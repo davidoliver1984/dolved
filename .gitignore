@@ -1,0 +1,58 @@
+# Repository environment
+.env
+.env.local
+.env.*.local
+!.env.example
+PROJECT_ROADMAP.md
+
+# macOS
+.DS_Store
+
+# IDEs
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Logs
+*.log
+logs/
+
+# Node / Next.js
+apps/web/node_modules/
+apps/web/.next/
+apps/web/out/
+apps/web/coverage/
+apps/web/.env
+apps/web/.env.local
+apps/web/.env.*.local
+!apps/web/.env.example
+
+# Laravel
+apps/api/vendor/
+apps/api/.env
+apps/api/storage/*.key
+apps/api/storage/framework/cache/data/*
+apps/api/storage/framework/sessions/*
+apps/api/storage/framework/views/*
+apps/api/storage/logs/*
+apps/api/bootstrap/cache/*.php
+apps/api/.phpunit.cache/
+apps/api/coverage/
+
+# Python
+apps/ai/.venv/
+apps/ai/.mypy_cache/
+apps/ai/.pytest_cache/
+apps/ai/.ruff_cache/
+apps/ai/__pycache__/
+apps/ai/**/*.py[cod]
+apps/ai/*.egg-info/
+apps/ai/src/*.egg-info/
+apps/ai/build/
+apps/ai/dist/
+apps/ai/coverage.xml
+apps/ai/htmlcov/
+
+# Local persistent bind mounts, should any be added later
+.local/
