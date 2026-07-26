@@ -43,7 +43,7 @@ help:
 		'  make format-check    Verify formatting without changing files' \
 		'  make typecheck       Run all available static type checks' \
 		'  make test            Run every currently configured test suite' \
-		'  make test-web        Report web test-suite availability' \
+		'  make test-web        Run Next.js unit tests' \
 		'  make test-api        Run Laravel tests' \
 		'  make test-ai         Run Python tests' \
 		'' \
@@ -117,7 +117,7 @@ typecheck-ai:
 test: test-web test-api test-ai
 
 test-web:
-	@printf '%s\n' 'Web: no automated test suite is configured yet; nothing to run.'
+	$(EXEC) web npm test
 
 test-api:
 	$(EXEC) api php artisan test

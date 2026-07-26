@@ -4170,35 +4170,150 @@ Choose and document the authentication boundary between Next.js and Laravel.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-26.
 
-Planned decisions
+### Decision
 
-* Session-cookie versus token-based authentication.
-* Laravel Sanctum usage.
-* CSRF protection.
-* Browser-to-API trust boundary.
-* Password-reset and email-verification requirements.
-* Local-development origins and cookie settings.
-* Whether Next.js acts only as a browser client or also as a backend-for-frontend.
+Option A was accepted with thirteen explicit refinements and recorded before
+implementation in:
 
-Required ADR
+```text
+docs/adr/0005-use-sanctum-and-fortify-for-first-party-spa-authentication.md
+```
 
-docs/adr/ADR-XXX-authentication-architecture.md
+Laravel Sanctum is used as Laravel's recommended stateful authentication approach
+for a first-party SPA. The recommendation is not Next.js-specific. Laravel is the
+only authentication and authorisation authority.
 
-Acceptance criteria
+The browser normally calls Laravel directly. Next.js is not a mandatory
+backend-for-frontend and does not duplicate Laravel authorisation. Selective
+server-side fetching is permitted, and is used by the protected workspace page to
+ask Laravel whether the request may use platform functionality.
 
-* Authentication flow is documented.
-* Browser and API responsibilities are explicit.
-* CSRF protection is addressed.
-* Cookie and CORS rules are documented.
-* Multi-tenancy implications are considered.
-* No implementation begins before the decision is recorded.
+Sanctum's stateful SPA mode requires the web and API hosts to share one top-level
+domain. The intended production hosts are:
 
-Commit boundary
+```text
+https://app.maketime.ai
+https://api.maketime.ai
+```
 
-git add docs/adr
-git commit -m "Document authentication architecture"
+The matching production settings are documented in `.env.example`:
+
+```dotenv
+APP_URL=https://api.maketime.ai
+FRONTEND_URL=https://app.maketime.ai
+NEXT_PUBLIC_API_URL=https://api.maketime.ai
+CORS_ALLOWED_ORIGINS=https://app.maketime.ai
+SANCTUM_STATEFUL_DOMAINS=app.maketime.ai
+SESSION_DOMAIN=.maketime.ai
+SESSION_SECURE_COOKIE=true
+```
+
+Local development uses `localhost:3000` and `localhost:8000`. Ports are included in
+the stateful-domain list as required by Sanctum.
+
+### Cookie and CSRF model
+
+Two cookies have deliberately different properties:
+
+* `rag-platform-session` contains the Laravel session identifier and is `HttpOnly`;
+  frontend JavaScript cannot read it.
+* `XSRF-TOKEN` is intentionally frontend-readable. The web client URL-decodes its
+  value and sends it as `X-XSRF-TOKEN` on state-changing requests.
+
+Both are sent only through requests using `credentials: "include"`. Production uses
+HTTPS, `Secure` cookies and `SameSite=Lax`.
+
+Sessions use PostgreSQL through Laravel's `database` session driver with an initial
+idle lifetime of 120 minutes. A later move to Redis changes operations, not the
+authentication architecture.
+
+### Fortify boundary
+
+Laravel Fortify remains headless. Its maintained actions, password broker,
+notifications, verification requests and controllers sit beneath the application-owned
+`/api/auth/*` JSON contract. Password recovery and email verification were not
+reimplemented.
+
+The exact unauthenticated allow-list is:
+
+```text
+GET  /sanctum/csrf-cookie
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/forgot-password
+POST /api/auth/reset-password
+```
+
+Registration returns `404` when `AUTH_REGISTRATION_ENABLED=false`, preserving the
+contract while allowing a later invite-only policy.
+
+The authenticated-but-unverified allow-list is:
+
+```text
+GET  /api/auth/user
+POST /api/auth/logout
+GET  /api/auth/email/verify/{id}/{hash}
+POST /api/auth/email/verification-notification
+```
+
+All actual platform routes use both:
+
+```php
+['auth:sanctum', 'verified']
+```
+
+`GET /api/platform/status` is the first protected proof route. Next.js redirects are
+user-experience aids; Laravel still enforces both conditions.
+
+### Identity rules
+
+`App\Support\CanonicalEmail` owns email canonicalisation:
+
+```text
+trim whitespace
+→ lowercase
+→ validate
+→ store the canonical value
+```
+
+The existing unique `users.email` database constraint therefore applies to the
+canonical value.
+
+The initial password rule is:
+
+```text
+minimum 12 characters
+upper- and lowercase letters
+at least one number
+at least one symbol
+```
+
+`uncompromised()` was not enabled initially because it makes validation depend on an
+external Have I Been Pwned request. That can be reconsidered when the operational
+failure policy is defined.
+
+A successful password reset:
+
+* hashes and stores the new password;
+* rotates `remember_token`;
+* deletes every database session belonging to that user.
+
+Login failures use Laravel's generic credential error. Forgotten-password requests
+return the same success message for present and absent accounts. Malformed email,
+weak password and duplicate-registration errors remain useful validation responses.
+
+### ADR creation
+
+```bash
+git status --short
+sed -n '1,240p' docs/adr/README.md
+```
+
+The ADR and index were written before package installation. Phase-level commit and
+tagging is used, so Stage 6.1 is committed together with the implementation it
+governs.
 
 ⸻
 
@@ -4206,38 +4321,292 @@ Stage 6.2 — Implement Laravel Authentication
 
 Objective
 
-Implement registration, login, logout and authenticated-user endpoints.
+Implement the accepted authentication contract with Sanctum, Fortify, PostgreSQL
+sessions and local email capture.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-26.
 
-Planned capabilities
+### Install Sanctum and Fortify
 
-* register;
-* login;
+The packages were installed through the running API container so the host does not
+need Composer:
+
+```bash
+docker compose exec api composer require laravel/sanctum laravel/fortify
+```
+
+Resolved versions:
+
+```text
+laravel/sanctum  v4.3.3
+laravel/fortify  v1.37.3
+```
+
+The official installers were then run:
+
+```bash
+docker compose exec api php artisan install:api --no-interaction
+docker compose exec api php artisan fortify:install --no-interaction
+docker compose exec api php artisan config:publish cors --no-interaction
+```
+
+The generated scaffold included personal access tokens, two-factor authentication,
+passkeys, profile updates and password changes. Those capabilities are outside the
+accepted allow-list. Their generated migrations and unused actions were removed.
+Sanctum remains in stateful session mode; the application does not issue personal
+access tokens.
+
+Fortify's automatic route registration was disabled with:
+
+```php
+Fortify::ignoreRoutes();
+```
+
+Only the accepted controllers were explicitly mounted in `routes/api.php` and
+`routes/web.php`.
+
+### Middleware and configuration
+
+`bootstrap/app.php` now:
+
+* enables Sanctum's stateful API middleware;
+* applies central email canonicalisation;
+* aliases the configurable open-registration middleware;
+* sends unauthenticated HTML visitors to the Next.js login page.
+
+Credentialed CORS is enabled only for configured origins. Its paths are:
+
+```php
+['api/*', 'sanctum/csrf-cookie']
+```
+
+The Compose API environment explicitly supplies:
+
+```text
+APP_URL
+FRONTEND_URL
+CORS_ALLOWED_ORIGINS
+SANCTUM_STATEFUL_DOMAINS
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_COOKIE=rag-platform-session
+SESSION_HTTP_ONLY=true
+SESSION_SAME_SITE=lax
+AUTH_REGISTRATION_ENABLED
+```
+
+Rate limits are:
+
+```text
+login                 5/minute per canonical email and IP
+registration          3/minute per IP
+password reset link   3/minute per canonical email and IP
+verification          6/minute
+```
+
+The first route-list attempt copied an option from an older Laravel CLI:
+
+```bash
+docker compose exec api php artisan route:list \
+  --path=api \
+  --columns=method,uri,name,middleware
+```
+
+Laravel 13 reported:
+
+```text
+The "--columns" option does not exist.
+```
+
+The supported verbose command was used instead:
+
+```bash
+docker compose exec api php artisan route:list --path=api -v
+```
+
+It showed only the eight authentication routes plus the protected platform proof
+route. The signed verification route is registered in `routes/web.php` because an
+email click must start the Laravel web session even when its referrer is Mailpit or an
+email client.
+
+### Fortify response customisation
+
+Small response adapters provide the stable JSON contract:
+
+```text
+ApiLoginResponse
+ApiRegisterResponse
+GenericPasswordResetLinkResponse
+VerifyEmailRedirectResponse
+```
+
+Successful verification redirects to:
+
+```text
+{FRONTEND_URL}/verify-email/result?status=verified
+```
+
+Password-reset notifications use Fortify's password broker and Laravel notification,
+but their URL targets the Next.js reset form:
+
+```text
+{FRONTEND_URL}/reset-password?token=...&email=...
+```
+
+Verification notifications continue to generate Laravel temporary signed URLs.
+
+### Add Mailpit
+
+The current official Mailpit release was checked before pinning:
+
+```text
+axllent/mailpit:v1.30.0
+```
+
+The service is named `mailpit`, its web interface binds only to
+`127.0.0.1:8025`, and Laravel connects internally to SMTP port `1025`.
+Mailpit's documented readiness command backs the health check:
+
+```yaml
+test: [CMD, /mailpit, readyz]
+```
+
+Start the affected services:
+
+```bash
+docker compose up -d mailpit api web
+```
+
+Mailpit is local-only and ephemeral. Verification and reset messages are not sent to
+an external provider.
+
+### Container environment fault discovered by the live test
+
+The first real registration returned `201`, but the user was absent from PostgreSQL
+and Mailpit had zero messages:
+
+```text
+Mailpit messages: 0
+```
+
+Inspection showed that `php artisan serve` launched PHP's development-server child
+with only `APP_ENV`. The child then loaded the scaffold `apps/api/.env`, silently
+selecting SQLite and log mail instead of the Compose PostgreSQL and SMTP values.
+
+The development image now launches PHP directly, preserving the full container
+environment:
+
+```dockerfile
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public", "public/index.php"]
+```
+
+The first direct-server correction used Laravel's framework `server.php` while the
+working directory was still `/app`. It attempted to require `/app/index.php` and
+failed. Using `public/index.php` as the router corrected the path.
+
+That fault also exposed a weak health check: any response body, including a PHP fatal
+page, counted as healthy. The health check now sends `Accept: application/json` and
+requires the exact Laravel response:
+
+```json
+{"status":"up"}
+```
+
+Rebuild and recreate:
+
+```bash
+docker compose build api
+docker compose up -d --force-recreate api web --wait --wait-timeout 180
+```
+
+### Test isolation correction
+
+Compose environment variables also had precedence over ordinary PHPUnit XML values.
+Before correction, the feature suite used development PostgreSQL and relied on test
+transaction rollback.
+
+Every PHPUnit environment entry now uses `force="true"`. Tests use in-memory SQLite,
+array sessions, array mail and synchronous queues regardless of Compose values.
+
+Isolation was proved by reading `users_id_seq`, running the suite, and reading it
+again:
+
+```bash
+docker compose exec postgres psql \
+  --username rag_platform \
+  --dbname rag_platform \
+  --tuples-only \
+  --command "SELECT last_value FROM users_id_seq;"
+
+make test-api format-check-api
+
+docker compose exec postgres psql \
+  --username rag_platform \
+  --dbname rag_platform \
+  --tuples-only \
+  --command "SELECT last_value FROM users_id_seq;"
+```
+
+The value remained `9`.
+
+### Signed-link middleware correction
+
+The first live verification-link request returned `500`. The log showed that
+`auth:sanctum` treated the direct email click as stateless because it did not carry a
+first-party SPA `Origin` or `Referer`; Laravel then attempted to redirect through an
+undefined local `login` route.
+
+The signed verification endpoint was moved to the normal Laravel `web` middleware
+group with `auth:web`, `signed` and throttling. It remains an authenticated Laravel
+endpoint, starts the existing session regardless of email-client referrer, verifies
+through Fortify and redirects to Next.js. A frontend login redirect is now configured
+for unauthenticated HTML requests.
+
+The corrected live result was:
+
+```text
+HTTP/1.1 302 Found
+Location: http://localhost:3000/verify-email/result?status=verified
+PostgreSQL email_verified_at set: true
+```
+
+### Backend feature tests
+
+`tests/Feature/AuthenticationTest.php` covers:
+
+* canonical registration and unique canonical email;
+* registration enabled and disabled;
+* the initial password rule;
+* signed Laravel verification URL generation;
+* login with a non-canonical email input;
+* generic invalid-credential handling;
+* current-user access before verification;
 * logout;
-* current user;
-* email verification if included;
-* password reset if included;
-* rate limiting;
-* authentication feature tests.
+* rejection of unverified platform access;
+* acceptance of verified platform access;
+* verification and redirect;
+* verification resend;
+* identical forgotten-password responses for known and unknown accounts;
+* useful malformed-email validation;
+* password reset, remember-token rotation and deletion of every database session;
+* frontend-readable XSRF cookie and `HttpOnly` session configuration.
 
-Acceptance criteria
+Run:
 
-* Users can register.
-* Users can log in.
-* Users can log out.
-* Authenticated requests resolve the current user.
-* Invalid credentials fail safely.
-* Authentication endpoints are rate-limited.
-* Passwords are never logged or returned.
-* Feature tests cover success and failure paths.
+```bash
+make test-api
+make format-check-api
+```
 
-Commit boundary
+Result:
 
-git add apps/api
-git commit -m "Implement API authentication"
+```text
+16 tests passed
+53 assertions
+Laravel Pint passed 42 files
+```
 
 ⸻
 
@@ -4249,32 +4618,222 @@ Provide frontend registration, login, logout and protected-route behaviour.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-26.
 
-Planned capabilities
+### Browser API client
 
-* registration form;
-* login form;
-* logout control;
-* authenticated application shell;
-* route protection;
-* loading and error states;
-* accessible validation feedback.
+`src/lib/api.ts` is the direct browser-to-Laravel client. For unsafe requests it:
 
-Acceptance criteria
+1. calls `GET /sanctum/csrf-cookie`;
+2. reads and URL-decodes `XSRF-TOKEN`;
+3. sends `X-XSRF-TOKEN`;
+4. sends credentials and requests JSON;
+5. turns Laravel validation payloads into safe UI errors.
 
-* Registration works through the UI.
-* Login works through the UI.
-* Logout clears authenticated state.
-* Protected pages redirect unauthenticated users.
-* API errors are presented safely.
-* Authentication state survives normal navigation.
-* Frontend tests cover critical flows.
+It never reads the `HttpOnly` session cookie.
 
-Commit boundary
+### User experience
 
-git add apps/web
-git commit -m "Add web authentication experience"
+The default scaffold was replaced with:
+
+```text
+/
+/login
+/register
+/forgot-password
+/reset-password
+/verify-email
+/verify-email/result
+/app
+```
+
+The account forms provide pending, success and error states with accessible status
+regions. The registration and reset forms explain the password policy.
+
+`/app` is a dynamic Server Component. It selectively forwards the incoming cookie to
+Laravel's internal Compose URL and calls the protected platform endpoint:
+
+```text
+200 → render the workspace
+401 → redirect to /login
+403 → redirect to /verify-email
+```
+
+It supplies the configured frontend origin so Sanctum recognises the forwarded
+first-party request. It does not make its own authorisation decision.
+
+The HTTP contract documentation was corrected from a mandatory
+Browser → Next.js → Laravel topology to direct browser-to-Laravel calls with an
+optional selective rendering path.
+
+### Web tests
+
+Next.js 16.2.11's bundled documentation was read before implementation, including the
+authentication, asynchronous `cookies()` and Vitest guides.
+
+Install the documented test stack:
+
+```bash
+docker compose exec web npm install --save-dev \
+  vitest \
+  @vitejs/plugin-react \
+  jsdom \
+  @testing-library/react \
+  @testing-library/dom \
+  @testing-library/user-event \
+  vite-tsconfig-paths
+```
+
+Current Vite reported that `vite-tsconfig-paths` is obsolete because native
+`resolve.tsconfigPaths` support is available. It was removed:
+
+```bash
+docker compose exec web npm uninstall --save-dev vite-tsconfig-paths
+```
+
+The three client tests prove:
+
+* unsafe calls bootstrap Sanctum CSRF state;
+* the readable XSRF value is decoded and returned as a header;
+* safe GET requests do not make a CSRF bootstrap call;
+* Laravel's useful field validation is preferred over a generic message.
+
+`make test-web` now runs `vitest run` instead of reporting that no suite exists.
+
+```bash
+make test-web lint-web typecheck-web
+```
+
+Result:
+
+```text
+3 Vitest tests passed
+ESLint passed
+TypeScript passed
+```
+
+### Production build corrections
+
+The first manual build ran inside the development service with
+`NODE_ENV=development`. Next.js warned about the non-production value and its error
+page prerender failed inside the mixed development/production React runtime.
+
+The first attempted Compose override used the unsupported long flag:
+
+```text
+unknown flag: --environment
+```
+
+The supported short flag produced a clean build:
+
+```bash
+docker compose stop web
+docker compose run --rm --no-deps -e NODE_ENV=production web npm run build
+docker compose up -d web --wait --wait-timeout 180
+```
+
+All nine application routes compiled. `/app`, `/reset-password` and the verification
+result are dynamic; the remaining pages are statically rendered.
+
+The actual standalone production image target was also built successfully:
+
+```bash
+docker build \
+  --target production \
+  --tag rag-platform-web:phase-6 \
+  apps/web
+```
+
+This verifies the container artifact path intended for a later ECS/Fargate deployment;
+it does not deploy anything to AWS.
+
+Runtime smoke checks:
+
+```bash
+curl --fail --silent --show-error \
+  --output /dev/null \
+  --write-out 'home HTTP %{http_code}\n' \
+  http://127.0.0.1:3000/
+
+curl --silent --show-error \
+  --output /dev/null \
+  --write-out 'workspace HTTP %{http_code} redirect %{redirect_url}\n' \
+  http://127.0.0.1:3000/app
+```
+
+Result:
+
+```text
+home HTTP 200
+workspace HTTP 307 redirect http://127.0.0.1:3000/login
+```
+
+### Live end-to-end authentication proof
+
+A real credentialed registration was sent through the host API after obtaining
+Sanctum's CSRF cookie. It:
+
+* returned `201`;
+* persisted the canonical user in PostgreSQL;
+* created a database session;
+* delivered one verification email to Mailpit;
+* produced a Laravel temporary signed verification URL;
+* verified the database row;
+* redirected to the Next.js success page.
+
+The single integration-test user, its session and its Mailpit message were then
+deleted. No external email or production system was used.
+
+### Dependency audit
+
+Adding test-only packages increased the unfiltered npm report to 12 high-severity
+findings. The production-only check remains three high findings inherited through
+Next.js 16.2.11:
+
+```bash
+docker compose exec web npm audit --omit=dev
+```
+
+The report identifies current `postcss` and `sharp` advisories. npm's proposed
+`--force` resolution would downgrade Next.js to 9.3.3, a breaking and invalid fix, so
+it was not applied. This remains a known upstream dependency risk to revisit when a
+compatible Next.js release updates those transitive packages.
+
+### Phase acceptance
+
+* Laravel is the sole security authority.
+* Open registration is configuration-controlled.
+* Canonical email uniqueness is enforced.
+* Login, logout, current user, reset and verification work.
+* Password reset invalidates all sessions.
+* Unverified accounts cannot use platform functionality.
+* Mailpit captures local email.
+* Next.js does not act as a mandatory BFF.
+* Tests are isolated from development PostgreSQL.
+* The production web build succeeds.
+* All local services are healthy.
+
+### Phase commit and tag
+
+Phase 6 receives one atomic milestone after the full vertical slice is verified:
+
+```bash
+git add \
+  .env.example \
+  IMPLEMENTATION_GUIDE.md \
+  README.md \
+  apps/api \
+  apps/web \
+  compose.yaml \
+  contracts/http/README.md \
+  docs/adr \
+  makefile
+
+git commit -m "Complete Phase 6 authentication and identity"
+git tag -a phase-6 -m "Authentication and identity"
+```
+
+The unrelated untracked `tasks.json` file remains excluded.
 
 ⸻
 

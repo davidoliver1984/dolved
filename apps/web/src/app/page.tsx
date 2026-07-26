@@ -1,66 +1,60 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="landing-shell">
+      <nav className="site-nav">
+        <Link className="wordmark" href="/">
+          Make Time<span>.</span>
+        </Link>
+        <div>
+          <Link className="text-link" href="/login">
+            Sign in
+          </Link>
+          <Link className="nav-button" href="/register">
+            Get started
+          </Link>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </nav>
+
+      <section className="hero">
+        <p className="eyebrow">Your knowledge, ready when you are</p>
+        <h1>
+          Stop hunting.
+          <br />
+          Start knowing.
+        </h1>
+        <p className="hero-copy">
+          Make Time turns the documents your team already trusts into clear,
+          grounded answers—with the source always in sight.
+        </p>
+        <div className="hero-actions">
+          <Link className="primary-button" href="/register">
+            Build your workspace
+          </Link>
+          <Link className="secondary-button" href="/login">
+            I already have an account
+          </Link>
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="proof-strip" aria-label="Product principles">
+        <div>
+          <span>01</span>
+          <strong>Grounded</strong>
+          <p>Answers stay connected to their evidence.</p>
+        </div>
+        <div>
+          <span>02</span>
+          <strong>Private</strong>
+          <p>Your workspace remains your workspace.</p>
+        </div>
+        <div>
+          <span>03</span>
+          <strong>Useful</strong>
+          <p>Designed for the question you have right now.</p>
+        </div>
+      </section>
+    </main>
   );
 }

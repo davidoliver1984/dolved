@@ -11,6 +11,7 @@ services:
       - "${WEB_PORT:-3000}:3000"
     environment:
       API_INTERNAL_URL: http://api:8000
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
     volumes:
       - ./apps/web:/app
@@ -39,8 +40,22 @@ services:
     ports:
       - "${API_PORT:-8000}:8000"
     environment:
+      APP_NAME: Make Time
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_URL: ${APP_URL:-http://localhost:8000}
       AI_SERVICE_URL: http://ai:8001
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+      SANCTUM_STATEFUL_DOMAINS: ${SANCTUM_STATEFUL_DOMAINS:-localhost:3000,127.0.0.1:3000}
+      SESSION_DRIVER: database
+      SESSION_LIFETIME: 120
+      SESSION_COOKIE: rag-platform-session
+      SESSION_DOMAIN: ${SESSION_DOMAIN:-}
+      SESSION_SECURE_COOKIE: ${SESSION_SECURE_COOKIE:-false}
+      SESSION_HTTP_ONLY: "true"
+      SESSION_SAME_SITE: lax
+      AUTH_REGISTRATION_ENABLED: ${AUTH_REGISTRATION_ENABLED:-true}
       DB_CONNECTION: pgsql
       DB_HOST: postgres
       DB_PORT: 5432
@@ -58,6 +73,11 @@ services:
       SQS_ENDPOINT: http://localstack:4566
       SQS_PREFIX: http://localstack:4566/000000000000
       SQS_QUEUE: ${INGESTION_QUEUE:-rag-platform-ingestion-local}
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      MAIL_FROM_ADDRESS: hello@maketime.ai
+      MAIL_FROM_NAME: Make Time
     volumes:
       - ./apps/api:/app
       - api_vendor:/app/vendor
@@ -68,12 +88,14 @@ services:
         condition: service_healthy
       localstack:
         condition: service_healthy
+      mailpit:
+        condition: service_healthy
     healthcheck:
       test:
         - CMD
         - php
         - -r
-        - "exit(@file_get_contents('http://127.0.0.1:8000/up') === false ? 1 : 0);"
+        - "$$context = stream_context_create(['http' => ['header' => 'Accept: application/json']]); $$body = @file_get_contents('http://127.0.0.1:8000/up', false, $$context); exit($$body === '{\"status\":\"up\"}' ? 0 : 1);"
       interval: 5s
       timeout: 3s
       retries: 10
@@ -166,6 +188,20 @@ services:
       retries: 20
       start_period: 20s
     stop_grace_period: 15s
+
+  mailpit:
+    image: axllent/mailpit:v1.30.0
+    ports:
+      - "127.0.0.1:${MAILPIT_WEB_PORT:-8025}:8025"
+    healthcheck:
+      test:
+        - CMD
+        - /mailpit
+        - readyz
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
 
 volumes:
   web_node_modules:

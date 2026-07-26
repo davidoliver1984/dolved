@@ -40,6 +40,8 @@ data, and therefore requires typing `RESET` interactively.
 | Python API | http://localhost:8001 |
 | PostgreSQL | `127.0.0.1:5433` |
 | LocalStack gateway | http://localhost:4566 |
+| Mailpit | http://localhost:8025 |
 
-LocalStack currently provides local S3 and SQS services. Qdrant, Mailpit and other
-supporting infrastructure will be added in later phases.
+LocalStack provides local S3 and SQS services. Mailpit captures local verification
+and password-reset messages without sending external email. Qdrant and Redis are
+added in later phases.
