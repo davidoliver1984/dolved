@@ -1,0 +1,10 @@
+.env
+.git
+.gitattributes
+.gitignore
+.phpunit.result.cache
+Dockerfile
+node_modules
+npm-debug.log*
+storage/logs/*
+vendor

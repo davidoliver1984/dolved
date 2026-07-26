@@ -1,0 +1,175 @@
+name: ${COMPOSE_PROJECT_NAME:-rag-platform}
+
+services:
+  web:
+    build:
+      context: ./apps/web
+      target: development
+    image: rag-platform-web:development
+    init: true
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      API_INTERNAL_URL: http://api:8000
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    volumes:
+      - ./apps/web:/app
+      - web_node_modules:/app/node_modules
+      - web_next:/app/.next
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000').then(response => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  api:
+    build:
+      context: ./apps/api
+      target: development
+    image: rag-platform-api:development
+    init: true
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      AI_SERVICE_URL: http://ai:8001
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB:-rag_platform}
+      DB_USERNAME: ${POSTGRES_USER:-rag_platform}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+      FILESYSTEM_DISK: s3
+      QUEUE_CONNECTION: sqs
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+      AWS_BUCKET: ${DOCUMENT_UPLOAD_BUCKET:-rag-platform-document-uploads-local}
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_USE_PATH_STYLE_ENDPOINT: "true"
+      SQS_ENDPOINT: http://localstack:4566
+      SQS_PREFIX: http://localstack:4566/000000000000
+      SQS_QUEUE: ${INGESTION_QUEUE:-rag-platform-ingestion-local}
+    volumes:
+      - ./apps/api:/app
+      - api_vendor:/app/vendor
+    depends_on:
+      ai:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - php
+        - -r
+        - "exit(@file_get_contents('http://127.0.0.1:8000/up') === false ? 1 : 0);"
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  ai:
+    build:
+      context: ./apps/ai
+      target: development
+    image: rag-platform-ai:development
+    init: true
+    ports:
+      - "${AI_PORT:-8001}:8001"
+    environment:
+      ENVIRONMENT: local
+      SERVICE_NAME: rag-platform-ai
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+      AWS_ENDPOINT_URL: http://localstack:4566
+      DOCUMENT_UPLOAD_BUCKET: ${DOCUMENT_UPLOAD_BUCKET:-rag-platform-document-uploads-local}
+      INGESTION_QUEUE: ${INGESTION_QUEUE:-rag-platform-ingestion-local}
+      INGESTION_DLQ: ${INGESTION_DLQ:-rag-platform-ingestion-dlq-local}
+    volumes:
+      - ./apps/ai:/app
+      - ai_venv:/app/.venv
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=2)"
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      localstack:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:18.4-alpine
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-rag_platform}
+      POSTGRES_USER: ${POSTGRES_USER:-rag_platform}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "pg_isready --username=$$POSTGRES_USER --dbname=$$POSTGRES_DB"
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    stop_grace_period: 30s
+
+  localstack:
+    image: localstack/localstack:4.14.0
+    ports:
+      - "127.0.0.1:${LOCALSTACK_PORT:-4566}:4566"
+    environment:
+      SERVICES: s3,sqs
+      SQS_ENDPOINT_STRATEGY: dynamic
+      DEBUG: ${LOCALSTACK_DEBUG:-0}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+      DOCUMENT_UPLOAD_BUCKET: ${DOCUMENT_UPLOAD_BUCKET:-rag-platform-document-uploads-local}
+      INGESTION_QUEUE: ${INGESTION_QUEUE:-rag-platform-ingestion-local}
+      INGESTION_DLQ: ${INGESTION_DLQ:-rag-platform-ingestion-dlq-local}
+      SQS_MAX_RECEIVE_COUNT: ${SQS_MAX_RECEIVE_COUNT:-3}
+    volumes:
+      - ./infrastructure/localstack/init/ready.d:/etc/localstack/init/ready.d:ro
+      - ./scripts/localstack:/opt/rag-platform/localstack:ro
+    tmpfs:
+      - /var/lib/localstack
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          awslocal s3api head-bucket --bucket "$$DOCUMENT_UPLOAD_BUCKET"
+          && awslocal sqs get-queue-url --queue-name "$$INGESTION_QUEUE"
+          && awslocal sqs get-queue-url --queue-name "$$INGESTION_DLQ"
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    stop_grace_period: 15s
+
+volumes:
+  web_node_modules:
+  web_next:
+  api_vendor:
+  ai_venv:
+  postgres_data:
