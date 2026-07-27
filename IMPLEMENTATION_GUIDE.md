@@ -4853,36 +4853,122 @@ Choose the platform tenancy model and record its security invariants.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-27.
 
-Planned decisions
+### Decision
 
-* organisation/workspace terminology;
-* user membership model;
-* roles and permissions;
-* invitation flow;
-* tenant selection;
-* tenant ownership of documents and conversations;
-* row-level isolation strategy;
-* background-job tenant context.
+The Workspace model was accepted and recorded before any Phase 7 implementation
+code in:
 
-Required ADR
+```text
+docs/adr/0006-use-workspace-as-the-tenancy-and-isolation-boundary.md
+```
 
-docs/adr/ADR-XXX-multi-tenancy-model.md
+A Workspace is the platform's tenant, collaboration and data-isolation boundary.
+No organisation layer sits above it at this stage. Users remain global
+identities (Phase 6) and may belong to multiple workspaces; the relationship is
+a first-class `WorkspaceMembership` model, not an anonymous pivot, carrying one
+of a fixed initial role set: `owner`, `admin`, `member`. Every workspace has
+exactly one active owner membership at all times; `created_by_user_id` records
+creation provenance only, not current ownership authority. Invitations are
+explicitly deferred to a later session.
+
+The relational tenancy model is pooled — one shared PostgreSQL database and
+shared tables, with a mandatory non-nullable workspace foreign key on every
+workspace-owned row. Tenant isolation is enforced through **defence in
+depth**: workspace-scoped routes, the authenticated user, active-membership
+validation, Laravel policies, explicit tenant-scoped queries, PostgreSQL
+Row-Level Security and database constraints must each independently hold, not
+any single mechanism alone. RLS is accepted as part of the architecture — not
+a replacement for application-layer authorisation, which must remain correct
+on its own even where RLS is disabled (e.g. some local development
+configurations). Its implementation (policies, connection-context propagation,
+a restricted non-superuser runtime database role, tests) is carried out in
+Stage 7.2, not this ADR; the repository must not describe RLS as active until
+then.
+
+Workspace identity must propagate through every derived artefact and service
+boundary: workspace-prefixed S3 object keys (server-controlled, not itself an
+authorisation mechanism), SQS ingestion events, extracted documents, chunks and
+vectors. Asynchronous workers must take workspace context from the message
+itself, never from browser sessions or process-global state, and consumers
+must validate that a referenced resource actually belongs to the workspace an
+event names — no service may derive tenant identity implicitly, and tenant
+identity crossing a service boundary is untrusted until the receiving service
+validates it. Event contracts are expected to carry explicit version
+information as they evolve. The Qdrant collection/sharding strategy remains
+deferred to `R13-S01`; every vector record must still carry immutable
+workspace identity regardless of the eventual physical layout.
+
+Workspace configuration distinguishes platform-global catalogues (supported
+embedding/generation providers and models) from per-workspace configuration
+(a workspace's selected provider, model, retrieval configuration and future
+credentials) — a fourth entity-classification category, alongside
+platform-global, workspace-relationship and workspace-owned:
+workspace-configurable.
+
+Three independent audit layers are recorded: business audit (workspace and
+membership lifecycle events), search/RAG audit (once retrieval exists), and
+database audit (e.g. `pgAudit`, reserved for forensic use, not the primary
+trail). Requests, events and downstream processing are intended to eventually
+share a common correlation identifier for end-to-end traceability.
+
+Registration (Phase 6) creates a global user identity only. Workspace creation
+is explicit and atomic — workspace and owner membership are created together.
+Workspace deletion is a lifecycle, not an immediate delete: it will
+orchestrate cleanup across PostgreSQL, object storage, Qdrant and audit
+records asynchronously; the concrete orchestration is deferred, but the shape
+of deletion as a multi-system auditable lifecycle is accepted now.
+
+The full set of agreed decisions, rejected alternatives and required security
+invariants is recorded in ADR 0006 rather than duplicated here. ADR 0006 went
+through two rounds of architecture review before acceptance — see the session
+journal for what changed in each round.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No migrations,
+models, middleware, policies, routes or frontend code were introduced. Verification
+consisted of:
+
+* inspecting `CLAUDE.md`, `CONTRIBUTING.md`, `PROJECT_ROADMAP.md`,
+  `IMPLEMENTATION_GUIDE.md`, `tasks.json` and every existing file under
+  `docs/adr/` before drafting, to preserve existing ADR numbering, format and
+  terminology conventions;
+* confirming `tasks.json` and `docs/rag-platform-tasks.json` are identical
+  copies, so both stay in sync;
+* checking the ADR against each item in the "Acceptance criteria" list below.
 
 Acceptance criteria
 
-* Tenant terminology is consistent.
-* Ownership rules are documented.
-* Membership and role rules are documented.
-* Cross-tenant access is explicitly forbidden.
-* Background processing carries tenant identity.
-* Vector metadata includes tenant identity.
-* Audit requirements are considered.
+* Tenant terminology is consistent. — Met: "Workspace" used throughout ADR 0006.
+* Ownership rules are documented. — Met: owner-membership and
+  `created_by_user_id` provenance rules recorded.
+* Membership and role rules are documented. — Met: `WorkspaceMembership`,
+  fixed `owner`/`admin`/`member` roles.
+* Cross-tenant access is explicitly forbidden. — Met: see ADR 0006 "Security
+  invariants".
+* Background processing carries tenant identity. — Met: async-worker and
+  event-consumer propagation rules recorded.
+* Vector metadata includes tenant identity. — Met: recorded as a requirement
+  independent of the deferred Qdrant layout decision.
+* Audit requirements are considered. — Met: business, search/RAG and database
+  audit layers are distinguished, with a future shared correlation identifier
+  recorded as an architectural intention.
+
+ADR 0006 was reviewed twice (Ralph) before acceptance. Round one accepted
+PostgreSQL RLS as a defence-in-depth layer (originally deferred), added the
+workspace-configuration/platform-catalogue split, the three audit layers, and
+reframed deletion as an asynchronous lifecycle. Round two was a polish pass:
+it added the `workspace-configurable` entity-classification category, explicit
+tenant-propagation and trust-boundary invariants, a correlation-ID statement,
+an event-versioning consideration, a provider/model split within workspace
+configuration, and a closing "correctness over convenience" principle. No
+structural changes or renumbering occurred in either round.
 
 Commit boundary
 
-git add docs/adr
+git add docs/adr docs/journal tasks.json docs/rag-platform-tasks.json IMPLEMENTATION_GUIDE.md
 git commit -m "Document multi-tenancy model"
 
 ⸻

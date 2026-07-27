@@ -49,3 +49,4 @@ that supersedes the previous record rather than rewriting its historical context
 | [0003](0003-use-container-first-local-development.md) | Accepted (retrospective) | Use containers as the canonical local development environment |
 | [0004](0004-use-localstack-4-for-local-aws-emulation.md) | Accepted | Use LocalStack 4.14 for account-free local S3 and SQS emulation |
 | [0005](0005-use-sanctum-and-fortify-for-first-party-spa-authentication.md) | Accepted | Use Sanctum stateful sessions and Fortify mechanics for first-party SPA authentication |
+| [0006](0006-use-workspace-as-the-tenancy-and-isolation-boundary.md) | Accepted | Use Workspace as the platform's tenancy, collaboration and data-isolation boundary |
