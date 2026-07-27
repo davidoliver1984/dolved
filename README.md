@@ -1,4 +1,4 @@
-# RAG Platform
+# dolved RAG system
 
 A container-first, multi-service Retrieval Augmented Generation platform built with
 Next.js, Laravel, FastAPI and PostgreSQL.
