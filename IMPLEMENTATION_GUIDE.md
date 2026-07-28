@@ -5946,123 +5946,681 @@ git commit -m "Implement document upload workflow" \
   -m "Implements ADR-0004 and ADR-0007."
 ```
 
-⸻
+---
 
-Phase 9 — Event-Driven Ingestion
+# Phase 9 — Event-Driven Ingestion
 
-Phase objective
+## Phase objective
 
-Decouple document uploads from processing by publishing durable ingestion jobs.
+Decouple document upload from document processing through a durable,
+tenant-aware and versioned ingestion workflow.
 
-⸻
+At the end of this phase, an uploaded Document can move through:
 
-Stage 9.1 — Define Ingestion Event Contract
+```text
+UPLOADED
+↓
+QUEUED
+↓
+PROCESSING
+```
 
-Objective
+Laravel remains authoritative for Document identity, workspace ownership and
+lifecycle state.
 
-Create a versioned event contract for document-ingestion requests.
+Python consumes ingestion requests asynchronously but does not directly modify
+Laravel-owned database tables.
 
-Status
+This phase establishes orchestration and delivery guarantees only. It does not
+perform text extraction, chunking, embedding generation or vector indexing.
+
+---
+
+# Stage 9.1 — Define the Ingestion Architecture and Event Contract
+
+## Objective
+
+Define the service boundaries, delivery semantics and versioned contract used
+to request document ingestion.
+
+## Status
 
 Not yet executed.
 
-Planned location
+## Engineering rationale
 
+SQS provides at-least-once delivery rather than exactly-once delivery.
+
+Consumers must therefore assume that messages can be:
+
+- delayed;
+- retried;
+- delivered more than once;
+- delivered after related lifecycle state has changed.
+
+The ingestion architecture must be designed around:
+
+- versioned contracts;
+- idempotent producers and consumers;
+- explicit workspace context;
+- correlation identifiers;
+- unsupported-version handling;
+- retry and dead-letter behaviour;
+- clear ownership of lifecycle state.
+
+Laravel owns the Document aggregate and its lifecycle.
+
+The Python ingestion service may request lifecycle transitions through an
+authenticated internal application boundary, but it must not update Laravel's
+PostgreSQL tables directly.
+
+A queue message represents a request to process a Document. It is not the
+authoritative record that the Document exists or remains eligible for
+processing.
+
+## Planned location
+
+```text
 contracts/events/document-ingestion-requested/
+```
 
-Planned fields
+Suggested structure:
 
-* event identifier;
-* event version;
-* occurred-at timestamp;
-* tenant identifier;
-* document identifier;
-* storage bucket;
-* storage object key;
-* media type;
-* correlation identifier.
+```text
+contracts/events/document-ingestion-requested/
+├── v1.schema.json
+├── v1.example.json
+└── README.md
+```
 
-Acceptance criteria
+## Contract requirements
 
-* The schema is versioned.
-* Required fields are documented.
-* Tenant identity is included.
-* Consumers can reject unsupported versions.
-* Example payloads exist.
-* Laravel and Python validate against the same contract.
-* No secrets or presigned URLs are included.
+The version 1 contract should include:
 
-Commit boundary
+- event identifier;
+- event type;
+- event version;
+- occurred-at timestamp;
+- workspace identifier;
+- document identifier;
+- source-storage bucket;
+- source-storage object key;
+- media type;
+- byte size;
+- correlation identifier.
 
-git add contracts/events
+Use public or transport-safe identifiers where appropriate.
+
+Do not include:
+
+- storage credentials;
+- presigned URLs;
+- user-facing secrets;
+- complete user records;
+- unbounded arbitrary metadata.
+
+The event identifier identifies one logical ingestion request.
+
+The document identifier identifies the durable Document being processed.
+
+The correlation identifier connects upload, publication, consumption and
+processing logs without replacing either identifier.
+
+## Delivery semantics
+
+The architecture must explicitly document that:
+
+- delivery is at least once;
+- message ordering is not guaranteed unless deliberately introduced later;
+- consumers must be idempotent;
+- unsupported event versions must fail safely;
+- malformed events must not be processed;
+- messages are acknowledged only after the responsibility represented by the
+  event has completed durably;
+- repeated terminal failures are routed to a dead-letter queue.
+
+## Expected changes
+
+- Versioned JSON Schema for the event.
+- Example event payload.
+- Human-readable contract documentation.
+- Shared contract-validation fixtures.
+- Laravel contract-validation tests.
+- Python contract-validation tests.
+- Architectural documentation describing producer and consumer ownership.
+
+Create a new ADR only if the existing ADRs do not already settle:
+
+- transactional publication strategy;
+- Laravel and Python lifecycle ownership;
+- internal service authentication;
+- retry and dead-letter semantics.
+
+Do not hide unresolved architecture inside implementation code.
+
+## Verification
+
+Verify that:
+
+- valid example payloads pass JSON Schema validation;
+- missing required fields fail validation;
+- unknown additional fields follow the documented schema policy;
+- unsupported versions are detectable;
+- Laravel and Python validate against the same canonical schema;
+- workspace and correlation identifiers are required;
+- no secret or presigned URL appears in the contract.
+
+## Acceptance criteria
+
+- The ingestion event is explicitly versioned.
+- Required fields and their meanings are documented.
+- Workspace identity is present.
+- Document identity is present.
+- Event and correlation identifiers are distinct.
+- Delivery semantics are documented as at least once.
+- Consumers can identify and reject unsupported versions.
+- Valid and invalid fixture payloads exist.
+- Laravel and Python validate against the same contract.
+- No credentials, secrets or presigned URLs are included.
+- Laravel remains authoritative for Document lifecycle state.
+
+## Commit boundary
+
+```bash
+git add contracts docs apps/api apps/ai
 git commit -m "Define document ingestion event contract"
+```
 
-⸻
+---
 
-Stage 9.2 — Publish Ingestion Jobs
+# Stage 9.2 — Publish Ingestion Requests Reliably
 
-Objective
+## Objective
 
-Publish an ingestion event after a document upload is confirmed.
+Reliably request ingestion after an uploaded Document is accepted for
+processing.
 
-Status
-
-Not yet executed.
-
-Acceptance criteria
-
-* Laravel publishes a valid event.
-* Publishing is tenant-aware.
-* Events include correlation identifiers.
-* Duplicate completion requests do not create uncontrolled duplicate work.
-* Queue failures are handled.
-* Publishing behaviour is covered by tests.
-* LocalStack SQS is supported.
-
-Commit boundary
-
-git add apps/api
-git commit -m "Publish document ingestion jobs"
-
-⸻
-
-Stage 9.3 — Consume Ingestion Jobs
-
-Objective
-
-Create a Python worker that receives, validates and acknowledges ingestion events.
-
-Status
+## Status
 
 Not yet executed.
 
-Planned engineering decisions
+## Engineering rationale
 
-* Worker process separate from the HTTP process.
-* Explicit visibility timeout.
-* Controlled retry count.
-* Dead-letter handling.
-* Idempotency based on event/document identifiers.
-* Structured logging with correlation context.
-* Messages acknowledged only after durable success.
+Updating PostgreSQL and publishing directly to SQS are two independent
+operations.
 
-Acceptance criteria
+A naïve workflow creates a dual-write failure:
 
-* The worker receives SQS messages.
-* Event schemas are validated.
-* Unsupported versions fail safely.
-* Successful messages are acknowledged.
-* Failed messages are retried.
-* Repeated failures reach the dead-letter queue.
-* Duplicate messages do not duplicate final data.
-* Worker tests cover acknowledgement and failure behaviour.
+```text
+Document becomes QUEUED
+↓
+SQS publication fails
+↓
+Document is never processed
+```
 
-Commit boundary
+Reversing the operation order is also unsafe:
 
-git add apps/ai contracts
+```text
+SQS message is published
+↓
+Database transaction fails
+↓
+Worker receives a request for state that was never committed
+```
+
+Use a transactional outbox so the lifecycle transition and durable publication
+intent are recorded within the same PostgreSQL transaction.
+
+Conceptual flow:
+
+```text
+Document: UPLOADED
+↓
+Database transaction
+├── transition Document to QUEUED
+└── create outbox record
+↓
+Commit
+↓
+Outbox publisher sends event to SQS
+↓
+Outbox record marked as published
+```
+
+The outbox guarantees durable publication intent. It does not provide
+exactly-once delivery, so downstream processing must remain idempotent.
+
+## Required behaviour
+
+Provide an explicit operation that requests ingestion for an eligible
+Document.
+
+The operation must:
+
+1. authenticate the user;
+2. resolve the workspace through active membership;
+3. authorise access to the Document;
+4. ensure the Document belongs to the workspace;
+5. require the expected `UPLOADED` state;
+6. transition the Document to `QUEUED`;
+7. create one durable outbox event within the same database transaction;
+8. return the updated public Document representation.
+
+Do not publish directly to SQS from inside the request transaction.
+
+An outbox publisher must:
+
+- read unpublished events;
+- validate payloads against the canonical contract;
+- publish them to LocalStack SQS locally and AWS SQS in production;
+- mark successful publications durably;
+- retry transient publication failures;
+- avoid uncontrolled duplicate publication;
+- retain enough failure information for diagnosis.
+
+## Idempotency
+
+Repeated ingestion requests must not create uncontrolled duplicate work.
+
+Where the Document is already `QUEUED` or `PROCESSING`, the operation should
+either:
+
+- return the current state idempotently; or
+- reject the request with a documented domain conflict.
+
+Choose one behaviour and test it consistently.
+
+Use a database constraint or equivalent invariant to prevent multiple active
+outbox requests for the same logical ingestion attempt.
+
+Do not claim exactly-once publication.
+
+## Correlation
+
+Propagate a correlation identifier across:
+
+- the initiating HTTP request;
+- the outbox record;
+- the SQS event;
+- structured publication logs.
+
+The event identifier must remain stable for retries of the same outbox event.
+
+A publication retry must not generate a new logical event identifier.
+
+## Local infrastructure
+
+Use the architecture established by ADR-0004:
+
+- LocalStack SQS for local development;
+- AWS SQS in production;
+- the existing AWS SDK and configuration conventions;
+- a configured ingestion queue;
+- a configured dead-letter queue;
+- an explicit redrive policy.
+
+Do not introduce MinIO or an additional queue emulator.
+
+## Expected changes
+
+Likely implementation areas include:
+
+- outbox persistence model and migration;
+- outbox event factory or serializer;
+- ingestion-request application action;
+- lifecycle transition enforcement;
+- SQS publisher;
+- publisher command or worker process;
+- LocalStack queue provisioning;
+- dead-letter queue configuration;
+- structured logging;
+- Laravel feature and integration tests.
+
+Keep controllers thin and keep AWS-specific publication details outside the
+Document model.
+
+## Verification
+
+Verify the following scenarios:
+
+1. An `UPLOADED` Document becomes `QUEUED`.
+2. The lifecycle transition and outbox record commit atomically.
+3. A failed database transaction creates neither change.
+4. An SQS outage leaves a retryable unpublished outbox record.
+5. A later publisher run successfully publishes that record.
+6. The event matches the versioned contract.
+7. The event contains the correct workspace and Document identifiers.
+8. Duplicate requests do not create uncontrolled duplicate outbox records.
+9. Repeated publisher execution does not intentionally create new logical
+   events.
+10. LocalStack receives the event.
+11. No Python processing is invoked synchronously.
+12. The HTTP request does not wait for document processing.
+
+## Acceptance criteria
+
+- Laravel records publication intent durably.
+- `UPLOADED → QUEUED` follows ADR-0007.
+- The lifecycle transition and outbox creation are atomic.
+- Published events conform to the shared contract.
+- Publication is workspace-aware.
+- Correlation identifiers are propagated.
+- Transient queue failures remain retryable.
+- Duplicate requests are controlled.
+- LocalStack SQS and its dead-letter queue are provisioned.
+- Publication behaviour is covered by automated tests.
+- No parsing, chunking, embedding or vector work occurs.
+
+## Commit boundary
+
+```bash
+git add apps/api infrastructure scripts compose.yaml docs
+git commit -m "Publish document ingestion requests"
+```
+
+---
+
+# Stage 9.3 — Consume and Claim Ingestion Requests
+
+## Objective
+
+Create a dedicated Python worker that receives, validates and idempotently
+claims document-ingestion requests.
+
+## Status
+
+Not yet executed.
+
+## Engineering rationale
+
+The Python worker is a separate process from the FastAPI HTTP application.
+
+Its first responsibility is reliable orchestration:
+
+```text
+SQS message
+↓
+Validate contract
+↓
+Check supported version
+↓
+Establish correlation context
+↓
+Claim Document for processing
+↓
+QUEUED → PROCESSING
+```
+
+Laravel remains authoritative for the lifecycle transition.
+
+The Python service must not connect directly to Laravel's application database
+to update the Document record. Use an authenticated internal API or another
+explicitly approved application boundary.
+
+At-least-once delivery means the same event may be received more than once.
+Duplicate delivery must not cause duplicate processing or an invalid lifecycle
+transition.
+
+This stage ends after the ingestion request has been claimed durably and the
+Document has entered `PROCESSING`.
+
+The Document may remain in `PROCESSING` until the extraction and indexing
+phases are implemented.
+
+Do not transition a Document to `INDEXED` merely to demonstrate queue success.
+
+## Worker process
+
+Implement a dedicated worker entry point separate from the HTTP server.
+
+The worker must have explicit configuration for:
+
+- queue URL or name;
+- AWS region;
+- local AWS endpoint;
+- long-poll duration;
+- visibility timeout;
+- maximum receive count;
+- dead-letter queue;
+- processing heartbeat or visibility-extension strategy where required;
+- shutdown behaviour;
+- internal API credentials or identity.
+
+The process must support graceful shutdown without acknowledging unfinished
+work.
+
+## Message handling
+
+For each received message:
+
+1. parse the SQS envelope;
+2. parse the event payload;
+3. validate against the canonical JSON Schema;
+4. reject unsupported event versions safely;
+5. attach event and correlation identifiers to structured logs;
+6. perform the idempotency check;
+7. request the authoritative `QUEUED → PROCESSING` transition;
+8. acknowledge the SQS message only after the claim succeeds durably.
+
+Classify failures deliberately.
+
+### Permanent failures
+
+Examples include:
+
+- malformed JSON;
+- contract-validation failure;
+- unsupported event version;
+- impossible or permanently invalid identifiers.
+
+These must not retry forever. Allow the configured SQS redrive policy to route
+them to the dead-letter queue, or use a documented equivalent strategy.
+
+### Transient failures
+
+Examples include:
+
+- temporary Laravel API unavailability;
+- network timeout;
+- temporary database failure;
+- temporary AWS failure.
+
+These should remain unacknowledged and be retried after the visibility timeout.
+
+### Duplicate or stale messages
+
+Examples include:
+
+- the same event has already been claimed;
+- the Document is already `PROCESSING`;
+- the Document has reached a later valid state;
+- the Document was deleted or cancelled according to ADR-0007.
+
+Handle these idempotently according to the authoritative lifecycle response.
+
+Do not restart completed work blindly.
+
+## Idempotency
+
+Persist or otherwise durably enforce processing of event identifiers.
+
+Idempotency must survive worker restarts.
+
+An in-memory set is insufficient.
+
+The implementation should distinguish between:
+
+- duplicate delivery of the same event;
+- a deliberate future retry represented by a new event;
+- a stale event for a Document whose lifecycle has advanced.
+
+Do not rely solely on SQS message identifiers because a logical event may be
+republished using a different transport message identifier.
+
+## Lifecycle reporting
+
+The worker must be able to request:
+
+```text
+QUEUED → PROCESSING
+```
+
+through the Laravel-owned lifecycle boundary.
+
+Do not implement:
+
+```text
+PROCESSING → INDEXED
+```
+
+until indexing has actually completed in a later phase.
+
+For failures occurring before the processing claim succeeds, leave the
+Document in its authoritative existing state and allow retry or dead-letter
+handling.
+
+Do not introduce broad `FAILED` transitions without distinguishing between:
+
+- event-delivery failure;
+- inability to claim processing;
+- failure during actual document processing.
+
+Actual processing failure semantics belong with the stage that performs that
+processing, unless an ADR explicitly defines them earlier.
+
+## Observability
+
+Structured worker logs should include:
+
+- event identifier;
+- event version;
+- correlation identifier;
+- workspace identifier;
+- document identifier;
+- SQS message identifier;
+- receive count;
+- processing outcome;
+- retry or acknowledgement decision.
+
+Do not log:
+
+- credentials;
+- full document content;
+- presigned URLs;
+- sensitive source data.
+
+## Expected changes
+
+Likely implementation areas include:
+
+- dedicated Python worker entry point;
+- SQS polling adapter;
+- contract-validation adapter;
+- idempotency persistence;
+- Laravel internal ingestion-control endpoint;
+- service-to-service authentication;
+- lifecycle claim action;
+- worker container or Compose process;
+- health or readiness strategy;
+- structured logging configuration;
+- unit, contract and LocalStack integration tests.
+
+Do not expose the internal ingestion-control endpoint as an ordinary
+user-facing API.
+
+If service-to-service authentication is not already architecturally settled,
+stop and create or amend the appropriate ADR before implementing it.
+
+## Verification
+
+Verify the following scenarios:
+
+1. The worker receives a valid LocalStack SQS event.
+2. The worker validates it against the shared schema.
+3. The worker requests `QUEUED → PROCESSING`.
+4. Laravel authoritatively performs the transition.
+5. The message is acknowledged only after the durable claim succeeds.
+6. A transient internal API failure causes retry.
+7. A malformed event is not processed.
+8. An unsupported version fails safely.
+9. Repeated terminal failures reach the dead-letter queue.
+10. Duplicate delivery does not duplicate processing claims.
+11. Idempotency survives a worker restart.
+12. Correlation context appears in Laravel and Python logs.
+13. Graceful shutdown does not lose an in-flight message.
+14. No Document is falsely transitioned to `INDEXED`.
+
+## Acceptance criteria
+
+- The worker runs separately from FastAPI.
+- LocalStack SQS messages are received.
+- The canonical event schema is enforced.
+- Unsupported versions fail safely.
+- Lifecycle state remains owned by Laravel.
+- `QUEUED → PROCESSING` occurs through an explicit application boundary.
+- Successful claims are acknowledged.
+- Transient failures are retried.
+- Repeated terminal failures reach the dead-letter queue.
+- Duplicate events do not create duplicate processing claims.
+- Idempotency is durable across worker restarts.
+- Structured logs include correlation context.
+- No text extraction, chunking, embeddings or vector indexing occurs.
+- The phase ends with the Document legitimately in `PROCESSING`.
+
+## Commit boundary
+
+```bash
+git add apps/api apps/ai contracts infrastructure compose.yaml docs
 git commit -m "Add document ingestion worker"
+```
 
-⸻
+---
+
+# Phase 9 completion criteria
+
+Phase 9 is complete when the following local workflow is demonstrated:
+
+```text
+Document is UPLOADED
+↓
+Ingestion is requested
+↓
+Document and outbox commit atomically
+↓
+Document becomes QUEUED
+↓
+Outbox publisher sends a versioned event to LocalStack SQS
+↓
+Python worker receives and validates the event
+↓
+Python worker claims processing through Laravel
+↓
+Document becomes PROCESSING
+↓
+SQS message is acknowledged
+```
+
+The demonstration must also prove:
+
+- an SQS outage does not lose durable publication intent;
+- duplicate requests do not create uncontrolled work;
+- duplicate deliveries are handled idempotently;
+- malformed or unsupported events fail safely;
+- repeated failures reach the dead-letter queue;
+- workspace and correlation context are preserved;
+- Laravel remains authoritative for lifecycle state;
+- no Document is marked `INDEXED`;
+- no extraction, chunking, embedding or vector persistence occurs.
+
+## Suggested phase tag
+
+```bash
+git tag -a phase-9 -m "Complete event-driven document ingestion"
+git push origin phase-9
+```
+
+---
 
 Phase 10 — Text Extraction and Normalisation
 

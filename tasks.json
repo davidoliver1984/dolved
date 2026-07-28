@@ -1439,20 +1439,20 @@
       "sessions": [
         {
           "id": "R09-S01",
-          "guide_stage": "Stage 9.1 \u2014 Define Ingestion Event Contract",
-          "title": "Define Ingestion Event Contract",
-          "guide_start_line": 5959,
-          "guide_end_line": 6001,
+          "guide_stage": "Stage 9.1 \u2014 Define the Ingestion Architecture and Event Contract",
+          "title": "Define the Ingestion Architecture and Event Contract",
+          "guide_start_line": 5979,
+          "guide_end_line": 6135,
           "status": "not_started",
-          "objective": "Create a versioned event contract for document-ingestion requests.",
+          "objective": "Define the service boundaries, delivery semantics and versioned contract used to request document ingestion.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
-            "stage": "Stage 9.1 \u2014 Define Ingestion Event Contract",
+            "stage": "Stage 9.1 \u2014 Define the Ingestion Architecture and Event Contract",
             "source_lines": {
-              "start": 5959,
-              "end": 6001
+              "start": 5979,
+              "end": 6135
             }
           },
           "workflow": [
@@ -1473,27 +1473,27 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r09-s01-define-ingestion-event-contract.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r09-s01-define-the-ingestion-architecture-and-event-contract.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R09-S02",
-          "guide_stage": "Stage 9.2 \u2014 Publish Ingestion Jobs",
-          "title": "Publish Ingestion Jobs",
-          "guide_start_line": 6002,
-          "guide_end_line": 6028,
+          "guide_stage": "Stage 9.2 \u2014 Publish Ingestion Requests Reliably",
+          "title": "Publish Ingestion Requests Reliably",
+          "guide_start_line": 6136,
+          "guide_end_line": 6323,
           "status": "not_started",
-          "objective": "Publish an ingestion event after a document upload is confirmed.",
+          "objective": "Reliably request ingestion after an uploaded Document is accepted for processing.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
-            "stage": "Stage 9.2 \u2014 Publish Ingestion Jobs",
+            "stage": "Stage 9.2 \u2014 Publish Ingestion Requests Reliably",
             "source_lines": {
-              "start": 6002,
-              "end": 6028
+              "start": 6136,
+              "end": 6323
             }
           },
           "workflow": [
@@ -1514,27 +1514,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r09-s02-publish-ingestion-jobs.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r09-s02-publish-ingestion-requests-reliably.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R09-S03",
-          "guide_stage": "Stage 9.3 \u2014 Consume Ingestion Jobs",
-          "title": "Consume Ingestion Jobs",
-          "guide_start_line": 6029,
-          "guide_end_line": 6066,
+          "guide_stage": "Stage 9.3 \u2014 Consume and Claim Ingestion Requests",
+          "title": "Consume and Claim Ingestion Requests",
+          "guide_start_line": 6324,
+          "guide_end_line": 6624,
           "status": "not_started",
-          "objective": "Create a Python worker that receives, validates and acknowledges ingestion events.",
+          "objective": "Create a dedicated Python worker that receives, validates and idempotently claims document-ingestion requests.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
-            "stage": "Stage 9.3 \u2014 Consume Ingestion Jobs",
+            "stage": "Stage 9.3 \u2014 Consume and Claim Ingestion Requests",
             "source_lines": {
-              "start": 6029,
-              "end": 6066
+              "start": 6324,
+              "end": 6624
             }
           },
           "workflow": [
@@ -1555,15 +1555,15 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r09-s03-consume-ingestion-jobs.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r09-s03-consume-and-claim-ingestion-requests.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 6066,
+      "guide_end_line": 6624,
       "status": "not_started",
-      "objective": "Decouple document uploads from processing by publishing durable ingestion jobs.",
+      "objective": "Decouple document upload from document processing through a durable, tenant-aware and versioned ingestion workflow.",
       "gate": {
         "id": "R09-GATE",
         "title": "Event-Driven Ingestion Acceptance Gate",
