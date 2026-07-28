@@ -394,6 +394,62 @@ input {
   font-size: 0.85rem;
 }
 
+.workspace-layout {
+  display: grid;
+  gap: clamp(2rem, 5vw, 5rem);
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+}
+
+.workspace-switcher {
+  border-right: 1px solid var(--line);
+  min-height: calc(100vh - 88px);
+  padding: 4rem 2rem 4rem 0;
+}
+
+.workspace-switcher-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.workspace-options {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.workspace-option {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+}
+
+.workspace-option:hover {
+  border-color: var(--line);
+}
+
+.workspace-option.active {
+  background: var(--forest);
+  color: white;
+}
+
+.workspace-option span {
+  font-weight: 800;
+}
+
+.workspace-option small {
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+.workspace-option.active small {
+  color: var(--mint);
+}
+
 @media (max-width: 800px) {
   .auth-shell {
     display: block;
@@ -424,5 +480,20 @@ input {
 
   .account-nav > span {
     display: none;
+  }
+
+  .workspace-layout {
+    display: block;
+  }
+
+  .workspace-switcher {
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+    min-height: auto;
+    padding: 2rem 0;
+  }
+
+  .workspace-options {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
 }

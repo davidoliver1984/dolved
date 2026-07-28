@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/LogoutButton";
-import { currentUser, platformAccess } from "@/lib/server-api";
+import { currentUser, platformAccess, userWorkspaces } from "@/lib/server-api";
 
 export default async function WorkspacePage() {
   const access = await platformAccess();
@@ -23,6 +23,12 @@ export default async function WorkspacePage() {
     redirect("/login");
   }
 
+  const workspaces = await userWorkspaces();
+
+  if (workspaces[0]) {
+    redirect(`/app/workspaces/${workspaces[0].public_id}`);
+  }
+
   return (
     <main className="workspace-shell">
       <nav className="site-nav">
@@ -36,18 +42,21 @@ export default async function WorkspacePage() {
       </nav>
 
       <section className="workspace-welcome">
-        <p className="eyebrow">Workspace ready</p>
+        <p className="eyebrow">No workspace assigned</p>
         <h1>Good to see you, {user.name.split(" ")[0]}.</h1>
         <p>
-          Authentication and verified platform access are working. Document
-          ingestion arrives in the next implementation phase.
+          Your account is ready, but it has not yet been assigned to a
+          workspace. A platform administrator can add your membership.
         </p>
       </section>
 
       <section className="empty-workspace">
         <div className="empty-mark">M</div>
-        <h2>Your knowledge space starts here.</h2>
-        <p>The upload workflow will connect to this verified boundary.</p>
+        <h2>No workspace access yet.</h2>
+        <p>
+          Workspace creation and membership management are
+          administrator-controlled.
+        </p>
       </section>
     </main>
   );

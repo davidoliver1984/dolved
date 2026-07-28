@@ -5257,7 +5257,7 @@ workspace-aware interface can be exercised locally.
 
 ## Status
 
-Not yet executed.
+Completed, verified and approved on 2026-07-28.
 
 ## Acceptance criteria
 
@@ -5276,7 +5276,41 @@ Not yet executed.
 - Granular workspace management (creation, membership management, ownership
   transfer and role administration) is outside the scope of this stage.
 
-## Implementation notes
+## Implementation
+
+Laravel now exposes two verified, session-authenticated workspace endpoints:
+
+```text
+GET /api/workspaces
+GET /api/workspaces/{workspacePublicId}
+```
+
+The list query starts from the authenticated user's memberships and returns only
+assigned workspaces. The detail query combines the authenticated user and requested
+immutable public UUID in one membership-scoped lookup. An unassigned or unknown UUID
+therefore returns `404`; the API does not reveal whether another workspace exists.
+
+`WorkspaceController` remains an HTTP coordinator. Read logic lives in
+`ListWorkspacesForUser` and `FindWorkspaceForUser`, and `WorkspaceResource` defines
+the deliberate response fields: public UUID, name, slug and the user's role. Internal
+workspace and membership IDs are not exposed.
+
+The Next.js application uses explicit workspace URLs:
+
+```text
+/app/workspaces/{workspacePublicId}
+```
+
+`/app` loads the server-verified workspace list and redirects to the first assigned
+workspace. The workspace page fetches both the assigned list and the requested
+workspace from Laravel with `cache: "no-store"`. Switching is normal URL navigation,
+so the selected workspace summary and role are fetched again. The browser does not
+store or authorise a hidden global current-workspace value.
+
+Users without memberships receive an explicit no-workspace state. Users who request
+an inaccessible public UUID receive the generic Next.js 404 page.
+
+## Development fixtures
 
 The development seeder should create a small, deterministic workspace fixture
 for local testing. At minimum:
@@ -5288,11 +5322,136 @@ for local testing. At minimum:
 - the existing `CreateWorkspace` action is reused where practical so seeded
   workspaces obey the same atomic owner-creation invariant as production code.
 
+`DevelopmentWorkspaceSeeder` implements that fixture with two synthetic users,
+`Atlas Research` and `Beacon Operations`. The primary user is the Atlas owner and a
+Beacon admin; the secondary user is the Beacon owner and an Atlas member. Each
+workspace is created through `CreateWorkspace` when absent, and the additional
+memberships use `updateOrCreate`.
+
+Running the normal command twice:
+
+```bash
+make seed
+make seed
+```
+
+produced the same fixture:
+
+```text
+fixture users:                 2
+fixture workspaces:            2
+fixture memberships:           4
+workspaces with one owner:     2
+```
+
+## Tests added
+
+`WorkspaceAccessTest` covers:
+
+- using isolated in-memory SQLite rather than development PostgreSQL;
+- listing only assigned workspaces, including the membership role;
+- resolving an assigned workspace by immutable public UUID;
+- returning `404` for an inaccessible workspace;
+- rejecting unauthenticated and unverified requests;
+- running the development seeder twice without duplicate users, workspaces or
+  memberships; and
+- preserving exactly one owner in each seeded workspace.
+
+`WorkspaceSwitcher.test.tsx` verifies that the active workspace is marked and each
+assigned workspace links to its public-UUID route.
+
+Focused results:
+
+```text
+WorkspaceAccessTest: 6 tests / 22 assertions passed
+WorkspaceSwitcher:   1 test passed
+```
+
+## Manual browser verification
+
+The synthetic user signed in through the normal browser flow. The first assigned
+workspace rendered as `Atlas Research` with role `owner`. Selecting
+`Beacon Operations` changed the route, active marker, heading and role to `admin`.
+A direct request for an unassigned valid UUID rendered the generic 404 page.
+
+## Commands and verification
+
+```bash
+make up
+make format-api
+make format-web
+docker compose exec -T api php artisan test --filter=WorkspaceAccessTest
+docker compose exec -T web npx vitest run \
+  src/components/WorkspaceSwitcher.test.tsx
+make typecheck-web
+make seed
+make seed
+make format-check-api
+make lint-api
+make test-api
+make format-check-web
+make lint-web
+make typecheck-web
+make test-web
+make format-check lint typecheck test ps
+make down
+```
+
+Final repository result:
+
+```text
+Web:  ESLint and TypeScript passed; 4 Vitest tests passed
+API:  Pint passed; 36 Laravel tests / 119 assertions passed
+AI:   Ruff format/lint and MyPy passed; 1 Pytest test passed
+All six Compose services healthy
+```
+
+The platform was stopped afterward without deleting persistent volumes.
+
+## Problems and corrections
+
+The first focused seeder assertion expected raw role strings, but Eloquent correctly
+returned `WorkspaceRole` enum instances through the relationship cast. The test was
+corrected to compare enum values.
+
+The first switcher test assumed whitespace between adjacent accessible text nodes.
+Each link received an explicit accessible label containing workspace name and role,
+which improved assistive-technology output and provided a stable test contract.
+
+During browser verification, the complete Laravel suite removed the development
+fixture rows. Investigation proved that Docker's process environment took precedence
+over the `<env>` values in `phpunit.xml`, so `RefreshDatabase` was operating against
+PostgreSQL rather than in-memory SQLite. The PHPUnit values were changed to forced
+`<server>` entries, which Laravel's environment reader checks first. A regression
+test now asserts the `sqlite`/`:memory:` connection, and a PostgreSQL marker remained
+present before and after both the focused and complete API suites.
+
+## Acceptance result
+
+- The active workspace is visible. — Met.
+- Workspace switching is supported. — Met.
+- Workspace-specific data refreshes after switching. — Met.
+- Users cannot select or access unassigned workspaces. — Met.
+- Laravel verifies membership for every requested workspace public UUID. — Met.
+- Two-workspace synthetic development data is available. — Met.
+- Repeated development seeding does not duplicate fixture rows. — Met.
+- Workspace creation, membership management, ownership transfer and role
+  administration. — Deliberately deferred by scope.
+
 ## Commit boundary
 
 ```bash
-git add apps/api apps/web
-git commit -m "Add workspace-aware web experience"
+git add \
+  IMPLEMENTATION_GUIDE.md \
+  apps/api \
+  apps/web \
+  docs/journal/2026-07-28-r07-s03-add-workspace-aware-web-experience.md \
+  tasks.json
+
+git commit -m "Add workspace-aware web experience" \
+  -m "Implements ADR-0006."
+
+git tag -a phase-7 -m "Complete Phase 7 multi-tenancy foundation"
 ```
 
 ⸻

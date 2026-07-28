@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R07",
-    "current_session": "R07-S03",
-    "next_action": "Begin R07-S03 \u2014 Add Tenant-Aware Web Experience.",
-    "completed_through": "R07-S02",
-    "completed_phase_count": 7,
+    "current_phase": "R08",
+    "current_session": "R08-S01",
+    "next_action": "Begin R08-S01 — Define Document Lifecycle with architecture review.",
+    "completed_through": "R07-S03",
+    "completed_phase_count": 8,
     "total_phase_count": 22
   },
   "phases": [
@@ -1184,9 +1184,9 @@
           "id": "R07-S03",
           "guide_stage": "Stage 7.3 — Add Workspace-Aware Web Experience",
           "title": "Add Workspace-Aware Web Experience",
-          "guide_start_line": 5244,
-          "guide_end_line": 5278,
-          "status": "not_started",
+          "guide_start_line": 5250,
+          "guide_end_line": 5458,
+          "status": "completed",
           "objective": "Allow authenticated users to view and switch between workspaces to which they have already been assigned, with deterministic development seed data available for local verification.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -1195,7 +1195,7 @@
             "stage": "Stage 7.3 — Add Workspace-Aware Web Experience",
             "source_lines": {
               "start": 5250,
-              "end": 5299
+              "end": 5458
             }
           },
           "workflow": [
@@ -1217,18 +1217,27 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r07-s03-add-workspace-aware-web-experience.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Membership-scoped GET /api/workspaces and GET /api/workspaces/{workspacePublicId}",
+            "Deterministic two-workspace development fixture verified repeatable",
+            "WorkspaceAccessTest (6 tests / 22 assertions, including in-memory database isolation)",
+            "WorkspaceSwitcher test passed",
+            "Manual login, switching and inaccessible-workspace 404 verification passed",
+            "Full repository boundary verification passed",
+            "IMPLEMENTATION_GUIDE.md Stage 7.3",
+            "docs/journal/2026-07-28-r07-s03-add-workspace-aware-web-experience.md"
+          ]
         }
       ],
-      "guide_end_line": 4847,
-      "status": "in_progress",
+      "guide_end_line": 5458,
+      "status": "completed",
       "objective": "Ensure every tenant-owned resource is isolated by design rather than filtered as an afterthought.",
       "gate": {
         "id": "R07-GATE",
         "title": "Multi-Tenancy Acceptance Gate",
-        "status": "not_started",
+        "status": "completed",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
@@ -1236,21 +1245,28 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-7 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "ADR-0006 accepted and implemented through R07-S03",
+          "Workspace persistence and membership constraints verified",
+          "Workspace-aware API and web switching verified",
+          "Negative inaccessible-workspace tests passed",
+          "Full repository boundary verification passed",
+          "Annotated phase-7 tag approved"
+        ]
       }
     },
     {
       "id": "R08",
       "guide_phase": "Phase 8 \u2014 Document Domain and Storage",
       "title": "Document Domain and Storage",
-      "guide_start_line": 5270,
+      "guide_start_line": 5459,
       "sessions": [
         {
           "id": "R08-S01",
           "guide_stage": "Stage 8.1 \u2014 Define Document Lifecycle",
           "title": "Define Document Lifecycle",
-          "guide_start_line": 5278,
-          "guide_end_line": 5322,
+          "guide_start_line": 5467,
+          "guide_end_line": 5511,
           "status": "not_started",
           "objective": "Define document states, ownership, metadata and failure behaviour.",
           "session_mode": "architecture",
@@ -1259,8 +1275,8 @@
             "phase": "Phase 8 \u2014 Document Domain and Storage",
             "stage": "Stage 8.1 \u2014 Define Document Lifecycle",
             "source_lines": {
-              "start": 5278,
-              "end": 5322
+              "start": 5467,
+              "end": 5511
             }
           },
           "workflow": [

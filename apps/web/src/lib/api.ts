@@ -5,6 +5,15 @@ export type User = {
   email_verified_at: string | null;
 };
 
+export type WorkspaceRole = "owner" | "admin" | "member";
+
+export type Workspace = {
+  public_id: string;
+  name: string;
+  slug: string;
+  role: WorkspaceRole;
+};
+
 type ValidationErrors = Record<string, string[]>;
 
 export class ApiError extends Error {

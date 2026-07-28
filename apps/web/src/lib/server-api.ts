@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-import type { User } from "@/lib/api";
+import type { User, Workspace } from "@/lib/api";
 
 const internalApiUrl =
   process.env.API_INTERNAL_URL?.replace(/\/$/, "") ?? "http://localhost:8000";
@@ -34,4 +34,36 @@ export async function currentUser(): Promise<User | null> {
   const payload = (await response.json()) as { data: { user: User } };
 
   return payload.data.user;
+}
+
+export async function userWorkspaces(): Promise<Workspace[]> {
+  const response = await serverFetch("/api/workspaces");
+
+  if (!response.ok) {
+    throw new Error("The workspace list is unavailable.");
+  }
+
+  const payload = (await response.json()) as { data: Workspace[] };
+
+  return payload.data;
+}
+
+export async function userWorkspace(
+  publicId: string,
+): Promise<Workspace | null> {
+  const response = await serverFetch(
+    `/api/workspaces/${encodeURIComponent(publicId)}`,
+  );
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error("The workspace is unavailable.");
+  }
+
+  const payload = (await response.json()) as { data: Workspace };
+
+  return payload.data;
 }

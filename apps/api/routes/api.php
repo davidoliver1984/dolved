@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -53,3 +54,8 @@ Route::prefix('auth')->group(function (): void {
 Route::get('/platform/status', function () {
     return response()->json(['data' => ['status' => 'available']]);
 })->middleware(['auth:sanctum', 'verified']);
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
+    Route::get('/workspaces', [WorkspaceController::class, 'index']);
+    Route::get('/workspaces/{workspacePublicId}', [WorkspaceController::class, 'show']);
+});
