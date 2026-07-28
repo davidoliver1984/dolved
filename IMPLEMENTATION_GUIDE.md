@@ -33,16 +33,22 @@ Each implementation stage should contain:
 
 Commands are run from the repository root unless explicitly stated otherwise.
 
-After each completed phase:
+After each completed stage:
 
-1. run the phase acceptance checks;
+1. run the stage acceptance checks and relevant repository-wide checks;
 2. update this implementation record;
-3. commit the completed phase;
-4. create an annotated `phase-N` Git tag at that commit.
+3. commit the completed stage;
+4. create an annotated `phase-N-sNN` Git tag at that commit; and
+5. push both the commit and stage tag to the configured remote.
 
-Phases 2 through 5 were accumulated before this convention was requested. They are
-recorded by one consolidated `phase-5` milestone rather than inventing inaccurate
-historical commit boundaries. Phase 6 onward receives its own commit and tag.
+After the final stage in a phase, also run the phase acceptance gate and create
+the annotated `phase-N` tag at the accepted phase-completion commit. The final
+stage therefore receives its stage tag and, once the whole phase gate passes,
+the phase tag.
+
+The explicit per-stage convention applies from Stage 9.1 onward. Existing
+historical tags remain unchanged: phases and stages completed before this rule
+was clarified are not retroactively tagged where no accurate boundary exists.
 
 ---
 

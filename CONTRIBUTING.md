@@ -421,11 +421,14 @@ ownership remain authoritative unless an ADR changes them.
 
 ## Git and commit conventions
 
-- Keep each commit focused, understandable and aligned with the agreed session or
-  phase boundary.
+- Keep each commit focused, understandable and aligned with the agreed stage
+  boundary.
 - Run and record the required verification before committing.
-- Follow the commit boundaries and annotated `phase-N` tags specified by
-  `IMPLEMENTATION_GUIDE.md`.
+- Give every completed planned stage its own commit and annotated
+  `phase-N-sNN` tag, following `IMPLEMENTATION_GUIDE.md`.
+- After the final stage passes the complete phase acceptance gate, also create
+  the annotated `phase-N` tag at the accepted phase-completion commit.
+- Push approved stage commits and their tags to the configured remote.
 - Review generated files, lock files, migration output and schema or contract
   artefacts before including them.
 - Inspect `git status` and the staged diff so unrelated local or ignored files are
