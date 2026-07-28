@@ -10,9 +10,15 @@
 
 - `PROJECT_ROADMAP.md` explains **what** will be built and in what order.
 - `IMPLEMENTATION_GUIDE.md` explains **how** to build and verify it.
+- `tasks.json` is the sole source of truth for the current engineering session.
 - `docs/adr/` records important architectural decisions and their trade-offs.
 - Application-specific setup belongs in the relevant application README only when it
   becomes necessary for operating that application.
+
+The former duplicate tracker at `docs/rag-platform-tasks.json` was retired on
+2026-07-28 to prevent divergent session state. References to it later in this guide
+or in historical journals record commands and verification that actually occurred;
+they are not instructions to recreate or maintain a second tracker.
 
 ## Working conventions
 
