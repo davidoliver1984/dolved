@@ -1182,20 +1182,20 @@
         },
         {
           "id": "R07-S03",
-          "guide_stage": "Stage 7.3 \u2014 Add Tenant-Aware Web Experience",
-          "title": "Add Tenant-Aware Web Experience",
+          "guide_stage": "Stage 7.3 — Add Workspace-Aware Web Experience",
+          "title": "Add Workspace-Aware Web Experience",
           "guide_start_line": 5244,
-          "guide_end_line": 5269,
+          "guide_end_line": 5278,
           "status": "not_started",
-          "objective": "Allow users to create, select and manage tenants through the frontend.",
+          "objective": "Allow authenticated users to view and switch between workspaces to which they have already been assigned, with deterministic development seed data available for local verification.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 7 \u2014 Multi-Tenancy",
-            "stage": "Stage 7.3 \u2014 Add Tenant-Aware Web Experience",
+            "phase": "Phase 7 — Multi-Tenancy",
+            "stage": "Stage 7.3 — Add Workspace-Aware Web Experience",
             "source_lines": {
-              "start": 5244,
-              "end": 5269
+              "start": 5250,
+              "end": 5299
             }
           },
           "workflow": [
@@ -1216,7 +1216,7 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r07-s03-add-tenant-aware-web-experience.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r07-s03-add-workspace-aware-web-experience.md",
             "status": "not_started"
           },
           "completion_evidence": []

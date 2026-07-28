@@ -5247,44 +5247,53 @@ git tag -a phase-7-s02 -m "Workspaces and memberships"
 
 ⸻
 
-Stage 7.3 — Add Tenant-Aware Web Experience
+# Stage 7.3 — Add Workspace-Aware Web Experience
 
-Objective
+## Objective
 
-Allow authenticated users to view and switch between workspaces to which they have already been assigned, with development seed data available so the workspace-aware interface can be exercised locally.
+Allow authenticated users to view and switch between workspaces to which they
+have already been assigned, with development seed data available so the
+workspace-aware interface can be exercised locally.
 
-Status
+## Status
 
 Not yet executed.
 
-Acceptance criteria
+## Acceptance criteria
 
-* The active tenant is visible.
-* Tenant switching is supported where applicable.
-* Tenant-specific data refreshes after switching.
-* Users cannot select inaccessible tenants.
-* Permission-restricted actions are hidden and enforced by the API.
-* Tenant state is not trusted solely from the browser.
-* Development seed data creates at least two workspaces and suitable memberships so workspace visibility and switching can be verified locally.
-* Seed data uses synthetic users and must not contain real credentials or personal information.
-* Running the development seeder is repeatable and does not create duplicate workspaces or memberships.
+- The active workspace is visible.
+- Workspace switching is supported where applicable.
+- Workspace-specific data refreshes after switching.
+- Users cannot select or access workspaces to which they have not been assigned.
+- Workspace membership is enforced by the API; browser-supplied workspace
+  identifiers are never trusted without server-side verification.
+- Development seed data creates at least two workspaces and suitable
+  memberships so workspace visibility and switching can be verified locally.
+- Seed data uses synthetic users and must not contain real credentials or
+  personal information.
+- Running the development seeder is repeatable and does not create duplicate
+  workspaces or memberships.
+- Granular workspace management (creation, membership management, ownership
+  transfer and role administration) is outside the scope of this stage.
 
 ## Implementation notes
 
-The development seeder should create a small, deterministic workspace fixture for
-local testing. At minimum:
+The development seeder should create a small, deterministic workspace fixture
+for local testing. At minimum:
 
-- one test user belongs to two workspaces;
+- one synthetic test user belongs to two workspaces;
 - the user has different roles where useful for interface testing;
 - each workspace has exactly one owner;
 - all users and workspace names are synthetic;
 - the existing `CreateWorkspace` action is reused where practical so seeded
   workspaces obey the same atomic owner-creation invariant as production code.
-  
-Commit boundary
 
-git add apps/web
-git commit -m "Add tenant-aware web experience"
+## Commit boundary
+
+```bash
+git add apps/api apps/web
+git commit -m "Add workspace-aware web experience"
+```
 
 ⸻
 
