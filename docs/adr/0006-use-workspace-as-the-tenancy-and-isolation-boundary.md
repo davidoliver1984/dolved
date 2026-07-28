@@ -161,6 +161,14 @@ not introduce new platform-wide capabilities.
   create a workspace.
 - Workspace creation is explicit and atomic: it creates the workspace and its
   owner membership together, never one without the other.
+- Workspace provisioning is currently platform-admin controlled. Ordinary
+  authenticated users cannot create workspaces for themselves through the
+  standard application interface.
+- An authorised platform process creates the workspace and assigns its initial
+  owner membership atomically.
+- Self-service workspace creation may be introduced later as part of a separate
+  onboarding, registration or payment flow, but that is not part of the current
+  architecture.
 - Workspace deletion is a **lifecycle**, not an immediate row delete. Deletion
   eventually orchestrates cleanup across PostgreSQL, object storage (S3),
   Qdrant, audit records, and other derived artefacts. Deletion is asynchronous

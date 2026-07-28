@@ -5251,7 +5251,7 @@ Stage 7.3 — Add Tenant-Aware Web Experience
 
 Objective
 
-Allow users to create, select and manage tenants through the frontend.
+Allow authenticated users to view and switch between workspaces to which they have already been assigned, with development seed data available so the workspace-aware interface can be exercised locally.
 
 Status
 
@@ -5265,7 +5265,22 @@ Acceptance criteria
 * Users cannot select inaccessible tenants.
 * Permission-restricted actions are hidden and enforced by the API.
 * Tenant state is not trusted solely from the browser.
+* Development seed data creates at least two workspaces and suitable memberships so workspace visibility and switching can be verified locally.
+* Seed data uses synthetic users and must not contain real credentials or personal information.
+* Running the development seeder is repeatable and does not create duplicate workspaces or memberships.
 
+## Implementation notes
+
+The development seeder should create a small, deterministic workspace fixture for
+local testing. At minimum:
+
+- one test user belongs to two workspaces;
+- the user has different roles where useful for interface testing;
+- each workspace has exactly one owner;
+- all users and workspace names are synthetic;
+- the existing `CreateWorkspace` action is reused where practical so seeded
+  workspaces obey the same atomic owner-creation invariant as production code.
+  
 Commit boundary
 
 git add apps/web
