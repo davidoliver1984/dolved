@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.rag-platform.internal/events/document-ingestion-requested/v1.schema.json",
+  "title": "Document Ingestion Requested (v1)",
+  "description": "Requests that a previously uploaded Document be ingested. Published by Laravel via the transactional outbox (ADR-0008) after a Document transitions from UPLOADED to QUEUED (ADR-0007), and consumed by the Python ingestion worker.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "event_type",
+    "event_version",
+    "occurred_at",
+    "workspace_id",
+    "document_id",
+    "storage_bucket",
+    "storage_key",
+    "media_type",
+    "byte_size",
+    "correlation_id"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Stable logical identifier for this ingestion request. Does not change across publication retries or duplicate SQS delivery; consumers must use this, not the SQS transport message identifier, to detect duplicates (ADR-0008)."
+    },
+    "event_type": {
+      "const": "document.ingestion.requested",
+      "description": "Fixed discriminator identifying this event's meaning, independent of its version."
+    },
+    "event_version": {
+      "const": 1,
+      "description": "Contract version this payload conforms to. A breaking change to this event introduces a new integer version and a new vN.schema.json rather than changing this schema in place. Consumers must reject a version they do not support rather than guess at compatibility."
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the ingestion request was recorded (the Document's UPLOADED -> QUEUED transition), not when it was published or received."
+    },
+    "workspace_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The immutable public identifier of the owning workspace (ADR-0006). Required so the consumer can preserve tenant context without trusting anything else in the message to imply it."
+    },
+    "document_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The immutable public identifier of the Document this request concerns (ADR-0007). This is the aggregate identifier the consumer acts on."
+    },
+    "storage_bucket": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The S3-compatible bucket holding the Document's source content."
+    },
+    "storage_key": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The server-controlled object key for the Document's source content within storage_bucket."
+    },
+    "media_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The Document's declared media type, as recorded at upload completion."
+    },
+    "byte_size": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The Document's positive verified size in bytes, as recorded at upload completion. Empty source objects are not eligible for ingestion."
+    },
+    "correlation_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Connects the originating HTTP request, the outbox record, this event and downstream logs. Distinct from event_id: correlation_id traces one causal chain across services, event_id identifies one logical ingestion request and drives idempotency."
+    }
+  }
+}

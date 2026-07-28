@@ -1,0 +1,13 @@
+{
+  "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+  "event_type": "document.ingestion.requested",
+  "event_version": 1,
+  "occurred_at": "2026-07-28T09:15:32Z",
+  "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+  "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+  "storage_bucket": "rag-platform-document-uploads-local",
+  "storage_key": "workspaces/b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10/documents/d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62/source.pdf",
+  "media_type": "application/pdf",
+  "byte_size": 482913,
+  "correlation_id": "7e6d5c4b-3a29-4180-9f8e-2d1c0b9a8f77"
+}

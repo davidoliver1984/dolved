@@ -8,6 +8,17 @@ Accepted
 
 2026-07-28
 
+## Superseded in part by ADR-0008
+
+ADR-0008's adoption of the Transactional Outbox Pattern supersedes only this
+ADR's original definition of when a Document enters `QUEUED`.
+
+`QUEUED` now means that the Document's lifecycle transition and its durable
+publication intent have committed together in PostgreSQL. Successful SQS
+publication occurs asynchronously afterward and is no longer the defining
+condition for entering `QUEUED`. The original wording below is retained as
+historical context; ADR-0008 is authoritative where the two decisions differ.
+
 ## Context
 
 Phase 7 established Workspace as the platform's tenancy and isolation

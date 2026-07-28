@@ -5985,7 +5985,128 @@ to request document ingestion.
 
 ## Status
 
-Not yet executed.
+Completed and approved on 2026-07-28.
+
+## Actual implementation record
+
+### Objective completed
+
+The version 1 `document.ingestion.requested` contract is now canonical under
+`contracts/events/document-ingestion-requested/` and is validated from that
+single location by both Laravel and Python.
+
+The contract records the immutable public Workspace and Document identifiers,
+storage identity, source properties, a stable logical event identifier and a
+separate correlation identifier. It is strict and explicitly versioned:
+unknown fields and unsupported versions fail closed.
+
+### Architecture alignment
+
+ADR-0008 accepts the Transactional Outbox Pattern for reliable ingestion
+publication. During implementation, ADR-0007's original description of
+`QUEUED` was found to conflict with that newer decision. After human approval,
+ADR-0007 received a narrow supersession notice without rewriting its original
+historical text:
+
+* `QUEUED` means the lifecycle transition and durable publication intent have
+  committed together;
+* successful SQS publication occurs asynchronously afterward; and
+* no additional lifecycle state was introduced.
+
+The contract implementation does not publish, consume or process an event.
+
+### Changes made
+
+* Added the Draft 2020-12 JSON Schema, valid example, four deliberately
+  invalid fixtures and human-readable contract documentation.
+* Added `opis/json-schema` as a Laravel development dependency.
+* Added `jsonschema` with non-GPL format validators and `types-jsonschema` as
+  Python development dependencies.
+* Mounted the repository `contracts/` directory read-only at `/contracts` in
+  both the API and AI containers.
+* Added a focused Laravel test that validates the canonical example and
+  asserts that every shared invalid fixture fails for its intended JSON Schema
+  keyword.
+* Added focused pytest coverage of the same files, including explicit
+  assertions for the version, additional-property and required-field
+  failures.
+* Kept the schema, examples and invalid fixtures out of both application
+  directories so neither language owns a private copy.
+
+### Commands executed
+
+```bash
+docker compose exec -T api composer require --dev \
+  'opis/json-schema:^2.6' --no-interaction
+docker compose exec -T ai uv add --dev \
+  'jsonschema[format-nongpl]>=4.26.0'
+docker compose up -d --force-recreate ai api web
+make format-api format-ai
+docker compose exec -T api php artisan test \
+  tests/Unit/DocumentIngestionRequestedContractTest.php
+docker compose exec -T ai uv run pytest \
+  tests/test_document_ingestion_requested_contract.py -v
+make format-check lint typecheck test ps
+docker compose exec -T ai uv add --dev \
+  'types-jsonschema>=4.26.0'
+make typecheck test ps
+make format-check lint typecheck test ps
+docker compose exec -T api composer validate --strict
+docker compose exec -T ai uv lock --check
+docker compose config --quiet
+git diff --check
+jq empty tasks.json
+jq empty contracts/events/document-ingestion-requested/*.json
+jq empty contracts/events/document-ingestion-requested/fixtures/*.json
+```
+
+### Verification evidence
+
+* Focused Laravel contract suite: 6 passed (10 assertions).
+* Focused Python contract suite: 9 passed.
+* Full Laravel suite: 74 passed (259 assertions).
+* Full web suite: 10 passed across 4 files.
+* Full AI suite: 10 passed.
+* Pint, ESLint, Ruff formatting/linting, TypeScript and mypy passed.
+* Composer manifest/lock validation and uv lock validation passed.
+* Compose configuration validation, service health and `git diff --check`
+  passed.
+* JSON parsing passed for the tracker, schema, example and all fixtures.
+
+The valid example passed in both languages. The same four invalid fixtures
+failed in both languages for the intended reasons:
+
+* missing `workspace_id`: `required`;
+* `event_version: 2`: `const`, because version 1 is required; and
+* unexpected `presigned_url`: `additionalProperties`; and
+* `byte_size: 0`: `minimum`, because accepted uploads must contain at least
+  one byte.
+
+### Problems and corrections
+
+The first full verification run reached mypy after all runtime and formatting
+checks had passed, but mypy reported that `jsonschema` does not provide the
+typing metadata required by this repository's strict test checking.
+`types-jsonschema` was added as a development dependency, after which mypy and
+the complete repository gate passed.
+
+The shared contract directory was not visible inside the existing service
+containers because each service mounted only its application directory.
+Read-only `/contracts` mounts were added rather than duplicating contract
+files.
+
+Final review found that the schema's original `minimum: 0` for `byte_size`
+was weaker than the established upload invariant. The browser rejects empty
+files, Laravel requires `size_bytes >= 1`, and completion verifies that the
+stored object has that positive declared size. Because an ingestion request
+can only follow an accepted upload, no legitimate producer path needs zero.
+The schema now requires `minimum: 1`, and a shared negative fixture proves
+that both validators reject a zero-byte event.
+
+### Commit boundary
+
+The human developer approved the R09-S01 implementation and commit boundary.
+Stage 9.2 may now begin.
 
 ## Engineering rationale
 

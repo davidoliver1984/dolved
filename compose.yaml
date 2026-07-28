@@ -86,6 +86,7 @@ services:
       MAIL_FROM_NAME: Make Time
     volumes:
       - ./apps/api:/app
+      - ./contracts:/contracts:ro
       - api_vendor:/app/vendor
     depends_on:
       ai:
@@ -128,6 +129,7 @@ services:
       INGESTION_DLQ: ${INGESTION_DLQ:-rag-platform-ingestion-dlq-local}
     volumes:
       - ./apps/ai:/app
+      - ./contracts:/contracts:ro
       - ai_venv:/app/.venv
     healthcheck:
       test:
