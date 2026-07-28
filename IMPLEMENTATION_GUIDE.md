@@ -5707,32 +5707,244 @@ Allow the browser to upload documents safely to S3-compatible storage.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-28 with automated and live LocalStack verification.
+Human visual verification of the multi-file interface passed, and the Phase 8
+commit/tag boundary was approved.
 
-Planned flow
+Architecture alignment
 
-1. Browser requests an upload authorisation from Laravel.
-2. Laravel validates tenant, filename, type and size.
-3. Laravel creates a pending document record.
-4. Laravel returns a presigned upload request.
-5. Browser uploads directly to storage.
-6. Completion is confirmed before processing begins.
+The implementation follows ADR-0007's document lifecycle and ADR-0004's
+accepted local AWS boundary. An implementation brief referred to MinIO, which
+conflicted with ADR-0004 and the existing LocalStack infrastructure. Work
+stopped for a human decision before code changed. The agreed resolution was:
+
+* retain LocalStack 4.14 as the local S3 implementation;
+* treat MinIO wording as generic S3-compatible storage requirements;
+* retain the standard AWS SDK/Flysystem adapter so production uses real S3
+  through configuration;
+* allow every authenticated, verified active workspace member (`owner`,
+  `admin` or `member`) to upload; and
+* keep granular document permissions and PostgreSQL RLS out of this stage.
+
+No ADR was added or changed because these choices preserve the accepted
+architecture rather than establishing a new one.
+
+Upload flow
+
+1. The client fetches the workspace-authorised upload configuration.
+2. Laravel validates active workspace membership using the scoped workspace
+   query and `WorkspacePolicy`.
+3. The browser performs lightweight validation; Laravel remains authoritative
+   for filename, declared MIME type, extension, non-zero size and the
+   environment-backed 25 MB default limit.
+4. `InitializeDocumentUpload` creates an independent `UPLOADING` Document and
+   obtains a ten-minute presigned PUT request in one database transaction.
+   Signing is local computation; a signing failure therefore rolls the new row
+   back before the client receives an unusable upload.
+5. The server-controlled key has the form
+   `workspaces/{workspace-public-id}/documents/{document-public-id}/source.{ext}`.
+   The original filename is display metadata and never participates in the
+   key.
+6. The browser PUTs the bytes directly to LocalStack/S3 using
+   `XMLHttpRequest`, reporting real byte progress.
+7. After the PUT succeeds, the UI displays `VERIFYING` and calls the explicit
+   completion endpoint.
+8. Laravel resolves the Document inside the authorised workspace, checks
+   `DocumentPolicy`, performs an S3 HEAD-equivalent existence/size check and
+   transitions only `UPLOADING → UPLOADED`.
+9. The completion action uses a database row lock before the state change.
+   Repeated completion of an already-`UPLOADED` Document is safe and does not
+   create another record.
+
+The database transaction does not pretend to include the browser's external
+PUT. A failed or abandoned PUT leaves its Document `UPLOADING`, as ADR-0007
+requires. Cleanup policy for abandoned uploads remains deferred.
+
+API operations
+
+```text
+GET  /api/workspaces/{workspacePublicId}/documents/uploads/configuration
+POST /api/workspaces/{workspacePublicId}/documents/uploads
+POST /api/workspaces/{workspacePublicId}/documents/{documentPublicId}/uploads/complete
+```
+
+All routes require `auth:sanctum` and `verified`. Workspace and Document
+lookups fail closed with `404` across tenant boundaries. Normal Document
+resources omit the storage key, bucket, disk, credentials and failure
+internals.
+
+Upload configuration
+
+`apps/api/config/documents.php` centrally defines:
+
+* PDF, DOCX, DOC, RTF, TXT and Markdown extension/MIME pairs;
+* `DOCUMENT_MAX_UPLOAD_MB` (default `25`);
+* `DOCUMENT_PRESIGNED_URL_LIFETIME_SECONDS` (default `600`);
+* `DOCUMENT_UPLOAD_CONCURRENCY` (default `3`);
+* the internal verification disk and browser-signing disk.
+
+The configuration endpoint supplies the safe validation/concurrency values to
+the client so PHP and React do not maintain competing product limits.
+`.env.example`, `apps/api/.env.example` and Compose expose the new
+environment contract.
+
+LocalStack endpoint and CORS configuration
+
+Laravel needs two views of the same S3 service:
+
+```text
+Internal verification endpoint: http://localstack:4566
+Browser signing endpoint:       http://localhost:4566
+```
+
+The `s3` disk performs server-side object checks using Docker DNS. The
+`s3_uploads` disk only creates signed, browser-reachable PUT requests using
+`AWS_UPLOAD_ENDPOINT`. Both share the same AWS credentials, region and bucket.
+Production omits local endpoint overrides and uses normal AWS endpoint
+resolution.
+
+The idempotent LocalStack ready hook now applies bucket CORS for the configured
+frontend origin, PUT/HEAD and the `content-type` request header.
+`make aws-status` verifies this configuration in addition to the existing
+bucket, queues and redrive policy.
+
+Frontend behaviour
+
+`DocumentUploadPanel` provides:
+
+* multiple selection and drag-and-drop;
+* waiting-list removal and duplicate-selection prevention;
+* authoritative configuration loaded from Laravel;
+* a three-upload default concurrency ceiling;
+* independent `WAITING`, `INITIALISING`, `UPLOADING`, `VERIFYING`, `COMPLETE`
+  and `FAILED` UI states;
+* real byte-based progress plus accessible textual and ARIA progress;
+* batch progress;
+* independent failure messages and retry; and
+* no `COMPLETE` state until Laravel returns an `uploaded` Document.
+
+These UI states are not new persisted lifecycle values. A retry performs a new
+initialisation; any abandoned prior attempt remains `UPLOADING` for the future
+cleanup policy defined outside this stage.
+
+Implementation files
+
+Laravel additions include focused initialisation/completion Actions, a Form
+Request, workspace/document policies, `DocumentObjectStorage`, safe upload
+exceptions, `DocumentUploadController`, central configuration and feature
+tests. The existing `CreateDocument` action now accepts a validated optional
+extension for the server-generated key, and the Document model protects its
+storage identity and source metadata from mutation after creation.
+
+Next.js additions include the interactive upload panel, upload API/client
+helpers, bounded concurrency and XMLHttpRequest transport, styling and focused
+tests. LocalStack provisioning/verification, Compose and environment examples
+were updated without introducing a new service.
+
+Commands executed
+
+```bash
+make up
+make seed
+make format-api
+make format-web
+make typecheck-web
+docker compose exec -T api php artisan test \
+  tests/Feature/DocumentUploadWorkflowTest.php \
+  tests/Feature/DocumentPersistenceTest.php
+docker compose exec -T web npx vitest run \
+  src/lib/document-upload.test.ts \
+  src/components/DocumentUploadPanel.test.tsx
+make aws-status
+docker compose exec -T api php artisan route:list --path=documents
+docker compose config --quiet
+git diff --check
+make format-check lint typecheck test aws-status ps
+```
+
+A disposable authenticated HTTP smoke test also:
+
+1. requested a browser-reachable presigned URL from Laravel;
+2. passed the LocalStack CORS preflight;
+3. PUT a Markdown fixture directly to `localhost:4566`;
+4. called the completion endpoint;
+5. confirmed the returned status was `uploaded`;
+6. confirmed the resource contained only the seven safe public fields; and
+7. removed the synthetic object and Document row afterward.
+
+Verification evidence
+
+* Focused Laravel document tests: 31 passed (129 assertions).
+* Full Laravel suite: 68 passed (249 assertions).
+* Focused frontend upload tests: 6 passed.
+* Full web suite: 10 passed across 4 test files.
+* AI suite: 1 passed.
+* Pint, ESLint, Ruff formatting/linting, TypeScript and mypy passed.
+* Compose configuration validation passed.
+* `make aws-status` passed with upload CORS, bucket, queues and redrive policy.
+* All six Compose services reported healthy.
+* The live signed-URL/CORS/PUT/HEAD/completion smoke test passed.
+* No queue job was pushed and no Document advanced to `QUEUED`.
+
+Problems and corrections
+
+* The brief named `docs/IMPLEMENTATION_GUIDE.md`; the canonical root
+  `IMPLEMENTATION_GUIDE.md` was used.
+* MinIO conflicted with ADR-0004. Implementation paused until retaining
+  LocalStack was explicitly accepted.
+* Role-specific upload permissions were undefined. Implementation paused
+  until upload access for all active members was explicitly accepted.
+* The first backend test used an event-wide “nothing dispatched” assertion.
+  Laravel correctly dispatches authentication, policy, request and Eloquent
+  events, so the test was corrected to assert the relevant invariant: no
+  ingestion queue work is pushed.
+* The first focused component run exposed missing React Testing Library
+  cleanup between tests; explicit cleanup was added.
+* The first command-line smoke login omitted the frontend `Origin` and then
+  reused a stale CSRF value. It was corrected to match the real client:
+  frontend Origin plus a fresh Sanctum CSRF cookie before each unsafe API
+  operation.
+* The in-app automation browser rejected localhost under its URL security
+  policy. No bypass or alternate browser automation was attempted. Automated
+  UI tests and the live HTTP/storage smoke passed; the visible multi-file
+  interaction remains a human acceptance check.
 
 Acceptance criteria
 
-* Uploads are authorised by Laravel.
-* Presigned requests are time-limited.
-* File type and size rules are enforced.
-* Storage keys are tenant-scoped.
-* The browser does not receive permanent AWS credentials.
-* Interrupted uploads do not become ready documents.
-* Upload completion is verified.
-* LocalStack and real S3-compatible configuration share the same application flow.
+* Uploads are authorised by Laravel. — Met through authentication,
+  verification, membership-scoped resolution and policies.
+* Presigned requests are time-limited. — Met; configurable 600-second default.
+* File type and size rules are enforced. — Met centrally and tested.
+* Storage keys are tenant-scoped. — Met with opaque workspace/document UUID
+  paths and validated extensions.
+* The browser does not receive permanent AWS credentials. — Met; only the
+  short-lived signed PUT request and required headers are returned.
+* Interrupted uploads do not become ready documents. — Met; they remain
+  `UPLOADING`.
+* Upload completion is verified. — Met through server-side existence and exact
+  size checks.
+* LocalStack and real S3-compatible configuration share the same application
+  flow. — Met through standard S3 adapters and endpoint configuration.
+* Multi-file visual behaviour. — Automated component coverage and human
+  browser acceptance passed.
 
 Commit boundary
 
-git add apps/api apps/web contracts
-git commit -m "Implement direct document uploads"
+```bash
+git add \
+  .env.example \
+  IMPLEMENTATION_GUIDE.md \
+  apps/api \
+  apps/web \
+  compose.yaml \
+  docs/journal \
+  infrastructure/localstack \
+  scripts/localstack \
+  tasks.json
+
+git commit -m "Implement document upload workflow" \
+  -m "Implements ADR-0004 and ADR-0007."
+```
 
 ⸻
 

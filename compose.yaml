@@ -69,7 +69,13 @@ services:
       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
       AWS_BUCKET: ${DOCUMENT_UPLOAD_BUCKET:-rag-platform-document-uploads-local}
       AWS_ENDPOINT: http://localstack:4566
+      AWS_UPLOAD_ENDPOINT: ${AWS_UPLOAD_ENDPOINT:-http://localhost:4566}
       AWS_USE_PATH_STYLE_ENDPOINT: "true"
+      DOCUMENT_STORAGE_DISK: s3
+      DOCUMENT_UPLOAD_DISK: s3_uploads
+      DOCUMENT_MAX_UPLOAD_MB: ${DOCUMENT_MAX_UPLOAD_MB:-25}
+      DOCUMENT_PRESIGNED_URL_LIFETIME_SECONDS: ${DOCUMENT_PRESIGNED_URL_LIFETIME_SECONDS:-600}
+      DOCUMENT_UPLOAD_CONCURRENCY: ${DOCUMENT_UPLOAD_CONCURRENCY:-3}
       SQS_ENDPOINT: http://localstack:4566
       SQS_PREFIX: http://localstack:4566/000000000000
       SQS_QUEUE: ${INGESTION_QUEUE:-rag-platform-ingestion-local}
@@ -117,6 +123,7 @@ services:
       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
       AWS_ENDPOINT_URL: http://localstack:4566
       DOCUMENT_UPLOAD_BUCKET: ${DOCUMENT_UPLOAD_BUCKET:-rag-platform-document-uploads-local}
+      DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN: ${DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN:-http://localhost:3000}
       INGESTION_QUEUE: ${INGESTION_QUEUE:-rag-platform-ingestion-local}
       INGESTION_DLQ: ${INGESTION_DLQ:-rag-platform-ingestion-dlq-local}
     volumes:

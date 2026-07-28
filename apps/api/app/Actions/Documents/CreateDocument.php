@@ -19,6 +19,7 @@ class CreateDocument
         string $sourceFilename,
         string $mediaType,
         int $sizeBytes,
+        ?string $extension = null,
     ): Document {
         $sourceFilename = trim($sourceFilename);
         $mediaType = trim($mediaType);
@@ -35,6 +36,13 @@ class CreateDocument
             throw new InvalidArgumentException('Document size cannot be negative.');
         }
 
+        if (
+            $extension !== null
+            && preg_match('/^[a-z0-9]+$/', $extension) !== 1
+        ) {
+            throw new InvalidArgumentException('The storage extension is invalid.');
+        }
+
         $publicId = (string) Str::uuid();
         $document = new Document([
             'source_filename' => $sourceFilename,
@@ -43,11 +51,14 @@ class CreateDocument
         ]);
         $document->public_id = $publicId;
         $document->status = DocumentStatus::Uploading;
-        $document->storage_key = sprintf(
+        $storageKey = sprintf(
             'workspaces/%s/documents/%s/source',
             $workspace->public_id,
             $publicId,
         );
+        $document->storage_key = $extension === null
+            ? $storageKey
+            : $storageKey.'.'.$extension;
         $document->workspace()->associate($workspace);
         $document->createdBy()->associate($creator);
         $document->save();

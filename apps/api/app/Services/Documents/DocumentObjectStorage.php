@@ -1,0 +1,99 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services\Documents;
+
+use App\Exceptions\DocumentUploadException;
+use App\Models\Document;
+use Carbon\CarbonImmutable;
+use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
+use Throwable;
+
+class DocumentObjectStorage
+{
+    public function __construct(
+        private readonly FilesystemFactory $filesystems,
+    ) {}
+
+    /**
+     * @return array{
+     *     url: string,
+     *     method: 'PUT',
+     *     headers: array<string, string>,
+     *     expires_at: string
+     * }
+     */
+    public function createUploadRequest(Document $document): array
+    {
+        $expiresAt = CarbonImmutable::now()->addSeconds(
+            (int) config('documents.presigned_url_lifetime_seconds'),
+        );
+
+        try {
+            $signedRequest = $this->filesystems
+                ->disk((string) config('documents.upload_disk'))
+                ->temporaryUploadUrl(
+                    $document->storage_key,
+                    $expiresAt,
+                    ['ContentType' => $document->media_type],
+                );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw DocumentUploadException::storageUnavailable();
+        }
+
+        return [
+            'url' => $signedRequest['url'],
+            'method' => 'PUT',
+            'headers' => $this->browserHeaders($signedRequest['headers']),
+            'expires_at' => $expiresAt->toIso8601String(),
+        ];
+    }
+
+    public function objectSize(Document $document): ?int
+    {
+        try {
+            $disk = $this->filesystems->disk(
+                (string) config('documents.storage_disk'),
+            );
+
+            if (! $disk->exists($document->storage_key)) {
+                return null;
+            }
+
+            return $disk->size($document->storage_key);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw DocumentUploadException::storageUnavailable();
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $headers
+     * @return array<string, string>
+     */
+    private function browserHeaders(array $headers): array
+    {
+        $browserHeaders = [];
+
+        foreach ($headers as $name => $value) {
+            $normalisedName = strtolower($name);
+
+            if (
+                $normalisedName === 'host'
+                || $normalisedName === 'content-length'
+            ) {
+                continue;
+            }
+
+            $browserHeaders[$name] = is_array($value)
+                ? implode(', ', $value)
+                : (string) $value;
+        }
+
+        return $browserHeaders;
+    }
+}

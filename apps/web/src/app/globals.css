@@ -34,7 +34,8 @@ a {
 }
 
 button,
-input {
+input,
+progress {
   font: inherit;
 }
 
@@ -450,6 +451,137 @@ input {
   color: var(--mint);
 }
 
+.document-upload-panel {
+  display: grid;
+  gap: 1.25rem;
+  padding-bottom: 4rem;
+}
+
+.upload-heading {
+  align-items: end;
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+}
+
+.upload-heading h2 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  letter-spacing: -0.055em;
+  margin: 0.5rem 0;
+}
+
+.upload-heading p:last-child {
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 640px;
+}
+
+.document-dropzone {
+  align-items: center;
+  background: var(--card);
+  border: 1px dashed #989b91;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  justify-content: center;
+  min-height: 230px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.document-dropzone input {
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+
+.document-dropzone > span,
+.document-dropzone small {
+  color: var(--muted);
+}
+
+.batch-progress {
+  align-items: center;
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: 1fr auto;
+}
+
+.batch-progress progress {
+  accent-color: var(--accent);
+  grid-column: 1 / -1;
+  height: 8px;
+  width: 100%;
+}
+
+.upload-queue {
+  display: grid;
+  gap: 0.8rem;
+  list-style: none;
+}
+
+.upload-item {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  display: grid;
+  gap: 0.7rem;
+  padding: 1.1rem 1.2rem;
+}
+
+.upload-item.complete {
+  border-color: #83ab98;
+}
+
+.upload-item.failed {
+  border-color: #d89986;
+}
+
+.upload-item-title,
+.upload-item-actions {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.upload-item-title small {
+  color: var(--muted);
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.upload-progress {
+  background: #e6e3d8;
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.upload-progress span {
+  background: var(--accent);
+  display: block;
+  height: 100%;
+  transition: width 120ms ease;
+}
+
+.upload-item.complete .upload-progress span {
+  background: var(--forest);
+}
+
+.upload-status,
+.upload-error {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.upload-error {
+  color: #79260e;
+}
+
 @media (max-width: 800px) {
   .auth-shell {
     display: block;
@@ -495,5 +627,14 @@ input {
 
   .workspace-options {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .upload-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .upload-heading .primary-button {
+    width: 100%;
   }
 }

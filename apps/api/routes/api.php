@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -58,4 +59,16 @@ Route::get('/platform/status', function () {
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('/workspaces', [WorkspaceController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}', [WorkspaceController::class, 'show']);
+    Route::get(
+        '/workspaces/{workspacePublicId}/documents/uploads/configuration',
+        [DocumentUploadController::class, 'configuration'],
+    );
+    Route::post(
+        '/workspaces/{workspacePublicId}/documents/uploads',
+        [DocumentUploadController::class, 'store'],
+    );
+    Route::post(
+        '/workspaces/{workspacePublicId}/documents/{documentPublicId}/uploads/complete',
+        [DocumentUploadController::class, 'complete'],
+    );
 });

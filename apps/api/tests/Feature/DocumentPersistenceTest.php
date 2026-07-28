@@ -279,6 +279,30 @@ class DocumentPersistenceTest extends TestCase
         }
     }
 
+    public function test_storage_identity_and_source_metadata_are_immutable(): void
+    {
+        $document = Document::factory()->create();
+        $originalStorageKey = $document->storage_key;
+        $document->storage_key = 'workspaces/changed/documents/changed/source.pdf';
+
+        try {
+            $document->save();
+            $this->fail('Document storage identity was changed.');
+        } catch (LogicException) {
+            $this->assertSame(
+                $originalStorageKey,
+                $document->fresh()->storage_key,
+            );
+        }
+
+        $document = $document->fresh();
+        $document->size_bytes++;
+
+        $this->expectException(LogicException::class);
+
+        $document->save();
+    }
+
     public function test_creation_rejects_invalid_intrinsic_metadata(): void
     {
         $workspace = Workspace::factory()->create();

@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R08",
-    "current_session": "R08-S03",
-    "next_action": "Begin R08-S03 \u2014 Implement Direct Upload Flow.",
-    "completed_through": "R08-S02",
-    "completed_phase_count": 8,
+    "current_phase": "R09",
+    "current_session": "R09-S01",
+    "next_action": "Discuss and agree the versioned document-ingestion event contract for R09-S01 before implementation.",
+    "completed_through": "R08-S03",
+    "completed_phase_count": 9,
     "total_phase_count": 22
   },
   "phases": [
@@ -1359,9 +1359,9 @@
           "id": "R08-S03",
           "guide_stage": "Stage 8.3 \u2014 Implement Direct Upload Flow",
           "title": "Implement Direct Upload Flow",
-          "guide_start_line": 5703,
-          "guide_end_line": 5739,
-          "status": "not_started",
+          "guide_start_line": 5702,
+          "guide_end_line": 5950,
+          "status": "completed",
           "objective": "Allow the browser to upload documents safely to S3-compatible storage.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -1369,8 +1369,8 @@
             "phase": "Phase 8 \u2014 Document Domain and Storage",
             "stage": "Stage 8.3 \u2014 Implement Direct Upload Flow",
             "source_lines": {
-              "start": 5703,
-              "end": 5739
+              "start": 5702,
+              "end": 5950
             }
           },
           "workflow": [
@@ -1391,19 +1391,29 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r08-s03-implement-direct-upload-flow.md",
-            "status": "not_started"
+            "path_template": "docs/journal/YYYY-MM-DD-r08-s03-implement-document-upload-workflow.md",
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Authenticated workspace-scoped upload configuration, initialisation and completion endpoints",
+            "LocalStack browser-reachable presigned PUT, CORS and server-side object-size verification",
+            "Next.js multi-file upload queue with bounded concurrency, byte progress, verification state and independent retry",
+            "apps/api/tests/Feature/DocumentUploadWorkflowTest.php: 13 passed",
+            "Focused frontend upload tests: 6 passed",
+            "Full repository verification: Laravel 68 passed (249 assertions), web 10 passed, AI 1 passed; formatting, linting, type checking, LocalStack acceptance and service health passed",
+            "Disposable live LocalStack signed-URL/CORS/PUT/HEAD/completion smoke passed",
+            "IMPLEMENTATION_GUIDE.md Stage 8.3 actual implementation and verification record",
+            "docs/journal/2026-07-28-r08-s03-implement-document-upload-workflow.md"
+          ]
         }
       ],
-      "guide_end_line": 5739,
-      "status": "in_progress",
+      "guide_end_line": 5950,
+      "status": "completed",
       "objective": "Model tenant-owned documents and store source files safely before asynchronous ingestion begins.",
       "gate": {
         "id": "R08-GATE",
         "title": "Document Domain and Storage Acceptance Gate",
-        "status": "not_started",
+        "status": "completed",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
@@ -1411,21 +1421,28 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-8 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "ADR-0007 remains authoritative and ADR-0004 remains the accepted LocalStack-to-AWS boundary.",
+          "Document persistence, tenant-scoped direct uploads and verified UPLOADED lifecycle transition are implemented.",
+          "Full repository verification passed: Laravel 68 tests (249 assertions), web 10 tests, AI 1 test, formatting, linting, type checking, LocalStack acceptance and service health.",
+          "Disposable authenticated direct-to-LocalStack upload smoke test passed.",
+          "Human visual acceptance of the multi-file upload interface passed.",
+          "Phase 8 commit and annotated tag boundary approved."
+        ]
       }
     },
     {
       "id": "R09",
       "guide_phase": "Phase 9 \u2014 Event-Driven Ingestion",
       "title": "Event-Driven Ingestion",
-      "guide_start_line": 5740,
+      "guide_start_line": 5951,
       "sessions": [
         {
           "id": "R09-S01",
           "guide_stage": "Stage 9.1 \u2014 Define Ingestion Event Contract",
           "title": "Define Ingestion Event Contract",
-          "guide_start_line": 5748,
-          "guide_end_line": 5790,
+          "guide_start_line": 5959,
+          "guide_end_line": 6001,
           "status": "not_started",
           "objective": "Create a versioned event contract for document-ingestion requests.",
           "session_mode": "architecture",
@@ -1434,8 +1451,8 @@
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
             "stage": "Stage 9.1 \u2014 Define Ingestion Event Contract",
             "source_lines": {
-              "start": 5748,
-              "end": 5790
+              "start": 5959,
+              "end": 6001
             }
           },
           "workflow": [
@@ -1465,8 +1482,8 @@
           "id": "R09-S02",
           "guide_stage": "Stage 9.2 \u2014 Publish Ingestion Jobs",
           "title": "Publish Ingestion Jobs",
-          "guide_start_line": 5791,
-          "guide_end_line": 5817,
+          "guide_start_line": 6002,
+          "guide_end_line": 6028,
           "status": "not_started",
           "objective": "Publish an ingestion event after a document upload is confirmed.",
           "session_mode": "implementation",
@@ -1475,8 +1492,8 @@
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
             "stage": "Stage 9.2 \u2014 Publish Ingestion Jobs",
             "source_lines": {
-              "start": 5791,
-              "end": 5817
+              "start": 6002,
+              "end": 6028
             }
           },
           "workflow": [
@@ -1506,8 +1523,8 @@
           "id": "R09-S03",
           "guide_stage": "Stage 9.3 \u2014 Consume Ingestion Jobs",
           "title": "Consume Ingestion Jobs",
-          "guide_start_line": 5818,
-          "guide_end_line": 5855,
+          "guide_start_line": 6029,
+          "guide_end_line": 6066,
           "status": "not_started",
           "objective": "Create a Python worker that receives, validates and acknowledges ingestion events.",
           "session_mode": "implementation",
@@ -1516,8 +1533,8 @@
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
             "stage": "Stage 9.3 \u2014 Consume Ingestion Jobs",
             "source_lines": {
-              "start": 5818,
-              "end": 5855
+              "start": 6029,
+              "end": 6066
             }
           },
           "workflow": [
@@ -1544,7 +1561,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 5855,
+      "guide_end_line": 6066,
       "status": "not_started",
       "objective": "Decouple document uploads from processing by publishing durable ingestion jobs.",
       "gate": {

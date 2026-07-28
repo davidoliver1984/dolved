@@ -60,6 +60,23 @@ return [
             'report' => false,
         ],
 
+        /*
+         * This disk is used only to sign browser-reachable upload URLs.
+         * Laravel's own storage operations continue to use the internal
+         * endpoint configured on the normal s3 disk.
+         */
+        's3_uploads' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'endpoint' => env('AWS_UPLOAD_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => true,
+            'report' => false,
+        ],
+
     ],
 
     /*

@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { LogoutButton } from "@/components/LogoutButton";
+import { DocumentUploadPanel } from "@/components/DocumentUploadPanel";
 import { WorkspaceSwitcher } from "@/components/WorkspaceSwitcher";
 import {
   currentUser,
@@ -69,16 +70,7 @@ export default async function WorkspacePage({
             </p>
           </section>
 
-          <section className="empty-workspace">
-            <div className="empty-mark">
-              {activeWorkspace.name.charAt(0).toUpperCase()}
-            </div>
-            <h2>{activeWorkspace.name} is ready.</h2>
-            <p>
-              Document ingestion for this workspace arrives in the next
-              implementation phase.
-            </p>
-          </section>
+          <DocumentUploadPanel workspacePublicId={activeWorkspace.public_id} />
         </div>
       </div>
     </main>

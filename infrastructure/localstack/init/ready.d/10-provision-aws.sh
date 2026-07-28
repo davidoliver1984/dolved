@@ -4,6 +4,7 @@ set -eu
 
 : "${AWS_DEFAULT_REGION:=us-east-1}"
 : "${DOCUMENT_UPLOAD_BUCKET:=rag-platform-document-uploads-local}"
+: "${DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN:=http://localhost:3000}"
 : "${INGESTION_QUEUE:=rag-platform-ingestion-local}"
 : "${INGESTION_DLQ:=rag-platform-ingestion-dlq-local}"
 : "${SQS_MAX_RECEIVE_COUNT:=3}"
@@ -25,6 +26,18 @@ if ! awslocal s3api head-bucket --bucket "$DOCUMENT_UPLOAD_BUCKET" >/dev/null 2>
             >/dev/null
     fi
 fi
+
+cors_configuration_file="/tmp/rag-platform-document-upload-cors.json"
+
+printf '{"CORSRules":[{"AllowedHeaders":["content-type"],"AllowedMethods":["PUT","HEAD"],"AllowedOrigins":["%s"],"ExposeHeaders":["ETag"],"MaxAgeSeconds":300}]}\n' \
+    "$DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN" \
+    > "$cors_configuration_file"
+
+awslocal s3api put-bucket-cors \
+    --bucket "$DOCUMENT_UPLOAD_BUCKET" \
+    --cors-configuration "file://$cors_configuration_file"
+
+rm -f "$cors_configuration_file"
 
 dlq_url="$(
     awslocal sqs create-queue \

@@ -3,12 +3,30 @@
 set -eu
 
 : "${DOCUMENT_UPLOAD_BUCKET:=rag-platform-document-uploads-local}"
+: "${DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN:=http://localhost:3000}"
 : "${INGESTION_QUEUE:=rag-platform-ingestion-local}"
 : "${INGESTION_DLQ:=rag-platform-ingestion-dlq-local}"
 : "${SQS_MAX_RECEIVE_COUNT:=3}"
 
 awslocal s3api head-bucket \
     --bucket "$DOCUMENT_UPLOAD_BUCKET"
+
+cors_configuration="$(
+    awslocal s3api get-bucket-cors \
+        --bucket "$DOCUMENT_UPLOAD_BUCKET" \
+        --output json
+)"
+
+case "$cors_configuration" in
+    *"PUT"*"HEAD"*"$DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN"*)
+        ;;
+    *)
+        printf 'Unexpected document-upload CORS configuration: %s\n' \
+            "$cors_configuration" \
+            >&2
+        exit 1
+        ;;
+esac
 
 queue_url="$(
     awslocal sqs get-queue-url \
@@ -53,6 +71,7 @@ esac
 
 printf 'Local AWS resources verified:\n'
 printf '  bucket: %s\n' "$DOCUMENT_UPLOAD_BUCKET"
+printf '  upload CORS origin: %s\n' "$DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN"
 printf '  queue:  %s\n' "$queue_url"
 printf '  dlq:    %s\n' "$dlq_url"
 printf '  redrive maxReceiveCount: %s\n' "$SQS_MAX_RECEIVE_COUNT"
