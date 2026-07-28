@@ -41,6 +41,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * @return HasMany<Document, $this>
+     */
+    public function createdDocuments(): HasMany
+    {
+        return $this->hasMany(Document::class, 'created_by_user_id');
+    }
+
+    /**
      * @return HasMany<WorkspaceMembership, $this>
      */
     public function workspaceMemberships(): HasMany

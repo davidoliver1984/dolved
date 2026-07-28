@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R08",
-    "current_session": "R08-S02",
-    "next_action": "Begin R08-S02 \u2014 Implement Document Persistence per ADR 0007.",
-    "completed_through": "R07-S03",
+    "current_session": "R08-S03",
+    "next_action": "Begin R08-S03 \u2014 Implement Direct Upload Flow.",
+    "completed_through": "R08-S02",
     "completed_phase_count": 8,
     "total_phase_count": 22
   },
@@ -1311,9 +1311,9 @@
           "guide_stage": "Stage 8.2 \u2014 Implement Document Persistence",
           "title": "Implement Document Persistence",
           "guide_start_line": 5576,
-          "guide_end_line": 5602,
-          "status": "not_started",
-          "objective": "Create the Laravel document domain model, migrations, policies and API resources.",
+          "guide_end_line": 5702,
+          "status": "completed",
+          "objective": "Implement the authoritative relational Document persistence model defined by ADR-0007.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
@@ -1321,7 +1321,7 @@
             "stage": "Stage 8.2 \u2014 Implement Document Persistence",
             "source_lines": {
               "start": 5576,
-              "end": 5602
+              "end": 5702
             }
           },
           "workflow": [
@@ -1343,16 +1343,24 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r08-s02-implement-document-persistence.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "apps/api Document migration, enum, model, relationships, factory, creation action, workspace-scoped query and safe resource",
+            "apps/api/tests/Feature/DocumentPersistenceTest.php: 17 passed (45 assertions)",
+            "apps/api/tests/Unit/DocumentStatusTest.php: 1 passed (1 assertion)",
+            "Full repository verification: Laravel 54 passed (165 assertions), web 4 passed, AI 1 passed; formatting, linting, type checking and service health passed",
+            "Clean PostgreSQL migration, constraint inspection, rollback and re-migration",
+            "IMPLEMENTATION_GUIDE.md Stage 8.2 actual implementation and verification record",
+            "docs/journal/2026-07-28-r08-s02-implement-document-persistence.md"
+          ]
         },
         {
           "id": "R08-S03",
           "guide_stage": "Stage 8.3 \u2014 Implement Direct Upload Flow",
           "title": "Implement Direct Upload Flow",
-          "guide_start_line": 5603,
-          "guide_end_line": 5639,
+          "guide_start_line": 5703,
+          "guide_end_line": 5739,
           "status": "not_started",
           "objective": "Allow the browser to upload documents safely to S3-compatible storage.",
           "session_mode": "implementation",
@@ -1361,8 +1369,8 @@
             "phase": "Phase 8 \u2014 Document Domain and Storage",
             "stage": "Stage 8.3 \u2014 Implement Direct Upload Flow",
             "source_lines": {
-              "start": 5603,
-              "end": 5639
+              "start": 5703,
+              "end": 5739
             }
           },
           "workflow": [
@@ -1389,8 +1397,8 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 5639,
-      "status": "not_started",
+      "guide_end_line": 5739,
+      "status": "in_progress",
       "objective": "Model tenant-owned documents and store source files safely before asynchronous ingestion begins.",
       "gate": {
         "id": "R08-GATE",
@@ -1410,14 +1418,14 @@
       "id": "R09",
       "guide_phase": "Phase 9 \u2014 Event-Driven Ingestion",
       "title": "Event-Driven Ingestion",
-      "guide_start_line": 5640,
+      "guide_start_line": 5740,
       "sessions": [
         {
           "id": "R09-S01",
           "guide_stage": "Stage 9.1 \u2014 Define Ingestion Event Contract",
           "title": "Define Ingestion Event Contract",
-          "guide_start_line": 5648,
-          "guide_end_line": 5690,
+          "guide_start_line": 5748,
+          "guide_end_line": 5790,
           "status": "not_started",
           "objective": "Create a versioned event contract for document-ingestion requests.",
           "session_mode": "architecture",
@@ -1426,8 +1434,8 @@
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
             "stage": "Stage 9.1 \u2014 Define Ingestion Event Contract",
             "source_lines": {
-              "start": 5648,
-              "end": 5690
+              "start": 5748,
+              "end": 5790
             }
           },
           "workflow": [
@@ -1457,8 +1465,8 @@
           "id": "R09-S02",
           "guide_stage": "Stage 9.2 \u2014 Publish Ingestion Jobs",
           "title": "Publish Ingestion Jobs",
-          "guide_start_line": 5691,
-          "guide_end_line": 5717,
+          "guide_start_line": 5791,
+          "guide_end_line": 5817,
           "status": "not_started",
           "objective": "Publish an ingestion event after a document upload is confirmed.",
           "session_mode": "implementation",
@@ -1467,8 +1475,8 @@
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
             "stage": "Stage 9.2 \u2014 Publish Ingestion Jobs",
             "source_lines": {
-              "start": 5691,
-              "end": 5717
+              "start": 5791,
+              "end": 5817
             }
           },
           "workflow": [
@@ -1498,8 +1506,8 @@
           "id": "R09-S03",
           "guide_stage": "Stage 9.3 \u2014 Consume Ingestion Jobs",
           "title": "Consume Ingestion Jobs",
-          "guide_start_line": 5718,
-          "guide_end_line": 5755,
+          "guide_start_line": 5818,
+          "guide_end_line": 5855,
           "status": "not_started",
           "objective": "Create a Python worker that receives, validates and acknowledges ingestion events.",
           "session_mode": "implementation",
@@ -1508,8 +1516,8 @@
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
             "stage": "Stage 9.3 \u2014 Consume Ingestion Jobs",
             "source_lines": {
-              "start": 5718,
-              "end": 5755
+              "start": 5818,
+              "end": 5855
             }
           },
           "workflow": [
@@ -1536,7 +1544,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 5755,
+      "guide_end_line": 5855,
       "status": "not_started",
       "objective": "Decouple document uploads from processing by publishing durable ingestion jobs.",
       "gate": {

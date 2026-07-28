@@ -43,6 +43,14 @@ class Workspace extends Model
     }
 
     /**
+     * @return HasMany<Document, $this>
+     */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    /**
      * @return HasManyThrough<User, WorkspaceMembership, $this>
      */
     public function members(): HasManyThrough

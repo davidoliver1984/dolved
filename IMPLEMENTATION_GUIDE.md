@@ -5577,26 +5577,125 @@ Stage 8.2 — Implement Document Persistence
 
 Objective
 
-Create the Laravel document domain model, migrations, policies and API resources.
+Persist the Document domain model defined by ADR-0007.
 
 Status
 
-Not yet executed.
+Completed, reviewed and verified on 2026-07-28.
+
+Engineering rationale
+
+The Document is the platform's authoritative system of record for document
+identity, workspace ownership and lifecycle, as defined by ADR-0007.
+
+This stage establishes only the durable persistence model. Upload,
+processing, object storage integration and retrieval are implemented in
+later stages.
+
+When deciding whether a field belongs on the Document model, apply the
+following principle:
+
+> Persist only information that remains true regardless of how the document
+> is processed.
+
+Intrinsic properties of the source content—such as ownership, lifecycle,
+storage identity, checksum and source metadata—belong on the Document.
+
+Information discovered or produced during processing—such as page count,
+detected language, chunk count, extracted text or embedding metadata—is
+processing metadata and should not be persisted on the Document unless a
+future ADR explicitly defines it as part of the core domain model.
 
 Acceptance criteria
 
 * Document records are tenant-owned.
-* State transitions are validated.
+* Lifecycle state is represented using the ADR-0007 state machine.
+* Workspace ownership is enforced.
+* Provenance is recorded separately from ownership.
 * Storage keys are generated safely.
-* File metadata is validated.
 * Cross-tenant access is rejected.
 * API responses do not expose sensitive storage details.
-* Feature tests cover policies and lifecycle changes.
+* Feature tests cover the document domain model and relationships.
+
+Implementation
+
+* Added the string-backed `DocumentStatus` enum with every lifecycle state
+  accepted by ADR-0007: `uploading`, `uploaded`, `queued`, `processing`,
+  `indexed`, `failed`, `deleting` and `deleted`.
+* Added the `documents` table with an internal primary key, immutable unique
+  public UUID, mandatory workspace ownership, separate creator provenance,
+  lifecycle status, intrinsic source metadata, a server-generated unique
+  storage key, nullable failure diagnostics and timestamps.
+* Added foreign keys that restrict deletion of a referenced workspace or
+  creator, plus indexes for workspace/status queries and creator provenance.
+  PostgreSQL check constraints reject negative sizes and require non-blank
+  failure category and message values whenever status is `failed`.
+* Added the first-class `Document` model and relationships:
+  `Workspace::documents()`, `Document::workspace()`,
+  `Document::createdBy()` and `User::createdDocuments()`. Status and size use
+  enum and integer casts respectively.
+* Added `CreateDocument` as the bounded application action. It creates only
+  the relational `uploading` record and generates both public identity and a
+  tenant/document-scoped storage key server-side. It does not upload bytes,
+  publish events or advance lifecycle state.
+* Added `FindDocumentForWorkspace`, which resolves a public document ID
+  through the owning workspace relationship so a document in another
+  workspace fails closed.
+* Added `DocumentResource` to establish the safe public representation
+  without exposing storage keys, internal foreign keys or failure internals.
+  No controller or route was introduced in this persistence-only stage.
+* Added a factory with states for every accepted lifecycle value. No document
+  seeder was added: seeding an active document without authoritative source
+  content would create a state that contradicts ADR-0007.
+
+Commands executed
+
+```bash
+make up
+make format-api
+make migrate
+docker compose exec -T api php artisan test tests/Feature/DocumentPersistenceTest.php
+docker compose exec -T api php artisan test tests/Unit/DocumentStatusTest.php
+make format-check-api lint-api test-api
+make format-check lint typecheck test ps
+git diff --check
+```
+
+A temporary PostgreSQL database named `rag_platform_r08_s02_verify` was also
+created, migrated from zero, inspected for the expected columns, indexes,
+foreign keys and check constraints, rolled back to confirm that `documents`
+was removed cleanly, migrated again, and dropped. This verified the
+PostgreSQL-specific constraints that SQLite cannot faithfully exercise.
+
+Verification evidence
+
+* Focused document feature tests: 17 passed (45 assertions).
+* Focused lifecycle enum unit test: 1 passed (1 assertion).
+* Full Laravel suite: 54 passed (165 assertions).
+* Web suite: 4 passed across 2 test files.
+* AI suite: 1 passed.
+* Laravel Pint, ESLint, Ruff formatting/linting, TypeScript and mypy all
+  passed.
+* All Docker Compose services reported healthy.
+* Clean PostgreSQL migration, rollback and re-migration passed.
+
+Problems and corrections
+
+* The requested `docs/IMPLEMENTATION_GUIDE.md` path does not exist; the
+  repository's canonical root `IMPLEMENTATION_GUIDE.md` was used.
+* Review of the first implementation pass added model-level immutability
+  guards and tests for public identity, workspace ownership and creator
+  provenance. Database uniqueness and foreign-key constraints remain the
+  final persistence backstop.
+* Lifecycle transition operations remain deferred. This stage represents the
+  accepted states but deliberately does not invent upload, processing, retry
+  or deletion workflows.
 
 Commit boundary
 
-git add apps/api
-git commit -m "Implement document domain model"
+git add apps/api IMPLEMENTATION_GUIDE.md tasks.json docs/journal
+git commit -m "Implement document persistence" \
+  -m "Implements ADR-0007."
 
 ⸻
 
