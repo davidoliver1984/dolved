@@ -5472,39 +5472,103 @@ Define document states, ownership, metadata and failure behaviour.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-28.
 
-Planned lifecycle states
+### Decision
 
-Potential states include:
+The Document lifecycle and storage-separation model was accepted and recorded
+before any Phase 8 implementation code in:
 
-pending_upload
-uploaded
-queued
-processing
-ready
-failed
-deleted
+```text
+docs/adr/0007-define-the-document-lifecycle-and-storage-model.md
+```
 
-The final state machine must be explicitly defined before implementation.
+A Document is a durable, workspace-owned domain record — distinct from the
+uploaded file it describes — and belongs to exactly one workspace, never an
+individual user, consistent with ADR 0006's workspace-owned entity
+classification. Three layers hold non-interchangeable responsibility:
+PostgreSQL is authoritative for identity, ownership and lifecycle state;
+S3-compatible object storage holds the authoritative source content, never
+trusted as the source of truth for lifecycle; and searchable/vector
+representations (Qdrant, from Phase 13 onward) are a derived, disposable,
+rebuildable projection, not itself authoritative.
 
-Required ADR or domain document
+The accepted lifecycle is an explicit state machine, not boolean flags:
 
-docs/adr/ADR-XXX-document-lifecycle.md
+```text
+UPLOADING → UPLOADED → QUEUED → PROCESSING → INDEXED
+PROCESSING → FAILED
+<any non-DELETED state> → DELETING → DELETED
+```
+
+`UPLOADED` means the authoritative source content is confirmed present in
+object storage, regardless of how it originated — deliberately worded so a
+future connector-sourced document (Google Drive, SharePoint, a fetched URL)
+fits the same states without a parallel lifecycle. `UPLOADED → QUEUED` occurs
+only once ingestion-event publication actually succeeds. `INDEXED` requires
+the complete searchable representation to be available for workspace-filtered
+retrieval; a partial write does not qualify.
+
+Domain-level retry (`FAILED → QUEUED`) is always an explicit, authorised
+action, never automatic; it preserves the Document's identity, not a history
+of prior attempts. Automatic, unbounded retry loops are rejected at every
+layer; bounding transport/queue redelivery is Phase 9's responsibility, not
+defined here. Deletion is asynchronous and reachable from any non-deleted
+state; `DELETING`/`DELETED` are cancellation barriers with no valid
+transition back to an active state. `DELETED` may retain the relational row
+for reconciliation and auditability, with retention duration and any hard
+purge deferred to a later data-retention decision.
+
+Every upload is currently treated as an independent Document; true
+versioning is intentionally deferred until a real product requirement exists.
+
+The full set of agreed decisions, rejected alternatives and rationale is
+recorded in ADR 0007 rather than duplicated here. ADR 0007 went through three
+rounds of refinement (an initial architecture review, then a corrections pass,
+then a single terminology amendment to the `UPLOADED` state) before
+acceptance — see the session journal for what changed in each round.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No migrations,
+models, middleware, policies, routes or frontend code were introduced.
+Verification consisted of:
+
+* inspecting `CLAUDE.md`, `CONTRIBUTING.md`, `PROJECT_ROADMAP.md`,
+  `IMPLEMENTATION_GUIDE.md`, `tasks.json` and the existing `docs/adr/` files
+  (including ADR 0006) before drafting, to preserve numbering, format,
+  terminology and cross-ADR consistency;
+* checking each ADR 0006 cross-reference in ADR 0007 against ADR 0006's
+  actual text before keeping or removing it, rather than assuming the
+  comparison held;
+* checking the ADR's final form against each Stage 8.1 acceptance criterion
+  below.
 
 Acceptance criteria
 
-* Document states are explicit.
-* Valid transitions are documented.
-* Tenant ownership is mandatory.
-* Original filename and media type are preserved safely.
-* Storage keys do not trust user-provided paths.
-* Failure and retry states are defined.
-* Deletion semantics are defined.
+* Document states are explicit. — Met: the `UPLOADING → UPLOADED → QUEUED →
+  PROCESSING → INDEXED` state machine, plus `FAILED` and
+  `DELETING`/`DELETED`, replaces the placeholder state list above.
+* Valid transitions are documented. — Met: including the deletion
+  cancellation-barrier invariant and the explicit-only domain retry
+  transition.
+* Tenant ownership is mandatory. — Met: a Document belongs to exactly one
+  workspace, consistent with ADR 0006.
+* Original filename and media type are preserved safely. — Met at the
+  conceptual level (recorded as relational metadata); exact columns are
+  Stage 8.2 work.
+* Storage keys do not trust user-provided paths. — Met at the conceptual
+  level: object storage is addressed by a server-controlled key; exact key
+  construction is Stage 8.2/8.3 work.
+* Failure and retry states are defined. — Met: `FAILED`, and explicit,
+  bounded (non-automatic) domain-level retry.
+* Deletion semantics are defined. — Met: asynchronous, reachable from any
+  non-deleted state, with a cancellation-barrier invariant and deferred
+  retention/purge policy.
 
 Commit boundary
 
-git add docs/adr
+git add docs/adr docs/journal tasks.json docs/rag-platform-tasks.json IMPLEMENTATION_GUIDE.md
 git commit -m "Document document lifecycle"
 
 ⸻

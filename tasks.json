@@ -39,8 +39,8 @@
   },
   "progress": {
     "current_phase": "R08",
-    "current_session": "R08-S01",
-    "next_action": "Begin R08-S01 — Define Document Lifecycle with architecture review.",
+    "current_session": "R08-S02",
+    "next_action": "Begin R08-S02 \u2014 Implement Document Persistence per ADR 0007.",
     "completed_through": "R07-S03",
     "completed_phase_count": 8,
     "total_phase_count": 22
@@ -1182,7 +1182,7 @@
         },
         {
           "id": "R07-S03",
-          "guide_stage": "Stage 7.3 — Add Workspace-Aware Web Experience",
+          "guide_stage": "Stage 7.3 \u2014 Add Workspace-Aware Web Experience",
           "title": "Add Workspace-Aware Web Experience",
           "guide_start_line": 5250,
           "guide_end_line": 5458,
@@ -1191,8 +1191,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 7 — Multi-Tenancy",
-            "stage": "Stage 7.3 — Add Workspace-Aware Web Experience",
+            "phase": "Phase 7 \u2014 Multi-Tenancy",
+            "stage": "Stage 7.3 \u2014 Add Workspace-Aware Web Experience",
             "source_lines": {
               "start": 5250,
               "end": 5458
@@ -1266,8 +1266,8 @@
           "guide_stage": "Stage 8.1 \u2014 Define Document Lifecycle",
           "title": "Define Document Lifecycle",
           "guide_start_line": 5467,
-          "guide_end_line": 5511,
-          "status": "not_started",
+          "guide_end_line": 5575,
+          "status": "completed",
           "objective": "Define document states, ownership, metadata and failure behaviour.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
@@ -1276,7 +1276,7 @@
             "stage": "Stage 8.1 \u2014 Define Document Lifecycle",
             "source_lines": {
               "start": 5467,
-              "end": 5511
+              "end": 5575
             }
           },
           "workflow": [
@@ -1298,16 +1298,20 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r08-s01-define-document-lifecycle.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "docs/adr/0007-define-the-document-lifecycle-and-storage-model.md",
+            "IMPLEMENTATION_GUIDE.md Stage 8.1 (Decision, Session verification, acceptance criteria checked)",
+            "docs/journal/2026-07-28-r08-s01-define-document-lifecycle.md"
+          ]
         },
         {
           "id": "R08-S02",
           "guide_stage": "Stage 8.2 \u2014 Implement Document Persistence",
           "title": "Implement Document Persistence",
-          "guide_start_line": 5323,
-          "guide_end_line": 5349,
+          "guide_start_line": 5576,
+          "guide_end_line": 5602,
           "status": "not_started",
           "objective": "Create the Laravel document domain model, migrations, policies and API resources.",
           "session_mode": "implementation",
@@ -1316,8 +1320,8 @@
             "phase": "Phase 8 \u2014 Document Domain and Storage",
             "stage": "Stage 8.2 \u2014 Implement Document Persistence",
             "source_lines": {
-              "start": 5323,
-              "end": 5349
+              "start": 5576,
+              "end": 5602
             }
           },
           "workflow": [
@@ -1347,8 +1351,8 @@
           "id": "R08-S03",
           "guide_stage": "Stage 8.3 \u2014 Implement Direct Upload Flow",
           "title": "Implement Direct Upload Flow",
-          "guide_start_line": 5350,
-          "guide_end_line": 5386,
+          "guide_start_line": 5603,
+          "guide_end_line": 5639,
           "status": "not_started",
           "objective": "Allow the browser to upload documents safely to S3-compatible storage.",
           "session_mode": "implementation",
@@ -1357,8 +1361,8 @@
             "phase": "Phase 8 \u2014 Document Domain and Storage",
             "stage": "Stage 8.3 \u2014 Implement Direct Upload Flow",
             "source_lines": {
-              "start": 5350,
-              "end": 5386
+              "start": 5603,
+              "end": 5639
             }
           },
           "workflow": [
@@ -1385,7 +1389,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 5277,
+      "guide_end_line": 5639,
       "status": "not_started",
       "objective": "Model tenant-owned documents and store source files safely before asynchronous ingestion begins.",
       "gate": {
@@ -1406,14 +1410,14 @@
       "id": "R09",
       "guide_phase": "Phase 9 \u2014 Event-Driven Ingestion",
       "title": "Event-Driven Ingestion",
-      "guide_start_line": 5387,
+      "guide_start_line": 5640,
       "sessions": [
         {
           "id": "R09-S01",
           "guide_stage": "Stage 9.1 \u2014 Define Ingestion Event Contract",
           "title": "Define Ingestion Event Contract",
-          "guide_start_line": 5395,
-          "guide_end_line": 5437,
+          "guide_start_line": 5648,
+          "guide_end_line": 5690,
           "status": "not_started",
           "objective": "Create a versioned event contract for document-ingestion requests.",
           "session_mode": "architecture",
@@ -1422,8 +1426,8 @@
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
             "stage": "Stage 9.1 \u2014 Define Ingestion Event Contract",
             "source_lines": {
-              "start": 5395,
-              "end": 5437
+              "start": 5648,
+              "end": 5690
             }
           },
           "workflow": [
@@ -1453,8 +1457,8 @@
           "id": "R09-S02",
           "guide_stage": "Stage 9.2 \u2014 Publish Ingestion Jobs",
           "title": "Publish Ingestion Jobs",
-          "guide_start_line": 5438,
-          "guide_end_line": 5464,
+          "guide_start_line": 5691,
+          "guide_end_line": 5717,
           "status": "not_started",
           "objective": "Publish an ingestion event after a document upload is confirmed.",
           "session_mode": "implementation",
@@ -1463,8 +1467,8 @@
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
             "stage": "Stage 9.2 \u2014 Publish Ingestion Jobs",
             "source_lines": {
-              "start": 5438,
-              "end": 5464
+              "start": 5691,
+              "end": 5717
             }
           },
           "workflow": [
@@ -1494,8 +1498,8 @@
           "id": "R09-S03",
           "guide_stage": "Stage 9.3 \u2014 Consume Ingestion Jobs",
           "title": "Consume Ingestion Jobs",
-          "guide_start_line": 5465,
-          "guide_end_line": 5502,
+          "guide_start_line": 5718,
+          "guide_end_line": 5755,
           "status": "not_started",
           "objective": "Create a Python worker that receives, validates and acknowledges ingestion events.",
           "session_mode": "implementation",
@@ -1504,8 +1508,8 @@
             "phase": "Phase 9 \u2014 Event-Driven Ingestion",
             "stage": "Stage 9.3 \u2014 Consume Ingestion Jobs",
             "source_lines": {
-              "start": 5465,
-              "end": 5502
+              "start": 5718,
+              "end": 5755
             }
           },
           "workflow": [
@@ -1532,7 +1536,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 5394,
+      "guide_end_line": 5755,
       "status": "not_started",
       "objective": "Decouple document uploads from processing by publishing durable ingestion jobs.",
       "gate": {
