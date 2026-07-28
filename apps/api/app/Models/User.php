@@ -7,6 +7,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -28,5 +30,36 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * @return HasMany<Workspace, $this>
+     */
+    public function createdWorkspaces(): HasMany
+    {
+        return $this->hasMany(Workspace::class, 'created_by_user_id');
+    }
+
+    /**
+     * @return HasMany<WorkspaceMembership, $this>
+     */
+    public function workspaceMemberships(): HasMany
+    {
+        return $this->hasMany(WorkspaceMembership::class);
+    }
+
+    /**
+     * @return HasManyThrough<Workspace, WorkspaceMembership, $this>
+     */
+    public function workspaces(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Workspace::class,
+            WorkspaceMembership::class,
+            'user_id',
+            'id',
+            'id',
+            'workspace_id'
+        );
     }
 }

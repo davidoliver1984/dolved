@@ -4883,9 +4883,9 @@ any single mechanism alone. RLS is accepted as part of the architecture — not
 a replacement for application-layer authorisation, which must remain correct
 on its own even where RLS is disabled (e.g. some local development
 configurations). Its implementation (policies, connection-context propagation,
-a restricted non-superuser runtime database role, tests) is carried out in
-Stage 7.2, not this ADR; the repository must not describe RLS as active until
-then.
+a restricted non-superuser runtime database role, tests) requires a separately
+scoped Phase 7 implementation session; the repository must not describe RLS as
+active until then.
 
 Workspace identity must propagate through every derived artefact and service
 boundary: workspace-prefixed S3 object keys (server-controlled, not itself an
@@ -4973,38 +4973,271 @@ git commit -m "Document multi-tenancy model"
 
 ⸻
 
-Stage 7.2 — Implement Tenants and Memberships
+Stage 7.2 — Implement Workspaces and Memberships
 
 Objective
 
-Create tenant, membership and role persistence in Laravel.
+Create Workspace, WorkspaceMembership and role persistence in Laravel.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-28.
 
-Planned database entities
+### Scope and terminology
 
-tenants
-tenant_memberships
-tenant_invitations
+ADR 0006 settled `Workspace` as the tenant, collaboration and isolation boundary,
+so the legacy planned `tenant` terminology was replaced by:
 
-Exact names may change through the ADR.
+```text
+workspaces
+workspace_memberships
+```
 
-Acceptance criteria
+Invitations, controllers, routes, switching, policies, tenant middleware,
+PostgreSQL RLS, ownership transfer, deletion orchestration, business-audit
+implementation and downstream tenant propagation were explicitly outside this
+bounded persistence session.
 
-* A user can create a tenant.
-* Users can belong to multiple tenants if permitted.
-* Roles are enforced server-side.
-* Tenant selection is explicit.
-* Database constraints protect integrity.
-* Policies prevent cross-tenant access.
-* Feature tests attempt and reject tenant-boundary violations.
+### Role model
+
+A string-backed PHP enum defines the initial fixed roles:
+
+```php
+enum WorkspaceRole: string
+{
+    case Owner = 'owner';
+    case Admin = 'admin';
+    case Member = 'member';
+}
+```
+
+The membership model casts `role` to `WorkspaceRole` and `joined_at` to a Laravel
+datetime. The migration hardcodes the accepted strings rather than reading the
+current PHP enum, so a future enum change cannot silently alter historical
+clean-database behaviour.
+
+### Relational schema
+
+The `workspaces` table contains:
+
+* an internal bigint primary key;
+* a non-null, unique public UUID;
+* name;
+* a non-null, unique slug;
+* `created_by_user_id` as provenance, referencing `users` with
+  `ON DELETE RESTRICT`;
+* timestamps.
+
+The `workspace_memberships` table contains:
+
+* an internal bigint primary key;
+* `workspace_id`, referencing `workspaces` with `ON DELETE CASCADE`;
+* `user_id`, referencing `users` with `ON DELETE RESTRICT`;
+* a non-null role string with a database `CHECK` allowing only
+  `owner`, `admin`, or `member`;
+* non-null `joined_at`;
+* timestamps.
+
+Database integrity is protected by:
+
+* a unique `(workspace_id, user_id)` constraint;
+* a PostgreSQL-compatible partial unique index on `workspace_id` where
+  `role = 'owner'`, enforcing at most one owner membership per workspace;
+* unique indexes for workspace public UUID and slug;
+* lookup indexes for provenance, membership-by-user, and workspace-plus-role;
+* the foreign-key delete behaviour described above.
+
+The database constraint enforces **at most** one owner. Atomic creation ensures a
+new workspace starts with exactly one. Ownership transfer and last-owner removal
+remain deferred transactional workflows.
+
+### Eloquent models and factories
+
+`WorkspaceMembership` is a normal first-class Eloquent model rather than an
+anonymous pivot. Relationships added are:
+
+* `Workspace::creator()`;
+* `Workspace::memberships()`;
+* `Workspace::members()`;
+* `WorkspaceMembership::workspace()`;
+* `WorkspaceMembership::user()`;
+* `User::createdWorkspaces()`;
+* `User::workspaceMemberships()`;
+* `User::workspaces()`.
+
+The convenience member/workspace relationships use `hasManyThrough`, retaining the
+first-class membership model as the authoritative relationship record.
+
+Factories were added for both models. `WorkspaceMembershipFactory` supplies explicit
+`owner()`, `admin()` and `member()` states. `WorkspaceFactory::withOwner()` provides
+a valid aggregate convenience state, while the bare factory remains useful for
+database-boundary tests.
+
+### Transactional workspace creation
+
+The existing repository convention for state-changing application operations is a
+focused Action, so the implementation was placed at:
+
+```text
+apps/api/app/Actions/Workspaces/CreateWorkspace.php
+```
+
+`CreateWorkspace::handle(User $creator, string $name)`:
+
+1. begins a database transaction;
+2. generates the public UUID server-side;
+3. trims the validated name and generates a server-side slug;
+4. creates the workspace with creation provenance;
+5. creates the creator's owner membership;
+6. returns the workspace with creator and membership data loaded.
+
+If owner-membership creation throws, the transaction rolls back the workspace.
+Repeated names receive deterministic numeric slug suffixes (`name`, `name-2`, and
+so on), with the database unique index remaining the final integrity boundary.
+`created_by_user_id` is never consulted as ownership authority.
+
+The `Workspace` model rejects public-ID changes made through Eloquent after
+creation. The database unique constraint independently protects identity
+uniqueness.
+
+### Focused tests
+
+The new `WorkspacePersistenceTest` contains 14 tests / 44 assertions covering:
+
+* successful atomic creation and rollback on membership failure;
+* the creator becoming owner;
+* enum and datetime casts;
+* owner/admin/member factory states;
+* every model relationship;
+* duplicate-membership rejection;
+* one user in multiple workspaces;
+* multiple users in one workspace;
+* database-level invalid-role rejection;
+* database-level second-owner rejection;
+* public UUID generation, uniqueness and Eloquent immutability;
+* restrictive and cascading foreign-key behaviour;
+* required schema and index creation.
+
+The first focused run reported 12 passes and one failure in the combined foreign-key
+test. PostgreSQL correctly aborts a transaction after a deliberate foreign-key
+violation, so subsequent assertions in that same test transaction were invalid.
+The restricted-user and cascading-workspace behaviours were separated into
+independent tests. No application implementation change was required.
+
+Final focused result:
+
+```text
+14 tests passed
+44 assertions
+```
+
+Full Laravel result:
+
+```text
+30 tests passed
+97 assertions
+```
+
+### Commands and verification
+
+The local services were started, the development migration applied, and the focused
+and full API checks run:
+
+```bash
+make up
+make migrate
+docker compose exec -T api php artisan test --filter=WorkspacePersistenceTest
+make format-check-api
+make lint-api
+make test-api
+```
+
+Pint passed all 51 PHP files.
+
+An isolated temporary PostgreSQL database named
+`rag_platform_r07_s02_verify` proved clean migration behaviour:
+
+```bash
+docker compose exec -T postgres createdb \
+  --username rag_platform \
+  rag_platform_r07_s02_verify
+
+docker compose exec -T \
+  -e DB_DATABASE=rag_platform_r07_s02_verify \
+  api php artisan migrate --force
+
+docker compose exec -T \
+  -e DB_DATABASE=rag_platform_r07_s02_verify \
+  api php artisan migrate:rollback --force
+
+docker compose exec -T \
+  -e DB_DATABASE=rag_platform_r07_s02_verify \
+  api php artisan migrate --force
+
+docker compose exec -T postgres dropdb \
+  --force \
+  --username rag_platform \
+  rag_platform_r07_s02_verify
+```
+
+PostgreSQL catalogue inspection confirmed the expected primary keys, foreign keys,
+role check, non-null constraints, unique membership constraint, UUID and slug
+uniqueness, supporting indexes and partial owner index. The full migration set
+applied from zero, rolled back fully, left both workspace tables absent, and applied
+again successfully. The temporary database was then removed.
+
+After human approval, the complete repository boundary gate ran:
+
+```bash
+make format-check lint typecheck test ps
+```
+
+Result:
+
+```text
+Web:  ESLint passed, TypeScript passed, 3 Vitest tests passed
+API:  Pint passed, 30 Laravel tests / 97 assertions passed
+AI:   Ruff format and lint passed, MyPy passed, 1 Pytest test passed
+All six Compose services healthy
+```
+
+The platform was stopped afterward without deleting persistent data:
+
+```bash
+make down
+```
+
+### Acceptance criteria
+
+* A creator can atomically create a workspace and owner membership. — Met.
+* Users can belong to multiple workspaces. — Met.
+* Different users can belong to one workspace. — Met.
+* Roles are represented by a fixed application enum and enforced by the database.
+  — Met.
+* Database constraints protect membership, role, owner and identity integrity.
+  — Met.
+* The membership is a first-class model with tested relationships. — Met.
+* Clean PostgreSQL migrations and rollback are repeatable. — Met.
+* Controllers, tenant selection, policies and broader tenant-boundary enforcement.
+  — Deferred by the explicit R07-S02 scope.
+* PostgreSQL RLS and restricted runtime roles. — Accepted by ADR 0006 but not
+  implemented or claimed active; requires a separately scoped Phase 7 session.
 
 Commit boundary
 
-git add apps/api
-git commit -m "Implement tenant membership model"
+```bash
+git add \
+  IMPLEMENTATION_GUIDE.md \
+  apps/api \
+  docs/journal/2026-07-28-r07-s02-implement-workspaces-and-memberships.md \
+  docs/rag-platform-tasks.json \
+  tasks.json
+
+git commit -m "Implement workspaces and memberships" \
+  -m "Implements ADR-0006."
+
+git tag -a phase-7-s02 -m "Workspaces and memberships"
+```
 
 ⸻
 
