@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DocumentIngestionController;
 use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
@@ -70,5 +71,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::post(
         '/workspaces/{workspacePublicId}/documents/{documentPublicId}/uploads/complete',
         [DocumentUploadController::class, 'complete'],
+    );
+    Route::post(
+        '/workspaces/{workspacePublicId}/documents/{documentPublicId}/ingestion-requests',
+        [DocumentIngestionController::class, 'store'],
     );
 });

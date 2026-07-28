@@ -38,6 +38,7 @@ data, and therefore requires typing `RESET` interactively.
 | Web | http://localhost:3000 |
 | API | http://localhost:8000 |
 | Python API | http://localhost:8001 |
+| Ingestion publisher | Background `publisher` process |
 | PostgreSQL | `127.0.0.1:5433` |
 | LocalStack gateway | http://localhost:4566 |
 | Mailpit | http://localhost:8025 |
@@ -45,3 +46,7 @@ data, and therefore requires typing `RESET` interactively.
 LocalStack provides local S3 and SQS services. Mailpit captures local verification
 and password-reset messages without sending external email. Qdrant and Redis are
 added in later phases.
+
+The ingestion publisher continuously delivers durable Laravel outbox events to
+LocalStack SQS. Inspect it with `docker compose logs publisher`, or run one
+publication batch explicitly with `make publish-ingestion`.

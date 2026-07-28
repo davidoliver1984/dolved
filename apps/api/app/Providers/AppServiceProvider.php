@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Contracts\Ingestion\IngestionEventPublisher;
+use App\Services\Ingestion\SqsIngestionEventPublisher;
 use App\Support\CanonicalEmail;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
@@ -14,7 +16,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            IngestionEventPublisher::class,
+            SqsIngestionEventPublisher::class,
+        );
     }
 
     /**

@@ -108,6 +108,48 @@ services:
       retries: 10
       start_period: 10s
 
+  publisher:
+    build:
+      context: ./apps/api
+      target: development
+    image: rag-platform-api:development
+    init: true
+    command: php artisan ingestion:publish
+    environment:
+      APP_NAME: Make Time
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      LOG_CHANNEL: stderr
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB:-rag_platform}
+      DB_USERNAME: ${POSTGRES_USER:-rag_platform}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+      QUEUE_CONNECTION: sqs
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+      AWS_BUCKET: ${DOCUMENT_UPLOAD_BUCKET:-rag-platform-document-uploads-local}
+      SQS_ENDPOINT: http://localstack:4566
+      SQS_PREFIX: http://localstack:4566/000000000000
+      SQS_QUEUE: ${INGESTION_QUEUE:-rag-platform-ingestion-local}
+      OUTBOX_PUBLISHER_BATCH_SIZE: ${OUTBOX_PUBLISHER_BATCH_SIZE:-10}
+      OUTBOX_PUBLISHER_POLL_SECONDS: ${OUTBOX_PUBLISHER_POLL_SECONDS:-2}
+      OUTBOX_CLAIM_LEASE_SECONDS: ${OUTBOX_CLAIM_LEASE_SECONDS:-60}
+      OUTBOX_RETRY_BASE_SECONDS: ${OUTBOX_RETRY_BASE_SECONDS:-5}
+      OUTBOX_RETRY_MAX_SECONDS: ${OUTBOX_RETRY_MAX_SECONDS:-300}
+    volumes:
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - api_vendor:/app/vendor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    stop_grace_period: 15s
+
   ai:
     build:
       context: ./apps/ai

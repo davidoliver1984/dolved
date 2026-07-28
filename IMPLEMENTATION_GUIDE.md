@@ -6269,7 +6269,225 @@ processing.
 
 ## Status
 
-Not yet executed.
+Implemented, verified and approved on 2026-07-28.
+
+## Actual implementation record
+
+### Objective completed
+
+Laravel now accepts an authenticated, verified, workspace-scoped request to
+ingest an `UPLOADED` Document. The Document transition to `QUEUED` and one
+immutable, contract-valid outbox event commit in the same PostgreSQL
+transaction.
+
+A separate long-running `publisher` process claims durable outbox events,
+validates their payloads against the canonical Stage 9.1 schema, publishes raw
+language-neutral JSON to SQS and records the confirmed publication.
+
+### Accepted lifecycle and HTTP behaviour
+
+The endpoint is:
+
+```text
+POST /api/workspaces/{workspace}/documents/{document}/ingestion-requests
+```
+
+It always returns the current safe `DocumentResource` with `202 Accepted`
+when the ingestion request is accepted or is already in progress:
+
+* `UPLOADED` — transition to `QUEUED` and create one outbox event;
+* `QUEUED` — return idempotently without creating an event; and
+* `PROCESSING` — return idempotently without creating an event.
+
+`UPLOADING`, `INDEXED`, `FAILED`, `DELETING` and `DELETED` return
+`409 Conflict`. Explicit retry from `FAILED` remains future work.
+
+A valid caller-supplied `X-Correlation-ID` UUID is preserved. If the header is
+absent or invalid, Laravel generates a UUID. The resolved value is returned in
+the response header and, for a new request, is persisted in the outbox payload
+and structured publication logs.
+
+### Idempotency invariant
+
+Idempotency is enforced by the authoritative lifecycle transition, not by an
+endpoint-local idempotency flag or a client-supplied key.
+
+`RequestDocumentIngestion` locks the Document row with `FOR UPDATE` inside the
+same transaction that creates the outbox event. Only the transaction that
+observes the locked Document in `UPLOADED` may create an event and transition
+it to `QUEUED`. A concurrent or repeated request subsequently observes
+`QUEUED` or `PROCESSING` and returns the current resource without another
+event.
+
+No permanent unique constraint on Document identity was added to the outbox.
+Such a constraint would incorrectly prevent a future explicit
+`FAILED → QUEUED` domain retry from creating a new logical ingestion attempt.
+The current invariant is instead the locked, one-way
+`UPLOADED → QUEUED` transition. Every logical outbox event still has a unique,
+immutable `event_id`.
+
+### Outbox persistence
+
+The `outbox_events` table stores:
+
+* unique logical event identity, event type and version;
+* immutable public Workspace and Document identifiers;
+* correlation identity and the canonical JSON payload;
+* occurrence, publication and terminal-failure timestamps;
+* lease time and claim token;
+* attempt count, next-attempt time and a sanitised last error; and
+* normal record timestamps.
+
+The table deliberately stores public transport identifiers rather than
+foreign keys to the Laravel aggregates. Publication evidence must remain
+diagnosable without introducing a foreign-key deletion barrier around future
+Document deletion orchestration.
+
+PostgreSQL constraints enforce a positive event version, unique event and
+claim identifiers, mutually exclusive published/failed terminal states and
+paired claim timestamp/token values. The model prevents mutation of event
+identity or payload after creation.
+
+### Publisher behaviour
+
+`php artisan ingestion:publish` continuously polls in the dedicated Compose
+`publisher` service. `--once` processes at most one configured batch and is
+exposed as:
+
+```bash
+make publish-ingestion
+```
+
+Each event is claimed in its own short PostgreSQL transaction. PostgreSQL uses
+`FOR UPDATE SKIP LOCKED`; the claim is persisted as a token plus lease
+timestamp before network I/O begins. This allows multiple publisher instances
+without holding a database transaction open during SQS calls. An expired
+lease is reclaimable after a publisher crash. A late publisher can only
+update a record while it still owns the matching claim token.
+
+The publisher:
+
+* validates every claimed payload against the shared canonical schema;
+* sends the stored payload unchanged through Laravel's SQS adapter;
+* marks it published only after SQS returns a transport message identifier;
+* keeps the original `event_id` through every retry;
+* sets deterministic contract failures aside using `failed_at`;
+* releases transient SQS failures for capped exponential-backoff retry; and
+* logs event, correlation, Workspace, Document and transport identifiers
+  without logging payloads or credentials.
+
+Transient publication attempts are retried durably rather than discarded
+after an arbitrary ceiling. The configurable delay starts at five seconds
+and is capped at five minutes, preventing a tight outage loop. Consumer
+redrive and the DLQ remain the separate Stage 9.3 responsibility.
+
+The long-running command waits safely if the outbox migration has not yet run,
+which allows normal `make bootstrap` ordering without a crash loop.
+
+### Files and operational changes
+
+* Added the outbox migration, model and factory.
+* Added the request action, thin controller, policy method and route.
+* Added the payload builder and canonical runtime contract validator.
+* Moved `opis/json-schema` from development-only to production Composer
+  dependencies because publication performs runtime validation.
+* Added the publisher interface, SQS adapter, claiming/publication action and
+  Artisan command.
+* Added configurable batch, polling, lease and retry settings to both example
+  environment files.
+* Added the dedicated Compose `publisher` process.
+* Added `make publish-ingestion` and documented the background service in the
+  root README.
+* Reused ADR-0004's existing LocalStack ingestion queue, DLQ and redrive
+  provisioning without introducing another emulator or queue.
+
+### Commands executed
+
+```bash
+docker compose exec -T api composer require \
+  'opis/json-schema:^2.6' --no-interaction
+make format-api
+docker compose exec -T api php artisan test \
+  tests/Feature/DocumentIngestionPublicationTest.php
+docker compose config --quiet
+docker compose up -d publisher
+docker compose exec -T api php artisan migrate --force
+docker compose logs --tail 80 publisher
+docker compose exec -T api php artisan test
+docker compose exec -T postgres createdb \
+  --username rag_platform rag_platform_r09_s02_test
+docker compose exec -T -e DB_DATABASE=rag_platform_r09_s02_test \
+  api php artisan migrate:fresh --force
+docker compose exec -T postgres psql \
+  --username rag_platform \
+  --dbname rag_platform_r09_s02_test \
+  --command "SELECT conname FROM pg_constraint WHERE conrelid = 'outbox_events'::regclass ORDER BY conname"
+docker compose exec -T postgres dropdb \
+  --username rag_platform rag_platform_r09_s02_test
+docker compose restart publisher
+make publish-ingestion
+make format-check lint typecheck test ps
+make aws-status
+docker compose exec -T api composer validate --strict
+docker compose exec -T api composer install \
+  --no-dev --dry-run --no-interaction
+docker compose exec -T api php artisan route:list \
+  --path=ingestion-requests
+docker compose exec -T api php artisan list ingestion
+docker compose config --quiet
+git diff --check
+jq empty tasks.json
+```
+
+### Verification evidence
+
+* Focused R09-S02 Laravel suite: 21 passed (105 assertions).
+* Full Laravel suite: 95 passed (364 assertions).
+* Full web suite: 10 passed across 4 files.
+* Full AI suite: 10 passed.
+* Pint, ESLint, Ruff formatting/linting, TypeScript and mypy passed.
+* Composer validation and a production `--no-dev` installation dry run
+  passed.
+* Compose validation passed and all seven processes were running; the six
+  HTTP/infrastructure services remained healthy.
+* LocalStack verification passed for the S3 bucket, ingestion queue, DLQ and
+  redrive policy (`maxReceiveCount: 3`).
+* A disposable PostgreSQL database migrated cleanly from empty and exposed
+  the expected outbox constraints. It was removed afterward.
+* The endpoint and Artisan command were registered.
+* `git diff --check` and tracker JSON validation passed.
+
+A disposable live smoke created an `UPLOADED` Document and requested
+ingestion. PostgreSQL committed the Document as `QUEUED` with one outbox
+record. The dedicated publisher delivered the exact version 1 payload to
+LocalStack SQS, preserved the supplied correlation identifier, recorded one
+attempt and marked the event published. Structured logs contained the
+logical and transport identifiers. The synthetic Document, outbox event and
+queue message were removed afterward.
+
+### Problems and corrections
+
+The runtime publisher now validates payloads, so keeping
+`opis/json-schema` in `require-dev` would have broken production images.
+Composer moved the already-pinned 2.6.0 package into `require`; no version
+upgrade was introduced.
+
+The first test formatting run exposed a chained PHP `match` expression that
+required parentheses. The syntax was corrected before any test execution.
+
+The initial publisher implementation claimed a whole batch before performing
+network I/O. It was tightened to claim one event immediately before each send,
+so later records in a batch do not spend their lease waiting behind earlier
+SQS calls.
+
+The publisher can start before migrations during a clean bootstrap. It now
+waits for the outbox table in continuous mode while the explicit `--once`
+command fails clearly if migrations are missing.
+
+### Commit and tag boundary
+
+The implementation was approved for the R09-S02 stage commit and annotated
+`phase-9-s02` tag. Stage 9.3 is the next bounded session.
 
 ## Engineering rationale
 
