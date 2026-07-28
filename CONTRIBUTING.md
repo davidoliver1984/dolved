@@ -3,7 +3,7 @@
 ## Purpose and audience
 
 This guide is for human contributors and AI-assisted engineering sessions working
-within the RAG platform's established architecture, teaching workflow and
+within the RAG platform's established architecture, engineering workflow and
 documentation system. It explains how to make a bounded, reviewable change without
 silently changing the platform's design or duplicating its existing documentation.
 
@@ -13,7 +13,7 @@ The documentation authorities are:
 |---|---|
 | `PROJECT_ROADMAP.md` | What will be built and in what order |
 | `IMPLEMENTATION_GUIDE.md` | How stages were implemented, verified and committed |
-| `tasks.json` | Which learning and implementation session is current |
+| `tasks.json` | Which planned engineering session is current |
 | `docs/adr/` | Why durable architecture decisions were made |
 | `docs/journal/` | What happened during individual engineering sessions |
 | `README.md` | Repository introduction and normal operating instructions |
@@ -21,6 +21,36 @@ The documentation authorities are:
 Do not reproduce those documents here. If an authority is missing, exists at a
 different path, or contradicts another authority, stop and reconcile the conflict
 with the human developer before treating either version as canonical.
+
+## Engineering Philosophy
+
+The objective of this repository is not merely to build a working RAG platform.
+
+It is to build a production-quality system whose architecture, documentation,
+engineering decisions and commit history demonstrate senior software engineering
+practice.
+
+Every change should optimise for:
+
+- clarity over cleverness
+- explicit architecture
+- maintainability
+- repeatability
+- observability
+- security
+- teaching value
+
+## AI Behaviour
+
+AI tools should:
+
+- inspect before modifying
+- explain before implementing
+- preserve existing conventions
+- stop when architecture decisions are required
+- never fabricate verification
+- never silently broaden scope
+- prefer improving existing code over introducing parallel patterns
 
 ## Repository structure
 
@@ -58,16 +88,19 @@ Preserve these responsibilities unless an agreed ADR changes them.
 Run `make help` for the current command list rather than maintaining a second
 operations manual here.
 
-## Teaching-session workflow
+## Engineering workflow
 
-Every implementation session follows this sequence:
+Planned engineering sessions follow this sequence:
 
 1. Read the current session from `tasks.json`.
-2. Discuss architecture, concepts, alternatives and trade-offs with Ralph/ChatGPT.
+2. Discuss architecture, concepts, alternatives and trade-offs with an architecture
+   reviewer.
 3. Produce an agreed, bounded implementation brief.
-4. Implement the brief with Codex in teaching mode.
+4. Implement the agreed brief. AI assistants may be used where appropriate, but the
+   human developer remains responsible for the resulting code.
 5. Run the required stage-specific and repository-wide verification.
-6. Return to Ralph for architecture review, questions and Important Takeaways.
+6. Complete architecture review, resolve outstanding questions and record Important
+   Takeaways.
 7. Apply any agreed corrections.
 8. Update `IMPLEMENTATION_GUIDE.md` with the actual commands, changes and
    verification evidence.
@@ -76,14 +109,132 @@ Every implementation session follows this sequence:
 11. Commit at the agreed session or phase boundary.
 12. Update `tasks.json` and advance the current session.
 
-Ralph/ChatGPT helps establish concepts, architecture, alternatives and trade-offs.
-Codex implements the agreed brief and records repository-specific evidence. Codex
-must not invent a major architectural decision: it should identify the decision,
-explain viable options and stop for agreement before implementation or a final ADR.
+Minor maintenance changes, documentation corrections and other work outside a planned session do not require a new session record. They must still remain focused, reviewable and subject to the relevant verification and commit standards.
 
-The human developer owns all final decisions and commit boundaries. Tools may create
-a commit only after the human has explicitly agreed the scope and authorised that
-commit.
+An architecture reviewer should establish concepts, architecture, alternatives and engineering trade-offs, helping define the intended solution before implementation begins.
+
+AI implementation assistants may implement all or part of the agreed brief. The human developer remains responsible for reviewing, accepting and integrating those changes.
+
+AI implementation assistants must not make significant architectural decisions independently. Where an architectural decision is required, they should:
+
+- identify the decision that needs to be made;
+- present the viable options and their trade-offs;
+- recommend the option that best fits the existing architecture; and
+- stop and obtain agreement before implementation or creating a final ADR.
+
+The human developer remains responsible for all final architectural decisions, implementation approval, commit boundaries and repository history. AI tools may recommend, prepare or create commits only after the human developer has explicitly agreed the implementation scope and authorised the commit.
+
+## Architecture and implementation workflow
+
+This project deliberately separates **architecture** from **implementation**.
+
+Architectural decisions should be discussed, reviewed and accepted before implementation begins. Avoid mixing architectural design with application code in the same commit wherever reasonably practical.
+
+### Architecture workflow
+
+Each architecture session follows the same lifecycle:
+
+1. **Architecture discussion**
+   - Explore options, trade-offs and recommendations.
+   - Record reasoning in `docs/adr/gpt_drafts/rXX-sXX.md`.
+
+2. **Architecture review**
+   - Review the proposed design.
+   - Challenge assumptions.
+   - Identify security, operational and future-proofing concerns.
+   - Record review notes in `docs/adr/gpt_drafts/rXX-sXX-reviewed.md`.
+
+3. **Final amendments**
+   - Apply agreed review changes.
+   - Record final amendments in `docs/adr/gpt_drafts/rXX-sXX-final-amends.md`.
+
+4. **ADR acceptance**
+   - Produce the final ADR in `docs/adr/`.
+   - Once accepted, the ADR becomes the canonical architectural decision.
+   - Implementation should not begin until the ADR is accepted.
+
+The draft documents intentionally capture the evolution of the decision. The ADR records the final accepted outcome.
+
+## Commit message conventions
+
+### Architecture & Documentation
+
+Architecture-only commits should document accepted decisions and should **not** introduce application code.
+
+Preferred commit subjects:
+
+```text
+Document ...
+Define ...
+Record ...
+Clarify ...
+Accept ADR-XXXX ...
+```
+
+Examples:
+
+```text
+Document workspace tenancy model (ADR-0006)
+
+Define retrieval architecture (ADR-0007)
+
+Record ingestion pipeline design
+```
+
+Architecture commits should typically include:
+
+- ADRs
+- implementation guide updates
+- roadmap updates
+- journals
+- architectural documentation
+
+Where appropriate, include:
+
+```text
+No application code changed.
+```
+
+### Implementation
+
+Implementation commits should implement previously accepted architectural decisions and remain within the scope of the accepted ADR. Architectural redesign belongs in a separate architecture session and ADR where required.
+
+Preferred commit subjects:
+
+```text
+Implement ...
+Add ...
+Refactor ...
+Remove ...
+Replace ...
+Fix ...
+```
+
+Examples:
+
+```text
+Implement workspace persistence
+
+Implement PostgreSQL Row-Level Security
+
+Implement tenant middleware
+```
+
+Where an ADR exists, reference it in the commit body.
+
+Example:
+
+```text
+Implements ADR-0006.
+```
+
+### Engineering principle
+
+Architecture sessions produce **decisions**.
+
+Implementation sessions produce **software**.
+
+Keep those responsibilities separate wherever practical. This improves review quality, repository history, architectural traceability and long-term maintainability.
 
 ## Change discipline
 
@@ -148,7 +299,8 @@ An ADR is normally appropriate when a decision:
 
 Ordinary implementation details, commands, bug fixes and easily reversible choices
 belong in the implementation guide or code review, not in an ADR. Architecture
-decisions must be agreed with the human developer before Codex writes the final ADR.
+decisions must be agreed with the human developer before an AI assistant prepares
+the final ADR.
 
 Follow `docs/adr/README.md` for numbering and required sections. Do not rewrite an
 accepted ADR to change history; add a superseding ADR.
@@ -281,6 +433,14 @@ ownership remain authoritative unless an ADR changes them.
 - Do not impose a branch-name or Conventional Commits policy: the current repository
   does not establish either as a requirement.
 - Do not rewrite shared history or accepted phase tags to conceal a correction.
+- The human developer owns the repository history.
+- AI tools may prepare commits, suggest commit messages or assist with Git
+  operations, but commit boundaries, repository history and releases remain the
+  responsibility of the human developer.
+- Human-authored changes follow the same engineering, documentation and
+  verification standards as AI-assisted changes.
+
+
 
 ## Definition of done
 
