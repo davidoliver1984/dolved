@@ -7471,20 +7471,130 @@ Support ingestion of UTF-8 plain-text documents.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-29 following human review and approval.
+
+Agreed bounded implementation brief
+
+Implement a standalone Python plain-text extractor and only the canonical
+model foundation required to support it under ADR-0010.
+
+Use the existing Pydantic runtime to define strict, frozen models with
+immutable collections and forbidden unexpected fields:
+
+* `ExtractedDocument` with public Workspace and Document UUIDs, source media
+  type and byte size, extractor identity/version, complete decoded text,
+  ordered elements and retained warnings;
+* a common semantic `Element` and source-location foundation;
+* `ParagraphElement` with text and source provenance; and
+* an explicit `UnknownElement` fallback so future element types can be
+  retained or traversed conservatively rather than failing unexpectedly.
+
+Add specialised heading, list, table and other semantic types only in the
+extractor stages that can define and test their real invariants.
+
+The plain-text extractor accepts bytes plus trusted extraction context. It:
+
+* enforces an injectable maximum size whose default matches the platform's
+  25 MiB upload limit;
+* performs strict UTF-8 decoding while accepting an optional UTF-8 BOM;
+* converts CRLF and standalone CR line endings to LF;
+* retains the complete decoded text;
+* represents blank-line-delimited non-empty content as ordered paragraph
+  elements without trimming meaningful whitespace;
+* records zero-based half-open character offsets and one-based inclusive line
+  ranges into the retained text;
+* creates fresh UUIDv4 element identifiers on every extraction run; and
+* raises typed permanent failures for oversized, invalidly encoded, empty or
+  whitespace-only content.
+
+Unicode normalisation and general whitespace normalisation remain Stage 10.5
+responsibilities. Tests compare deterministic content and provenance
+separately from the intentionally fresh UUIDs.
+
+This stage does not read S3, alter the SQS worker, extend message visibility,
+report lifecycle transitions to Laravel, persist extracted content or perform
+normalisation/chunking.
+
+Implementation record
+
+The Python service now has a deliberately small `app/extraction` boundary:
+
+* `models.py` defines the frozen, strict Pydantic contract foundation:
+  extraction context, extractor identity, retained warnings, extensible
+  source locations, base elements, paragraphs, the explicit unknown-element
+  fallback and `ExtractedDocument`;
+* `errors.py` distinguishes transient and permanent typed extraction failures
+  and carries both a machine-readable code and user-facing explanation; and
+* `plain_text.py` contains the standalone extractor with an injectable
+  default 25 MiB limit.
+
+The extractor validates the byte limit before decoding, accepts strict UTF-8
+with an optional BOM, converts only CRLF and CR to LF, and splits paragraphs
+only on blank LF-delimited lines. Limiting line recognition to LF is
+intentional: Python's broader `splitlines()` also treats Unicode separators
+as line boundaries, which would perform unapproved whitespace normalisation
+before Stage 10.5. Meaningful leading, trailing and internal whitespace is
+therefore retained.
+
+Source byte size records the original bytes, including a BOM when present.
+Character offsets refer to the complete decoded, newline-normalised text and
+are zero-based and half-open; line ranges are one-based and inclusive.
+Paragraph UUIDv4 identifiers are fresh for every extraction run. Tests compare
+all deterministic fields separately from those deliberately fresh identities.
+
+`UnknownElement` provides the required conservative representation for a type
+a consumer does not yet understand. It retains the original kind, source
+location and any available text without weakening normal extraction into an
+untyped generic block model.
+
+No new dependency was required because Pydantic is already part of the Python
+runtime. No S3, SQS, Laravel lifecycle, persistence, normalisation or chunking
+code changed.
+
+Commands executed
+
+```bash
+docker compose exec -T ai uv run ruff format app/extraction tests/test_plain_text_extraction.py
+docker compose exec -T ai uv run ruff format --check app/extraction tests/test_plain_text_extraction.py
+docker compose exec -T ai uv run ruff check app/extraction tests/test_plain_text_extraction.py
+docker compose exec -T ai uv run mypy app/extraction tests/test_plain_text_extraction.py
+docker compose exec -T ai uv run pytest tests/test_plain_text_extraction.py -q
+make format-check lint typecheck test ps
+make aws-status
+```
+
+Verification evidence
+
+* The focused extractor suite passed all 14 tests.
+* The Python repository suite passed all 56 tests and mypy checked all 24
+  source files without error.
+* Ruff formatting and linting passed.
+* Laravel passed 118 tests with 491 assertions.
+* The web application passed all 10 tests and its TypeScript check.
+* All eight Compose processes were running; every service with a health check
+  was healthy.
+* LocalStack bucket, upload CORS, ingestion queue, dead-letter queue and
+  redrive policy verification passed.
 
 Acceptance criteria
 
-* Valid text files are extracted.
-* Encoding failures are handled clearly.
-* Empty files are handled.
-* Excessively large files are bounded.
-* Newline normalisation is deterministic.
-* Tests use representative fixtures.
+* Valid text files are extracted. — Met by Unicode, multiline, whitespace and
+  ordered-paragraph fixture coverage.
+* Encoding failures are handled clearly. — Met by a typed permanent
+  `invalid_encoding` failure with a user-readable UTF-8 explanation.
+* Empty files are handled. — Met for both zero-byte and whitespace-only input
+  through typed permanent `empty_content` failures.
+* Excessively large files are bounded. — Met before decoding through the
+  injectable limit and typed permanent `source_too_large` failure.
+* Newline normalisation is deterministic. — Met for CRLF, CR and LF while
+  deliberately retaining non-CR/LF Unicode separators for Stage 10.5.
+* Tests use representative fixtures. — Met by
+  `tests/fixtures/plain_text/representative.txt` plus focused boundary inputs.
 
 Commit boundary
 
-git add apps/ai tests
+git add apps/ai IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-07-29-r10-s02-implement-plain-text-extraction.md
 git commit -m "Add plain text extraction"
 
 ⸻
