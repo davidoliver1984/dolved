@@ -7607,32 +7607,239 @@ Extract text and source-location metadata from PDFs.
 
 Status
 
-Not yet executed.
+Complete. Implemented, verified and approved on 2026-07-29.
 
-Planned considerations
+Agreed bounded implementation brief
 
-* text-based PDFs;
-* scanned PDFs;
-* page boundaries;
-* headers and footers;
-* multi-column layouts;
-* tables;
-* malformed or encrypted PDFs;
-* OCR as a separate and explicit capability.
+Use `pdfplumber` for the initial PDF implementation behind a small,
+implementation-neutral `PdfExtractor` protocol. The concrete
+`PdfPlumberExtractor` accepts source bytes plus trusted `ExtractionContext`
+and returns the same immutable canonical `ExtractedDocument` as every other
+extractor. Parser-specific page, table, geometry and exception objects remain
+private to its adapter package.
+
+> The initial PDF extractor implementation uses pdfplumber. The extractor
+> boundary intentionally isolates parser-specific behaviour so that
+> alternative implementations, such as PyMuPDF or future commercial parsers,
+> can be introduced and benchmarked without changing downstream pipeline
+> stages.
+
+Add `pdfplumber` as a runtime dependency and ReportLab as a development-only
+dependency for deterministic synthetic fixtures. Do not implement
+configuration-based selection, fallback extraction, multi-parser
+reconciliation, confidence routing or benchmarking in this stage.
+
+Extend the canonical model only as required for PDF output:
+
+* precise rotation-aware `PdfSourceLocation` values using PDF points in
+  pdfplumber's validated displayed-page, top-left-origin coordinate space,
+  while explicitly recording whether a distinct CropBox exists rather than
+  falsely claiming it was applied as a destructive extraction boundary;
+* parser identity/version alongside the platform extractor identity/version;
+* source-aware typed warnings; and
+* immutable table, row and cell representations with cell provenance.
+
+Treat paragraph reconstruction conservatively. PDFs do not expose true
+semantic paragraphs: group only under explicit deterministic geometric rules
+and preserve smaller ordered blocks when uncertain. Do not infer headings from
+font size. Reading order is deterministic best effort based on parser output
+and page geometry, not a universal semantic-order guarantee.
+
+Recognise line-bounded tables and suppress their text from paragraph output
+only when it can be confidently associated with successfully extracted cells.
+If separation is ambiguous, preserve the content and emit a typed warning
+rather than risk information loss.
+
+Define canonical complete-text assembly as a stable contract:
+
+* deterministic separators between elements and pages;
+* deterministic table serialisation;
+* zero-based, end-exclusive Unicode string offsets; and
+* element ranges that are directly sliceable against
+  `ExtractedDocument.text`.
+
+Preserve blank pages. A textless page may receive a `no_extractable_text` or
+`ocr_may_be_required` warning where appropriate; it is not automatically
+declared scanned. A wholly textless image-bearing document may fail
+permanently as `ocr_required`. OCR and password submission remain out of
+scope.
+
+Use injectable initial limits of 25 MiB, 500 pages and 5,000,000 extracted
+characters. Byte, page and text limits reduce exposure but do not replace
+future process isolation, timeouts, memory controls or protection against
+unusually high per-page parser-object expansion. Those operational hardening
+decisions must be resolved before untrusted PDF parsing is connected to the
+worker.
+
+Synthetic fixtures are the initial controlled suite. Rendered fixtures are
+diagnostic evidence, while programmatic assertions over order, geometry,
+tables, offsets and provenance remain the automated CI oracle. A curated,
+legally redistributable real-world corpus is future evaluation work.
+
+This stage does not read S3, alter the ingestion worker, report lifecycle
+transitions, persist extracted output, perform OCR, normalise content or
+chunk it.
+
+Implementation record
+
+The PDF extraction package now exposes:
+
+* an implementation-neutral `PdfExtractor` protocol;
+* a minimal `create_pdf_extractor()` composition function; and
+* a `PdfPlumberExtractor` adapter, which is the only production module that
+  imports `pdfplumber`.
+
+The adapter accepts source bytes and trusted `ExtractionContext`, returning
+the immutable canonical `ExtractedDocument`. The dependency lock selected
+`pdfplumber` 0.11.10. ReportLab 5.0.0 and its type stubs are development-only
+dependencies used to generate deterministic test fixtures in memory.
+
+The canonical extraction model gained immutable PDF source locations,
+document metadata, parser identity, source-aware warnings and typed table,
+row and cell structures. Existing plain-text extraction continues to use the
+same model and shared 25 MiB source-size constant.
+
+PDF coordinates are PDF points in pdfplumber's displayed-page,
+top-left-origin coordinate space. Each location records the page number,
+displayed width and height, validated bounding box, normalized rotation and
+whether its PDF CropBox differs from its MediaBox. The v1 extractor does not
+discard content merely because it lies outside a distinct CropBox. This is a
+deliberate loss-minimising behaviour, not a claim that the CropBox was
+destructively applied.
+
+Paragraph-like output is deliberately conservative: pdfplumber text boxes are
+ordered deterministically by vertical position, horizontal position and
+parser order. This is a repeatable best effort for multi-column documents,
+not a semantic reading-order guarantee. Headers and footers are retained for
+Stage 10.5 and no heading meaning is inferred from font size.
+
+Line-bounded tables are emitted as one `TableElement` with rectangular,
+ordered rows and cells. Each cell retains PDF provenance when pdfplumber
+provides it. A table's canonical text is escaped tab-separated rows:
+backslashes, tabs and newlines inside cells are escaped before cells are
+joined with tabs and rows with newlines. A text box is suppressed only when
+its normalized content and bounding box confidently match an extracted table
+cell. Ambiguous overlap is preserved and produces an
+`ambiguous_table_text_overlap` warning.
+
+The complete-text contract uses:
+
+```text
+element separator: "\n\n"
+page separator:    "\n\n\f\n\n"
+```
+
+Blank pages therefore remain visible through page separators. Element
+character ranges are zero-based, end-exclusive Python Unicode indexes and
+slice directly against `ExtractedDocument.text`.
+
+Textless pages produce `no_extractable_text`, or
+`ocr_may_be_required` when an image is present. A wholly image-only document
+fails permanently with `ocr_required`; a textless non-image document fails
+with `empty_content`. Empty, corrupt and encrypted input, excessive source
+bytes, page count and extracted character count also produce stable typed
+permanent failures. OCR is never attempted.
+
+The initial injectable limits are:
+
+| Resource | Default |
+|---|---:|
+| Source bytes | 25 MiB |
+| Pages | 500 |
+| Complete extracted text | 5,000,000 Unicode characters |
+
+These limits are checked in the adapter. They do not yet bound parser time,
+memory or the number of parser objects on an individual page, so process
+isolation and stronger operational controls remain required before the
+extractor handles untrusted worker input.
+
+Problems and corrections
+
+The initial encrypted-PDF handler expected pdfminer exceptions directly.
+Current pdfplumber wraps them in `PdfminerException`, so the adapter now
+unwraps the cause to distinguish a password-protected file from a generally
+invalid PDF while retaining stable platform failure codes.
+
+Review of a rotated PDF with a distinct CropBox showed that pdfplumber reports
+the displayed page geometry without necessarily excluding content outside the
+CropBox. The model and documentation were corrected from an inaccurate
+“crop applied” claim to the factual `has_distinct_crop_box` provenance flag.
+
+Pydantic's `model_copy()` does not revalidate updated values. The source
+location invariant test therefore reconstructs through `model_validate()` so
+it genuinely exercises the paired offset validation rather than merely
+asserting a test-helper behaviour.
+
+Verification commands
+
+```bash
+docker compose build ai worker
+docker compose up --detach --force-recreate --no-deps --wait ai worker
+docker compose exec -T ai uv run ruff format --check \
+  app/extraction tests/pdf_fixtures.py tests/test_pdf_extraction.py
+docker compose exec -T ai uv run ruff check \
+  app/extraction tests/pdf_fixtures.py tests/test_pdf_extraction.py
+docker compose exec -T ai uv run mypy \
+  app/extraction tests/pdf_fixtures.py tests/test_pdf_extraction.py
+docker compose exec -T ai uv run pytest \
+  tests/test_plain_text_extraction.py tests/test_pdf_extraction.py -q
+make format-check lint typecheck test ps
+make aws-status
+```
+
+A controlled table fixture was also written to a temporary PDF, inspected
+with `pdfinfo`, rendered with Poppler and visually checked. The rendered table
+contained the same three rows and two columns asserted by the automated
+extraction test. The temporary PDF and image were then removed. This render
+was diagnostic evidence only; programmatic assertions remain the CI oracle.
+
+Verification evidence
+
+* The focused extraction suite passed all 33 tests: 14 plain-text tests and
+  19 PDF tests.
+* The complete Python suite passed all 75 tests and mypy checked all 31 source
+  files without error.
+* Ruff formatting and linting passed across 32 files.
+* Laravel passed 118 tests with 491 assertions.
+* The web application passed all 10 tests and its TypeScript check.
+* The rebuilt AI and worker images installed the locked dependencies and
+  started successfully.
+* All eight Compose processes were running; every service with a health check
+  was healthy.
+* LocalStack bucket, upload CORS, ingestion queue, dead-letter queue and
+  redrive policy verification passed.
+
+Deferred work
+
+* OCR, password submission and semantic heading inference.
+* Parser selection, fallback, reconciliation and benchmarking.
+* A curated, legally redistributable real-world evaluation corpus.
+* Process isolation, time and memory limits, and per-page parser-object
+  expansion controls before worker integration.
+* Normalisation of repeated headers, footers and other structural noise.
+* Worker, object-storage, lifecycle and persistence integration.
 
 Acceptance criteria
 
-* Text-based PDFs are supported.
-* Page numbers are preserved.
-* Unsupported encrypted files fail clearly.
-* Empty extraction is detected.
-* Table behaviour is documented.
-* Representative fixtures are tested.
-* OCR is not silently performed unless intentionally implemented.
+* Text-based PDFs are supported. — Met by controlled single-page, multi-page,
+  multi-column, rotated and metadata-bearing fixtures.
+* Page numbers are preserved. — Met by element, cell and warning source
+  locations with one-based page numbers.
+* Unsupported encrypted files fail clearly. — Met by the typed permanent
+  `encrypted_pdf` failure and user-readable explanation.
+* Empty extraction is detected. — Met for empty bytes, textless PDFs and
+  image-only PDFs with distinct typed outcomes.
+* Table behaviour is documented. — Met by the deterministic table contract,
+  loss-minimising duplicate rule and typed ambiguity warning above.
+* Representative fixtures are tested. — Met by deterministic ReportLab text,
+  layout, table, image, blank-page, crop/rotation and encrypted fixtures.
+* OCR is not silently performed unless intentionally implemented. — Met:
+  image-only content is warned or rejected and OCR is never invoked.
 
 Commit boundary
 
-git add apps/ai tests
+git add apps/ai IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-07-29-r10-s03-implement-pdf-extraction.md
 git commit -m "Add PDF text extraction"
 
 ⸻

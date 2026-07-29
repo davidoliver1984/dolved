@@ -9,6 +9,7 @@ dependencies = [
     "fastapi[standard]>=0.139.2",
     "httpx>=0.28.1",
     "jsonschema[format-nongpl]>=4.26.0",
+    "pdfplumber>=0.11.9",
     "pydantic-settings>=2.14.2",
 ]
 
@@ -18,6 +19,8 @@ dev = [
     "mypy>=2.3.0",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
+    "reportlab>=4.4.9",
     "ruff>=0.16.0",
     "types-jsonschema>=4.26.0",
+    "types-reportlab>=4.5.1.20260728",
 ]

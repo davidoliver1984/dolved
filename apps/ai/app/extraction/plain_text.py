@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from app.extraction.errors import ExtractionFailure, ExtractionFailureKind
+from app.extraction.limits import DEFAULT_MAX_SOURCE_BYTES
 from app.extraction.models import (
     ExtractedDocument,
     ExtractionContext,
@@ -8,8 +9,6 @@ from app.extraction.models import (
     ParagraphElement,
     TextSourceLocation,
 )
-
-DEFAULT_MAX_SOURCE_BYTES = 25 * 1024 * 1024
 
 
 @dataclass(frozen=True)
