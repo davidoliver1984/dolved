@@ -7852,20 +7852,190 @@ Extract paragraphs, headings and table content from DOCX documents.
 
 Status
 
-Not yet executed.
+Complete. Implemented, verified and approved on 2026-07-29.
+
+Agreed bounded implementation brief
+
+Use `python-docx` 1.2 for the initial DOCX implementation behind an
+implementation-neutral `DocxExtractor` protocol. The concrete
+`PythonDocxExtractor` accepts source bytes plus trusted `ExtractionContext`
+and returns the immutable canonical `ExtractedDocument`. Parser-specific
+package, document, paragraph, table, style and exception objects remain
+private to the adapter.
+
+Use `Document.iter_inner_content()` so top-level paragraphs and tables retain
+their actual body order. Preserve non-empty ordinary paragraphs as
+`ParagraphElement` values. Preserve explicit Word Heading 1 through Heading 9
+styles as typed `HeadingElement` values with their level; do not infer
+headings from font size, bold text or visual appearance.
+
+Represent top-level tables with the existing immutable `TableElement`,
+`TableRow` and `TableCell` contract. Produce a deliberate rectangular
+layout-grid representation: account for omitted leading and trailing grid
+columns, and accept python-docx's documented repeated-cell approximation for
+merged spans. Serialise table text with the same escaped TSV rules as PDF so
+complete text remains deterministic. Preserve cell text in document order;
+if a cell contains a nested table, flatten its text deterministically into
+that cell and emit a typed warning rather than silently discard it.
+
+Add precise parser-neutral `DocxSourceLocation` provenance using zero-based
+body block indexes plus optional row and column indexes for table cells.
+Element character ranges remain zero-based, end-exclusive Unicode indexes
+that slice directly against `ExtractedDocument.text`. DOCX has no dependable
+rendered page coordinates, so do not invent page numbers.
+
+Map available core properties into `ExtractedDocumentMetadata`. Use the same
+element separator as the other extractors. Page separators are not introduced
+because DOCX pagination is a rendering result rather than a stable property
+of the source package.
+
+Use the shared injectable 25 MiB source limit and an injectable
+5,000,000-character complete-text limit. Treat empty, corrupt, non-DOCX and
+password-protected/encrypted packages as stable typed permanent failures where
+the parser can distinguish them. A valid document without extractable
+paragraph or table text fails with `empty_content`.
+
+Generate deterministic representative fixtures with `python-docx` itself.
+Test ordered paragraphs, explicit heading levels, interleaved tables,
+metadata, cell provenance, merged and omitted-grid behaviour where practical,
+nested-table flattening, complete-text offsets, corrupt/empty inputs, resource
+limits, immutability and fresh element UUIDs.
+
+Do not extract images, perform OCR, include comments, resolve tracked-change
+markup outside python-docx's public body iteration, normalise content, connect
+the worker or object storage, persist output or chunk it. Unsupported or
+unrecognised content must fail clearly or produce an explicit warning; it
+must not disappear under a claim of complete semantic support.
+
+Implementation record
+
+The DOCX extraction package now exposes:
+
+* an implementation-neutral `DocxExtractor` protocol;
+* a minimal `create_docx_extractor()` composition function; and
+* a `PythonDocxExtractor` adapter, which owns every `python-docx` type and
+  exception used by production code.
+
+The dependency lock selected `python-docx` 1.2.0 and its existing `lxml`
+dependency. `lxml-stubs` 0.5.1 is development-only and keeps the repository
+MyPy gate explicit rather than suppressing parser exception types.
+
+Top-level paragraphs and tables are read through
+`Document.iter_inner_content()` in body order. Non-empty paragraphs remain
+`ParagraphElement` values. Paragraphs using explicit Heading 1 through
+Heading 9 style names or identifiers become immutable `HeadingElement`
+values with the corresponding level. Visual formatting alone never creates a
+heading.
+
+`DocxSourceLocation` records the zero-based body block index. Table-cell
+locations additionally record zero-based row and layout-grid column indexes.
+Element locations carry zero-based, end-exclusive complete-text offsets that
+slice directly against `ExtractedDocument.text`. DOCX page numbers are not
+invented because pagination depends on the renderer rather than the package
+content.
+
+The complete text joins top-level elements with `"\n\n"`. No page separator
+is added. Tables reuse the escaped TSV representation established in Stage
+10.3. Omitted layout-grid columns are padded explicitly, and python-docx's
+documented repeated-value approximation is retained for merged cells.
+Nested tables are flattened into their containing cell in document order and
+produce a `nested_table_flattened` warning.
+
+Available title, author, subject, keywords, creation date and modification
+date core properties are mapped into canonical document metadata. Embedded
+inline images are not treated as extracted content: usable surrounding text
+is retained and an `images_not_extracted` warning is emitted. A document
+without extractable paragraph or table text fails with `empty_content`.
+
+Stable permanent failures cover empty bytes, invalid packages,
+encrypted-or-legacy OLE Word packages, excessive source size and excessive
+complete text. The shared default source limit is 25 MiB and the injectable
+complete-text limit is 5,000,000 Unicode characters.
+
+Problems and corrections
+
+Initial static analysis identified four boundary issues without requiring a
+contract change: the fixture helper annotated the `Document()` factory rather
+than its returned type, the direct lxml exception import needed stubs, the
+internal heading representation required an explicit non-null guard before
+constructing `HeadingElement`, and one test needed to narrow an optional
+offset before arithmetic. These were corrected at their actual boundaries.
+
+One focused MyPy rerun encountered `sqlite3.OperationalError: disk I/O error`
+while opening generated parallel cache shards on the Docker bind mount. The
+same code passed immediately with an isolated cache, proving the failure was
+not a typing error. Only the generated `.mypy_cache/3.14` files were removed;
+the normal repository MyPy command was then rerun successfully and later
+passed again in the complete gate.
+
+Verification commands
+
+```bash
+docker compose run --rm --no-deps ai uv lock
+docker compose build ai worker
+docker compose up --detach --force-recreate --no-deps --wait ai worker
+docker compose exec -T ai uv run ruff format \
+  app/extraction tests/docx_fixtures.py tests/test_docx_extraction.py
+docker compose exec -T ai uv run ruff check \
+  app/extraction tests/docx_fixtures.py tests/test_docx_extraction.py
+docker compose exec -T ai uv run mypy \
+  app/extraction tests/docx_fixtures.py tests/test_docx_extraction.py
+docker compose exec -T ai uv run pytest \
+  tests/test_plain_text_extraction.py tests/test_pdf_extraction.py \
+  tests/test_docx_extraction.py -q
+make format-check
+make lint
+make typecheck
+make test
+make ps
+make aws-status
+```
+
+Verification evidence
+
+* The focused extraction suite passed all 49 tests: 14 plain-text, 19 PDF and
+  16 DOCX tests.
+* The complete Python suite passed all 91 tests and MyPy checked all 37 source
+  files without error.
+* Ruff reported all 38 files formatted and no lint violations.
+* Laravel Pint passed across 105 files, and Laravel passed 118 tests with 491
+  assertions.
+* The web application passed all 10 tests plus ESLint and TypeScript checks.
+* The rebuilt AI and worker images installed the locked DOCX dependencies and
+  started successfully.
+* All eight Compose processes were running; every service with a health check
+  was healthy.
+* LocalStack bucket, upload CORS, ingestion queue, dead-letter queue and
+  redrive policy verification passed.
+
+Deferred work
+
+* Images, OCR, comments and unsupported tracked-revision body content.
+* Rendered pagination or conversion to PDF.
+* Rich inline formatting, drawing geometry and Word layout reproduction.
+* Worker, object-storage, lifecycle and persistence integration.
+* Normalisation and chunking.
 
 Acceptance criteria
 
-* Paragraph text is extracted in order.
-* Heading information is retained.
-* Table content is represented deliberately.
-* Corrupt files fail clearly.
-* Source structure can support later citations.
-* Representative fixtures are tested.
+* Paragraph text is extracted in order. — Met by the interleaved
+  heading/paragraph/table/paragraph fixture and complete-text assertions.
+* Heading information is retained. — Met by typed heading elements and an
+  explicit Heading 2 style/level test without visual inference.
+* Table content is represented deliberately. — Met by immutable rows, cells,
+  provenance, escaped TSV, merged-cell behaviour and nested-table warnings.
+* Corrupt files fail clearly. — Met by stable typed `invalid_docx`,
+  `unsupported_word_package` and `empty_content` failures.
+* Source structure can support later citations. — Met by body-block and
+  table-cell indexes plus directly sliceable element character ranges.
+* Representative fixtures are tested. — Met by deterministic metadata,
+  ordered body, table, merged-cell, nested-table, image, empty and corrupt
+  fixtures plus boundary inputs.
 
 Commit boundary
 
-git add apps/ai tests
+git add apps/ai IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-07-29-r10-s04-implement-docx-extraction.md
 git commit -m "Add DOCX text extraction"
 
 ⸻

@@ -116,6 +116,38 @@ class PdfSourceLocation(SourceLocation):
         return self
 
 
+class DocxSourceLocation(SourceLocation):
+    """A location in the ordered DOCX document body."""
+
+    kind: Literal["docx"] = "docx"
+    body_block_index: int = Field(ge=0)
+    table_row_index: int | None = Field(default=None, ge=0)
+    table_column_index: int | None = Field(default=None, ge=0)
+    start_character: int | None = Field(default=None, ge=0)
+    end_character: int | None = Field(default=None, ge=0)
+
+    @model_validator(mode="after")
+    def validate_docx_ranges(self) -> DocxSourceLocation:
+        if (self.table_row_index is None) != (self.table_column_index is None):
+            raise ValueError(
+                "table_row_index and table_column_index must be provided together"
+            )
+
+        if (self.start_character is None) != (self.end_character is None):
+            raise ValueError(
+                "start_character and end_character must be provided together"
+            )
+
+        if (
+            self.start_character is not None
+            and self.end_character is not None
+            and self.end_character < self.start_character
+        ):
+            raise ValueError("end_character must not precede start_character")
+
+        return self
+
+
 class Element(ImmutableModel):
     id: UUID = Field(default_factory=uuid4)
     kind: str
@@ -126,6 +158,12 @@ class Element(ImmutableModel):
 class ParagraphElement(Element):
     kind: Literal["paragraph"] = "paragraph"
     text: NonEmptyString
+
+
+class HeadingElement(Element):
+    kind: Literal["heading"] = "heading"
+    text: NonEmptyString
+    level: int = Field(ge=1, le=9)
 
 
 class UnknownElement(Element):
