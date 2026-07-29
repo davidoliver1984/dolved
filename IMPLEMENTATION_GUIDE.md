@@ -8048,7 +8048,72 @@ Convert extractor-specific output into one deterministic normalised representati
 
 Status
 
-Not yet executed.
+Complete. Implemented, verified and approved on 2026-07-29.
+
+Agreed bounded implementation brief
+
+Add a pure `StructuralNormaliser` that consumes only immutable
+`ExtractedDocument` and produces a distinct immutable `NormalisedDocument`.
+It must not receive parser objects, mutate extraction output, chunk content or
+branch on source media type.
+
+The normalised contract records:
+
+* Workspace and Document identity;
+* source media type, extractor identity and metadata as provenance;
+* a versioned normaliser identity;
+* immutable normalised semantic elements;
+* deterministic complete text;
+* retained extraction warnings;
+* explicit normalisation changes; and
+* source-element UUID and source-location linkage for every derived element.
+
+Generate derived element UUIDs deterministically from normaliser version,
+source-element identity, semantic kind and normalised content. The same
+immutable extraction input must therefore produce the same complete
+normalised representation without requiring deterministic identity across
+separate extraction runs.
+
+Use the following explicit version-one rules:
+
+* apply Unicode NFC canonical composition;
+* convert Unicode space-separator characters to ASCII space;
+* normalise CRLF and CR to LF;
+* collapse horizontal spaces and tabs inside known paragraph and heading
+  content, trim line edges and reconcile repeated empty internal lines;
+* normalise table cells independently and rebuild the existing escaped TSV
+  table representation;
+* retain semantic kind, heading level, table structure, confidence, metadata,
+  warnings and source provenance;
+* remove a known element only when its normalised content is semantically
+  empty, recording the removal explicitly; and
+* preserve unknown future element types through a safe immutable fallback
+  containing their original kind, conservative text and canonical serialized
+  payload rather than failing unexpectedly.
+
+Treat repeated headers and footers conservatively. A paragraph is eligible
+only when PDF source-location provenance places it in the top or bottom 15%
+of its page, the same normalized text occurs at the corresponding boundary
+of at least three content-bearing pages, and every content-bearing page has
+the same candidate. Do not use source media type or filename as a switch.
+Never remove headings or tables under this rule. Record every suppressed
+source element and retain page traceability.
+
+Preserve PDF page boundaries in complete text from source-location page
+numbers, including gaps for blank pages where extraction provenance makes
+them knowable. Preserve DOCX section structure through heading elements.
+Other formats retain their ordered element boundaries. Normalised element
+character ranges must be zero-based, end-exclusive indexes that directly
+slice `NormalisedDocument.text`.
+
+Test independently from extraction libraries. Cover immutability, unchanged
+source input, deterministic output and identifiers, Unicode and whitespace,
+semantic structure, table rebuilding, warning and metadata retention, source
+linkage, conservative repeated-boundary detection, blank PDF pages, unknown
+element fallback, semantically empty removal and direct-slice offsets.
+
+Do not persist output, connect the worker, alter lifecycle state, select
+chunks, add embeddings or implement source-format-specific normalisers.
 
 Planned behaviour
 
@@ -8060,17 +8125,148 @@ Planned behaviour
 * deterministic output;
 * warning retention.
 
+Implementation record
+
+The new `app.normalisation` package contains immutable normalisation models
+and a pure `StructuralNormaliser`. It imports the canonical extraction
+contract but no parser library. The source `ExtractedDocument` is never
+modified.
+
+`NormalisedDocument` distinguishes the new representation explicitly. It
+retains Workspace and Document identity, source media type and byte size,
+extractor identity, metadata and extraction warnings. It adds normaliser name
+and version, deterministic complete text, immutable derived elements and
+explicit `NormalisationChange` records.
+
+Each derived element has:
+
+* a UUIDv5 generated from a private fixed namespace, normaliser version,
+  source element UUID, semantic kind and normalized text;
+* one or more source-element UUIDs;
+* one or more immutable source locations;
+* normalized complete-text offsets;
+* retained extraction confidence; and
+* its semantic structure, including heading level or table rows and cells.
+
+UUIDv5 makes repeated normalisation of the same immutable extraction output
+fully deterministic. A separate extraction run still creates new source
+element UUIDs in accordance with ADR-0010, so no cross-extraction identity
+claim is introduced.
+
+Version-one known-text rules apply NFC composition, CR/LF normalization,
+Unicode space-separator replacement, horizontal whitespace collapse, line
+edge trimming and reduction of three or more consecutive line feeds to two.
+They do not apply Unicode compatibility normalization. Table cells are
+normalised independently and the table's escaped TSV complete text is then
+rebuilt from those cells.
+
+Unknown future element subtypes are converted to
+`NormalisedUnknownElement`. Their source kind, canonical JSON payload,
+source identity and source location are retained. Any available text receives
+only conservative NFC and CR/LF normalization, avoiding known-type whitespace
+policy being imposed on unrecognised semantics.
+
+Known elements that become empty under the explicit rules are removed with a
+`semantically_empty_element_removed` change referencing the source UUID.
+Extraction warnings are copied intact into the distinct
+`extraction_warnings` collection rather than being renamed or discarded.
+
+Repeated PDF headers and footers are removed only when all of these conditions
+hold:
+
+* at least three content-bearing pages are represented;
+* every represented page contains at least two elements;
+* the candidate is a paragraph and is respectively first or last on the
+  page;
+* geometry places it in the top or bottom 15% of the page; and
+* normalized candidate text is identical and non-empty on every represented
+  page.
+
+The rule inspects `PdfSourceLocation` provenance rather than source media type.
+It never suppresses headings or tables. Each group of removed source UUIDs is
+recorded as `repeated_header_removed` or `repeated_footer_removed`.
+
+PDF page transitions use the existing `"\n\n\f\n\n"` separator. A jump from
+page one to page three emits two separators, retaining the blank middle page.
+Leading and trailing page gaps are retained when page provenance makes them
+knowable. Non-page formats use the standard `"\n\n"` element separator, and
+DOCX heading elements retain section structure.
+
+Problems and corrections
+
+The first table-normalisation test accidentally supplied an already-composed
+`é` followed by another combining acute accent. NFC correctly retained the
+double accent, exposing that the fixture did not represent the intended
+decomposed form. The fixture was corrected to `e` plus combining acute; the
+test now proves canonical composition to one `é`.
+
+No production correction or dependency was required after focused review.
+
+Verification commands
+
+```bash
+docker compose exec -T ai uv run ruff format \
+  app/normalisation tests/test_structural_normalisation.py
+docker compose exec -T ai uv run ruff check \
+  app/normalisation tests/test_structural_normalisation.py
+docker compose exec -T ai uv run mypy \
+  app/normalisation tests/test_structural_normalisation.py
+docker compose exec -T ai uv run pytest \
+  tests/test_plain_text_extraction.py tests/test_pdf_extraction.py \
+  tests/test_docx_extraction.py tests/test_structural_normalisation.py -q
+make format-check
+make lint
+make typecheck
+make test
+make ps
+make aws-status
+```
+
+Verification evidence
+
+* All 12 focused structural-normalisation tests passed.
+* The combined extraction and normalisation suite passed all 61 tests.
+* The complete Python suite passed all 103 tests and MyPy checked all 41
+  source files without error.
+* Ruff reported all 42 files formatted and no lint violations.
+* Laravel Pint passed across 105 files, and Laravel passed 118 tests with 491
+  assertions.
+* The web application passed all 10 tests plus ESLint and TypeScript checks.
+* All eight Compose processes were running; every service with a health check
+  was healthy.
+* LocalStack bucket, upload CORS, ingestion queue, dead-letter queue and
+  redrive policy verification passed.
+
+Deferred work
+
+* Persistence and worker integration for extraction and normalisation output.
+* Additional semantic element subtypes as real extractors begin producing
+  them.
+* Richer list, code, quote, hyperlink, footnote and image-caption
+  normalisation rules.
+* Chunking, which begins only after R11-S01 defines its accepted contract.
+
 Acceptance criteria
 
-* Equivalent input produces deterministic output.
-* Source-location mappings remain valid.
-* Structural boundaries are not discarded unnecessarily.
-* Normalisation is tested independently.
-* Raw extraction and normalised content can be distinguished.
+* Equivalent input produces deterministic output. — Met by complete model
+  equality and UUIDv5 identity across repeated runs of the same immutable
+  extraction input.
+* Source-location mappings remain valid. — Met by retained source UUIDs and
+  immutable source locations plus separate directly sliceable normalized
+  offsets.
+* Structural boundaries are not discarded unnecessarily. — Met by preserved
+  semantic types, heading levels, table structure, PDF page gaps and
+  conservative repeated-boundary suppression.
+* Normalisation is tested independently. — Met by 12 tests constructed solely
+  from canonical extraction models without invoking any source parser.
+* Raw extraction and normalised content can be distinguished. — Met by
+  separate immutable contracts, explicit source extractor and normaliser
+  identities, and a test proving the extraction input is unchanged.
 
 Commit boundary
 
-git add apps/ai tests
+git add apps/ai IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-07-29-r10-s05-normalise-extracted-content.md
 git commit -m "Normalise extracted document content"
 
 ⸻
