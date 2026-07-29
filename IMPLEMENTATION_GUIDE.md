@@ -7360,32 +7360,99 @@ Define the internal representation produced by document extractors.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-29.
 
-Planned fields
+### Decision
 
-* document identifier;
-* tenant identifier;
-* source media type;
-* extracted text;
-* page or section boundaries;
-* table metadata where available;
-* source offsets;
-* warnings;
-* extractor name and version.
+The canonical extracted-document architecture was accepted and recorded
+before any Phase 10 implementation code in:
+
+```text
+docs/adr/0010-define-the-canonical-extracted-document-contract.md
+```
+
+Every extractor — plain text, PDF, DOCX, and any future format — produces
+exactly one canonical, immutable `ExtractedDocument` representation, composed
+of a common, extensible `Element` model (`HeadingElement`, `ParagraphElement`,
+`ListElement`, `TableElement`, `CodeBlockElement`, `QuoteElement`,
+`HyperlinkElement`, `ImageCaptionElement`, `HorizontalRuleElement`,
+`FootnoteElement`, open to future element types without downstream redesign).
+Extraction, normalisation and chunking each own exactly one responsibility:
+each extractor owns its parser-specific objects privately and maps them into
+canonical `ExtractedDocument`; normalisation consumes that representation and
+produces a new immutable `NormalisedDocument` through deterministic structural
+normalisation without discarding information or chunking; chunking consumes
+only `NormalisedDocument`.
+
+Source format remains available as provenance for citations, auditing and
+debugging, but chunking must not branch on it. Public Workspace and Document
+identities remain at document level to preserve tenant and aggregate context.
+
+The governing principle is that extraction is a loss-minimisation stage, not
+a simplification stage — any lossy transformation is deferred to whichever
+later pipeline stage has enough context to make an informed trade-off, because
+information can always be discarded later but never recreated. Reading order,
+document hierarchy, page numbering, provenance, extraction confidence and
+document metadata are preserved wherever the source format makes it
+practical. Every semantic element carries a stable identifier. Extraction
+failures are distinguished as transient or permanent, with permanent failures
+carrying both a machine-readable failure code and a human-readable
+explanation, every failure audited and non-fatal warnings retained.
+
+`ExtractedDocument` and `NormalisedDocument` are immutable. A new extraction
+run creates new element UUIDs; deterministic identifiers across re-extraction
+are not required. Derived representations preserve traceability rather than
+mutating a previous stage's output.
+
+The full set of agreed decisions, rejected alternatives (an ad hoc
+per-extractor structure, flattening to plain text at extraction time, adopting
+a third-party parser's object model as canonical, mutable in-place pipeline
+objects, an untyped generic `Block` shape, deferring provenance, and combining
+extraction with chunking) and consequences is recorded in ADR 0010 rather than
+duplicated here.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No extractors,
+models, schemas or pipeline code were introduced. Verification consisted of:
+
+* inspecting `CONTRIBUTING.md`, `IMPLEMENTATION_GUIDE.md`, `tasks.json`,
+  `CLAUDE.md` and every existing ADR (0001–0009) before drafting, to preserve
+  numbering, structure, terminology and cross-ADR consistency — in
+  particular using "workspace" throughout rather than the stale "tenant"
+  wording this stage's own placeholder text still used, to stay consistent
+  with ADR 0006;
+* two initial rounds of architecture review plus a final boundary review that
+  separated private parser models, `ExtractedDocument`, `NormalisedDocument`
+  and chunking responsibilities (see the session journal);
+* checking the ADR against each Stage 10.1 acceptance criterion below; and
+* running the repository-wide formatting, linting, type-checking, test,
+  process and LocalStack gates: Laravel 118 tests (491 assertions), Python 42
+  tests and web 10 tests all passed.
 
 Acceptance criteria
 
-* The representation is typed.
-* Source locations can later support citations.
-* Extraction warnings are retained.
-* Empty and malformed documents are represented explicitly.
-* Tenant context is preserved.
-* Extractor version information is captured.
+* The representation is typed. — Met: a canonical `ExtractedDocument`
+  composed of a typed, extensible `Element` model, rather than an untyped
+  block shape (explicitly rejected as an alternative).
+* Source locations can later support citations. — Met: provenance and page
+  numbering are preserved as an architectural requirement on every element.
+* Extraction warnings are retained. — Met: covered as distinct non-fatal
+  diagnostics on the immutable extraction output; exact warning
+  representation is deferred to Stage 10.2 onward.
+* Empty and malformed documents are represented explicitly. — Met: covered
+  by the permanent-failure requirement (machine-readable code and
+  human-readable explanation), rather than being silently absent.
+* Tenant context is preserved. — Superseded by Workspace context: immutable
+  public Workspace and Document identities are preserved at document level,
+  consistent with ADR 0006, rather than duplicated on every element.
+* Extractor version information is captured. — Met: provenance is required
+  to support debugging, auditing and replay, which includes extractor
+  identity and version; exact fields are deferred to Stage 10.2 onward.
 
 Commit boundary
 
-git add apps/ai contracts
+git add docs/adr docs/journal tasks.json IMPLEMENTATION_GUIDE.md
 git commit -m "Define extracted document representation"
 
 ⸻

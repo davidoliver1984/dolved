@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R10",
-    "current_session": "R10-S01",
-    "next_action": "Begin the R10-S01 architecture discussion for the extracted-document contract; do not implement until its decisions and bounded brief are agreed.",
-    "completed_through": "R09-S03",
+    "current_session": "R10-S02",
+    "next_action": "Review and agree the bounded R10-S02 plain-text extraction implementation brief before changing application code.",
+    "completed_through": "R10-S01",
     "completed_phase_count": 10,
     "total_phase_count": 22
   },
@@ -1626,8 +1626,8 @@
           "guide_stage": "Stage 10.1 \u2014 Define Extracted Document Contract",
           "title": "Define Extracted Document Contract",
           "guide_start_line": 7355,
-          "guide_end_line": 7392,
-          "status": "not_started",
+          "guide_end_line": 7459,
+          "status": "completed",
           "objective": "Define the internal representation produced by document extractors.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
@@ -1636,7 +1636,7 @@
             "stage": "Stage 10.1 \u2014 Define Extracted Document Contract",
             "source_lines": {
               "start": 7355,
-              "end": 7392
+              "end": 7459
             }
           },
           "workflow": [
@@ -1658,16 +1658,25 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r10-s01-define-extracted-document-contract.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Accepted ADR-0010 defining the loss-minimising canonical extracted-document architecture",
+            "Final clarification separating private parser models, immutable ExtractedDocument, immutable NormalisedDocument and format-independent chunking",
+            "Fresh element UUIDs per extraction run with deterministic cross-extraction identity explicitly deferred",
+            "ADR index and IMPLEMENTATION_GUIDE.md Stage 10.1 decision and acceptance record",
+            "docs/adr/gpt_drafts/r10-s01.md, r10-s01-reviewed.md and r10-s01-final-amends.md",
+            "docs/journal/2026-07-29-r10-s01-define-extracted-document-contract.md",
+            "Documentation consistency, tracker JSON and guide references passed",
+            "Repository verification passed: Laravel 118 tests (491 assertions), Python 42 tests, web 10 tests, formatting, linting, type checking, processes and LocalStack"
+          ]
         },
         {
           "id": "R10-S02",
           "guide_stage": "Stage 10.2 \u2014 Implement Plain Text Extraction",
           "title": "Implement Plain Text Extraction",
-          "guide_start_line": 7393,
-          "guide_end_line": 7418,
+          "guide_start_line": 7460,
+          "guide_end_line": 7485,
           "status": "not_started",
           "objective": "Support ingestion of UTF-8 plain-text documents.",
           "session_mode": "implementation",
@@ -1676,8 +1685,8 @@
             "phase": "Phase 10 \u2014 Text Extraction and Normalisation",
             "stage": "Stage 10.2 \u2014 Implement Plain Text Extraction",
             "source_lines": {
-              "start": 7393,
-              "end": 7418
+              "start": 7460,
+              "end": 7485
             }
           },
           "workflow": [
@@ -1707,8 +1716,8 @@
           "id": "R10-S03",
           "guide_stage": "Stage 10.3 \u2014 Implement PDF Extraction",
           "title": "Implement PDF Extraction",
-          "guide_start_line": 7419,
-          "guide_end_line": 7456,
+          "guide_start_line": 7486,
+          "guide_end_line": 7523,
           "status": "not_started",
           "objective": "Extract text and source-location metadata from PDFs.",
           "session_mode": "implementation",
@@ -1717,8 +1726,8 @@
             "phase": "Phase 10 \u2014 Text Extraction and Normalisation",
             "stage": "Stage 10.3 \u2014 Implement PDF Extraction",
             "source_lines": {
-              "start": 7419,
-              "end": 7456
+              "start": 7486,
+              "end": 7523
             }
           },
           "workflow": [
@@ -1748,8 +1757,8 @@
           "id": "R10-S04",
           "guide_stage": "Stage 10.4 \u2014 Implement DOCX Extraction",
           "title": "Implement DOCX Extraction",
-          "guide_start_line": 7457,
-          "guide_end_line": 7482,
+          "guide_start_line": 7524,
+          "guide_end_line": 7549,
           "status": "not_started",
           "objective": "Extract paragraphs, headings and table content from DOCX documents.",
           "session_mode": "implementation",
@@ -1758,8 +1767,8 @@
             "phase": "Phase 10 \u2014 Text Extraction and Normalisation",
             "stage": "Stage 10.4 \u2014 Implement DOCX Extraction",
             "source_lines": {
-              "start": 7457,
-              "end": 7482
+              "start": 7524,
+              "end": 7549
             }
           },
           "workflow": [
@@ -1789,8 +1798,8 @@
           "id": "R10-S05",
           "guide_stage": "Stage 10.5 \u2014 Normalise Extracted Content",
           "title": "Normalise Extracted Content",
-          "guide_start_line": 7483,
-          "guide_end_line": 7517,
+          "guide_start_line": 7550,
+          "guide_end_line": 7584,
           "status": "not_started",
           "objective": "Convert extractor-specific output into one deterministic normalised representation.",
           "session_mode": "implementation",
@@ -1799,8 +1808,8 @@
             "phase": "Phase 10 \u2014 Text Extraction and Normalisation",
             "stage": "Stage 10.5 \u2014 Normalise Extracted Content",
             "source_lines": {
-              "start": 7483,
-              "end": 7517
+              "start": 7550,
+              "end": 7584
             }
           },
           "workflow": [
@@ -1827,8 +1836,8 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 7517,
-      "status": "not_started",
+      "guide_end_line": 7584,
+      "status": "in_progress",
       "objective": "Convert supported source documents into a consistent internal representation with traceable source metadata.",
       "gate": {
         "id": "R10-GATE",
@@ -1848,14 +1857,14 @@
       "id": "R11",
       "guide_phase": "Phase 11 \u2014 Chunking",
       "title": "Chunking",
-      "guide_start_line": 7518,
+      "guide_start_line": 7585,
       "sessions": [
         {
           "id": "R11-S01",
           "guide_stage": "Stage 11.1 \u2014 Define Chunk Contract",
           "title": "Define Chunk Contract",
-          "guide_start_line": 7526,
-          "guide_end_line": 7565,
+          "guide_start_line": 7593,
+          "guide_end_line": 7632,
           "status": "not_started",
           "objective": "Define the fields and invariants of a document chunk.",
           "session_mode": "architecture",
@@ -1864,8 +1873,8 @@
             "phase": "Phase 11 \u2014 Chunking",
             "stage": "Stage 11.1 \u2014 Define Chunk Contract",
             "source_lines": {
-              "start": 7526,
-              "end": 7565
+              "start": 7593,
+              "end": 7632
             }
           },
           "workflow": [
@@ -1895,8 +1904,8 @@
           "id": "R11-S02",
           "guide_stage": "Stage 11.2 \u2014 Implement Baseline Chunker",
           "title": "Implement Baseline Chunker",
-          "guide_start_line": 7566,
-          "guide_end_line": 7603,
+          "guide_start_line": 7633,
+          "guide_end_line": 7670,
           "status": "not_started",
           "objective": "Create a deterministic baseline chunking strategy.",
           "session_mode": "implementation",
@@ -1905,8 +1914,8 @@
             "phase": "Phase 11 \u2014 Chunking",
             "stage": "Stage 11.2 \u2014 Implement Baseline Chunker",
             "source_lines": {
-              "start": 7566,
-              "end": 7603
+              "start": 7633,
+              "end": 7670
             }
           },
           "workflow": [
@@ -1936,8 +1945,8 @@
           "id": "R11-S03",
           "guide_stage": "Stage 11.3 \u2014 Evaluate Chunking Quality",
           "title": "Evaluate Chunking Quality",
-          "guide_start_line": 7604,
-          "guide_end_line": 7640,
+          "guide_start_line": 7671,
+          "guide_end_line": 7707,
           "status": "not_started",
           "objective": "Create an evaluation corpus and measure whether chunks preserve useful retrieval context.",
           "session_mode": "implementation",
@@ -1946,8 +1955,8 @@
             "phase": "Phase 11 \u2014 Chunking",
             "stage": "Stage 11.3 \u2014 Evaluate Chunking Quality",
             "source_lines": {
-              "start": 7604,
-              "end": 7640
+              "start": 7671,
+              "end": 7707
             }
           },
           "workflow": [
@@ -1974,7 +1983,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 7640,
+      "guide_end_line": 7707,
       "status": "not_started",
       "objective": "Split normalised documents into retrieval units while preserving enough context and source metadata for accurate answers and citations.",
       "gate": {
@@ -1995,14 +2004,14 @@
       "id": "R12",
       "guide_phase": "Phase 12 \u2014 Embeddings",
       "title": "Embeddings",
-      "guide_start_line": 7641,
+      "guide_start_line": 7708,
       "sessions": [
         {
           "id": "R12-S01",
           "guide_stage": "Stage 12.1 \u2014 Define Embedding Provider Boundary",
           "title": "Define Embedding Provider Boundary",
-          "guide_start_line": 7649,
-          "guide_end_line": 7690,
+          "guide_start_line": 7716,
+          "guide_end_line": 7757,
           "status": "not_started",
           "objective": "Introduce a provider-neutral interface for embedding text.",
           "session_mode": "architecture",
@@ -2011,8 +2020,8 @@
             "phase": "Phase 12 \u2014 Embeddings",
             "stage": "Stage 12.1 \u2014 Define Embedding Provider Boundary",
             "source_lines": {
-              "start": 7649,
-              "end": 7690
+              "start": 7716,
+              "end": 7757
             }
           },
           "workflow": [
@@ -2042,8 +2051,8 @@
           "id": "R12-S02",
           "guide_stage": "Stage 12.2 \u2014 Implement Embedding Generation",
           "title": "Implement Embedding Generation",
-          "guide_start_line": 7691,
-          "guide_end_line": 7718,
+          "guide_start_line": 7758,
+          "guide_end_line": 7785,
           "status": "not_started",
           "objective": "Generate embeddings for chunks in controlled batches.",
           "session_mode": "implementation",
@@ -2052,8 +2061,8 @@
             "phase": "Phase 12 \u2014 Embeddings",
             "stage": "Stage 12.2 \u2014 Implement Embedding Generation",
             "source_lines": {
-              "start": 7691,
-              "end": 7718
+              "start": 7758,
+              "end": 7785
             }
           },
           "workflow": [
@@ -2080,7 +2089,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 7718,
+      "guide_end_line": 7785,
       "status": "not_started",
       "objective": "Generate reproducible vector representations while keeping model providers replaceable.",
       "gate": {
@@ -2101,14 +2110,14 @@
       "id": "R13",
       "guide_phase": "Phase 13 \u2014 Vector Storage",
       "title": "Vector Storage",
-      "guide_start_line": 7719,
+      "guide_start_line": 7786,
       "sessions": [
         {
           "id": "R13-S01",
           "guide_stage": "Stage 13.1 \u2014 Define Vector Database Architecture",
           "title": "Define Vector Database Architecture",
-          "guide_start_line": 7727,
-          "guide_end_line": 7768,
+          "guide_start_line": 7794,
+          "guide_end_line": 7835,
           "status": "not_started",
           "objective": "Confirm Qdrant as the vector store and document collection, tenancy and filtering strategy.",
           "session_mode": "architecture",
@@ -2117,8 +2126,8 @@
             "phase": "Phase 13 \u2014 Vector Storage",
             "stage": "Stage 13.1 \u2014 Define Vector Database Architecture",
             "source_lines": {
-              "start": 7727,
-              "end": 7768
+              "start": 7794,
+              "end": 7835
             }
           },
           "workflow": [
@@ -2148,8 +2157,8 @@
           "id": "R13-S02",
           "guide_stage": "Stage 13.2 \u2014 Add Qdrant Development Service",
           "title": "Add Qdrant Development Service",
-          "guide_start_line": 7769,
-          "guide_end_line": 7799,
+          "guide_start_line": 7836,
+          "guide_end_line": 7866,
           "status": "not_started",
           "objective": "Add Qdrant to Docker Compose with persistent local storage and health checks.",
           "session_mode": "implementation",
@@ -2158,8 +2167,8 @@
             "phase": "Phase 13 \u2014 Vector Storage",
             "stage": "Stage 13.2 \u2014 Add Qdrant Development Service",
             "source_lines": {
-              "start": 7769,
-              "end": 7799
+              "start": 7836,
+              "end": 7866
             }
           },
           "workflow": [
@@ -2189,8 +2198,8 @@
           "id": "R13-S03",
           "guide_stage": "Stage 13.3 \u2014 Persist Chunk Vectors",
           "title": "Persist Chunk Vectors",
-          "guide_start_line": 7800,
-          "guide_end_line": 7827,
+          "guide_start_line": 7867,
+          "guide_end_line": 7894,
           "status": "not_started",
           "objective": "Store embedded chunks and retrieval metadata in Qdrant.",
           "session_mode": "implementation",
@@ -2199,8 +2208,8 @@
             "phase": "Phase 13 \u2014 Vector Storage",
             "stage": "Stage 13.3 \u2014 Persist Chunk Vectors",
             "source_lines": {
-              "start": 7800,
-              "end": 7827
+              "start": 7867,
+              "end": 7894
             }
           },
           "workflow": [
@@ -2230,8 +2239,8 @@
           "id": "R13-S04",
           "guide_stage": "Stage 13.4 \u2014 Complete Ingestion Pipeline",
           "title": "Complete Ingestion Pipeline",
-          "guide_start_line": 7828,
-          "guide_end_line": 7855,
+          "guide_start_line": 7895,
+          "guide_end_line": 7922,
           "status": "not_started",
           "objective": "Connect upload, queue consumption, extraction, normalisation, chunking, embedding and vector persistence.",
           "session_mode": "implementation",
@@ -2240,8 +2249,8 @@
             "phase": "Phase 13 \u2014 Vector Storage",
             "stage": "Stage 13.4 \u2014 Complete Ingestion Pipeline",
             "source_lines": {
-              "start": 7828,
-              "end": 7855
+              "start": 7895,
+              "end": 7922
             }
           },
           "workflow": [
@@ -2268,7 +2277,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 7855,
+      "guide_end_line": 7922,
       "status": "not_started",
       "objective": "Persist tenant-isolated chunk vectors and metadata in a dedicated vector database.",
       "gate": {
@@ -2289,14 +2298,14 @@
       "id": "R14",
       "guide_phase": "Phase 14 \u2014 Retrieval",
       "title": "Retrieval",
-      "guide_start_line": 7856,
+      "guide_start_line": 7923,
       "sessions": [
         {
           "id": "R14-S01",
           "guide_stage": "Stage 14.1 \u2014 Define Retrieval Contract",
           "title": "Define Retrieval Contract",
-          "guide_start_line": 7864,
-          "guide_end_line": 7907,
+          "guide_start_line": 7931,
+          "guide_end_line": 7974,
           "status": "not_started",
           "objective": "Define the input, output and diagnostics of the retrieval subsystem.",
           "session_mode": "architecture",
@@ -2305,8 +2314,8 @@
             "phase": "Phase 14 \u2014 Retrieval",
             "stage": "Stage 14.1 \u2014 Define Retrieval Contract",
             "source_lines": {
-              "start": 7864,
-              "end": 7907
+              "start": 7931,
+              "end": 7974
             }
           },
           "workflow": [
@@ -2336,8 +2345,8 @@
           "id": "R14-S02",
           "guide_stage": "Stage 14.2 \u2014 Implement Semantic Retrieval",
           "title": "Implement Semantic Retrieval",
-          "guide_start_line": 7908,
-          "guide_end_line": 7934,
+          "guide_start_line": 7975,
+          "guide_end_line": 8001,
           "status": "not_started",
           "objective": "Embed a user query and retrieve tenant-filtered chunks from Qdrant.",
           "session_mode": "implementation",
@@ -2346,8 +2355,8 @@
             "phase": "Phase 14 \u2014 Retrieval",
             "stage": "Stage 14.2 \u2014 Implement Semantic Retrieval",
             "source_lines": {
-              "start": 7908,
-              "end": 7934
+              "start": 7975,
+              "end": 8001
             }
           },
           "workflow": [
@@ -2377,8 +2386,8 @@
           "id": "R14-S03",
           "guide_stage": "Stage 14.3 \u2014 Add Retrieval Evaluation",
           "title": "Add Retrieval Evaluation",
-          "guide_start_line": 7935,
-          "guide_end_line": 7968,
+          "guide_start_line": 8002,
+          "guide_end_line": 8035,
           "status": "not_started",
           "objective": "Measure retrieval quality against a curated question-and-source dataset.",
           "session_mode": "implementation",
@@ -2387,8 +2396,8 @@
             "phase": "Phase 14 \u2014 Retrieval",
             "stage": "Stage 14.3 \u2014 Add Retrieval Evaluation",
             "source_lines": {
-              "start": 7935,
-              "end": 7968
+              "start": 8002,
+              "end": 8035
             }
           },
           "workflow": [
@@ -2418,8 +2427,8 @@
           "id": "R14-S04",
           "guide_stage": "Stage 14.4 \u2014 Introduce Retrieval Enhancements",
           "title": "Introduce Retrieval Enhancements",
-          "guide_start_line": 7969,
-          "guide_end_line": 8004,
+          "guide_start_line": 8036,
+          "guide_end_line": 8071,
           "status": "not_started",
           "objective": "Evaluate enhancements only after the semantic baseline is measured.",
           "session_mode": "implementation",
@@ -2428,8 +2437,8 @@
             "phase": "Phase 14 \u2014 Retrieval",
             "stage": "Stage 14.4 \u2014 Introduce Retrieval Enhancements",
             "source_lines": {
-              "start": 7969,
-              "end": 8004
+              "start": 8036,
+              "end": 8071
             }
           },
           "workflow": [
@@ -2456,7 +2465,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 8004,
+      "guide_end_line": 8071,
       "status": "not_started",
       "objective": "Retrieve relevant, tenant-safe source chunks for a user query.",
       "gate": {
@@ -2477,14 +2486,14 @@
       "id": "R15",
       "guide_phase": "Phase 15 \u2014 Grounded Generation",
       "title": "Grounded Generation",
-      "guide_start_line": 8005,
+      "guide_start_line": 8072,
       "sessions": [
         {
           "id": "R15-S01",
           "guide_stage": "Stage 15.1 \u2014 Define Generation Provider Boundary",
           "title": "Define Generation Provider Boundary",
-          "guide_start_line": 8013,
-          "guide_end_line": 8054,
+          "guide_start_line": 8080,
+          "guide_end_line": 8121,
           "status": "not_started",
           "objective": "Create a provider-neutral interface for chat or completion models.",
           "session_mode": "architecture",
@@ -2493,8 +2502,8 @@
             "phase": "Phase 15 \u2014 Grounded Generation",
             "stage": "Stage 15.1 \u2014 Define Generation Provider Boundary",
             "source_lines": {
-              "start": 8013,
-              "end": 8054
+              "start": 8080,
+              "end": 8121
             }
           },
           "workflow": [
@@ -2524,8 +2533,8 @@
           "id": "R15-S02",
           "guide_stage": "Stage 15.2 \u2014 Build Grounded Prompt Assembly",
           "title": "Build Grounded Prompt Assembly",
-          "guide_start_line": 8055,
-          "guide_end_line": 8090,
+          "guide_start_line": 8122,
+          "guide_end_line": 8157,
           "status": "not_started",
           "objective": "Construct prompts from the user query, tenant-safe retrieved chunks and explicit grounding instructions.",
           "session_mode": "implementation",
@@ -2534,8 +2543,8 @@
             "phase": "Phase 15 \u2014 Grounded Generation",
             "stage": "Stage 15.2 \u2014 Build Grounded Prompt Assembly",
             "source_lines": {
-              "start": 8055,
-              "end": 8090
+              "start": 8122,
+              "end": 8157
             }
           },
           "workflow": [
@@ -2565,8 +2574,8 @@
           "id": "R15-S03",
           "guide_stage": "Stage 15.3 \u2014 Generate Answers with Citations",
           "title": "Generate Answers with Citations",
-          "guide_start_line": 8091,
-          "guide_end_line": 8117,
+          "guide_start_line": 8158,
+          "guide_end_line": 8184,
           "status": "not_started",
           "objective": "Produce answers that cite retrieved source locations.",
           "session_mode": "implementation",
@@ -2575,8 +2584,8 @@
             "phase": "Phase 15 \u2014 Grounded Generation",
             "stage": "Stage 15.3 \u2014 Generate Answers with Citations",
             "source_lines": {
-              "start": 8091,
-              "end": 8117
+              "start": 8158,
+              "end": 8184
             }
           },
           "workflow": [
@@ -2606,8 +2615,8 @@
           "id": "R15-S04",
           "guide_stage": "Stage 15.4 \u2014 Add Answer Evaluation",
           "title": "Add Answer Evaluation",
-          "guide_start_line": 8118,
-          "guide_end_line": 8154,
+          "guide_start_line": 8185,
+          "guide_end_line": 8221,
           "status": "not_started",
           "objective": "Evaluate groundedness, citation correctness and answer usefulness.",
           "session_mode": "implementation",
@@ -2616,8 +2625,8 @@
             "phase": "Phase 15 \u2014 Grounded Generation",
             "stage": "Stage 15.4 \u2014 Add Answer Evaluation",
             "source_lines": {
-              "start": 8118,
-              "end": 8154
+              "start": 8185,
+              "end": 8221
             }
           },
           "workflow": [
@@ -2644,7 +2653,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 8154,
+      "guide_end_line": 8221,
       "status": "not_started",
       "objective": "Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.",
       "gate": {
@@ -2665,14 +2674,14 @@
       "id": "R16",
       "guide_phase": "Phase 16 \u2014 Conversation and Streaming",
       "title": "Conversation and Streaming",
-      "guide_start_line": 8155,
+      "guide_start_line": 8222,
       "sessions": [
         {
           "id": "R16-S01",
           "guide_stage": "Stage 16.1 \u2014 Define Conversation Domain",
           "title": "Define Conversation Domain",
-          "guide_start_line": 8163,
-          "guide_end_line": 8198,
+          "guide_start_line": 8230,
+          "guide_end_line": 8265,
           "status": "not_started",
           "objective": "Model conversations, messages, citations and generation metadata.",
           "session_mode": "architecture",
@@ -2681,8 +2690,8 @@
             "phase": "Phase 16 \u2014 Conversation and Streaming",
             "stage": "Stage 16.1 \u2014 Define Conversation Domain",
             "source_lines": {
-              "start": 8163,
-              "end": 8198
+              "start": 8230,
+              "end": 8265
             }
           },
           "workflow": [
@@ -2712,8 +2721,8 @@
           "id": "R16-S02",
           "guide_stage": "Stage 16.2 \u2014 Implement Chat Orchestration API",
           "title": "Implement Chat Orchestration API",
-          "guide_start_line": 8199,
-          "guide_end_line": 8235,
+          "guide_start_line": 8266,
+          "guide_end_line": 8302,
           "status": "not_started",
           "objective": "Coordinate retrieval and generation through a stable Laravel-facing API.",
           "session_mode": "implementation",
@@ -2722,8 +2731,8 @@
             "phase": "Phase 16 \u2014 Conversation and Streaming",
             "stage": "Stage 16.2 \u2014 Implement Chat Orchestration API",
             "source_lines": {
-              "start": 8199,
-              "end": 8235
+              "start": 8266,
+              "end": 8302
             }
           },
           "workflow": [
@@ -2753,8 +2762,8 @@
           "id": "R16-S03",
           "guide_stage": "Stage 16.3 \u2014 Implement Streaming Responses",
           "title": "Implement Streaming Responses",
-          "guide_start_line": 8236,
-          "guide_end_line": 8273,
+          "guide_start_line": 8303,
+          "guide_end_line": 8340,
           "status": "not_started",
           "objective": "Stream generated answer tokens or events to the browser.",
           "session_mode": "implementation",
@@ -2763,8 +2772,8 @@
             "phase": "Phase 16 \u2014 Conversation and Streaming",
             "stage": "Stage 16.3 \u2014 Implement Streaming Responses",
             "source_lines": {
-              "start": 8236,
-              "end": 8273
+              "start": 8303,
+              "end": 8340
             }
           },
           "workflow": [
@@ -2794,8 +2803,8 @@
           "id": "R16-S04",
           "guide_stage": "Stage 16.4 \u2014 Build Chat Interface",
           "title": "Build Chat Interface",
-          "guide_start_line": 8274,
-          "guide_end_line": 8313,
+          "guide_start_line": 8341,
+          "guide_end_line": 8380,
           "status": "not_started",
           "objective": "Create the tenant-aware conversational UI.",
           "session_mode": "implementation",
@@ -2804,8 +2813,8 @@
             "phase": "Phase 16 \u2014 Conversation and Streaming",
             "stage": "Stage 16.4 \u2014 Build Chat Interface",
             "source_lines": {
-              "start": 8274,
-              "end": 8313
+              "start": 8341,
+              "end": 8380
             }
           },
           "workflow": [
@@ -2832,7 +2841,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 8313,
+      "guide_end_line": 8380,
       "status": "not_started",
       "objective": "Expose the RAG workflow as a persistent, streaming conversational experience.",
       "gate": {
@@ -2853,14 +2862,14 @@
       "id": "R17",
       "guide_phase": "Phase 17 \u2014 Administration",
       "title": "Administration",
-      "guide_start_line": 8314,
+      "guide_start_line": 8381,
       "sessions": [
         {
           "id": "R17-S01",
           "guide_stage": "Stage 17.1 \u2014 Build Document Administration",
           "title": "Build Document Administration",
-          "guide_start_line": 8322,
-          "guide_end_line": 8358,
+          "guide_start_line": 8389,
+          "guide_end_line": 8425,
           "status": "not_started",
           "objective": "Allow authorised users to inspect, retry and delete documents.",
           "session_mode": "implementation",
@@ -2869,8 +2878,8 @@
             "phase": "Phase 17 \u2014 Administration",
             "stage": "Stage 17.1 \u2014 Build Document Administration",
             "source_lines": {
-              "start": 8322,
-              "end": 8358
+              "start": 8389,
+              "end": 8425
             }
           },
           "workflow": [
@@ -2900,8 +2909,8 @@
           "id": "R17-S02",
           "guide_stage": "Stage 17.2 \u2014 Build Tenant and Membership Administration",
           "title": "Build Tenant and Membership Administration",
-          "guide_start_line": 8359,
-          "guide_end_line": 8384,
+          "guide_start_line": 8426,
+          "guide_end_line": 8451,
           "status": "not_started",
           "objective": "Allow authorised tenant administrators to manage members and roles.",
           "session_mode": "implementation",
@@ -2910,8 +2919,8 @@
             "phase": "Phase 17 \u2014 Administration",
             "stage": "Stage 17.2 \u2014 Build Tenant and Membership Administration",
             "source_lines": {
-              "start": 8359,
-              "end": 8384
+              "start": 8426,
+              "end": 8451
             }
           },
           "workflow": [
@@ -2941,8 +2950,8 @@
           "id": "R17-S03",
           "guide_stage": "Stage 17.3 \u2014 Add Usage Visibility",
           "title": "Add Usage Visibility",
-          "guide_start_line": 8385,
-          "guide_end_line": 8421,
+          "guide_start_line": 8452,
+          "guide_end_line": 8488,
           "status": "not_started",
           "objective": "Expose document, storage, ingestion and model-usage information.",
           "session_mode": "implementation",
@@ -2951,8 +2960,8 @@
             "phase": "Phase 17 \u2014 Administration",
             "stage": "Stage 17.3 \u2014 Add Usage Visibility",
             "source_lines": {
-              "start": 8385,
-              "end": 8421
+              "start": 8452,
+              "end": 8488
             }
           },
           "workflow": [
@@ -2979,7 +2988,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 8421,
+      "guide_end_line": 8488,
       "status": "not_started",
       "objective": "Provide operational visibility and safe tenant-level controls.",
       "gate": {
@@ -3000,14 +3009,14 @@
       "id": "R18",
       "guide_phase": "Phase 18 \u2014 Observability and Operations",
       "title": "Observability and Operations",
-      "guide_start_line": 8422,
+      "guide_start_line": 8489,
       "sessions": [
         {
           "id": "R18-S01",
           "guide_stage": "Stage 18.1 \u2014 Standardise Structured Logging",
           "title": "Standardise Structured Logging",
-          "guide_start_line": 8430,
-          "guide_end_line": 8470,
+          "guide_start_line": 8497,
+          "guide_end_line": 8537,
           "status": "not_started",
           "objective": "Emit machine-readable, correlated logs from every service.",
           "session_mode": "implementation",
@@ -3016,8 +3025,8 @@
             "phase": "Phase 18 \u2014 Observability and Operations",
             "stage": "Stage 18.1 \u2014 Standardise Structured Logging",
             "source_lines": {
-              "start": 8430,
-              "end": 8470
+              "start": 8497,
+              "end": 8537
             }
           },
           "workflow": [
@@ -3047,8 +3056,8 @@
           "id": "R18-S02",
           "guide_stage": "Stage 18.2 \u2014 Add Metrics",
           "title": "Add Metrics",
-          "guide_start_line": 8471,
-          "guide_end_line": 8510,
+          "guide_start_line": 8538,
+          "guide_end_line": 8577,
           "status": "not_started",
           "objective": "Measure platform health, latency, throughput and failures.",
           "session_mode": "implementation",
@@ -3057,8 +3066,8 @@
             "phase": "Phase 18 \u2014 Observability and Operations",
             "stage": "Stage 18.2 \u2014 Add Metrics",
             "source_lines": {
-              "start": 8471,
-              "end": 8510
+              "start": 8538,
+              "end": 8577
             }
           },
           "workflow": [
@@ -3088,8 +3097,8 @@
           "id": "R18-S03",
           "guide_stage": "Stage 18.3 \u2014 Add Distributed Tracing",
           "title": "Add Distributed Tracing",
-          "guide_start_line": 8511,
-          "guide_end_line": 8540,
+          "guide_start_line": 8578,
+          "guide_end_line": 8607,
           "status": "not_started",
           "objective": "Trace requests across Next.js, Laravel, Python, queues and external providers.",
           "session_mode": "implementation",
@@ -3098,8 +3107,8 @@
             "phase": "Phase 18 \u2014 Observability and Operations",
             "stage": "Stage 18.3 \u2014 Add Distributed Tracing",
             "source_lines": {
-              "start": 8511,
-              "end": 8540
+              "start": 8578,
+              "end": 8607
             }
           },
           "workflow": [
@@ -3129,8 +3138,8 @@
           "id": "R18-S04",
           "guide_stage": "Stage 18.4 \u2014 Define Operational Alerts",
           "title": "Define Operational Alerts",
-          "guide_start_line": 8541,
-          "guide_end_line": 8578,
+          "guide_start_line": 8608,
+          "guide_end_line": 8645,
           "status": "not_started",
           "objective": "Document actionable alert conditions and runbooks.",
           "session_mode": "architecture",
@@ -3139,8 +3148,8 @@
             "phase": "Phase 18 \u2014 Observability and Operations",
             "stage": "Stage 18.4 \u2014 Define Operational Alerts",
             "source_lines": {
-              "start": 8541,
-              "end": 8578
+              "start": 8608,
+              "end": 8645
             }
           },
           "workflow": [
@@ -3167,7 +3176,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 8578,
+      "guide_end_line": 8645,
       "status": "not_started",
       "objective": "Make failures, latency and cross-service behaviour diagnosable.",
       "gate": {
@@ -3188,14 +3197,14 @@
       "id": "R19",
       "guide_phase": "Phase 19 \u2014 Testing and Quality Strategy",
       "title": "Testing and Quality Strategy",
-      "guide_start_line": 8579,
+      "guide_start_line": 8646,
       "sessions": [
         {
           "id": "R19-S01",
           "guide_stage": "Stage 19.1 \u2014 Establish Test Taxonomy",
           "title": "Establish Test Taxonomy",
-          "guide_start_line": 8587,
-          "guide_end_line": 8627,
+          "guide_start_line": 8654,
+          "guide_end_line": 8694,
           "status": "not_started",
           "objective": "Document which behaviours belong in unit, integration, contract, feature and end-to-end tests.",
           "session_mode": "implementation",
@@ -3204,8 +3213,8 @@
             "phase": "Phase 19 \u2014 Testing and Quality Strategy",
             "stage": "Stage 19.1 \u2014 Establish Test Taxonomy",
             "source_lines": {
-              "start": 8587,
-              "end": 8627
+              "start": 8654,
+              "end": 8694
             }
           },
           "workflow": [
@@ -3235,8 +3244,8 @@
           "id": "R19-S02",
           "guide_stage": "Stage 19.2 \u2014 Add Contract Tests",
           "title": "Add Contract Tests",
-          "guide_start_line": 8628,
-          "guide_end_line": 8654,
+          "guide_start_line": 8695,
+          "guide_end_line": 8721,
           "status": "not_started",
           "objective": "Verify that Laravel and Python agree on shared HTTP and event contracts.",
           "session_mode": "architecture",
@@ -3245,8 +3254,8 @@
             "phase": "Phase 19 \u2014 Testing and Quality Strategy",
             "stage": "Stage 19.2 \u2014 Add Contract Tests",
             "source_lines": {
-              "start": 8628,
-              "end": 8654
+              "start": 8695,
+              "end": 8721
             }
           },
           "workflow": [
@@ -3276,8 +3285,8 @@
           "id": "R19-S03",
           "guide_stage": "Stage 19.3 \u2014 Add End-to-End Ingestion Tests",
           "title": "Add End-to-End Ingestion Tests",
-          "guide_start_line": 8655,
-          "guide_end_line": 8686,
+          "guide_start_line": 8722,
+          "guide_end_line": 8753,
           "status": "not_started",
           "objective": "Test the complete document path from upload to searchable vectors.",
           "session_mode": "implementation",
@@ -3286,8 +3295,8 @@
             "phase": "Phase 19 \u2014 Testing and Quality Strategy",
             "stage": "Stage 19.3 \u2014 Add End-to-End Ingestion Tests",
             "source_lines": {
-              "start": 8655,
-              "end": 8686
+              "start": 8722,
+              "end": 8753
             }
           },
           "workflow": [
@@ -3317,8 +3326,8 @@
           "id": "R19-S04",
           "guide_stage": "Stage 19.4 \u2014 Add End-to-End Chat Tests",
           "title": "Add End-to-End Chat Tests",
-          "guide_start_line": 8687,
-          "guide_end_line": 8714,
+          "guide_start_line": 8754,
+          "guide_end_line": 8781,
           "status": "not_started",
           "objective": "Test authenticated, tenant-safe retrieval and grounded answer generation.",
           "session_mode": "implementation",
@@ -3327,8 +3336,8 @@
             "phase": "Phase 19 \u2014 Testing and Quality Strategy",
             "stage": "Stage 19.4 \u2014 Add End-to-End Chat Tests",
             "source_lines": {
-              "start": 8687,
-              "end": 8714
+              "start": 8754,
+              "end": 8781
             }
           },
           "workflow": [
@@ -3358,8 +3367,8 @@
           "id": "R19-S05",
           "guide_stage": "Stage 19.5 \u2014 Add Security-Focused Tests",
           "title": "Add Security-Focused Tests",
-          "guide_start_line": 8715,
-          "guide_end_line": 8754,
+          "guide_start_line": 8782,
+          "guide_end_line": 8821,
           "status": "not_started",
           "objective": "Automate checks for the platform\u2019s most important security boundaries.",
           "session_mode": "implementation",
@@ -3368,8 +3377,8 @@
             "phase": "Phase 19 \u2014 Testing and Quality Strategy",
             "stage": "Stage 19.5 \u2014 Add Security-Focused Tests",
             "source_lines": {
-              "start": 8715,
-              "end": 8754
+              "start": 8782,
+              "end": 8821
             }
           },
           "workflow": [
@@ -3396,7 +3405,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 8754,
+      "guide_end_line": 8821,
       "status": "not_started",
       "objective": "Create a layered test strategy that catches regressions without requiring every check to be an expensive end-to-end test.",
       "gate": {
@@ -3417,14 +3426,14 @@
       "id": "R20",
       "guide_phase": "Phase 20 \u2014 CI/CD and Production Readiness",
       "title": "CI/CD and Production Readiness",
-      "guide_start_line": 8755,
+      "guide_start_line": 8822,
       "sessions": [
         {
           "id": "R20-S01",
           "guide_stage": "Stage 20.1 \u2014 Add Continuous Integration",
           "title": "Add Continuous Integration",
-          "guide_start_line": 8763,
-          "guide_end_line": 8802,
+          "guide_start_line": 8830,
+          "guide_end_line": 8869,
           "status": "not_started",
           "objective": "Run quality and test checks automatically for every relevant change.",
           "session_mode": "implementation",
@@ -3433,8 +3442,8 @@
             "phase": "Phase 20 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 20.1 \u2014 Add Continuous Integration",
             "source_lines": {
-              "start": 8763,
-              "end": 8802
+              "start": 8830,
+              "end": 8869
             }
           },
           "workflow": [
@@ -3464,8 +3473,8 @@
           "id": "R20-S02",
           "guide_stage": "Stage 20.2 \u2014 Create Production Container Builds",
           "title": "Create Production Container Builds",
-          "guide_start_line": 8803,
-          "guide_end_line": 8843,
+          "guide_start_line": 8870,
+          "guide_end_line": 8910,
           "status": "not_started",
           "objective": "Create minimal, immutable runtime images distinct from development behaviour.",
           "session_mode": "implementation",
@@ -3474,8 +3483,8 @@
             "phase": "Phase 20 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 20.2 \u2014 Create Production Container Builds",
             "source_lines": {
-              "start": 8803,
-              "end": 8843
+              "start": 8870,
+              "end": 8910
             }
           },
           "workflow": [
@@ -3505,8 +3514,8 @@
           "id": "R20-S03",
           "guide_stage": "Stage 20.3 \u2014 Add Infrastructure as Code",
           "title": "Add Infrastructure as Code",
-          "guide_start_line": 8844,
-          "guide_end_line": 8893,
+          "guide_start_line": 8911,
+          "guide_end_line": 8960,
           "status": "not_started",
           "objective": "Define production infrastructure under infrastructure/terraform.",
           "session_mode": "implementation",
@@ -3515,8 +3524,8 @@
             "phase": "Phase 20 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 20.3 \u2014 Add Infrastructure as Code",
             "source_lines": {
-              "start": 8844,
-              "end": 8893
+              "start": 8911,
+              "end": 8960
             }
           },
           "workflow": [
@@ -3546,8 +3555,8 @@
           "id": "R20-S04",
           "guide_stage": "Stage 20.4 \u2014 Configure Secrets and Environment Management",
           "title": "Configure Secrets and Environment Management",
-          "guide_start_line": 8894,
-          "guide_end_line": 8930,
+          "guide_start_line": 8961,
+          "guide_end_line": 8997,
           "status": "not_started",
           "objective": "Create a secure configuration contract across local, CI, staging and production environments.",
           "session_mode": "implementation",
@@ -3556,8 +3565,8 @@
             "phase": "Phase 20 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 20.4 \u2014 Configure Secrets and Environment Management",
             "source_lines": {
-              "start": 8894,
-              "end": 8930
+              "start": 8961,
+              "end": 8997
             }
           },
           "workflow": [
@@ -3587,8 +3596,8 @@
           "id": "R20-S05",
           "guide_stage": "Stage 20.5 \u2014 Add Database Backup and Recovery",
           "title": "Add Database Backup and Recovery",
-          "guide_start_line": 8931,
-          "guide_end_line": 8957,
+          "guide_start_line": 8998,
+          "guide_end_line": 9024,
           "status": "not_started",
           "objective": "Define and test relational database backup and restoration.",
           "session_mode": "implementation",
@@ -3597,8 +3606,8 @@
             "phase": "Phase 20 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 20.5 \u2014 Add Database Backup and Recovery",
             "source_lines": {
-              "start": 8931,
-              "end": 8957
+              "start": 8998,
+              "end": 9024
             }
           },
           "workflow": [
@@ -3628,8 +3637,8 @@
           "id": "R20-S06",
           "guide_stage": "Stage 20.6 \u2014 Define Vector Index Recovery",
           "title": "Define Vector Index Recovery",
-          "guide_start_line": 8958,
-          "guide_end_line": 8994,
+          "guide_start_line": 9025,
+          "guide_end_line": 9061,
           "status": "not_started",
           "objective": "Define whether vector data is backed up, recreated or both.",
           "session_mode": "architecture",
@@ -3638,8 +3647,8 @@
             "phase": "Phase 20 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 20.6 \u2014 Define Vector Index Recovery",
             "source_lines": {
-              "start": 8958,
-              "end": 8994
+              "start": 9025,
+              "end": 9061
             }
           },
           "workflow": [
@@ -3669,8 +3678,8 @@
           "id": "R20-S07",
           "guide_stage": "Stage 20.7 \u2014 Perform Security Hardening",
           "title": "Perform Security Hardening",
-          "guide_start_line": 8995,
-          "guide_end_line": 9044,
+          "guide_start_line": 9062,
+          "guide_end_line": 9111,
           "status": "not_started",
           "objective": "Review and harden the complete platform before public deployment.",
           "session_mode": "implementation",
@@ -3679,8 +3688,8 @@
             "phase": "Phase 20 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 20.7 \u2014 Perform Security Hardening",
             "source_lines": {
-              "start": 8995,
-              "end": 9044
+              "start": 9062,
+              "end": 9111
             }
           },
           "workflow": [
@@ -3710,8 +3719,8 @@
           "id": "R20-S08",
           "guide_stage": "Stage 20.8 \u2014 Create Staging Deployment",
           "title": "Create Staging Deployment",
-          "guide_start_line": 9045,
-          "guide_end_line": 9072,
+          "guide_start_line": 9112,
+          "guide_end_line": 9139,
           "status": "not_started",
           "objective": "Deploy the complete platform to a production-like staging environment.",
           "session_mode": "implementation",
@@ -3720,8 +3729,8 @@
             "phase": "Phase 20 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 20.8 \u2014 Create Staging Deployment",
             "source_lines": {
-              "start": 9045,
-              "end": 9072
+              "start": 9112,
+              "end": 9139
             }
           },
           "workflow": [
@@ -3751,8 +3760,8 @@
           "id": "R20-S09",
           "guide_stage": "Stage 20.9 \u2014 Production Readiness Review",
           "title": "Production Readiness Review",
-          "guide_start_line": 9073,
-          "guide_end_line": 9120,
+          "guide_start_line": 9140,
+          "guide_end_line": 9187,
           "status": "not_started",
           "objective": "Perform a formal go-live review against technical and operational criteria.",
           "session_mode": "architecture",
@@ -3761,8 +3770,8 @@
             "phase": "Phase 20 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 20.9 \u2014 Production Readiness Review",
             "source_lines": {
-              "start": 9073,
-              "end": 9120
+              "start": 9140,
+              "end": 9187
             }
           },
           "workflow": [
@@ -3789,7 +3798,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 9120,
+      "guide_end_line": 9187,
       "status": "not_started",
       "objective": "Make the platform reproducibly testable, buildable, deployable and operable outside a developer laptop.",
       "gate": {
@@ -3810,14 +3819,14 @@
       "id": "R21",
       "guide_phase": "Phase 21 \u2014 Portfolio and Demonstration Readiness",
       "title": "Portfolio and Demonstration Readiness",
-      "guide_start_line": 9121,
+      "guide_start_line": 9188,
       "sessions": [
         {
           "id": "R21-S01",
           "guide_stage": "Stage 21.1 \u2014 Write Architecture Documentation",
           "title": "Write Architecture Documentation",
-          "guide_start_line": 9129,
-          "guide_end_line": 9166,
+          "guide_start_line": 9196,
+          "guide_end_line": 9233,
           "status": "not_started",
           "objective": "Explain the system clearly to reviewers, recruiters, clients and future contributors.",
           "session_mode": "architecture",
@@ -3826,8 +3835,8 @@
             "phase": "Phase 21 \u2014 Portfolio and Demonstration Readiness",
             "stage": "Stage 21.1 \u2014 Write Architecture Documentation",
             "source_lines": {
-              "start": 9129,
-              "end": 9166
+              "start": 9196,
+              "end": 9233
             }
           },
           "workflow": [
@@ -3857,8 +3866,8 @@
           "id": "R21-S02",
           "guide_stage": "Stage 21.2 \u2014 Create Demonstration Dataset and Scenario",
           "title": "Create Demonstration Dataset and Scenario",
-          "guide_start_line": 9167,
-          "guide_end_line": 9193,
+          "guide_start_line": 9234,
+          "guide_end_line": 9260,
           "status": "not_started",
           "objective": "Provide a safe, repeatable demonstration of ingestion, retrieval, citations and tenant isolation.",
           "session_mode": "implementation",
@@ -3867,8 +3876,8 @@
             "phase": "Phase 21 \u2014 Portfolio and Demonstration Readiness",
             "stage": "Stage 21.2 \u2014 Create Demonstration Dataset and Scenario",
             "source_lines": {
-              "start": 9167,
-              "end": 9193
+              "start": 9234,
+              "end": 9260
             }
           },
           "workflow": [
@@ -3898,8 +3907,8 @@
           "id": "R21-S03",
           "guide_stage": "Stage 21.3 \u2014 Finalise Repository README",
           "title": "Finalise Repository README",
-          "guide_start_line": 9194,
-          "guide_end_line": 9326,
+          "guide_start_line": 9261,
+          "guide_end_line": 9392,
           "status": "not_started",
           "objective": "Make the root README an accurate entry point for technical reviewers.",
           "session_mode": "implementation",
@@ -3908,8 +3917,8 @@
             "phase": "Phase 21 \u2014 Portfolio and Demonstration Readiness",
             "stage": "Stage 21.3 \u2014 Finalise Repository README",
             "source_lines": {
-              "start": 9194,
-              "end": 9326
+              "start": 9261,
+              "end": 9392
             }
           },
           "workflow": [
@@ -3936,7 +3945,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 9326,
+      "guide_end_line": 9392,
       "status": "not_started",
       "objective": "Present the platform as a credible 2027 engineering portfolio project without allowing presentation work to replace engineering substance.",
       "gate": {
