@@ -33,3 +33,20 @@ output and are not silently discarded or automatically treated as failures.
 These amendments resolve the ambiguity between “every extractor produces the
 canonical representation” and “normalisation creates the canonical
 representation” without changing ADR-0010's loss-minimisation principle.
+
+## Final wording review
+
+Normalisation must not discard meaningful semantic information, but it may
+remove or reconcile semantically empty, duplicated or parser-generated
+structural noise under explicit deterministic rules while preserving
+provenance and traceability. Blank paragraphs and meaningless formatting noise
+therefore do not become permanent artefacts merely because the architecture
+protects semantic information from premature loss.
+
+Immutability prevents later stages from altering earlier representations
+through normal application behaviour and reduces accidental or unauthorised
+pipeline mutation. It complements rather than replaces storage access
+controls, integrity checks and auditing.
+
+Every consumer must provide a deliberate safe fallback for future or currently
+unrecognised `Element` types instead of failing unexpectedly.

@@ -128,9 +128,11 @@ deliberately narrow:
 - **Normalisation** consumes `ExtractedDocument`, performs deterministic
   *structural* normalisation only and produces a new immutable
   `NormalisedDocument`. It does not receive parser-specific objects, mutate
-  the extracted representation, discard information or chunk. It reconciles
-  structurally equivalent extracted content into deterministic forms while
-  preserving provenance and traceability to the extraction output.
+  the extracted representation or chunk. It must not discard meaningful
+  semantic information, but may remove or reconcile semantically empty,
+  duplicated or parser-generated structural noise under explicit
+  deterministic rules. Those rules preserve provenance and traceability to
+  the extraction output.
 - **Chunking** operates exclusively on `NormalisedDocument` and remains
   independent of source format. Source format may remain present as
   provenance for citations, debugging and auditing, but chunking must not
@@ -169,6 +171,12 @@ reasonably treat it as an unrecognised block rather than failing outright).
 Without this, every new element type discovered in the wild would require
 renegotiating the shape of the contract itself, which is exactly the
 coupling this ADR exists to prevent.
+
+Every consumer must implement a deliberate safe fallback for future or
+currently unrecognised `Element` types. A consumer may preserve, pass through
+or handle an unknown element conservatively according to its responsibility,
+but it must not fail unexpectedly merely because the canonical model has
+gained an element type it does not yet interpret.
 
 ### Preserve semantic structure wherever practical
 
@@ -249,8 +257,11 @@ This has several architectural benefits beyond tidiness:
   have altered concurrently or out of order.
 - **Debugging** — the state at each stage boundary is a fixed, inspectable
   artefact rather than a moving target.
-- **Security** — an immutable representation cannot be tampered with by a
-  later stage acting outside its intended responsibility.
+- **Security** — immutability prevents later pipeline stages from altering
+  earlier representations through normal application behaviour and reduces
+  accidental or unauthorised mutation within the pipeline. It complements
+  rather than replaces storage access controls, integrity checks and
+  auditing.
 - **Future event-driven processing** — an immutable, versioned representation
   is exactly the shape of thing that can later be published, cached, or
   passed between processing stages as a durable artefact, in the same way

@@ -49,6 +49,16 @@ Every semantic element receives a UUID that remains stable for its immutable
 representation. A new extraction run creates new UUIDs; deterministic
 identity across re-extraction is deliberately not required yet.
 
+Final wording review clarified that loss minimisation protects meaningful
+semantic information. Deterministic normalisation may still remove or
+reconcile empty, duplicated or parser-generated structural noise while
+preserving provenance and traceability.
+
+It also clarified that immutability reduces mutation through normal pipeline
+behaviour but does not replace access controls, integrity checks or auditing.
+Consumers must handle unrecognised future element types through a deliberate
+safe fallback.
+
 ## Alternatives rejected
 
 The session rejected parser-specific downstream models, extraction-time
@@ -88,6 +98,8 @@ state and LocalStack resource verification.
   matching across re-extraction.
 * Warnings and failures carry different operational meanings and should not
   be conflated.
+* Immutability is one defence within the pipeline, not a complete integrity
+  or storage-security mechanism.
 
 ## Next step
 

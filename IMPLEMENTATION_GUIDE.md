@@ -7381,12 +7381,16 @@ Extraction, normalisation and chunking each own exactly one responsibility:
 each extractor owns its parser-specific objects privately and maps them into
 canonical `ExtractedDocument`; normalisation consumes that representation and
 produces a new immutable `NormalisedDocument` through deterministic structural
-normalisation without discarding information or chunking; chunking consumes
-only `NormalisedDocument`.
+normalisation without discarding meaningful semantic information or chunking.
+It may remove or reconcile semantically empty, duplicated or parser-generated
+structural noise under explicit deterministic rules while preserving
+provenance and traceability. Chunking consumes only `NormalisedDocument`.
 
 Source format remains available as provenance for citations, auditing and
 debugging, but chunking must not branch on it. Public Workspace and Document
 identities remain at document level to preserve tenant and aggregate context.
+Every consumer must deliberately handle future or currently unrecognised
+`Element` types through a safe fallback rather than failing unexpectedly.
 
 The governing principle is that extraction is a loss-minimisation stage, not
 a simplification stage — any lossy transformation is deferred to whichever
@@ -7402,7 +7406,9 @@ explanation, every failure audited and non-fatal warnings retained.
 `ExtractedDocument` and `NormalisedDocument` are immutable. A new extraction
 run creates new element UUIDs; deterministic identifiers across re-extraction
 are not required. Derived representations preserve traceability rather than
-mutating a previous stage's output.
+mutating a previous stage's output. Immutability reduces accidental or
+unauthorised pipeline mutation but complements rather than replaces storage
+access controls, integrity checks and auditing.
 
 The full set of agreed decisions, rejected alternatives (an ad hoc
 per-extractor structure, flattening to plain text at extraction time, adopting
@@ -7587,6 +7593,30 @@ Phase 11 — Chunking
 Phase objective
 
 Split normalised documents into retrieval units while preserving enough context and source metadata for accurate answers and citations.
+
+Deferred R11-S01 architecture direction
+
+R11-S01 must define a pluggable `ChunkingStrategy` abstraction. This is a
+deferred Phase 11 decision and does not expand ADR-0010 beyond extraction and
+normalisation.
+
+The agreed direction for that architecture session is:
+
+* `ChunkingStrategy` accepts an immutable `NormalisedDocument`;
+* `ChunkingStrategy` returns an immutable `ChunkingResult`;
+* callers depend on the strategy abstraction rather than a concrete chunker;
+* Phase 11 v1 implements one deterministic, structure-aware baseline
+  strategy;
+* the abstraction permits future structural, semantic, context-enriched,
+  LLM-driven and hybrid strategies without changing the consuming pipeline;
+* `ChunkingResult` preserves strategy identity, strategy version,
+  configuration, source-element provenance, token usage, warnings and
+  processing duration; and
+* a future model-assisted strategy exposes model identity, token usage, call
+  count, latency and estimated cost.
+
+Exact contract fields and implementation details remain intentionally
+deferred to R11-S01.
 
 ⸻
 
