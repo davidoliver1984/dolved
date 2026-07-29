@@ -6675,7 +6675,202 @@ claims document-ingestion requests.
 
 ## Status
 
-Not yet executed.
+Architecture prerequisite accepted in ADR-0009. Implementation not yet
+executed.
+
+## Agreed bounded implementation brief
+
+Implement only SQS consumption, canonical event validation and the durable
+claim that moves a Document from `QUEUED` to `PROCESSING`. This stage must not
+extract text, read source objects for processing, chunk content, create
+embeddings, write vectors or transition a Document to `INDEXED` or `FAILED`.
+
+### Laravel internal claim boundary
+
+Add the internal endpoint:
+
+```text
+POST /api/internal/ingestion/events/{eventId}/claim
+```
+
+The request body is the exact canonical Document Ingestion Requested v1 event.
+The path event ID, body `event_id` and signed event-ID header must agree.
+Laravel validates the shared event schema independently rather than trusting
+the worker's validation.
+
+Protect only this endpoint with the ADR-0009 HMAC middleware. It does not use
+Sanctum or CSRF authentication and is not added to the user-facing route
+group. The implementation must:
+
+* resolve an enabled Key ID from the configured ingestion-worker key ring;
+* reject absent, malformed, unknown, disabled or expired signatures with one
+  generic authentication response;
+* calculate the digest from the untouched request bytes;
+* use the exact ADR-0009 string-to-sign and constant-time comparison;
+* enforce the configurable five-minute timestamp window;
+* reject query strings and inconsistent path/header/body event identifiers;
+* avoid logging secrets, signatures or request bodies; and
+* expose safe Key ID, event and correlation context in structured logs.
+
+Add a first-class ingestion-event claim record with a globally unique logical
+`event_id`, Workspace and Document public identifiers, correlation identifier
+and claim timestamp. Public identifiers preserve the event evidence and tenant
+context. The exact migration must have reviewable constraints and indexes and
+must not grant Python database access.
+
+A focused Laravel action performs the claim in one PostgreSQL transaction:
+
+1. lock the Workspace-scoped Document row;
+2. inspect the durable event claim;
+3. for a new event and `QUEUED` Document, insert the claim and transition the
+   Document to `PROCESSING`;
+4. for the same event, Workspace and Document, return the existing successful
+   claim idempotently; and
+5. reject identity reuse, backwards transitions and ineligible or stale
+   events without changing lifecycle state.
+
+Return a small machine-readable response with these initial semantics:
+
+* `200` with `claimed` when the claim and transition commit;
+* `200` with `already_claimed` for the identical durable event claim;
+* `409` with `stale_event` when the Document is already in a later lifecycle
+  state without a matching claim; and
+* `409` with `ineligible_state` when the Document is in an earlier or otherwise
+  impossible state for this event.
+
+The worker acknowledges `claimed`, `already_claimed` and `stale_event`.
+`ineligible_state`, an unknown Workspace or Document, invalid contract data and
+event-identity reuse are poison outcomes left for the SQS redrive policy. No
+response may move the Document backwards.
+
+### Python ingestion worker
+
+Add a dedicated worker entry point in `apps/ai`, separate from the FastAPI
+application process, and a separate Compose `worker` service using the
+existing AI image.
+
+The worker must:
+
+1. resolve the ingestion queue URL through the configured LocalStack/AWS
+   adapter;
+2. long-poll SQS in bounded batches;
+3. parse the message body as JSON;
+4. validate it against the canonical shared v1 schema;
+5. reject unsupported versions without guessing compatibility;
+6. attach the logical event, correlation, Workspace, Document, SQS message
+   and receive-count context to logs;
+7. sign the exact internal request according to ADR-0009 using its configured
+   active Key ID;
+8. request Laravel's authoritative claim;
+9. delete the SQS message only after a new claim, an identical existing claim
+   or a safe stale-event response; and
+10. leave retryable and poison messages unacknowledged so SQS visibility and
+    the existing redrive policy govern retry and DLQ delivery.
+
+Move `httpx` and JSON Schema validation into Python runtime dependencies
+because the production worker requires both. Keep boto3 as the SQS adapter.
+
+Initial worker configuration must include:
+
+* queue name or URL, AWS region and optional local endpoint;
+* long-poll duration, visibility timeout and batch size;
+* internal Laravel base URL and bounded HTTP timeout;
+* active HMAC Key ID and secret;
+* signature clock-skew agreement; and
+* shutdown polling interval or equivalent interruptible-wait behaviour.
+
+Because this stage performs only one bounded internal HTTP claim, configure
+the SQS visibility timeout to exceed the HTTP timeout and normal claim
+duration. Do not add a heartbeat loop yet. Long-running extraction begins in
+a later stage and must introduce or confirm visibility extension before doing
+work that can exceed the timeout.
+
+On `SIGTERM` or `SIGINT`, stop receiving new messages, allow the current
+bounded claim to finish and do not acknowledge an unfinished message. A
+`--once` mode must process at most one receive batch for deterministic tests
+and manual acceptance.
+
+### Outcome classification
+
+Use explicit worker outcomes:
+
+* valid new or identical durable claim — acknowledge;
+* Laravel-declared `stale_event` — acknowledge without processing;
+* Laravel-declared `ineligible_state`, unknown domain identity or event-ID
+  identity reuse — do not acknowledge; repeated receipt must reach the DLQ;
+* malformed JSON, schema failure or unsupported version — do not acknowledge;
+  repeated receipt must reach the configured DLQ;
+* missing/invalid HMAC configuration or Laravel `401`/`403` — do not
+  acknowledge and log a safe operational error;
+* network error, timeout, `429` or Laravel `5xx` — do not acknowledge and
+  retry after visibility expiry; and
+* an unexpected Laravel response — fail closed and do not acknowledge.
+
+No outcome in this stage marks a Document `INDEXED` or broadly changes it to
+`FAILED`.
+
+### Required tests
+
+Laravel tests must cover:
+
+* every required signature component;
+* valid authentication;
+* invalid signature, unknown Key ID and stale/future timestamp rejection;
+* body, path, method and event-ID tamper rejection;
+* constant-time comparison through the framework implementation choice;
+* overlapping old/new keys during rotation;
+* canonical contract validation;
+* atomic `QUEUED → PROCESSING` plus claim insertion;
+* rollback if either write fails;
+* identical-event idempotency;
+* event-ID identity mismatch rejection;
+* stale and ineligible lifecycle handling;
+* Workspace isolation; and
+* clean migration behaviour and database constraints.
+
+Python tests must cover:
+
+* canonical contract loading and validation;
+* deterministic ADR-0009 signing;
+* SQS envelope parsing and receive metadata;
+* success, duplicate, stale, poison and transient response classification;
+* acknowledgement only for safe terminal outcomes;
+* no acknowledgement on interruption or failure;
+* stable logical event identity across duplicate transport messages;
+* graceful shutdown; and
+* `--once` operation.
+
+LocalStack acceptance must demonstrate:
+
+1. a valid published event is received by the dedicated worker;
+2. Python and Laravel validate the same shared contract;
+3. the signed internal request is accepted;
+4. Laravel commits the event claim and `PROCESSING` transition atomically;
+5. the worker then deletes the SQS message;
+6. redelivery of the same logical event does not create another claim;
+7. a transient Laravel failure leaves the message available for retry;
+8. a malformed or unsupported event reaches the existing DLQ after the
+   configured receive threshold;
+9. correlation context is visible in both services; and
+10. no Document becomes `INDEXED`.
+
+### Expected implementation areas
+
+Expected changes are bounded to:
+
+* the new Laravel migration, claim model/action, internal controller,
+  HMAC verifier/middleware, configuration, route and focused tests;
+* the Python worker, SQS and internal-API adapters, settings, runtime
+  dependencies and focused tests;
+* the dedicated Compose worker process and safe example environment values;
+* minimal Make/README operational commands;
+* Stage 9.3's factual implementation record and session journal; and
+* tracker evidence after verification.
+
+ADR-0009 is the architecture authority for authentication. If implementation
+requires another principal, permission model, general authentication
+framework, Python database access, a different lifecycle transition or a
+different idempotency authority, stop for architecture review.
 
 ## Engineering rationale
 
