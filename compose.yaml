@@ -79,6 +79,11 @@ services:
       SQS_ENDPOINT: http://localstack:4566
       SQS_PREFIX: http://localstack:4566/000000000000
       SQS_QUEUE: ${INGESTION_QUEUE:-rag-platform-ingestion-local}
+      INGESTION_WORKER_HMAC_PRIMARY_KEY_ID: ${INGESTION_WORKER_HMAC_PRIMARY_KEY_ID:-local-v1}
+      INGESTION_WORKER_HMAC_PRIMARY_SECRET: ${INGESTION_WORKER_HMAC_PRIMARY_SECRET:-MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=}
+      INGESTION_WORKER_HMAC_SECONDARY_KEY_ID: ${INGESTION_WORKER_HMAC_SECONDARY_KEY_ID:-}
+      INGESTION_WORKER_HMAC_SECONDARY_SECRET: ${INGESTION_WORKER_HMAC_SECONDARY_SECRET:-}
+      INGESTION_WORKER_HMAC_MAX_CLOCK_SKEW_SECONDS: ${INGESTION_WORKER_HMAC_MAX_CLOCK_SKEW_SECONDS:-300}
       MAIL_MAILER: smtp
       MAIL_HOST: mailpit
       MAIL_PORT: 1025
@@ -186,6 +191,40 @@ services:
     depends_on:
       localstack:
         condition: service_healthy
+
+  worker:
+    build:
+      context: ./apps/ai
+      target: development
+    image: rag-platform-ai:development
+    init: true
+    command: python -m app.worker
+    environment:
+      ENVIRONMENT: local
+      SERVICE_NAME: rag-platform-ingestion-worker
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+      AWS_ENDPOINT_URL: http://localstack:4566
+      INGESTION_QUEUE: ${INGESTION_QUEUE:-rag-platform-ingestion-local}
+      INGESTION_WORKER_WAIT_TIME_SECONDS: ${INGESTION_WORKER_WAIT_TIME_SECONDS:-10}
+      INGESTION_WORKER_VISIBILITY_TIMEOUT_SECONDS: ${INGESTION_WORKER_VISIBILITY_TIMEOUT_SECONDS:-30}
+      INGESTION_WORKER_BATCH_SIZE: ${INGESTION_WORKER_BATCH_SIZE:-1}
+      INGESTION_WORKER_ERROR_WAIT_SECONDS: ${INGESTION_WORKER_ERROR_WAIT_SECONDS:-2}
+      INGESTION_WORKER_API_URL: http://api:8000
+      INGESTION_WORKER_API_TIMEOUT_SECONDS: ${INGESTION_WORKER_API_TIMEOUT_SECONDS:-10}
+      INGESTION_WORKER_HMAC_KEY_ID: ${INGESTION_WORKER_HMAC_PRIMARY_KEY_ID:-local-v1}
+      INGESTION_WORKER_HMAC_SECRET: ${INGESTION_WORKER_HMAC_PRIMARY_SECRET:-MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=}
+    volumes:
+      - ./apps/ai:/app
+      - ./contracts:/contracts:ro
+      - ai_venv:/app/.venv
+    depends_on:
+      api:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    stop_grace_period: 25s
 
   postgres:
     image: postgres:18.4-alpine

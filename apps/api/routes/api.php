@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DocumentIngestionController;
 use App\Http\Controllers\DocumentUploadController;
+use App\Http\Controllers\Internal\DocumentIngestionClaimController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +57,11 @@ Route::prefix('auth')->group(function (): void {
 Route::get('/platform/status', function () {
     return response()->json(['data' => ['status' => 'available']]);
 })->middleware(['auth:sanctum', 'verified']);
+
+Route::post(
+    '/internal/ingestion/events/{eventId}/claim',
+    [DocumentIngestionClaimController::class, 'store'],
+)->middleware('ingestion.worker');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('/workspaces', [WorkspaceController::class, 'index']);

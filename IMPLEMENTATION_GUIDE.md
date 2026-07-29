@@ -6675,8 +6675,190 @@ claims document-ingestion requests.
 
 ## Status
 
-Architecture prerequisite accepted in ADR-0009. Implementation not yet
-executed.
+Implemented, verified and approved on 2026-07-29 under ADR-0008 and ADR-0009.
+Ready for the stage commit and completion tags.
+
+## Actual implementation record
+
+### What was implemented
+
+Laravel now exposes one narrowly scoped internal endpoint:
+
+```text
+POST /api/internal/ingestion/events/{eventId}/claim
+```
+
+The endpoint is protected by dedicated ingestion-worker HMAC middleware. It
+validates the untouched request bytes, request timestamp, Key ID, signature,
+HTTP method, path, body digest and logical event identifier using ADR-0009's
+canonical string. Query strings are rejected. Authentication failures return
+the same generic response while safe operational reasons remain available in
+Laravel logs.
+
+The configured key ring accepts multiple enabled Key IDs concurrently for
+rotation. Secrets must be strictly Base64 encoded and decode to at least 32
+bytes. The active Python signing key is separate from Laravel's application
+and user authentication configuration.
+
+Laravel independently validates the exact event body against the shared
+Document Ingestion Requested version 1 schema. It then executes
+`ClaimDocumentIngestion` in one database transaction:
+
+1. lock the Workspace-scoped Document;
+2. inspect the durable logical-event claim;
+3. insert the claim for a new eligible event;
+4. move the Document atomically from `QUEUED` to `PROCESSING`; and
+5. return `claimed`, `already_claimed`, `stale_event` or
+   `ineligible_state` without moving lifecycle state backwards.
+
+The first-class `ingestion_event_claims` record stores the globally unique
+logical event ID, public Workspace and Document identities, correlation ID,
+claim timestamp and SHA-256 digest of the canonical event payload. The digest
+means the same event ID cannot later be presented with modified content and
+mistaken for an identical delivery. Database uniqueness makes idempotency
+durable across Python and Laravel process restarts.
+
+The Python service now has a dedicated `python -m app.worker` process,
+separate from FastAPI. It long-polls SQS, parses and validates each event
+against the repository's canonical shared schema, signs the raw request,
+calls Laravel's authoritative claim endpoint and deletes only messages with a
+safe terminal outcome:
+
+* `claimed`, `already_claimed` and `stale_event` are acknowledged;
+* malformed, unsupported, unknown, ineligible and identity-reuse outcomes are
+  left for the existing SQS redrive policy;
+* authentication, throttling, server and network failures remain
+  unacknowledged for retry; and
+* unexpected responses fail closed.
+
+Structured JSON logs carry logical event, correlation, Workspace, Document,
+SQS transport-message and receive-count context without request bodies,
+signatures, credentials or document content. `SIGTERM` and `SIGINT` stop new
+receives and allow the bounded current claim to finish. `--once` processes at
+most one receive batch.
+
+Compose gained a dedicated `worker` service and the Makefile gained
+`consume-ingestion`. The root, Laravel and Python example environments
+document the local key ring, active signing key and worker polling settings.
+`httpx` and `jsonschema` are runtime Python dependencies because the deployed
+worker needs both.
+
+No heartbeat was added. The current worker performs only a bounded HTTP claim;
+its 30-second SQS visibility timeout exceeds the 10-second internal HTTP
+timeout. A later stage that performs extraction or other long-running work
+must reassess and, where necessary, extend message visibility.
+
+### Commands executed
+
+The implementation was formatted and verified with the repository commands:
+
+```bash
+make format
+make format-check
+make lint
+make typecheck
+make test
+make ps
+make aws-status
+```
+
+Focused and supporting checks included:
+
+```bash
+docker compose exec api php artisan test tests/Feature/DocumentIngestionClaimTest.php
+docker compose exec ai uv run pytest tests/test_ingestion_signing.py \
+  tests/test_ingestion_claim_client.py tests/test_ingestion_sqs.py \
+  tests/test_ingestion_worker.py tests/test_worker_entrypoint.py
+docker compose exec api composer validate --strict
+docker compose exec ai uv sync --locked --no-dev --dry-run
+docker compose config --quiet
+docker compose exec api php artisan route:list --path=api/internal/ingestion
+git diff --check
+```
+
+A disposable PostgreSQL database was created, migrated from empty, inspected
+for the claim table's constraints and indexes, and dropped. LocalStack queue
+and DLQ state was inspected with `awslocal`.
+
+### Verification evidence
+
+* Focused Laravel claim suite: 23 tests passed with 127 assertions.
+* Full Laravel suite: 118 tests passed with 491 assertions.
+* Focused Python worker suite: 32 tests passed.
+* Full Python suite: 42 tests passed.
+* Full Next.js suite: 10 tests passed.
+* Pint, ESLint, Ruff, TypeScript and mypy checks passed.
+* Strict Composer validation and the production-only Python dependency dry
+  run passed.
+* Compose configuration, all container health checks, LocalStack resources,
+  the internal route and whitespace checks passed.
+* A clean database migrated successfully and exposed the expected unique
+  logical-event constraint, payload-digest check and tenant/document index.
+
+The live LocalStack acceptance exercised the full path:
+
+```text
+UPLOADED Document
+→ transactional ingestion request and outbox
+→ QUEUED
+→ publisher
+→ LocalStack SQS
+→ Python contract validation and HMAC request
+→ Laravel durable claim
+→ PROCESSING
+→ SQS acknowledgement
+```
+
+Republishing the same logical event under a different SQS transport message
+returned `already_claimed`, retained one durable claim and was acknowledged.
+A deliberately unavailable Laravel endpoint left the message unacknowledged;
+the normal worker later received and safely acknowledged it. A malformed
+message remained unacknowledged on three receives and reached the configured
+DLQ. Correlation context appeared in publisher, Python and Laravel logs.
+Graceful worker termination was also observed. No Document became `INDEXED`.
+
+All synthetic Document, outbox and claim rows were removed after the
+acceptance run, and the source queue and DLQ were purged.
+
+### Problems and corrections
+
+The runtime worker imports `httpx` and `jsonschema`; both were moved from
+development-only dependencies to the production dependency set.
+
+The durable record was strengthened with the exact canonical payload digest.
+Without it, reuse of an existing logical event ID with altered event content
+could appear to be an ordinary duplicate.
+
+Known local credentials exist only in example and Compose-local
+configuration. Application defaults do not silently enable that identity, so
+a deployed worker or Laravel API fails closed when secrets management has not
+supplied an HMAC secret.
+
+The worker's error classification was made explicit so deterministic poison
+messages are not deleted prematurely and transient infrastructure failures
+are not misclassified as permanent contract failures.
+
+Final review found that the `ineligible_state` client test used the exception
+response shape even though Laravel returns that outcome through the normal
+`data` response. The fixture now mirrors the real wire contract. Review also
+found that structurally malformed SQS receive entries were ignored silently.
+They remain unacknowledged as before, but now emit a safe warning containing
+only transport diagnostics. A regression test covers that behaviour.
+
+### Commit boundary
+
+After human review, stage only the R09-S03 implementation, documentation and
+tracker changes. Do not include unrelated local files. The proposed commit is:
+
+```text
+Add document ingestion worker
+
+Implements ADR-0008 and ADR-0009.
+```
+
+Create the annotated `phase-9-s03` stage tag after the commit. Because this
+stage also completes the Phase 9 acceptance workflow, create the annotated
+`phase-9` phase tag at the same commit.
 
 ## Agreed bounded implementation brief
 

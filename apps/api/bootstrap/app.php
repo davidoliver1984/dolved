@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AuthenticateIngestionWorker;
 use App\Http\Middleware\CanonicalizeEmail;
 use App\Http\Middleware\RequireOpenRegistration;
 use Illuminate\Foundation\Application;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             fn () => rtrim(config('app.frontend_url'), '/').'/login'
         );
         $middleware->alias([
+            'ingestion.worker' => AuthenticateIngestionWorker::class,
             'registration.open' => RequireOpenRegistration::class,
         ]);
     })

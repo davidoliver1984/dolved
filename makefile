@@ -14,7 +14,7 @@ TAIL ?= 100
 	typecheck typecheck-web typecheck-ai \
 	test test-web test-api test-ai \
 	bootstrap migrate seed reset clean \
-	aws-provision aws-status publish-ingestion \
+	aws-provision aws-status publish-ingestion consume-ingestion \
 	shell-web shell-api shell-ai shell-db shell-aws
 
 help:
@@ -36,6 +36,7 @@ help:
 		'  make aws-provision   Idempotently provision local AWS resources' \
 		'  make aws-status      Verify the bucket, queues and redrive policy' \
 		'  make publish-ingestion  Run one outbox publication batch' \
+		'  make consume-ingestion  Run one ingestion-worker receive batch' \
 		'  make reset           Delete local volumes and bootstrap again' \
 		'' \
 		'Quality' \
@@ -145,6 +146,9 @@ aws-status:
 
 publish-ingestion:
 	$(EXEC) api php artisan ingestion:publish --once
+
+consume-ingestion:
+	$(COMPOSE) run --rm --no-deps worker python -m app.worker --once
 
 reset:
 	@printf '%s\n' \

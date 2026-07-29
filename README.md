@@ -39,6 +39,7 @@ data, and therefore requires typing `RESET` interactively.
 | API | http://localhost:8000 |
 | Python API | http://localhost:8001 |
 | Ingestion publisher | Background `publisher` process |
+| Ingestion worker | Background `worker` process |
 | PostgreSQL | `127.0.0.1:5433` |
 | LocalStack gateway | http://localhost:4566 |
 | Mailpit | http://localhost:8025 |
@@ -50,3 +51,8 @@ added in later phases.
 The ingestion publisher continuously delivers durable Laravel outbox events to
 LocalStack SQS. Inspect it with `docker compose logs publisher`, or run one
 publication batch explicitly with `make publish-ingestion`.
+
+The separate Python ingestion worker validates those events and requests
+Laravel's authoritative `QUEUED` to `PROCESSING` claim. Inspect it with
+`docker compose logs worker`. To run one receive batch manually, first stop the
+background worker and then run `make consume-ingestion`.
