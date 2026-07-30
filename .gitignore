@@ -4,6 +4,9 @@
 .env.*.local
 !.env.example
 
+# Local-only, non-canonical documents (intentionally kept out of version control)
+PROJECT_JOURNEY.md
+
 # macOS
 .DS_Store
 

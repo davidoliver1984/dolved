@@ -16,6 +16,7 @@ The documentation authorities are:
 | `tasks.json` | Which planned engineering session is current |
 | `docs/adr/` | Why durable architecture decisions were made |
 | `docs/journal/` | What happened during individual engineering sessions |
+| `PROJECT_JOURNEY.md` | What is being built and why, in plain language, for non-technical stakeholders |
 | `README.md` | Repository introduction and normal operating instructions |
 
 Do not reproduce those documents here. If an authority is missing, exists at a
@@ -106,8 +107,13 @@ Planned engineering sessions follow this sequence:
    verification evidence.
 9. Create or update an ADR only when a durable architectural decision was made.
 10. Write the factual session journal entry in `docs/journal/`.
-11. Commit at the agreed session or phase boundary.
-12. Update `tasks.json` and advance the current session.
+11. Update `PROJECT_JOURNEY.md` with a plain-language account of what changed and
+    why, for a non-technical reader, when the session completes a stage or phase
+    boundary worth telling that story about. Minor or purely internal sessions may
+    skip this if there is nothing a non-technical stakeholder would recognise as
+    progress.
+12. Commit at the agreed session or phase boundary.
+13. Update `tasks.json` and advance the current session.
 
 Minor maintenance changes, documentation corrections and other work outside a planned session do not require a new session record. They must still remain focused, reviewable and subject to the relevant verification and commit standards.
 
