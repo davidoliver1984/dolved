@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R11",
-    "current_session": "R11-S03",
-    "next_action": "Begin R11-S03 \u2014 Evaluate Chunking Quality.",
-    "completed_through": "R11-S02",
-    "completed_phase_count": 11,
+    "current_phase": "R12",
+    "current_session": "R12-S01",
+    "next_action": "Begin R12-S01 \u2014 Define Embedding Provider Boundary.",
+    "completed_through": "R11-S03",
+    "completed_phase_count": 12,
     "total_phase_count": 22
   },
   "phases": [
@@ -1997,7 +1997,7 @@
           "title": "Evaluate Chunking Quality",
           "guide_start_line": 8456,
           "guide_end_line": 8492,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Create an evaluation corpus and measure whether chunks preserve useful retrieval context.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -2028,18 +2028,25 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r11-s03-evaluate-chunking-quality.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "apps/ai/tests/fixtures/chunking/corpus.json defines the repository-authored CC0 evaluation corpus",
+            "apps/ai/tests/test_chunking_evaluation.py passed all 6 focused evaluation tests",
+            "docs/evaluation/r11-s03-baseline-chunking.md records observed distributions, success criteria and known limitations",
+            "IMPLEMENTATION_GUIDE.md Stage 11.3 records actual commands and repository-wide verification evidence",
+            "docs/journal/2026-07-30-r11-s03-evaluate-chunking-quality.md",
+            "Human review approved the R11-S03 evaluation and Phase 11 commit boundary"
+          ]
         }
       ],
       "guide_end_line": 8492,
-      "status": "not_started",
+      "status": "completed",
       "objective": "Split normalised documents into retrieval units while preserving enough context and source metadata for accurate answers and citations.",
       "gate": {
         "id": "R11-GATE",
         "title": "Chunking Acceptance Gate",
-        "status": "not_started",
+        "status": "completed",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
@@ -2047,7 +2054,13 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-11 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "ADR-0011 defines the accepted deterministic and pluggable chunking architecture",
+          "R11-S02 implements and verifies the baseline structural strategy",
+          "R11-S03 establishes a reproducible corpus, observed distributions and structural quality baseline",
+          "All Phase 11 focused and repository-wide acceptance checks passed",
+          "Human review approved completion of Phase 11"
+        ]
       }
     },
     {

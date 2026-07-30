@@ -8578,32 +8578,116 @@ Create an evaluation corpus and measure whether chunks preserve useful retrieval
 
 Status
 
-Not yet executed.
+Completed on 2026-07-30 after implementation, repository-wide verification,
+the final editorial refinement and human review.
 
-Planned evaluation material
+Evaluation implementation
 
-* prose-heavy PDF;
-* multi-section DOCX;
-* plain text;
-* tables;
-* repeated headings;
-* short document;
-* long document;
-* awkward formatting.
+The committed, repository-authored CC0 evaluation specification is:
+
+```text
+apps/ai/tests/fixtures/chunking/corpus.json
+```
+
+`tests/test_chunking_evaluation.py` builds six deterministic cases from that
+specification: a short plain-text document, long repeated prose, awkward
+Unicode/whitespace and an unbroken value, a three-page prose-heavy PDF with
+repeated header/footer furniture, a multi-section DOCX with headings, and a
+48-row table. PDF and DOCX bytes are generated during the tests through the
+same extraction and normalisation implementations used elsewhere; no
+third-party document fixture is committed.
+
+The tests verify repeated-run equality, the hard token bound, complete primary
+text coverage, exact source/chunk character slicing, inherited source-element
+identity and location equality, retained PDF and DOCX location types,
+repeated-page-furniture removal, heading/body adjacency, row-boundary table
+splitting and inspectable distribution output.
+
+Measured default-profile token distributions:
+
+| Case | Chunks | Minimum | Median | Mean | Maximum |
+|---|---:|---:|---:|---:|---:|
+| Short plain text | 1 | 25 | 25 | 25 | 25 |
+| Long plain text | 4 | 337 | 428.5 | 414 | 462 |
+| Awkward plain text | 1 | 48 | 48 | 48 | 48 |
+| Prose-heavy PDF | 2 | 316 | 356 | 356 | 396 |
+| Multi-section DOCX | 1 | 87 | 87 | 87 | 87 |
+| Table | 3 | 224 | 400 | 362.67 | 464 |
+
+Expected structural behaviour, measured results and known limitations are
+recorded in:
+
+```text
+docs/evaluation/r11-s03-baseline-chunking.md
+```
+
+Problems and corrections
+
+The first heading expectation required each heading/body pair to be the only
+two primary contributions in a chunk. The actual valid result placed all
+three small sections into one bounded chunk while retaining every heading
+immediately before its body. The assertion was corrected to test adjacency,
+which is the intended structural invariant.
+
+The initial PDF fixture contained too little prose to justify the planned
+"prose-heavy" description. It was expanded to three pages with six body
+paragraphs per page. The final result forms two chunks of 316 and 396 tokens
+after deterministic repeated-header/footer removal.
+
+Verification commands
+
+```bash
+docker compose exec -T ai uv run ruff format \
+  tests/test_chunking_evaluation.py
+docker compose exec -T ai uv run ruff check \
+  tests/test_chunking_evaluation.py
+docker compose exec -T ai uv run mypy \
+  tests/test_chunking_evaluation.py
+docker compose exec -T ai uv run pytest \
+  tests/test_chunking_evaluation.py -q
+docker compose exec -T ai uv run python -c \
+  "import json; from tests.test_chunking_evaluation import evaluated_cases, token_distribution; from app.chunking import BaselineStructuralChunker; print(json.dumps({name: token_distribution(BaselineStructuralChunker().chunk(document)) for name, document in evaluated_cases().items()}, indent=2, sort_keys=True))"
+make format-check lint typecheck test ps
+```
+
+Verification evidence
+
+* All 6 focused chunking-evaluation tests passed.
+* The complete Python suite passed all 123 tests; MyPy checked all 49 source
+  files without error and Ruff reported all 50 files formatted with no lint
+  violations.
+* Laravel Pint passed across 105 files, and Laravel passed 118 tests with 491
+  assertions.
+* The web application passed all 10 tests plus ESLint and TypeScript checks.
+* All eight Compose processes were running; every service with a health check
+  was healthy.
 
 Acceptance criteria
 
-* Evaluation fixtures are committed where licensing permits.
-* Expected boundaries are documented.
-* Chunk-size distributions can be inspected.
-* Text-loss checks exist.
-* Source-location integrity is tested.
-* Known limitations are recorded.
+* Evaluation fixtures are committed where licensing permits. — Met: all
+  semantic material is repository-authored and explicitly CC0; binary PDF
+  and DOCX inputs are generated deterministically during tests.
+* Expected boundaries are documented. — Met in the corpus specification and
+  evaluation report for prose, headings, page furniture, tables and fallback
+  splitting.
+* Chunk-size distributions can be inspected. — Met through a reusable metrics
+  function, JSON output command and the measured table above.
+* Text-loss checks exist. — Met: primary provenance is reconstructed per
+  element and compared exactly with every chunkable element's complete text.
+* Source-location integrity is tested. — Met: contribution spans slice both
+  chunk and element text exactly; identity/location values and PDF/DOCX
+  location types survive the full path.
+* Known limitations are recorded. — Met in the evaluation report without
+  expanding this stage into semantic/model-assisted chunking.
 
 Commit boundary
 
-git add tests docs
+git add apps/ai/tests docs/evaluation \
+  docs/journal/2026-07-30-r11-s03-evaluate-chunking-quality.md \
+  IMPLEMENTATION_GUIDE.md tasks.json
 git commit -m "Add chunking evaluation corpus"
+git tag -a phase-11-s03 -m "Complete Stage 11.3: Evaluate Chunking Quality"
+git tag -a phase-11 -m "Complete Phase 11: Chunking"
 
 ⸻
 

@@ -1,0 +1,80 @@
+{
+  "license": "Repository-authored synthetic evaluation material; CC0-1.0.",
+  "cases": {
+    "short_plain_text": {
+      "paragraphs": [
+        "A workspace keeps documents belonging to one collaborating team together.",
+        "Every answer must remain traceable to the source material that supported it."
+      ],
+      "expected": [
+        "one chunk",
+        "all paragraphs retained",
+        "source locations remain directly traceable"
+      ]
+    },
+    "long_plain_text": {
+      "repeat": 24,
+      "paragraphs": [
+        "The ingestion pipeline records durable intent before asynchronous publication. A worker may receive the same event more than once, so lifecycle transitions and event identity make repeated delivery safe.",
+        "Normalisation preserves meaningful structure and provenance before chunking begins. The baseline chunker prefers semantic boundaries while retaining every character as primary content exactly once."
+      ],
+      "expected": [
+        "multiple bounded chunks",
+        "deterministic overlap",
+        "no primary text loss"
+      ]
+    },
+    "awkward_plain_text": {
+      "paragraphs": [
+        "  Canonically equivalent Café text uses decomposed Unicode before normalisation.\nThe same paragraph contains\ttabs, uneven spacing, and several short lines.  ",
+        "AReallyLongUnbrokenValueDesignedToExerciseTokenizerSafeFallbackBoundariesWithoutIntroducingAnArtificialWhitespaceBoundary."
+      ],
+      "expected": [
+        "Unicode remains valid",
+        "awkward whitespace is handled deterministically",
+        "fallback boundaries preserve all content"
+      ]
+    },
+    "pdf": {
+      "pages": 3,
+      "paragraphs_per_page": 6,
+      "repeated_header": "MakeTime ingestion handbook",
+      "repeated_footer": "Internal evaluation copy",
+      "body_template": "Page {page}, paragraph {paragraph}, explains why deterministic processing, explicit provenance, bounded retry behaviour, and immutable intermediate representations make an event-driven document pipeline inspectable and reproducible.",
+      "expected": [
+        "repeated page furniture removed by normalisation",
+        "page reading order retained",
+        "PDF source locations retained"
+      ]
+    },
+    "docx": {
+      "sections": [
+        {
+          "heading": "Upload and provenance",
+          "paragraph": "A document is a durable domain object. Its storage key and creator record provenance without turning either value into workspace ownership authority."
+        },
+        {
+          "heading": "Extraction and normalisation",
+          "paragraph": "Format-specific parsers remain private behind extractors. The canonical immutable output is normalised through deterministic structural rules before chunking."
+        },
+        {
+          "heading": "Chunking and retrieval",
+          "paragraph": "Chunks preserve ordered source spans and stable semantic configuration so later embeddings, retrieval results, and citations can be inspected and reproduced."
+        }
+      ],
+      "expected": [
+        "heading order retained",
+        "headings remain associated with following content where size permits",
+        "DOCX source locations retained"
+      ]
+    },
+    "table": {
+      "rows": 48,
+      "expected": [
+        "multiple bounded chunks",
+        "row boundaries preferred",
+        "table source provenance retained"
+      ]
+    }
+  }
+}
