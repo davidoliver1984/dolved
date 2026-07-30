@@ -60,7 +60,7 @@ one-command onboarding.
 ### Paid LocalStack plan
 
 A paid plan provides current releases and local state persistence. It was rejected
-because routine development of this portfolio project should not require a commercial
+because routine development of this project should not require a commercial
 subscription.
 
 ### Separate open-source S3 and SQS emulators

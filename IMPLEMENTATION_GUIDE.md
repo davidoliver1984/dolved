@@ -10176,11 +10176,11 @@ git commit -m "Complete production readiness review"
 
 ⸻
 
-Phase 21 — Portfolio and Demonstration Readiness
+Phase 21 — Documentation and Demonstration Readiness
 
 Phase objective
 
-Present the platform as a credible 2027 engineering portfolio project without allowing presentation work to replace engineering substance.
+Document the platform clearly and provide a reproducible way to demonstrate its capabilities, without letting presentation work substitute for engineering substance.
 
 ⸻
 
@@ -10188,7 +10188,7 @@ Stage 21.1 — Write Architecture Documentation
 
 Objective
 
-Explain the system clearly to reviewers, recruiters, clients and future contributors.
+Explain the system clearly to reviewers, collaborators, clients and future contributors.
 
 Status
 

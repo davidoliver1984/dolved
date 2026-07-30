@@ -14,8 +14,9 @@ Build a production-quality, AI-powered Retrieval Augmented Generation (RAG)
 platform that demonstrates modern software architecture, cloud-native
 engineering, AI integration and scalable system design.
 
-The platform is intended to showcase professional software engineering
-practices rather than simply demonstrate AI features.
+The platform is engineered to professional software engineering standards
+throughout — architecture, testing, security and operability — not merely
+assembled to demonstrate AI features.
 
 ### Core objectives
 
@@ -28,7 +29,7 @@ practices rather than simply demonstrate AI features.
 - Infrastructure as Code
 - Comprehensive testing
 - Observable and maintainable
-- Suitable as a flagship portfolio project
+- Built to be run and maintained as genuine, ongoing production software
 
 ---
 
@@ -566,12 +567,13 @@ Production-ready platform.
 
 ---
 
-## Phase 21 — Portfolio and Demonstration Readiness
+## Phase 21 — Documentation and Demonstration Readiness
 
 ### Objectives
 
-Present the platform as a credible 2027 engineering portfolio project without
-allowing presentation work to replace engineering substance.
+Document the platform clearly and provide a reproducible way to demonstrate
+its capabilities, without letting presentation work substitute for
+engineering substance.
 
 ### Tasks
 
@@ -581,7 +583,8 @@ allowing presentation work to replace engineering substance.
 
 ### Deliverable
 
-A polished, demonstrable, portfolio-ready platform.
+A clearly documented platform with a reproducible demonstration of its core
+capabilities.
 
 ---
 
@@ -645,7 +648,7 @@ A phase is complete only when:
 | Observability and Operations | ⬜ Not Started |
 | Testing and Quality Strategy | ⬜ Not Started |
 | CI/CD and Production Readiness | ⬜ Not Started |
-| Portfolio and Demonstration Readiness | ⬜ Not Started |
+| Documentation and Demonstration Readiness | ⬜ Not Started |
 
 ---
 
