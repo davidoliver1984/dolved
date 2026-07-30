@@ -1,434 +1,445 @@
-dolved (RAG platform) Roadmap
+# dolved — RAG Platform Roadmap
 
-Project Status: In Progress — Phase 11 of 22 (Chunking)
-Version: 0.1
-Owner: David Oliver
+| Field | Value |
+|---|---|
+| Project status | In Progress — Phase 12 of 22 (Embeddings) |
+| Version | 0.1 |
+| Owner | David Oliver |
 
-⸻
+---
 
-Vision
+## Vision
 
-Build a production-quality, AI-powered Retrieval Augmented Generation (RAG) platform that demonstrates modern software architecture, cloud-native engineering, AI integration, and scalable system design.
+Build a production-quality, AI-powered Retrieval Augmented Generation (RAG)
+platform that demonstrates modern software architecture, cloud-native
+engineering, AI integration and scalable system design.
 
-The platform is intended to showcase professional software engineering practices rather than simply demonstrate AI features.
+The platform is intended to showcase professional software engineering
+practices rather than simply demonstrate AI features.
 
-Core objectives:
+### Core objectives
 
-* Multi-tenant by design
-* Cloud-native architecture
-* Event-driven ingestion pipeline
-* Production-quality codebase
-* Excellent developer experience
-* Fully containerised local development
-* Infrastructure as Code
-* Comprehensive testing
-* Observable and maintainable
-* Suitable as a flagship portfolio project
+- Multi-tenant by design
+- Cloud-native architecture
+- Event-driven ingestion pipeline
+- Production-quality codebase
+- Excellent developer experience
+- Fully containerised local development
+- Infrastructure as Code
+- Comprehensive testing
+- Observable and maintainable
+- Suitable as a flagship portfolio project
 
-⸻
+---
 
-Guiding Principles
+## Guiding principles
 
 Every architectural decision should favour:
 
-* Simplicity before cleverness
-* Maintainability before optimisation
-* Explicitness over magic
-* Strong typing where practical
-* Automation over manual processes
-* Incremental delivery
-* Production-first thinking
-* Clear separation of responsibilities
+- Simplicity before cleverness
+- Maintainability before optimisation
+- Explicitness over magic
+- Strong typing where practical
+- Automation over manual processes
+- Incremental delivery
+- Production-first thinking
+- Clear separation of responsibilities
 
-⸻
+---
 
-Technology Stack
+## Technology stack
 
-Frontend
+### Frontend
 
-* Next.js
-* React
-* TypeScript
-* App Router
+- Next.js
+- React
+- TypeScript
+- App Router
 
-⸻
+---
 
-Backend
+### Backend
 
-* Laravel
-* PHP
-* REST API
-* Queues
-* Events
-* Policies
+- Laravel
+- PHP
+- REST API
+- Queues
+- Events
+- Policies
 
-⸻
+---
 
-AI
+### AI
 
-* Python
-* FastAPI
-* LangChain (where appropriate)
-* OpenAI
-* Local models (future)
+- Python
+- FastAPI
+- LangChain (where appropriate)
+- OpenAI
+- Local models (future)
 
-⸻
+---
 
-Data
+### Data
 
-* PostgreSQL
-* Qdrant
+- PostgreSQL
+- Qdrant
 
-⸻
+---
 
-Infrastructure
+### Infrastructure
 
-* Docker
-* Docker Compose
-* LocalStack
-* Redis
-* Mailpit
-* Laravel Reverb
+- Docker
+- Docker Compose
+- LocalStack
+- Redis
+- Mailpit
+- Laravel Reverb
 
-⸻
+---
 
-Cloud (Future)
+### Cloud (future)
 
-* AWS ECS
-* S3
-* SQS
-* CloudWatch
-* Secrets Manager
-* IAM
-* Terraform
+- AWS ECS
+- S3
+- SQS
+- CloudWatch
+- Secrets Manager
+- IAM
+- Terraform
 
-⸻
+---
 
-Repository Milestones
+## Repository milestones
 
-⸻
+---
 
-Phase 0 — Repository Foundation
+## Phase 0 — Repository Foundation
 
-Objectives
+### Objectives
 
 Create the monorepo contract before generating applications.
 
-Tasks
+### Tasks
 
-* Create repository
-* Initialise Git
-* Create root folders
-* Create README
-* Create LICENSE
-* Create Makefile
-* Create .editorconfig
-* Create .gitignore
-* Create .env.example
-* Initial commit
+- Create repository
+- Initialise Git
+- Create root folders
+- Create README
+- Create LICENSE
+- Create Makefile
+- Create `.editorconfig`
+- Create `.gitignore`
+- Create `.env.example`
+- Initial commit
 
-Deliverable
+### Deliverable
 
 A clean, version-controlled monorepo ready for development.
 
-⸻
+---
 
-Phase 1 — Application Scaffolding
+## Phase 1 — Application Scaffolding
 
-Next.js
+### Next.js
 
-* Generate application
-* Configure App Router
-* Configure TypeScript
-* Configure ESLint
-* Create route groups
-* Create feature folders
-* Health page
+- Generate application
+- Configure App Router
+- Configure TypeScript
+- Configure ESLint
+- Create route groups
+- Create feature folders
+- Health page
 
-⸻
+---
 
-Laravel
+### Laravel
 
-* Generate application
-* Configure PostgreSQL
-* Create API health endpoint
-* Verify routing
-* Verify migrations
+- Generate application
+- Configure PostgreSQL
+- Create API health endpoint
+- Verify routing
+- Verify migrations
 
-⸻
+---
 
-Python
+### Python
 
-* Create package
-* Configure pyproject
-* Configure Ruff
-* Configure MyPy
-* Configure Pytest
-* Create settings module
+- Create package
+- Configure `pyproject.toml`
+- Configure Ruff
+- Configure MyPy
+- Configure Pytest
+- Create settings module
 
-Deliverable
+### Deliverable
 
 Three independently runnable applications.
 
-⸻
+---
 
-Phase 2 — Independent Containerisation
+## Phase 2 — Independent Containerisation
 
-Objectives
+### Objectives
 
-Create an independently buildable development image for each application before connecting them through Docker Compose.
+Create an independently buildable development image for each application
+before connecting them through Docker Compose.
 
-Tasks
+### Tasks
 
-* Containerise Next.js Web Application
-* Containerise Laravel API Application
-* Containerise Python AI Service
+- Containerise Next.js Web Application
+- Containerise Laravel API Application
+- Containerise Python AI Service
 
-Deliverable
+### Deliverable
 
 Each image builds independently.
 
-⸻
+---
 
-Phase 3 — Docker Compose Platform
+## Phase 3 — Docker Compose Platform
 
-Objectives
+### Objectives
 
-Connect the independently working application containers through the root compose.yaml.
+Connect the independently working application containers through the root
+`compose.yaml`.
 
-Tasks
+### Tasks
 
-* Compose Application Services
-* Add PostgreSQL
-* Integrate Laravel with PostgreSQL
-* Platform Health Verification
+- Compose Application Services
+- Add PostgreSQL
+- Integrate Laravel with PostgreSQL
+- Platform Health Verification
 
-Deliverable
+### Deliverable
 
 Entire platform starts using one command.
 
-⸻
+---
 
-Phase 4 — Developer Interface
+## Phase 4 — Developer Interface
 
-Objectives
+### Objectives
 
 Expose a stable, memorable repository interface through the root Makefile.
 
-Tasks
+### Tasks
 
-* Add Core Make Targets
-* Add Quality and Test Targets
-* Add Bootstrap and Reset Targets
+- Add Core Make Targets
+- Add Quality and Test Targets
+- Add Bootstrap and Reset Targets
 
-Deliverable
+### Deliverable
 
 Developers interact with the repository through Make.
 
-⸻
+---
 
-Phase 5 — Local AWS Development
+## Phase 5 — Local AWS Development
 
-Objectives
+### Objectives
 
-Introduce local AWS-compatible infrastructure without requiring real cloud resources during routine development.
+Introduce local AWS-compatible infrastructure without requiring real cloud
+resources during routine development.
 
-Tasks
+### Tasks
 
-* Add LocalStack
-* Provision Local AWS Resources
+- Add LocalStack
+- Provision Local AWS Resources
 
-Deliverable
+### Deliverable
 
 Local AWS-compatible environment.
 
-⸻
+---
 
-Phase 6 — Authentication and Identity
+## Phase 6 — Authentication and Identity
 
-Objectives
+### Objectives
 
 Establish secure user identity before introducing tenant-owned documents and conversations.
 
-Tasks
+### Tasks
 
-* Define Authentication Architecture
-* Implement Laravel Authentication
-* Implement Next.js Authentication UI
+- Define Authentication Architecture
+- Implement Laravel Authentication
+- Implement Next.js Authentication UI
 
-Deliverable
+### Deliverable
 
 Secure authenticated platform.
 
-⸻
+---
 
-Phase 7 — Multi-Tenancy
+## Phase 7 — Multi-Tenancy
 
-Objectives
+### Objectives
 
 Ensure every tenant-owned resource is isolated by design rather than filtered as an afterthought.
 
-Tasks
+### Tasks
 
-* Define Tenant Model
-* Implement Workspaces and Memberships
-* Add Workspace-Aware Web Experience
+- Define Tenant Model
+- Implement Workspaces and Memberships
+- Add Workspace-Aware Web Experience
 
-Deliverable
+### Deliverable
 
 Workspace-aware application architecture.
 
-⸻
+---
 
-Phase 8 — Document Domain and Storage
+## Phase 8 — Document Domain and Storage
 
-Objectives
+### Objectives
 
 Model tenant-owned documents and store source files safely before asynchronous ingestion begins.
 
-Tasks
+### Tasks
 
-* Define Document Lifecycle
-* Implement Document Persistence
-* Implement Direct Upload Flow
+- Define Document Lifecycle
+- Implement Document Persistence
+- Implement Direct Upload Flow
 
-Deliverable
+### Deliverable
 
 Reliable document storage.
 
-⸻
+---
 
-Phase 9 — Event-Driven Ingestion
+## Phase 9 — Event-Driven Ingestion
 
-Objectives
+### Objectives
 
-Decouple document upload from document processing through a durable, tenant-aware and versioned ingestion workflow.
+Decouple document upload from document processing through a durable,
+tenant-aware and versioned ingestion workflow.
 
-Tasks
+### Tasks
 
-* Define the Ingestion Architecture and Event Contract
-* Publish Ingestion Requests Reliably
-* Consume and Claim Ingestion Requests
+- Define the Ingestion Architecture and Event Contract
+- Publish Ingestion Requests Reliably
+- Consume and Claim Ingestion Requests
 
-Deliverable
+### Deliverable
 
 Robust asynchronous ingestion.
 
-⸻
+---
 
-Phase 10 — Text Extraction and Normalisation
+## Phase 10 — Text Extraction and Normalisation
 
-Objectives
+### Objectives
 
-Convert supported source documents into a consistent internal representation with traceable source metadata.
+Convert supported source documents into a consistent internal representation
+with traceable source metadata.
 
-Tasks
+### Tasks
 
-* Define Extracted Document Contract
-* Implement Plain Text Extraction
-* Implement PDF Extraction
-* Implement DOCX Extraction
-* Normalise Extracted Content
+- Define Extracted Document Contract
+- Implement Plain Text Extraction
+- Implement PDF Extraction
+- Implement DOCX Extraction
+- Normalise Extracted Content
 
-Deliverable
+### Deliverable
 
 Normalised document content.
 
-⸻
+---
 
-Phase 11 — Chunking
+## Phase 11 — Chunking
 
-Objectives
+### Objectives
 
-Split normalised documents into retrieval units while preserving enough context and source metadata for accurate answers and citations.
+Split normalised documents into retrieval units while preserving enough
+context and source metadata for accurate answers and citations.
 
-Tasks
+### Tasks
 
-* Define Chunk Contract
-* Implement Baseline Chunker
-* Evaluate Chunking Quality
+- Define Chunk Contract
+- Implement Baseline Chunker
+- Evaluate Chunking Quality
 
-Deliverable
+### Deliverable
 
 Consistent document chunks.
 
-⸻
+---
 
-Phase 12 — Embeddings
+## Phase 12 — Embeddings
 
-Objectives
+### Objectives
 
 Generate reproducible vector representations while keeping model providers replaceable.
 
-Tasks
+### Tasks
 
-* Define Embedding Provider Boundary
-* Implement Embedding Generation
+- Define Embedding Provider Boundary
+- Implement Embedding Generation
 
-Deliverable
+### Deliverable
 
 Searchable vector data.
 
-⸻
+---
 
-Phase 13 — Vector Storage
+## Phase 13 — Vector Storage
 
-Objectives
+### Objectives
 
 Persist tenant-isolated chunk vectors and metadata in a dedicated vector database.
 
-Tasks
+### Tasks
 
-* Define Vector Database Architecture
-* Add Qdrant Development Service
-* Persist Chunk Vectors
-* Complete Ingestion Pipeline
+- Define Vector Database Architecture
+- Add Qdrant Development Service
+- Persist Chunk Vectors
+- Complete Ingestion Pipeline
 
-Deliverable
+### Deliverable
 
 Working vector search.
 
-⸻
+---
 
-Phase 14 — Retrieval
+## Phase 14 — Retrieval
 
-Objectives
+### Objectives
 
 Retrieve relevant, tenant-safe source chunks for a user query.
 
-Tasks
+### Tasks
 
-* Define Retrieval Contract
-* Implement Semantic Retrieval
-* Add Retrieval Evaluation
-* Introduce Retrieval Enhancements
+- Define Retrieval Contract
+- Implement Semantic Retrieval
+- Add Retrieval Evaluation
+- Introduce Retrieval Enhancements
 
-Deliverable
+### Deliverable
 
 Accurate retrieval pipeline.
 
-⸻
+---
 
-Phase 15 — Grounded Generation
+## Phase 15 — Grounded Generation
 
-Objectives
+### Objectives
 
 Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.
 
-Tasks
+### Tasks
 
-* Define Generation Provider Boundary
-* Build Grounded Prompt Assembly
-* Generate Answers with Citations
-* Add Answer Evaluation
+- Define Generation Provider Boundary
+- Build Grounded Prompt Assembly
+- Generate Answers with Citations
+- Add Answer Evaluation
 
-Deliverable
+### Deliverable
 
 Reliable RAG responses.
 
-⸻
+---
 
-Design Constraint — Citations and Re-extraction
+### Design constraint — Citations and re-extraction
 
 Recorded 2026-07-30, arising from Phase 10 (ADR-0010) and its extracted-element
 identity model.
@@ -441,197 +452,205 @@ previous extraction may no longer reference the active extraction.
 Before Phase 15 citation and answer-generation work begins implementation, the
 citation and re-extraction design must explicitly decide:
 
-* whether an extraction is permanently retained once referenced;
-* whether re-extraction creates a new version alongside the previous one;
-* whether chunking, embeddings and citations are rebuilt atomically;
-* whether citations reference raw element UUIDs or a separate evidence identity;
-* how historical answers continue to resolve their original evidence.
+- whether an extraction is permanently retained once referenced;
+- whether re-extraction creates a new version alongside the previous one;
+- whether chunking, embeddings and citations are rebuilt atomically;
+- whether citations reference raw element UUIDs or a separate evidence identity;
+- how historical answers continue to resolve their original evidence.
 
 This is intentionally deferred until retrieval and answer generation provide
 enough context to define the actual citation requirements. No Phase 10
 implementation change is required.
 
-⸻
+---
 
-Phase 16 — Conversation and Streaming
+## Phase 16 — Conversation and Streaming
 
-Objectives
+### Objectives
 
 Expose the RAG workflow as a persistent, streaming conversational experience.
 
-Tasks
+### Tasks
 
-* Define Conversation Domain
-* Implement Chat Orchestration API
-* Implement Streaming Responses
-* Build Chat Interface
+- Define Conversation Domain
+- Implement Chat Orchestration API
+- Implement Streaming Responses
+- Build Chat Interface
 
-Deliverable
+### Deliverable
 
 Production-quality chat interface.
 
-⸻
+---
 
-Phase 17 — Administration
+## Phase 17 — Administration
 
-Objectives
+### Objectives
 
 Provide operational visibility and safe tenant-level controls.
 
-Tasks
+### Tasks
 
-* Build Document Administration
-* Build Tenant and Membership Administration
-* Add Usage Visibility
+- Build Document Administration
+- Build Tenant and Membership Administration
+- Add Usage Visibility
 
-Deliverable
+### Deliverable
 
 Complete administration tools.
 
-⸻
+---
 
-Phase 18 — Observability and Operations
+## Phase 18 — Observability and Operations
 
-Objectives
+### Objectives
 
 Make failures, latency and cross-service behaviour diagnosable.
 
-Tasks
+### Tasks
 
-* Standardise Structured Logging
-* Add Metrics
-* Add Distributed Tracing
-* Define Operational Alerts
+- Standardise Structured Logging
+- Add Metrics
+- Add Distributed Tracing
+- Define Operational Alerts
 
-Deliverable
+### Deliverable
 
 Observable platform.
 
-⸻
+---
 
-Phase 19 — Testing and Quality Strategy
+## Phase 19 — Testing and Quality Strategy
 
-Objectives
+### Objectives
 
-Create a layered test strategy that catches regressions without requiring every check to be an expensive end-to-end test.
+Create a layered test strategy that catches regressions without requiring
+every check to be an expensive end-to-end test.
 
-Tasks
+### Tasks
 
-* Establish Test Taxonomy
-* Add Contract Tests
-* Add End-to-End Ingestion Tests
-* Add End-to-End Chat Tests
-* Add Security-Focused Tests
+- Establish Test Taxonomy
+- Add Contract Tests
+- Add End-to-End Ingestion Tests
+- Add End-to-End Chat Tests
+- Add Security-Focused Tests
 
-Deliverable
+### Deliverable
 
 Comprehensive test suite.
 
-⸻
+---
 
-Phase 20 — CI/CD and Production Readiness
+## Phase 20 — CI/CD and Production Readiness
 
-Objectives
+### Objectives
 
-Make the platform reproducibly testable, buildable, deployable and operable outside a developer laptop.
+Make the platform reproducibly testable, buildable, deployable and operable
+outside a developer laptop.
 
-Tasks
+### Tasks
 
-* Add Continuous Integration
-* Create Production Container Builds
-* Add Infrastructure as Code
-* Configure Secrets and Environment Management
-* Add Database Backup and Recovery
-* Define Vector Index Recovery
-* Perform Security Hardening
-* Create Staging Deployment
-* Production Readiness Review
+- Add Continuous Integration
+- Create Production Container Builds
+- Add Infrastructure as Code
+- Configure Secrets and Environment Management
+- Add Database Backup and Recovery
+- Define Vector Index Recovery
+- Perform Security Hardening
+- Create Staging Deployment
+- Production Readiness Review
 
-Deliverable
+### Deliverable
 
 Production-ready platform.
 
-⸻
+---
 
-Phase 21 — Portfolio and Demonstration Readiness
+## Phase 21 — Portfolio and Demonstration Readiness
 
-Objectives
+### Objectives
 
-Present the platform as a credible 2027 engineering portfolio project without allowing presentation work to replace engineering substance.
+Present the platform as a credible 2027 engineering portfolio project without
+allowing presentation work to replace engineering substance.
 
-Tasks
+### Tasks
 
-* Write Architecture Documentation
-* Create Demonstration Dataset and Scenario
-* Finalise Repository README
+- Write Architecture Documentation
+- Create Demonstration Dataset and Scenario
+- Finalise Repository README
 
-Deliverable
+### Deliverable
 
 A polished, demonstrable, portfolio-ready platform.
 
-⸻
+---
 
-Future Enhancements
+## Future enhancements
 
-* OCR
-* Image understanding
-* Audio transcription
-* Video ingestion
-* Hybrid search
-* Re-ranking
-* Multiple LLM providers
-* Local LLM support
-* Agent workflows
-* Knowledge graphs
-* Fine-tuning
-* Analytics dashboard
-* Billing
-* API keys
-* Webhooks
-* Plugin architecture
+- OCR
+- Image understanding
+- Audio transcription
+- Video ingestion
+- Hybrid search
+- Re-ranking
+- Multiple LLM providers
+- Local LLM support
+- Agent workflows
+- Knowledge graphs
+- Fine-tuning
+- Analytics dashboard
+- Billing
+- API keys
+- Webhooks
+- Plugin architecture
 
-⸻
+---
 
-Definition of Done
+## Definition of done
 
 A phase is complete only when:
 
-* All tasks are complete.
-* Code is committed.
-* Tests pass.
-* Documentation is updated.
-* ADRs are written where appropriate.
-* The application runs locally.
-* No known critical defects remain.
+- All tasks are complete.
+- Code is committed.
+- Tests pass.
+- Documentation is updated.
+- ADRs are written where appropriate.
+- The application runs locally.
+- No known critical defects remain.
 
-⸻
+---
 
-Progress
+## Progress
 
-Phase	Status
-Repository Foundation	✅ Complete
-Application Scaffolding	✅ Complete
-Independent Containerisation	✅ Complete
-Docker Compose Platform	✅ Complete
-Developer Interface	✅ Complete
-Local AWS Development	✅ Complete
-Authentication and Identity	✅ Complete
-Multi-Tenancy	✅ Complete
-Document Domain and Storage	✅ Complete
-Event-Driven Ingestion	✅ Complete
-Text Extraction and Normalisation	✅ Complete
-Chunking	⏳ In Progress
-Embeddings	⬜ Not Started
-Vector Storage	⬜ Not Started
-Retrieval	⬜ Not Started
-Grounded Generation	⬜ Not Started
-Conversation and Streaming	⬜ Not Started
-Administration	⬜ Not Started
-Observability and Operations	⬜ Not Started
-Testing and Quality Strategy	⬜ Not Started
-CI/CD and Production Readiness	⬜ Not Started
-Portfolio and Demonstration Readiness	⬜ Not Started
+| Phase | Status |
+|---|---|
+| Repository Foundation | ✅ Complete |
+| Application Scaffolding | ✅ Complete |
+| Independent Containerisation | ✅ Complete |
+| Docker Compose Platform | ✅ Complete |
+| Developer Interface | ✅ Complete |
+| Local AWS Development | ✅ Complete |
+| Authentication and Identity | ✅ Complete |
+| Multi-Tenancy | ✅ Complete |
+| Document Domain and Storage | ✅ Complete |
+| Event-Driven Ingestion | ✅ Complete |
+| Text Extraction and Normalisation | ✅ Complete |
+| Chunking | ✅ Complete |
+| Embeddings | ⏳ In Progress |
+| Vector Storage | ⬜ Not Started |
+| Retrieval | ⬜ Not Started |
+| Grounded Generation | ⬜ Not Started |
+| Conversation and Streaming | ⬜ Not Started |
+| Administration | ⬜ Not Started |
+| Observability and Operations | ⬜ Not Started |
+| Testing and Quality Strategy | ⬜ Not Started |
+| CI/CD and Production Readiness | ⬜ Not Started |
+| Portfolio and Demonstration Readiness | ⬜ Not Started |
 
-⸻
+---
 
-Remember: This roadmap is a living document. As the platform evolves, update it to reflect architectural decisions, completed milestones, and new priorities. The goal is not merely to finish the checklist, but to build a platform that demonstrates thoughtful engineering, clear architecture, and production-ready practices.
+> **Remember:** This roadmap is a living document. As the platform evolves,
+> update it to reflect architectural decisions, completed milestones and new
+> priorities. The goal is not merely to finish the checklist, but to build a
+> platform that demonstrates thoughtful engineering, clear architecture and
+> production-ready practices.
