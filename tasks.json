@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R11",
-    "current_session": "R11-S02",
-    "next_action": "Begin R11-S02 \u2014 Implement Baseline Chunker per ADR 0011.",
-    "completed_through": "R11-S01",
+    "current_session": "R11-S03",
+    "next_action": "Begin R11-S03 \u2014 Evaluate Chunking Quality.",
+    "completed_through": "R11-S02",
     "completed_phase_count": 11,
     "total_phase_count": 22
   },
@@ -1950,7 +1950,7 @@
           "title": "Implement Baseline Chunker",
           "guide_start_line": 8418,
           "guide_end_line": 8455,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Create a deterministic baseline chunking strategy.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -1981,9 +1981,15 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r11-s02-implement-baseline-chunker.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "apps/ai/app/chunking implements the ADR-0011 strategy, semantic result, provenance and tokenizer contracts",
+            "apps/ai/tests/test_baseline_chunking.py passed all 14 focused tests",
+            "IMPLEMENTATION_GUIDE.md Stage 11.2 records the actual implementation and verification evidence",
+            "docs/journal/2026-07-30-r11-s02-implement-baseline-chunker.md",
+            "Human review approved the R11-S02 implementation and commit boundary"
+          ]
         },
         {
           "id": "R11-S03",

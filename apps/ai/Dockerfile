@@ -7,6 +7,7 @@ FROM ${UV_IMAGE} AS development
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
 ENV UV_PROJECT_ENVIRONMENT=/app/.venv
+ENV TIKTOKEN_CACHE_DIR=/opt/tiktoken-cache
 ENV PATH="/app/.venv/bin:${PATH}"
 
 RUN groupadd --gid 10001 app \
@@ -26,7 +27,9 @@ RUN uv sync \
 
 COPY --chown=app:app . .
 RUN uv sync --locked \
-    && chown -R app:app /app
+    && mkdir --parents "${TIKTOKEN_CACHE_DIR}" \
+    && uv run python -c "import tiktoken; tiktoken.get_encoding('o200k_base')" \
+    && chown -R app:app /app "${TIKTOKEN_CACHE_DIR}"
 
 USER app
 

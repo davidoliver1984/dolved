@@ -8277,7 +8277,7 @@ Phase objective
 
 Split normalised documents into retrieval units while preserving enough context and source metadata for accurate answers and citations.
 
-Deferred R11-S01 architecture direction
+Pre-ADR R11-S01 architecture direction
 
 R11-S01 must define a pluggable `ChunkingStrategy` abstraction. This is a
 deferred Phase 11 decision and does not expand ADR-0010 beyond extraction and
@@ -8293,13 +8293,16 @@ The agreed direction for that architecture session is:
 * the abstraction permits future structural, semantic, context-enriched,
   LLM-driven and hybrid strategies without changing the consuming pipeline;
 * `ChunkingResult` preserves strategy identity, strategy version,
-  configuration, source-element provenance, token usage, warnings and
-  processing duration; and
-* a future model-assisted strategy exposes model identity, token usage, call
-  count, latency and estimated cost.
+  consequential configuration, source-element provenance, per-chunk token
+  counts and semantic warnings; and
+* a future model-assisted strategy records consequential model identity and
+  parameters in its semantic configuration, while execution token usage,
+  call count, latency, estimated cost and processing duration remain separate
+  operational telemetry.
 
-Exact contract fields and implementation details remain intentionally
-deferred to R11-S01.
+ADR-0011 supersedes the earlier wording that placed operational measurements
+inside `ChunkingResult`. Exact contract fields and baseline implementation
+details remained intentionally deferred to R11-S01 and R11-S02 respectively.
 
 ⸻
 
@@ -8423,33 +8426,147 @@ Create a deterministic baseline chunking strategy.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-30 after implementation, repository-wide verification
+and human review.
 
-Planned considerations
+Implementation
 
-* token-based limits;
-* overlap;
-* paragraph boundaries;
-* headings;
-* minimum useful chunk size;
-* excessive single paragraphs;
-* tables and lists;
-* deterministic ordering.
+The Python service now exposes the ADR-0011
+`ChunkingStrategy.chunk(document: NormalisedDocument) -> ChunkingResult`
+boundary and a version-one `BaselineStructuralChunker`.
+
+Tokenisation is isolated behind a `Tokenizer` protocol. The baseline adapter
+pins `tiktoken==0.13.0` and the explicit `o200k_base` encoding. Its semantic
+configuration records the library identity and version, encoding identity,
+the SHA-256 fingerprint of the loaded mergeable-rank vocabulary, and the
+consequential chunking values:
+
+```text
+target_tokens=400
+max_tokens=512
+overlap_tokens=64
+preferred_min_tokens=100
+```
+
+The complete typed configuration snapshot is retained on `ChunkingResult`;
+canonical JSON and SHA-256 produce its deterministic fingerprint. No model
+identity is present because this strategy invokes no model.
+
+The upstream hash-verified `o200k_base` vocabulary is loaded into a dedicated
+cache while the AI image is built. Runtime chunking therefore does not depend
+on downloading tokenizer data from the network.
+
+The baseline preserves complete normalised elements where they fit. Oversized
+paragraphs prefer sentence boundaries, then line and word boundaries, before
+falling back to a tokenizer-safe character boundary. Oversized tables prefer
+row boundaries. Headings are moved to the following primary group when that
+association fits under the hard maximum. List-like content currently follows
+paragraph structure because the canonical normalised model does not yet
+define a list element subtype.
+
+Every contribution records its normalised-element UUID, original
+source-element UUIDs and source locations, element-local character span,
+chunk-local character span, and whether it is primary content or deliberate
+overlap. A postcondition proves that primary spans cover every non-empty
+chunkable element contiguously from start to end. An unknown element with
+preserved text is chunked conservatively; an unknown element containing only
+its preserved structural payload is explicitly classified as non-chunkable
+and produces a semantic warning. Any other unrepresentable content raises
+the typed `UnrepresentableContentError`.
+
+Chunk UUIDv5 identities include workspace and Document identity, strategy
+name/version, configuration fingerprint, ordinal, ordered provenance spans
+and roles, and final chunk content. Repeating the same transformation
+therefore reproduces both values and identities. Per-chunk token counts are
+semantic output; execution duration and other operational telemetry remain
+outside `ChunkingResult` in accordance with ADR-0011.
+
+Problems and corrections
+
+The first focused MyPy run found that the private piece model represented its
+provenance role as a general string while `ChunkContribution` correctly
+requires the literal values `primary` or `overlap`. The private type was
+narrowed to the same literal union. No runtime behaviour changed.
+
+An explicit small-final-chunk test showed that the preferred-minimum warning
+initially counted overlap as though it were new primary content. The check now
+measures primary content only, so repeated context cannot conceal an
+undersized retrieval unit.
+
+The pre-ADR Phase 11 note incorrectly placed processing duration and
+model-execution usage inside semantic `ChunkingResult`. Its wording was
+corrected to match accepted ADR-0011 before implementation.
+
+Verification commands
+
+```bash
+docker compose exec -T ai uv add 'tiktoken==0.13.0'
+docker compose exec -T ai uv run ruff format \
+  app/chunking tests/test_baseline_chunking.py
+docker compose exec -T ai uv run ruff check \
+  app/chunking tests/test_baseline_chunking.py
+docker compose exec -T ai uv run mypy \
+  app/chunking tests/test_baseline_chunking.py
+docker compose exec -T ai uv run pytest \
+  tests/test_baseline_chunking.py -q
+docker compose build ai worker
+docker run --rm --network none rag-platform-ai:development \
+  python -c "from app.chunking import TiktokenTokenizer; print(TiktokenTokenizer().identity)"
+make format-check lint typecheck test ps
+```
+
+Verification evidence
+
+* All 14 focused baseline-chunking tests passed.
+* The rebuilt AI image loaded the pinned tokenizer successfully with
+  networking disabled, proving the vocabulary is available at runtime
+  without a download.
+* The complete Python suite passed all 117 tests; MyPy checked all 48 source
+  files without error and Ruff reported all 49 files formatted with no lint
+  violations.
+* Laravel Pint passed across 105 files, and Laravel passed 118 tests with 491
+  assertions.
+* The web application passed all 10 tests plus ESLint and TypeScript checks.
+* All eight Compose processes were running; every service with a health check
+  was healthy.
+
+Deferred work
+
+* Stage 11.3 evaluation against representative prose, PDF, DOCX and table
+  material, including chunk-size distribution and retrieval-context review.
+* Dedicated list, code, quote and other future normalised element semantics.
+* Model-assisted, semantic, contextual and hybrid strategies.
+* Pipeline orchestration, persistence, embeddings and vector storage.
 
 Acceptance criteria
 
-* Chunk size is bounded.
-* Overlap is deterministic.
-* Text is not silently lost.
-* Chunk ordering is stable.
-* Source metadata is preserved.
-* Edge cases are tested.
+* Chunk size is bounded. — Met: every chunk is checked against the explicit
+  512-token hard maximum, including overlap and separators.
+* Overlap is deterministic. — Met: trailing primary spans are selected
+  deterministically under the explicit 64-token budget and labelled
+  `overlap`.
+* Text is not silently lost. — Met: a postcondition requires contiguous
+  primary coverage of every chunkable element; unsafe representation raises
+  a typed failure.
+* Chunk ordering is stable. — Met: source order is retained, ordinals must be
+  contiguous, and repeated runs are equal.
+* Source metadata is preserved. — Met: contributions retain normalised and
+  extracted element identities, immutable source locations, and exact source
+  and chunk character spans.
+* Edge cases are tested. — Met: tests cover oversized prose and tables,
+  sentence and row boundaries, headings, Unicode, overlap, small final
+  chunks, unknown elements, empty documents, configuration validation,
+  immutability and identity changes.
 * Configuration is explicit rather than hard-coded throughout the codebase.
+  — Met: one validated immutable configuration snapshot owns all
+  consequential parameters and tokenizer identity.
 
 Commit boundary
 
-git add apps/ai tests
+git add apps/ai IMPLEMENTATION_GUIDE.md \
+  docs/journal/2026-07-30-r11-s02-implement-baseline-chunker.md tasks.json
 git commit -m "Implement baseline document chunking"
+git tag -a phase-11-s02 -m "Complete Stage 11.2: Implement Baseline Chunker"
 
 ⸻
 
