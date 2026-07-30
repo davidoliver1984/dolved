@@ -8311,34 +8311,106 @@ Define the fields and invariants of a document chunk.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-30.
 
-Planned fields
+### Decision
 
-* chunk identifier;
-* document identifier;
-* tenant identifier;
-* chunk ordinal;
-* text;
-* token count;
-* source page or section;
-* source offsets;
-* heading context;
-* chunking strategy and version;
-* metadata used for retrieval filters.
+The chunking architecture and chunk contract were accepted and recorded
+before any Phase 11 implementation code in:
+
+```text
+docs/adr/0011-define-the-chunking-architecture-and-contract.md
+```
+
+Chunking is a deterministic, versioned transformation from one immutable
+`NormalisedDocument` into one immutable `ChunkingResult`, via
+`ChunkingStrategy.chunk(document: NormalisedDocument) -> ChunkingResult`. No
+`ChunkingContext`/`ChunkingInput` wrapper is introduced — `NormalisedDocument`
+already carries its own `workspace_id` and `document_id`, consistent with how
+`ExtractionContext` exists only because raw bytes lack identity of their own.
+The invocation accepts only the document; strategy configuration and
+implementation dependencies (a tokenizer, for example) are supplied
+independently and must not require resolving a persisted pipeline-run entity.
+
+The pipeline depends on the `ChunkingStrategy` abstraction, not a concrete
+chunker, so future semantic, contextual or model-assisted strategies are
+additive. Given an identical document, strategy, version and consequential
+configuration, chunking must produce an identical chunk set and identical
+chunk identities; a model-assisted strategy is conformant only if its model
+identity/version, parameters and model-produced decisions are fixed, retained
+or cached enough to actually reproduce that guarantee.
+
+A successful `ChunkingResult` must account for all content the canonical
+normalised model classifies as chunkable — content that cannot be
+represented safely without loss causes a typed failure, not an incomplete
+result dressed up as a success. Warnings remain valid only for recoverable
+compromises (splitting an oversized element, missing a preferred target
+size, a table-specific compromise, a recorded fallback), never for content
+silently dropped.
+
+Each chunk carries provenance back to the `NormalisedElement`(s) it was
+built from, and a deterministically derived identifier (document identity,
+strategy identity/version, configuration fingerprint, ordinal, ordered
+provenance spans and final content) rather than a random UUID — deliberately
+unlike `ExtractedElement`'s fresh-per-run identity, because chunking's input
+is already a fixed, complete value with no "which run" ambiguity to
+preserve. `ChunkingResult` retains the consequential configuration as both a
+canonical snapshot and a derived fingerprint, and keeps the semantic outcome
+(strategy identity/version, configuration, chunks, provenance, warnings, and
+for a model-assisted strategy its model identity/parameters) conceptually
+separate from operational/execution information (timing, call count, token
+usage, cost), which orchestration or instrumentation may capture instead of
+the strategy itself.
+
+The full set of agreed decisions, rejected alternatives and consequences is
+recorded in ADR 0011 rather than duplicated here.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No chunk model,
+chunking strategy or pipeline code was introduced. Verification consisted of:
+
+* inspecting the existing `apps/ai/app/extraction` and
+  `apps/ai/app/normalisation` models and every prior ADR (0001–0010) before
+  drafting, to confirm `NormalisedDocument` already carries `workspace_id`
+  and `document_id` and to ground the `ChunkingContext` decision in the
+  actual `ExtractionContext` precedent rather than an assumption;
+* two rounds of architecture review before acceptance (see the session
+  journal for what was tightened in each round — completeness/failure
+  semantics, model-assisted determinism, snapshot-and-fingerprint,
+  tokenizer precision, the narrowed persistent-run-record rejection,
+  semantic-versus-operational `ChunkingResult` fields, strengthened chunk
+  identity material, and the "identical input"/"given nothing but" wording
+  fixes);
+* checking the ADR against each Stage 11.1 acceptance criterion below.
 
 Acceptance criteria
 
-* Chunk identifiers are stable or reproducibly generated.
-* Tenant and document identity are mandatory.
-* Source metadata supports citations.
-* Chunking strategy version is recorded.
-* Token counts are available.
-* The contract supports re-chunking.
+* Chunk identifiers are stable or reproducibly generated. — Met: chunk
+  identity is deterministically derived, not randomly generated, from
+  document identity, strategy identity/version, configuration fingerprint,
+  ordinal, provenance spans and final content.
+* Tenant and document identity are mandatory. — Superseded by workspace
+  identity: `NormalisedDocument.workspace_id`/`document_id` are already
+  mandatory and are what chunk identity is partly derived from; no separate
+  chunk-level tenant field is required by the architecture.
+* Source metadata supports citations. — Met: every chunk preserves
+  provenance back to its source `NormalisedElement`(s), without this ADR
+  designing the citation system itself (deferred to Phase 15 and the
+  citation/re-extraction constraint in `PROJECT_ROADMAP.md`).
+* Chunking strategy version is recorded. — Met: strategy identity and
+  version are part of the semantic `ChunkingResult` and part of chunk
+  identity derivation.
+* Token counts are available. — Met: each chunk records its own token
+  count; tokenizer identity (precise enough to resolve exact tokenisation
+  behaviour) is recorded once, on the configuration.
+* The contract supports re-chunking. — Met: determinism plus derived
+  (not random) chunk identity make a re-chunking run comparable and
+  diffable against a prior one.
 
 Commit boundary
 
-git add apps/ai contracts
+git add docs/adr docs/journal tasks.json IMPLEMENTATION_GUIDE.md
 git commit -m "Define document chunk contract"
 
 ⸻

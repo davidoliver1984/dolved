@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R11",
-    "current_session": "R11-S01",
-    "next_action": "Begin the R11-S01 chunk-contract architecture discussion and prepare the accepted ADR before implementation.",
-    "completed_through": "R10-S05",
+    "current_session": "R11-S02",
+    "next_action": "Begin R11-S02 \u2014 Implement Baseline Chunker per ADR 0011.",
+    "completed_through": "R11-S01",
     "completed_phase_count": 11,
     "total_phase_count": 22
   },
@@ -1903,9 +1903,9 @@
           "id": "R11-S01",
           "guide_stage": "Stage 11.1 \u2014 Define Chunk Contract",
           "title": "Define Chunk Contract",
-          "guide_start_line": 8307,
-          "guide_end_line": 8346,
-          "status": "not_started",
+          "guide_start_line": 8306,
+          "guide_end_line": 8417,
+          "status": "completed",
           "objective": "Define the fields and invariants of a document chunk.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
@@ -1913,8 +1913,8 @@
             "phase": "Phase 11 \u2014 Chunking",
             "stage": "Stage 11.1 \u2014 Define Chunk Contract",
             "source_lines": {
-              "start": 8307,
-              "end": 8346
+              "start": 8306,
+              "end": 8417
             }
           },
           "workflow": [
@@ -1936,16 +1936,20 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r11-s01-define-chunk-contract.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "docs/adr/0011-define-the-chunking-architecture-and-contract.md",
+            "IMPLEMENTATION_GUIDE.md Stage 11.1 (Decision, Session verification, acceptance criteria checked)",
+            "docs/journal/2026-07-30-r11-s01-define-chunk-contract.md"
+          ]
         },
         {
           "id": "R11-S02",
           "guide_stage": "Stage 11.2 \u2014 Implement Baseline Chunker",
           "title": "Implement Baseline Chunker",
-          "guide_start_line": 8347,
-          "guide_end_line": 8384,
+          "guide_start_line": 8418,
+          "guide_end_line": 8455,
           "status": "not_started",
           "objective": "Create a deterministic baseline chunking strategy.",
           "session_mode": "implementation",
@@ -1954,8 +1958,8 @@
             "phase": "Phase 11 \u2014 Chunking",
             "stage": "Stage 11.2 \u2014 Implement Baseline Chunker",
             "source_lines": {
-              "start": 8347,
-              "end": 8384
+              "start": 8418,
+              "end": 8455
             }
           },
           "workflow": [
@@ -1985,8 +1989,8 @@
           "id": "R11-S03",
           "guide_stage": "Stage 11.3 \u2014 Evaluate Chunking Quality",
           "title": "Evaluate Chunking Quality",
-          "guide_start_line": 8385,
-          "guide_end_line": 8421,
+          "guide_start_line": 8456,
+          "guide_end_line": 8492,
           "status": "not_started",
           "objective": "Create an evaluation corpus and measure whether chunks preserve useful retrieval context.",
           "session_mode": "implementation",
@@ -1995,8 +1999,8 @@
             "phase": "Phase 11 \u2014 Chunking",
             "stage": "Stage 11.3 \u2014 Evaluate Chunking Quality",
             "source_lines": {
-              "start": 8385,
-              "end": 8421
+              "start": 8456,
+              "end": 8492
             }
           },
           "workflow": [
@@ -2023,7 +2027,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 8421,
+      "guide_end_line": 8492,
       "status": "not_started",
       "objective": "Split normalised documents into retrieval units while preserving enough context and source metadata for accurate answers and citations.",
       "gate": {
