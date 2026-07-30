@@ -3,7 +3,6 @@
 .env.local
 .env.*.local
 !.env.example
-PROJECT_ROADMAP.md
 
 # macOS
 .DS_Store

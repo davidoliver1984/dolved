@@ -8874,6 +8874,11 @@ Objective
 
 Produce answers that cite retrieved source locations.
 
+Design constraint
+
+Review the citation and re-extraction design constraint recorded in
+`PROJECT_ROADMAP.md` before implementation begins.
+
 Status
 
 Not yet executed.
