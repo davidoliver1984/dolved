@@ -1,6 +1,6 @@
-RAG Platform Roadmap
+dolved (RAG platform) Roadmap
 
-Project Status: Planning / Repository Scaffold
+Project Status: In Progress — Phase 11 of 22 (Chunking)
 Version: 0.1
 Owner: David Oliver
 
@@ -112,7 +112,7 @@ Phase 0 — Repository Foundation
 
 Objectives
 
-Establish the repository contract.
+Create the monorepo contract before generating applications.
 
 Tasks
 
@@ -172,20 +172,17 @@ Three independently runnable applications.
 
 ⸻
 
-Phase 2 — Docker Development Environment
+Phase 2 — Independent Containerisation
 
 Objectives
 
-Each application runs inside Docker.
+Create an independently buildable development image for each application before connecting them through Docker Compose.
 
 Tasks
 
-* Web Dockerfile
-* API Dockerfile
-* AI Dockerfile
-* Build verification
-* Development volumes
-* Health checks
+* Containerise Next.js Web Application
+* Containerise Laravel API Application
+* Containerise Python AI Service
 
 Deliverable
 
@@ -193,22 +190,18 @@ Each image builds independently.
 
 ⸻
 
-Phase 3 — Docker Compose
+Phase 3 — Docker Compose Platform
 
 Objectives
 
-Bring the platform together.
+Connect the independently working application containers through the root compose.yaml.
 
 Tasks
 
-* PostgreSQL
-* API
-* Web
-* AI
-* Docker network
-* Named volumes
-* Environment variables
-* Bootstrap script
+* Compose Application Services
+* Add PostgreSQL
+* Integrate Laravel with PostgreSQL
+* Platform Health Verification
 
 Deliverable
 
@@ -216,21 +209,17 @@ Entire platform starts using one command.
 
 ⸻
 
-Phase 4 — Developer Experience
+Phase 4 — Developer Interface
 
 Objectives
 
-Improve the daily workflow.
+Expose a stable, memorable repository interface through the root Makefile.
 
 Tasks
 
-* Root Makefile
-* Bootstrap automation
-* Lint command
-* Test command
-* Format command
-* Logs
-* Shell helpers
+* Add Core Make Targets
+* Add Quality and Test Targets
+* Add Bootstrap and Reset Targets
 
 Deliverable
 
@@ -238,20 +227,16 @@ Developers interact with the repository through Make.
 
 ⸻
 
-Phase 5 — Local AWS
+Phase 5 — Local AWS Development
 
 Objectives
 
-Replace mocked infrastructure with realistic local services.
+Introduce local AWS-compatible infrastructure without requiring real cloud resources during routine development.
 
 Tasks
 
-* LocalStack
-* S3
-* SQS
-* Dead Letter Queue
-* IAM configuration
-* Queue verification
+* Add LocalStack
+* Provision Local AWS Resources
 
 Deliverable
 
@@ -259,20 +244,17 @@ Local AWS-compatible environment.
 
 ⸻
 
-Phase 6 — Authentication
+Phase 6 — Authentication and Identity
 
 Objectives
 
-Secure the platform.
+Establish secure user identity before introducing tenant-owned documents and conversations.
 
 Tasks
 
-* User registration
-* Login
-* Sanctum
-* Session management
-* Password reset
-* API authentication
+* Define Authentication Architecture
+* Implement Laravel Authentication
+* Implement Next.js Authentication UI
 
 Deliverable
 
@@ -284,38 +266,31 @@ Phase 7 — Multi-Tenancy
 
 Objectives
 
-Support multiple organisations.
+Ensure every tenant-owned resource is isolated by design rather than filtered as an afterthought.
 
 Tasks
 
-* Tenant model
-* Organisations
-* Memberships
-* Roles
-* Permissions
-* Tenant middleware
-* Tenant isolation
+* Define Tenant Model
+* Implement Workspaces and Memberships
+* Add Workspace-Aware Web Experience
 
 Deliverable
 
-Tenant-aware application architecture.
+Workspace-aware application architecture.
 
 ⸻
 
-Phase 8 — Document Storage
+Phase 8 — Document Domain and Storage
 
 Objectives
 
-Store uploaded documents.
+Model tenant-owned documents and store source files safely before asynchronous ingestion begins.
 
 Tasks
 
-* Upload endpoint
-* Storage abstraction
-* S3 integration
-* Metadata
-* Validation
-* Virus scanning (future)
+* Define Document Lifecycle
+* Implement Document Persistence
+* Implement Direct Upload Flow
 
 Deliverable
 
@@ -323,20 +298,17 @@ Reliable document storage.
 
 ⸻
 
-Phase 9 — Ingestion Pipeline
+Phase 9 — Event-Driven Ingestion
 
 Objectives
 
-Asynchronous document processing.
+Decouple document upload from document processing through a durable, tenant-aware and versioned ingestion workflow.
 
 Tasks
 
-* Upload event
-* Queue message
-* Python worker
-* Status tracking
-* Retry strategy
-* Dead Letter Queue support
+* Define the Ingestion Architecture and Event Contract
+* Publish Ingestion Requests Reliably
+* Consume and Claim Ingestion Requests
 
 Deliverable
 
@@ -344,20 +316,19 @@ Robust asynchronous ingestion.
 
 ⸻
 
-Phase 10 — Document Processing
+Phase 10 — Text Extraction and Normalisation
 
 Objectives
 
-Extract useful text.
+Convert supported source documents into a consistent internal representation with traceable source metadata.
 
 Tasks
 
-* PDF parsing
-* DOCX parsing
-* TXT parsing
-* Markdown parsing
-* Metadata extraction
-* Error handling
+* Define Extracted Document Contract
+* Implement Plain Text Extraction
+* Implement PDF Extraction
+* Implement DOCX Extraction
+* Normalise Extracted Content
 
 Deliverable
 
@@ -369,15 +340,13 @@ Phase 11 — Chunking
 
 Objectives
 
-Prepare text for embedding.
+Split normalised documents into retrieval units while preserving enough context and source metadata for accurate answers and citations.
 
 Tasks
 
-* Chunk strategy
-* Overlap
-* Metadata
-* Chunk IDs
-* Tenant awareness
+* Define Chunk Contract
+* Implement Baseline Chunker
+* Evaluate Chunking Quality
 
 Deliverable
 
@@ -389,15 +358,12 @@ Phase 12 — Embeddings
 
 Objectives
 
-Generate vector representations.
+Generate reproducible vector representations while keeping model providers replaceable.
 
 Tasks
 
-* Embedding service
-* OpenAI integration
-* Batch processing
-* Retry logic
-* Cost tracking
+* Define Embedding Provider Boundary
+* Implement Embedding Generation
 
 Deliverable
 
@@ -405,19 +371,18 @@ Searchable vector data.
 
 ⸻
 
-Phase 13 — Vector Database
+Phase 13 — Vector Storage
 
 Objectives
 
-Semantic search.
+Persist tenant-isolated chunk vectors and metadata in a dedicated vector database.
 
 Tasks
 
-* Qdrant
-* Collections
-* Metadata filters
-* Similarity search
-* Collection management
+* Define Vector Database Architecture
+* Add Qdrant Development Service
+* Persist Chunk Vectors
+* Complete Ingestion Pipeline
 
 Deliverable
 
@@ -429,14 +394,14 @@ Phase 14 — Retrieval
 
 Objectives
 
-Retrieve relevant context.
+Retrieve relevant, tenant-safe source chunks for a user query.
 
 Tasks
 
-* Similarity search
-* Metadata filtering
-* Ranking
-* Context assembly
+* Define Retrieval Contract
+* Implement Semantic Retrieval
+* Add Retrieval Evaluation
+* Introduce Retrieval Enhancements
 
 Deliverable
 
@@ -444,19 +409,18 @@ Accurate retrieval pipeline.
 
 ⸻
 
-Phase 15 — AI Responses
+Phase 15 — Grounded Generation
 
 Objectives
 
-Generate grounded answers.
+Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.
 
 Tasks
 
-* Prompt templates
-* Context injection
-* Token budgeting
-* Citations
-* Streaming responses
+* Define Generation Provider Boundary
+* Build Grounded Prompt Assembly
+* Generate Answers with Citations
+* Add Answer Evaluation
 
 Deliverable
 
@@ -489,20 +453,18 @@ implementation change is required.
 
 ⸻
 
-Phase 16 — Chat Experience
+Phase 16 — Conversation and Streaming
 
 Objectives
 
-Excellent user interaction.
+Expose the RAG workflow as a persistent, streaming conversational experience.
 
 Tasks
 
-* Conversations
-* Message history
-* Streaming UI
-* Typing indicators
-* Markdown rendering
-* Source references
+* Define Conversation Domain
+* Implement Chat Orchestration API
+* Implement Streaming Responses
+* Build Chat Interface
 
 Deliverable
 
@@ -514,15 +476,13 @@ Phase 17 — Administration
 
 Objectives
 
-Manage the platform.
+Provide operational visibility and safe tenant-level controls.
 
 Tasks
 
-* Tenant dashboard
-* User management
-* Usage metrics
-* Document management
-* Queue monitoring
+* Build Document Administration
+* Build Tenant and Membership Administration
+* Add Usage Visibility
 
 Deliverable
 
@@ -530,19 +490,18 @@ Complete administration tools.
 
 ⸻
 
-Phase 18 — Observability
+Phase 18 — Observability and Operations
 
 Objectives
 
-Understand system behaviour.
+Make failures, latency and cross-service behaviour diagnosable.
 
 Tasks
 
-* Structured logging
-* Metrics
-* Health endpoints
-* Correlation IDs
-* Request tracing
+* Standardise Structured Logging
+* Add Metrics
+* Add Distributed Tracing
+* Define Operational Alerts
 
 Deliverable
 
@@ -550,19 +509,19 @@ Observable platform.
 
 ⸻
 
-Phase 19 — Testing
+Phase 19 — Testing and Quality Strategy
 
 Objectives
 
-High confidence deployments.
+Create a layered test strategy that catches regressions without requiring every check to be an expensive end-to-end test.
 
 Tasks
 
-* Unit tests
-* Integration tests
-* API tests
-* End-to-end tests
-* Performance tests
+* Establish Test Taxonomy
+* Add Contract Tests
+* Add End-to-End Ingestion Tests
+* Add End-to-End Chat Tests
+* Add Security-Focused Tests
 
 Deliverable
 
@@ -570,25 +529,45 @@ Comprehensive test suite.
 
 ⸻
 
-Phase 20 — Production Readiness
+Phase 20 — CI/CD and Production Readiness
 
 Objectives
 
-Prepare for deployment.
+Make the platform reproducibly testable, buildable, deployable and operable outside a developer laptop.
 
 Tasks
 
-* Docker optimisation
-* Secrets management
-* Environment validation
-* CI/CD
-* Release process
-* Backup strategy
-* Disaster recovery
+* Add Continuous Integration
+* Create Production Container Builds
+* Add Infrastructure as Code
+* Configure Secrets and Environment Management
+* Add Database Backup and Recovery
+* Define Vector Index Recovery
+* Perform Security Hardening
+* Create Staging Deployment
+* Production Readiness Review
 
 Deliverable
 
 Production-ready platform.
+
+⸻
+
+Phase 21 — Portfolio and Demonstration Readiness
+
+Objectives
+
+Present the platform as a credible 2027 engineering portfolio project without allowing presentation work to replace engineering substance.
+
+Tasks
+
+* Write Architecture Documentation
+* Create Demonstration Dataset and Scenario
+* Finalise Repository README
+
+Deliverable
+
+A polished, demonstrable, portfolio-ready platform.
 
 ⸻
 
@@ -630,27 +609,28 @@ A phase is complete only when:
 Progress
 
 Phase	Status
-Repository Foundation	⏳ In Progress
-Application Scaffolding	⬜ Not Started
-Docker Development	⬜ Not Started
-Docker Compose	⬜ Not Started
-Developer Experience	⬜ Not Started
-Local AWS	⬜ Not Started
-Authentication	⬜ Not Started
-Multi-Tenancy	⬜ Not Started
-Storage	⬜ Not Started
-Ingestion Pipeline	⬜ Not Started
-Processing	⬜ Not Started
-Chunking	⬜ Not Started
+Repository Foundation	✅ Complete
+Application Scaffolding	✅ Complete
+Independent Containerisation	✅ Complete
+Docker Compose Platform	✅ Complete
+Developer Interface	✅ Complete
+Local AWS Development	✅ Complete
+Authentication and Identity	✅ Complete
+Multi-Tenancy	✅ Complete
+Document Domain and Storage	✅ Complete
+Event-Driven Ingestion	✅ Complete
+Text Extraction and Normalisation	✅ Complete
+Chunking	⏳ In Progress
 Embeddings	⬜ Not Started
-Vector Database	⬜ Not Started
+Vector Storage	⬜ Not Started
 Retrieval	⬜ Not Started
-AI Responses	⬜ Not Started
-Chat Experience	⬜ Not Started
+Grounded Generation	⬜ Not Started
+Conversation and Streaming	⬜ Not Started
 Administration	⬜ Not Started
-Observability	⬜ Not Started
-Testing	⬜ Not Started
-Production Readiness	⬜ Not Started
+Observability and Operations	⬜ Not Started
+Testing and Quality Strategy	⬜ Not Started
+CI/CD and Production Readiness	⬜ Not Started
+Portfolio and Demonstration Readiness	⬜ Not Started
 
 ⸻
 
