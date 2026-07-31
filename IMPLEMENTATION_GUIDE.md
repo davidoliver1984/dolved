@@ -8712,9 +8712,9 @@ semantic-convention principles.
 
 Status
 
-Not yet executed.
+Complete.
 
-Planned decisions
+Decision
 
 * OpenTelemetry as the canonical instrumentation API;
 * the OpenTelemetry Collector as the routing and backend boundary;
@@ -8727,26 +8727,107 @@ Planned decisions
 * metric cardinality discipline;
 * graceful degradation on telemetry failure.
 
-Required ADR
+Architecture record
 
-docs/adr/ADR-XXX-observability-and-telemetry-foundation.md
+`docs/adr/0012-establish-the-observability-and-telemetry-foundation.md`
+
+ADR-0012 was accepted on 30 July 2026. It establishes OpenTelemetry as the
+canonical application instrumentation API and the Collector as the only
+backend-routing boundary. Application code must not depend directly on a
+commercial observability SDK or backend-specific exporter.
+
+The accepted decision keeps the durable contract-level `correlation_id`
+distinct from the OpenTelemetry trace ID while allowing the correlation ID
+as an allowlisted span attribute. Trace context must propagate across
+Laravel HTTP, the transactional outbox and queue, the Python worker,
+outbound HTTP and external providers where supported.
+
+Telemetry uses an explicit safe-attribute allowlist. Document content,
+prompts, retrieved chunks, questions, model responses, credentials and
+secrets are excluded by default. Workspace and document public identifiers
+may be recorded on traces, but unbounded identifiers and free text must not
+be metric labels. Telemetry failure must degrade safely and must never fail
+the business operation being observed.
+
+Alternatives rejected
+
+* a custom application-owned telemetry abstraction duplicating
+  OpenTelemetry primitives;
+* direct instrumentation against a commercial observability SDK;
+* exporting independently from each application without a Collector;
+* deferring observability until after AI-provider integrations exist;
+* capturing full request and response payloads by default;
+* using raw entity identifiers as metric labels;
+* requiring the durable correlation ID to equal the OpenTelemetry trace ID.
+
+Commands used
+
+```bash
+sed -n '1,520p' \
+  docs/adr/0012-establish-the-observability-and-telemetry-foundation.md
+rg -n "ADR-0012|Stage 12\\.1|R12-S01|Phase 12" \
+  docs/adr/README.md IMPLEMENTATION_GUIDE.md PROJECT_ROADMAP.md tasks.json
+git show --stat --oneline 5b28068
+git show --format=fuller --no-patch 5b28068
+```
+
+Changes made
+
+* Added and accepted ADR-0012.
+* Added ADR-0012 to the ADR index.
+* Reconciled the accepted ADR against the renumbered Phase 12 roadmap,
+  implementation guide and tracker.
+* Added the factual Stage 12.1 journal entry and advanced the session
+  tracker to Stage 12.2.
+
+Verification
+
+* Confirmed ADR-0012 has every required ADR section and is marked Accepted.
+* Confirmed each Stage 12.1 acceptance criterion is represented as an
+  explicit architectural invariant.
+* Confirmed the ADR preserves the established Workspace, transactional
+  outbox, HMAC worker-authentication and cross-language pipeline boundaries.
+* Confirmed this was an architecture-only stage; no application,
+  infrastructure or dependency files changed, so application test suites
+  were not applicable.
 
 Acceptance criteria
 
-* OpenTelemetry is adopted as the canonical instrumentation API.
+* OpenTelemetry is adopted as the canonical instrumentation API. — Met by
+  ADR-0012's canonical instrumentation API decision.
 * No proprietary telemetry abstraction duplicates OpenTelemetry primitives.
+  — Met: the ADR explicitly rejects such a wrapper.
 * Backend choice is a Collector-configuration concern, not an
-  application-code concern.
+  application-code concern. — Met by the Collector boundary and
+  application-code invariants.
 * Trace-context propagation requirements are defined across every service
-  boundary.
-* A default privacy allowlist is defined.
-* Metric cardinality principles are defined.
-* Telemetry failure-handling behaviour is defined.
+  boundary. — Met across Laravel HTTP, queue/outbox, Python, outbound HTTP
+  and supporting providers.
+* A default privacy allowlist is defined. — Met: sensitive content is
+  excluded by default and only explicitly safe attributes may be exported.
+* Metric cardinality principles are defined. — Met: entity identifiers and
+  free text are prohibited as metric labels.
+* Telemetry failure-handling behaviour is defined. — Met: telemetry must
+  degrade safely without failing user-facing work.
 
 Commit boundary
 
-git add docs/adr
-git commit -m "Define observability and telemetry architecture"
+The accepted ADR and ADR-index change were committed as:
+
+```bash
+git commit -m "Accept ADR-0012: establish observability and telemetry foundation"
+```
+
+The completed stage record is committed and tagged at the Stage 12.1
+boundary:
+
+```bash
+git add IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-07-31-r12-s01-define-telemetry-and-observability-architecture.md
+git commit -m "Close telemetry and observability architecture stage"
+git tag -a phase-12-s01 \
+  -m "Complete Stage 12.1: Define Telemetry and Observability Architecture"
+```
 
 ⸻
 

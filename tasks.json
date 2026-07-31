@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R12",
-    "current_session": "R12-S01",
-    "next_action": "Begin R12-S01 \u2014 Define Telemetry and Observability Architecture.",
-    "completed_through": "R11-S03",
+    "current_session": "R12-S02",
+    "next_action": "Begin R12-S02 \u2014 Establish Local Telemetry Infrastructure.",
+    "completed_through": "R12-S01",
     "completed_phase_count": 12,
     "total_phase_count": 23
   },
@@ -2074,8 +2074,8 @@
           "guide_stage": "Stage 12.1 \u2014 Define Telemetry and Observability Architecture",
           "title": "Define Telemetry and Observability Architecture",
           "guide_start_line": 8705,
-          "guide_end_line": 8752,
-          "status": "not_started",
+          "guide_end_line": 8833,
+          "status": "completed",
           "objective": "Establish OpenTelemetry as the platform's canonical instrumentation API, vendor-neutral Collector boundary, context-propagation, privacy and semantic-convention principles.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
@@ -2084,7 +2084,7 @@
             "stage": "Stage 12.1 \u2014 Define Telemetry and Observability Architecture",
             "source_lines": {
               "start": 8705,
-              "end": 8752
+              "end": 8833
             }
           },
           "workflow": [
@@ -2106,16 +2106,21 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r12-s01-define-telemetry-and-observability-architecture.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "docs/adr/0012-establish-the-observability-and-telemetry-foundation.md",
+            "IMPLEMENTATION_GUIDE.md Stage 12.1 records the accepted decision and verifies every acceptance criterion",
+            "docs/journal/2026-07-31-r12-s01-define-telemetry-and-observability-architecture.md",
+            "ADR-0012 and the ADR index were accepted in commit 5b28068"
+          ]
         },
         {
           "id": "R12-S02",
           "guide_stage": "Stage 12.2 \u2014 Establish Local Telemetry Infrastructure",
           "title": "Establish Local Telemetry Infrastructure",
-          "guide_start_line": 8753,
-          "guide_end_line": 8789,
+          "guide_start_line": 8834,
+          "guide_end_line": 8870,
           "status": "not_started",
           "objective": "Provision the shared OpenTelemetry Collector and a local telemetry backend before either application is instrumented.",
           "session_mode": "implementation",
@@ -2124,8 +2129,8 @@
             "phase": "Phase 12 \u2014 Observability Foundation",
             "stage": "Stage 12.2 \u2014 Establish Local Telemetry Infrastructure",
             "source_lines": {
-              "start": 8753,
-              "end": 8789
+              "start": 8834,
+              "end": 8870
             }
           },
           "workflow": [
@@ -2155,8 +2160,8 @@
           "id": "R12-S03",
           "guide_stage": "Stage 12.3 \u2014 Instrument Laravel with OpenTelemetry",
           "title": "Instrument Laravel with OpenTelemetry",
-          "guide_start_line": 8790,
-          "guide_end_line": 8823,
+          "guide_start_line": 8871,
+          "guide_end_line": 8904,
           "status": "not_started",
           "objective": "Emit traces and metrics from the Laravel API using the OpenTelemetry SDK.",
           "session_mode": "implementation",
@@ -2165,8 +2170,8 @@
             "phase": "Phase 12 \u2014 Observability Foundation",
             "stage": "Stage 12.3 \u2014 Instrument Laravel with OpenTelemetry",
             "source_lines": {
-              "start": 8790,
-              "end": 8823
+              "start": 8871,
+              "end": 8904
             }
           },
           "workflow": [
@@ -2196,8 +2201,8 @@
           "id": "R12-S04",
           "guide_stage": "Stage 12.4 \u2014 Instrument the Python AI Service with OpenTelemetry",
           "title": "Instrument the Python AI Service with OpenTelemetry",
-          "guide_start_line": 8824,
-          "guide_end_line": 8857,
+          "guide_start_line": 8905,
+          "guide_end_line": 8938,
           "status": "not_started",
           "objective": "Emit traces and metrics from the Python AI service using the OpenTelemetry SDK.",
           "session_mode": "implementation",
@@ -2206,8 +2211,8 @@
             "phase": "Phase 12 \u2014 Observability Foundation",
             "stage": "Stage 12.4 \u2014 Instrument the Python AI Service with OpenTelemetry",
             "source_lines": {
-              "start": 8824,
-              "end": 8857
+              "start": 8905,
+              "end": 8938
             }
           },
           "workflow": [
@@ -2237,8 +2242,8 @@
           "id": "R12-S05",
           "guide_stage": "Stage 12.5 \u2014 Verify Cross-Service Trace Propagation and the Privacy Allowlist",
           "title": "Verify Cross-Service Trace Propagation and the Privacy Allowlist",
-          "guide_start_line": 8858,
-          "guide_end_line": 8893,
+          "guide_start_line": 8939,
+          "guide_end_line": 8974,
           "status": "not_started",
           "objective": "Prove that one logical request remains correlated across Laravel, the queue and Python, and that sensitive content never appears in exported telemetry.",
           "session_mode": "implementation",
@@ -2247,8 +2252,8 @@
             "phase": "Phase 12 \u2014 Observability Foundation",
             "stage": "Stage 12.5 \u2014 Verify Cross-Service Trace Propagation and the Privacy Allowlist",
             "source_lines": {
-              "start": 8858,
-              "end": 8893
+              "start": 8939,
+              "end": 8974
             }
           },
           "workflow": [
@@ -2275,7 +2280,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 8893,
+      "guide_end_line": 8974,
       "status": "not_started",
       "objective": "Make the platform observable by design, using OpenTelemetry as a vendor-neutral instrumentation and correlation foundation, before embeddings, retrieval and generation introduce the platform's first calls to external AI providers.",
       "gate": {
