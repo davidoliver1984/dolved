@@ -1,9 +1,15 @@
 import logging
 import threading
+import time
+
+from opentelemetry import metrics, trace
+from opentelemetry.propagate import extract
+from opentelemetry.trace import SpanKind, Status, StatusCode
 
 from app.ingestion.claim_client import ClaimDisposition, IngestionClaimClient
 from app.ingestion.contract import InvalidIngestionEvent, parse_and_validate_event
 from app.ingestion.sqs import IngestionQueueMessage, SqsIngestionQueue
+from app.telemetry import metric_attributes, trace_attributes
 
 logger = logging.getLogger("ingestion.worker")
 
@@ -48,6 +54,63 @@ class IngestionWorker:
             "sqs_message_id": message.message_id,
             "receive_count": message.receive_count,
         }
+        attributes: dict[str, object] = {
+            "messaging.system": "aws_sqs",
+            "messaging.destination.name": message.destination_name,
+            "messaging.operation.name": "process",
+            "messaging.operation.type": "process",
+            "messaging.message.id": message.message_id,
+            "messaging.message.delivery_count": message.receive_count,
+        }
+        meter = metrics.get_meter("maketime.python.ingestion.worker")
+        processed_count = meter.create_counter(
+            "rag.ingestion.message.count",
+            unit="{message}",
+            description="Count of ingestion messages handled by the Python worker.",
+        )
+        processing_duration = meter.create_histogram(
+            "messaging.process.duration",
+            unit="s",
+            description="Duration of ingestion message processing.",
+        )
+        started_at = time.perf_counter()
+        parent_context = extract(message.trace_context)
+
+        with trace.get_tracer("maketime.python.ingestion.worker").start_as_current_span(
+            f"process {message.destination_name}",
+            context=parent_context,
+            kind=SpanKind.CONSUMER,
+            attributes=trace_attributes(attributes),
+            record_exception=False,
+            set_status_on_exception=False,
+        ) as span:
+            outcome = "error"
+
+            try:
+                outcome = self._process_message(message, context, attributes)
+            except Exception as exception:
+                attributes["error.type"] = type(exception).__name__
+                span.set_status(Status(StatusCode.ERROR))
+                raise
+            finally:
+                attributes["rag.processing.outcome"] = outcome
+                span.set_attributes(trace_attributes(attributes))
+                metric_values = metric_attributes(attributes)
+                processed_count.add(1, metric_values)
+                processing_duration.record(
+                    time.perf_counter() - started_at,
+                    metric_values,
+                )
+
+                if outcome != ClaimDisposition.ACKNOWLEDGE.value:
+                    span.set_status(Status(StatusCode.ERROR))
+
+    def _process_message(
+        self,
+        message: IngestionQueueMessage,
+        context: dict[str, object],
+        attributes: dict[str, object],
+    ) -> str:
 
         try:
             event = parse_and_validate_event(message.body)
@@ -56,7 +119,7 @@ class IngestionWorker:
                 "Ingestion event is poison and remains unacknowledged.",
                 extra={**context, "processing_outcome": "invalid_event"},
             )
-            return
+            return "invalid_event"
 
         event_id = str(event["event_id"])
         context.update(
@@ -66,6 +129,15 @@ class IngestionWorker:
                 "correlation_id": event["correlation_id"],
                 "workspace_id": event["workspace_id"],
                 "document_id": event["document_id"],
+            }
+        )
+        attributes.update(
+            {
+                "rag.event.id": event_id,
+                "rag.event.version": event["event_version"],
+                "rag.correlation.id": event["correlation_id"],
+                "rag.workspace.id": event["workspace_id"],
+                "rag.document.id": event["document_id"],
             }
         )
         disposition = self._claim_client.claim(
@@ -79,9 +151,11 @@ class IngestionWorker:
                 "Ingestion event was durably claimed and acknowledged.",
                 extra={**context, "processing_outcome": disposition.value},
             )
-            return
+            return disposition.value
 
         logger.warning(
             "Ingestion event remains unacknowledged.",
             extra={**context, "processing_outcome": disposition.value},
         )
+
+        return disposition.value

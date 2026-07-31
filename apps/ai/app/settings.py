@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     ingestion_worker_api_timeout_seconds: float = Field(default=10.0, gt=0)
     ingestion_worker_hmac_key_id: str = "local-v1"
     ingestion_worker_hmac_secret: SecretStr = SecretStr("")
+    otel_exporter_otlp_endpoint: str = "http://otel-collector:4318"
+    otel_exporter_otlp_protocol: str = "http/protobuf"
+    otel_exporter_otlp_timeout: int = Field(default=250, ge=1)
+    otel_exporter_otlp_metrics_temporality_preference: str = "cumulative"
+    otel_sdk_disabled: bool = False
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

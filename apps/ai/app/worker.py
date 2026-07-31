@@ -12,6 +12,7 @@ from app.ingestion.sqs import SqsIngestionQueue
 from app.ingestion.worker import IngestionWorker
 from app.settings import get_settings
 from app.structured_logging import configure_structured_logging
+from app.telemetry import configure_telemetry
 
 logger = logging.getLogger("ingestion.worker")
 
@@ -59,6 +60,7 @@ def main() -> int:
     )
     arguments = parser.parse_args()
     configure_structured_logging()
+    telemetry = configure_telemetry(get_settings())
     stop_event = threading.Event()
 
     def request_shutdown(
@@ -74,12 +76,15 @@ def main() -> int:
 
     signal.signal(signal.SIGTERM, request_shutdown)
     signal.signal(signal.SIGINT, request_shutdown)
-    worker = build_worker(stop_event)
+    try:
+        worker = build_worker(stop_event)
 
-    if arguments.once:
-        worker.run_once()
-    else:
-        worker.run()
+        if arguments.once:
+            worker.run_once()
+        else:
+            worker.run()
+    finally:
+        telemetry.shutdown()
 
     return 0
 

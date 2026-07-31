@@ -1,9 +1,14 @@
 import time
 from enum import StrEnum
+from typing import Any
 
 import httpx
+from opentelemetry import metrics, trace
+from opentelemetry.propagate import inject
+from opentelemetry.trace import SpanKind, Status, StatusCode
 
 from app.ingestion.signing import IngestionWorkerSigner
+from app.telemetry import metric_attributes, trace_attributes
 
 
 class ClaimDisposition(StrEnum):
@@ -41,15 +46,60 @@ class IngestionClaimClient:
             body=body,
             event_id=event_id,
         ).as_http_headers()
+        attributes: dict[str, Any] = {
+            "http.request.method": "POST",
+            "http.route": "/api/internal/ingestion/events/{event}/claim",
+            "rag.event.id": event_id,
+        }
+        started_at = time.perf_counter()
+        meter = metrics.get_meter("maketime.python.ingestion.claim")
+        request_count = meter.create_counter(
+            "rag.ingestion.claim.request.count",
+            unit="{request}",
+            description="Count of Laravel ingestion claim requests.",
+        )
+        request_duration = meter.create_histogram(
+            "rag.ingestion.claim.request.duration",
+            unit="s",
+            description="Duration of Laravel ingestion claim requests.",
+        )
 
-        try:
-            response = self._client.post(
-                f"{self._base_url}{path}",
-                content=body,
-                headers=headers,
+        with trace.get_tracer("maketime.python.ingestion.claim").start_as_current_span(
+            "POST /api/internal/ingestion/events/{event}/claim",
+            kind=SpanKind.CLIENT,
+            attributes=trace_attributes(attributes),
+            record_exception=False,
+            set_status_on_exception=False,
+        ) as span:
+            try:
+                inject(headers)
+                response = self._client.post(
+                    f"{self._base_url}{path}",
+                    content=body,
+                    headers=headers,
+                )
+                attributes["http.response.status_code"] = response.status_code
+                disposition = self._disposition(response)
+            except httpx.HTTPError as exception:
+                attributes["error.type"] = type(exception).__name__
+                disposition = ClaimDisposition.RETRY
+
+            attributes["rag.processing.outcome"] = disposition.value
+            span.set_attributes(trace_attributes(attributes))
+
+            if disposition is not ClaimDisposition.ACKNOWLEDGE:
+                span.set_status(Status(StatusCode.ERROR))
+
+            metric_values = metric_attributes(attributes)
+            request_count.add(1, metric_values)
+            request_duration.record(
+                time.perf_counter() - started_at,
+                metric_values,
             )
-        except httpx.HTTPError:
-            return ClaimDisposition.RETRY
+
+            return disposition
+
+    def _disposition(self, response: httpx.Response) -> ClaimDisposition:
 
         response_code = self._response_code(response)
 

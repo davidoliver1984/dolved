@@ -1,6 +1,12 @@
 import logging
-from dataclasses import dataclass
+import time
+from dataclasses import dataclass, field
 from typing import Any
+
+from opentelemetry import metrics, trace
+from opentelemetry.trace import SpanKind, Status, StatusCode
+
+from app.telemetry import metric_attributes, trace_attributes
 
 logger = logging.getLogger("ingestion.sqs")
 
@@ -11,6 +17,8 @@ class IngestionQueueMessage:
     receipt_handle: str
     message_id: str
     receive_count: int
+    trace_context: dict[str, str] = field(default_factory=dict)
+    destination_name: str = "unknown"
 
 
 class SqsIngestionQueue:
@@ -24,19 +32,55 @@ class SqsIngestionQueue:
         batch_size: int,
     ) -> None:
         self._client = client
+        self._queue_name = queue_name
         self._queue_url = str(client.get_queue_url(QueueName=queue_name)["QueueUrl"])
         self._wait_time_seconds = wait_time_seconds
         self._visibility_timeout_seconds = visibility_timeout_seconds
         self._batch_size = batch_size
 
     def receive(self) -> list[IngestionQueueMessage]:
-        response = self._client.receive_message(
-            QueueUrl=self._queue_url,
-            MaxNumberOfMessages=self._batch_size,
-            WaitTimeSeconds=self._wait_time_seconds,
-            VisibilityTimeout=self._visibility_timeout_seconds,
-            AttributeNames=["ApproximateReceiveCount"],
+        attributes = {
+            "messaging.system": "aws_sqs",
+            "messaging.destination.name": self._queue_name,
+            "messaging.operation.name": "receive",
+            "messaging.operation.type": "receive",
+        }
+        started_at = time.perf_counter()
+        meter = metrics.get_meter("maketime.python.ingestion.sqs")
+        duration = meter.create_histogram(
+            "messaging.client.operation.duration",
+            unit="s",
+            description="Duration of SQS receive operations.",
         )
+
+        with trace.get_tracer("maketime.python.ingestion.sqs").start_as_current_span(
+            f"receive {self._queue_name}",
+            kind=SpanKind.CLIENT,
+            attributes=trace_attributes(attributes),
+            record_exception=False,
+            set_status_on_exception=False,
+        ) as span:
+            try:
+                response = self._client.receive_message(
+                    QueueUrl=self._queue_url,
+                    MaxNumberOfMessages=self._batch_size,
+                    WaitTimeSeconds=self._wait_time_seconds,
+                    VisibilityTimeout=self._visibility_timeout_seconds,
+                    AttributeNames=["ApproximateReceiveCount"],
+                    MessageAttributeNames=["traceparent", "tracestate"],
+                )
+            except Exception as exception:
+                span.set_attributes(
+                    trace_attributes({"error.type": type(exception).__name__})
+                )
+                span.set_status(Status(StatusCode.ERROR))
+                raise
+            finally:
+                duration.record(
+                    time.perf_counter() - started_at,
+                    metric_attributes(attributes),
+                )
+
         messages: list[IngestionQueueMessage] = []
 
         for raw_message in response.get("Messages", []):
@@ -45,6 +89,7 @@ class SqsIngestionQueue:
             message_id = raw_message.get("MessageId")
             attributes = raw_message.get("Attributes", {})
             receive_count = attributes.get("ApproximateReceiveCount", "1")
+            message_attributes = raw_message.get("MessageAttributes", {})
 
             if not all(
                 isinstance(value, str)
@@ -67,6 +112,8 @@ class SqsIngestionQueue:
                     receipt_handle=receipt_handle,
                     message_id=message_id,
                     receive_count=int(receive_count),
+                    trace_context=self._trace_context(message_attributes),
+                    destination_name=self._queue_name,
                 )
             )
 
@@ -77,3 +124,23 @@ class SqsIngestionQueue:
             QueueUrl=self._queue_url,
             ReceiptHandle=message.receipt_handle,
         )
+
+    @staticmethod
+    def _trace_context(message_attributes: object) -> dict[str, str]:
+        if not isinstance(message_attributes, dict):
+            return {}
+
+        context: dict[str, str] = {}
+
+        for name in ("traceparent", "tracestate"):
+            attribute = message_attributes.get(name)
+
+            if not isinstance(attribute, dict):
+                continue
+
+            value = attribute.get("StringValue")
+
+            if isinstance(value, str):
+                context[name] = value
+
+        return context

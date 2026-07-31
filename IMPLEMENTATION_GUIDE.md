@@ -9181,15 +9181,150 @@ SDK.
 
 Status
 
-Not yet executed.
+Complete.
 
-Planned instrumentation
+Implementation
 
-* worker and service spans;
-* SQS consume/claim spans;
-* baseline platform metrics;
-* privacy-allowlisted span and metric attributes;
-* graceful degradation when the Collector is unreachable.
+The Python AI image now uses the official OpenTelemetry Python SDK and
+OTLP/HTTP protobuf exporter 1.44.0. Both the FastAPI service and ingestion
+worker export only to the dedicated application-facing Collector. No
+Grafana-specific SDK, endpoint or application configuration was introduced.
+
+`app/telemetry.py` owns SDK construction and best-effort lifecycle. It uses
+an explicit two-field resource (`service.name` and
+`deployment.environment.name`), a 250 ms export timeout, cumulative metrics
+and separate trace and metric attribute allowlists. Configuration or
+shutdown failure degrades to no-op or guarded behaviour rather than changing
+application correctness.
+
+The implemented signals are:
+
+* FastAPI server spans plus standard HTTP request count and duration metrics,
+  using route templates rather than raw URLs and extracting incoming W3C
+  context;
+* standard SQS receive client spans and
+  `messaging.client.operation.duration` metrics;
+* per-message consumer spans, `messaging.process.duration` and a bounded
+  outcome counter;
+* Laravel claim client spans plus count and duration metrics, with the
+  current W3C context injected alongside the existing HMAC headers.
+
+The SQS adapter reads only the `traceparent` and `tracestate` message
+attributes written in Stage 12.3. The canonical JSON event body is unchanged.
+Because this worker receives one message at a time and has no competing
+ambient request context, the message creation context becomes the consumer
+span parent. The later claim span is its child and propagates that context to
+Laravel.
+
+Entity, event and correlation identifiers are allowlisted on traces for
+diagnosis but excluded from metrics. Metric dimensions are limited to bounded
+operation, route, status, version and outcome values. Bodies, storage keys,
+filenames, document content, prompts, questions, credentials and signatures
+are never recorded. Automatic exception recording is disabled so exception
+messages cannot bypass the allowlist; only the exception type may be emitted.
+
+Files changed
+
+* `apps/ai/pyproject.toml` and `apps/ai/uv.lock`
+  * add and lock the official OpenTelemetry SDK and OTLP/HTTP exporter 1.44.0.
+* `apps/ai/app/telemetry.py` and `apps/ai/app/settings.py`
+  * configure providers, resource privacy, attribute allowlists and guarded
+    lifecycle from standard OpenTelemetry environment variables.
+* `apps/ai/app/main.py`
+  * adds W3C-aware FastAPI server spans and low-cardinality HTTP metrics.
+* `apps/ai/app/ingestion/sqs.py`
+  * records standard receive telemetry and extracts W3C SQS attributes.
+* `apps/ai/app/ingestion/worker.py`
+  * creates the consumer span and records safe processing telemetry.
+* `apps/ai/app/ingestion/claim_client.py`
+  * creates the outbound claim span, injects W3C headers and records bounded
+    outcomes without recording the signed body.
+* `apps/ai/app/worker.py`
+  * starts and shuts down the SDK around the worker lifecycle.
+* `apps/ai/tests/test_telemetry.py` and focused existing ingestion tests
+  * verify propagation, privacy, metrics, lifecycle and transport behaviour.
+* `compose.yaml`
+  * passes the shared timeout, temporality and SDK enablement settings to the
+    AI and worker processes.
+
+Commands used
+
+```bash
+cd apps/ai
+uv add 'opentelemetry-sdk>=1.44.0' \
+  'opentelemetry-exporter-otlp-proto-http>=1.44.0'
+uv sync --locked --all-groups
+.venv/bin/ruff format app tests
+.venv/bin/ruff check app tests
+.venv/bin/mypy app tests
+cd ../..
+docker compose build ai worker
+docker compose run --rm --no-deps ai uv sync --locked
+docker compose run --rm --no-deps ai pytest -q
+docker compose run --rm --no-deps ai ruff check app tests
+docker compose run --rm --no-deps ai mypy app tests
+docker compose config --quiet
+docker compose up --detach --build ai worker
+docker compose exec ai python -c \
+  "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=2).read().decode())"
+docker compose run --rm worker python -m app.worker --once
+docker compose exec otel-lgtm curl --get --data-urlencode \
+  'q={ resource.service.name = "rag-platform-ingestion-worker" }' \
+  http://127.0.0.1:3000/api/datasources/proxy/uid/tempo/api/search
+docker compose exec otel-lgtm curl --get --data-urlencode \
+  'query=messaging_client_operation_duration_seconds_count{service_name="rag-platform-ingestion-worker"}' \
+  http://127.0.0.1:3000/api/datasources/proxy/uid/prometheus/api/v1/query
+docker compose run --rm \
+  -e OTEL_EXPORTER_OTLP_ENDPOINT=http://127.0.0.1:9 \
+  worker python -m app.worker --once
+```
+
+Verification
+
+* Ruff formatting and linting passed.
+* mypy passed across 51 Python source and test files.
+* The complete Python suite passed: 130 tests.
+* Seven focused telemetry tests prove service and queue parent extraction,
+  claim propagation, privacy allowlists, bounded metric attributes and
+  graceful setup/shutdown failure.
+* Tempo stored `rag-platform-ai` `GET /health` traces and
+  `rag-platform-ingestion-worker` SQS receive traces through the Collector.
+* Prometheus stored the cumulative worker receive-duration metric with only
+  service, environment, queue, operation and messaging-system labels.
+* A worker poll against an intentionally unreachable OTLP endpoint completed
+  successfully; exporter failures were logged without changing its exit
+  result.
+* Repository verification passed:
+  * web: ESLint, TypeScript and 10 tests;
+  * Laravel: Pint and 125 tests (561 assertions);
+  * Python: Ruff formatting/linting, mypy and 130 tests;
+  * LocalStack S3/SQS/DLQ/redrive checks;
+  * Collector-to-Grafana trace and metric smoke verification.
+
+Problems and corrections
+
+The host's cached Python 3.14 release candidate was incompatible with the
+locked Pydantic build, so authoritative runtime tests were executed in the
+repository's Python 3.14.6 container. Static Ruff and mypy checks also passed
+on the host and in the container.
+
+The initial receive metric used a project-shaped name. It was corrected to
+the official `messaging.client.operation.duration` semantic convention and
+the required `messaging.operation.name` attribute was added. Processing uses
+the official `messaging.process.duration` convention; only the
+domain-specific outcome count retains a `rag.*` name.
+
+Acceptance criteria
+
+* The Python service emits spans using the OpenTelemetry SDK, not a
+  proprietary wrapper. — Met by direct official API/SDK instrumentation and
+  OTLP export solely to the Collector.
+* No sensitive payload appears in exported attributes by default. — Met by
+  explicit resource, trace and metric allowlists plus negative tests.
+* Telemetry failures do not affect worker correctness. — Met by guarded
+  setup/shutdown and the successful live unreachable-endpoint worker run.
+* Metrics avoid unbounded-cardinality labels. — Met by excluding all entity,
+  event, correlation and transport-message identifiers from metric labels.
 
 Acceptance criteria
 
@@ -9201,8 +9336,14 @@ Acceptance criteria
 
 Commit boundary
 
-git add apps/ai docs
+```bash
+git add compose.yaml apps/ai \
+  docs/journal/2026-07-31-r12-s04-instrument-the-python-ai-service-with-opentelemetry.md \
+  IMPLEMENTATION_GUIDE.md tasks.json
 git commit -m "Instrument the Python AI service with OpenTelemetry"
+git tag -a phase-12-s04 \
+  -m "Complete Stage 12.4: Instrument the Python AI Service with OpenTelemetry"
+```
 
 ⸻
 

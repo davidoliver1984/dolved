@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R12",
-    "current_session": "R12-S04",
-    "next_action": "Begin R12-S04 \u2014 Instrument the Python AI Service with OpenTelemetry.",
-    "completed_through": "R12-S03",
+    "current_session": "R12-S05",
+    "next_action": "Begin R12-S05 \u2014 Verify Cross-Service Trace Propagation and the Privacy Allowlist.",
+    "completed_through": "R12-S04",
     "completed_phase_count": 12,
     "total_phase_count": 23
   },
@@ -2218,9 +2218,9 @@
           "id": "R12-S04",
           "guide_stage": "Stage 12.4 \u2014 Instrument the Python AI Service with OpenTelemetry",
           "title": "Instrument the Python AI Service with OpenTelemetry",
-          "guide_start_line": 9034,
-          "guide_end_line": 9067,
-          "status": "not_started",
+          "guide_start_line": 9175,
+          "guide_end_line": 9349,
+          "status": "completed",
           "objective": "Emit traces and metrics from the Python AI service using the OpenTelemetry SDK.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -2228,8 +2228,8 @@
             "phase": "Phase 12 \u2014 Observability Foundation",
             "stage": "Stage 12.4 \u2014 Instrument the Python AI Service with OpenTelemetry",
             "source_lines": {
-              "start": 9034,
-              "end": 9067
+              "start": 9175,
+              "end": 9349
             }
           },
           "workflow": [
@@ -2251,16 +2251,26 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r12-s04-instrument-the-python-ai-service-with-opentelemetry.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Official OpenTelemetry Python SDK and OTLP/HTTP exporter 1.44.0",
+            "FastAPI HTTP, SQS receive/process and Laravel claim spans with baseline cumulative metrics",
+            "W3C context extracted from SQS attributes and injected into the signed Laravel claim request without changing the event body",
+            "Explicit resource, trace and metric privacy allowlists with entity identifiers excluded from metric labels",
+            "Focused telemetry verification passed: 7 tests; complete Python suite passed: 130 tests",
+            "Stored AI and worker traces plus bounded worker metrics verified through Grafana",
+            "An unreachable OTLP endpoint did not change the worker's successful completion",
+            "Repository verification passed: web 10 tests, Laravel 125 tests (561 assertions), Python 130 tests, formatting, linting, type checking, LocalStack and telemetry smoke",
+            "IMPLEMENTATION_GUIDE.md Stage 12.4 and docs/journal/2026-07-31-r12-s04-instrument-the-python-ai-service-with-opentelemetry.md"
+          ]
         },
         {
           "id": "R12-S05",
           "guide_stage": "Stage 12.5 \u2014 Verify Cross-Service Trace Propagation and the Privacy Allowlist",
           "title": "Verify Cross-Service Trace Propagation and the Privacy Allowlist",
-          "guide_start_line": 9068,
-          "guide_end_line": 9103,
+          "guide_start_line": 9350,
+          "guide_end_line": 9385,
           "status": "not_started",
           "objective": "Prove that one logical request remains correlated across Laravel, the queue and Python, and that sensitive content never appears in exported telemetry.",
           "session_mode": "implementation",
@@ -2269,8 +2279,8 @@
             "phase": "Phase 12 \u2014 Observability Foundation",
             "stage": "Stage 12.5 \u2014 Verify Cross-Service Trace Propagation and the Privacy Allowlist",
             "source_lines": {
-              "start": 9068,
-              "end": 9103
+              "start": 9350,
+              "end": 9385
             }
           },
           "workflow": [

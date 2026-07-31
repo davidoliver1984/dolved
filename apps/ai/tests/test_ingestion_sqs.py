@@ -26,6 +26,19 @@ class FakeSqsClient:
                     "Attributes": {
                         "ApproximateReceiveCount": "3",
                     },
+                    "MessageAttributes": {
+                        "traceparent": {
+                            "DataType": "String",
+                            "StringValue": (
+                                "00-11111111111111111111111111111111-"
+                                "2222222222222222-01"
+                            ),
+                        },
+                        "tracestate": {
+                            "DataType": "String",
+                            "StringValue": "vendor=value",
+                        },
+                    },
                 }
             ]
         }
@@ -52,6 +65,13 @@ def test_sqs_adapter_preserves_transport_metadata_and_poll_configuration() -> No
             receipt_handle="receipt",
             message_id="transport-message",
             receive_count=3,
+            trace_context={
+                "traceparent": (
+                    "00-11111111111111111111111111111111-2222222222222222-01"
+                ),
+                "tracestate": "vendor=value",
+            },
+            destination_name="ingestion",
         )
     ]
     assert client.receive_arguments == {
@@ -60,6 +80,7 @@ def test_sqs_adapter_preserves_transport_metadata_and_poll_configuration() -> No
         "WaitTimeSeconds": 10,
         "VisibilityTimeout": 30,
         "AttributeNames": ["ApproximateReceiveCount"],
+        "MessageAttributeNames": ["traceparent", "tracestate"],
     }
 
     queue.acknowledge(messages[0])
