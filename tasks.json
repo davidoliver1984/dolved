@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R12",
-    "current_session": "R12-S05",
-    "next_action": "Begin R12-S05 \u2014 Verify Cross-Service Trace Propagation and the Privacy Allowlist.",
-    "completed_through": "R12-S04",
-    "completed_phase_count": 12,
+    "current_phase": "R13",
+    "current_session": "R13-S01",
+    "next_action": "Begin R13-S01 \u2014 Define Embedding Provider Boundary with Ralph before implementation.",
+    "completed_through": "R12-S05",
+    "completed_phase_count": 13,
     "total_phase_count": 23
   },
   "phases": [
@@ -2271,7 +2271,7 @@
           "title": "Verify Cross-Service Trace Propagation and the Privacy Allowlist",
           "guide_start_line": 9350,
           "guide_end_line": 9385,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Prove that one logical request remains correlated across Laravel, the queue and Python, and that sensitive content never appears in exported telemetry.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -2302,18 +2302,27 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r12-s05-verify-cross-service-trace-propagation-and-the-privacy-allowlist.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Nullable immutable W3C trace context persisted across the transactional outbox boundary",
+            "Focused Laravel telemetry verification passed: 8 tests and 76 assertions",
+            "make telemetry-verify proved one trace across the Laravel API, publisher, LocalStack SQS, Python worker and signed Laravel claim",
+            "The synthetic sensitive marker was absent from the stored trace and entity identifiers were absent from metric labels",
+            "make telemetry-outage proved an authenticated user-facing request returned HTTP 200 while the Collector was stopped and restored it healthy",
+            "Repository verification passed: web 10 tests, Laravel 127 tests (568 assertions), Python 130 tests, formatting, linting, type checking, LocalStack and all telemetry checks",
+            "A disposable PostgreSQL database migrated cleanly from empty and was removed",
+            "IMPLEMENTATION_GUIDE.md Stage 12.5 and docs/journal/2026-07-31-r12-s05-verify-cross-service-trace-propagation-and-the-privacy-allowlist.md"
+          ]
         }
       ],
       "guide_end_line": 9103,
-      "status": "not_started",
+      "status": "completed",
       "objective": "Make the platform observable by design, using OpenTelemetry as a vendor-neutral instrumentation and correlation foundation, before embeddings, retrieval and generation introduce the platform's first calls to external AI providers.",
       "gate": {
         "id": "R12-GATE",
         "title": "Observability Foundation Acceptance Gate",
-        "status": "not_started",
+        "status": "completed",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
@@ -2321,7 +2330,12 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-12 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "ADR-0012 defines the accepted vendor-neutral observability, propagation, privacy and cardinality boundaries",
+          "Stages R12-S02 through R12-S04 established the Collector/backend and instrumented Laravel and Python",
+          "R12-S05 proved the complete cross-service ingestion trace, privacy allowlist, bounded metrics and Collector outage isolation",
+          "All Phase 12 repository-wide and live acceptance checks passed"
+        ]
       }
     },
     {

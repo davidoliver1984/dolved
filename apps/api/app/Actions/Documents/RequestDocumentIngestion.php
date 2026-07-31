@@ -13,6 +13,8 @@ use App\Support\Ingestion\DocumentIngestionRequestedPayload;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use OpenTelemetry\API\Trace\Propagation\TraceContextPropagator;
+use Throwable;
 
 class RequestDocumentIngestion
 {
@@ -59,6 +61,8 @@ class RequestDocumentIngestion
 
             $this->validator->validate($payload);
 
+            $traceContext = $this->currentTraceContext();
+
             $lockedDocument->status = DocumentStatus::Queued;
             $lockedDocument->save();
 
@@ -69,11 +73,34 @@ class RequestDocumentIngestion
                 'workspace_public_id' => $lockedDocument->workspace->public_id,
                 'document_public_id' => $lockedDocument->public_id,
                 'correlation_id' => $correlationId,
+                'traceparent' => $traceContext['traceparent'] ?? null,
+                'tracestate' => $traceContext['tracestate'] ?? null,
                 'payload' => $payload,
                 'occurred_at' => $occurredAt,
             ]);
 
             return $lockedDocument->refresh();
         });
+    }
+
+    /**
+     * @return array{traceparent?: string, tracestate?: string}
+     */
+    private function currentTraceContext(): array
+    {
+        $carrier = [];
+
+        try {
+            TraceContextPropagator::getInstance()->inject($carrier);
+        } catch (Throwable) {
+            // Durable ingestion must succeed when telemetry is unavailable.
+            return [];
+        }
+
+        return array_filter(
+            $carrier,
+            static fn (mixed $value): bool => is_string($value)
+                && $value !== '',
+        );
     }
 }

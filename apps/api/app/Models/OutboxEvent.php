@@ -17,6 +17,8 @@ use LogicException;
     'workspace_public_id',
     'document_public_id',
     'correlation_id',
+    'traceparent',
+    'tracestate',
     'payload',
     'occurred_at',
     'published_at',
@@ -44,6 +46,8 @@ class OutboxEvent extends Model
                     'workspace_public_id',
                     'document_public_id',
                     'correlation_id',
+                    'traceparent',
+                    'tracestate',
                     'payload',
                     'occurred_at',
                 ])

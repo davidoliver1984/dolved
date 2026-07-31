@@ -9357,29 +9357,144 @@ telemetry.
 
 Status
 
-Not yet executed.
+Completed on 2026-07-31.
 
-Planned verification
+Implementation and verification
 
-* one logical request traced end to end across Laravel, the queue and
-  Python;
-* a negative test proving a synthetic sensitive value is absent from
-  exported attributes;
-* graceful-degradation behaviour under a temporarily unreachable Collector;
-* metric label cardinality review.
+The accepted ADR-0012 boundary was exercised using a real authenticated
+document upload and ingestion request. Inspection identified one missing
+link: the ingestion HTTP span ended before the asynchronous outbox publisher
+ran, but the outbox did not preserve its W3C context. The publisher therefore
+started a separate trace even though its SQS child context reached Python
+correctly.
+
+The narrow correction adds nullable `traceparent` and `tracestate` fields to
+the outbox. `RequestDocumentIngestion` injects the current request context
+when it creates the durable event, and `PublishIngestionOutbox` extracts that
+context as the producer span's parent. These fields are immutable with the
+event identity and payload. Missing context remains valid so telemetry cannot
+block durable ingestion and pre-existing outbox rows remain publishable.
+
+The versioned event body and durable `correlation_id` were not changed. The
+business correlation identifier remains separate from the OpenTelemetry trace
+ID, exactly as ADR-0012 requires.
+
+Two repeatable repository commands now exercise the live guarantees:
+
+* `make telemetry-verify` authenticates as the deterministic synthetic
+  development user, uploads a one-line synthetic document, requests
+  ingestion with known W3C and correlation IDs, waits for `PROCESSING`, and
+  queries Tempo for the same trace. It requires the API, publisher and Python
+  worker service identities plus the publisher, consumer and internal-claim
+  spans. It also proves the unique synthetic content is absent and checks
+  Prometheus series for forbidden entity labels. Database, S3 and temporary
+  local artifacts are removed on exit.
+* `make telemetry-outage` authenticates while the stack is healthy, stops
+  only the Collector, proves the protected user-facing platform-status
+  request still returns HTTP 200, and restores the Collector through an exit
+  trap before returning.
+
+Focused Laravel tests separately prove that the request context is persisted
+at the transactional outbox boundary, the publisher resumes the recorded
+parent, safe trace attributes remain available and metric attributes remain
+bounded. Existing Python tests continue proving SQS extraction and claim-HTTP
+injection.
+
+Commands used
+
+```bash
+docker compose exec -T api php artisan migrate --force
+docker compose exec -T api php artisan db:seed --force
+docker compose restart publisher
+docker compose exec -T api ./vendor/bin/pint
+docker compose exec -T api php artisan test --filter=TelemetryTest
+make telemetry-verify
+make telemetry-outage
+make lint format-check typecheck test aws-status \
+  telemetry-smoke telemetry-verify telemetry-outage
+docker compose exec -T postgres createdb \
+  --username rag_platform rag_platform_r12_s05_test
+docker compose exec -T -e DB_DATABASE=rag_platform_r12_s05_test \
+  api php artisan migrate:fresh --force
+docker compose exec -T postgres psql \
+  --username rag_platform \
+  --dbname rag_platform_r12_s05_test \
+  --command "SELECT column_name, is_nullable, character_maximum_length
+    FROM information_schema.columns
+    WHERE table_name = 'outbox_events'
+      AND column_name IN ('traceparent', 'tracestate')"
+docker compose exec -T postgres dropdb \
+  --username rag_platform rag_platform_r12_s05_test
+```
+
+Verification evidence
+
+* A real trace crossed `rag-platform-api`,
+  `rag-platform-ingestion-publisher` and
+  `rag-platform-ingestion-worker`, including the asynchronous outbox/SQS
+  boundary and the signed claim request back to Laravel.
+* The synthetic document reached `PROCESSING`; no extraction, chunking or
+  indexing was introduced.
+* The per-run sensitive marker was absent from the exact stored trace.
+* Prometheus exposed no correlation, Workspace, Document, event or transport
+  message identifier as a metric label.
+* With the Collector stopped, the authenticated platform-status endpoint
+  returned HTTP 200; the Collector was restored healthy afterward.
+* The focused Laravel telemetry suite passed: 8 tests and 76 assertions.
+* Repository checks passed: web lint, TypeScript and 10 tests; Laravel Pint
+  and 127 tests (568 assertions); Python Ruff formatting/linting, mypy and
+  130 tests; LocalStack provisioning; telemetry infrastructure smoke; live
+  cross-service verification; and Collector-outage isolation.
+* A disposable PostgreSQL database migrated cleanly from empty. The nullable
+  outbox columns were observed at their intended lengths (`traceparent` 55,
+  `tracestate` 512), and the database was removed.
+* The acceptance script removed its synthetic Document, outbox, claim and S3
+  records. The source queue had zero visible or in-flight messages afterward.
+
+Residual gaps
+
+Stage 12 validates the ingestion request, publication and claim slice only.
+Future external embedding and generation provider calls do not exist yet and
+will inherit the same propagation/privacy rules when their phases implement
+them. Dashboards, alerting, sampling and production retention remain the
+operational work explicitly deferred by ADR-0012.
 
 Acceptance criteria
 
 * Trace context is proven to propagate across every service boundary for
-  one logical request.
-* A test proves sensitive content is never exported.
-* A test proves a Collector outage does not fail a user-facing request.
-* Findings and any residual gaps are recorded.
+  one logical request. — Met by the live authenticated upload, asynchronous
+  publication, Python consumption and signed Laravel claim trace.
+* A test proves sensitive content is never exported. — Met by the per-run
+  synthetic content assertion against the exact stored Tempo trace and the
+  application allowlist tests.
+* A test proves a Collector outage does not fail a user-facing request. — Met
+  by `make telemetry-outage`, which returned HTTP 200 and restored the
+  Collector healthy.
+* Findings and any residual gaps are recorded. — Met above and in the Stage
+  12.5 journal.
 
 Commit boundary
 
-git add apps tests docs
+```bash
+git add makefile \
+  apps/api/app/Actions/Documents/RequestDocumentIngestion.php \
+  apps/api/app/Actions/Ingestion/PublishIngestionOutbox.php \
+  apps/api/app/Models/OutboxEvent.php \
+  apps/api/database/factories/OutboxEventFactory.php \
+  apps/api/database/migrations/2026_07_31_000006_add_trace_context_to_outbox_events_table.php \
+  apps/api/tests/Feature/DocumentIngestionPublicationTest.php \
+  apps/api/tests/Feature/TelemetryTest.php \
+  scripts/telemetry/verify-cross-service.sh \
+  scripts/telemetry/verify-collector-outage.sh \
+  tests/end-to-end/README.md \
+  docs/journal/2026-07-31-r12-s05-verify-cross-service-trace-propagation-and-the-privacy-allowlist.md \
+  IMPLEMENTATION_GUIDE.md tasks.json
 git commit -m "Verify cross-service trace propagation and telemetry privacy"
+git tag -a phase-12-s05 \
+  -m "Complete Stage 12.5: Verify Cross-Service Trace Propagation and the Privacy Allowlist"
+git tag -a phase-12 \
+  -m "Complete Phase 12: Observability Foundation"
+```
 
 ⸻
 

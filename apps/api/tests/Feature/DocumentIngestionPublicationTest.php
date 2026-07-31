@@ -404,6 +404,8 @@ class DocumentIngestionPublicationTest extends TestCase
             'workspace_public_id',
             'document_public_id',
             'correlation_id',
+            'traceparent',
+            'tracestate',
             'payload',
             'occurred_at',
             'published_at',
@@ -449,6 +451,18 @@ class DocumentIngestionPublicationTest extends TestCase
     {
         $event = OutboxEvent::factory()->create();
         $event->event_id = (string) Str::uuid();
+
+        $this->expectException(LogicException::class);
+
+        $event->save();
+    }
+
+    public function test_persisted_trace_context_is_immutable(): void
+    {
+        $event = OutboxEvent::factory()->create([
+            'traceparent' => '00-11111111111111111111111111111111-2222222222222222-01',
+        ]);
+        $event->traceparent = '00-33333333333333333333333333333333-4444444444444444-01';
 
         $this->expectException(LogicException::class);
 

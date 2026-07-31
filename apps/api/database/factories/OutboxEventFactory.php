@@ -27,6 +27,8 @@ class OutboxEventFactory extends Factory
             'workspace_public_id' => $workspaceId,
             'document_public_id' => $documentId,
             'correlation_id' => $correlationId,
+            'traceparent' => null,
+            'tracestate' => null,
             'payload' => [
                 'event_id' => $eventId,
                 'event_type' => 'document.ingestion.requested',

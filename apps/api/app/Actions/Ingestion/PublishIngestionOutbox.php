@@ -18,9 +18,11 @@ use Illuminate\Support\Str;
 use OpenTelemetry\API\Metrics\CounterInterface;
 use OpenTelemetry\API\Metrics\HistogramInterface;
 use OpenTelemetry\API\Metrics\MeterProviderInterface;
+use OpenTelemetry\API\Trace\Propagation\TraceContextPropagator;
 use OpenTelemetry\API\Trace\SpanKind;
 use OpenTelemetry\API\Trace\TracerInterface;
 use OpenTelemetry\API\Trace\TracerProviderInterface;
+use OpenTelemetry\Context\ContextInterface;
 use Throwable;
 
 class PublishIngestionOutbox
@@ -113,6 +115,7 @@ class PublishIngestionOutbox
         ];
         $span = $this->tracer
             ->spanBuilder('messaging.publish document.ingestion.requested')
+            ->setParent($this->parentContext($event))
             ->setSpanKind(SpanKind::KIND_PRODUCER)
             ->setAttributes($this->allowlist->trace($attributes))
             ->startSpan();
@@ -158,6 +161,17 @@ class PublishIngestionOutbox
             $scope->detach();
             $span->end();
         }
+    }
+
+    private function parentContext(OutboxEvent $event): ContextInterface
+    {
+        $carrier = array_filter([
+            'traceparent' => $event->traceparent,
+            'tracestate' => $event->tracestate,
+        ], static fn (mixed $value): bool => is_string($value)
+            && $value !== '');
+
+        return TraceContextPropagator::getInstance()->extract($carrier);
     }
 
     private function claimNextEvent(): ?OutboxEvent

@@ -7,7 +7,11 @@ namespace Tests\Feature;
 use App\Actions\Ingestion\PublishIngestionOutbox;
 use App\Contracts\Ingestion\IngestionEventPublisher;
 use App\Http\Middleware\TraceHttpRequests;
+use App\Models\Document;
 use App\Models\OutboxEvent;
+use App\Models\User;
+use App\Models\Workspace;
+use App\Models\WorkspaceMembership;
 use App\Services\Ingestion\SqsIngestionEventPublisher;
 use App\Telemetry\DatabaseTelemetry;
 use App\Telemetry\TelemetryAttributeAllowlist;
@@ -153,7 +157,11 @@ class TelemetryTest extends TestCase
     {
         [$spanExporter, $metricExporter, $tracerProvider, $meterProvider] =
             $this->installInMemoryTelemetry();
-        $event = OutboxEvent::factory()->create();
+        $traceId = '55555555555555555555555555555555';
+        $parentSpanId = '6666666666666666';
+        $event = OutboxEvent::factory()->create([
+            'traceparent' => "00-{$traceId}-{$parentSpanId}-01",
+        ]);
         $spanExporter->getStorage()->exchangeArray([]);
         $transport = Mockery::mock(IngestionEventPublisher::class);
         $transport->shouldReceive('publish')
@@ -170,6 +178,11 @@ class TelemetryTest extends TestCase
         );
 
         $this->assertNotNull($span);
+        $this->assertSame($traceId, $span->getContext()->getTraceId());
+        $this->assertSame(
+            $parentSpanId,
+            $span->getParentContext()->getSpanId(),
+        );
         $attributes = $span->getAttributes()->toArray();
         $this->assertSame($event->event_id, $attributes['rag.event.id']);
         $this->assertSame(
@@ -194,6 +207,53 @@ class TelemetryTest extends TestCase
             'Observed metrics: '.implode(', ', $metricNames),
         );
         $this->assertMetricAttributesExcludeEntityIdentifiers($metrics);
+
+        $tracerProvider->shutdown();
+        $meterProvider->shutdown();
+    }
+
+    public function test_request_trace_context_is_persisted_at_the_transactional_outbox_boundary(): void
+    {
+        [$spanExporter, , $tracerProvider, $meterProvider] =
+            $this->installInMemoryTelemetry();
+        $traceId = '33333333333333333333333333333333';
+        $parentSpanId = '4444444444444444';
+        $user = User::factory()->create();
+        $workspace = Workspace::factory()->for($user, 'creator')->create();
+        WorkspaceMembership::factory()
+            ->for($workspace)
+            ->for($user)
+            ->owner()
+            ->create();
+        $document = Document::factory()
+            ->for($workspace)
+            ->for($user, 'createdBy')
+            ->uploaded()
+            ->create();
+        $this->actingAs($user)
+            ->withHeader(
+                'traceparent',
+                "00-{$traceId}-{$parentSpanId}-01",
+            )
+            ->postJson(sprintf(
+                '/api/workspaces/%s/documents/%s/ingestion-requests',
+                $workspace->public_id,
+                $document->public_id,
+            ))
+            ->assertAccepted();
+
+        $requestSpan = collect($spanExporter->getSpans())->firstWhere(
+            fn ($span): bool => $span->getName()
+                === 'POST /api/workspaces/{workspacePublicId}/documents/{documentPublicId}/ingestion-requests',
+        );
+        $event = OutboxEvent::query()->sole();
+
+        $this->assertNotNull($requestSpan);
+        $this->assertSame($traceId, $requestSpan->getContext()->getTraceId());
+        $this->assertSame(
+            "00-{$traceId}-{$requestSpan->getContext()->getSpanId()}-01",
+            $event->traceparent,
+        );
 
         $tracerProvider->shutdown();
         $meterProvider->shutdown();

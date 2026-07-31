@@ -15,7 +15,7 @@ TAIL ?= 100
 	test test-web test-api test-ai \
 	bootstrap migrate seed reset clean \
 	aws-provision aws-status publish-ingestion consume-ingestion \
-	telemetry-smoke \
+	telemetry-smoke telemetry-verify telemetry-outage \
 	shell-web shell-api shell-ai shell-db shell-aws
 
 help:
@@ -39,6 +39,8 @@ help:
 		'  make publish-ingestion  Run one outbox publication batch' \
 		'  make consume-ingestion  Run one ingestion-worker receive batch' \
 		'  make telemetry-smoke Verify Collector-to-Grafana trace and metric flow' \
+		'  make telemetry-verify Verify cross-service trace, privacy and cardinality' \
+		'  make telemetry-outage Verify requests survive a Collector outage' \
 		'  make reset           Delete local volumes and bootstrap again' \
 		'' \
 		'Quality' \
@@ -154,6 +156,12 @@ consume-ingestion:
 
 telemetry-smoke:
 	./scripts/telemetry/smoke-test.sh
+
+telemetry-verify:
+	./scripts/telemetry/verify-cross-service.sh
+
+telemetry-outage:
+	./scripts/telemetry/verify-collector-outage.sh
 
 reset:
 	@printf '%s\n' \
