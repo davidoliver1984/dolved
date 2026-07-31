@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R12",
-    "current_session": "R12-S03",
-    "next_action": "Begin R12-S03 \u2014 Instrument Laravel with OpenTelemetry.",
-    "completed_through": "R12-S02",
+    "current_session": "R12-S04",
+    "next_action": "Begin R12-S04 \u2014 Instrument the Python AI Service with OpenTelemetry.",
+    "completed_through": "R12-S03",
     "completed_phase_count": 12,
     "total_phase_count": 23
   },
@@ -2169,7 +2169,7 @@
           "title": "Instrument Laravel with OpenTelemetry",
           "guide_start_line": 9000,
           "guide_end_line": 9033,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Emit traces and metrics from the Laravel API using the OpenTelemetry SDK.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -2200,9 +2200,19 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r12-s03-instrument-laravel-with-opentelemetry.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Official OpenTelemetry PHP SDK 1.15.0 and OTLP exporter 1.4.0 with pinned protobuf 5.35.1",
+            "HTTP, database and outbox traces plus low-cardinality baseline metrics",
+            "W3C trace context injected into SQS message attributes without changing the event contract",
+            "Explicit trace, metric and resource privacy allowlists with focused negative tests",
+            "Focused telemetry verification passed: 7 tests and 70 assertions",
+            "Stored Tempo trace and cumulative Prometheus metrics verified through Grafana",
+            "Collector outage preserved the expected API response in 0.036 seconds",
+            "Repository verification passed: web 10 tests, Laravel 125 tests (561 assertions), Python 123 tests, formatting, linting, type checking, LocalStack and telemetry smoke",
+            "IMPLEMENTATION_GUIDE.md Stage 12.3 and docs/journal/2026-07-31-r12-s03-instrument-laravel-with-opentelemetry.md"
+          ]
         },
         {
           "id": "R12-S04",

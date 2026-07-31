@@ -32,5 +32,6 @@
         <server name="PULSE_ENABLED" value="false" force="true"/>
         <server name="TELESCOPE_ENABLED" value="false" force="true"/>
         <server name="NIGHTWATCH_ENABLED" value="false" force="true"/>
+        <server name="OTEL_SDK_DISABLED" value="true" force="true"/>
     </php>
 </phpunit>

@@ -13,6 +13,7 @@ RUN apk add --no-cache \
         libpq \
         sqlite-libs \
     && apk add --no-cache --virtual .build-dependencies \
+        $PHPIZE_DEPS \
         icu-dev \
         libpq-dev \
         libxml2-dev \
@@ -27,6 +28,8 @@ RUN apk add --no-cache \
         pdo_sqlite \
         xml \
         xmlwriter \
+    && pecl install protobuf-5.35.1 \
+    && docker-php-ext-enable protobuf \
     && apk del .build-dependencies
 
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer

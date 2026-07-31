@@ -8,19 +8,54 @@ use App\Contracts\Ingestion\IngestionEventPublisher;
 use App\Exceptions\InvalidIngestionEvent;
 use App\Models\OutboxEvent;
 use App\Services\Ingestion\DocumentIngestionContractValidator;
+use App\Telemetry\TelemetryAttributeAllowlist;
+use App\Telemetry\TelemetryLifecycle;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use OpenTelemetry\API\Metrics\CounterInterface;
+use OpenTelemetry\API\Metrics\HistogramInterface;
+use OpenTelemetry\API\Metrics\MeterProviderInterface;
+use OpenTelemetry\API\Trace\SpanKind;
+use OpenTelemetry\API\Trace\TracerInterface;
+use OpenTelemetry\API\Trace\TracerProviderInterface;
 use Throwable;
 
 class PublishIngestionOutbox
 {
+    private readonly TracerInterface $tracer;
+
+    private readonly CounterInterface $publicationCount;
+
+    private readonly HistogramInterface $publicationDuration;
+
     public function __construct(
         private readonly DocumentIngestionContractValidator $validator,
         private readonly IngestionEventPublisher $publisher,
-    ) {}
+        TracerProviderInterface $tracerProvider,
+        MeterProviderInterface $meterProvider,
+        private readonly TelemetryAttributeAllowlist $allowlist,
+        private readonly TelemetryLifecycle $telemetryLifecycle,
+    ) {
+        $this->tracer = $tracerProvider->getTracer(
+            'maketime.laravel.ingestion-publisher',
+        );
+        $meter = $meterProvider->getMeter(
+            'maketime.laravel.ingestion-publisher',
+        );
+        $this->publicationCount = $meter->createCounter(
+            'rag.ingestion.outbox.publication.count',
+            '{event}',
+            'Count of ingestion outbox publication outcomes.',
+        );
+        $this->publicationDuration = $meter->createHistogram(
+            'rag.ingestion.outbox.publication.duration',
+            's',
+            'Duration of ingestion outbox publication attempts.',
+        );
+    }
 
     /**
      * @return array{claimed: int, published: int, retryable: int, failed: int}
@@ -33,41 +68,96 @@ class PublishIngestionOutbox
             'retryable' => 0,
             'failed' => 0,
         ];
+        try {
+            $batchSize = max(
+                1,
+                (int) config('ingestion.publisher.batch_size'),
+            );
 
-        $batchSize = max(
-            1,
-            (int) config('ingestion.publisher.batch_size'),
-        );
+            for ($index = 0; $index < $batchSize; $index++) {
+                $event = $this->claimNextEvent();
 
-        for ($index = 0; $index < $batchSize; $index++) {
-            $event = $this->claimNextEvent();
+                if ($event === null) {
+                    break;
+                }
 
-            if ($event === null) {
-                break;
+                $summary['claimed']++;
+                $this->publishClaimedEvent($event, $summary);
             }
 
-            $summary['claimed']++;
+            return $summary;
+        } finally {
+            $this->telemetryLifecycle->flush();
+        }
+    }
 
+    /**
+     * @param  array{claimed: int, published: int, retryable: int, failed: int}  $summary
+     */
+    private function publishClaimedEvent(
+        OutboxEvent $event,
+        array &$summary,
+    ): void {
+        $startedAt = hrtime(true);
+        $attributes = [
+            'messaging.system' => 'aws_sqs',
+            'messaging.destination.name' => (string) config(
+                'queue.connections.sqs.queue',
+                'default',
+            ),
+            'messaging.operation.type' => 'publish',
+            'rag.event.id' => $event->event_id,
+            'rag.correlation.id' => $event->correlation_id,
+            'rag.workspace.id' => $event->workspace_public_id,
+            'rag.document.id' => $event->document_public_id,
+        ];
+        $span = $this->tracer
+            ->spanBuilder('messaging.publish document.ingestion.requested')
+            ->setSpanKind(SpanKind::KIND_PRODUCER)
+            ->setAttributes($this->allowlist->trace($attributes))
+            ->startSpan();
+        $scope = $span->activate();
+        $outcome = 'failed';
+
+        try {
             try {
                 $this->validator->validate($event->payload);
             } catch (InvalidIngestionEvent $exception) {
                 $this->markTerminalFailure($event, $exception);
                 $summary['failed']++;
 
-                continue;
+                return;
             }
 
             try {
                 $messageId = $this->publisher->publish($event->payload);
                 $this->markPublished($event, $messageId);
                 $summary['published']++;
+                $outcome = 'published';
             } catch (Throwable $exception) {
                 $this->scheduleRetry($event, $exception);
                 $summary['retryable']++;
+                $outcome = 'retryable';
             }
+        } finally {
+            $outcomeAttributes = [
+                ...$attributes,
+                'rag.outbox.outcome' => $outcome,
+            ];
+            $span->setAttributes(
+                $this->allowlist->trace($outcomeAttributes),
+            );
+            $metricAttributes = $this->allowlist->metric(
+                $outcomeAttributes,
+            );
+            $this->publicationCount->add(1, $metricAttributes);
+            $this->publicationDuration->record(
+                (hrtime(true) - $startedAt) / 1_000_000_000,
+                $metricAttributes,
+            );
+            $scope->detach();
+            $span->end();
         }
-
-        return $summary;
     }
 
     private function claimNextEvent(): ?OutboxEvent

@@ -3,6 +3,7 @@
 use App\Http\Middleware\AuthenticateIngestionWorker;
 use App\Http\Middleware\CanonicalizeEmail;
 use App\Http\Middleware\RequireOpenRegistration;
+use App\Http\Middleware\TraceHttpRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
+        $middleware->append(TraceHttpRequests::class);
         $middleware->append(CanonicalizeEmail::class);
         $middleware->redirectGuestsTo(
             fn () => rtrim(config('app.frontend_url'), '/').'/login'

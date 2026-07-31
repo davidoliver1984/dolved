@@ -7,7 +7,9 @@ namespace App\Services\Ingestion;
 use App\Contracts\Ingestion\IngestionEventPublisher;
 use Illuminate\Contracts\Queue\Factory as QueueFactory;
 use Illuminate\Queue\SqsQueue;
+use OpenTelemetry\API\Trace\Propagation\TraceContextPropagator;
 use RuntimeException;
+use Throwable;
 
 class SqsIngestionEventPublisher implements IngestionEventPublisher
 {
@@ -25,8 +27,31 @@ class SqsIngestionEventPublisher implements IngestionEventPublisher
             );
         }
 
+        $messageAttributes = [];
+
+        try {
+            TraceContextPropagator::getInstance()->inject($messageAttributes);
+        } catch (Throwable) {
+            // Publication must continue if trace-context injection fails.
+            $messageAttributes = [];
+        }
+
+        $sqsAttributes = [];
+
+        foreach ($messageAttributes as $name => $value) {
+            $sqsAttributes[$name] = [
+                'DataType' => 'String',
+                'StringValue' => $value,
+            ];
+        }
+
+        $options = $sqsAttributes === []
+            ? []
+            : ['MessageAttributes' => $sqsAttributes];
         $messageId = $connection->pushRaw(
             json_encode($payload, JSON_THROW_ON_ERROR),
+            null,
+            $options,
         );
 
         if (! is_string($messageId) || $messageId === '') {

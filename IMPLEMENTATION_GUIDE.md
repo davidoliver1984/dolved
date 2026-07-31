@@ -9005,29 +9005,170 @@ Emit traces and metrics from the Laravel API using the OpenTelemetry SDK.
 
 Status
 
-Not yet executed.
+Complete.
 
-Planned instrumentation
+Implementation
 
-* HTTP request spans;
-* queue/outbox publication spans;
-* database query spans where practical;
-* baseline platform metrics;
-* privacy-allowlisted span and metric attributes;
-* graceful degradation when the Collector is unreachable.
+Laravel now uses the official `open-telemetry/sdk` 1.15.0 and
+`open-telemetry/exporter-otlp` 1.4.0 packages directly. The container also
+builds the explicitly pinned protobuf extension 5.35.1. The SDK exports
+traces and cumulative metrics over OTLP/HTTP protobuf only to the dedicated
+application-facing Collector.
+
+`TelemetryServiceProvider` owns provider construction and lifecycle. It
+binds the official SDK/API provider interfaces, retains request and database
+instrumentation for the complete Laravel lifecycle, and performs best-effort
+flush/shutdown. If configuration or export fails, no-op providers or guarded
+lifecycle operations preserve application behaviour.
+
+The implemented signals are:
+
+* one server span plus request-count and request-duration metrics for each
+  Laravel HTTP request, named with the resolved route template rather than
+  the raw URL;
+* client spans plus duration metrics for database operations, recording only
+  the database system and operation verb, never SQL text, bindings or table
+  names;
+* producer spans plus publication-count and publication-duration metrics for
+  claimed outbox events;
+* W3C `traceparent` and `tracestate` injection into SQS message attributes
+  without changing the canonical JSON event contract.
+
+The explicit attribute allowlist keeps entity UUIDs and correlation IDs on
+traces where they aid diagnosis, while excluding them from metric labels.
+Payloads, source content, prompts, questions, credentials and SQL are not
+accepted attributes. Resource attributes are also explicit: only
+`service.name` and `deployment.environment.name` are exported. This avoids
+the default PHP process detector capturing command arguments, which can
+contain request query data under the development server.
+
+Cumulative metric temporality is explicit because the local
+Prometheus-compatible backend does not retain the SDK's default delta
+points. This is protocol configuration behind the Collector boundary, not
+Grafana coupling. HTTP telemetry flushes in Laravel's post-response
+termination lifecycle, so a Collector outage does not delay the response
+body. Tests disable network telemetry globally and use the SDK's in-memory
+exporters only in the focused telemetry suite.
+
+Files changed
+
+* `.env.example` and `compose.yaml`
+  * configure endpoint, protocol, 250 ms exporter timeout, cumulative metric
+    temporality, SDK enablement and distinct API/publisher service names.
+* `apps/api/Dockerfile`
+  * installs the pinned protobuf 5.35.1 PHP extension.
+* `apps/api/composer.json` and `apps/api/composer.lock`
+  * add the official OpenTelemetry SDK and OTLP exporter.
+* `apps/api/config/telemetry.php`
+  * defines exporter configuration and separate trace/metric attribute
+    allowlists.
+* `apps/api/app/Providers/TelemetryServiceProvider.php`
+  * registers official SDK providers, database observation and lifecycle.
+* `apps/api/app/Telemetry/`
+  * constructs the SDK, filters attributes, records safe database operations
+    and guards flush/shutdown.
+* `apps/api/app/Http/Middleware/TraceHttpRequests.php`
+  * records safe route-template HTTP spans and baseline metrics.
+* `apps/api/app/Actions/Ingestion/PublishIngestionOutbox.php`
+  * records outbox producer spans and low-cardinality outcome metrics.
+* `apps/api/app/Services/Ingestion/SqsIngestionEventPublisher.php`
+  * injects current W3C context into SQS message attributes.
+* `apps/api/bootstrap/app.php`, `apps/api/bootstrap/providers.php` and
+  `apps/api/phpunit.xml`
+  * activate instrumentation and keep normal tests network-independent.
+* `apps/api/tests/Feature/TelemetryTest.php`
+  * verifies propagation, privacy, metrics, database/outbox instrumentation,
+    SQS injection and graceful exporter failure.
+
+Commands used
+
+```bash
+docker compose exec -T api composer require \
+  'open-telemetry/sdk:^1.15' \
+  'open-telemetry/exporter-otlp:^1.4' \
+  --with-all-dependencies --no-interaction
+make format-api
+docker compose exec -T api php artisan test \
+  tests/Feature/TelemetryTest.php
+docker compose build api
+docker compose up --detach --wait --wait-timeout 180 api publisher
+docker compose exec -T api php -r \
+  'echo phpversion("protobuf"), PHP_EOL;'
+curl --header 'traceparent: 00-…-…-01' \
+  http://127.0.0.1:8000/api/auth/user
+curl http://127.0.0.1:3001/api/datasources/proxy/uid/tempo/api/traces/…
+curl http://127.0.0.1:3001/api/datasources/proxy/uid/prometheus/api/v1/label/__name__/values
+docker compose stop otel-collector
+curl http://127.0.0.1:8000/api/auth/user
+docker compose up --detach --wait --wait-timeout 120 otel-collector
+make format-check lint typecheck test aws-status telemetry-smoke
+docker compose config --quiet
+docker compose exec -T api composer validate --strict
+git diff --check
+```
+
+Verification
+
+* Focused telemetry suite: 7 tests and 70 assertions passed.
+* A known incoming W3C trace ID produced a `GET /api/auth/user` server span
+  with the expected parent and was queryable from Tempo.
+* The stored trace resource contained only `service.name` and
+  `deployment.environment.name`; the synthetic query value was absent.
+* Prometheus exposed Laravel HTTP request and database operation
+  count/duration series after cumulative export.
+* With the Collector stopped, the same API request still returned its
+  expected 401 response in 0.036 seconds; Collector health was then restored.
+* The rebuilt image reported protobuf 5.35.1.
+* Repository verification passed:
+  * web: ESLint, TypeScript and 10 tests;
+  * Laravel: Pint and 125 tests (561 assertions);
+  * Python: Ruff formatting/linting, mypy and 123 tests;
+  * LocalStack S3/SQS/DLQ/redrive checks;
+  * Collector-to-Grafana trace and metric smoke verification.
+
+Problems and corrections
+
+The first runtime trace used the SDK's default resource detectors. Under
+PHP's local development server, a query value appeared as
+`process.command`, even though span attributes were safe. Resource
+collection was therefore changed to an explicit two-field allowlist and a
+focused regression test was added.
+
+The Collector received the PHP SDK's initial delta metrics, but the local
+Prometheus-compatible backend did not retain them. Metric temporality was
+made explicitly cumulative, after which the HTTP and database series were
+queryable. A temporary Collector debug exporter was used only for diagnosis
+and was removed before completion.
+
+HTTP middleware begins before Laravel has resolved the route. Route
+template naming is therefore finalised after downstream dispatch, avoiding
+raw request paths and the misleading `unmatched` name.
 
 Acceptance criteria
 
 * Laravel emits spans using the OpenTelemetry SDK, not a proprietary
-  wrapper.
-* No sensitive payload appears in exported attributes by default.
+  wrapper. — Met by direct use of official API/SDK interfaces and OTLP
+  exporters.
+* No sensitive payload appears in exported attributes by default. — Met by
+  trace, metric and resource allowlists plus negative tests and stored-trace
+  inspection.
 * Telemetry failures do not affect request success or user-visible latency.
-* Metrics avoid unbounded-cardinality labels.
+  — Met by guarded no-op/flush behaviour and the live Collector-outage
+  request.
+* Metrics avoid unbounded-cardinality labels. — Met by the separate metric
+  allowlist, which excludes all workspace, document, event and correlation
+  identifiers.
 
 Commit boundary
 
-git add apps/api docs
+```bash
+git add .env.example compose.yaml apps/api \
+  docs/journal/2026-07-31-r12-s03-instrument-laravel-with-opentelemetry.md \
+  IMPLEMENTATION_GUIDE.md tasks.json
 git commit -m "Instrument Laravel with OpenTelemetry"
+git tag -a phase-12-s03 \
+  -m "Complete Stage 12.3: Instrument Laravel with OpenTelemetry"
+```
 
 ⸻
 
