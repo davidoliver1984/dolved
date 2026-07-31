@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R12",
-    "current_session": "R12-S02",
-    "next_action": "Begin R12-S02 \u2014 Establish Local Telemetry Infrastructure.",
-    "completed_through": "R12-S01",
+    "current_session": "R12-S03",
+    "next_action": "Begin R12-S03 \u2014 Instrument Laravel with OpenTelemetry.",
+    "completed_through": "R12-S02",
     "completed_phase_count": 12,
     "total_phase_count": 23
   },
@@ -2120,8 +2120,8 @@
           "guide_stage": "Stage 12.2 \u2014 Establish Local Telemetry Infrastructure",
           "title": "Establish Local Telemetry Infrastructure",
           "guide_start_line": 8834,
-          "guide_end_line": 8870,
-          "status": "not_started",
+          "guide_end_line": 8999,
+          "status": "completed",
           "objective": "Provision the shared OpenTelemetry Collector and a local telemetry backend before either application is instrumented.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -2130,7 +2130,7 @@
             "stage": "Stage 12.2 \u2014 Establish Local Telemetry Infrastructure",
             "source_lines": {
               "start": 8834,
-              "end": 8870
+              "end": 8999
             }
           },
           "workflow": [
@@ -2152,16 +2152,23 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r12-s02-establish-local-telemetry-infrastructure.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Pinned otel-collector 0.153.0 and grafana/otel-lgtm 0.29.2 Compose services",
+            "Explicit Collector OTLP trace and metric pipelines with the backend address isolated to Collector configuration",
+            "make telemetry-smoke proved a fresh trace and metric were queryable through Grafana",
+            "All ten Compose processes ran; all eight configured health checks were healthy",
+            "Repository verification passed: web 10 tests, Laravel 118 tests (491 assertions), Python 123 tests, formatting, linting, type checking and LocalStack",
+            "IMPLEMENTATION_GUIDE.md Stage 12.2 and docs/journal/2026-07-31-r12-s02-establish-local-telemetry-infrastructure.md"
+          ]
         },
         {
           "id": "R12-S03",
           "guide_stage": "Stage 12.3 \u2014 Instrument Laravel with OpenTelemetry",
           "title": "Instrument Laravel with OpenTelemetry",
-          "guide_start_line": 8871,
-          "guide_end_line": 8904,
+          "guide_start_line": 9000,
+          "guide_end_line": 9033,
           "status": "not_started",
           "objective": "Emit traces and metrics from the Laravel API using the OpenTelemetry SDK.",
           "session_mode": "implementation",
@@ -2170,8 +2177,8 @@
             "phase": "Phase 12 \u2014 Observability Foundation",
             "stage": "Stage 12.3 \u2014 Instrument Laravel with OpenTelemetry",
             "source_lines": {
-              "start": 8871,
-              "end": 8904
+              "start": 9000,
+              "end": 9033
             }
           },
           "workflow": [
@@ -2201,8 +2208,8 @@
           "id": "R12-S04",
           "guide_stage": "Stage 12.4 \u2014 Instrument the Python AI Service with OpenTelemetry",
           "title": "Instrument the Python AI Service with OpenTelemetry",
-          "guide_start_line": 8905,
-          "guide_end_line": 8938,
+          "guide_start_line": 9034,
+          "guide_end_line": 9067,
           "status": "not_started",
           "objective": "Emit traces and metrics from the Python AI service using the OpenTelemetry SDK.",
           "session_mode": "implementation",
@@ -2211,8 +2218,8 @@
             "phase": "Phase 12 \u2014 Observability Foundation",
             "stage": "Stage 12.4 \u2014 Instrument the Python AI Service with OpenTelemetry",
             "source_lines": {
-              "start": 8905,
-              "end": 8938
+              "start": 9034,
+              "end": 9067
             }
           },
           "workflow": [
@@ -2242,8 +2249,8 @@
           "id": "R12-S05",
           "guide_stage": "Stage 12.5 \u2014 Verify Cross-Service Trace Propagation and the Privacy Allowlist",
           "title": "Verify Cross-Service Trace Propagation and the Privacy Allowlist",
-          "guide_start_line": 8939,
-          "guide_end_line": 8974,
+          "guide_start_line": 9068,
+          "guide_end_line": 9103,
           "status": "not_started",
           "objective": "Prove that one logical request remains correlated across Laravel, the queue and Python, and that sensitive content never appears in exported telemetry.",
           "session_mode": "implementation",
@@ -2252,8 +2259,8 @@
             "phase": "Phase 12 \u2014 Observability Foundation",
             "stage": "Stage 12.5 \u2014 Verify Cross-Service Trace Propagation and the Privacy Allowlist",
             "source_lines": {
-              "start": 8939,
-              "end": 8974
+              "start": 9068,
+              "end": 9103
             }
           },
           "workflow": [
@@ -2280,7 +2287,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 8974,
+      "guide_end_line": 9103,
       "status": "not_started",
       "objective": "Make the platform observable by design, using OpenTelemetry as a vendor-neutral instrumentation and correlation foundation, before embeddings, retrieval and generation introduce the platform's first calls to external AI providers.",
       "gate": {

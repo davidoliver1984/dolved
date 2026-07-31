@@ -8840,31 +8840,160 @@ before either application is instrumented.
 
 Status
 
-Not yet executed.
+Complete.
 
-Planned infrastructure
+Infrastructure
 
-* OpenTelemetry Collector Compose service;
-* a local telemetry backend for traces and metrics;
-* Collector exporter and pipeline configuration;
-* shared environment variables and endpoints for both applications;
-* local health verification.
+The application-facing `otel-collector` service uses the explicitly pinned
+OpenTelemetry Collector `0.153.0` image. It accepts OTLP/gRPC on port 4317
+and OTLP/HTTP on port 4318, exposes its health extension on port 13133, and
+has explicit traces and metrics pipelines in
+`infrastructure/opentelemetry/collector.yaml`.
+
+The Collector exports both signals over OTLP/HTTP to the explicitly pinned
+`grafana/otel-lgtm:0.29.2` local backend. The backend packages local
+Prometheus-compatible metric storage, Tempo trace storage and Grafana for
+development use. Grafana is available at `http://localhost:3001`; the
+backend's own OTLP ports are not published to the host.
+
+The dependency direction is:
+
+```text
+Laravel / Python services
+  -> OpenTelemetry SDK and instrumentation
+  -> otel-collector
+  -> otel-lgtm
+  -> Grafana
+```
+
+OpenTelemetry is the instrumentation and transport standard; it is not a
+telemetry store. `otel-lgtm` is the replaceable local storage, query and
+visualisation destination. Application service environments contain only
+the application-facing Collector endpoint
+`http://otel-collector:4318` and the standard `http/protobuf` protocol.
+They contain neither the `otel-lgtm` address nor any Grafana-specific
+configuration. The backend address is owned exclusively by Collector
+configuration through `OTEL_BACKEND_OTLP_ENDPOINT`.
+
+This stage intentionally adds no OpenTelemetry SDK dependency and no
+Laravel- or Python-specific instrumentation. Those remain bounded to
+Stages 12.3 and 12.4.
+
+Files changed
+
+* `compose.yaml`
+  * adds the pinned `otel-collector` and `otel-lgtm` services;
+  * publishes Collector ports only on loopback;
+  * publishes Grafana on loopback port 3001;
+  * gives both services health checks and starts the Collector only after
+    the backend is healthy;
+  * gives Laravel and Python processes only the standard Collector OTLP
+    endpoint/protocol variables;
+  * persists local backend state in `telemetry_data`.
+* `infrastructure/opentelemetry/collector.yaml`
+  * defines OTLP/gRPC and OTLP/HTTP receivers;
+  * defines batch processing and retrying/queued OTLP/HTTP export;
+  * defines separate traces and metrics pipelines;
+  * enables the Collector health endpoint.
+* `scripts/telemetry/smoke-test.sh`
+  * creates a unique synthetic trace and metric;
+  * submits them only to the application-facing Collector;
+  * queries the same trace and exact metric value through Grafana's
+    provisioned Tempo and Prometheus data sources;
+  * retries briefly for asynchronous batching and fails explicitly if
+    either signal is absent.
+* `.env.example`
+  * documents local Grafana and Collector ports plus the shared
+    application-facing OTLP endpoint/protocol.
+* `Makefile`
+  * adds `make telemetry-smoke`.
+* `README.md`
+  * documents local ports, responsibilities, topology, inspection and the
+    infrastructure smoke command.
+
+Commands used
+
+```bash
+docker compose config --quiet
+docker compose config --images
+sh -n scripts/telemetry/smoke-test.sh
+docker compose pull otel-lgtm otel-collector
+docker compose up --detach --wait --wait-timeout 180 \
+  otel-lgtm otel-collector
+make telemetry-smoke
+make up
+docker compose ps
+docker compose images
+make telemetry-smoke
+make format-check
+make lint
+make typecheck
+make test
+make aws-status
+git diff --check
+```
+
+Verification
+
+* `docker compose config --quiet` accepted the complete topology.
+* Compose resolved exactly
+  `ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.153.0`
+  and `grafana/otel-lgtm:0.29.2`; neither uses a floating tag.
+* All ten Compose processes were running. All eight services with health
+  checks were healthy.
+* `make telemetry-smoke` proved that a fresh trace and metric travelled
+  through the dedicated Collector and were queryable through Grafana's
+  Tempo and Prometheus data sources.
+* The backend's OTLP ports remained internal to the Compose network; only
+  the Collector's OTLP ports were published to the host.
+* Web verification passed: ESLint, TypeScript, and 10 tests.
+* Laravel verification passed: Pint and 118 tests (491 assertions).
+* Python verification passed: Ruff formatting, Ruff linting, mypy, and 123
+  tests.
+* LocalStack S3, SQS, DLQ and redrive verification passed.
+
+Problems and corrections
+
+The first agent-run smoke attempt could not reach the loopback health port
+because that command was executed inside a restricted network sandbox. The
+published port and Collector logs confirmed the service was ready; running
+the same repository command with normal local loopback access passed. No
+topology correction was required.
+
+The initial smoke identity used only whole seconds. It was strengthened
+before completion to combine the current time and process identity for a
+fresh trace ID and to require the metric value produced by the current run.
+This prevents previously stored telemetry from creating a false positive.
 
 Acceptance criteria
 
-* The Collector runs as a Docker Compose service.
+* The Collector runs as a Docker Compose service. — Met by the healthy
+  pinned `otel-collector` service.
 * A local backend makes traces and metrics inspectable without a commercial
-  account.
+  account. — Met by the loopback-only Grafana UI backed by local Tempo and
+  Prometheus storage.
 * Collector configuration, not application code, determines backend
-  routing.
-* Laravel and Python share consistent endpoint configuration.
+  routing. — Met: only the Collector knows
+  `http://otel-lgtm:4318`.
+* Laravel and Python share consistent endpoint configuration. — Met:
+  Laravel API/publisher and Python API/worker receive the same standard
+  Collector endpoint and protocol.
 * No application code yet depends on this infrastructure — this stage
-  provisions it only.
+  provisions it only. — Met: no application dependencies, imports or
+  instrumentation call sites were added.
 
 Commit boundary
 
-git add compose.yaml infrastructure docs
+```bash
+git add .env.example README.md compose.yaml makefile \
+  infrastructure/opentelemetry/collector.yaml \
+  scripts/telemetry/smoke-test.sh \
+  docs/journal/2026-07-31-r12-s02-establish-local-telemetry-infrastructure.md \
+  IMPLEMENTATION_GUIDE.md tasks.json
 git commit -m "Establish local telemetry infrastructure"
+git tag -a phase-12-s02 \
+  -m "Complete Stage 12.2: Establish Local Telemetry Infrastructure"
+```
 
 ⸻
 

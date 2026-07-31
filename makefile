@@ -15,6 +15,7 @@ TAIL ?= 100
 	test test-web test-api test-ai \
 	bootstrap migrate seed reset clean \
 	aws-provision aws-status publish-ingestion consume-ingestion \
+	telemetry-smoke \
 	shell-web shell-api shell-ai shell-db shell-aws
 
 help:
@@ -37,6 +38,7 @@ help:
 		'  make aws-status      Verify the bucket, queues and redrive policy' \
 		'  make publish-ingestion  Run one outbox publication batch' \
 		'  make consume-ingestion  Run one ingestion-worker receive batch' \
+		'  make telemetry-smoke Verify Collector-to-Grafana trace and metric flow' \
 		'  make reset           Delete local volumes and bootstrap again' \
 		'' \
 		'Quality' \
@@ -149,6 +151,9 @@ publish-ingestion:
 
 consume-ingestion:
 	$(COMPOSE) run --rm --no-deps worker python -m app.worker --once
+
+telemetry-smoke:
+	./scripts/telemetry/smoke-test.sh
 
 reset:
 	@printf '%s\n' \

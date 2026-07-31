@@ -84,6 +84,8 @@ services:
       INGESTION_WORKER_HMAC_SECONDARY_KEY_ID: ${INGESTION_WORKER_HMAC_SECONDARY_KEY_ID:-}
       INGESTION_WORKER_HMAC_SECONDARY_SECRET: ${INGESTION_WORKER_HMAC_SECONDARY_SECRET:-}
       INGESTION_WORKER_HMAC_MAX_CLOCK_SKEW_SECONDS: ${INGESTION_WORKER_HMAC_MAX_CLOCK_SKEW_SECONDS:-300}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}
+      OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}
       MAIL_MAILER: smtp
       MAIL_HOST: mailpit
       MAIL_PORT: 1025
@@ -144,6 +146,8 @@ services:
       OUTBOX_CLAIM_LEASE_SECONDS: ${OUTBOX_CLAIM_LEASE_SECONDS:-60}
       OUTBOX_RETRY_BASE_SECONDS: ${OUTBOX_RETRY_BASE_SECONDS:-5}
       OUTBOX_RETRY_MAX_SECONDS: ${OUTBOX_RETRY_MAX_SECONDS:-300}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}
+      OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}
     volumes:
       - ./apps/api:/app
       - ./contracts:/contracts:ro
@@ -174,6 +178,8 @@ services:
       DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN: ${DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN:-http://localhost:3000}
       INGESTION_QUEUE: ${INGESTION_QUEUE:-rag-platform-ingestion-local}
       INGESTION_DLQ: ${INGESTION_DLQ:-rag-platform-ingestion-dlq-local}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}
+      OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}
     volumes:
       - ./apps/ai:/app
       - ./contracts:/contracts:ro
@@ -215,6 +221,8 @@ services:
       INGESTION_WORKER_API_TIMEOUT_SECONDS: ${INGESTION_WORKER_API_TIMEOUT_SECONDS:-10}
       INGESTION_WORKER_HMAC_KEY_ID: ${INGESTION_WORKER_HMAC_PRIMARY_KEY_ID:-local-v1}
       INGESTION_WORKER_HMAC_SECRET: ${INGESTION_WORKER_HMAC_PRIMARY_SECRET:-MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}
+      OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-http/protobuf}
     volumes:
       - ./apps/ai:/app
       - ./contracts:/contracts:ro
@@ -293,9 +301,61 @@ services:
       retries: 10
       start_period: 5s
 
+  otel-lgtm:
+    image: grafana/otel-lgtm:0.29.2
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3001}:3000"
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    volumes:
+      - telemetry_data:/data
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - --fail
+        - --silent
+        - --show-error
+        - http://127.0.0.1:3000/api/health
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    stop_grace_period: 20s
+
+  otel-collector:
+    image: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.153.0
+    command:
+      - --config=/etc/otelcol/config.yaml
+    environment:
+      OTEL_BACKEND_OTLP_ENDPOINT: http://otel-lgtm:4318
+    volumes:
+      - ./infrastructure/opentelemetry/collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "127.0.0.1:${OTEL_COLLECTOR_GRPC_PORT:-4317}:4317"
+      - "127.0.0.1:${OTEL_COLLECTOR_HTTP_PORT:-4318}:4318"
+      - "127.0.0.1:${OTEL_COLLECTOR_HEALTH_PORT:-13133}:13133"
+    depends_on:
+      otel-lgtm:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - /otelcol
+        - validate
+        - --config=/etc/otelcol/config.yaml
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    stop_grace_period: 15s
+
 volumes:
   web_node_modules:
   web_next:
   api_vendor:
   ai_venv:
   postgres_data:
+  telemetry_data:

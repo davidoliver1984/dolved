@@ -1,0 +1,135 @@
+# Session Journal: R12-S02 — Establish Local Telemetry Infrastructure
+
+## Date
+
+2026-07-31
+
+## Session mode
+
+Infrastructure implementation in teaching mode. No Laravel- or
+Python-specific telemetry instrumentation was introduced.
+
+## What happened
+
+The accepted ADR-0012 boundary was turned into runnable local
+infrastructure before either application is instrumented. Three local
+backend topologies were considered:
+
+* a dedicated Collector followed by Grafana's all-in-one `otel-lgtm`
+  development backend;
+* a dedicated Collector followed by separate Grafana, Tempo and Prometheus
+  services;
+* a dedicated Collector followed by Jaeger and Prometheus with separate
+  inspection interfaces.
+
+The first option was approved for V1 because it preserves the important
+application-facing Collector boundary, provides one local inspection UI,
+and avoids operating several backend containers prematurely. The separate
+Grafana/Tempo/Prometheus topology remains a possible production-like local
+arrangement if that operational fidelity becomes useful later.
+
+The repository now runs a dedicated OpenTelemetry Collector, pinned to
+`0.153.0`, and the local `grafana/otel-lgtm` backend, pinned to `0.29.2`.
+Applications are configured only with the Collector's Compose-network
+address. The `otel-lgtm` address is visible only in Collector configuration,
+and its OTLP ports are not published to the host.
+
+## Important implementation decisions
+
+* The external boundary remains:
+
+  ```text
+  application -> otel-collector -> otel-lgtm
+  ```
+
+  The backend image includes its own ingestion component as an internal
+  packaging detail, but applications never address it.
+* OTLP/HTTP with `http/protobuf` is the shared application export protocol.
+  OTLP/gRPC is also available at the Collector boundary for tools or SDK
+  choices that require it.
+* Collector traces and metrics pipelines are explicit and both use batching,
+  a sending queue and retry-on-failure before OTLP/HTTP export.
+* Grafana is bound to loopback port 3001 to avoid the Next.js port. Anonymous
+  local access is enabled only on that loopback-bound development service.
+* Collector OTLP and health ports are also bound to loopback. Backend OTLP,
+  Tempo and Prometheus ports remain internal.
+* Local telemetry data uses a named Compose volume. `make down` stops the
+  services without deleting it; the deliberately destructive `make reset`
+  removes it with the other local volumes.
+* No application service has a hard startup dependency on telemetry. The
+  standard OTLP environment values are inert until Stages 12.3 and 12.4 add
+  SDKs, and later instrumentation must still degrade safely when the
+  Collector is unavailable.
+
+## Smoke verification
+
+`make telemetry-smoke` generates a fresh synthetic trace and gauge metric as
+OTLP JSON. Both are sent to `http://127.0.0.1:4318`, the published endpoint
+of the dedicated application-facing Collector.
+
+The test then queries the trace by its unique ID and the metric by the exact
+value generated for that run through Grafana's provisioned Tempo and
+Prometheus data-source proxy endpoints. This proves more than process
+health: ingestion, Collector batching/export, backend storage and Grafana
+query access all work.
+
+The smoke payload contains no customer or application data and does not
+instrument Laravel or Python.
+
+## Verification performed
+
+* `docker compose config --quiet`
+* `docker compose config --images`
+* `sh -n scripts/telemetry/smoke-test.sh`
+* `docker compose pull otel-lgtm otel-collector`
+* focused two-service Compose startup with `--wait`
+* `make telemetry-smoke`
+* complete `make up`
+* `docker compose ps`
+* `docker compose images`
+* a second strengthened `make telemetry-smoke`
+* `make format-check`
+* `make lint`
+* `make typecheck`
+* `make test`
+* `make aws-status`
+* `git diff --check`
+
+Results:
+
+* all ten Compose processes running; all eight configured health checks
+  healthy;
+* Collector-to-Grafana synthetic trace and metric flow passed;
+* explicit pinned images confirmed;
+* web: ESLint and TypeScript passed; 10 tests passed;
+* Laravel: Pint passed; 118 tests (491 assertions) passed;
+* Python: Ruff formatting/linting and mypy passed; 123 tests passed;
+* LocalStack bucket, queues and redrive policy passed verification.
+
+## Problems or corrections
+
+The first smoke invocation from the agent environment failed at the
+Collector health request because the command was running inside a restricted
+network sandbox that cannot access host loopback ports. Compose port
+inspection and Collector logs showed that the port was correctly published
+and the health extension was ready. The unmodified repository command passed
+when run with normal local loopback access.
+
+The first smoke-test draft derived its trace ID only from whole seconds and
+looked for the metric name alone. It was tightened before completion:
+time plus process identity now produces a fresh trace ID, and the metric
+query must contain the exact value generated by the current invocation.
+This prevents stale stored telemetry from satisfying a later run.
+
+## Next steps / important takeaways
+
+* OpenTelemetry itself is not storage. The Collector receives, processes and
+  routes telemetry; `otel-lgtm` supplies the replaceable local trace/metric
+  storage and Grafana inspection experience.
+* Stage 12.3 can instrument Laravel against only
+  `OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318`.
+* Stage 12.4 can do the same for Python without knowing or importing
+  anything Grafana-specific.
+* Stage 12.5 must prove real cross-service context propagation and the
+  privacy allowlist. This synthetic infrastructure test intentionally does
+  not claim either application-level guarantee.
