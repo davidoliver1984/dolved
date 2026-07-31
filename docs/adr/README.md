@@ -55,3 +55,4 @@ that supersedes the previous record rather than rewriting its historical context
 | [0009](0009-use-hmac-authentication-for-ai-worker-lifecycle-requests.md) | Accepted | Authenticate the AI ingestion worker's internal lifecycle requests with a rotatable HMAC protocol |
 | [0010](0010-define-the-canonical-extracted-document-contract.md) | Accepted | Define the immutable ExtractedDocument and NormalisedDocument processing boundaries |
 | [0011](0011-define-the-chunking-architecture-and-contract.md) | Accepted | Define the deterministic, immutable ChunkingStrategy/ChunkingResult contract |
+| [0012](0012-establish-the-observability-and-telemetry-foundation.md) | Accepted | Establish OpenTelemetry as the platform's vendor-neutral observability foundation |
