@@ -13,7 +13,7 @@ Accepted
 Phase 9 ends with a Document durably claimed and in `PROCESSING` (ADR 0007,
 ADR 0008, ADR 0009). Phase 10 begins the work that actually happens during
 `PROCESSING`: turning the uploaded source bytes into content the rest of the
-pipeline — chunking (Phase 11), embeddings (Phase 12), retrieval (Phase 14)
+pipeline — chunking (Phase 11), embeddings (Phase 13), retrieval (Phase 15)
 and citation generation — can work with.
 
 The platform will support multiple source formats: plain text and PDF and
@@ -435,7 +435,7 @@ This ADR does not define:
   PDF, Stage 10.4 DOCX) uses;
 - the specific structural-normalisation rules Stage 10.5 implements;
 - chunking strategy itself (Phase 11);
-- embedding model or retrieval design (Phase 12 onward);
+- embedding model or retrieval design (Phase 13 onward);
 - whether this contract is expressed as a language-internal Python model, a
   shared schema artefact under `contracts/`, or both — that decision belongs
   to whichever stage first implements it, informed by whether the contract

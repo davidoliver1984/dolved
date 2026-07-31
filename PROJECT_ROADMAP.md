@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 12 of 22 (Embeddings) |
+| Project status | In Progress — Phase 12 of 23 (Observability Foundation) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -366,7 +366,31 @@ Consistent document chunks.
 
 ---
 
-## Phase 12 — Embeddings
+## Phase 12 — Observability Foundation
+
+### Objectives
+
+Make the platform observable by design, using OpenTelemetry as a
+vendor-neutral instrumentation and correlation foundation, before
+embeddings, retrieval and generation introduce the platform's first calls
+to external AI providers.
+
+### Tasks
+
+- Define Telemetry and Observability Architecture
+- Establish Local Telemetry Infrastructure
+- Instrument Laravel with OpenTelemetry
+- Instrument the Python AI Service with OpenTelemetry
+- Verify Cross-Service Trace Propagation and the Privacy Allowlist
+
+### Deliverable
+
+A vendor-neutral, privacy-conscious observability foundation that every
+later AI-pipeline phase builds on.
+
+---
+
+## Phase 13 — Embeddings
 
 ### Objectives
 
@@ -383,7 +407,7 @@ Searchable vector data.
 
 ---
 
-## Phase 13 — Vector Storage
+## Phase 14 — Vector Storage
 
 ### Objectives
 
@@ -402,7 +426,7 @@ Working vector search.
 
 ---
 
-## Phase 14 — Retrieval
+## Phase 15 — Retrieval
 
 ### Objectives
 
@@ -421,7 +445,7 @@ Accurate retrieval pipeline.
 
 ---
 
-## Phase 15 — Grounded Generation
+## Phase 16 — Grounded Generation
 
 ### Objectives
 
@@ -450,7 +474,7 @@ extraction run. If the platform later supports re-extracting an already-processe
 document, any citation, chunk or embedding linked directly to elements from the
 previous extraction may no longer reference the active extraction.
 
-Before Phase 15 citation and answer-generation work begins implementation, the
+Before Phase 16 citation and answer-generation work begins implementation, the
 citation and re-extraction design must explicitly decide:
 
 - whether an extraction is permanently retained once referenced;
@@ -465,7 +489,7 @@ implementation change is required.
 
 ---
 
-## Phase 16 — Conversation and Streaming
+## Phase 17 — Conversation and Streaming
 
 ### Objectives
 
@@ -484,7 +508,7 @@ Production-quality chat interface.
 
 ---
 
-## Phase 17 — Administration
+## Phase 18 — Administration
 
 ### Objectives
 
@@ -502,7 +526,7 @@ Complete administration tools.
 
 ---
 
-## Phase 18 — Observability and Operations
+## Phase 19 — Observability and Operations
 
 ### Objectives
 
@@ -521,7 +545,35 @@ Observable platform.
 
 ---
 
-## Phase 19 — Testing and Quality Strategy
+### Design constraint — Phase 19 should operationalise, not rebuild, observability
+
+Recorded 2026-07-30, arising from Phase 12 (ADR-0012) and its OpenTelemetry
+observability foundation.
+
+Phase 12 already establishes OpenTelemetry as the platform's canonical
+instrumentation API, the Collector as the backend-routing boundary, and the
+metrics/tracing principles (privacy allowlist, cardinality discipline,
+context propagation) that a distributed-tracing and metrics stage would
+otherwise need to invent from scratch. This phase's Tasks list — in
+particular "Add Metrics" and "Add Distributed Tracing" — predates that
+decision and, read literally, now substantially duplicates it.
+
+When Phase 19 is eventually reviewed, before implementation begins, its
+scope should shift from *building* observability to *operationalising* it:
+assume the OpenTelemetry foundation from Phase 12 is already in place, and
+focus this phase on what that foundation does not itself provide —
+operational dashboards, alerting, SLOs, production diagnostics and
+runbooks. "Standardise Structured Logging" remains a distinct, legitimate
+concern of its own (logging is not something Phase 12 establishes), as does
+"Define Operational Alerts" (already an operational-layer concern, not a
+foundational one).
+
+This is intentionally deferred rather than actioned now — no change to this
+phase's Tasks, Objectives or Deliverable has been made yet.
+
+---
+
+## Phase 20 — Testing and Quality Strategy
 
 ### Objectives
 
@@ -542,7 +594,7 @@ Comprehensive test suite.
 
 ---
 
-## Phase 20 — CI/CD and Production Readiness
+## Phase 21 — CI/CD and Production Readiness
 
 ### Objectives
 
@@ -567,7 +619,7 @@ Production-ready platform.
 
 ---
 
-## Phase 21 — Documentation and Demonstration Readiness
+## Phase 22 — Documentation and Demonstration Readiness
 
 ### Objectives
 
@@ -639,7 +691,8 @@ A phase is complete only when:
 | Event-Driven Ingestion | ✅ Complete |
 | Text Extraction and Normalisation | ✅ Complete |
 | Chunking | ✅ Complete |
-| Embeddings | ⏳ In Progress |
+| Observability Foundation | ⏳ In Progress |
+| Embeddings | ⬜ Not Started |
 | Vector Storage | ⬜ Not Started |
 | Retrieval | ⬜ Not Started |
 | Grounded Generation | ⬜ Not Started |

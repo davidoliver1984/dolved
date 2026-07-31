@@ -18,7 +18,7 @@ is not yet scoped to any collaboration or isolation boundary.
 The tenancy decision is foundational rather than local to Laravel: it must also
 describe how tenant identity propagates through asynchronous processing (SQS
 events consumed by the Python AI service), object storage (S3-compatible document
-uploads), and — once Phase 12–13 introduce embeddings — vector storage (Qdrant).
+uploads), and — once Phase 13–14 introduce embeddings — vector storage (Qdrant).
 Getting this wrong is expensive to reverse, since every later phase (document
 storage, ingestion, chunking, embeddings, retrieval) builds tenant-owned data on
 top of whatever boundary is chosen here.

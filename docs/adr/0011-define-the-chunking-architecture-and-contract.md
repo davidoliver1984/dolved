@@ -18,8 +18,8 @@ self-describing domain model carrying its own `workspace_id` and
 derived identifiers.
 
 Phase 11 must take that `NormalisedDocument` and produce chunks: the
-retrieval-sized units that Phase 12 will embed, that Phase 14 will retrieve,
-and that Phase 15 will eventually cite. Before any of that can happen, the
+retrieval-sized units that Phase 13 will embed, that Phase 15 will retrieve,
+and that Phase 16 will eventually cite. Before any of that can happen, the
 platform needs an architectural contract chunking conforms to — the same way
 ADR 0010 defined what every extractor must produce before Stage 10.2–10.4
 picked specific parsing libraries.
@@ -154,7 +154,7 @@ stage boundary.
 This provenance exists to support future citation, inspection and
 traceability. It is deliberately not this ADR's job to design what a citation
 actually looks like, how it is presented, or how it survives re-extraction —
-that is Phase 15's work, and the citation/re-extraction design constraint
+that is Phase 16's work, and the citation/re-extraction design constraint
 already recorded in `PROJECT_ROADMAP.md`. This ADR's obligation is narrower:
 ensure chunking does not discard the information a future citation feature
 would need, consistent with ADR 0010's core principle that information
@@ -502,10 +502,10 @@ This ADR does not define:
   serialisation format;
 - the exact chunk-identity derivation scheme (hash function, namespace,
   field ordering);
-- embedding generation (Phase 12);
-- vector database persistence (Phase 13);
-- retrieval (Phase 14);
-- the citation lifecycle (Phase 15, and the citation/re-extraction design
+- embedding generation (Phase 13);
+- vector database persistence (Phase 14);
+- retrieval (Phase 15);
+- the citation lifecycle (Phase 16, and the citation/re-extraction design
   constraint already recorded in `PROJECT_ROADMAP.md`);
 - the re-extraction lifecycle;
 - whether and how a `ChunkingResult` or chunk set is persisted, including

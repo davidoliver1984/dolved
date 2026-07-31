@@ -5496,7 +5496,7 @@ classification. Three layers hold non-interchangeable responsibility:
 PostgreSQL is authoritative for identity, ownership and lifecycle state;
 S3-compatible object storage holds the authoritative source content, never
 trusted as the source of truth for lifecycle; and searchable/vector
-representations (Qdrant, from Phase 13 onward) are a derived, disposable,
+representations (Qdrant, from Phase 14 onward) are a derived, disposable,
 rebuildable projection, not itself authoritative.
 
 The accepted lifecycle is an explicit state machine, not boolean flags:
@@ -8399,7 +8399,7 @@ Acceptance criteria
   chunk-level tenant field is required by the architecture.
 * Source metadata supports citations. — Met: every chunk preserves
   provenance back to its source `NormalisedElement`(s), without this ADR
-  designing the citation system itself (deferred to Phase 15 and the
+  designing the citation system itself (deferred to Phase 16 and the
   citation/re-extraction constraint in `PROJECT_ROADMAP.md`).
 * Chunking strategy version is recorded. — Met: strategy identity and
   version are part of the semantic `ChunkingResult` and part of chunk
@@ -8691,7 +8691,207 @@ git tag -a phase-11 -m "Complete Phase 11: Chunking"
 
 ⸻
 
-Phase 12 — Embeddings
+Phase 12 — Observability Foundation
+
+Phase objective
+
+Make the platform observable by design, using OpenTelemetry as a
+vendor-neutral instrumentation and correlation foundation, before
+embeddings, retrieval and generation introduce the platform's first calls
+to external AI providers.
+
+⸻
+
+Stage 12.1 — Define Telemetry and Observability Architecture
+
+Objective
+
+Establish OpenTelemetry as the platform's canonical instrumentation API,
+vendor-neutral Collector boundary, context-propagation, privacy and
+semantic-convention principles.
+
+Status
+
+Not yet executed.
+
+Planned decisions
+
+* OpenTelemetry as the canonical instrumentation API;
+* the OpenTelemetry Collector as the routing and backend boundary;
+* vendor neutrality from commercial observability platforms;
+* trace-context propagation across Laravel, the queue, Python and external
+  providers;
+* a privacy allowlist rather than a denylist for telemetry attributes;
+* AI-specific semantic conventions only where OpenTelemetry has no
+  equivalent;
+* metric cardinality discipline;
+* graceful degradation on telemetry failure.
+
+Required ADR
+
+docs/adr/ADR-XXX-observability-and-telemetry-foundation.md
+
+Acceptance criteria
+
+* OpenTelemetry is adopted as the canonical instrumentation API.
+* No proprietary telemetry abstraction duplicates OpenTelemetry primitives.
+* Backend choice is a Collector-configuration concern, not an
+  application-code concern.
+* Trace-context propagation requirements are defined across every service
+  boundary.
+* A default privacy allowlist is defined.
+* Metric cardinality principles are defined.
+* Telemetry failure-handling behaviour is defined.
+
+Commit boundary
+
+git add docs/adr
+git commit -m "Define observability and telemetry architecture"
+
+⸻
+
+Stage 12.2 — Establish Local Telemetry Infrastructure
+
+Objective
+
+Provision the shared OpenTelemetry Collector and a local telemetry backend
+before either application is instrumented.
+
+Status
+
+Not yet executed.
+
+Planned infrastructure
+
+* OpenTelemetry Collector Compose service;
+* a local telemetry backend for traces and metrics;
+* Collector exporter and pipeline configuration;
+* shared environment variables and endpoints for both applications;
+* local health verification.
+
+Acceptance criteria
+
+* The Collector runs as a Docker Compose service.
+* A local backend makes traces and metrics inspectable without a commercial
+  account.
+* Collector configuration, not application code, determines backend
+  routing.
+* Laravel and Python share consistent endpoint configuration.
+* No application code yet depends on this infrastructure — this stage
+  provisions it only.
+
+Commit boundary
+
+git add compose.yaml infrastructure docs
+git commit -m "Establish local telemetry infrastructure"
+
+⸻
+
+Stage 12.3 — Instrument Laravel with OpenTelemetry
+
+Objective
+
+Emit traces and metrics from the Laravel API using the OpenTelemetry SDK.
+
+Status
+
+Not yet executed.
+
+Planned instrumentation
+
+* HTTP request spans;
+* queue/outbox publication spans;
+* database query spans where practical;
+* baseline platform metrics;
+* privacy-allowlisted span and metric attributes;
+* graceful degradation when the Collector is unreachable.
+
+Acceptance criteria
+
+* Laravel emits spans using the OpenTelemetry SDK, not a proprietary
+  wrapper.
+* No sensitive payload appears in exported attributes by default.
+* Telemetry failures do not affect request success or user-visible latency.
+* Metrics avoid unbounded-cardinality labels.
+
+Commit boundary
+
+git add apps/api docs
+git commit -m "Instrument Laravel with OpenTelemetry"
+
+⸻
+
+Stage 12.4 — Instrument the Python AI Service with OpenTelemetry
+
+Objective
+
+Emit traces and metrics from the Python AI service using the OpenTelemetry
+SDK.
+
+Status
+
+Not yet executed.
+
+Planned instrumentation
+
+* worker and service spans;
+* SQS consume/claim spans;
+* baseline platform metrics;
+* privacy-allowlisted span and metric attributes;
+* graceful degradation when the Collector is unreachable.
+
+Acceptance criteria
+
+* The Python service emits spans using the OpenTelemetry SDK, not a
+  proprietary wrapper.
+* No sensitive payload appears in exported attributes by default.
+* Telemetry failures do not affect worker correctness.
+* Metrics avoid unbounded-cardinality labels.
+
+Commit boundary
+
+git add apps/ai docs
+git commit -m "Instrument the Python AI service with OpenTelemetry"
+
+⸻
+
+Stage 12.5 — Verify Cross-Service Trace Propagation and the Privacy Allowlist
+
+Objective
+
+Prove that one logical request remains correlated across Laravel, the
+queue and Python, and that sensitive content never appears in exported
+telemetry.
+
+Status
+
+Not yet executed.
+
+Planned verification
+
+* one logical request traced end to end across Laravel, the queue and
+  Python;
+* a negative test proving a synthetic sensitive value is absent from
+  exported attributes;
+* graceful-degradation behaviour under a temporarily unreachable Collector;
+* metric label cardinality review.
+
+Acceptance criteria
+
+* Trace context is proven to propagate across every service boundary for
+  one logical request.
+* A test proves sensitive content is never exported.
+* A test proves a Collector outage does not fail a user-facing request.
+* Findings and any residual gaps are recorded.
+
+Commit boundary
+
+git add apps tests docs
+git commit -m "Verify cross-service trace propagation and telemetry privacy"
+
+⸻
+
+Phase 13 — Embeddings
 
 Phase objective
 
@@ -8699,7 +8899,7 @@ Generate reproducible vector representations while keeping model providers repla
 
 ⸻
 
-Stage 12.1 — Define Embedding Provider Boundary
+Stage 13.1 — Define Embedding Provider Boundary
 
 Objective
 
@@ -8741,7 +8941,7 @@ git commit -m "Define embedding provider boundary"
 
 ⸻
 
-Stage 12.2 — Implement Embedding Generation
+Stage 13.2 — Implement Embedding Generation
 
 Objective
 
@@ -8769,7 +8969,7 @@ git commit -m "Implement chunk embedding generation"
 
 ⸻
 
-Phase 13 — Vector Storage
+Phase 14 — Vector Storage
 
 Phase objective
 
@@ -8777,7 +8977,7 @@ Persist tenant-isolated chunk vectors and metadata in a dedicated vector databas
 
 ⸻
 
-Stage 13.1 — Define Vector Database Architecture
+Stage 14.1 — Define Vector Database Architecture
 
 Objective
 
@@ -8819,7 +9019,7 @@ git commit -m "Document vector storage architecture"
 
 ⸻
 
-Stage 13.2 — Add Qdrant Development Service
+Stage 14.2 — Add Qdrant Development Service
 
 Objective
 
@@ -8850,7 +9050,7 @@ git commit -m "Add Qdrant development service"
 
 ⸻
 
-Stage 13.3 — Persist Chunk Vectors
+Stage 14.3 — Persist Chunk Vectors
 
 Objective
 
@@ -8878,7 +9078,7 @@ git commit -m "Persist document vectors in Qdrant"
 
 ⸻
 
-Stage 13.4 — Complete Ingestion Pipeline
+Stage 14.4 — Complete Ingestion Pipeline
 
 Objective
 
@@ -8906,7 +9106,7 @@ git commit -m "Complete document ingestion pipeline"
 
 ⸻
 
-Phase 14 — Retrieval
+Phase 15 — Retrieval
 
 Phase objective
 
@@ -8914,7 +9114,7 @@ Retrieve relevant, tenant-safe source chunks for a user query.
 
 ⸻
 
-Stage 14.1 — Define Retrieval Contract
+Stage 15.1 — Define Retrieval Contract
 
 Objective
 
@@ -8958,7 +9158,7 @@ git commit -m "Define retrieval contract"
 
 ⸻
 
-Stage 14.2 — Implement Semantic Retrieval
+Stage 15.2 — Implement Semantic Retrieval
 
 Objective
 
@@ -8985,7 +9185,7 @@ git commit -m "Implement semantic document retrieval"
 
 ⸻
 
-Stage 14.3 — Add Retrieval Evaluation
+Stage 15.3 — Add Retrieval Evaluation
 
 Objective
 
@@ -9019,7 +9219,7 @@ git commit -m "Add retrieval evaluation suite"
 
 ⸻
 
-Stage 14.4 — Introduce Retrieval Enhancements
+Stage 15.4 — Introduce Retrieval Enhancements
 
 Objective
 
@@ -9055,7 +9255,7 @@ To be defined for the selected enhancement.
 
 ⸻
 
-Phase 15 — Grounded Generation
+Phase 16 — Grounded Generation
 
 Phase objective
 
@@ -9063,7 +9263,7 @@ Generate answers that are constrained by retrieved evidence and accompanied by v
 
 ⸻
 
-Stage 15.1 — Define Generation Provider Boundary
+Stage 16.1 — Define Generation Provider Boundary
 
 Objective
 
@@ -9105,7 +9305,7 @@ git commit -m "Define generation provider boundary"
 
 ⸻
 
-Stage 15.2 — Build Grounded Prompt Assembly
+Stage 16.2 — Build Grounded Prompt Assembly
 
 Objective
 
@@ -9141,7 +9341,7 @@ git commit -m "Build grounded prompt assembly"
 
 ⸻
 
-Stage 15.3 — Generate Answers with Citations
+Stage 16.3 — Generate Answers with Citations
 
 Objective
 
@@ -9173,7 +9373,7 @@ git commit -m "Generate grounded answers with citations"
 
 ⸻
 
-Stage 15.4 — Add Answer Evaluation
+Stage 16.4 — Add Answer Evaluation
 
 Objective
 
@@ -9210,7 +9410,7 @@ git commit -m "Add grounded answer evaluation"
 
 ⸻
 
-Phase 16 — Conversation and Streaming
+Phase 17 — Conversation and Streaming
 
 Phase objective
 
@@ -9218,7 +9418,7 @@ Expose the RAG workflow as a persistent, streaming conversational experience.
 
 ⸻
 
-Stage 16.1 — Define Conversation Domain
+Stage 17.1 — Define Conversation Domain
 
 Objective
 
@@ -9254,7 +9454,7 @@ git commit -m "Define conversation domain"
 
 ⸻
 
-Stage 16.2 — Implement Chat Orchestration API
+Stage 17.2 — Implement Chat Orchestration API
 
 Objective
 
@@ -9291,7 +9491,7 @@ git commit -m "Implement chat orchestration API"
 
 ⸻
 
-Stage 16.3 — Implement Streaming Responses
+Stage 17.3 — Implement Streaming Responses
 
 Objective
 
@@ -9329,7 +9529,7 @@ git commit -m "Add streaming chat responses"
 
 ⸻
 
-Stage 16.4 — Build Chat Interface
+Stage 17.4 — Build Chat Interface
 
 Objective
 
@@ -9369,7 +9569,7 @@ git commit -m "Build streaming RAG chat interface"
 
 ⸻
 
-Phase 17 — Administration
+Phase 18 — Administration
 
 Phase objective
 
@@ -9377,7 +9577,7 @@ Provide operational visibility and safe tenant-level controls.
 
 ⸻
 
-Stage 17.1 — Build Document Administration
+Stage 18.1 — Build Document Administration
 
 Objective
 
@@ -9414,7 +9614,7 @@ git commit -m "Add document administration"
 
 ⸻
 
-Stage 17.2 — Build Tenant and Membership Administration
+Stage 18.2 — Build Tenant and Membership Administration
 
 Objective
 
@@ -9440,7 +9640,7 @@ git commit -m "Add tenant membership administration"
 
 ⸻
 
-Stage 17.3 — Add Usage Visibility
+Stage 18.3 — Add Usage Visibility
 
 Objective
 
@@ -9477,15 +9677,23 @@ git commit -m "Add tenant usage visibility"
 
 ⸻
 
-Phase 18 — Observability and Operations
+Phase 19 — Observability and Operations
 
 Phase objective
 
 Make failures, latency and cross-service behaviour diagnosable.
 
+Design constraint
+
+Review the "Phase 19 should operationalise, not rebuild, observability"
+design constraint recorded in `PROJECT_ROADMAP.md` before implementation
+begins. Stage 19.2 and Stage 19.3 in particular predate Phase 12's
+OpenTelemetry foundation (ADR-0012) and are expected to be rescoped before
+this phase starts, not implemented as currently written.
+
 ⸻
 
-Stage 18.1 — Standardise Structured Logging
+Stage 19.1 — Standardise Structured Logging
 
 Objective
 
@@ -9526,7 +9734,7 @@ git commit -m "Standardise structured platform logging"
 
 ⸻
 
-Stage 18.2 — Add Metrics
+Stage 19.2 — Add Metrics
 
 Objective
 
@@ -9566,7 +9774,7 @@ git commit -m "Add platform metrics"
 
 ⸻
 
-Stage 18.3 — Add Distributed Tracing
+Stage 19.3 — Add Distributed Tracing
 
 Objective
 
@@ -9596,7 +9804,7 @@ git commit -m "Add distributed tracing"
 
 ⸻
 
-Stage 18.4 — Define Operational Alerts
+Stage 19.4 — Define Operational Alerts
 
 Objective
 
@@ -9634,7 +9842,7 @@ git commit -m "Document operational alerts and runbooks"
 
 ⸻
 
-Phase 19 — Testing and Quality Strategy
+Phase 20 — Testing and Quality Strategy
 
 Phase objective
 
@@ -9642,7 +9850,7 @@ Create a layered test strategy that catches regressions without requiring every 
 
 ⸻
 
-Stage 19.1 — Establish Test Taxonomy
+Stage 20.1 — Establish Test Taxonomy
 
 Objective
 
@@ -9683,7 +9891,7 @@ git commit -m "Document platform testing strategy"
 
 ⸻
 
-Stage 19.2 — Add Contract Tests
+Stage 20.2 — Add Contract Tests
 
 Objective
 
@@ -9710,7 +9918,7 @@ git commit -m "Add shared contract tests"
 
 ⸻
 
-Stage 19.3 — Add End-to-End Ingestion Tests
+Stage 20.3 — Add End-to-End Ingestion Tests
 
 Objective
 
@@ -9742,7 +9950,7 @@ git commit -m "Add end-to-end ingestion tests"
 
 ⸻
 
-Stage 19.4 — Add End-to-End Chat Tests
+Stage 20.4 — Add End-to-End Chat Tests
 
 Objective
 
@@ -9770,7 +9978,7 @@ git commit -m "Add end-to-end RAG chat tests"
 
 ⸻
 
-Stage 19.5 — Add Security-Focused Tests
+Stage 20.5 — Add Security-Focused Tests
 
 Objective
 
@@ -9810,7 +10018,7 @@ git commit -m "Add security regression tests"
 
 ⸻
 
-Phase 20 — CI/CD and Production Readiness
+Phase 21 — CI/CD and Production Readiness
 
 Phase objective
 
@@ -9818,7 +10026,7 @@ Make the platform reproducibly testable, buildable, deployable and operable outs
 
 ⸻
 
-Stage 20.1 — Add Continuous Integration
+Stage 21.1 — Add Continuous Integration
 
 Objective
 
@@ -9858,7 +10066,7 @@ git commit -m "Add continuous integration pipeline"
 
 ⸻
 
-Stage 20.2 — Create Production Container Builds
+Stage 21.2 — Create Production Container Builds
 
 Objective
 
@@ -9899,7 +10107,7 @@ git commit -m "Add production container builds"
 
 ⸻
 
-Stage 20.3 — Add Infrastructure as Code
+Stage 21.3 — Add Infrastructure as Code
 
 Objective
 
@@ -9949,7 +10157,7 @@ git commit -m "Define production infrastructure"
 
 ⸻
 
-Stage 20.4 — Configure Secrets and Environment Management
+Stage 21.4 — Configure Secrets and Environment Management
 
 Objective
 
@@ -9986,7 +10194,7 @@ git commit -m "Harden environment and secret management"
 
 ⸻
 
-Stage 20.5 — Add Database Backup and Recovery
+Stage 21.5 — Add Database Backup and Recovery
 
 Objective
 
@@ -10013,7 +10221,7 @@ git commit -m "Add database backup and recovery plan"
 
 ⸻
 
-Stage 20.6 — Define Vector Index Recovery
+Stage 21.6 — Define Vector Index Recovery
 
 Objective
 
@@ -10050,7 +10258,7 @@ git commit -m "Define vector index recovery"
 
 ⸻
 
-Stage 20.7 — Perform Security Hardening
+Stage 21.7 — Perform Security Hardening
 
 Objective
 
@@ -10100,7 +10308,7 @@ git commit -m "Harden platform security"
 
 ⸻
 
-Stage 20.8 — Create Staging Deployment
+Stage 21.8 — Create Staging Deployment
 
 Objective
 
@@ -10128,7 +10336,7 @@ To be defined based on the deployment platform.
 
 ⸻
 
-Stage 20.9 — Production Readiness Review
+Stage 21.9 — Production Readiness Review
 
 Objective
 
@@ -10176,7 +10384,7 @@ git commit -m "Complete production readiness review"
 
 ⸻
 
-Phase 21 — Documentation and Demonstration Readiness
+Phase 22 — Documentation and Demonstration Readiness
 
 Phase objective
 
@@ -10184,7 +10392,7 @@ Document the platform clearly and provide a reproducible way to demonstrate its 
 
 ⸻
 
-Stage 21.1 — Write Architecture Documentation
+Stage 22.1 — Write Architecture Documentation
 
 Objective
 
@@ -10222,7 +10430,7 @@ git commit -m "Document platform architecture"
 
 ⸻
 
-Stage 21.2 — Create Demonstration Dataset and Scenario
+Stage 22.2 — Create Demonstration Dataset and Scenario
 
 Objective
 
@@ -10249,7 +10457,7 @@ git commit -m "Add repeatable platform demonstration"
 
 ⸻
 
-Stage 21.3 — Finalise Repository README
+Stage 22.3 — Finalise Repository README
 
 Objective
 

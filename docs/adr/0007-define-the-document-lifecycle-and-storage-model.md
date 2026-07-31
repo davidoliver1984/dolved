@@ -32,7 +32,7 @@ same way an incorrect tenancy model would have been.
 A document touches three physically different systems with different
 guarantees: Laravel/PostgreSQL (the system of record, per ADR 0002), an
 S3-compatible object store reached through a provider abstraction, and — from
-Phase 12–13 onward — a vector store (Qdrant). A document also has a
+Phase 13–14 onward — a vector store (Qdrant). A document also has a
 lifecycle: it does not exist fully formed the instant a user clicks upload; it
 passes through upload, queuing, asynchronous processing, and eventually
 either a searchable state or a failure. That lifecycle needs to be a single,
@@ -108,7 +108,7 @@ Three layers hold different, non-interchangeable responsibilities:
    as "ready" or "deleted." Storage state is reconciled toward the relational
    record, not the reverse.
 3. **Searchable/vector representation (chunks and embeddings, Qdrant from
-   Phase 13 onward)** — a derived, disposable, rebuildable projection of a
+   Phase 14 onward)** — a derived, disposable, rebuildable projection of a
    document's content. It is rebuildable from the authoritative source
    content through the processing pipeline, without requiring a fresh upload.
    This ADR does not assume that any intermediate extracted or normalised
