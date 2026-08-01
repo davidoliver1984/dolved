@@ -13,6 +13,7 @@ The documentation authorities are:
 |---|---|
 | `PROJECT_ROADMAP.md` | What will be built and in what order |
 | `IMPLEMENTATION_GUIDE.md` | How stages were implemented, verified and committed |
+| `docs/ENGINEERING_METHODOLOGY.md` | The engineering process, roles and lifecycle followed across all projects |
 | `tasks.json` | Which planned engineering session is current |
 | `docs/adr/` | Why durable architecture decisions were made |
 | `docs/journal/` | What happened during individual engineering sessions |
@@ -22,6 +23,15 @@ The documentation authorities are:
 Do not reproduce those documents here. If an authority is missing, exists at a
 different path, or contradicts another authority, stop and reconcile the conflict
 with the human developer before treating either version as canonical.
+
+## Engineering methodology
+
+This repository follows the engineering process defined in:
+
+`docs/ENGINEERING_METHODOLOGY.md`
+
+All contributors (human and AI) should follow this methodology before making
+architectural or implementation changes.
 
 ## Engineering Philosophy
 
