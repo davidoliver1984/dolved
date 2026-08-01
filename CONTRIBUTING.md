@@ -173,6 +173,19 @@ The draft documents intentionally capture the evolution of the decision. The ADR
 
 ## Commit message conventions
 
+Use clear, imperative commit messages.
+
+Examples:
+
+- Accept ADR-0007: Multi-tenant storage strategy
+- Implement workspace membership policies
+- Add OpenTelemetry collector configuration
+- Refactor embedding provider abstraction
+- Update implementation guide for Phase 12
+
+Do not use Conventional Commit prefixes (`feat:`, `fix:`, `docs:`, `chore:` etc.)
+unless the repository explicitly adopts that convention. Dolved has not.
+
 ### Architecture & Documentation
 
 Architecture-only commits should document accepted decisions and should **not** introduce application code.
