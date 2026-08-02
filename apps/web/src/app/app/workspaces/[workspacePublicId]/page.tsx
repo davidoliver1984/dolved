@@ -1,78 +1,49 @@
-import { notFound, redirect } from "next/navigation";
-import { LogoutButton } from "@/components/LogoutButton";
+import { notFound } from "next/navigation";
 import { DocumentUploadPanel } from "@/components/DocumentUploadPanel";
 import { WorkspaceSwitcher } from "@/components/WorkspaceSwitcher";
 import {
-  currentUser,
-  platformAccess,
   userWorkspace,
   userWorkspaces,
+  workspaceUploadConfiguration,
 } from "@/lib/server-api";
 
 export default async function WorkspacePage({
   params,
-}: PageProps<"/app/workspaces/[workspacePublicId]">) {
-  const access = await platformAccess();
-
-  if (access.status === 401) {
-    redirect("/login");
-  }
-
-  if (access.status === 403) {
-    redirect("/verify-email");
-  }
-
-  if (!access.ok) {
-    throw new Error("The platform API is unavailable.");
-  }
-
+}: Readonly<{ params: Promise<{ workspacePublicId: string }> }>) {
   const { workspacePublicId } = await params;
-  const [user, workspaces, activeWorkspace] = await Promise.all([
-    currentUser(),
+  const [workspaces, activeWorkspace, uploadConfiguration] = await Promise.all([
     userWorkspaces(),
     userWorkspace(workspacePublicId),
+    workspaceUploadConfiguration(workspacePublicId),
   ]);
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  if (!activeWorkspace) {
+  if (!activeWorkspace || !uploadConfiguration) {
     notFound();
   }
 
   return (
-    <main className="workspace-shell">
-      <nav className="site-nav">
-        <span className="wordmark">
-          Make Time<span>.</span>
-        </span>
-        <div className="account-nav">
-          <span>{user.email}</span>
-          <LogoutButton />
-        </div>
-      </nav>
+    <div className="workspace-layout">
+      <WorkspaceSwitcher
+        activeWorkspace={activeWorkspace}
+        workspaces={workspaces}
+      />
 
-      <div className="workspace-layout">
-        <WorkspaceSwitcher
-          activeWorkspace={activeWorkspace}
-          workspaces={workspaces}
+      <div>
+        <section className="workspace-welcome">
+          <p className="eyebrow">Active workspace</p>
+          <h1>{activeWorkspace.name}</h1>
+          <p>
+            You are viewing this workspace as{" "}
+            <strong>{activeWorkspace.role}</strong>. Laravel verified this
+            membership before returning the workspace.
+          </p>
+        </section>
+
+        <DocumentUploadPanel
+          configuration={uploadConfiguration}
+          workspacePublicId={activeWorkspace.public_id}
         />
-
-        <div>
-          <section className="workspace-welcome">
-            <p className="eyebrow">Active workspace</p>
-            <h1>{activeWorkspace.name}</h1>
-            <p>
-              You are viewing this workspace as{" "}
-              <strong>{activeWorkspace.role}</strong>. Laravel verified this
-              membership before returning the workspace.
-            </p>
-          </section>
-
-          <DocumentUploadPanel workspacePublicId={activeWorkspace.public_id} />
-        </div>
       </div>
-    </main>
+    </div>
   );
 }

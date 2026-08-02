@@ -38,16 +38,6 @@ export type InitialisedDocumentUpload = {
   upload: PresignedUpload;
 };
 
-export async function documentUploadConfiguration(
-  workspacePublicId: string,
-): Promise<DocumentUploadConfiguration> {
-  const payload = await apiFetch<{ data: DocumentUploadConfiguration }>(
-    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/documents/uploads/configuration`,
-  );
-
-  return payload.data;
-}
-
 export async function initialiseDocumentUpload(
   workspacePublicId: string,
   file: File,

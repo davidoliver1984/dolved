@@ -4,16 +4,13 @@ import {
   type ChangeEvent,
   type DragEvent,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from "react";
-import { firstError } from "@/lib/api";
 import {
   completeDocumentUpload,
   type Document,
   type DocumentUploadConfiguration,
-  documentUploadConfiguration,
   initialiseDocumentUpload,
   type InitialisedDocumentUpload,
   runWithConcurrency,
@@ -40,7 +37,7 @@ type UploadItem = {
 
 type DocumentUploadPanelProps = {
   workspacePublicId: string;
-  configuration?: DocumentUploadConfiguration;
+  configuration: DocumentUploadConfiguration;
   initialise?: (
     workspacePublicId: string,
     file: File,
@@ -69,45 +66,14 @@ function stateLabel(state: UploadState): string {
 
 export function DocumentUploadPanel({
   workspacePublicId,
-  configuration: providedConfiguration,
+  configuration,
   initialise = initialiseDocumentUpload,
   complete = completeDocumentUpload,
   transport = uploadToPresignedUrl,
 }: DocumentUploadPanelProps) {
-  const [configuration, setConfiguration] =
-    useState<DocumentUploadConfiguration | null>(
-      providedConfiguration ?? null,
-    );
   const [items, setItems] = useState<UploadItem[]>([]);
   const [selectionErrors, setSelectionErrors] = useState<string[]>([]);
-  const [configurationError, setConfigurationError] = useState<string | null>(
-    null,
-  );
   const [batchRunning, setBatchRunning] = useState(false);
-
-  useEffect(() => {
-    if (providedConfiguration) {
-      return;
-    }
-
-    let cancelled = false;
-
-    documentUploadConfiguration(workspacePublicId)
-      .then((loadedConfiguration) => {
-        if (!cancelled) {
-          setConfiguration(loadedConfiguration);
-        }
-      })
-      .catch((error: unknown) => {
-        if (!cancelled) {
-          setConfigurationError(firstError(error));
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [providedConfiguration, workspacePublicId]);
 
   const updateItem = useCallback(
     (id: string, changes: Partial<UploadItem>) => {
@@ -172,11 +138,6 @@ export function DocumentUploadPanel({
 
   const addFiles = useCallback(
     (files: File[]) => {
-      if (!configuration) {
-        setSelectionErrors(["Upload configuration is still loading."]);
-        return;
-      }
-
       const existingIds = new Set(items.map((item) => item.id));
       const errors: string[] = [];
       const accepted: UploadItem[] = [];
@@ -223,7 +184,7 @@ export function DocumentUploadPanel({
   };
 
   const startWaitingUploads = async () => {
-    if (!configuration || batchRunning) {
+    if (batchRunning) {
       return;
     }
 
@@ -270,11 +231,9 @@ export function DocumentUploadPanel({
     );
   }, [items]);
 
-  const acceptedExtensions = configuration
-    ? Object.keys(configuration.formats)
-        .map((extension) => `.${extension}`)
-        .join(",")
-    : "";
+  const acceptedExtensions = Object.keys(configuration.formats)
+    .map((extension) => `.${extension}`)
+    .join(",");
   const waitingCount = items.filter((item) => item.state === "waiting").length;
 
   return (
@@ -314,7 +273,6 @@ export function DocumentUploadPanel({
         </label>
         <input
           accept={acceptedExtensions}
-          disabled={!configuration}
           id="document-files"
           multiple
           onChange={handleSelection}
@@ -322,18 +280,10 @@ export function DocumentUploadPanel({
         />
         <small>
           PDF, DOCX, DOC, RTF, TXT or Markdown · up to{" "}
-          {configuration
-            ? Math.floor(configuration.max_upload_bytes / 1024 / 1024)
-            : "…"}{" "}
+          {Math.floor(configuration.max_upload_bytes / 1024 / 1024)}{" "}
           MB each
         </small>
       </div>
-
-      {configurationError ? (
-        <p className="form-alert error" role="alert">
-          {configurationError}
-        </p>
-      ) : null}
 
       {selectionErrors.length > 0 ? (
         <div className="form-alert error" role="alert">

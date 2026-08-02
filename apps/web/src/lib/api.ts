@@ -1,3 +1,5 @@
+import { clientEnvironment } from "@/lib/env/client";
+
 export type User = {
   id: number;
   name: string;
@@ -26,10 +28,6 @@ export class ApiError extends Error {
   }
 }
 
-const apiUrl =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-  "http://localhost:8000";
-
 function cookieValue(name: string): string | null {
   const prefix = `${name}=`;
   const cookie = document.cookie
@@ -57,7 +55,7 @@ export async function apiFetch<T>(
   }
 
   if (isUnsafe(method)) {
-    await fetch(`${apiUrl}/sanctum/csrf-cookie`, {
+    await fetch(`${clientEnvironment.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
       credentials: "include",
       headers: { Accept: "application/json" },
     });
@@ -69,11 +67,14 @@ export async function apiFetch<T>(
     }
   }
 
-  const response = await fetch(`${apiUrl}${path}`, {
-    ...init,
-    credentials: "include",
-    headers,
-  });
+  const response = await fetch(
+    `${clientEnvironment.NEXT_PUBLIC_API_URL}${path}`,
+    {
+      ...init,
+      credentials: "include",
+      headers,
+    },
+  );
 
   const payload = response.status === 204 ? null : await response.json();
 

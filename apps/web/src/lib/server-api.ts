@@ -1,22 +1,24 @@
 import "server-only";
 
-import { cookies } from "next/headers";
 import type { User, Workspace } from "@/lib/api";
-
-const internalApiUrl =
-  process.env.API_INTERNAL_URL?.replace(/\/$/, "") ?? "http://localhost:8000";
-const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
+import { forwardedAuthCookieHeader } from "@/lib/auth-cookies";
+import type { DocumentUploadConfiguration } from "@/lib/document-upload";
+import { serverEnvironment } from "@/lib/env/server";
 
 async function serverFetch(path: string): Promise<Response> {
-  const cookieHeader = (await cookies()).toString();
+  const cookieHeader = await forwardedAuthCookieHeader();
+  const headers = new Headers({
+    Accept: "application/json",
+    Origin: serverEnvironment.FRONTEND_URL,
+  });
 
-  return fetch(`${internalApiUrl}${path}`, {
+  if (cookieHeader) {
+    headers.set("Cookie", cookieHeader);
+  }
+
+  return fetch(`${serverEnvironment.API_INTERNAL_URL}${path}`, {
     cache: "no-store",
-    headers: {
-      Accept: "application/json",
-      Cookie: cookieHeader,
-      Origin: frontendUrl,
-    },
+    headers,
   });
 }
 
@@ -27,8 +29,12 @@ export async function platformAccess(): Promise<Response> {
 export async function currentUser(): Promise<User | null> {
   const response = await serverFetch("/api/auth/user");
 
-  if (!response.ok) {
+  if (response.status === 401) {
     return null;
+  }
+
+  if (!response.ok) {
+    throw new Error("The current account is unavailable.");
   }
 
   const payload = (await response.json()) as { data: { user: User } };
@@ -64,6 +70,28 @@ export async function userWorkspace(
   }
 
   const payload = (await response.json()) as { data: Workspace };
+
+  return payload.data;
+}
+
+export async function workspaceUploadConfiguration(
+  workspacePublicId: string,
+): Promise<DocumentUploadConfiguration | null> {
+  const response = await serverFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/documents/uploads/configuration`,
+  );
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error("Document upload configuration is unavailable.");
+  }
+
+  const payload = (await response.json()) as {
+    data: DocumentUploadConfiguration;
+  };
 
   return payload.data;
 }
