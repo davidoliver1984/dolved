@@ -10,29 +10,29 @@ Accepted
 
 ## Correction to ADR-0006's forward reference
 
-ADR-0006's reference to `R13-S01` as the session that would decide Qdrant's
+ADR 0006's reference to `R13-S01` as the session that would decide Qdrant's
 collection/sharding topology was accurate under the roadmap sequencing that
-existed when ADR-0006 was accepted. The subsequent insertion of Phase 12
-(Observability Foundation, ADR-0012) shifted every later phase number by one:
+existed when ADR 0006 was accepted. The subsequent insertion of Phase 12
+(Observability Foundation, ADR 0012) shifted every later phase number by one:
 embeddings moved from what would have been Phase 12 to Phase 13, and vector
 storage moved from Phase 13 to Phase 14. `R13-S01` is now this document —
 Phase 13's embedding-provider boundary — not the vector-storage decision.
-The Qdrant collection/generation topology ADR-0006 anticipated remains
+The Qdrant collection/generation topology ADR 0006 anticipated remains
 correctly deferred, but to `R14-S01`, not `R13-S01`.
 
-This is a citation correction, not a reversal of anything ADR-0006 decided.
-ADR-0006's own text is left unchanged, consistent with this project's rule
+This is a citation correction, not a reversal of anything ADR 0006 decided.
+ADR 0006's own text is left unchanged, consistent with this project's rule
 that an accepted ADR is not rewritten to change history. This note exists so
-a reader who follows ADR-0006's forward reference lands in the right place.
+a reader who follows ADR 0006's forward reference lands in the right place.
 
 ## Context
 
-Phase 11 (ADR-0011) completed the deterministic chunking pipeline: every
+Phase 11 (ADR 0011) completed the deterministic chunking pipeline: every
 document is reduced to an immutable `ChunkingResult` carrying ordered,
 provenance-tracked `Chunk` values, each with a stable identity, its own token
 count, and a strategy identity/version plus a configuration snapshot and
 fingerprint that make the whole result attributable and comparable across
-runs. Phase 12 (ADR-0012) established OpenTelemetry as the platform's one
+runs. Phase 12 (ADR 0012) established OpenTelemetry as the platform's one
 instrumentation API, an allowlist-first privacy posture, and — specifically
 relevant here — the architectural habit of separating a pipeline stage's
 semantic result from the operational telemetry describing how it was
@@ -92,7 +92,7 @@ data model the way every earlier stage's output was.
 
 The pipeline depends on an application-owned, provider-neutral `Embedder`
 abstraction, never on the Voyage SDK or API directly. This is the same
-Open/Closed reasoning ADR-0010 applied to the `Element` model and ADR-0011
+Open/Closed reasoning ADR 0010 applied to the `Element` model and ADR 0011
 applied to `ChunkingStrategy`: the set of `Embedder` implementations is open
 for extension, but everything that calls `Embedder` and everything that
 consumes an `EmbeddingResult` is closed for modification when a new
@@ -121,7 +121,43 @@ pretend otherwise.
 ### Voyage as the initial V1 provider
 
 Voyage is the initial hosted V1 embedding provider, reached exclusively
-through the `Embedder` contract above.
+through the `Embedder` contract above. Stage 13.1 requires the selected
+model and vector dimensions to be explicit, not left as an illustrative
+placeholder, so the initial V1 embedding-space profile is recorded here:
+
+- **provider**: Voyage
+- **model**: `voyage-4-large` — Voyage's current best general-purpose and
+  multilingual retrieval-quality model. `voyage-3-large` is Voyage's
+  previous-generation model in the same family and is not the V1 choice;
+  it appears elsewhere in this document only as a rejected alternative.
+- **output dimensions**: `1024`
+- **output data type**: `float`
+- **document input type**: `document`
+- **query input type**: `query`
+- **provider-side truncation**: disabled — see "No silent truncation" below
+- **normalisation**: unit length (L2 norm = 1), per Voyage's documented
+  embedding behaviour
+- **adapter version**: recorded explicitly (this platform's `Embedder`
+  implementation version, independent of Voyage's own versioning)
+- **model revision**: recorded as unavailable — Voyage does not expose an
+  immutable, dated model revision the way some providers do; see "Embedding
+  profile and lineage" below for what this means for reproducibility
+
+### No silent truncation
+
+Voyage's embedding API accepts an explicit truncation setting: left
+enabled, an over-length input is silently truncated before vectorisation;
+disabled, an over-length input instead causes Voyage to reject the request
+rather than embed a truncated fragment of it. V1 disables provider-side
+truncation. If a chunk's text exceeds Voyage's accepted input size, the
+`Embedder` implementation surfaces this as the typed "input too large"
+failure this document already requires (see "Typed failures and retries"
+below) — it never allows a chunk to be silently embedded from an
+incomplete version of its own text. This is the same no-silent-loss
+principle ADR 0010 established for extraction and ADR 0011 established for
+chunking completeness, applied to the embedding boundary: an input this
+platform cannot embed in full is a failure to surface, not a partial
+result to accept quietly.
 
 ### Why Voyage was selected for V1
 
@@ -151,7 +187,7 @@ demonstrated latency, cost-at-scale, data-residency, or compliance
 requirement today that a well-chosen managed provider fails to meet. Taking
 on that infrastructure now, before any such requirement exists, would be
 exactly the kind of premature complexity this platform's stated engineering
-philosophy already argues against elsewhere in this pipeline (ADR-0010's
+philosophy already argues against elsewhere in this pipeline (ADR 0010's
 core principle applies the same way here: don't pay a cost before there is a
 concrete reason to).
 
@@ -190,6 +226,17 @@ measurable evidence, not a judgement call made on vendor reputation or
 opinion — the same evidentiary standard this document expects of every
 later retrieval-quality change.
 
+This selection is a snapshot judgement, not a static one. Voyage's V1
+selection is this platform's current assessment across retrieval quality,
+operational maturity, API stability and implementation simplicity — the
+same dimensions any future replacement is expected to be judged against, not
+a different or lower bar. A stronger benchmark claim or a newer vendor
+announcement is not, by itself, grounds to reopen this decision. A future
+provider change must be justified with evidence from the repository-owned
+evaluation harness described above, and accepted the same way this
+decision was: through this project's ADR process, not adopted informally
+on the strength of a vendor's own marketing.
+
 ### Embedding timing and workflow
 
 Embedding happens asynchronously, as a stage of ingestion, after extraction,
@@ -197,7 +244,7 @@ structural normalisation and chunking have already produced an immutable
 chunk set — it is not a synchronous step of the browser upload. The browser
 never calls the embedding provider, directly or indirectly; only the
 already-authenticated, already-tenant-scoped ingestion worker does, in the
-same asynchronous processing context ADR-0008 and ADR-0009 already
+same asynchronous processing context ADR 0008 and ADR 0009 already
 establish for this pipeline.
 
 The provider receives only what it needs to embed: chunk text, and the
@@ -224,48 +271,79 @@ request declares.
 ### Explicit embedding purposes
 
 The request contract distinguishes, at minimum, between document/chunk
-embedding and query embedding. Where the underlying provider exposes
-task-specific input modes — Voyage does, through an explicit input-type
-parameter — that mode is an explicit, named part of the request, not an
-implementation detail buried inside the `Embedder`'s Voyage-specific code.
-A provider's task-mode distinction exists because document and query text
-are asymmetric in retrieval — treating them identically discards a real,
-provider-exposed retrieval-quality signal, and because it is consequential
-to the resulting vector space, it is retained as part of the
-`EmbeddingProfile` (below), not silently defaulted.
+embedding and query embedding. This distinction operates at two different
+levels, and this document is deliberately precise about which is which,
+because conflating them would silently break retrieval.
+
+At the **profile level**, an embedding-space profile configures both
+purpose mappings together, as one pair, not one mode chosen per call:
+document/chunk embedding maps to Voyage's `input_type=document`, and query
+embedding maps to `input_type=query`. Both mappings belong to the same
+immutable profile and contribute to the same profile fingerprint (see
+"Embedding profile and lineage" below) — together they describe the one
+compatible retrieval space a workspace has adopted, not two different
+spaces. A provider's task-mode distinction exists because document and
+query text are asymmetric in retrieval — treating them identically
+discards a real, provider-exposed retrieval-quality signal — and because
+that asymmetry is consequential to the resulting vector space, both of its
+configured directions are recorded explicitly in the profile, never
+silently defaulted.
+
+At the **individual request/result level**, every embedding operation
+still records its own explicit purpose — document or query — identifying
+which of the profile's two configured mappings actually produced that
+particular vector. This purpose is retained on the request and the result
+for traceability, but it is not a second fingerprint and does not create a
+second compatibility space: a document vector and a query vector produced
+through the same profile's two mappings share the identical embedding-
+profile fingerprint, because both were produced within the one compatible
+retrieval space that profile describes. This is exactly what makes a query
+vector retrievable against the document vectors it is meant to search — if
+purpose participated in the fingerprint, a query vector and the document
+vectors it needs to search would never be recognised as compatible, which
+would defeat retrieval entirely rather than protect it.
 
 ### Embedding profile and lineage
 
 An immutable, typed `EmbeddingProfile` records every consequential fact that
 determines vector compatibility and behaviour: provider identity; model
 identity; the model's revision or version, where the provider exposes one;
-output dimensions; vector data type; normalisation behaviour; which
-document/query task mode applies; the adapter's own version (this
-platform's `Embedder` implementation, independent of the provider's own
-versioning); and any other provider parameter that changes what vector a
-given input produces.
+output dimensions; vector data type; normalisation behaviour; the
+configured document/query task-mode mapping — both directions together, as
+described in "Explicit embedding purposes" above, never a single mode
+chosen per call; the adapter's own version (this platform's `Embedder`
+implementation, independent of the provider's own versioning); and any
+other provider parameter that changes what vector a given input produces.
 
 Illustrative example only, not a schema — the exact fields, types and
-serialisation are a Stage 13.2 concern, and a real profile also carries
-`model_revision` (where the provider exposes one), vector data type and
-normalisation behaviour alongside the fields shown below:
+serialisation are a Stage 13.2 concern. The example below is the profile
+itself, where both task-mode mappings live together; an individual
+request/result's own purpose (document or query — see "Explicit embedding
+purposes" above) is recorded separately, per operation, and is not one of
+the fields the fingerprint below is derived from:
 
 ```text
 EmbeddingProfile
 
 provider: voyage
-model: voyage-3-large
+model: voyage-4-large
 dimensions: 1024
-task_mode: document
+output_dtype: float
+document_input_type: document
+query_input_type: query
+normalisation: unit_length
+model_revision: unavailable
 adapter_version: 1
 fingerprint: 5c2d...
 ```
 
 The fingerprint is derived deterministically from every field in the
-profile snapshot — this is what makes two `EmbeddingResult`s comparable
-without re-inspecting every field individually each time.
+profile snapshot shown above — this is what makes two `EmbeddingResult`s
+comparable without re-inspecting every field individually each time, and
+it is exactly why a document vector and a query vector produced under this
+one profile share that same fingerprint rather than receiving two.
 
-Like `ChunkingResult`'s configuration (ADR-0011), the profile is retained in
+Like `ChunkingResult`'s configuration (ADR 0011), the profile is retained in
 two complementary forms: a canonical, inspectable **snapshot** — a human or
 a later process can read exactly what produced a given vector — and a
 deterministic **fingerprint** derived from that snapshot, the same
@@ -289,7 +367,7 @@ sufficient lineage precisely because of this: if the platform recorded only
 vectors recorded under the identical profile snapshot could, in principle,
 no longer be reproducible from the same input — the fingerprint identifies
 what was asked for and received at the time, not a permanent guarantee about
-what asking again later will return. This mirrors ADR-0011's own honesty
+what asking again later will return. This mirrors ADR 0011's own honesty
 about model-assisted chunking determinism: a guarantee is only as real as
 what can actually be verified, and this document does not promise more than
 that.
@@ -305,7 +383,7 @@ vector generation only using that generation's compatible embedding
 profile.
 
 The exact Qdrant collection/generation topology that enforces this
-invariant physically belongs to Phase 14 (see "Correction to ADR-0006's
+invariant physically belongs to Phase 14 (see "Correction to ADR 0006's
 forward reference" above) — this document does not decide collection
 layout, sharding, or point-identifier schemes. What this document commits
 to now, so Phase 14 inherits a settled answer rather than re-deriving one,
@@ -350,21 +428,39 @@ that operational benefit is only acceptable alongside an equally concrete
 architectural guarantee: batching must never weaken the ability to say,
 for any single vector, exactly which chunk produced it. Each requested item
 retains its source chunk identity (in practice, the `Chunk.id` already
-established by ADR-0011) through the call, and the result preserves a
+established by ADR 0011) through the call, and the result preserves a
 strict one-to-one association between requested chunk identities and
 returned vectors — a batch response is never trusted merely because it
 returned the expected count of vectors; it is validated.
+
+This guarantee is stated honestly, in terms of what the platform actually
+does rather than what the provider does on its behalf. Voyage's API does
+not accept or echo this platform's local chunk identifiers — it returns
+embeddings in the documented order of the submitted request, with each
+result item's own index recording its position within that list. Source-
+identity association is therefore this platform's responsibility, not
+Voyage's: the `Embedder` implementation pairs each returned vector back to
+the local chunk ID it corresponds to using that documented response order.
+This document does not claim, and no implementation of it may claim, that
+Voyage itself echoed, recognised, or independently verified this
+platform's source identities — it did not, and the guarantee here rests
+entirely on this platform's own validation of documented order, not on any
+provider-side confirmation.
 
 The implementation must validate, for every batch response: the response
 item count against the request; each vector's dimensions against the
 embedding profile; that every returned numeric value is finite (a
 provider-side numerical fault must never silently enter this platform's
 vector space as `NaN` or `Infinity`); item association and order against
-what was requested; and profile compatibility of the result as a whole.
-Batch size limits are configurable and are constrained by the provider's own
-limits — maximum input count per request, aggregate token or input size, and
-maximum payload size — rather than an arbitrary constant chosen without
-reference to what the provider actually accepts.
+what was requested, using the provider's documented response order as
+described above; that the expected embedding-profile fingerprint is
+retained on every result; that each result retains the individual
+request's declared purpose (document or query); and profile compatibility
+of the result as a whole. Batch size limits are configurable and are
+constrained by the provider's own limits — maximum input count per
+request, aggregate token or input size, and maximum payload size — rather
+than an arbitrary constant chosen without reference to what the provider
+actually accepts.
 
 ### Semantic result versus operational telemetry
 
@@ -372,8 +468,8 @@ The semantic `EmbeddingResult` contains exactly the facts required to
 understand and persist the produced vectors: the embedding profile snapshot
 and fingerprint; the source chunk identity; the produced vector; its
 dimensions; and any consequential provider-returned semantic metadata (for
-example, a provider-reported truncation of an oversized input). This is the
-same distinction ADR-0011 drew for `ChunkingResult`, and ADR-0012's
+example, a provider-reported input token count). This is the
+same distinction ADR 0011 drew for `ChunkingResult`, and ADR 0012's
 allowlist-first posture applies to it identically: operational telemetry —
 provider name, model classification, item count, token usage, request
 duration, provider call count, retry count, estimated cost, and controlled
@@ -385,7 +481,7 @@ make the semantic result look non-deterministic when only its incidental
 execution detail varied.
 
 Raw chunk text, raw query text, and the produced vectors themselves are not
-exported to telemetry by default, consistent with ADR-0012's privacy
+exported to telemetry by default, consistent with ADR 0012's privacy
 posture: telemetry explains how the system behaved, not what the
 platform's — or a workspace's — content was. A vector is a derived
 representation of exactly that content and is treated with the same
@@ -407,10 +503,10 @@ and compatibility failures are never retried as though they were transient:
 retrying a request that is permanently wrong (a workspace's Voyage
 credential is missing; a batch was assembled against the wrong profile)
 provides no value and only delays the moment someone finds out something
-needs correcting, the same reasoning ADR-0010 already applied to
+needs correcting, the same reasoning ADR 0010 already applied to
 transient-versus-permanent extraction failures. Failures and retries are
 visible in safe telemetry and, where operationally significant, in the
-platform's existing audit layers (ADR-0006), not silently swallowed.
+platform's existing audit layers (ADR 0006), not silently swallowed.
 
 ### Testing
 
@@ -435,8 +531,8 @@ dependency it does not want ordinary CI runs quietly depending on.
 Provider credentials — the Voyage API key — never appear in domain models,
 logs, telemetry, or persisted semantic results. They belong to
 environment/secret-management configuration exclusively, consistent with
-how this platform already treats the HMAC secrets in ADR-0009 and the
-privacy posture in ADR-0012.
+how this platform already treats the HMAC secrets in ADR 0009 and the
+privacy posture in ADR 0012.
 
 ## Forward architectural decisions recorded now, not implemented
 
@@ -487,7 +583,7 @@ future ADR) before implementation begins.
 Rejected. This would couple every future consumer of embeddings —
 ingestion, retrieval, any future re-embedding tooling — to one vendor's
 client library and request shape, recreating exactly the coupling problem
-ADR-0010 already solved for extraction and ADR-0011 already solved for
+ADR 0010 already solved for extraction and ADR 0011 already solved for
 chunking, one stage further into the pipeline.
 
 ### Amazon Bedrock/Titan, or a local model, as the V1 provider
@@ -511,6 +607,19 @@ ignoring it discards a real, provider-exposed retrieval-quality signal for
 no benefit, and silently defaulting it inside provider-specific code would
 hide a consequential configuration choice from the profile that is supposed
 to fully describe what produced a given vector.
+
+### Letting an individual request's purpose participate in the profile fingerprint
+
+Rejected. An earlier draft of this document described task mode as a single
+value inside the embedding profile, which would have given document
+embeddings and query embeddings produced under the same configuration two
+different fingerprints. That would have broken retrieval by definition — a
+query vector is only useful if it is recognised as compatible with the
+document vectors it needs to search, and two different fingerprints would
+mean it never is. The fix is the two-level model in "Explicit embedding
+purposes" above: both purpose mappings belong to one profile and one
+fingerprint; only the individual request/result's own purpose is
+per-operation, and it deliberately does not affect compatibility.
 
 ### A bare, mutable model name as embedding lineage
 
@@ -538,7 +647,7 @@ over a bounded batch contract with equivalent per-item guarantees.
 
 ### Folding operational telemetry into the semantic `EmbeddingResult`
 
-Rejected, for the same reason ADR-0011 rejected it for `ChunkingResult`:
+Rejected, for the same reason ADR 0011 rejected it for `ChunkingResult`:
 duration, cost, retry count and call count vary for reasons unrelated to
 which vector was produced. Combining them with the semantic result would
 make incidental execution variance look like it affects the embedding
@@ -549,8 +658,8 @@ outcome, when only the operational telemetry does.
 Rejected. Retrying a permanently invalid request (bad credentials, a
 malformed batch, a profile mismatch) as though it might eventually succeed
 can mask a systemic problem as a background retry loop instead of surfacing
-a diagnosable failure — the same reasoning ADR-0010 already applied to
-extraction failures and ADR-0007 already applied to document processing
+a diagnosable failure — the same reasoning ADR 0010 already applied to
+extraction failures and ADR 0007 already applied to document processing
 retries generally.
 
 ## Consequences
@@ -566,8 +675,8 @@ retries generally.
   workflow for a provider or model change, rather than an ad hoc migration
   invented under pressure the first time one is needed.
 - The semantic-result/telemetry separation and the privacy-conscious
-  telemetry posture extend ADR-0012's foundation into Phase 13 exactly as
-  ADR-0012 intended every later AI-pipeline phase to inherit it.
+  telemetry posture extend ADR 0012's foundation into Phase 13 exactly as
+  ADR 0012 intended every later AI-pipeline phase to inherit it.
 - A deterministic fake `Embedder` keeps the ordinary test suite fast,
   free, and independent of Voyage's availability, while still exercising
   real batch, validation and failure-handling behaviour.
@@ -581,7 +690,7 @@ retries generally.
 - Hosted-provider reproducibility is honestly limited: this platform can
   detect and version a provider-side model change, but cannot prevent one,
   and cannot promise permanent bit-for-bit vector reproducibility the way
-  ADR-0011's deterministic chunking contract can for source-controlled code.
+  ADR 0011's deterministic chunking contract can for source-controlled code.
 - Controlled re-embedding is real, recurring operational work every time a
   consequential profile change is adopted — this document commits the
   platform to that discipline rather than allowing a cheaper, riskier
