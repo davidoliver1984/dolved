@@ -9514,7 +9514,9 @@ Introduce a provider-neutral interface for embedding text.
 
 ### Status
 
-Not yet executed.
+Complete. ADR-0013 defines the provider-neutral embedding boundary, the
+initial Voyage embedding-space profile and the compatibility rules that
+Stages 13.2–14 must preserve.
 
 ### Planned decisions
 
@@ -9530,7 +9532,118 @@ Not yet executed.
 
 ### Required ADR
 
-docs/adr/ADR-XXX-embedding-provider.md
+[ADR-0013: Define the Provider-Neutral Embedding Architecture and Embedding Contract](docs/adr/0013-define-the-provider-neutral-embedding-architecture-and-contract.md)
+
+### Decisions recorded
+
+* Application and pipeline callers depend on an application-owned
+  `Embedder` protocol, not directly on the Voyage client.
+* Voyage is the initial hosted V1 provider. The initial profile uses
+  `voyage-4-large`, 1,024-dimensional float vectors, unit-length
+  normalisation and explicit document/query input-type mappings.
+* Provider-side truncation is disabled. Oversized inputs become typed,
+  permanent failures rather than silently incomplete embeddings.
+* One immutable `EmbeddingProfile` records the complete compatible space:
+  provider, model, optional revision, dimensions, data type, normalisation,
+  both purpose mappings and adapter version. Its canonical snapshot produces
+  a deterministic SHA-256 fingerprint.
+* Document and query requests retain their individual purpose, but that
+  per-operation purpose does not create a second fingerprint. Both mappings
+  belong to one compatible profile so query vectors can search its document
+  vectors.
+* A consequential profile change creates a new vector generation and requires
+  controlled re-embedding; matching dimensions alone never imply
+  compatibility.
+* Batches retain local chunk identity. The Voyage adapter associates returned
+  vectors by the provider's documented response order and validates count,
+  dimensions, finite numeric values and profile retention without claiming
+  that Voyage understands local chunk IDs.
+* Semantic embedding results remain separate from operational telemetry.
+  Content and vectors are excluded from telemetry by default under ADR-0012.
+* Only rate limits, timeouts and temporary provider unavailability are
+  retryable. Invalid input, credentials/configuration faults, malformed
+  responses, dimension mismatches and profile mismatches are permanent typed
+  failures.
+* Ordinary tests use a deterministic fake provider. Live Voyage tests remain
+  isolated and opt-in.
+
+### Scope boundary
+
+This stage changed architecture documentation only. It did not add the
+`Embedder` classes, the Voyage dependency, credentials, provider calls,
+vector persistence, Qdrant topology, retrieval or re-embedding orchestration.
+Those remain bounded to Stage 13.2 and the later phases identified by
+ADR-0013.
+
+### Architecture review and corrections
+
+The final review identified two issues in the prepared ADR:
+
+1. A single request's `document` or `query` purpose initially participated
+   in the profile fingerprint. That would have assigned incompatible
+   fingerprints to the two sides of the same retrieval space. The accepted
+   ADR now records both purpose mappings together in one profile while
+   retaining the individual purpose separately on each request and result.
+2. The model and dimensions were illustrative rather than selected, despite
+   the Stage 13.1 acceptance criterion requiring them to be explicit. The
+   accepted ADR now selects `voyage-4-large`, 1,024 float dimensions, unit
+   normalisation and disabled provider truncation. It also records that
+   Voyage does not expose an immutable model revision.
+
+The review also clarified the batch association guarantee: source IDs are
+kept locally and paired with provider results by documented positional order;
+the platform validates that mapping but does not claim provider-side ID
+verification.
+
+### Commands used
+
+```bash
+sed -n '1,760p' \
+  docs/adr/0013-define-the-provider-neutral-embedding-architecture-and-contract.md
+sed -n '9501,9578p' IMPLEMENTATION_GUIDE.md
+sed -n '2380,2565p' tasks.json
+rg -n \
+  "voyage-4-large|1024|truncation|purpose|fingerprint|model_revision|association|normalisation" \
+  docs/adr/0013-define-the-provider-neutral-embedding-architecture-and-contract.md
+git show --stat --format=fuller dd0b0d7
+git show --stat --format=fuller 8ec0cf2
+git diff --check
+python3 -m json.tool tasks.json >/dev/null
+```
+
+Voyage's official embedding, API-reference, rate-limit, normalisation and
+pricing documentation was also reviewed on 2026-08-03 to verify the current
+model family, explicit input types, configurable dimensions, float output,
+normalisation behaviour, batch limits and truncation semantics.
+
+### Files changed
+
+* `docs/adr/0013-define-the-provider-neutral-embedding-architecture-and-contract.md`
+* `docs/adr/README.md`
+* `IMPLEMENTATION_GUIDE.md`
+* `docs/journal/2026-08-03-r13-s01-define-embedding-provider-boundary.md`
+* `PROJECT_JOURNEY.md` (updated locally; intentionally ignored by Git under
+  the repository's current policy)
+* `tasks.json`
+
+No application, dependency, environment or infrastructure file changed.
+
+### Verification
+
+* Confirmed ADR-0013 is marked Accepted, indexed and contains every ADR
+  section required by `docs/adr/README.md`.
+* Confirmed the amended profile resolves document/query compatibility while
+  retaining explicit purpose lineage.
+* Confirmed the initial provider, model, dimensions, data type,
+  normalisation and truncation policy are explicit.
+* Confirmed retries are bounded to typed transient failures, ordinary tests
+  require no external provider and controlled re-embedding is mandatory for
+  consequential profile changes.
+* Confirmed ADR-0013 preserves ADR-0006 tenancy, ADR-0011 chunk identity and
+  completeness, and ADR-0012 telemetry privacy and semantic/operational
+  separation.
+* Confirmed this was architecture-only, so application test suites and live
+  provider calls were not applicable.
 
 ### Acceptance criteria
 
@@ -9541,10 +9654,29 @@ docs/adr/ADR-XXX-embedding-provider.md
 * Tests can run without paid external calls.
 * Model changes trigger controlled re-embedding.
 
+All Stage 13.1 acceptance criteria are satisfied by ADR-0013. Executable
+proof of the protocol, validation, failure taxonomy and deterministic fake
+belongs to Stage 13.2.
+
 ### Commit boundary
 
-git add docs/adr apps/ai
-git commit -m "Define embedding provider boundary"
+The accepted ADR and index were committed locally as:
+
+```bash
+git commit -m "Accept ADR-0013: Provider-neutral embedding architecture"
+```
+
+The final amendments resolving compatibility, V1 profile and batch-order
+semantics were committed under the same architecture subject. The completed
+stage record is committed and tagged at the Stage 13.1 boundary:
+
+```bash
+git add IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-08-03-r13-s01-define-embedding-provider-boundary.md
+git commit -m "Close embedding provider architecture stage"
+git tag -a phase-13-s01 \
+  -m "Complete Stage 13.1: Define Embedding Provider Boundary"
+```
 
 ---
 
