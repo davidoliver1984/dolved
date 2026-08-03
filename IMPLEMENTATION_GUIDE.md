@@ -4166,21 +4166,21 @@ explicit decision to adopt and update that separate workflow.
 
 ⸻
 
-Phase 6 — Authentication and Identity
+# Phase 6 — Authentication and Identity
 
-Phase objective
+## Phase objective
 
 Establish secure user identity before introducing tenant-owned documents and conversations.
 
-⸻
+---
 
-Stage 6.1 — Define Authentication Architecture
+## Stage 6.1 — Define Authentication Architecture
 
-Objective
+### Objective
 
 Choose and document the authentication boundary between Next.js and Laravel.
 
-Status
+### Status
 
 Completed on 2026-07-26.
 
@@ -4327,16 +4327,16 @@ The ADR and index were written before package installation. Phase-level commit a
 tagging is used, so Stage 6.1 is committed together with the implementation it
 governs.
 
-⸻
+---
 
-Stage 6.2 — Implement Laravel Authentication
+## Stage 6.2 — Implement Laravel Authentication
 
-Objective
+### Objective
 
 Implement the accepted authentication contract with Sanctum, Fortify, PostgreSQL
 sessions and local email capture.
 
-Status
+### Status
 
 Completed on 2026-07-26.
 
@@ -4620,15 +4620,15 @@ Result:
 Laravel Pint passed 42 files
 ```
 
-⸻
+---
 
-Stage 6.3 — Implement Next.js Authentication UI
+## Stage 6.3 — Implement Next.js Authentication UI
 
-Objective
+### Objective
 
 Provide frontend registration, login, logout and protected-route behaviour.
 
-Status
+### Status
 
 Completed on 2026-07-26.
 
@@ -4847,23 +4847,23 @@ git tag -a phase-6 -m "Authentication and identity"
 
 The unrelated untracked `tasks.json` file remains excluded.
 
-⸻
+---
 
-Phase 7 — Multi-Tenancy
+# Phase 7 — Multi-Tenancy
 
-Phase objective
+## Phase objective
 
 Ensure every tenant-owned resource is isolated by design rather than filtered as an afterthought.
 
-⸻
+---
 
-Stage 7.1 — Define Tenant Model
+## Stage 7.1 — Define Tenant Model
 
-Objective
+### Objective
 
 Choose the platform tenancy model and record its security invariants.
 
-Status
+### Status
 
 Completed on 2026-07-27.
 
@@ -4951,7 +4951,7 @@ consisted of:
   copies, so both stay in sync;
 * checking the ADR against each item in the "Acceptance criteria" list below.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Tenant terminology is consistent. — Met: "Workspace" used throughout ADR 0006.
 * Ownership rules are documented. — Met: owner-membership and
@@ -4978,20 +4978,20 @@ an event-versioning consideration, a provider/model split within workspace
 configuration, and a closing "correctness over convenience" principle. No
 structural changes or renumbering occurred in either round.
 
-Commit boundary
+### Commit boundary
 
 git add docs/adr docs/journal tasks.json docs/rag-platform-tasks.json IMPLEMENTATION_GUIDE.md
 git commit -m "Document multi-tenancy model"
 
-⸻
+---
 
-Stage 7.2 — Implement Workspaces and Memberships
+## Stage 7.2 — Implement Workspaces and Memberships
 
-Objective
+### Objective
 
 Create Workspace, WorkspaceMembership and role persistence in Laravel.
 
-Status
+### Status
 
 Completed on 2026-07-28.
 
@@ -5235,7 +5235,7 @@ make down
 * PostgreSQL RLS and restricted runtime roles. — Accepted by ADR 0006 but not
   implemented or claimed active; requires a separately scoped Phase 7 session.
 
-Commit boundary
+### Commit boundary
 
 ```bash
 git add \
@@ -5251,21 +5251,21 @@ git commit -m "Implement workspaces and memberships" \
 git tag -a phase-7-s02 -m "Workspaces and memberships"
 ```
 
-⸻
+---
 
-# Stage 7.3 — Add Workspace-Aware Web Experience
+## Stage 7.3 — Add Workspace-Aware Web Experience
 
-## Objective
+### Objective
 
 Allow authenticated users to view and switch between workspaces to which they
 have already been assigned, with development seed data available so the
 workspace-aware interface can be exercised locally.
 
-## Status
+### Status
 
 Completed, verified and approved on 2026-07-28.
 
-## Acceptance criteria
+### Acceptance criteria
 
 - The active workspace is visible.
 - Workspace switching is supported where applicable.
@@ -5282,7 +5282,7 @@ Completed, verified and approved on 2026-07-28.
 - Granular workspace management (creation, membership management, ownership
   transfer and role administration) is outside the scope of this stage.
 
-## Implementation
+### Implementation
 
 Laravel now exposes two verified, session-authenticated workspace endpoints:
 
@@ -5316,7 +5316,7 @@ store or authorise a hidden global current-workspace value.
 Users without memberships receive an explicit no-workspace state. Users who request
 an inaccessible public UUID receive the generic Next.js 404 page.
 
-## Development fixtures
+### Development fixtures
 
 The development seeder should create a small, deterministic workspace fixture
 for local testing. At minimum:
@@ -5350,7 +5350,7 @@ fixture memberships:           4
 workspaces with one owner:     2
 ```
 
-## Tests added
+### Tests added
 
 `WorkspaceAccessTest` covers:
 
@@ -5373,14 +5373,14 @@ WorkspaceAccessTest: 6 tests / 22 assertions passed
 WorkspaceSwitcher:   1 test passed
 ```
 
-## Manual browser verification
+### Manual browser verification
 
 The synthetic user signed in through the normal browser flow. The first assigned
 workspace rendered as `Atlas Research` with role `owner`. Selecting
 `Beacon Operations` changed the route, active marker, heading and role to `admin`.
 A direct request for an unassigned valid UUID rendered the generic 404 page.
 
-## Commands and verification
+### Commands and verification
 
 ```bash
 make up
@@ -5414,7 +5414,7 @@ All six Compose services healthy
 
 The platform was stopped afterward without deleting persistent volumes.
 
-## Problems and corrections
+### Problems and corrections
 
 The first focused seeder assertion expected raw role strings, but Eloquent correctly
 returned `WorkspaceRole` enum instances through the relationship cast. The test was
@@ -5432,7 +5432,7 @@ PostgreSQL rather than in-memory SQLite. The PHPUnit values were changed to forc
 test now asserts the `sqlite`/`:memory:` connection, and a PostgreSQL marker remained
 present before and after both the focused and complete API suites.
 
-## Acceptance result
+### Acceptance result
 
 - The active workspace is visible. — Met.
 - Workspace switching is supported. — Met.
@@ -5444,7 +5444,7 @@ present before and after both the focused and complete API suites.
 - Workspace creation, membership management, ownership transfer and role
   administration. — Deliberately deferred by scope.
 
-## Commit boundary
+### Commit boundary
 
 ```bash
 git add \
@@ -5460,23 +5460,23 @@ git commit -m "Add workspace-aware web experience" \
 git tag -a phase-7 -m "Complete Phase 7 multi-tenancy foundation"
 ```
 
-⸻
+---
 
-Phase 8 — Document Domain and Storage
+# Phase 8 — Document Domain and Storage
 
-Phase objective
+## Phase objective
 
 Model tenant-owned documents and store source files safely before asynchronous ingestion begins.
 
-⸻
+---
 
-Stage 8.1 — Define Document Lifecycle
+## Stage 8.1 — Define Document Lifecycle
 
-Objective
+### Objective
 
 Define document states, ownership, metadata and failure behaviour.
 
-Status
+### Status
 
 Completed on 2026-07-28.
 
@@ -5550,7 +5550,7 @@ Verification consisted of:
 * checking the ADR's final form against each Stage 8.1 acceptance criterion
   below.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Document states are explicit. — Met: the `UPLOADING → UPLOADED → QUEUED →
   PROCESSING → INDEXED` state machine, plus `FAILED` and
@@ -5572,24 +5572,24 @@ Acceptance criteria
   non-deleted state, with a cancellation-barrier invariant and deferred
   retention/purge policy.
 
-Commit boundary
+### Commit boundary
 
 git add docs/adr docs/journal tasks.json docs/rag-platform-tasks.json IMPLEMENTATION_GUIDE.md
 git commit -m "Document document lifecycle"
 
-⸻
+---
 
-Stage 8.2 — Implement Document Persistence
+## Stage 8.2 — Implement Document Persistence
 
-Objective
+### Objective
 
 Persist the Document domain model defined by ADR-0007.
 
-Status
+### Status
 
 Completed, reviewed and verified on 2026-07-28.
 
-Engineering rationale
+### Engineering rationale
 
 The Document is the platform's authoritative system of record for document
 identity, workspace ownership and lifecycle, as defined by ADR-0007.
@@ -5612,7 +5612,7 @@ detected language, chunk count, extracted text or embedding metadata—is
 processing metadata and should not be persisted on the Document unless a
 future ADR explicitly defines it as part of the core domain model.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Document records are tenant-owned.
 * Lifecycle state is represented using the ADR-0007 state machine.
@@ -5623,7 +5623,7 @@ Acceptance criteria
 * API responses do not expose sensitive storage details.
 * Feature tests cover the document domain model and relationships.
 
-Implementation
+### Implementation
 
 * Added the string-backed `DocumentStatus` enum with every lifecycle state
   accepted by ADR-0007: `uploading`, `uploaded`, `queued`, `processing`,
@@ -5654,7 +5654,7 @@ Implementation
   seeder was added: seeding an active document without authoritative source
   content would create a state that contradicts ADR-0007.
 
-Commands executed
+### Commands executed
 
 ```bash
 make up
@@ -5673,7 +5673,7 @@ foreign keys and check constraints, rolled back to confirm that `documents`
 was removed cleanly, migrated again, and dropped. This verified the
 PostgreSQL-specific constraints that SQLite cannot faithfully exercise.
 
-Verification evidence
+### Verification evidence
 
 * Focused document feature tests: 17 passed (45 assertions).
 * Focused lifecycle enum unit test: 1 passed (1 assertion).
@@ -5685,7 +5685,7 @@ Verification evidence
 * All Docker Compose services reported healthy.
 * Clean PostgreSQL migration, rollback and re-migration passed.
 
-Problems and corrections
+### Problems and corrections
 
 * The requested `docs/IMPLEMENTATION_GUIDE.md` path does not exist; the
   repository's canonical root `IMPLEMENTATION_GUIDE.md` was used.
@@ -5697,27 +5697,27 @@ Problems and corrections
   accepted states but deliberately does not invent upload, processing, retry
   or deletion workflows.
 
-Commit boundary
+### Commit boundary
 
 git add apps/api IMPLEMENTATION_GUIDE.md tasks.json docs/journal
 git commit -m "Implement document persistence" \
   -m "Implements ADR-0007."
 
-⸻
+---
 
-Stage 8.3 — Implement Direct Upload Flow
+## Stage 8.3 — Implement Direct Upload Flow
 
-Objective
+### Objective
 
 Allow the browser to upload documents safely to S3-compatible storage.
 
-Status
+### Status
 
 Completed on 2026-07-28 with automated and live LocalStack verification.
 Human visual verification of the multi-file interface passed, and the Phase 8
 commit/tag boundary was approved.
 
-Architecture alignment
+### Architecture alignment
 
 The implementation follows ADR-0007's document lifecycle and ADR-0004's
 accepted local AWS boundary. An implementation brief referred to MinIO, which
@@ -5735,7 +5735,7 @@ stopped for a human decision before code changed. The agreed resolution was:
 No ADR was added or changed because these choices preserve the accepted
 architecture rather than establishing a new one.
 
-Upload flow
+### Upload flow
 
 1. The client fetches the workspace-authorised upload configuration.
 2. Laravel validates active workspace membership using the scoped workspace
@@ -5766,7 +5766,7 @@ The database transaction does not pretend to include the browser's external
 PUT. A failed or abandoned PUT leaves its Document `UPLOADING`, as ADR-0007
 requires. Cleanup policy for abandoned uploads remains deferred.
 
-API operations
+### API operations
 
 ```text
 GET  /api/workspaces/{workspacePublicId}/documents/uploads/configuration
@@ -5779,7 +5779,7 @@ lookups fail closed with `404` across tenant boundaries. Normal Document
 resources omit the storage key, bucket, disk, credentials and failure
 internals.
 
-Upload configuration
+### Upload configuration
 
 `apps/api/config/documents.php` centrally defines:
 
@@ -5794,7 +5794,7 @@ the client so PHP and React do not maintain competing product limits.
 `.env.example`, `apps/api/.env.example` and Compose expose the new
 environment contract.
 
-LocalStack endpoint and CORS configuration
+### LocalStack endpoint and CORS configuration
 
 Laravel needs two views of the same S3 service:
 
@@ -5814,7 +5814,7 @@ frontend origin, PUT/HEAD and the `content-type` request header.
 `make aws-status` verifies this configuration in addition to the existing
 bucket, queues and redrive policy.
 
-Frontend behaviour
+### Frontend behaviour
 
 `DocumentUploadPanel` provides:
 
@@ -5833,7 +5833,7 @@ These UI states are not new persisted lifecycle values. A retry performs a new
 initialisation; any abandoned prior attempt remains `UPLOADING` for the future
 cleanup policy defined outside this stage.
 
-Implementation files
+### Implementation files
 
 Laravel additions include focused initialisation/completion Actions, a Form
 Request, workspace/document policies, `DocumentObjectStorage`, safe upload
@@ -5847,7 +5847,7 @@ helpers, bounded concurrency and XMLHttpRequest transport, styling and focused
 tests. LocalStack provisioning/verification, Compose and environment examples
 were updated without introducing a new service.
 
-Commands executed
+### Commands executed
 
 ```bash
 make up
@@ -5878,7 +5878,7 @@ A disposable authenticated HTTP smoke test also:
 6. confirmed the resource contained only the seven safe public fields; and
 7. removed the synthetic object and Document row afterward.
 
-Verification evidence
+### Verification evidence
 
 * Focused Laravel document tests: 31 passed (129 assertions).
 * Full Laravel suite: 68 passed (249 assertions).
@@ -5892,7 +5892,7 @@ Verification evidence
 * The live signed-URL/CORS/PUT/HEAD/completion smoke test passed.
 * No queue job was pushed and no Document advanced to `QUEUED`.
 
-Problems and corrections
+### Problems and corrections
 
 * The brief named `docs/IMPLEMENTATION_GUIDE.md`; the canonical root
   `IMPLEMENTATION_GUIDE.md` was used.
@@ -5915,7 +5915,7 @@ Problems and corrections
   UI tests and the live HTTP/storage smoke passed; the visible multi-file
   interaction remains a human acceptance check.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Uploads are authorised by Laravel. — Met through authentication,
   verification, membership-scoped resolution and policies.
@@ -5934,7 +5934,7 @@ Acceptance criteria
 * Multi-file visual behaviour. — Automated component coverage and human
   browser acceptance passed.
 
-Commit boundary
+### Commit boundary
 
 ```bash
 git add \
@@ -7344,21 +7344,21 @@ git push origin phase-9
 
 ---
 
-Phase 10 — Text Extraction and Normalisation
+# Phase 10 — Text Extraction and Normalisation
 
-Phase objective
+## Phase objective
 
 Convert supported source documents into a consistent internal representation with traceable source metadata.
 
-⸻
+---
 
-Stage 10.1 — Define Extracted Document Contract
+## Stage 10.1 — Define Extracted Document Contract
 
-Objective
+### Objective
 
 Define the internal representation produced by document extractors.
 
-Status
+### Status
 
 Completed on 2026-07-29.
 
@@ -7436,7 +7436,7 @@ models, schemas or pipeline code were introduced. Verification consisted of:
   process and LocalStack gates: Laravel 118 tests (491 assertions), Python 42
   tests and web 10 tests all passed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * The representation is typed. — Met: a canonical `ExtractedDocument`
   composed of a typed, extensible `Element` model, rather than an untyped
@@ -7456,24 +7456,24 @@ Acceptance criteria
   to support debugging, auditing and replay, which includes extractor
   identity and version; exact fields are deferred to Stage 10.2 onward.
 
-Commit boundary
+### Commit boundary
 
 git add docs/adr docs/journal tasks.json IMPLEMENTATION_GUIDE.md
 git commit -m "Define extracted document representation"
 
-⸻
+---
 
-Stage 10.2 — Implement Plain Text Extraction
+## Stage 10.2 — Implement Plain Text Extraction
 
-Objective
+### Objective
 
 Support ingestion of UTF-8 plain-text documents.
 
-Status
+### Status
 
 Completed on 2026-07-29 following human review and approval.
 
-Agreed bounded implementation brief
+### Agreed bounded implementation brief
 
 Implement a standalone Python plain-text extractor and only the canonical
 model foundation required to support it under ADR-0010.
@@ -7515,7 +7515,7 @@ This stage does not read S3, alter the SQS worker, extend message visibility,
 report lifecycle transitions to Laravel, persist extracted content or perform
 normalisation/chunking.
 
-Implementation record
+### Implementation record
 
 The Python service now has a deliberately small `app/extraction` boundary:
 
@@ -7551,7 +7551,7 @@ No new dependency was required because Pydantic is already part of the Python
 runtime. No S3, SQS, Laravel lifecycle, persistence, normalisation or chunking
 code changed.
 
-Commands executed
+### Commands executed
 
 ```bash
 docker compose exec -T ai uv run ruff format app/extraction tests/test_plain_text_extraction.py
@@ -7563,7 +7563,7 @@ make format-check lint typecheck test ps
 make aws-status
 ```
 
-Verification evidence
+### Verification evidence
 
 * The focused extractor suite passed all 14 tests.
 * The Python repository suite passed all 56 tests and mypy checked all 24
@@ -7576,7 +7576,7 @@ Verification evidence
 * LocalStack bucket, upload CORS, ingestion queue, dead-letter queue and
   redrive policy verification passed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Valid text files are extracted. — Met by Unicode, multiline, whitespace and
   ordered-paragraph fixture coverage.
@@ -7591,25 +7591,25 @@ Acceptance criteria
 * Tests use representative fixtures. — Met by
   `tests/fixtures/plain_text/representative.txt` plus focused boundary inputs.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai IMPLEMENTATION_GUIDE.md tasks.json \
   docs/journal/2026-07-29-r10-s02-implement-plain-text-extraction.md
 git commit -m "Add plain text extraction"
 
-⸻
+---
 
-Stage 10.3 — Implement PDF Extraction
+## Stage 10.3 — Implement PDF Extraction
 
-Objective
+### Objective
 
 Extract text and source-location metadata from PDFs.
 
-Status
+### Status
 
 Complete. Implemented, verified and approved on 2026-07-29.
 
-Agreed bounded implementation brief
+### Agreed bounded implementation brief
 
 Use `pdfplumber` for the initial PDF implementation behind a small,
 implementation-neutral `PdfExtractor` protocol. The concrete
@@ -7680,7 +7680,7 @@ This stage does not read S3, alter the ingestion worker, report lifecycle
 transitions, persist extracted output, perform OCR, normalise content or
 chunk it.
 
-Implementation record
+### Implementation record
 
 The PDF extraction package now exposes:
 
@@ -7753,7 +7753,7 @@ memory or the number of parser objects on an individual page, so process
 isolation and stronger operational controls remain required before the
 extractor handles untrusted worker input.
 
-Problems and corrections
+### Problems and corrections
 
 The initial encrypted-PDF handler expected pdfminer exceptions directly.
 Current pdfplumber wraps them in `PdfminerException`, so the adapter now
@@ -7770,7 +7770,7 @@ location invariant test therefore reconstructs through `model_validate()` so
 it genuinely exercises the paired offset validation rather than merely
 asserting a test-helper behaviour.
 
-Verification commands
+### Verification commands
 
 ```bash
 docker compose build ai worker
@@ -7793,7 +7793,7 @@ contained the same three rows and two columns asserted by the automated
 extraction test. The temporary PDF and image were then removed. This render
 was diagnostic evidence only; programmatic assertions remain the CI oracle.
 
-Verification evidence
+### Verification evidence
 
 * The focused extraction suite passed all 33 tests: 14 plain-text tests and
   19 PDF tests.
@@ -7809,7 +7809,7 @@ Verification evidence
 * LocalStack bucket, upload CORS, ingestion queue, dead-letter queue and
   redrive policy verification passed.
 
-Deferred work
+### Deferred work
 
 * OCR, password submission and semantic heading inference.
 * Parser selection, fallback, reconciliation and benchmarking.
@@ -7819,7 +7819,7 @@ Deferred work
 * Normalisation of repeated headers, footers and other structural noise.
 * Worker, object-storage, lifecycle and persistence integration.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Text-based PDFs are supported. — Met by controlled single-page, multi-page,
   multi-column, rotated and metadata-bearing fixtures.
@@ -7836,25 +7836,25 @@ Acceptance criteria
 * OCR is not silently performed unless intentionally implemented. — Met:
   image-only content is warned or rejected and OCR is never invoked.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai IMPLEMENTATION_GUIDE.md tasks.json \
   docs/journal/2026-07-29-r10-s03-implement-pdf-extraction.md
 git commit -m "Add PDF text extraction"
 
-⸻
+---
 
-Stage 10.4 — Implement DOCX Extraction
+## Stage 10.4 — Implement DOCX Extraction
 
-Objective
+### Objective
 
 Extract paragraphs, headings and table content from DOCX documents.
 
-Status
+### Status
 
 Complete. Implemented, verified and approved on 2026-07-29.
 
-Agreed bounded implementation brief
+### Agreed bounded implementation brief
 
 Use `python-docx` 1.2 for the initial DOCX implementation behind an
 implementation-neutral `DocxExtractor` protocol. The concrete
@@ -7907,7 +7907,7 @@ the worker or object storage, persist output or chunk it. Unsupported or
 unrecognised content must fail clearly or produce an explicit warning; it
 must not disappear under a claim of complete semantic support.
 
-Implementation record
+### Implementation record
 
 The DOCX extraction package now exposes:
 
@@ -7952,7 +7952,7 @@ encrypted-or-legacy OLE Word packages, excessive source size and excessive
 complete text. The shared default source limit is 25 MiB and the injectable
 complete-text limit is 5,000,000 Unicode characters.
 
-Problems and corrections
+### Problems and corrections
 
 Initial static analysis identified four boundary issues without requiring a
 contract change: the fixture helper annotated the `Document()` factory rather
@@ -7968,7 +7968,7 @@ not a typing error. Only the generated `.mypy_cache/3.14` files were removed;
 the normal repository MyPy command was then rerun successfully and later
 passed again in the complete gate.
 
-Verification commands
+### Verification commands
 
 ```bash
 docker compose run --rm --no-deps ai uv lock
@@ -7991,7 +7991,7 @@ make ps
 make aws-status
 ```
 
-Verification evidence
+### Verification evidence
 
 * The focused extraction suite passed all 49 tests: 14 plain-text, 19 PDF and
   16 DOCX tests.
@@ -8008,7 +8008,7 @@ Verification evidence
 * LocalStack bucket, upload CORS, ingestion queue, dead-letter queue and
   redrive policy verification passed.
 
-Deferred work
+### Deferred work
 
 * Images, OCR, comments and unsupported tracked-revision body content.
 * Rendered pagination or conversion to PDF.
@@ -8016,7 +8016,7 @@ Deferred work
 * Worker, object-storage, lifecycle and persistence integration.
 * Normalisation and chunking.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Paragraph text is extracted in order. — Met by the interleaved
   heading/paragraph/table/paragraph fixture and complete-text assertions.
@@ -8032,25 +8032,25 @@ Acceptance criteria
   ordered body, table, merged-cell, nested-table, image, empty and corrupt
   fixtures plus boundary inputs.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai IMPLEMENTATION_GUIDE.md tasks.json \
   docs/journal/2026-07-29-r10-s04-implement-docx-extraction.md
 git commit -m "Add DOCX text extraction"
 
-⸻
+---
 
-Stage 10.5 — Normalise Extracted Content
+## Stage 10.5 — Normalise Extracted Content
 
-Objective
+### Objective
 
 Convert extractor-specific output into one deterministic normalised representation.
 
-Status
+### Status
 
 Complete. Implemented, verified and approved on 2026-07-29.
 
-Agreed bounded implementation brief
+### Agreed bounded implementation brief
 
 Add a pure `StructuralNormaliser` that consumes only immutable
 `ExtractedDocument` and produces a distinct immutable `NormalisedDocument`.
@@ -8115,7 +8115,7 @@ element fallback, semantically empty removal and direct-slice offsets.
 Do not persist output, connect the worker, alter lifecycle state, select
 chunks, add embeddings or implement source-format-specific normalisers.
 
-Planned behaviour
+### Planned behaviour
 
 * Unicode normalisation;
 * whitespace normalisation;
@@ -8125,7 +8125,7 @@ Planned behaviour
 * deterministic output;
 * warning retention.
 
-Implementation record
+### Implementation record
 
 The new `app.normalisation` package contains immutable normalisation models
 and a pure `StructuralNormaliser`. It imports the canonical extraction
@@ -8192,7 +8192,7 @@ Leading and trailing page gaps are retained when page provenance makes them
 knowable. Non-page formats use the standard `"\n\n"` element separator, and
 DOCX heading elements retain section structure.
 
-Problems and corrections
+### Problems and corrections
 
 The first table-normalisation test accidentally supplied an already-composed
 `é` followed by another combining acute accent. NFC correctly retained the
@@ -8202,7 +8202,7 @@ test now proves canonical composition to one `é`.
 
 No production correction or dependency was required after focused review.
 
-Verification commands
+### Verification commands
 
 ```bash
 docker compose exec -T ai uv run ruff format \
@@ -8222,7 +8222,7 @@ make ps
 make aws-status
 ```
 
-Verification evidence
+### Verification evidence
 
 * All 12 focused structural-normalisation tests passed.
 * The combined extraction and normalisation suite passed all 61 tests.
@@ -8237,7 +8237,7 @@ Verification evidence
 * LocalStack bucket, upload CORS, ingestion queue, dead-letter queue and
   redrive policy verification passed.
 
-Deferred work
+### Deferred work
 
 * Persistence and worker integration for extraction and normalisation output.
 * Additional semantic element subtypes as real extractors begin producing
@@ -8246,7 +8246,7 @@ Deferred work
   normalisation rules.
 * Chunking, which begins only after R11-S01 defines its accepted contract.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Equivalent input produces deterministic output. — Met by complete model
   equality and UUIDv5 identity across repeated runs of the same immutable
@@ -8263,21 +8263,21 @@ Acceptance criteria
   separate immutable contracts, explicit source extractor and normaliser
   identities, and a test proving the extraction input is unchanged.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai IMPLEMENTATION_GUIDE.md tasks.json \
   docs/journal/2026-07-29-r10-s05-normalise-extracted-content.md
 git commit -m "Normalise extracted document content"
 
-⸻
+---
 
-Phase 11 — Chunking
+# Phase 11 — Chunking
 
-Phase objective
+## Phase objective
 
 Split normalised documents into retrieval units while preserving enough context and source metadata for accurate answers and citations.
 
-Pre-ADR R11-S01 architecture direction
+## Pre-ADR R11-S01 architecture direction
 
 R11-S01 must define a pluggable `ChunkingStrategy` abstraction. This is a
 deferred Phase 11 decision and does not expand ADR-0010 beyond extraction and
@@ -8304,15 +8304,15 @@ ADR-0011 supersedes the earlier wording that placed operational measurements
 inside `ChunkingResult`. Exact contract fields and baseline implementation
 details remained intentionally deferred to R11-S01 and R11-S02 respectively.
 
-⸻
+---
 
-Stage 11.1 — Define Chunk Contract
+## Stage 11.1 — Define Chunk Contract
 
-Objective
+### Objective
 
 Define the fields and invariants of a document chunk.
 
-Status
+### Status
 
 Completed on 2026-07-30.
 
@@ -8387,7 +8387,7 @@ chunking strategy or pipeline code was introduced. Verification consisted of:
   fixes);
 * checking the ADR against each Stage 11.1 acceptance criterion below.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Chunk identifiers are stable or reproducibly generated. — Met: chunk
   identity is deterministically derived, not randomly generated, from
@@ -8411,25 +8411,25 @@ Acceptance criteria
   (not random) chunk identity make a re-chunking run comparable and
   diffable against a prior one.
 
-Commit boundary
+### Commit boundary
 
 git add docs/adr docs/journal tasks.json IMPLEMENTATION_GUIDE.md
 git commit -m "Define document chunk contract"
 
-⸻
+---
 
-Stage 11.2 — Implement Baseline Chunker
+## Stage 11.2 — Implement Baseline Chunker
 
-Objective
+### Objective
 
 Create a deterministic baseline chunking strategy.
 
-Status
+### Status
 
 Completed on 2026-07-30 after implementation, repository-wide verification
 and human review.
 
-Implementation
+### Implementation
 
 The Python service now exposes the ADR-0011
 `ChunkingStrategy.chunk(document: NormalisedDocument) -> ChunkingResult`
@@ -8481,7 +8481,7 @@ therefore reproduces both values and identities. Per-chunk token counts are
 semantic output; execution duration and other operational telemetry remain
 outside `ChunkingResult` in accordance with ADR-0011.
 
-Problems and corrections
+### Problems and corrections
 
 The first focused MyPy run found that the private piece model represented its
 provenance role as a general string while `ChunkContribution` correctly
@@ -8497,7 +8497,7 @@ The pre-ADR Phase 11 note incorrectly placed processing duration and
 model-execution usage inside semantic `ChunkingResult`. Its wording was
 corrected to match accepted ADR-0011 before implementation.
 
-Verification commands
+### Verification commands
 
 ```bash
 docker compose exec -T ai uv add 'tiktoken==0.13.0'
@@ -8515,7 +8515,7 @@ docker run --rm --network none rag-platform-ai:development \
 make format-check lint typecheck test ps
 ```
 
-Verification evidence
+### Verification evidence
 
 * All 14 focused baseline-chunking tests passed.
 * The rebuilt AI image loaded the pinned tokenizer successfully with
@@ -8530,7 +8530,7 @@ Verification evidence
 * All eight Compose processes were running; every service with a health check
   was healthy.
 
-Deferred work
+### Deferred work
 
 * Stage 11.3 evaluation against representative prose, PDF, DOCX and table
   material, including chunk-size distribution and retrieval-context review.
@@ -8538,7 +8538,7 @@ Deferred work
 * Model-assisted, semantic, contextual and hybrid strategies.
 * Pipeline orchestration, persistence, embeddings and vector storage.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Chunk size is bounded. — Met: every chunk is checked against the explicit
   512-token hard maximum, including overlap and separators.
@@ -8561,27 +8561,27 @@ Acceptance criteria
   — Met: one validated immutable configuration snapshot owns all
   consequential parameters and tokenizer identity.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai IMPLEMENTATION_GUIDE.md \
   docs/journal/2026-07-30-r11-s02-implement-baseline-chunker.md tasks.json
 git commit -m "Implement baseline document chunking"
 git tag -a phase-11-s02 -m "Complete Stage 11.2: Implement Baseline Chunker"
 
-⸻
+---
 
-Stage 11.3 — Evaluate Chunking Quality
+## Stage 11.3 — Evaluate Chunking Quality
 
-Objective
+### Objective
 
 Create an evaluation corpus and measure whether chunks preserve useful retrieval context.
 
-Status
+### Status
 
 Completed on 2026-07-30 after implementation, repository-wide verification,
 the final editorial refinement and human review.
 
-Evaluation implementation
+### Evaluation implementation
 
 The committed, repository-authored CC0 evaluation specification is:
 
@@ -8621,7 +8621,7 @@ recorded in:
 docs/evaluation/r11-s03-baseline-chunking.md
 ```
 
-Problems and corrections
+### Problems and corrections
 
 The first heading expectation required each heading/body pair to be the only
 two primary contributions in a chunk. The actual valid result placed all
@@ -8634,7 +8634,7 @@ The initial PDF fixture contained too little prose to justify the planned
 paragraphs per page. The final result forms two chunks of 316 and 396 tokens
 after deterministic repeated-header/footer removal.
 
-Verification commands
+### Verification commands
 
 ```bash
 docker compose exec -T ai uv run ruff format \
@@ -8650,7 +8650,7 @@ docker compose exec -T ai uv run python -c \
 make format-check lint typecheck test ps
 ```
 
-Verification evidence
+### Verification evidence
 
 * All 6 focused chunking-evaluation tests passed.
 * The complete Python suite passed all 123 tests; MyPy checked all 49 source
@@ -8662,7 +8662,7 @@ Verification evidence
 * All eight Compose processes were running; every service with a health check
   was healthy.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Evaluation fixtures are committed where licensing permits. — Met: all
   semantic material is repository-authored and explicitly CC0; binary PDF
@@ -8680,7 +8680,7 @@ Acceptance criteria
 * Known limitations are recorded. — Met in the evaluation report without
   expanding this stage into semantic/model-assisted chunking.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai/tests docs/evaluation \
   docs/journal/2026-07-30-r11-s03-evaluate-chunking-quality.md \
@@ -8689,32 +8689,32 @@ git commit -m "Add chunking evaluation corpus"
 git tag -a phase-11-s03 -m "Complete Stage 11.3: Evaluate Chunking Quality"
 git tag -a phase-11 -m "Complete Phase 11: Chunking"
 
-⸻
+---
 
-Phase 12 — Observability Foundation
+# Phase 12 — Observability Foundation
 
-Phase objective
+## Phase objective
 
 Make the platform observable by design, using OpenTelemetry as a
 vendor-neutral instrumentation and correlation foundation, before
 embeddings, retrieval and generation introduce the platform's first calls
 to external AI providers.
 
-⸻
+---
 
-Stage 12.1 — Define Telemetry and Observability Architecture
+## Stage 12.1 — Define Telemetry and Observability Architecture
 
-Objective
+### Objective
 
 Establish OpenTelemetry as the platform's canonical instrumentation API,
 vendor-neutral Collector boundary, context-propagation, privacy and
 semantic-convention principles.
 
-Status
+### Status
 
 Complete.
 
-Decision
+### Decision
 
 * OpenTelemetry as the canonical instrumentation API;
 * the OpenTelemetry Collector as the routing and backend boundary;
@@ -8727,7 +8727,7 @@ Decision
 * metric cardinality discipline;
 * graceful degradation on telemetry failure.
 
-Architecture record
+### Architecture record
 
 `docs/adr/0012-establish-the-observability-and-telemetry-foundation.md`
 
@@ -8749,7 +8749,7 @@ may be recorded on traces, but unbounded identifiers and free text must not
 be metric labels. Telemetry failure must degrade safely and must never fail
 the business operation being observed.
 
-Alternatives rejected
+### Alternatives rejected
 
 * a custom application-owned telemetry abstraction duplicating
   OpenTelemetry primitives;
@@ -8760,7 +8760,7 @@ Alternatives rejected
 * using raw entity identifiers as metric labels;
 * requiring the durable correlation ID to equal the OpenTelemetry trace ID.
 
-Commands used
+### Commands used
 
 ```bash
 sed -n '1,520p' \
@@ -8771,7 +8771,7 @@ git show --stat --oneline 5b28068
 git show --format=fuller --no-patch 5b28068
 ```
 
-Changes made
+### Changes made
 
 * Added and accepted ADR-0012.
 * Added ADR-0012 to the ADR index.
@@ -8780,7 +8780,7 @@ Changes made
 * Added the factual Stage 12.1 journal entry and advanced the session
   tracker to Stage 12.2.
 
-Verification
+### Verification
 
 * Confirmed ADR-0012 has every required ADR section and is marked Accepted.
 * Confirmed each Stage 12.1 acceptance criterion is represented as an
@@ -8791,7 +8791,7 @@ Verification
   infrastructure or dependency files changed, so application test suites
   were not applicable.
 
-Acceptance criteria
+### Acceptance criteria
 
 * OpenTelemetry is adopted as the canonical instrumentation API. — Met by
   ADR-0012's canonical instrumentation API decision.
@@ -8810,7 +8810,7 @@ Acceptance criteria
 * Telemetry failure-handling behaviour is defined. — Met: telemetry must
   degrade safely without failing user-facing work.
 
-Commit boundary
+### Commit boundary
 
 The accepted ADR and ADR-index change were committed as:
 
@@ -8829,20 +8829,20 @@ git tag -a phase-12-s01 \
   -m "Complete Stage 12.1: Define Telemetry and Observability Architecture"
 ```
 
-⸻
+---
 
-Stage 12.2 — Establish Local Telemetry Infrastructure
+## Stage 12.2 — Establish Local Telemetry Infrastructure
 
-Objective
+### Objective
 
 Provision the shared OpenTelemetry Collector and a local telemetry backend
 before either application is instrumented.
 
-Status
+### Status
 
 Complete.
 
-Infrastructure
+### Infrastructure
 
 The application-facing `otel-collector` service uses the explicitly pinned
 OpenTelemetry Collector `0.153.0` image. It accepts OTLP/gRPC on port 4317
@@ -8879,7 +8879,7 @@ This stage intentionally adds no OpenTelemetry SDK dependency and no
 Laravel- or Python-specific instrumentation. Those remain bounded to
 Stages 12.3 and 12.4.
 
-Files changed
+### Files changed
 
 * `compose.yaml`
   * adds the pinned `otel-collector` and `otel-lgtm` services;
@@ -8911,7 +8911,7 @@ Files changed
   * documents local ports, responsibilities, topology, inspection and the
     infrastructure smoke command.
 
-Commands used
+### Commands used
 
 ```bash
 docker compose config --quiet
@@ -8933,7 +8933,7 @@ make aws-status
 git diff --check
 ```
 
-Verification
+### Verification
 
 * `docker compose config --quiet` accepted the complete topology.
 * Compose resolved exactly
@@ -8952,7 +8952,7 @@ Verification
   tests.
 * LocalStack S3, SQS, DLQ and redrive verification passed.
 
-Problems and corrections
+### Problems and corrections
 
 The first agent-run smoke attempt could not reach the loopback health port
 because that command was executed inside a restricted network sandbox. The
@@ -8965,7 +8965,7 @@ before completion to combine the current time and process identity for a
 fresh trace ID and to require the metric value produced by the current run.
 This prevents previously stored telemetry from creating a false positive.
 
-Acceptance criteria
+### Acceptance criteria
 
 * The Collector runs as a Docker Compose service. — Met by the healthy
   pinned `otel-collector` service.
@@ -8982,7 +8982,7 @@ Acceptance criteria
   provisions it only. — Met: no application dependencies, imports or
   instrumentation call sites were added.
 
-Commit boundary
+### Commit boundary
 
 ```bash
 git add .env.example README.md compose.yaml makefile \
@@ -8995,19 +8995,19 @@ git tag -a phase-12-s02 \
   -m "Complete Stage 12.2: Establish Local Telemetry Infrastructure"
 ```
 
-⸻
+---
 
-Stage 12.3 — Instrument Laravel with OpenTelemetry
+## Stage 12.3 — Instrument Laravel with OpenTelemetry
 
-Objective
+### Objective
 
 Emit traces and metrics from the Laravel API using the OpenTelemetry SDK.
 
-Status
+### Status
 
 Complete.
 
-Implementation
+### Implementation
 
 Laravel now uses the official `open-telemetry/sdk` 1.15.0 and
 `open-telemetry/exporter-otlp` 1.4.0 packages directly. The container also
@@ -9050,7 +9050,7 @@ termination lifecycle, so a Collector outage does not delay the response
 body. Tests disable network telemetry globally and use the SDK's in-memory
 exporters only in the focused telemetry suite.
 
-Files changed
+### Files changed
 
 * `.env.example` and `compose.yaml`
   * configure endpoint, protocol, 250 ms exporter timeout, cumulative metric
@@ -9080,7 +9080,7 @@ Files changed
   * verifies propagation, privacy, metrics, database/outbox instrumentation,
     SQS injection and graceful exporter failure.
 
-Commands used
+### Commands used
 
 ```bash
 docker compose exec -T api composer require \
@@ -9107,7 +9107,7 @@ docker compose exec -T api composer validate --strict
 git diff --check
 ```
 
-Verification
+### Verification
 
 * Focused telemetry suite: 7 tests and 70 assertions passed.
 * A known incoming W3C trace ID produced a `GET /api/auth/user` server span
@@ -9126,7 +9126,7 @@ Verification
   * LocalStack S3/SQS/DLQ/redrive checks;
   * Collector-to-Grafana trace and metric smoke verification.
 
-Problems and corrections
+### Problems and corrections
 
 The first runtime trace used the SDK's default resource detectors. Under
 PHP's local development server, a query value appeared as
@@ -9144,7 +9144,7 @@ HTTP middleware begins before Laravel has resolved the route. Route
 template naming is therefore finalised after downstream dispatch, avoiding
 raw request paths and the misleading `unmatched` name.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Laravel emits spans using the OpenTelemetry SDK, not a proprietary
   wrapper. — Met by direct use of official API/SDK interfaces and OTLP
@@ -9159,7 +9159,7 @@ Acceptance criteria
   allowlist, which excludes all workspace, document, event and correlation
   identifiers.
 
-Commit boundary
+### Commit boundary
 
 ```bash
 git add .env.example compose.yaml apps/api \
@@ -9170,20 +9170,20 @@ git tag -a phase-12-s03 \
   -m "Complete Stage 12.3: Instrument Laravel with OpenTelemetry"
 ```
 
-⸻
+---
 
-Stage 12.4 — Instrument the Python AI Service with OpenTelemetry
+## Stage 12.4 — Instrument the Python AI Service with OpenTelemetry
 
-Objective
+### Objective
 
 Emit traces and metrics from the Python AI service using the OpenTelemetry
 SDK.
 
-Status
+### Status
 
 Complete.
 
-Implementation
+### Implementation
 
 The Python AI image now uses the official OpenTelemetry Python SDK and
 OTLP/HTTP protobuf exporter 1.44.0. Both the FastAPI service and ingestion
@@ -9223,7 +9223,7 @@ filenames, document content, prompts, questions, credentials and signatures
 are never recorded. Automatic exception recording is disabled so exception
 messages cannot bypass the allowlist; only the exception type may be emitted.
 
-Files changed
+### Files changed
 
 * `apps/ai/pyproject.toml` and `apps/ai/uv.lock`
   * add and lock the official OpenTelemetry SDK and OTLP/HTTP exporter 1.44.0.
@@ -9247,7 +9247,7 @@ Files changed
   * passes the shared timeout, temporality and SDK enablement settings to the
     AI and worker processes.
 
-Commands used
+### Commands used
 
 ```bash
 cd apps/ai
@@ -9279,7 +9279,7 @@ docker compose run --rm \
   worker python -m app.worker --once
 ```
 
-Verification
+### Verification
 
 * Ruff formatting and linting passed.
 * mypy passed across 51 Python source and test files.
@@ -9301,7 +9301,7 @@ Verification
   * LocalStack S3/SQS/DLQ/redrive checks;
   * Collector-to-Grafana trace and metric smoke verification.
 
-Problems and corrections
+### Problems and corrections
 
 The host's cached Python 3.14 release candidate was incompatible with the
 locked Pydantic build, so authoritative runtime tests were executed in the
@@ -9314,7 +9314,7 @@ the required `messaging.operation.name` attribute was added. Processing uses
 the official `messaging.process.duration` convention; only the
 domain-specific outcome count retains a `rag.*` name.
 
-Acceptance criteria
+### Acceptance criteria
 
 * The Python service emits spans using the OpenTelemetry SDK, not a
   proprietary wrapper. — Met by direct official API/SDK instrumentation and
@@ -9326,7 +9326,7 @@ Acceptance criteria
 * Metrics avoid unbounded-cardinality labels. — Met by excluding all entity,
   event, correlation and transport-message identifiers from metric labels.
 
-Acceptance criteria
+### Acceptance criteria
 
 * The Python service emits spans using the OpenTelemetry SDK, not a
   proprietary wrapper.
@@ -9334,7 +9334,7 @@ Acceptance criteria
 * Telemetry failures do not affect worker correctness.
 * Metrics avoid unbounded-cardinality labels.
 
-Commit boundary
+### Commit boundary
 
 ```bash
 git add compose.yaml apps/ai \
@@ -9345,21 +9345,21 @@ git tag -a phase-12-s04 \
   -m "Complete Stage 12.4: Instrument the Python AI Service with OpenTelemetry"
 ```
 
-⸻
+---
 
-Stage 12.5 — Verify Cross-Service Trace Propagation and the Privacy Allowlist
+## Stage 12.5 — Verify Cross-Service Trace Propagation and the Privacy Allowlist
 
-Objective
+### Objective
 
 Prove that one logical request remains correlated across Laravel, the
 queue and Python, and that sensitive content never appears in exported
 telemetry.
 
-Status
+### Status
 
 Completed on 2026-07-31.
 
-Implementation and verification
+### Implementation and verification
 
 The accepted ADR-0012 boundary was exercised using a real authenticated
 document upload and ingestion request. Inspection identified one missing
@@ -9400,7 +9400,7 @@ parent, safe trace attributes remain available and metric attributes remain
 bounded. Existing Python tests continue proving SQS extraction and claim-HTTP
 injection.
 
-Commands used
+### Commands used
 
 ```bash
 docker compose exec -T api php artisan migrate --force
@@ -9427,7 +9427,7 @@ docker compose exec -T postgres dropdb \
   --username rag_platform rag_platform_r12_s05_test
 ```
 
-Verification evidence
+### Verification evidence
 
 * A real trace crossed `rag-platform-api`,
   `rag-platform-ingestion-publisher` and
@@ -9451,7 +9451,7 @@ Verification evidence
 * The acceptance script removed its synthetic Document, outbox, claim and S3
   records. The source queue had zero visible or in-flight messages afterward.
 
-Residual gaps
+### Residual gaps
 
 Stage 12 validates the ingestion request, publication and claim slice only.
 Future external embedding and generation provider calls do not exist yet and
@@ -9459,7 +9459,7 @@ will inherit the same propagation/privacy rules when their phases implement
 them. Dashboards, alerting, sampling and production retention remain the
 operational work explicitly deferred by ADR-0012.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Trace context is proven to propagate across every service boundary for
   one logical request. — Met by the live authenticated upload, asynchronous
@@ -9473,7 +9473,7 @@ Acceptance criteria
 * Findings and any residual gaps are recorded. — Met above and in the Stage
   12.5 journal.
 
-Commit boundary
+### Commit boundary
 
 ```bash
 git add makefile \
@@ -9496,27 +9496,27 @@ git tag -a phase-12 \
   -m "Complete Phase 12: Observability Foundation"
 ```
 
-⸻
+---
 
-Phase 13 — Embeddings
+# Phase 13 — Embeddings
 
-Phase objective
+## Phase objective
 
 Generate reproducible vector representations while keeping model providers replaceable.
 
-⸻
+---
 
-Stage 13.1 — Define Embedding Provider Boundary
+## Stage 13.1 — Define Embedding Provider Boundary
 
-Objective
+### Objective
 
 Introduce a provider-neutral interface for embedding text.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned decisions
+### Planned decisions
 
 * hosted versus local model support;
 * model identifier configuration;
@@ -9528,11 +9528,11 @@ Planned decisions
 * test doubles;
 * model-version tracking.
 
-Required ADR
+### Required ADR
 
 docs/adr/ADR-XXX-embedding-provider.md
 
-Acceptance criteria
+### Acceptance criteria
 
 * Application code does not depend directly on one vendor SDK everywhere.
 * Model and dimensions are explicit.
@@ -9541,24 +9541,24 @@ Acceptance criteria
 * Tests can run without paid external calls.
 * Model changes trigger controlled re-embedding.
 
-Commit boundary
+### Commit boundary
 
 git add docs/adr apps/ai
 git commit -m "Define embedding provider boundary"
 
-⸻
+---
 
-Stage 13.2 — Implement Embedding Generation
+## Stage 13.2 — Implement Embedding Generation
 
-Objective
+### Objective
 
 Generate embeddings for chunks in controlled batches.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Chunk text is embedded in batches.
 * Empty content is rejected.
@@ -9569,32 +9569,32 @@ Acceptance criteria
 * Tests use a deterministic fake provider.
 * Real-provider integration is tested separately.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai tests
 git commit -m "Implement chunk embedding generation"
 
-⸻
+---
 
-Phase 14 — Vector Storage
+# Phase 14 — Vector Storage
 
-Phase objective
+## Phase objective
 
 Persist tenant-isolated chunk vectors and metadata in a dedicated vector database.
 
-⸻
+---
 
-Stage 14.1 — Define Vector Database Architecture
+## Stage 14.1 — Define Vector Database Architecture
 
-Objective
+### Objective
 
 Confirm Qdrant as the vector store and document collection, tenancy and filtering strategy.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned decisions
+### Planned decisions
 
 * collection per environment versus per tenant;
 * tenant filtering;
@@ -9606,11 +9606,11 @@ Planned decisions
 * backup considerations;
 * local and managed deployment compatibility.
 
-Required ADR
+### Required ADR
 
 docs/adr/ADR-XXX-vector-storage.md
 
-Acceptance criteria
+### Acceptance criteria
 
 * Tenant isolation strategy is explicit.
 * Payload schema is documented.
@@ -9619,28 +9619,28 @@ Acceptance criteria
 * Document deletion behaviour is defined.
 * Re-indexing is possible without corrupting active data.
 
-Commit boundary
+### Commit boundary
 
 git add docs/adr
 git commit -m "Document vector storage architecture"
 
-⸻
+---
 
-Stage 14.2 — Add Qdrant Development Service
+## Stage 14.2 — Add Qdrant Development Service
 
-Objective
+### Objective
 
 Add Qdrant to Docker Compose with persistent local storage and health checks.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned service name
+### Planned service name
 
 qdrant
 
-Acceptance criteria
+### Acceptance criteria
 
 * Qdrant starts through Compose.
 * The image version is pinned.
@@ -9650,24 +9650,24 @@ Acceptance criteria
 * No public exposure is enabled unnecessarily.
 * Reset behaviour is documented.
 
-Commit boundary
+### Commit boundary
 
 git add compose.yaml .env.example
 git commit -m "Add Qdrant development service"
 
-⸻
+---
 
-Stage 14.3 — Persist Chunk Vectors
+## Stage 14.3 — Persist Chunk Vectors
 
-Objective
+### Objective
 
 Store embedded chunks and retrieval metadata in Qdrant.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Collections are created idempotently.
 * Vector dimensions are validated.
@@ -9678,24 +9678,24 @@ Acceptance criteria
 * Partial failures are handled.
 * Tests verify tenant filtering.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai tests
 git commit -m "Persist document vectors in Qdrant"
 
-⸻
+---
 
-Stage 14.4 — Complete Ingestion Pipeline
+## Stage 14.4 — Complete Ingestion Pipeline
 
-Objective
+### Objective
 
 Connect upload, queue consumption, extraction, normalisation, chunking, embedding and vector persistence.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * An uploaded document reaches the ready state.
 * Each stage is observable.
@@ -9706,41 +9706,108 @@ Acceptance criteria
 * Dead-letter behaviour is verified.
 * End-to-end ingestion tests exist.
 
-Commit boundary
+### Commit boundary
 
 git add apps/api apps/ai tests contracts
 git commit -m "Complete document ingestion pipeline"
 
-⸻
+---
 
-Phase 15 — Retrieval
+# Phase 15 — Retrieval
 
-Phase objective
+## Phase objective
 
 Retrieve relevant, tenant-safe source chunks for a user query.
 
-⸻
+## Phase 15 restructuring note
 
-Stage 15.1 — Define Retrieval Contract
+Recorded 2026-08-03. Phase 15 was originally scoped as four stages (contract,
+semantic implementation, evaluation, enhancements). Before any Phase 15
+implementation began, this was restructured to seven stages so that document
+freshness/archival semantics and the evaluation/quality-gate harness are
+architectural decisions made explicitly, with their own ADRs, rather than
+implicit assumptions inside the retrieval contract or an under-scoped
+evaluation task. No completed stage numbering was changed by this
+restructuring — Phase 15 had not yet started.
 
-Objective
+---
 
-Define the input, output and diagnostics of the retrieval subsystem.
+## Stage 15.1 — Define Document Freshness and Archival Policy
 
-Status
+### Objective
+
+Decide what "obsolete" or "archived" means for a Document, extending
+ADR-0007's lifecycle rather than replacing it, so that retrieval (Stage
+15.2) and evaluation (Stage 15.4) have a settled definition of "active" to
+filter against.
+
+### Status
 
 Not yet executed.
 
-Planned input
+### Planned decisions
+
+* whether archival is a new Document lifecycle state, an orthogonal flag, or
+  a relationship to a superseding Document;
+* whether archival is user/administrator-initiated, time-based, or both;
+* how an archived document's existing chunks and vectors are treated —
+  retained but excluded from retrieval, or removed from the active vector
+  generation;
+* how retrieval and evaluation express an "active documents only" filter;
+* how this interacts with ADR-0007's existing no-versioning decision — this
+  ADR must not silently reintroduce versioning while solving archival.
+
+### Required ADR
+
+docs/adr/ADR-XXX-document-freshness-and-archival-policy.md
+
+### Acceptance criteria
+
+* Archival is defined without contradicting or silently rewriting ADR-0007.
+* Retrieval has an explicit, typed way to exclude archived/obsolete
+  documents.
+* The evaluation harness (Stage 15.4) can express obsolete/current-document
+  test cases against this same definition.
+* No versioning scheme is introduced as a side effect.
+
+### Commit boundary
+
+git add docs/adr
+git commit -m "Define document freshness and archival policy"
+
+---
+
+## Stage 15.2 — Define Retrieval Contract
+
+### Objective
+
+Define the input, output and diagnostics of the retrieval subsystem,
+including the query-planning boundary and freshness filtering Stage 15.1
+requires.
+
+### Status
+
+Not yet executed.
+
+### Design constraint
+
+Record the query-decomposition direction agreed alongside ADR-0013 (see
+`PROJECT_ROADMAP.md`'s "Design constraint — Query decomposition and the
+retrieval pipeline shape") before implementation begins. The contract must
+carry a query-planning boundary that accepts one or more bounded retrieval
+queries even though V1 only ever exercises an identity/no-op planner.
+
+### Planned input
 
 * tenant identifier;
 * query text;
 * optional document filters;
 * optional metadata filters;
+* active/archival filter, per Stage 15.1's policy;
 * result limit;
 * retrieval configuration.
 
-Planned output
+### Planned output
 
 * ranked chunks;
 * similarity score;
@@ -9749,138 +9816,261 @@ Planned output
 * retrieval diagnostics;
 * strategy version.
 
-Acceptance criteria
+### Required ADR
+
+docs/adr/ADR-XXX-retrieval-contract.md
+
+### Acceptance criteria
 
 * Tenant context is mandatory.
 * Retrieval results include citation metadata.
 * Scores and ranking are inspectable.
-* Filters are typed.
+* Filters are typed, including the active/archival filter.
+* The query-planning boundary exists in the contract, exercised only by an
+  identity/no-op planner for V1.
 * Empty-query behaviour is defined.
 * No generation concerns leak into the retrieval contract.
 
-Commit boundary
+### Commit boundary
 
-git add apps/ai contracts
+git add apps/ai contracts docs/adr
 git commit -m "Define retrieval contract"
 
-⸻
+---
 
-Stage 15.2 — Implement Semantic Retrieval
+## Stage 15.3 — Implement Semantic Retrieval
 
-Objective
+### Objective
 
 Embed a user query and retrieve tenant-filtered chunks from Qdrant.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Query embeddings use the compatible model.
 * Every search includes tenant filtering.
 * Optional document filters work.
+* Archived/obsolete documents are excluded per Stage 15.1's policy.
 * Result limits are bounded.
 * No cross-tenant chunks are returned.
 * Empty results are represented normally.
 * Tests cover ranking and isolation.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai tests
 git commit -m "Implement semantic document retrieval"
 
-⸻
+---
 
-Stage 15.3 — Add Retrieval Evaluation
+## Stage 15.4 — Define Evaluation and Quality-Gate Architecture
 
-Objective
+### Objective
 
-Measure retrieval quality against a curated question-and-source dataset.
+Define a repository-owned evaluation harness and quality-gate policy that
+grows with the pipeline, starting with retrieval and extending to
+generation (Stage 16.4) without redesign.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned metrics
+### Planned decisions
 
-* hit rate;
-* recall at K;
-* mean reciprocal rank where useful;
+* a repository-owned, framework-independent corpus format: representative
+  source documents, labelled questions, expected relevant
+  documents/elements/chunks, and reference answers or required answer facts
+  where appropriate;
+* required case coverage: answerable and unanswerable questions,
+  exact-wording and paraphrased questions, table-based questions,
+  multi-evidence questions, conflicting-document cases,
+  obsolete/current-document cases (per Stage 15.1), cross-workspace and
+  authorisation cases, and adversarial/prompt-injection cases;
+* the metrics catalogue: Recall@k, MRR, nDCG, context precision, context
+  recall, faithfulness, answer correctness/relevancy, citation support,
+  abstention accuracy, latency, token usage, provider cost;
+* where Ragas may be used for suitable LLM/RAG metrics, and why the
+  labelled corpus, deterministic retrieval metrics and experiment records
+  must remain repository-owned and framework-independent regardless;
+* the quality-release-gate policy: before a consequential quality-affecting
+  configuration or provider change reaches production, the accepted
+  evaluation corpus is run and compared against the current baseline,
+  protecting at minimum retrieval recall, reranking quality, faithfulness,
+  citation support, correct abstention, workspace isolation/authorisation,
+  and unacceptable latency/cost regression;
+* that the gate begins as a documented/manual acceptance step and may later
+  be automated in CI (Phase 21).
+
+### Required ADR
+
+docs/adr/ADR-XXX-evaluation-and-quality-gate-architecture.md
+
+### Acceptance criteria
+
+* The corpus schema and metrics catalogue are defined independently of any
+  single evaluation framework.
+* Required case coverage (including adversarial/prompt-injection cases) is
+  named explicitly, even where V1 only populates a subset.
+* The quality-gate policy is defined even though its enforcement starts
+  manual.
+* Stage 16.4 (Add Answer Evaluation) can extend this same harness rather
+  than defining its own.
+
+### Commit boundary
+
+git add docs/adr
+git commit -m "Define evaluation and quality-gate architecture"
+
+---
+
+## Stage 15.5 — Implement Retrieval Evaluation
+
+### Objective
+
+Measure retrieval quality against the Stage 15.4 harness's curated
+question-and-source dataset.
+
+### Status
+
+Not yet executed.
+
+### Planned metrics
+
+* Recall@k;
+* MRR;
+* nDCG where useful;
 * tenant-isolation correctness;
 * latency;
-* no-result behaviour.
+* no-result and abstention behaviour.
 
-Acceptance criteria
+### Acceptance criteria
 
-* Evaluation questions have expected source chunks or documents.
+* Evaluation questions have expected source chunks or documents, per Stage
+  15.4's corpus format.
 * Metrics are reproducible.
 * Baseline results are recorded.
-* Retrieval changes can be compared.
-* Failures are inspectable rather than represented only by one aggregate score.
+* Retrieval changes can be compared against the recorded baseline.
+* Failures are inspectable rather than represented only by one aggregate
+  score.
 
-Commit boundary
+### Commit boundary
 
 git add tests docs scripts
 git commit -m "Add retrieval evaluation suite"
 
-⸻
+---
 
-Stage 15.4 — Introduce Retrieval Enhancements
+## Stage 15.6 — Define Hybrid Retrieval and Reranking Architecture
 
-Objective
+### Objective
 
-Evaluate enhancements only after the semantic baseline is measured.
+Define one combined candidate-selection architecture — dense retrieval,
+sparse/keyword retrieval, fusion, reranking and evidence thresholds — as a
+single ADR, evaluated only after the Stage 15.3/15.5 semantic baseline is
+measured.
 
-Status
+### Status
 
 Not yet executed.
 
-Candidate enhancements
+### Planned decisions
 
-* hybrid lexical/vector retrieval;
-* reranking;
-* query rewriting;
-* metadata-aware retrieval;
-* contextual compression;
-* diversity selection;
-* parent-child retrieval.
+* sparse/keyword retrieval alongside the existing dense retrieval;
+* hybrid candidate fusion, with Reciprocal Rank Fusion (RRF) as the initial
+  likely method;
+* a distinct, provider-neutral `Reranker` contract within this same ADR —
+  not a separate ADR — mirroring ADR-0013's `Embedder` abstraction shape;
+* Voyage as the initial V1 reranking provider;
+* retrieving a broader candidate set before reranking, then reranking down
+  to a smaller evidence set;
+* calibrated evidence thresholds and explicit abstention where the system
+  cannot find sufficient evidence;
+* hard workspace, authorisation, active-document and lifecycle filters
+  (per Stage 15.1) applied to candidate selection, not only to final
+  results;
+* preservation of source identity and provenance through fusion and
+  reranking.
 
-Do not implement all candidates automatically. Each enhancement must justify its complexity through evaluation.
+### Required ADR
 
-Acceptance criteria
+docs/adr/ADR-XXX-hybrid-retrieval-and-reranking.md
 
-* A baseline exists before enhancement.
-* The enhancement solves an observed weakness.
-* Quality and latency effects are measured.
-* Tenant filtering remains mandatory.
-* The simpler approach remains preferred when results are equivalent.
+### Acceptance criteria
 
-Commit boundary
+* A semantic-retrieval baseline exists and is measured (Stage 15.5) before
+  this architecture is adopted.
+* The `Reranker` contract is provider-neutral, matching the `Embedder`
+  pattern's replaceability requirements.
+* Fusion, thresholds and abstention are each explicit, typed decisions, not
+  implicit behaviour.
+* Tenant, authorisation and freshness filtering remain mandatory through
+  fusion and reranking.
+* The simpler semantic-only baseline remains the fallback if hybrid/rerank
+  evaluation does not show a measured improvement.
 
-To be defined for the selected enhancement.
+### Commit boundary
 
-⸻
+git add docs/adr
+git commit -m "Define hybrid retrieval and reranking architecture"
 
-Phase 16 — Grounded Generation
+---
 
-Phase objective
+## Stage 15.7 — Implement Hybrid Retrieval and Reranking
+
+### Objective
+
+Implement the Stage 15.6 architecture: sparse retrieval, RRF fusion, the
+`Reranker` contract with Voyage as its V1 provider, calibrated thresholds
+and abstention.
+
+### Status
+
+Not yet executed.
+
+### Acceptance criteria
+
+* Sparse and dense candidates are fused before reranking, not merged
+  ad hoc per call site.
+* Reranking reduces a broader candidate set to a smaller evidence set
+  through the `Reranker` contract, not a direct Voyage SDK call.
+* Evidence below the calibrated threshold results in explicit abstention,
+  not a low-confidence answer presented as if grounded.
+* Tenant, authorisation and freshness filtering are verified through the
+  complete fused/reranked path, not only the semantic baseline.
+* Stage 15.5's evaluation harness shows a measured improvement over the
+  semantic-only baseline before this becomes the default retrieval path.
+* Tests cover fusion, reranking, threshold/abstention behaviour and
+  isolation.
+
+### Commit boundary
+
+git add apps/ai tests
+git commit -m "Implement hybrid retrieval and reranking"
+
+---
+
+# Phase 16 — Grounded Generation
+
+## Phase objective
 
 Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.
 
-⸻
+---
 
-Stage 16.1 — Define Generation Provider Boundary
+## Stage 16.1 — Define Generation Provider Boundary
 
-Objective
+### Objective
 
 Create a provider-neutral interface for chat or completion models.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned decisions
+### Planned decisions
 
 * supported provider;
 * model configuration;
@@ -9892,11 +10082,11 @@ Planned decisions
 * test doubles;
 * prompt versioning.
 
-Required ADR
+### Required ADR
 
 docs/adr/ADR-XXX-generation-provider.md
 
-Acceptance criteria
+### Acceptance criteria
 
 * Provider SDK use is isolated.
 * Model identifiers are configurable.
@@ -9905,24 +10095,24 @@ Acceptance criteria
 * Tests do not require paid API calls.
 * Prompt versions are traceable.
 
-Commit boundary
+### Commit boundary
 
 git add docs/adr apps/ai
 git commit -m "Define generation provider boundary"
 
-⸻
+---
 
-Stage 16.2 — Build Grounded Prompt Assembly
+## Stage 16.2 — Build Grounded Prompt Assembly
 
-Objective
+### Objective
 
 Construct prompts from the user query, tenant-safe retrieved chunks and explicit grounding instructions.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned principles
+### Planned principles
 
 * source material is clearly delimited;
 * instructions state that sources may contain untrusted text;
@@ -9932,7 +10122,7 @@ Planned principles
 * source identifiers are stable enough for citation mapping;
 * token budgets are bounded.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Prompt assembly is deterministic.
 * Retrieved sources are clearly delimited.
@@ -9941,29 +10131,29 @@ Acceptance criteria
 * Source identifiers survive generation.
 * Prompt templates are versioned and tested.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai tests
 git commit -m "Build grounded prompt assembly"
 
-⸻
+---
 
-Stage 16.3 — Generate Answers with Citations
+## Stage 16.3 — Generate Answers with Citations
 
-Objective
+### Objective
 
 Produce answers that cite retrieved source locations.
 
-Design constraint
+### Design constraint
 
 Review the citation and re-extraction design constraint recorded in
 `PROJECT_ROADMAP.md` before implementation begins.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Answers cite source identifiers.
 * Citations map to real retrieved chunks.
@@ -9973,24 +10163,32 @@ Acceptance criteria
 * Provider failures are represented clearly.
 * Tests cover grounded and ungrounded cases.
 
-Commit boundary
+### Commit boundary
 
 git add apps/ai tests
 git commit -m "Generate grounded answers with citations"
 
-⸻
+---
 
-Stage 16.4 — Add Answer Evaluation
+## Stage 16.4 — Add Answer Evaluation
 
-Objective
+### Objective
 
 Evaluate groundedness, citation correctness and answer usefulness.
 
-Status
+### Design constraint
+
+Extend the repository-owned evaluation and quality-gate harness defined in
+Stage 15.4 (`docs/adr/ADR-XXX-evaluation-and-quality-gate-architecture.md`)
+with generation-specific metrics, rather than defining a second, separate
+harness. See also `PROJECT_ROADMAP.md`'s "Design constraint — Quality
+lineage across the pipeline."
+
+### Status
 
 Not yet executed.
 
-Planned measures
+### Planned measures
 
 * citation precision;
 * citation recall where measurable;
@@ -10001,7 +10199,7 @@ Planned measures
 * token usage;
 * cost.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Evaluation examples are versioned.
 * Citation mappings can be checked automatically.
@@ -10010,32 +10208,32 @@ Acceptance criteria
 * Prompt/model changes can be compared.
 * Regression thresholds are documented.
 
-Commit boundary
+### Commit boundary
 
 git add tests docs scripts
 git commit -m "Add grounded answer evaluation"
 
-⸻
+---
 
-Phase 17 — Conversation and Streaming
+# Phase 17 — Conversation and Streaming
 
-Phase objective
+## Phase objective
 
 Expose the RAG workflow as a persistent, streaming conversational experience.
 
-⸻
+---
 
-Stage 17.1 — Define Conversation Domain
+## Stage 17.1 — Define Conversation Domain
 
-Objective
+### Objective
 
 Model conversations, messages, citations and generation metadata.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned entities
+### Planned entities
 
 conversations
 messages
@@ -10044,7 +10242,7 @@ generation_runs
 
 Exact names may change.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Conversations are tenant-owned.
 * Messages record user and assistant roles.
@@ -10054,24 +10252,24 @@ Acceptance criteria
 * Conversation deletion semantics are defined.
 * Cross-tenant access is prohibited.
 
-Commit boundary
+### Commit boundary
 
 git add apps/api docs/adr
 git commit -m "Define conversation domain"
 
-⸻
+---
 
-Stage 17.2 — Implement Chat Orchestration API
+## Stage 17.2 — Implement Chat Orchestration API
 
-Objective
+### Objective
 
 Coordinate retrieval and generation through a stable Laravel-facing API.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned flow
+### Planned flow
 
 1. Laravel authorises the user and tenant.
 2. Laravel persists the user message.
@@ -10081,7 +10279,7 @@ Planned flow
 6. Laravel persists the answer and citations.
 7. The result is returned or streamed to the browser.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Laravel remains the identity and authorisation boundary.
 * AI requests carry trusted tenant context.
@@ -10091,24 +10289,24 @@ Acceptance criteria
 * Timeouts and cancellation are handled.
 * Integration tests cover the complete request.
 
-Commit boundary
+### Commit boundary
 
 git add apps/api apps/ai contracts
 git commit -m "Implement chat orchestration API"
 
-⸻
+---
 
-Stage 17.3 — Implement Streaming Responses
+## Stage 17.3 — Implement Streaming Responses
 
-Objective
+### Objective
 
 Stream generated answer tokens or events to the browser.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned decisions
+### Planned decisions
 
 * Server-Sent Events versus another streaming transport.
 * Event schema.
@@ -10118,7 +10316,7 @@ Planned decisions
 * Persisting partial versus final responses.
 * Reconnection behaviour.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Streaming transport is documented.
 * The browser receives incremental output.
@@ -10129,24 +10327,24 @@ Acceptance criteria
 * Citations are delivered consistently.
 * Streaming tests exist.
 
-Commit boundary
+### Commit boundary
 
 git add apps/web apps/api apps/ai contracts
 git commit -m "Add streaming chat responses"
 
-⸻
+---
 
-Stage 17.4 — Build Chat Interface
+## Stage 17.4 — Build Chat Interface
 
-Objective
+### Objective
 
 Create the tenant-aware conversational UI.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned capabilities
+### Planned capabilities
 
 * conversation list;
 * new conversation;
@@ -10158,7 +10356,7 @@ Planned capabilities
 * accessible keyboard behaviour;
 * retry or regenerate where appropriate.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Users can create conversations.
 * Users can send messages.
@@ -10169,32 +10367,32 @@ Acceptance criteria
 * The interface is keyboard accessible.
 * Critical interactions are tested.
 
-Commit boundary
+### Commit boundary
 
 git add apps/web
 git commit -m "Build streaming RAG chat interface"
 
-⸻
+---
 
-Phase 18 — Administration
+# Phase 18 — Administration
 
-Phase objective
+## Phase objective
 
 Provide operational visibility and safe tenant-level controls.
 
-⸻
+---
 
-Stage 18.1 — Build Document Administration
+## Stage 18.1 — Build Document Administration
 
-Objective
+### Objective
 
 Allow authorised users to inspect, retry and delete documents.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned capabilities
+### Planned capabilities
 
 * document list;
 * processing status;
@@ -10205,7 +10403,7 @@ Planned capabilities
 * filter and search;
 * inspect source metadata.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Permissions are enforced server-side.
 * Status reflects the real ingestion state.
@@ -10214,24 +10412,24 @@ Acceptance criteria
 * Failures are understandable without exposing secrets.
 * Cross-tenant administration is impossible.
 
-Commit boundary
+### Commit boundary
 
 git add apps/api apps/web
 git commit -m "Add document administration"
 
-⸻
+---
 
-Stage 18.2 — Build Tenant and Membership Administration
+## Stage 18.2 — Build Tenant and Membership Administration
 
-Objective
+### Objective
 
 Allow authorised tenant administrators to manage members and roles.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Members can be listed.
 * Invitations can be issued and revoked where supported.
@@ -10240,24 +10438,24 @@ Acceptance criteria
 * Permission changes take effect consistently.
 * Audit events are recorded for sensitive changes.
 
-Commit boundary
+### Commit boundary
 
 git add apps/api apps/web
 git commit -m "Add tenant membership administration"
 
-⸻
+---
 
-Stage 18.3 — Add Usage Visibility
+## Stage 18.3 — Add Usage Visibility
 
-Objective
+### Objective
 
 Expose document, storage, ingestion and model-usage information.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned metrics
+### Planned metrics
 
 * document count;
 * storage usage;
@@ -10268,7 +10466,7 @@ Planned metrics
 * generation token usage;
 * estimated provider cost where available.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Usage is tenant-scoped.
 * Metrics have defined units and time ranges.
@@ -10277,20 +10475,20 @@ Acceptance criteria
 * Expensive aggregation is controlled.
 * Data freshness is visible.
 
-Commit boundary
+### Commit boundary
 
 git add apps/api apps/web
 git commit -m "Add tenant usage visibility"
 
-⸻
+---
 
-Phase 19 — Observability and Operations
+# Phase 19 — Observability and Operations
 
-Phase objective
+## Phase objective
 
 Make failures, latency and cross-service behaviour diagnosable.
 
-Design constraint
+### Design constraint
 
 Review the "Phase 19 should operationalise, not rebuild, observability"
 design constraint recorded in `PROJECT_ROADMAP.md` before implementation
@@ -10298,19 +10496,19 @@ begins. Stage 19.2 and Stage 19.3 in particular predate Phase 12's
 OpenTelemetry foundation (ADR-0012) and are expected to be rescoped before
 this phase starts, not implemented as currently written.
 
-⸻
+---
 
-Stage 19.1 — Standardise Structured Logging
+## Stage 19.1 — Standardise Structured Logging
 
-Objective
+### Objective
 
 Emit machine-readable, correlated logs from every service.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned common fields
+### Planned common fields
 
 * timestamp;
 * level;
@@ -10325,7 +10523,7 @@ Planned common fields
 * duration;
 * error type.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Logs are structured consistently.
 * Secrets and source-document contents are not logged.
@@ -10334,24 +10532,24 @@ Acceptance criteria
 * Errors include useful stack or exception context.
 * Logging configuration differs appropriately by environment.
 
-Commit boundary
+### Commit boundary
 
 git add apps/web apps/api apps/ai docs
 git commit -m "Standardise structured platform logging"
 
-⸻
+---
 
-Stage 19.2 — Add Metrics
+## Stage 19.2 — Add Metrics
 
-Objective
+### Objective
 
 Measure platform health, latency, throughput and failures.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned metrics
+### Planned metrics
 
 * HTTP request count and latency;
 * queue depth and age;
@@ -10365,7 +10563,7 @@ Planned metrics
 * streaming completion and cancellation;
 * database and vector-store failures.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Metrics have stable names.
 * Labels avoid unbounded cardinality.
@@ -10374,28 +10572,28 @@ Acceptance criteria
 * Error counts can be separated by class.
 * Local metric inspection is possible.
 
-Commit boundary
+### Commit boundary
 
 git add apps infrastructure docs
 git commit -m "Add platform metrics"
 
-⸻
+---
 
-Stage 19.3 — Add Distributed Tracing
+## Stage 19.3 — Add Distributed Tracing
 
-Objective
+### Objective
 
 Trace requests across Next.js, Laravel, Python, queues and external providers.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned technology
+### Planned technology
 
 OpenTelemetry or another explicitly documented standard.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Trace context propagates over HTTP.
 * Trace context propagates through queue messages.
@@ -10404,24 +10602,24 @@ Acceptance criteria
 * Sampling strategy is configurable.
 * Local traces can be inspected.
 
-Commit boundary
+### Commit boundary
 
 git add apps infrastructure docs
 git commit -m "Add distributed tracing"
 
-⸻
+---
 
-Stage 19.4 — Define Operational Alerts
+## Stage 19.4 — Define Operational Alerts
 
-Objective
+### Objective
 
 Document actionable alert conditions and runbooks.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned alerts
+### Planned alerts
 
 * API error-rate increase;
 * queue backlog;
@@ -10433,7 +10631,7 @@ Planned alerts
 * latency threshold breach;
 * storage capacity concern.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Every alert has an owner or response expectation.
 * Alerts describe impact rather than only internal symptoms.
@@ -10442,32 +10640,32 @@ Acceptance criteria
 * Alerts avoid obvious noise.
 * Local or test alert verification is possible where practical.
 
-Commit boundary
+### Commit boundary
 
 git add docs infrastructure
 git commit -m "Document operational alerts and runbooks"
 
-⸻
+---
 
-Phase 20 — Testing and Quality Strategy
+# Phase 20 — Testing and Quality Strategy
 
-Phase objective
+## Phase objective
 
 Create a layered test strategy that catches regressions without requiring every check to be an expensive end-to-end test.
 
-⸻
+---
 
-Stage 20.1 — Establish Test Taxonomy
+## Stage 20.1 — Establish Test Taxonomy
 
-Objective
+### Objective
 
 Document which behaviours belong in unit, integration, contract, feature and end-to-end tests.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned categories
+### Planned categories
 
 * frontend component tests;
 * frontend integration tests;
@@ -10482,7 +10680,7 @@ Planned categories
 * retrieval evaluation;
 * generation evaluation.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Test categories have clear purposes.
 * External providers can be faked.
@@ -10491,24 +10689,24 @@ Acceptance criteria
 * Test data strategy is documented.
 * CI stages can map to the taxonomy.
 
-Commit boundary
+### Commit boundary
 
 git add docs
 git commit -m "Document platform testing strategy"
 
-⸻
+---
 
-Stage 20.2 — Add Contract Tests
+## Stage 20.2 — Add Contract Tests
 
-Objective
+### Objective
 
 Verify that Laravel and Python agree on shared HTTP and event contracts.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Contracts are versioned.
 * Producers validate emitted payloads.
@@ -10518,28 +10716,28 @@ Acceptance criteria
 * Unsupported versions are tested.
 * Contract generation or duplication is controlled.
 
-Commit boundary
+### Commit boundary
 
 git add contracts apps/api apps/ai tests
 git commit -m "Add shared contract tests"
 
-⸻
+---
 
-Stage 20.3 — Add End-to-End Ingestion Tests
+## Stage 20.3 — Add End-to-End Ingestion Tests
 
-Objective
+### Objective
 
 Test the complete document path from upload to searchable vectors.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned location
+### Planned location
 
 tests/end-to-end/
 
-Acceptance criteria
+### Acceptance criteria
 
 * A test document can be uploaded.
 * An ingestion event is published.
@@ -10550,24 +10748,24 @@ Acceptance criteria
 * Test runs isolate or clean their data.
 * Cross-tenant search is rejected.
 
-Commit boundary
+### Commit boundary
 
 git add tests/end-to-end
 git commit -m "Add end-to-end ingestion tests"
 
-⸻
+---
 
-Stage 20.4 — Add End-to-End Chat Tests
+## Stage 20.4 — Add End-to-End Chat Tests
 
-Objective
+### Objective
 
 Test authenticated, tenant-safe retrieval and grounded answer generation.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * A user can authenticate.
 * A tenant document can be indexed.
@@ -10578,24 +10776,24 @@ Acceptance criteria
 * Provider calls can use deterministic test doubles.
 * Streaming completion can be tested.
 
-Commit boundary
+### Commit boundary
 
 git add tests/end-to-end
 git commit -m "Add end-to-end RAG chat tests"
 
-⸻
+---
 
-Stage 20.5 — Add Security-Focused Tests
+## Stage 20.5 — Add Security-Focused Tests
 
-Objective
+### Objective
 
 Automate checks for the platform’s most important security boundaries.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned coverage
+### Planned coverage
 
 * cross-tenant access;
 * insecure direct object references;
@@ -10609,7 +10807,7 @@ Planned coverage
 * rate limiting;
 * authentication and authorisation failures.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Cross-tenant tests exist for every tenant-owned resource.
 * Upload abuse cases are tested.
@@ -10618,32 +10816,32 @@ Acceptance criteria
 * Sensitive errors do not leak internals.
 * Security regressions fail CI.
 
-Commit boundary
+### Commit boundary
 
 git add tests apps
 git commit -m "Add security regression tests"
 
-⸻
+---
 
-Phase 21 — CI/CD and Production Readiness
+# Phase 21 — CI/CD and Production Readiness
 
-Phase objective
+## Phase objective
 
 Make the platform reproducibly testable, buildable, deployable and operable outside a developer laptop.
 
-⸻
+---
 
-Stage 21.1 — Add Continuous Integration
+## Stage 21.1 — Add Continuous Integration
 
-Objective
+### Objective
 
 Run quality and test checks automatically for every relevant change.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned CI stages
+### Planned CI stages
 
 * repository validation;
 * Next.js lint and build;
@@ -10656,7 +10854,7 @@ Planned CI stages
 * selected integration tests;
 * dependency and security scanning.
 
-Acceptance criteria
+### Acceptance criteria
 
 * CI runs from a clean checkout.
 * Lockfiles are enforced.
@@ -10666,24 +10864,24 @@ Acceptance criteria
 * Cache use does not hide missing dependencies.
 * CI commands match documented local commands.
 
-Commit boundary
+### Commit boundary
 
 git add .github Makefile
 git commit -m "Add continuous integration pipeline"
 
-⸻
+---
 
-Stage 21.2 — Create Production Container Builds
+## Stage 21.2 — Create Production Container Builds
 
-Objective
+### Objective
 
 Create minimal, immutable runtime images distinct from development behaviour.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned principles
+### Planned principles
 
 * multi-stage builds;
 * production-only dependencies;
@@ -10696,7 +10894,7 @@ Planned principles
 * image metadata;
 * reproducible tags and digests.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Production images build independently.
 * Development dependencies are excluded where appropriate.
@@ -10707,24 +10905,24 @@ Acceptance criteria
 * Graceful termination is verified.
 * Image sizes and contents are reviewed.
 
-Commit boundary
+### Commit boundary
 
 git add apps infrastructure
 git commit -m "Add production container builds"
 
-⸻
+---
 
-Stage 21.3 — Add Infrastructure as Code
+## Stage 21.3 — Add Infrastructure as Code
 
-Objective
+### Objective
 
 Define production infrastructure under infrastructure/terraform.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned infrastructure
+### Planned infrastructure
 
 Exact provider and deployment platform must be confirmed before implementation.
 
@@ -10742,11 +10940,11 @@ Potential resources include:
 * IAM roles and policies;
 * container registry.
 
-Required ADR
+### Required ADR
 
 docs/adr/ADR-XXX-production-deployment-platform.md
 
-Acceptance criteria
+### Acceptance criteria
 
 * Deployment platform is documented.
 * Infrastructure is reproducible.
@@ -10757,24 +10955,24 @@ Acceptance criteria
 * Destructive changes are reviewable.
 * Cost implications are documented.
 
-Commit boundary
+### Commit boundary
 
 git add infrastructure/terraform docs/adr
 git commit -m "Define production infrastructure"
 
-⸻
+---
 
-Stage 21.4 — Configure Secrets and Environment Management
+## Stage 21.4 — Configure Secrets and Environment Management
 
-Objective
+### Objective
 
 Create a secure configuration contract across local, CI, staging and production environments.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned principles
+### Planned principles
 
 * no secrets committed;
 * .env.example documents required variables;
@@ -10784,7 +10982,7 @@ Planned principles
 * startup fails clearly when required configuration is missing;
 * sensitive values are never logged.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Every required variable is documented.
 * Development defaults are clearly non-production.
@@ -10794,24 +10992,24 @@ Acceptance criteria
 * Configuration validation occurs at startup.
 * No secret appears in repository history or image layers.
 
-Commit boundary
+### Commit boundary
 
 git add .env.example apps docs infrastructure
 git commit -m "Harden environment and secret management"
 
-⸻
+---
 
-Stage 21.5 — Add Database Backup and Recovery
+## Stage 21.5 — Add Database Backup and Recovery
 
-Objective
+### Objective
 
 Define and test relational database backup and restoration.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Backup frequency is defined.
 * Retention is defined.
@@ -10821,24 +11019,24 @@ Acceptance criteria
 * Backup failure is observable.
 * Tenant deletion and retention requirements are considered.
 
-Commit boundary
+### Commit boundary
 
 git add docs infrastructure
 git commit -m "Add database backup and recovery plan"
 
-⸻
+---
 
-Stage 21.6 — Define Vector Index Recovery
+## Stage 21.6 — Define Vector Index Recovery
 
-Objective
+### Objective
 
 Define whether vector data is backed up, recreated or both.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned considerations
+### Planned considerations
 
 * source documents as system of record;
 * extracted content persistence;
@@ -10849,7 +11047,7 @@ Planned considerations
 * disaster recovery;
 * zero-downtime re-indexing.
 
-Acceptance criteria
+### Acceptance criteria
 
 * The vector system of record is explicit.
 * Re-indexing is reproducible.
@@ -10858,24 +11056,24 @@ Acceptance criteria
 * Snapshot or rebuild procedures are tested.
 * Active retrieval is protected during re-indexing.
 
-Commit boundary
+### Commit boundary
 
 git add docs infrastructure apps/ai
 git commit -m "Define vector index recovery"
 
-⸻
+---
 
-Stage 21.7 — Perform Security Hardening
+## Stage 21.7 — Perform Security Hardening
 
-Objective
+### Objective
 
 Review and harden the complete platform before public deployment.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned review areas
+### Planned review areas
 
 * authentication;
 * authorisation;
@@ -10896,7 +11094,7 @@ Planned review areas
 * data deletion;
 * backup access.
 
-Acceptance criteria
+### Acceptance criteria
 
 * A threat model exists.
 * High-risk boundaries are tested.
@@ -10908,24 +11106,24 @@ Acceptance criteria
 * Prompt-injection controls are documented and tested.
 * Security findings have owners and resolution states.
 
-Commit boundary
+### Commit boundary
 
 git add docs apps infrastructure tests
 git commit -m "Harden platform security"
 
-⸻
+---
 
-Stage 21.8 — Create Staging Deployment
+## Stage 21.8 — Create Staging Deployment
 
-Objective
+### Objective
 
 Deploy the complete platform to a production-like staging environment.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Staging is provisioned from infrastructure code.
 * Production container images are used.
@@ -10937,23 +11135,23 @@ Acceptance criteria
 * Failure and rollback procedures are exercised.
 * End-to-end tests run against staging.
 
-Commit boundary
+### Commit boundary
 
 To be defined based on the deployment platform.
 
-⸻
+---
 
-Stage 21.9 — Production Readiness Review
+## Stage 21.9 — Production Readiness Review
 
-Objective
+### Objective
 
 Perform a formal go-live review against technical and operational criteria.
 
-Status
+### Status
 
 Not yet executed.
 
-Required review areas
+### Required review areas
 
 * functionality;
 * security;
@@ -10971,7 +11169,7 @@ Required review areas
 * rollback;
 * legal and privacy obligations.
 
-Acceptance criteria
+### Acceptance criteria
 
 * All critical user journeys pass.
 * No unresolved critical security finding remains.
@@ -10984,32 +11182,32 @@ Acceptance criteria
 * Known limitations are visible.
 * A go/no-go decision is recorded.
 
-Commit boundary
+### Commit boundary
 
 git add docs
 git commit -m "Complete production readiness review"
 
-⸻
+---
 
-Phase 22 — Documentation and Demonstration Readiness
+# Phase 22 — Documentation and Demonstration Readiness
 
-Phase objective
+## Phase objective
 
 Document the platform clearly and provide a reproducible way to demonstrate its capabilities, without letting presentation work substitute for engineering substance.
 
-⸻
+---
 
-Stage 22.1 — Write Architecture Documentation
+## Stage 22.1 — Write Architecture Documentation
 
-Objective
+### Objective
 
 Explain the system clearly to reviewers, collaborators, clients and future contributors.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned documentation
+### Planned documentation
 
 * system context diagram;
 * container/service diagram;
@@ -11021,7 +11219,7 @@ Planned documentation
 * key ADR index;
 * technology choices and trade-offs.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Diagrams match the implemented system.
 * Service responsibilities are clear.
@@ -11030,24 +11228,24 @@ Acceptance criteria
 * Trade-offs are discussed honestly.
 * Documentation avoids pretending unfinished capabilities exist.
 
-Commit boundary
+### Commit boundary
 
 git add docs README.md
 git commit -m "Document platform architecture"
 
-⸻
+---
 
-Stage 22.2 — Create Demonstration Dataset and Scenario
+## Stage 22.2 — Create Demonstration Dataset and Scenario
 
-Objective
+### Objective
 
 Provide a safe, repeatable demonstration of ingestion, retrieval, citations and tenant isolation.
 
-Status
+### Status
 
 Not yet executed.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Demonstration documents are legally reusable.
 * The scenario includes multiple document formats.
@@ -11057,24 +11255,24 @@ Acceptance criteria
 * Failure handling can be demonstrated.
 * Setup is reproducible.
 
-Commit boundary
+### Commit boundary
 
 git add docs scripts tests
 git commit -m "Add repeatable platform demonstration"
 
-⸻
+---
 
-Stage 22.3 — Finalise Repository README
+## Stage 22.3 — Finalise Repository README
 
-Objective
+### Objective
 
 Make the root README an accurate entry point for technical reviewers.
 
-Status
+### Status
 
 Not yet executed.
 
-Planned sections
+### Planned sections
 
 * project purpose;
 * capabilities;
@@ -11090,7 +11288,7 @@ Planned sections
 * screenshots or demonstration;
 * licence.
 
-Acceptance criteria
+### Acceptance criteria
 
 * Setup works from a clean clone.
 * Commands match the Makefile.
@@ -11100,14 +11298,14 @@ Acceptance criteria
 * Screenshots contain no sensitive data.
 * The README links to deeper documentation rather than duplicating everything.
 
-Commit boundary
+### Commit boundary
 
 git add README.md docs
 git commit -m "Finalise project documentation"
 
-⸻
+---
 
-Future Enhancement Backlog
+# Future Enhancement Backlog
 
 These are deliberately outside the initial production milestone. They must not distract from completing and proving the baseline platform.
 
@@ -11140,9 +11338,9 @@ Potential future work:
 
 Each enhancement must receive its own objective, rationale, tests, acceptance criteria and commit boundary before implementation.
 
-⸻
+---
 
-Project Definition of Done
+# Project Definition of Done
 
 The baseline RAG Platform is complete when:
 
@@ -11174,9 +11372,9 @@ The baseline RAG Platform is complete when:
 * Architecture and operational documentation are complete.
 * The root README accurately represents the implemented platform.
 
-⸻
+---
 
-Change Discipline
+# Change Discipline
 
 When a command fails:
 

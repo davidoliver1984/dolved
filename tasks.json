@@ -50,14 +50,14 @@
       "id": "R00",
       "guide_phase": "Phase 0 \u2014 Repository Foundation",
       "title": "Repository Foundation",
-      "guide_start_line": 43,
+      "guide_start_line": 55,
       "sessions": [
         {
           "id": "R00-S01",
           "guide_stage": "Phase 0 repository work",
           "title": "Establish Repository Foundation",
-          "guide_start_line": 43,
-          "guide_end_line": 90,
+          "guide_start_line": 55,
+          "guide_end_line": 102,
           "status": "completed",
           "objective": "Create the monorepo contract before generating applications.",
           "session_mode": "implementation",
@@ -66,8 +66,8 @@
             "phase": "Phase 0 \u2014 Repository Foundation",
             "stage": "Phase 0 repository work",
             "source_lines": {
-              "start": 43,
-              "end": 90
+              "start": 55,
+              "end": 102
             }
           },
           "workflow": [
@@ -81,6 +81,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -94,7 +95,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 42,
+      "guide_end_line": 102,
       "status": "completed",
       "objective": null,
       "gate": {
@@ -115,14 +116,14 @@
       "id": "R01",
       "guide_phase": "Phase 1 \u2014 Application Scaffolding",
       "title": "Application Scaffolding",
-      "guide_start_line": 91,
+      "guide_start_line": 103,
       "sessions": [
         {
           "id": "R01-S01",
           "guide_stage": "Stage 1.1 \u2014 Scaffold Next.js",
           "title": "Scaffold Next.js",
-          "guide_start_line": 106,
-          "guide_end_line": 257,
+          "guide_start_line": 118,
+          "guide_end_line": 269,
           "status": "completed",
           "objective": "Generate the TypeScript frontend at `apps/web`.",
           "session_mode": "implementation",
@@ -131,8 +132,8 @@
             "phase": "Phase 1 \u2014 Application Scaffolding",
             "stage": "Stage 1.1 \u2014 Scaffold Next.js",
             "source_lines": {
-              "start": 106,
-              "end": 257
+              "start": 118,
+              "end": 269
             }
           },
           "workflow": [
@@ -146,6 +147,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -162,8 +164,8 @@
           "id": "R01-S02",
           "guide_stage": "Stage 1.2 \u2014 Scaffold Laravel API",
           "title": "Scaffold Laravel API",
-          "guide_start_line": 258,
-          "guide_end_line": 259,
+          "guide_start_line": 270,
+          "guide_end_line": 495,
           "status": "completed",
           "objective": null,
           "session_mode": "implementation",
@@ -172,8 +174,8 @@
             "phase": "Phase 1 \u2014 Application Scaffolding",
             "stage": "Stage 1.2 \u2014 Scaffold Laravel API",
             "source_lines": {
-              "start": 258,
-              "end": 259
+              "start": 270,
+              "end": 495
             }
           },
           "workflow": [
@@ -187,6 +189,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -203,8 +206,8 @@
           "id": "R01-S02",
           "guide_stage": "Stage 1.2 \u2014 Scaffold Laravel API",
           "title": "Scaffold Laravel API",
-          "guide_start_line": 260,
-          "guide_end_line": 483,
+          "guide_start_line": 270,
+          "guide_end_line": 495,
           "status": "completed",
           "objective": "Generate a Laravel 13 application at apps/api using a disposable Composer/PHP container.",
           "session_mode": "implementation",
@@ -213,8 +216,8 @@
             "phase": "Phase 1 \u2014 Application Scaffolding",
             "stage": "Stage 1.2 \u2014 Scaffold Laravel API",
             "source_lines": {
-              "start": 260,
-              "end": 483
+              "start": 270,
+              "end": 495
             }
           },
           "workflow": [
@@ -228,6 +231,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -244,8 +248,8 @@
           "id": "R01-S03",
           "guide_stage": "Stage 1.3 \u2014 Scaffold Python AI Service",
           "title": "Scaffold Python AI Service",
-          "guide_start_line": 484,
-          "guide_end_line": 485,
+          "guide_start_line": 496,
+          "guide_end_line": 871,
           "status": "completed",
           "objective": null,
           "session_mode": "implementation",
@@ -254,8 +258,8 @@
             "phase": "Phase 1 \u2014 Application Scaffolding",
             "stage": "Stage 1.3 \u2014 Scaffold Python AI Service",
             "source_lines": {
-              "start": 484,
-              "end": 485
+              "start": 496,
+              "end": 871
             }
           },
           "workflow": [
@@ -269,6 +273,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -285,8 +290,8 @@
           "id": "R01-S03",
           "guide_stage": "Stage 1.3 \u2014 Scaffold Python AI Service",
           "title": "Scaffold Python AI Service",
-          "guide_start_line": 486,
-          "guide_end_line": 859,
+          "guide_start_line": 496,
+          "guide_end_line": 871,
           "status": "completed",
           "objective": "Create the Python AI service at apps/ai using Python 3.14, FastAPI and uv.",
           "session_mode": "implementation",
@@ -295,8 +300,8 @@
             "phase": "Phase 1 \u2014 Application Scaffolding",
             "stage": "Stage 1.3 \u2014 Scaffold Python AI Service",
             "source_lines": {
-              "start": 486,
-              "end": 859
+              "start": 496,
+              "end": 871
             }
           },
           "workflow": [
@@ -310,6 +315,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -323,7 +329,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 105,
+      "guide_end_line": 871,
       "status": "completed",
       "objective": null,
       "gate": {
@@ -344,14 +350,14 @@
       "id": "R02",
       "guide_phase": "Phase 2 \u2014 Independent Containerisation",
       "title": "Independent Containerisation",
-      "guide_start_line": 860,
+      "guide_start_line": 872,
       "sessions": [
         {
           "id": "R02-S01",
           "guide_stage": "Stage 2.1 \u2014 Containerise Next.js Web Application",
           "title": "Containerise Next.js Web Application",
-          "guide_start_line": 878,
-          "guide_end_line": 1236,
+          "guide_start_line": 890,
+          "guide_end_line": 1248,
           "status": "completed",
           "objective": "Create independently buildable development and production images for the Next.js application at `apps/web`.",
           "session_mode": "implementation",
@@ -360,8 +366,8 @@
             "phase": "Phase 2 \u2014 Independent Containerisation",
             "stage": "Stage 2.1 \u2014 Containerise Next.js Web Application",
             "source_lines": {
-              "start": 878,
-              "end": 1236
+              "start": 890,
+              "end": 1248
             }
           },
           "workflow": [
@@ -375,6 +381,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -391,8 +398,8 @@
           "id": "R02-S02",
           "guide_stage": "Stage 2.2 \u2014 Containerise Laravel API Application",
           "title": "Containerise Laravel API Application",
-          "guide_start_line": 1237,
-          "guide_end_line": 1624,
+          "guide_start_line": 1249,
+          "guide_end_line": 1636,
           "status": "completed",
           "objective": "Create an independently buildable Laravel 13 development image at `apps/api`.",
           "session_mode": "implementation",
@@ -401,8 +408,8 @@
             "phase": "Phase 2 \u2014 Independent Containerisation",
             "stage": "Stage 2.2 \u2014 Containerise Laravel API Application",
             "source_lines": {
-              "start": 1237,
-              "end": 1624
+              "start": 1249,
+              "end": 1636
             }
           },
           "workflow": [
@@ -416,6 +423,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -432,8 +440,8 @@
           "id": "R02-S03",
           "guide_stage": "Stage 2.3 \u2014 Containerise Python AI Service",
           "title": "Containerise Python AI Service",
-          "guide_start_line": 1625,
-          "guide_end_line": 1946,
+          "guide_start_line": 1637,
+          "guide_end_line": 1958,
           "status": "completed",
           "objective": "Create an independently buildable development image for the FastAPI service at `apps/ai`.",
           "session_mode": "implementation",
@@ -442,8 +450,8 @@
             "phase": "Phase 2 \u2014 Independent Containerisation",
             "stage": "Stage 2.3 \u2014 Containerise Python AI Service",
             "source_lines": {
-              "start": 1625,
-              "end": 1946
+              "start": 1637,
+              "end": 1958
             }
           },
           "workflow": [
@@ -457,6 +465,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -470,7 +479,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 877,
+      "guide_end_line": 1958,
       "status": "completed",
       "objective": "Create an independently buildable development image for each application before connecting them through Docker Compose.",
       "gate": {
@@ -491,14 +500,14 @@
       "id": "R03",
       "guide_phase": "Phase 3 \u2014 Docker Compose Platform",
       "title": "Docker Compose Platform",
-      "guide_start_line": 1947,
+      "guide_start_line": 1959,
       "sessions": [
         {
           "id": "R03-S01",
           "guide_stage": "Stage 3.1 \u2014 Compose Application Services",
           "title": "Compose Application Services",
-          "guide_start_line": 1955,
-          "guide_end_line": 2284,
+          "guide_start_line": 1967,
+          "guide_end_line": 2296,
           "status": "completed",
           "objective": "Create the initial root `compose.yaml` and run the independently verified web, API and AI development images as one platform.",
           "session_mode": "implementation",
@@ -507,8 +516,8 @@
             "phase": "Phase 3 \u2014 Docker Compose Platform",
             "stage": "Stage 3.1 \u2014 Compose Application Services",
             "source_lines": {
-              "start": 1955,
-              "end": 2284
+              "start": 1967,
+              "end": 2296
             }
           },
           "workflow": [
@@ -522,6 +531,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -538,8 +548,8 @@
           "id": "R03-S02",
           "guide_stage": "Stage 3.2 \u2014 Add PostgreSQL",
           "title": "Add PostgreSQL",
-          "guide_start_line": 2285,
-          "guide_end_line": 2471,
+          "guide_start_line": 2297,
+          "guide_end_line": 2483,
           "status": "completed",
           "objective": "Add a persistent PostgreSQL development service before connecting Laravel.",
           "session_mode": "implementation",
@@ -548,8 +558,8 @@
             "phase": "Phase 3 \u2014 Docker Compose Platform",
             "stage": "Stage 3.2 \u2014 Add PostgreSQL",
             "source_lines": {
-              "start": 2285,
-              "end": 2471
+              "start": 2297,
+              "end": 2483
             }
           },
           "workflow": [
@@ -563,6 +573,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -579,8 +590,8 @@
           "id": "R03-S03",
           "guide_stage": "Stage 3.3 \u2014 Integrate Laravel with PostgreSQL",
           "title": "Integrate Laravel with PostgreSQL",
-          "guide_start_line": 2472,
-          "guide_end_line": 2673,
+          "guide_start_line": 2484,
+          "guide_end_line": 2685,
           "status": "completed",
           "objective": "Configure the Laravel development service to use PostgreSQL through Compose while keeping automated tests isolated on in-memory SQLite.",
           "session_mode": "implementation",
@@ -589,8 +600,8 @@
             "phase": "Phase 3 \u2014 Docker Compose Platform",
             "stage": "Stage 3.3 \u2014 Integrate Laravel with PostgreSQL",
             "source_lines": {
-              "start": 2472,
-              "end": 2673
+              "start": 2484,
+              "end": 2685
             }
           },
           "workflow": [
@@ -604,6 +615,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -620,8 +632,8 @@
           "id": "R03-S04",
           "guide_stage": "Stage 3.4 \u2014 Platform Health Verification",
           "title": "Platform Health Verification",
-          "guide_start_line": 2674,
-          "guide_end_line": 2836,
+          "guide_start_line": 2686,
+          "guide_end_line": 2848,
           "status": "completed",
           "objective": "Prove that web, API, AI and PostgreSQL build, start, communicate, stop and recover as one development platform.",
           "session_mode": "implementation",
@@ -630,8 +642,8 @@
             "phase": "Phase 3 \u2014 Docker Compose Platform",
             "stage": "Stage 3.4 \u2014 Platform Health Verification",
             "source_lines": {
-              "start": 2674,
-              "end": 2836
+              "start": 2686,
+              "end": 2848
             }
           },
           "workflow": [
@@ -645,6 +657,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -658,7 +671,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 1954,
+      "guide_end_line": 2848,
       "status": "completed",
       "objective": "Connect the independently working application containers through the root compose.yaml.",
       "gate": {
@@ -679,14 +692,14 @@
       "id": "R04",
       "guide_phase": "Phase 4 \u2014 Developer Interface",
       "title": "Developer Interface",
-      "guide_start_line": 2837,
+      "guide_start_line": 2849,
       "sessions": [
         {
           "id": "R04-S01",
           "guide_stage": "Stage 4.1 \u2014 Add Core Make Targets",
           "title": "Add Core Make Targets",
-          "guide_start_line": 2868,
-          "guide_end_line": 3042,
+          "guide_start_line": 2880,
+          "guide_end_line": 3054,
           "status": "completed",
           "objective": "Add root commands for common build and runtime operations.",
           "session_mode": "implementation",
@@ -695,8 +708,8 @@
             "phase": "Phase 4 \u2014 Developer Interface",
             "stage": "Stage 4.1 \u2014 Add Core Make Targets",
             "source_lines": {
-              "start": 2868,
-              "end": 3042
+              "start": 2880,
+              "end": 3054
             }
           },
           "workflow": [
@@ -710,6 +723,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -726,8 +740,8 @@
           "id": "R04-S02",
           "guide_stage": "Stage 4.2 \u2014 Add Quality and Test Targets",
           "title": "Add Quality and Test Targets",
-          "guide_start_line": 3043,
-          "guide_end_line": 3196,
+          "guide_start_line": 3055,
+          "guide_end_line": 3208,
           "status": "completed",
           "objective": "Provide repository-level commands for linting, formatting, type checking and tests.",
           "session_mode": "implementation",
@@ -736,8 +750,8 @@
             "phase": "Phase 4 \u2014 Developer Interface",
             "stage": "Stage 4.2 \u2014 Add Quality and Test Targets",
             "source_lines": {
-              "start": 3043,
-              "end": 3196
+              "start": 3055,
+              "end": 3208
             }
           },
           "workflow": [
@@ -751,6 +765,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -767,8 +782,8 @@
           "id": "R04-S03",
           "guide_stage": "Stage 4.3 \u2014 Add Bootstrap and Reset Targets",
           "title": "Add Bootstrap and Reset Targets",
-          "guide_start_line": 3197,
-          "guide_end_line": 3468,
+          "guide_start_line": 3209,
+          "guide_end_line": 3480,
           "status": "completed",
           "objective": "Make first-time setup and local-environment recovery predictable.",
           "session_mode": "implementation",
@@ -777,8 +792,8 @@
             "phase": "Phase 4 \u2014 Developer Interface",
             "stage": "Stage 4.3 \u2014 Add Bootstrap and Reset Targets",
             "source_lines": {
-              "start": 3197,
-              "end": 3468
+              "start": 3209,
+              "end": 3480
             }
           },
           "workflow": [
@@ -792,6 +807,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -805,7 +821,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 2867,
+      "guide_end_line": 3480,
       "status": "completed",
       "objective": "Expose a stable, memorable repository interface through the root Makefile.",
       "gate": {
@@ -826,14 +842,14 @@
       "id": "R05",
       "guide_phase": "Phase 5 \u2014 Local AWS Development",
       "title": "Local AWS Development",
-      "guide_start_line": 3469,
+      "guide_start_line": 3481,
       "sessions": [
         {
           "id": "R05-S01",
           "guide_stage": "Stage 5.1 \u2014 Add LocalStack",
           "title": "Add LocalStack",
-          "guide_start_line": 3477,
-          "guide_end_line": 3842,
+          "guide_start_line": 3489,
+          "guide_end_line": 3854,
           "status": "completed",
           "objective": "Add LocalStack to Docker Compose for locally emulated AWS services.",
           "session_mode": "implementation",
@@ -842,8 +858,8 @@
             "phase": "Phase 5 \u2014 Local AWS Development",
             "stage": "Stage 5.1 \u2014 Add LocalStack",
             "source_lines": {
-              "start": 3477,
-              "end": 3842
+              "start": 3489,
+              "end": 3854
             }
           },
           "workflow": [
@@ -857,6 +873,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -873,8 +890,8 @@
           "id": "R05-S02",
           "guide_stage": "Stage 5.2 \u2014 Provision Local AWS Resources",
           "title": "Provision Local AWS Resources",
-          "guide_start_line": 3843,
-          "guide_end_line": 4156,
+          "guide_start_line": 3855,
+          "guide_end_line": 4168,
           "status": "completed",
           "objective": "Create reproducible local S3 buckets and SQS queues.",
           "session_mode": "implementation",
@@ -883,8 +900,8 @@
             "phase": "Phase 5 \u2014 Local AWS Development",
             "stage": "Stage 5.2 \u2014 Provision Local AWS Resources",
             "source_lines": {
-              "start": 3843,
-              "end": 4156
+              "start": 3855,
+              "end": 4168
             }
           },
           "workflow": [
@@ -898,6 +915,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -911,7 +929,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 3476,
+      "guide_end_line": 4168,
       "status": "completed",
       "objective": "Introduce local AWS-compatible infrastructure without requiring real cloud resources during routine development.",
       "gate": {
@@ -932,14 +950,14 @@
       "id": "R06",
       "guide_phase": "Phase 6 \u2014 Authentication and Identity",
       "title": "Authentication and Identity",
-      "guide_start_line": 4157,
+      "guide_start_line": 4169,
       "sessions": [
         {
           "id": "R06-S01",
           "guide_stage": "Stage 6.1 \u2014 Define Authentication Architecture",
           "title": "Define Authentication Architecture",
-          "guide_start_line": 4165,
-          "guide_end_line": 4319,
+          "guide_start_line": 4177,
+          "guide_end_line": 4331,
           "status": "completed",
           "objective": "Choose and document the authentication boundary between Next.js and Laravel.",
           "session_mode": "architecture",
@@ -948,8 +966,8 @@
             "phase": "Phase 6 \u2014 Authentication and Identity",
             "stage": "Stage 6.1 \u2014 Define Authentication Architecture",
             "source_lines": {
-              "start": 4165,
-              "end": 4319
+              "start": 4177,
+              "end": 4331
             }
           },
           "workflow": [
@@ -963,6 +981,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -979,8 +998,8 @@
           "id": "R06-S02",
           "guide_stage": "Stage 6.2 \u2014 Implement Laravel Authentication",
           "title": "Implement Laravel Authentication",
-          "guide_start_line": 4320,
-          "guide_end_line": 4612,
+          "guide_start_line": 4332,
+          "guide_end_line": 4624,
           "status": "completed",
           "objective": "Implement the accepted authentication contract with Sanctum, Fortify, PostgreSQL sessions and local email capture.",
           "session_mode": "implementation",
@@ -989,8 +1008,8 @@
             "phase": "Phase 6 \u2014 Authentication and Identity",
             "stage": "Stage 6.2 \u2014 Implement Laravel Authentication",
             "source_lines": {
-              "start": 4320,
-              "end": 4612
+              "start": 4332,
+              "end": 4624
             }
           },
           "workflow": [
@@ -1004,6 +1023,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1020,8 +1040,8 @@
           "id": "R06-S03",
           "guide_stage": "Stage 6.3 \u2014 Implement Next.js Authentication UI",
           "title": "Implement Next.js Authentication UI",
-          "guide_start_line": 4613,
-          "guide_end_line": 4839,
+          "guide_start_line": 4625,
+          "guide_end_line": 4851,
           "status": "completed",
           "objective": "Provide frontend registration, login, logout and protected-route behaviour.",
           "session_mode": "implementation",
@@ -1030,8 +1050,8 @@
             "phase": "Phase 6 \u2014 Authentication and Identity",
             "stage": "Stage 6.3 \u2014 Implement Next.js Authentication UI",
             "source_lines": {
-              "start": 4613,
-              "end": 4839
+              "start": 4625,
+              "end": 4851
             }
           },
           "workflow": [
@@ -1045,6 +1065,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1058,7 +1079,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 4164,
+      "guide_end_line": 4851,
       "status": "completed",
       "objective": "Establish secure user identity before introducing tenant-owned documents and conversations.",
       "gate": {
@@ -1079,14 +1100,14 @@
       "id": "R07",
       "guide_phase": "Phase 7 \u2014 Multi-Tenancy",
       "title": "Multi-Tenancy",
-      "guide_start_line": 4840,
+      "guide_start_line": 4852,
       "sessions": [
         {
           "id": "R07-S01",
           "guide_stage": "Stage 7.1 \u2014 Define Tenant Model",
           "title": "Define Tenant Model",
-          "guide_start_line": 4848,
-          "guide_end_line": 4975,
+          "guide_start_line": 4860,
+          "guide_end_line": 4987,
           "status": "completed",
           "objective": "Choose the platform tenancy model and record its security invariants.",
           "session_mode": "architecture",
@@ -1095,8 +1116,8 @@
             "phase": "Phase 7 \u2014 Multi-Tenancy",
             "stage": "Stage 7.1 \u2014 Define Tenant Model",
             "source_lines": {
-              "start": 4848,
-              "end": 4975
+              "start": 4860,
+              "end": 4987
             }
           },
           "workflow": [
@@ -1110,6 +1131,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1131,8 +1153,8 @@
           "id": "R07-S02",
           "guide_stage": "Stage 7.2 \u2014 Implement Workspaces and Memberships",
           "title": "Implement Workspaces and Memberships",
-          "guide_start_line": 4976,
-          "guide_end_line": 5243,
+          "guide_start_line": 4988,
+          "guide_end_line": 5255,
           "status": "completed",
           "objective": "Create workspace, membership and role persistence in Laravel.",
           "session_mode": "implementation",
@@ -1141,8 +1163,8 @@
             "phase": "Phase 7 \u2014 Multi-Tenancy",
             "stage": "Stage 7.2 \u2014 Implement Workspaces and Memberships",
             "source_lines": {
-              "start": 4976,
-              "end": 5243
+              "start": 4988,
+              "end": 5255
             }
           },
           "workflow": [
@@ -1156,6 +1178,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1184,8 +1207,8 @@
           "id": "R07-S03",
           "guide_stage": "Stage 7.3 \u2014 Add Workspace-Aware Web Experience",
           "title": "Add Workspace-Aware Web Experience",
-          "guide_start_line": 5250,
-          "guide_end_line": 5458,
+          "guide_start_line": 5256,
+          "guide_end_line": 5464,
           "status": "completed",
           "objective": "Allow authenticated users to view and switch between workspaces to which they have already been assigned, with deterministic development seed data available for local verification.",
           "session_mode": "implementation",
@@ -1194,8 +1217,8 @@
             "phase": "Phase 7 \u2014 Multi-Tenancy",
             "stage": "Stage 7.3 \u2014 Add Workspace-Aware Web Experience",
             "source_lines": {
-              "start": 5250,
-              "end": 5458
+              "start": 5256,
+              "end": 5464
             }
           },
           "workflow": [
@@ -1209,6 +1232,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1231,7 +1255,7 @@
           ]
         }
       ],
-      "guide_end_line": 5458,
+      "guide_end_line": 5464,
       "status": "completed",
       "objective": "Ensure every tenant-owned resource is isolated by design rather than filtered as an afterthought.",
       "gate": {
@@ -1259,14 +1283,14 @@
       "id": "R08",
       "guide_phase": "Phase 8 \u2014 Document Domain and Storage",
       "title": "Document Domain and Storage",
-      "guide_start_line": 5459,
+      "guide_start_line": 5465,
       "sessions": [
         {
           "id": "R08-S01",
           "guide_stage": "Stage 8.1 \u2014 Define Document Lifecycle",
           "title": "Define Document Lifecycle",
-          "guide_start_line": 5467,
-          "guide_end_line": 5575,
+          "guide_start_line": 5473,
+          "guide_end_line": 5581,
           "status": "completed",
           "objective": "Define document states, ownership, metadata and failure behaviour.",
           "session_mode": "architecture",
@@ -1275,8 +1299,8 @@
             "phase": "Phase 8 \u2014 Document Domain and Storage",
             "stage": "Stage 8.1 \u2014 Define Document Lifecycle",
             "source_lines": {
-              "start": 5467,
-              "end": 5575
+              "start": 5473,
+              "end": 5581
             }
           },
           "workflow": [
@@ -1290,6 +1314,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1310,8 +1335,8 @@
           "id": "R08-S02",
           "guide_stage": "Stage 8.2 \u2014 Implement Document Persistence",
           "title": "Implement Document Persistence",
-          "guide_start_line": 5576,
-          "guide_end_line": 5702,
+          "guide_start_line": 5582,
+          "guide_end_line": 5707,
           "status": "completed",
           "objective": "Implement the authoritative relational Document persistence model defined by ADR-0007.",
           "session_mode": "implementation",
@@ -1320,8 +1345,8 @@
             "phase": "Phase 8 \u2014 Document Domain and Storage",
             "stage": "Stage 8.2 \u2014 Implement Document Persistence",
             "source_lines": {
-              "start": 5576,
-              "end": 5702
+              "start": 5582,
+              "end": 5707
             }
           },
           "workflow": [
@@ -1335,6 +1360,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1359,8 +1385,8 @@
           "id": "R08-S03",
           "guide_stage": "Stage 8.3 \u2014 Implement Direct Upload Flow",
           "title": "Implement Direct Upload Flow",
-          "guide_start_line": 5702,
-          "guide_end_line": 5950,
+          "guide_start_line": 5708,
+          "guide_end_line": 5956,
           "status": "completed",
           "objective": "Allow the browser to upload documents safely to S3-compatible storage.",
           "session_mode": "implementation",
@@ -1369,8 +1395,8 @@
             "phase": "Phase 8 \u2014 Document Domain and Storage",
             "stage": "Stage 8.3 \u2014 Implement Direct Upload Flow",
             "source_lines": {
-              "start": 5702,
-              "end": 5950
+              "start": 5708,
+              "end": 5956
             }
           },
           "workflow": [
@@ -1384,6 +1410,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1407,7 +1434,7 @@
           ]
         }
       ],
-      "guide_end_line": 5950,
+      "guide_end_line": 5956,
       "status": "completed",
       "objective": "Model tenant-owned documents and store source files safely before asynchronous ingestion begins.",
       "gate": {
@@ -1466,6 +1493,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1516,6 +1544,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1567,6 +1596,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1650,6 +1680,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1701,6 +1732,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1750,6 +1782,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1799,6 +1832,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1824,7 +1858,7 @@
           "guide_stage": "Stage 10.5 \u2014 Normalise Extracted Content",
           "title": "Normalise Extracted Content",
           "guide_start_line": 8043,
-          "guide_end_line": 8274,
+          "guide_end_line": 8273,
           "status": "completed",
           "objective": "Convert extractor-specific output into one deterministic normalised representation.",
           "session_mode": "implementation",
@@ -1834,7 +1868,7 @@
             "stage": "Stage 10.5 \u2014 Normalise Extracted Content",
             "source_lines": {
               "start": 8043,
-              "end": 8274
+              "end": 8273
             }
           },
           "workflow": [
@@ -1848,6 +1882,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1870,7 +1905,7 @@
           ]
         }
       ],
-      "guide_end_line": 8274,
+      "guide_end_line": 8273,
       "status": "completed",
       "objective": "Convert supported source documents into a consistent internal representation with traceable source metadata.",
       "gate": {
@@ -1897,14 +1932,14 @@
       "id": "R11",
       "guide_phase": "Phase 11 \u2014 Chunking",
       "title": "Chunking",
-      "guide_start_line": 8275,
+      "guide_start_line": 8274,
       "sessions": [
         {
           "id": "R11-S01",
           "guide_stage": "Stage 11.1 \u2014 Define Chunk Contract",
           "title": "Define Chunk Contract",
-          "guide_start_line": 8306,
-          "guide_end_line": 8417,
+          "guide_start_line": 8309,
+          "guide_end_line": 8420,
           "status": "completed",
           "objective": "Define the fields and invariants of a document chunk.",
           "session_mode": "architecture",
@@ -1913,8 +1948,8 @@
             "phase": "Phase 11 \u2014 Chunking",
             "stage": "Stage 11.1 \u2014 Define Chunk Contract",
             "source_lines": {
-              "start": 8306,
-              "end": 8417
+              "start": 8309,
+              "end": 8420
             }
           },
           "workflow": [
@@ -1928,6 +1963,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1948,8 +1984,8 @@
           "id": "R11-S02",
           "guide_stage": "Stage 11.2 \u2014 Implement Baseline Chunker",
           "title": "Implement Baseline Chunker",
-          "guide_start_line": 8418,
-          "guide_end_line": 8455,
+          "guide_start_line": 8421,
+          "guide_end_line": 8572,
           "status": "completed",
           "objective": "Create a deterministic baseline chunking strategy.",
           "session_mode": "implementation",
@@ -1958,8 +1994,8 @@
             "phase": "Phase 11 \u2014 Chunking",
             "stage": "Stage 11.2 \u2014 Implement Baseline Chunker",
             "source_lines": {
-              "start": 8418,
-              "end": 8455
+              "start": 8421,
+              "end": 8572
             }
           },
           "workflow": [
@@ -1973,6 +2009,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -1995,8 +2032,8 @@
           "id": "R11-S03",
           "guide_stage": "Stage 11.3 \u2014 Evaluate Chunking Quality",
           "title": "Evaluate Chunking Quality",
-          "guide_start_line": 8456,
-          "guide_end_line": 8492,
+          "guide_start_line": 8573,
+          "guide_end_line": 8693,
           "status": "completed",
           "objective": "Create an evaluation corpus and measure whether chunks preserve useful retrieval context.",
           "session_mode": "implementation",
@@ -2005,8 +2042,8 @@
             "phase": "Phase 11 \u2014 Chunking",
             "stage": "Stage 11.3 \u2014 Evaluate Chunking Quality",
             "source_lines": {
-              "start": 8456,
-              "end": 8492
+              "start": 8573,
+              "end": 8693
             }
           },
           "workflow": [
@@ -2020,6 +2057,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2040,7 +2078,7 @@
           ]
         }
       ],
-      "guide_end_line": 8492,
+      "guide_end_line": 8693,
       "status": "completed",
       "objective": "Split normalised documents into retrieval units while preserving enough context and source metadata for accurate answers and citations.",
       "gate": {
@@ -2098,6 +2136,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2144,6 +2183,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2168,7 +2208,7 @@
           "guide_stage": "Stage 12.3 \u2014 Instrument Laravel with OpenTelemetry",
           "title": "Instrument Laravel with OpenTelemetry",
           "guide_start_line": 9000,
-          "guide_end_line": 9033,
+          "guide_end_line": 9174,
           "status": "completed",
           "objective": "Emit traces and metrics from the Laravel API using the OpenTelemetry SDK.",
           "session_mode": "implementation",
@@ -2178,7 +2218,7 @@
             "stage": "Stage 12.3 \u2014 Instrument Laravel with OpenTelemetry",
             "source_lines": {
               "start": 9000,
-              "end": 9033
+              "end": 9174
             }
           },
           "workflow": [
@@ -2192,6 +2232,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2243,6 +2284,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2270,7 +2312,7 @@
           "guide_stage": "Stage 12.5 \u2014 Verify Cross-Service Trace Propagation and the Privacy Allowlist",
           "title": "Verify Cross-Service Trace Propagation and the Privacy Allowlist",
           "guide_start_line": 9350,
-          "guide_end_line": 9385,
+          "guide_end_line": 9500,
           "status": "completed",
           "objective": "Prove that one logical request remains correlated across Laravel, the queue and Python, and that sensitive content never appears in exported telemetry.",
           "session_mode": "implementation",
@@ -2280,7 +2322,7 @@
             "stage": "Stage 12.5 \u2014 Verify Cross-Service Trace Propagation and the Privacy Allowlist",
             "source_lines": {
               "start": 9350,
-              "end": 9385
+              "end": 9500
             }
           },
           "workflow": [
@@ -2294,6 +2336,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2316,7 +2359,7 @@
           ]
         }
       ],
-      "guide_end_line": 9103,
+      "guide_end_line": 9500,
       "status": "completed",
       "objective": "Make the platform observable by design, using OpenTelemetry as a vendor-neutral instrumentation and correlation foundation, before embeddings, retrieval and generation introduce the platform's first calls to external AI providers.",
       "gate": {
@@ -2342,14 +2385,14 @@
       "id": "R13",
       "guide_phase": "Phase 13 \u2014 Embeddings",
       "title": "Embeddings",
-      "guide_start_line": 8894,
+      "guide_start_line": 9501,
       "sessions": [
         {
           "id": "R13-S01",
           "guide_stage": "Stage 13.1 \u2014 Define Embedding Provider Boundary",
           "title": "Define Embedding Provider Boundary",
-          "guide_start_line": 8902,
-          "guide_end_line": 8943,
+          "guide_start_line": 9509,
+          "guide_end_line": 9550,
           "status": "not_started",
           "objective": "Introduce a provider-neutral interface for embedding text.",
           "session_mode": "architecture",
@@ -2358,8 +2401,8 @@
             "phase": "Phase 13 \u2014 Embeddings",
             "stage": "Stage 13.1 \u2014 Define Embedding Provider Boundary",
             "source_lines": {
-              "start": 8902,
-              "end": 8943
+              "start": 9509,
+              "end": 9550
             }
           },
           "workflow": [
@@ -2373,6 +2416,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2389,8 +2433,8 @@
           "id": "R13-S02",
           "guide_stage": "Stage 13.2 \u2014 Implement Embedding Generation",
           "title": "Implement Embedding Generation",
-          "guide_start_line": 8944,
-          "guide_end_line": 8971,
+          "guide_start_line": 9551,
+          "guide_end_line": 9578,
           "status": "not_started",
           "objective": "Generate embeddings for chunks in controlled batches.",
           "session_mode": "implementation",
@@ -2399,8 +2443,8 @@
             "phase": "Phase 13 \u2014 Embeddings",
             "stage": "Stage 13.2 \u2014 Implement Embedding Generation",
             "source_lines": {
-              "start": 8944,
-              "end": 8971
+              "start": 9551,
+              "end": 9578
             }
           },
           "workflow": [
@@ -2414,6 +2458,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2427,7 +2472,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 8971,
+      "guide_end_line": 9578,
       "status": "not_started",
       "objective": "Generate reproducible vector representations while keeping model providers replaceable.",
       "gate": {
@@ -2448,14 +2493,14 @@
       "id": "R14",
       "guide_phase": "Phase 14 \u2014 Vector Storage",
       "title": "Vector Storage",
-      "guide_start_line": 8972,
+      "guide_start_line": 9579,
       "sessions": [
         {
           "id": "R14-S01",
           "guide_stage": "Stage 14.1 \u2014 Define Vector Database Architecture",
           "title": "Define Vector Database Architecture",
-          "guide_start_line": 8980,
-          "guide_end_line": 9021,
+          "guide_start_line": 9587,
+          "guide_end_line": 9628,
           "status": "not_started",
           "objective": "Confirm Qdrant as the vector store and document collection, tenancy and filtering strategy.",
           "session_mode": "architecture",
@@ -2464,8 +2509,8 @@
             "phase": "Phase 14 \u2014 Vector Storage",
             "stage": "Stage 14.1 \u2014 Define Vector Database Architecture",
             "source_lines": {
-              "start": 8980,
-              "end": 9021
+              "start": 9587,
+              "end": 9628
             }
           },
           "workflow": [
@@ -2479,6 +2524,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2495,8 +2541,8 @@
           "id": "R14-S02",
           "guide_stage": "Stage 14.2 \u2014 Add Qdrant Development Service",
           "title": "Add Qdrant Development Service",
-          "guide_start_line": 9022,
-          "guide_end_line": 9052,
+          "guide_start_line": 9629,
+          "guide_end_line": 9659,
           "status": "not_started",
           "objective": "Add Qdrant to Docker Compose with persistent local storage and health checks.",
           "session_mode": "implementation",
@@ -2505,8 +2551,8 @@
             "phase": "Phase 14 \u2014 Vector Storage",
             "stage": "Stage 14.2 \u2014 Add Qdrant Development Service",
             "source_lines": {
-              "start": 9022,
-              "end": 9052
+              "start": 9629,
+              "end": 9659
             }
           },
           "workflow": [
@@ -2520,6 +2566,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2536,8 +2583,8 @@
           "id": "R14-S03",
           "guide_stage": "Stage 14.3 \u2014 Persist Chunk Vectors",
           "title": "Persist Chunk Vectors",
-          "guide_start_line": 9053,
-          "guide_end_line": 9080,
+          "guide_start_line": 9660,
+          "guide_end_line": 9687,
           "status": "not_started",
           "objective": "Store embedded chunks and retrieval metadata in Qdrant.",
           "session_mode": "implementation",
@@ -2546,8 +2593,8 @@
             "phase": "Phase 14 \u2014 Vector Storage",
             "stage": "Stage 14.3 \u2014 Persist Chunk Vectors",
             "source_lines": {
-              "start": 9053,
-              "end": 9080
+              "start": 9660,
+              "end": 9687
             }
           },
           "workflow": [
@@ -2561,6 +2608,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2577,8 +2625,8 @@
           "id": "R14-S04",
           "guide_stage": "Stage 14.4 \u2014 Complete Ingestion Pipeline",
           "title": "Complete Ingestion Pipeline",
-          "guide_start_line": 9081,
-          "guide_end_line": 9108,
+          "guide_start_line": 9688,
+          "guide_end_line": 9715,
           "status": "not_started",
           "objective": "Connect upload, queue consumption, extraction, normalisation, chunking, embedding and vector persistence.",
           "session_mode": "implementation",
@@ -2587,8 +2635,8 @@
             "phase": "Phase 14 \u2014 Vector Storage",
             "stage": "Stage 14.4 \u2014 Complete Ingestion Pipeline",
             "source_lines": {
-              "start": 9081,
-              "end": 9108
+              "start": 9688,
+              "end": 9715
             }
           },
           "workflow": [
@@ -2602,6 +2650,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2615,7 +2664,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 9108,
+      "guide_end_line": 9715,
       "status": "not_started",
       "objective": "Persist tenant-isolated chunk vectors and metadata in a dedicated vector database.",
       "gate": {
@@ -2636,24 +2685,24 @@
       "id": "R15",
       "guide_phase": "Phase 15 \u2014 Retrieval",
       "title": "Retrieval",
-      "guide_start_line": 9109,
+      "guide_start_line": 9716,
       "sessions": [
         {
           "id": "R15-S01",
-          "guide_stage": "Stage 15.1 \u2014 Define Retrieval Contract",
-          "title": "Define Retrieval Contract",
-          "guide_start_line": 9117,
-          "guide_end_line": 9160,
+          "guide_stage": "Stage 15.1 \u2014 Define Document Freshness and Archival Policy",
+          "title": "Define Document Freshness and Archival Policy",
+          "guide_start_line": 9735,
+          "guide_end_line": 9779,
           "status": "not_started",
-          "objective": "Define the input, output and diagnostics of the retrieval subsystem.",
+          "objective": "Decide what \"obsolete\" or \"archived\" means for a Document, extending ADR-0007's lifecycle rather than replacing it, so that retrieval and evaluation have a settled definition of \"active\" to filter against.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.1 \u2014 Define Retrieval Contract",
+            "stage": "Stage 15.1 \u2014 Define Document Freshness and Archival Policy",
             "source_lines": {
-              "start": 9117,
-              "end": 9160
+              "start": 9735,
+              "end": 9779
             }
           },
           "workflow": [
@@ -2667,6 +2716,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2674,27 +2724,27 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s01-define-retrieval-contract.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r15-s01-define-document-freshness-and-archival-policy.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R15-S02",
-          "guide_stage": "Stage 15.2 \u2014 Implement Semantic Retrieval",
-          "title": "Implement Semantic Retrieval",
-          "guide_start_line": 9161,
-          "guide_end_line": 9187,
+          "guide_stage": "Stage 15.2 \u2014 Define Retrieval Contract",
+          "title": "Define Retrieval Contract",
+          "guide_start_line": 9780,
+          "guide_end_line": 9840,
           "status": "not_started",
-          "objective": "Embed a user query and retrieve tenant-filtered chunks from Qdrant.",
-          "session_mode": "implementation",
+          "objective": "Define the input, output and diagnostics of the retrieval subsystem, including the query-planning boundary and freshness filtering Stage 15.1 requires.",
+          "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.2 \u2014 Implement Semantic Retrieval",
+            "stage": "Stage 15.2 \u2014 Define Retrieval Contract",
             "source_lines": {
-              "start": 9161,
-              "end": 9187
+              "start": 9780,
+              "end": 9840
             }
           },
           "workflow": [
@@ -2708,34 +2758,35 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
+          "requires_architecture_review": true,
+          "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s02-implement-semantic-retrieval.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r15-s02-define-retrieval-contract.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R15-S03",
-          "guide_stage": "Stage 15.3 \u2014 Add Retrieval Evaluation",
-          "title": "Add Retrieval Evaluation",
-          "guide_start_line": 9188,
-          "guide_end_line": 9221,
+          "guide_stage": "Stage 15.3 \u2014 Implement Semantic Retrieval",
+          "title": "Implement Semantic Retrieval",
+          "guide_start_line": 9841,
+          "guide_end_line": 9868,
           "status": "not_started",
-          "objective": "Measure retrieval quality against a curated question-and-source dataset.",
+          "objective": "Embed a user query and retrieve tenant-filtered chunks from Qdrant.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.3 \u2014 Add Retrieval Evaluation",
+            "stage": "Stage 15.3 \u2014 Implement Semantic Retrieval",
             "source_lines": {
-              "start": 9188,
-              "end": 9221
+              "start": 9841,
+              "end": 9868
             }
           },
           "workflow": [
@@ -2749,6 +2800,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2756,27 +2808,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s03-add-retrieval-evaluation.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r15-s03-implement-semantic-retrieval.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R15-S04",
-          "guide_stage": "Stage 15.4 \u2014 Introduce Retrieval Enhancements",
-          "title": "Introduce Retrieval Enhancements",
-          "guide_start_line": 9222,
-          "guide_end_line": 9257,
+          "guide_stage": "Stage 15.4 \u2014 Define Evaluation and Quality-Gate Architecture",
+          "title": "Define Evaluation and Quality-Gate Architecture",
+          "guide_start_line": 9869,
+          "guide_end_line": 9928,
           "status": "not_started",
-          "objective": "Evaluate enhancements only after the semantic baseline is measured.",
-          "session_mode": "implementation",
+          "objective": "Define a repository-owned evaluation harness and quality-gate policy that grows with the pipeline, starting with retrieval and extending to generation without redesign.",
+          "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.4 \u2014 Introduce Retrieval Enhancements",
+            "stage": "Stage 15.4 \u2014 Define Evaluation and Quality-Gate Architecture",
             "source_lines": {
-              "start": 9222,
-              "end": 9257
+              "start": 9869,
+              "end": 9928
             }
           },
           "workflow": [
@@ -2790,6 +2842,49 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": true,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r15-s04-define-evaluation-and-quality-gate-architecture.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R15-S05",
+          "guide_stage": "Stage 15.5 \u2014 Implement Retrieval Evaluation",
+          "title": "Implement Retrieval Evaluation",
+          "guide_start_line": 9929,
+          "guide_end_line": 9965,
+          "status": "not_started",
+          "objective": "Measure retrieval quality against the Stage 15.4 harness's curated question-and-source dataset.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 15 \u2014 Retrieval",
+            "stage": "Stage 15.5 \u2014 Implement Retrieval Evaluation",
+            "source_lines": {
+              "start": 9929,
+              "end": 9965
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2797,13 +2892,97 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s04-introduce-retrieval-enhancements.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r15-s05-implement-retrieval-evaluation.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R15-S06",
+          "guide_stage": "Stage 15.6 \u2014 Define Hybrid Retrieval and Reranking Architecture",
+          "title": "Define Hybrid Retrieval and Reranking Architecture",
+          "guide_start_line": 9966,
+          "guide_end_line": 10020,
+          "status": "not_started",
+          "objective": "Define one combined candidate-selection architecture \u2014 dense retrieval, sparse/keyword retrieval, fusion, reranking and evidence thresholds \u2014 as a single ADR, evaluated only after the semantic baseline is measured.",
+          "session_mode": "architecture",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 15 \u2014 Retrieval",
+            "stage": "Stage 15.6 \u2014 Define Hybrid Retrieval and Reranking Architecture",
+            "source_lines": {
+              "start": 9966,
+              "end": 10020
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": true,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r15-s06-define-hybrid-retrieval-and-reranking-architecture.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R15-S07",
+          "guide_stage": "Stage 15.7 \u2014 Implement Hybrid Retrieval and Reranking",
+          "title": "Implement Hybrid Retrieval and Reranking",
+          "guide_start_line": 10021,
+          "guide_end_line": 10054,
+          "status": "not_started",
+          "objective": "Implement the Stage 15.6 architecture: sparse retrieval, RRF fusion, the Reranker contract with Voyage as its V1 provider, calibrated thresholds and abstention.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 15 \u2014 Retrieval",
+            "stage": "Stage 15.7 \u2014 Implement Hybrid Retrieval and Reranking",
+            "source_lines": {
+              "start": 10021,
+              "end": 10054
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r15-s07-implement-hybrid-retrieval-and-reranking.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 9257,
+      "guide_end_line": 10054,
       "status": "not_started",
       "objective": "Retrieve relevant, tenant-safe source chunks for a user query.",
       "gate": {
@@ -2824,14 +3003,14 @@
       "id": "R16",
       "guide_phase": "Phase 16 \u2014 Grounded Generation",
       "title": "Grounded Generation",
-      "guide_start_line": 9258,
+      "guide_start_line": 10055,
       "sessions": [
         {
           "id": "R16-S01",
           "guide_stage": "Stage 16.1 \u2014 Define Generation Provider Boundary",
           "title": "Define Generation Provider Boundary",
-          "guide_start_line": 9266,
-          "guide_end_line": 9307,
+          "guide_start_line": 10063,
+          "guide_end_line": 10104,
           "status": "not_started",
           "objective": "Create a provider-neutral interface for chat or completion models.",
           "session_mode": "architecture",
@@ -2840,8 +3019,8 @@
             "phase": "Phase 16 \u2014 Grounded Generation",
             "stage": "Stage 16.1 \u2014 Define Generation Provider Boundary",
             "source_lines": {
-              "start": 9266,
-              "end": 9307
+              "start": 10063,
+              "end": 10104
             }
           },
           "workflow": [
@@ -2855,6 +3034,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2871,8 +3051,8 @@
           "id": "R16-S02",
           "guide_stage": "Stage 16.2 \u2014 Build Grounded Prompt Assembly",
           "title": "Build Grounded Prompt Assembly",
-          "guide_start_line": 9308,
-          "guide_end_line": 9343,
+          "guide_start_line": 10105,
+          "guide_end_line": 10140,
           "status": "not_started",
           "objective": "Construct prompts from the user query, tenant-safe retrieved chunks and explicit grounding instructions.",
           "session_mode": "implementation",
@@ -2881,8 +3061,8 @@
             "phase": "Phase 16 \u2014 Grounded Generation",
             "stage": "Stage 16.2 \u2014 Build Grounded Prompt Assembly",
             "source_lines": {
-              "start": 9308,
-              "end": 9343
+              "start": 10105,
+              "end": 10140
             }
           },
           "workflow": [
@@ -2896,6 +3076,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2912,8 +3093,8 @@
           "id": "R16-S03",
           "guide_stage": "Stage 16.3 \u2014 Generate Answers with Citations",
           "title": "Generate Answers with Citations",
-          "guide_start_line": 9344,
-          "guide_end_line": 9375,
+          "guide_start_line": 10141,
+          "guide_end_line": 10172,
           "status": "not_started",
           "objective": "Produce answers that cite retrieved source locations.",
           "session_mode": "implementation",
@@ -2922,8 +3103,8 @@
             "phase": "Phase 16 \u2014 Grounded Generation",
             "stage": "Stage 16.3 \u2014 Generate Answers with Citations",
             "source_lines": {
-              "start": 9344,
-              "end": 9375
+              "start": 10141,
+              "end": 10172
             }
           },
           "workflow": [
@@ -2937,6 +3118,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2953,8 +3135,8 @@
           "id": "R16-S04",
           "guide_stage": "Stage 16.4 \u2014 Add Answer Evaluation",
           "title": "Add Answer Evaluation",
-          "guide_start_line": 9376,
-          "guide_end_line": 9412,
+          "guide_start_line": 10173,
+          "guide_end_line": 10217,
           "status": "not_started",
           "objective": "Evaluate groundedness, citation correctness and answer usefulness.",
           "session_mode": "implementation",
@@ -2963,8 +3145,8 @@
             "phase": "Phase 16 \u2014 Grounded Generation",
             "stage": "Stage 16.4 \u2014 Add Answer Evaluation",
             "source_lines": {
-              "start": 9376,
-              "end": 9412
+              "start": 10173,
+              "end": 10217
             }
           },
           "workflow": [
@@ -2978,6 +3160,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -2991,7 +3174,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 9412,
+      "guide_end_line": 10217,
       "status": "not_started",
       "objective": "Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.",
       "gate": {
@@ -3012,14 +3195,14 @@
       "id": "R17",
       "guide_phase": "Phase 17 \u2014 Conversation and Streaming",
       "title": "Conversation and Streaming",
-      "guide_start_line": 9413,
+      "guide_start_line": 10218,
       "sessions": [
         {
           "id": "R17-S01",
           "guide_stage": "Stage 17.1 \u2014 Define Conversation Domain",
           "title": "Define Conversation Domain",
-          "guide_start_line": 9421,
-          "guide_end_line": 9456,
+          "guide_start_line": 10226,
+          "guide_end_line": 10261,
           "status": "not_started",
           "objective": "Model conversations, messages, citations and generation metadata.",
           "session_mode": "architecture",
@@ -3028,8 +3211,8 @@
             "phase": "Phase 17 \u2014 Conversation and Streaming",
             "stage": "Stage 17.1 \u2014 Define Conversation Domain",
             "source_lines": {
-              "start": 9421,
-              "end": 9456
+              "start": 10226,
+              "end": 10261
             }
           },
           "workflow": [
@@ -3043,6 +3226,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3059,8 +3243,8 @@
           "id": "R17-S02",
           "guide_stage": "Stage 17.2 \u2014 Implement Chat Orchestration API",
           "title": "Implement Chat Orchestration API",
-          "guide_start_line": 9457,
-          "guide_end_line": 9493,
+          "guide_start_line": 10262,
+          "guide_end_line": 10298,
           "status": "not_started",
           "objective": "Coordinate retrieval and generation through a stable Laravel-facing API.",
           "session_mode": "implementation",
@@ -3069,8 +3253,8 @@
             "phase": "Phase 17 \u2014 Conversation and Streaming",
             "stage": "Stage 17.2 \u2014 Implement Chat Orchestration API",
             "source_lines": {
-              "start": 9457,
-              "end": 9493
+              "start": 10262,
+              "end": 10298
             }
           },
           "workflow": [
@@ -3084,6 +3268,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3100,8 +3285,8 @@
           "id": "R17-S03",
           "guide_stage": "Stage 17.3 \u2014 Implement Streaming Responses",
           "title": "Implement Streaming Responses",
-          "guide_start_line": 9494,
-          "guide_end_line": 9531,
+          "guide_start_line": 10299,
+          "guide_end_line": 10336,
           "status": "not_started",
           "objective": "Stream generated answer tokens or events to the browser.",
           "session_mode": "implementation",
@@ -3110,8 +3295,8 @@
             "phase": "Phase 17 \u2014 Conversation and Streaming",
             "stage": "Stage 17.3 \u2014 Implement Streaming Responses",
             "source_lines": {
-              "start": 9494,
-              "end": 9531
+              "start": 10299,
+              "end": 10336
             }
           },
           "workflow": [
@@ -3125,6 +3310,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3141,8 +3327,8 @@
           "id": "R17-S04",
           "guide_stage": "Stage 17.4 \u2014 Build Chat Interface",
           "title": "Build Chat Interface",
-          "guide_start_line": 9532,
-          "guide_end_line": 9571,
+          "guide_start_line": 10337,
+          "guide_end_line": 10376,
           "status": "not_started",
           "objective": "Create the tenant-aware conversational UI.",
           "session_mode": "implementation",
@@ -3151,8 +3337,8 @@
             "phase": "Phase 17 \u2014 Conversation and Streaming",
             "stage": "Stage 17.4 \u2014 Build Chat Interface",
             "source_lines": {
-              "start": 9532,
-              "end": 9571
+              "start": 10337,
+              "end": 10376
             }
           },
           "workflow": [
@@ -3166,6 +3352,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3179,7 +3366,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 9571,
+      "guide_end_line": 10376,
       "status": "not_started",
       "objective": "Expose the RAG workflow as a persistent, streaming conversational experience.",
       "gate": {
@@ -3200,14 +3387,14 @@
       "id": "R18",
       "guide_phase": "Phase 18 \u2014 Administration",
       "title": "Administration",
-      "guide_start_line": 9572,
+      "guide_start_line": 10377,
       "sessions": [
         {
           "id": "R18-S01",
           "guide_stage": "Stage 18.1 \u2014 Build Document Administration",
           "title": "Build Document Administration",
-          "guide_start_line": 9580,
-          "guide_end_line": 9616,
+          "guide_start_line": 10385,
+          "guide_end_line": 10421,
           "status": "not_started",
           "objective": "Allow authorised users to inspect, retry and delete documents.",
           "session_mode": "implementation",
@@ -3216,8 +3403,8 @@
             "phase": "Phase 18 \u2014 Administration",
             "stage": "Stage 18.1 \u2014 Build Document Administration",
             "source_lines": {
-              "start": 9580,
-              "end": 9616
+              "start": 10385,
+              "end": 10421
             }
           },
           "workflow": [
@@ -3231,6 +3418,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3247,8 +3435,8 @@
           "id": "R18-S02",
           "guide_stage": "Stage 18.2 \u2014 Build Tenant and Membership Administration",
           "title": "Build Tenant and Membership Administration",
-          "guide_start_line": 9617,
-          "guide_end_line": 9642,
+          "guide_start_line": 10422,
+          "guide_end_line": 10447,
           "status": "not_started",
           "objective": "Allow authorised tenant administrators to manage members and roles.",
           "session_mode": "implementation",
@@ -3257,8 +3445,8 @@
             "phase": "Phase 18 \u2014 Administration",
             "stage": "Stage 18.2 \u2014 Build Tenant and Membership Administration",
             "source_lines": {
-              "start": 9617,
-              "end": 9642
+              "start": 10422,
+              "end": 10447
             }
           },
           "workflow": [
@@ -3272,6 +3460,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3288,8 +3477,8 @@
           "id": "R18-S03",
           "guide_stage": "Stage 18.3 \u2014 Add Usage Visibility",
           "title": "Add Usage Visibility",
-          "guide_start_line": 9643,
-          "guide_end_line": 9679,
+          "guide_start_line": 10448,
+          "guide_end_line": 10484,
           "status": "not_started",
           "objective": "Expose document, storage, ingestion and model-usage information.",
           "session_mode": "implementation",
@@ -3298,8 +3487,8 @@
             "phase": "Phase 18 \u2014 Administration",
             "stage": "Stage 18.3 \u2014 Add Usage Visibility",
             "source_lines": {
-              "start": 9643,
-              "end": 9679
+              "start": 10448,
+              "end": 10484
             }
           },
           "workflow": [
@@ -3313,6 +3502,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3326,7 +3516,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 9679,
+      "guide_end_line": 10484,
       "status": "not_started",
       "objective": "Provide operational visibility and safe tenant-level controls.",
       "gate": {
@@ -3347,14 +3537,14 @@
       "id": "R19",
       "guide_phase": "Phase 19 \u2014 Observability and Operations",
       "title": "Observability and Operations",
-      "guide_start_line": 9680,
+      "guide_start_line": 10485,
       "sessions": [
         {
           "id": "R19-S01",
           "guide_stage": "Stage 19.1 \u2014 Standardise Structured Logging",
           "title": "Standardise Structured Logging",
-          "guide_start_line": 9688,
-          "guide_end_line": 9728,
+          "guide_start_line": 10501,
+          "guide_end_line": 10541,
           "status": "not_started",
           "objective": "Emit machine-readable, correlated logs from every service.",
           "session_mode": "implementation",
@@ -3363,8 +3553,8 @@
             "phase": "Phase 19 \u2014 Observability and Operations",
             "stage": "Stage 19.1 \u2014 Standardise Structured Logging",
             "source_lines": {
-              "start": 9688,
-              "end": 9728
+              "start": 10501,
+              "end": 10541
             }
           },
           "workflow": [
@@ -3378,6 +3568,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3394,8 +3585,8 @@
           "id": "R19-S02",
           "guide_stage": "Stage 19.2 \u2014 Add Metrics",
           "title": "Add Metrics",
-          "guide_start_line": 9729,
-          "guide_end_line": 9768,
+          "guide_start_line": 10542,
+          "guide_end_line": 10581,
           "status": "not_started",
           "objective": "Measure platform health, latency, throughput and failures.",
           "session_mode": "implementation",
@@ -3404,8 +3595,8 @@
             "phase": "Phase 19 \u2014 Observability and Operations",
             "stage": "Stage 19.2 \u2014 Add Metrics",
             "source_lines": {
-              "start": 9729,
-              "end": 9768
+              "start": 10542,
+              "end": 10581
             }
           },
           "workflow": [
@@ -3419,6 +3610,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3435,8 +3627,8 @@
           "id": "R19-S03",
           "guide_stage": "Stage 19.3 \u2014 Add Distributed Tracing",
           "title": "Add Distributed Tracing",
-          "guide_start_line": 9769,
-          "guide_end_line": 9798,
+          "guide_start_line": 10582,
+          "guide_end_line": 10611,
           "status": "not_started",
           "objective": "Trace requests across Next.js, Laravel, Python, queues and external providers.",
           "session_mode": "implementation",
@@ -3445,8 +3637,8 @@
             "phase": "Phase 19 \u2014 Observability and Operations",
             "stage": "Stage 19.3 \u2014 Add Distributed Tracing",
             "source_lines": {
-              "start": 9769,
-              "end": 9798
+              "start": 10582,
+              "end": 10611
             }
           },
           "workflow": [
@@ -3460,6 +3652,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3476,8 +3669,8 @@
           "id": "R19-S04",
           "guide_stage": "Stage 19.4 \u2014 Define Operational Alerts",
           "title": "Define Operational Alerts",
-          "guide_start_line": 9799,
-          "guide_end_line": 9836,
+          "guide_start_line": 10612,
+          "guide_end_line": 10649,
           "status": "not_started",
           "objective": "Document actionable alert conditions and runbooks.",
           "session_mode": "architecture",
@@ -3486,8 +3679,8 @@
             "phase": "Phase 19 \u2014 Observability and Operations",
             "stage": "Stage 19.4 \u2014 Define Operational Alerts",
             "source_lines": {
-              "start": 9799,
-              "end": 9836
+              "start": 10612,
+              "end": 10649
             }
           },
           "workflow": [
@@ -3501,6 +3694,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3514,7 +3708,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 9836,
+      "guide_end_line": 10649,
       "status": "not_started",
       "objective": "Make failures, latency and cross-service behaviour diagnosable.",
       "gate": {
@@ -3535,14 +3729,14 @@
       "id": "R20",
       "guide_phase": "Phase 20 \u2014 Testing and Quality Strategy",
       "title": "Testing and Quality Strategy",
-      "guide_start_line": 9837,
+      "guide_start_line": 10650,
       "sessions": [
         {
           "id": "R20-S01",
           "guide_stage": "Stage 20.1 \u2014 Establish Test Taxonomy",
           "title": "Establish Test Taxonomy",
-          "guide_start_line": 9845,
-          "guide_end_line": 9885,
+          "guide_start_line": 10658,
+          "guide_end_line": 10698,
           "status": "not_started",
           "objective": "Document which behaviours belong in unit, integration, contract, feature and end-to-end tests.",
           "session_mode": "implementation",
@@ -3551,8 +3745,8 @@
             "phase": "Phase 20 \u2014 Testing and Quality Strategy",
             "stage": "Stage 20.1 \u2014 Establish Test Taxonomy",
             "source_lines": {
-              "start": 9845,
-              "end": 9885
+              "start": 10658,
+              "end": 10698
             }
           },
           "workflow": [
@@ -3566,6 +3760,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3582,8 +3777,8 @@
           "id": "R20-S02",
           "guide_stage": "Stage 20.2 \u2014 Add Contract Tests",
           "title": "Add Contract Tests",
-          "guide_start_line": 9886,
-          "guide_end_line": 9912,
+          "guide_start_line": 10699,
+          "guide_end_line": 10725,
           "status": "not_started",
           "objective": "Verify that Laravel and Python agree on shared HTTP and event contracts.",
           "session_mode": "architecture",
@@ -3592,8 +3787,8 @@
             "phase": "Phase 20 \u2014 Testing and Quality Strategy",
             "stage": "Stage 20.2 \u2014 Add Contract Tests",
             "source_lines": {
-              "start": 9886,
-              "end": 9912
+              "start": 10699,
+              "end": 10725
             }
           },
           "workflow": [
@@ -3607,6 +3802,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3623,8 +3819,8 @@
           "id": "R20-S03",
           "guide_stage": "Stage 20.3 \u2014 Add End-to-End Ingestion Tests",
           "title": "Add End-to-End Ingestion Tests",
-          "guide_start_line": 9913,
-          "guide_end_line": 9944,
+          "guide_start_line": 10726,
+          "guide_end_line": 10757,
           "status": "not_started",
           "objective": "Test the complete document path from upload to searchable vectors.",
           "session_mode": "implementation",
@@ -3633,8 +3829,8 @@
             "phase": "Phase 20 \u2014 Testing and Quality Strategy",
             "stage": "Stage 20.3 \u2014 Add End-to-End Ingestion Tests",
             "source_lines": {
-              "start": 9913,
-              "end": 9944
+              "start": 10726,
+              "end": 10757
             }
           },
           "workflow": [
@@ -3648,6 +3844,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3664,8 +3861,8 @@
           "id": "R20-S04",
           "guide_stage": "Stage 20.4 \u2014 Add End-to-End Chat Tests",
           "title": "Add End-to-End Chat Tests",
-          "guide_start_line": 9945,
-          "guide_end_line": 9972,
+          "guide_start_line": 10758,
+          "guide_end_line": 10785,
           "status": "not_started",
           "objective": "Test authenticated, tenant-safe retrieval and grounded answer generation.",
           "session_mode": "implementation",
@@ -3674,8 +3871,8 @@
             "phase": "Phase 20 \u2014 Testing and Quality Strategy",
             "stage": "Stage 20.4 \u2014 Add End-to-End Chat Tests",
             "source_lines": {
-              "start": 9945,
-              "end": 9972
+              "start": 10758,
+              "end": 10785
             }
           },
           "workflow": [
@@ -3689,6 +3886,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3705,8 +3903,8 @@
           "id": "R20-S05",
           "guide_stage": "Stage 20.5 \u2014 Add Security-Focused Tests",
           "title": "Add Security-Focused Tests",
-          "guide_start_line": 9973,
-          "guide_end_line": 10012,
+          "guide_start_line": 10786,
+          "guide_end_line": 10825,
           "status": "not_started",
           "objective": "Automate checks for the platform\u2019s most important security boundaries.",
           "session_mode": "implementation",
@@ -3715,8 +3913,8 @@
             "phase": "Phase 20 \u2014 Testing and Quality Strategy",
             "stage": "Stage 20.5 \u2014 Add Security-Focused Tests",
             "source_lines": {
-              "start": 9973,
-              "end": 10012
+              "start": 10786,
+              "end": 10825
             }
           },
           "workflow": [
@@ -3730,6 +3928,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3743,7 +3942,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 10012,
+      "guide_end_line": 10825,
       "status": "not_started",
       "objective": "Create a layered test strategy that catches regressions without requiring every check to be an expensive end-to-end test.",
       "gate": {
@@ -3764,14 +3963,14 @@
       "id": "R21",
       "guide_phase": "Phase 21 \u2014 CI/CD and Production Readiness",
       "title": "CI/CD and Production Readiness",
-      "guide_start_line": 10013,
+      "guide_start_line": 10826,
       "sessions": [
         {
           "id": "R21-S01",
           "guide_stage": "Stage 21.1 \u2014 Add Continuous Integration",
           "title": "Add Continuous Integration",
-          "guide_start_line": 10021,
-          "guide_end_line": 10060,
+          "guide_start_line": 10834,
+          "guide_end_line": 10873,
           "status": "not_started",
           "objective": "Run quality and test checks automatically for every relevant change.",
           "session_mode": "implementation",
@@ -3780,8 +3979,8 @@
             "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 21.1 \u2014 Add Continuous Integration",
             "source_lines": {
-              "start": 10021,
-              "end": 10060
+              "start": 10834,
+              "end": 10873
             }
           },
           "workflow": [
@@ -3795,6 +3994,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3811,8 +4011,8 @@
           "id": "R21-S02",
           "guide_stage": "Stage 21.2 \u2014 Create Production Container Builds",
           "title": "Create Production Container Builds",
-          "guide_start_line": 10061,
-          "guide_end_line": 10101,
+          "guide_start_line": 10874,
+          "guide_end_line": 10914,
           "status": "not_started",
           "objective": "Create minimal, immutable runtime images distinct from development behaviour.",
           "session_mode": "implementation",
@@ -3821,8 +4021,8 @@
             "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 21.2 \u2014 Create Production Container Builds",
             "source_lines": {
-              "start": 10061,
-              "end": 10101
+              "start": 10874,
+              "end": 10914
             }
           },
           "workflow": [
@@ -3836,6 +4036,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3852,8 +4053,8 @@
           "id": "R21-S03",
           "guide_stage": "Stage 21.3 \u2014 Add Infrastructure as Code",
           "title": "Add Infrastructure as Code",
-          "guide_start_line": 10102,
-          "guide_end_line": 10151,
+          "guide_start_line": 10915,
+          "guide_end_line": 10964,
           "status": "not_started",
           "objective": "Define production infrastructure under infrastructure/terraform.",
           "session_mode": "implementation",
@@ -3862,8 +4063,8 @@
             "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 21.3 \u2014 Add Infrastructure as Code",
             "source_lines": {
-              "start": 10102,
-              "end": 10151
+              "start": 10915,
+              "end": 10964
             }
           },
           "workflow": [
@@ -3877,6 +4078,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3893,8 +4095,8 @@
           "id": "R21-S04",
           "guide_stage": "Stage 21.4 \u2014 Configure Secrets and Environment Management",
           "title": "Configure Secrets and Environment Management",
-          "guide_start_line": 10152,
-          "guide_end_line": 10188,
+          "guide_start_line": 10965,
+          "guide_end_line": 11001,
           "status": "not_started",
           "objective": "Create a secure configuration contract across local, CI, staging and production environments.",
           "session_mode": "implementation",
@@ -3903,8 +4105,8 @@
             "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 21.4 \u2014 Configure Secrets and Environment Management",
             "source_lines": {
-              "start": 10152,
-              "end": 10188
+              "start": 10965,
+              "end": 11001
             }
           },
           "workflow": [
@@ -3918,6 +4120,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3934,8 +4137,8 @@
           "id": "R21-S05",
           "guide_stage": "Stage 21.5 \u2014 Add Database Backup and Recovery",
           "title": "Add Database Backup and Recovery",
-          "guide_start_line": 10189,
-          "guide_end_line": 10215,
+          "guide_start_line": 11002,
+          "guide_end_line": 11028,
           "status": "not_started",
           "objective": "Define and test relational database backup and restoration.",
           "session_mode": "implementation",
@@ -3944,8 +4147,8 @@
             "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 21.5 \u2014 Add Database Backup and Recovery",
             "source_lines": {
-              "start": 10189,
-              "end": 10215
+              "start": 11002,
+              "end": 11028
             }
           },
           "workflow": [
@@ -3959,6 +4162,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -3975,8 +4179,8 @@
           "id": "R21-S06",
           "guide_stage": "Stage 21.6 \u2014 Define Vector Index Recovery",
           "title": "Define Vector Index Recovery",
-          "guide_start_line": 10216,
-          "guide_end_line": 10252,
+          "guide_start_line": 11029,
+          "guide_end_line": 11065,
           "status": "not_started",
           "objective": "Define whether vector data is backed up, recreated or both.",
           "session_mode": "architecture",
@@ -3985,8 +4189,8 @@
             "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 21.6 \u2014 Define Vector Index Recovery",
             "source_lines": {
-              "start": 10216,
-              "end": 10252
+              "start": 11029,
+              "end": 11065
             }
           },
           "workflow": [
@@ -4000,6 +4204,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -4016,8 +4221,8 @@
           "id": "R21-S07",
           "guide_stage": "Stage 21.7 \u2014 Perform Security Hardening",
           "title": "Perform Security Hardening",
-          "guide_start_line": 10253,
-          "guide_end_line": 10302,
+          "guide_start_line": 11066,
+          "guide_end_line": 11115,
           "status": "not_started",
           "objective": "Review and harden the complete platform before public deployment.",
           "session_mode": "implementation",
@@ -4026,8 +4231,8 @@
             "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 21.7 \u2014 Perform Security Hardening",
             "source_lines": {
-              "start": 10253,
-              "end": 10302
+              "start": 11066,
+              "end": 11115
             }
           },
           "workflow": [
@@ -4041,6 +4246,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -4057,8 +4263,8 @@
           "id": "R21-S08",
           "guide_stage": "Stage 21.8 \u2014 Create Staging Deployment",
           "title": "Create Staging Deployment",
-          "guide_start_line": 10303,
-          "guide_end_line": 10330,
+          "guide_start_line": 11116,
+          "guide_end_line": 11143,
           "status": "not_started",
           "objective": "Deploy the complete platform to a production-like staging environment.",
           "session_mode": "implementation",
@@ -4067,8 +4273,8 @@
             "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 21.8 \u2014 Create Staging Deployment",
             "source_lines": {
-              "start": 10303,
-              "end": 10330
+              "start": 11116,
+              "end": 11143
             }
           },
           "workflow": [
@@ -4082,6 +4288,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -4098,8 +4305,8 @@
           "id": "R21-S09",
           "guide_stage": "Stage 21.9 \u2014 Production Readiness Review",
           "title": "Production Readiness Review",
-          "guide_start_line": 10331,
-          "guide_end_line": 10378,
+          "guide_start_line": 11144,
+          "guide_end_line": 11191,
           "status": "not_started",
           "objective": "Perform a formal go-live review against technical and operational criteria.",
           "session_mode": "architecture",
@@ -4108,8 +4315,8 @@
             "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
             "stage": "Stage 21.9 \u2014 Production Readiness Review",
             "source_lines": {
-              "start": 10331,
-              "end": 10378
+              "start": 11144,
+              "end": 11191
             }
           },
           "workflow": [
@@ -4123,6 +4330,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -4136,7 +4344,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 10378,
+      "guide_end_line": 11191,
       "status": "not_started",
       "objective": "Make the platform reproducibly testable, buildable, deployable and operable outside a developer laptop.",
       "gate": {
@@ -4157,14 +4365,14 @@
       "id": "R22",
       "guide_phase": "Phase 22 \u2014 Documentation and Demonstration Readiness",
       "title": "Documentation and Demonstration Readiness",
-      "guide_start_line": 10379,
+      "guide_start_line": 11192,
       "sessions": [
         {
           "id": "R22-S01",
           "guide_stage": "Stage 22.1 \u2014 Write Architecture Documentation",
           "title": "Write Architecture Documentation",
-          "guide_start_line": 10387,
-          "guide_end_line": 10424,
+          "guide_start_line": 11200,
+          "guide_end_line": 11237,
           "status": "not_started",
           "objective": "Explain the system clearly to reviewers, collaborators, clients and future contributors.",
           "session_mode": "architecture",
@@ -4173,8 +4381,8 @@
             "phase": "Phase 22 \u2014 Documentation and Demonstration Readiness",
             "stage": "Stage 22.1 \u2014 Write Architecture Documentation",
             "source_lines": {
-              "start": 10387,
-              "end": 10424
+              "start": 11200,
+              "end": 11237
             }
           },
           "workflow": [
@@ -4188,6 +4396,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -4204,8 +4413,8 @@
           "id": "R22-S02",
           "guide_stage": "Stage 22.2 \u2014 Create Demonstration Dataset and Scenario",
           "title": "Create Demonstration Dataset and Scenario",
-          "guide_start_line": 10425,
-          "guide_end_line": 10451,
+          "guide_start_line": 11238,
+          "guide_end_line": 11264,
           "status": "not_started",
           "objective": "Provide a safe, repeatable demonstration of ingestion, retrieval, citations and tenant isolation.",
           "session_mode": "implementation",
@@ -4214,8 +4423,8 @@
             "phase": "Phase 22 \u2014 Documentation and Demonstration Readiness",
             "stage": "Stage 22.2 \u2014 Create Demonstration Dataset and Scenario",
             "source_lines": {
-              "start": 10425,
-              "end": 10451
+              "start": 11238,
+              "end": 11264
             }
           },
           "workflow": [
@@ -4229,6 +4438,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -4245,8 +4455,8 @@
           "id": "R22-S03",
           "guide_stage": "Stage 22.3 \u2014 Finalise Repository README",
           "title": "Finalise Repository README",
-          "guide_start_line": 10452,
-          "guide_end_line": 10583,
+          "guide_start_line": 11265,
+          "guide_end_line": 11396,
           "status": "not_started",
           "objective": "Make the root README an accurate entry point for technical reviewers.",
           "session_mode": "implementation",
@@ -4255,8 +4465,8 @@
             "phase": "Phase 22 \u2014 Documentation and Demonstration Readiness",
             "stage": "Stage 22.3 \u2014 Finalise Repository README",
             "source_lines": {
-              "start": 10452,
-              "end": 10583
+              "start": 11265,
+              "end": 11396
             }
           },
           "workflow": [
@@ -4270,6 +4480,7 @@
             "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
             "Create or update an ADR only when the session makes a durable architecture decision.",
             "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
@@ -4283,7 +4494,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 10583,
+      "guide_end_line": 11396,
       "status": "not_started",
       "objective": "Document the platform clearly and provide a reproducible way to demonstrate its capabilities, without letting presentation work substitute for engineering substance.",
       "gate": {

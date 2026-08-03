@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 12 of 23 (Observability Foundation) |
+| Project status | In Progress — Phase 13 of 23 (Embeddings) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -434,14 +434,51 @@ Retrieve relevant, tenant-safe source chunks for a user query.
 
 ### Tasks
 
+- Define Document Freshness and Archival Policy
 - Define Retrieval Contract
 - Implement Semantic Retrieval
-- Add Retrieval Evaluation
-- Introduce Retrieval Enhancements
+- Define Evaluation and Quality-Gate Architecture
+- Implement Retrieval Evaluation
+- Define Hybrid Retrieval and Reranking Architecture
+- Implement Hybrid Retrieval and Reranking
 
 ### Deliverable
 
-Accurate retrieval pipeline.
+Accurate retrieval pipeline, with a repository-owned evaluation harness and
+quality gate established before hybrid retrieval and reranking are built on
+top of it.
+
+---
+
+### Design constraint — Query decomposition and the retrieval pipeline shape
+
+Recorded 2026-08-03, arising from Phase 13 (ADR-0013)'s embedding/retrieval
+boundary discussion, to be formalised in Phase 15's Retrieval Contract ADR
+(Stage 15.2).
+
+The retrieval architecture must be shaped so query decomposition can be
+enabled later without rewriting the retrieval pipeline:
+
+```text
+User query
+    -> query-planning boundary
+    -> one or more bounded retrieval queries
+    -> retrieve each query
+    -> merge and deduplicate evidence
+    -> rerank against the original user question
+    -> generate one grounded answer
+```
+
+For V1, the query-planning boundary exists in the contract but is not
+exercised: an identity/no-op planner returns only the original query, and
+model-assisted decomposition remains disabled by default. Enabling it later
+is an additive change to the planner, not a retrieval-pipeline rewrite — but
+it must not be turned on until the repository-owned evaluation harness
+(Stage 15.4) demonstrates that the quality gain justifies the added latency,
+cost and complexity of a second model call per query.
+
+This is intentionally deferred rather than actioned now — no Phase 15
+implementation exists yet for this constraint to apply to.
 
 ---
 
@@ -486,6 +523,35 @@ citation and re-extraction design must explicitly decide:
 This is intentionally deferred until retrieval and answer generation provide
 enough context to define the actual citation requirements. No Phase 10
 implementation change is required.
+
+---
+
+### Design constraint — Quality lineage across the pipeline
+
+Recorded 2026-08-03, arising from Phase 13 (ADR-0013)'s embedding-profile
+lineage requirement.
+
+Every answer or evaluation result should eventually be attributable to the
+quality-affecting configuration that produced it, including — where each
+becomes relevant — extraction/parser identity, normaliser version, chunking
+strategy/profile, embedding profile, vector generation, retrieval
+configuration, sparse retrieval configuration, fusion method/configuration,
+reranker provider/model/profile, query-planner identity/configuration where
+used, prompt-template version, and generation provider/model/configuration.
+
+No single ADR owns this whole chain. ADR-0013 owns the embedding-profile
+link; the Phase 14 vector-storage ADR owns the vector-generation link; the
+Phase 15 retrieval and hybrid-retrieval/reranking ADRs own the retrieval,
+fusion and reranker links; the Phase 16 generation ADR owns the
+prompt-template and generation-configuration links. Each future ADR is
+expected to record its own piece of this chain explicitly, consistent with
+how it stores and exposes that configuration, rather than this constraint
+prescribing a single cross-cutting lineage schema in advance of any of them
+existing.
+
+This is intentionally deferred rather than actioned now — no Phase 13
+implementation change is required, and each named ADR records its own
+lineage fields when it is actually written.
 
 ---
 
@@ -691,8 +757,8 @@ A phase is complete only when:
 | Event-Driven Ingestion | ✅ Complete |
 | Text Extraction and Normalisation | ✅ Complete |
 | Chunking | ✅ Complete |
-| Observability Foundation | ⏳ In Progress |
-| Embeddings | ⬜ Not Started |
+| Observability Foundation | ✅ Complete |
+| Embeddings | ⏳ In Progress |
 | Vector Storage | ⬜ Not Started |
 | Retrieval | ⬜ Not Started |
 | Grounded Generation | ⬜ Not Started |

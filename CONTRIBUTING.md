@@ -16,6 +16,7 @@ The documentation authorities are:
 | `docs/ENGINEERING_METHODOLOGY.md` | The engineering process, roles and lifecycle followed across all projects |
 | `tasks.json` | Which planned engineering session is current |
 | `docs/adr/` | Why durable architecture decisions were made |
+| `docs/standards/` | Implementation-level engineering standards (e.g. Next.js conventions) within the architecture the accepted ADRs establish |
 | `docs/journal/` | What happened during individual engineering sessions |
 | `PROJECT_JOURNEY.md` | What is being built and why, in plain language, for non-technical stakeholders |
 | `README.md` | Repository introduction and normal operating instructions |
@@ -23,6 +24,34 @@ The documentation authorities are:
 Do not reproduce those documents here. If an authority is missing, exists at a
 different path, or contradicts another authority, stop and reconcile the conflict
 with the human developer before treating either version as canonical.
+
+## Standards and architecture precedence
+
+This repository distinguishes **why** an architectural decision was made
+from **how** to build within it:
+
+- `docs/adr/` records **why** — the accepted, durable architectural
+  decisions (service boundaries, tenancy, authentication, storage) that
+  everything else in the repository must respect.
+- `docs/standards/` records **how** — implementation-level engineering
+  standards that apply within whatever architecture the accepted ADRs
+  establish. A standard does not redecide product or business architecture;
+  it says how to build inside the architecture the ADRs have already
+  chosen.
+- `IMPLEMENTATION_GUIDE.md` and `PROJECT_ROADMAP.md` describe what has
+  actually been built and in what order, applying both the ADRs and the
+  standards to real stages of work.
+
+Accepted ADRs are the authoritative architectural source. If a standard
+appears to conflict with an accepted ADR, the ADR takes precedence until the
+standard is explicitly updated to document the exception — never silently
+worked around in code, and never silently overridden project-wide in the
+standard. Record the conflict as an explicit, ADR-referenced exception in
+the standards document itself (see
+`docs/standards/NEXTJS_ENGINEERING_STANDARDS.md`'s Sanctum SPA authentication
+exception for a worked example), so a standard evolves through documented
+review rather than drifting silently out of sync with what the accepted
+architecture actually requires.
 
 ## Engineering methodology
 
