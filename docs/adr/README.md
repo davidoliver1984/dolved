@@ -56,3 +56,4 @@ that supersedes the previous record rather than rewriting its historical context
 | [0010](0010-define-the-canonical-extracted-document-contract.md) | Accepted | Define the immutable ExtractedDocument and NormalisedDocument processing boundaries |
 | [0011](0011-define-the-chunking-architecture-and-contract.md) | Accepted | Define the deterministic, immutable ChunkingStrategy/ChunkingResult contract |
 | [0012](0012-establish-the-observability-and-telemetry-foundation.md) | Accepted | Establish OpenTelemetry as the platform's vendor-neutral observability foundation |
+| [0013](0013-define-the-provider-neutral-embedding-architecture-and-contract.md) | Accepted | Define the provider-neutral Embedder boundary, Voyage as the initial V1 provider, and the embedding profile/lineage contract |
