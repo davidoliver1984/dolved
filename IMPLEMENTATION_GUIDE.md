@@ -9688,7 +9688,141 @@ Generate embeddings for chunks in controlled batches.
 
 ### Status
 
-Not yet executed.
+Complete. The Python service now exposes the immutable provider-neutral
+embedding contracts defined by ADR-0013, a deterministic fake, and an
+isolated Voyage adapter for the explicit V1 profile.
+
+### Implementation
+
+* Added immutable `EmbeddingProfile`, `EmbeddingRequest`, `EmbeddingResult`,
+  `EmbeddingInput` and `EmbeddedVector` models plus the document/query
+  `EmbeddingPurpose` enum.
+* Recorded the complete V1 Voyage profile — `voyage-4-large`, 1,024 float
+  dimensions, unit-length normalisation, disabled truncation, both purpose
+  mappings, unavailable model revision and adapter version — and derive its
+  compatibility fingerprint from canonical JSON.
+* Added the application-owned `Embedder` protocol, so callers have no direct
+  dependency on Voyage.
+* Added `ChunkEmbeddingGenerator`, which accepts an immutable
+  `ChunkingResult`, rejects missing or blank chunk content, embeds controlled
+  batches and preserves exact chunk-ID order across the combined result.
+* Added `DeterministicFakeEmbedder`, which produces stable unit vectors from
+  the profile fingerprint, purpose and input text and can surface any injected
+  typed embedding failure without credentials or network access.
+* Added an isolated `VoyageEmbedder` over the repository's existing `httpx`
+  dependency. It sends only text and required embedding parameters, keeps
+  platform IDs local, and associates returned vectors through validated
+  positional order.
+* Validate provider model, response count and indices, dimensions, finite
+  numeric values, unit normalisation, purpose and profile compatibility before
+  accepting a result. Provider-reported input-token usage is retained as
+  semantic metadata.
+* Translate provider failures into typed platform errors. Only rate limiting,
+  timeouts and temporary provider unavailability use capped, jittered and
+  bounded retries; permanent input, credential, response, dimension and
+  profile failures are not retried.
+* Added environment-only Voyage credentials and operational configuration.
+  The secret remains a `SecretStr` and is unwrapped only by the real adapter.
+* Added allowlisted embedding trace and metric attributes plus structured logs
+  containing correlation/document/workspace IDs and safe operational facts.
+  Raw text, vectors, credentials and provider response bodies are excluded.
+* Added an isolated live Voyage contract test that runs only when
+  `RUN_VOYAGE_INTEGRATION=1` and `VOYAGE_API_KEY` are deliberately supplied.
+  Ordinary repository tests never make a paid provider call.
+
+No Voyage SDK was added: the already-present `httpx` client keeps the vendor
+surface inside one adapter and makes the complete wire contract testable with
+an injected transport.
+
+### Commands used
+
+```bash
+cd apps/ai
+.venv/bin/ruff format app/embedding \
+  tests/test_embedding_models.py \
+  tests/test_embedding_configuration.py \
+  tests/test_chunk_embedding_generation.py \
+  tests/test_voyage_embedding.py \
+  tests/test_voyage_embedding_live.py
+.venv/bin/ruff check app/embedding app/settings.py app/telemetry.py \
+  tests/test_embedding_models.py tests/test_embedding_configuration.py \
+  tests/test_chunk_embedding_generation.py tests/test_voyage_embedding.py \
+  tests/test_voyage_embedding_live.py
+cd ../..
+docker compose exec worker mypy app \
+  tests/test_embedding_models.py \
+  tests/test_embedding_configuration.py \
+  tests/test_chunk_embedding_generation.py \
+  tests/test_voyage_embedding.py \
+  tests/test_voyage_embedding_live.py
+docker compose exec worker pytest -q \
+  tests/test_embedding_models.py \
+  tests/test_embedding_configuration.py \
+  tests/test_chunk_embedding_generation.py \
+  tests/test_voyage_embedding.py \
+  tests/test_voyage_embedding_live.py
+make format-check-ai lint-ai typecheck-ai test-ai
+docker compose config --quiet
+make lint-web lint-api lint-ai
+git diff --check
+```
+
+The local host virtual environment could not collect the existing Pydantic
+models because its Python 3.14 dependency state differed from the repository
+runtime, so authoritative tests and type checks were run inside Docker as
+required by `CONTRIBUTING.md`.
+
+### Files changed
+
+* `.env.example`
+* `compose.yaml`
+* `apps/ai/app/settings.py`
+* `apps/ai/app/telemetry.py`
+* `apps/ai/app/embedding/__init__.py`
+* `apps/ai/app/embedding/errors.py`
+* `apps/ai/app/embedding/factory.py`
+* `apps/ai/app/embedding/fake.py`
+* `apps/ai/app/embedding/generation.py`
+* `apps/ai/app/embedding/models.py`
+* `apps/ai/app/embedding/protocol.py`
+* `apps/ai/app/embedding/voyage.py`
+* `apps/ai/pyproject.toml`
+* `apps/ai/tests/test_chunk_embedding_generation.py`
+* `apps/ai/tests/test_embedding_configuration.py`
+* `apps/ai/tests/test_embedding_models.py`
+* `apps/ai/tests/test_voyage_embedding.py`
+* `apps/ai/tests/test_voyage_embedding_live.py`
+* `IMPLEMENTATION_GUIDE.md`
+* `docs/journal/2026-08-03-r13-s02-implement-embedding-generation.md`
+* `tasks.json`
+
+`PROJECT_JOURNEY.md` was also updated locally at the phase boundary and
+remains intentionally ignored by Git.
+
+### Verification
+
+* Python formatting and Ruff lint passed for all 65 Python files.
+* Mypy passed with no issues across all 64 checked application and test source
+  files.
+* The complete Python suite passed with 168 tests; the one live Voyage test
+  was skipped by design because explicit opt-in credentials were absent.
+* Focused contract tests cover canonical profile fingerprinting, immutability,
+  purposes, batching, order and identity retention, typed failures, bounded
+  retries, secrets, payload minimisation, dimensions, finite values,
+  normalisation, token metadata and telemetry privacy.
+* `docker compose config --quiet` passed with the new environment contract.
+* Next.js, Laravel and Python lint checks passed, including all 114 Laravel
+  files checked by Pint.
+* `git diff --check` passed.
+* The final fixed fingerprint assertion was independently calculated as
+  `ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c`
+  and passed local formatting/lint checks. A later attempt to repeat the
+  Docker gate stalled before execution because Docker Desktop stopped
+  responding; the command was interrupted and is not recorded as successful.
+
+Vector persistence, Qdrant topology, generation activation, ingestion-worker
+pipeline integration and retrieval remain deferred to their accepted later
+stages.
 
 ### Acceptance criteria
 
@@ -9703,8 +9837,15 @@ Not yet executed.
 
 ### Commit boundary
 
-git add apps/ai tests
+```bash
+git add .env.example compose.yaml apps/ai IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-08-03-r13-s02-implement-embedding-generation.md
 git commit -m "Implement chunk embedding generation"
+git tag -a phase-13-s02 \
+  -m "Complete Stage 13.2: Implement Embedding Generation"
+git tag -a phase-13 \
+  -m "Complete Phase 13: Embeddings"
+```
 
 ---
 

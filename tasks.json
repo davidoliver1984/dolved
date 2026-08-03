@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R13",
-    "current_session": "R13-S02",
-    "next_action": "Implement R13-S02 \u2014 Generate embeddings through the accepted ADR-0013 provider-neutral boundary.",
-    "completed_through": "R13-S01",
-    "completed_phase_count": 13,
+    "current_phase": "R14",
+    "current_session": "R14-S01",
+    "next_action": "Begin R14-S01 \u2014 Define Vector Database Architecture with Ralph before implementation.",
+    "completed_through": "R13-S02",
+    "completed_phase_count": 14,
     "total_phase_count": 23
   },
   "phases": [
@@ -2442,7 +2442,7 @@
           "title": "Implement Embedding Generation",
           "guide_start_line": 9682,
           "guide_end_line": 9709,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Generate embeddings for chunks in controlled batches.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -2474,18 +2474,26 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r13-s02-implement-embedding-generation.md",
-            "status": "not_started"
+            "status": "completed",
+            "path": "docs/journal/2026-08-03-r13-s02-implement-embedding-generation.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Immutable provider-neutral embedding contracts and the canonical ADR-0013 compatibility profile implemented",
+            "Controlled chunk batching preserves source identity, order, purpose, profile and provider token metadata",
+            "Voyage adapter validates responses and retries only typed transient failures with bounded backoff",
+            "Deterministic fake and isolated opt-in live-provider contract test added",
+            "Python formatting, lint and type checks passed; full suite passed with 168 tests and one deliberate live-provider skip",
+            "Implementation guide, project journey and factual session journal updated"
+          ]
         }
       ],
       "guide_end_line": 9709,
-      "status": "in_progress",
+      "status": "completed",
       "objective": "Generate reproducible vector representations while keeping model providers replaceable.",
       "gate": {
         "id": "R13-GATE",
         "title": "Embeddings Acceptance Gate",
-        "status": "not_started",
+        "status": "completed",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
@@ -2493,7 +2501,12 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-13 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "ADR-0013 defines the provider-neutral embedding and vector-compatibility architecture",
+          "R13-S02 implements the immutable contracts, Voyage adapter, deterministic fake, typed failures and safe telemetry",
+          "Controlled batching and response validation preserve chunk identity and profile compatibility",
+          "All Phase 13 Python quality gates and ordinary tests passed without paid external calls"
+        ]
       }
     },
     {

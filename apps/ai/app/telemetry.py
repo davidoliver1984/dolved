@@ -22,6 +22,10 @@ logger = logging.getLogger("telemetry")
 TRACE_ATTRIBUTE_ALLOWLIST = frozenset(
     {
         "error.type",
+        "gen_ai.operation.name",
+        "gen_ai.provider.name",
+        "gen_ai.request.model",
+        "gen_ai.usage.input_tokens",
         "http.request.method",
         "http.response.status_code",
         "http.route",
@@ -35,6 +39,11 @@ TRACE_ATTRIBUTE_ALLOWLIST = frozenset(
         "rag.document.id",
         "rag.event.id",
         "rag.event.version",
+        "rag.embedding.estimated_cost_usd",
+        "rag.embedding.item_count",
+        "rag.embedding.profile_fingerprint",
+        "rag.embedding.purpose",
+        "rag.embedding.retry_count",
         "rag.processing.outcome",
         "rag.workspace.id",
     }
@@ -43,6 +52,10 @@ TRACE_ATTRIBUTE_ALLOWLIST = frozenset(
 METRIC_ATTRIBUTE_ALLOWLIST = frozenset(
     {
         "http.request.method",
+        "error.type",
+        "gen_ai.operation.name",
+        "gen_ai.provider.name",
+        "gen_ai.request.model",
         "http.response.status_code",
         "http.route",
         "messaging.destination.name",
@@ -50,6 +63,7 @@ METRIC_ATTRIBUTE_ALLOWLIST = frozenset(
         "messaging.operation.type",
         "messaging.system",
         "rag.event.version",
+        "rag.embedding.purpose",
         "rag.processing.outcome",
     }
 )

@@ -21,6 +21,19 @@ class Settings(BaseSettings):
     ingestion_worker_api_timeout_seconds: float = Field(default=10.0, gt=0)
     ingestion_worker_hmac_key_id: str = "local-v1"
     ingestion_worker_hmac_secret: SecretStr = SecretStr("")
+    voyage_api_key: SecretStr = SecretStr("")
+    voyage_api_url: str = "https://api.voyageai.com/v1/embeddings"
+    embedding_model: str = "voyage-4-large"
+    embedding_dimensions: int = Field(default=1024, gt=0)
+    embedding_batch_size: int = Field(default=64, ge=1, le=1000)
+    embedding_timeout_seconds: float = Field(default=10.0, gt=0)
+    embedding_max_attempts: int = Field(default=3, ge=1, le=10)
+    embedding_initial_backoff_seconds: float = Field(default=0.25, ge=0)
+    embedding_max_backoff_seconds: float = Field(default=2.0, ge=0)
+    embedding_estimated_cost_per_million_tokens_usd: float = Field(
+        default=0.12,
+        ge=0,
+    )
     otel_exporter_otlp_endpoint: str = "http://otel-collector:4318"
     otel_exporter_otlp_protocol: str = "http/protobuf"
     otel_exporter_otlp_timeout: int = Field(default=250, ge=1)
