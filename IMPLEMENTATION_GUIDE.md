@@ -9865,37 +9865,118 @@ Confirm Qdrant as the vector store and document collection, tenancy and filterin
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-04.
 
-### Planned decisions
+### Decision
 
-* collection per environment versus per tenant;
-* tenant filtering;
-* vector dimensions and distance metric;
-* payload schema;
-* point identifiers;
-* re-index strategy;
-* deletion behaviour;
-* backup considerations;
-* local and managed deployment compatibility.
+Qdrant was confirmed and accepted as the V1 vector store, reached only through a
+provider-neutral `VectorStore` abstraction, before any Phase 14 implementation code,
+in:
 
-### Required ADR
+```text
+docs/adr/0014-define-the-vector-storage-architecture-and-qdrant-topology.md
+```
 
-docs/adr/ADR-XXX-vector-storage.md
+PostgreSQL remains authoritative for documents, canonical chunk text, lineage and
+lifecycle — extending, not reopening, ADR 0007's position that the vector layer is a
+disposable, rebuildable search projection. Two distinct generation concepts were
+introduced to resolve an ambiguity in ADR 0013's "vector generation" term: an
+**embedding-space generation** (platform-scoped, tied 1:1 to an `EmbeddingProfile`
+fingerprint and to one Qdrant collection, created only by a consequential profile
+change) and a **workspace corpus generation** (PostgreSQL-owned, per workspace,
+representing the current searchable build of one workspace's corpus, extended
+incrementally by ordinary document ingestion and replaced wholesale only by a
+coordinated rebuild).
+
+V1 uses a single platform-selected embedding profile across all workspaces (the ADR
+0013 Voyage profile); a workspace-override resolution seam is preserved
+architecturally but not built. Per-workspace corpus-generation activation supports
+staged rollout and cheap rollback of any future coordinated rebuild, independent of
+whether workspaces ever diverge on profile.
+
+Collection topology is one Qdrant collection per embedding-space generation, chosen
+as a deliberate architectural decision — not because Qdrant is technically incapable
+of hosting multiple embedding spaces in one collection — for the lifecycle-isolation,
+completeness-verification and retirement reasons recorded in the ADR. A named dense
+vector (`dense`) is used from V1. The Qdrant payload is deliberately minimal
+(`workspace_id`, `document_id`, `chunk_id`, `workspace_corpus_generation_id`,
+`embedding_space_generation_id`), with `workspace_id`, `workspace_corpus_generation_id`
+and `document_id` carrying mandatory payload indexes. Point identity is derived
+deterministically from embedding-space generation, workspace, workspace corpus
+generation and chunk identity. Completeness verification compares expected and
+actual point identities, payload identities and vector schema against PostgreSQL's
+authoritative chunk set — count equality alone is explicitly insufficient. Activation
+is a PostgreSQL/domain operation and is deliberately excluded from `VectorStore`.
+
+The full set of agreed decisions, rejected alternatives and required invariants —
+including the migration-concurrency invariant governing candidate-generation
+activation, and the generation lifecycle state semantics — is recorded in ADR 0014
+rather than duplicated here. ADR 0014 followed an independent architectural review
+rather than a direct implementation of the requester's initial preference, and went
+through a further round of bounded documentation amendment before acceptance; see the
+session journal for what changed and why.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No migrations, models,
+Qdrant client code, or `VectorStore` implementation were introduced. Verification
+consisted of:
+
+* independently inspecting ADR 0006, 0007, 0010, 0011, 0012 and 0013,
+  `PROJECT_ROADMAP.md`, `IMPLEMENTATION_GUIDE.md` and `tasks.json` before forming a
+  recommendation, rather than starting from the requester's stated preference;
+* verifying, on request, whether ADR 0006 required independent per-workspace
+  embedding-profile selection in V1 or only workspace-scoped effective
+  configuration — resolved as the latter, against ADR 0006's own stated
+  classification purpose, before the generation/topology design was finalised;
+* checking current Qdrant documentation before finalising claims about named-vector
+  and collection capabilities, correcting an earlier draft's overstated framing of
+  physical incapability;
+* checking the accepted ADR against each Stage 14.1 acceptance criterion below.
 
 ### Acceptance criteria
 
-* Tenant isolation strategy is explicit.
-* Payload schema is documented.
-* Distance metric is justified.
-* Model/dimension changes are handled.
-* Document deletion behaviour is defined.
-* Re-indexing is possible without corrupting active data.
+* Tenant isolation strategy is explicit. — Met: `workspace_id` is a mandatory,
+  indexed payload filter on every query and mutation; authorisation itself remains a
+  Laravel-side concern per ADR 0006, never delegated to Qdrant.
+* Payload schema is documented. — Met: the minimal V1 payload field set and its
+  required indexes are recorded in ADR 0014's "Minimal Qdrant payload" and "Payload
+  indexes" sections.
+* Distance metric is justified. — Met: cosine distance, justified against Voyage's
+  unit-length normalisation, recorded as embedding-space configuration rather than a
+  permanent platform-wide constant.
+* Model/dimension changes are handled. — Met: a consequential profile change
+  produces a new embedding-space generation and collection; the six-step controlled
+  re-embedding workflow (ADR 0013) is given physical shape by the rebuild invariant
+  and per-workspace activation.
+* Document deletion behaviour is defined. — Met: routine deletion is a scoped
+  `VectorStore` delete against the active corpus generation; full cross-system
+  deletion orchestration remains explicitly deferred, consistent with ADR 0006 and
+  ADR 0007.
+* Re-indexing is possible without corrupting active data. — Met: the existing
+  workspace corpus generation remains active and searchable throughout any rebuild;
+  activation is gated on completeness/compatibility verification and the
+  migration-concurrency invariant, so a stale or incomplete candidate can never
+  become active.
+
+ADR 0014 was produced through an independent architectural review, not a direct
+implementation of the requester's initial preference, followed by two rounds of
+requested refinement: the first reconsidered V1 embedding-profile scope and the
+collection/generation topology, introducing the embedding-space/workspace-corpus
+generation split; the second was a bounded documentation amendment covering ordinary
+incremental ingestion versus coordinated rebuild, the migration-concurrency
+invariant, corrected Qdrant capability claims, generation lifecycle state semantics,
+required payload indexes, and the completeness-verification definition. No
+structural renumbering occurred in either round.
 
 ### Commit boundary
 
-git add docs/adr
+git add docs/adr/0014-define-the-vector-storage-architecture-and-qdrant-topology.md \
+  docs/adr/README.md docs/journal/2026-08-04-r14-s01-define-vector-database-architecture.md \
+  IMPLEMENTATION_GUIDE.md tasks.json
 git commit -m "Document vector storage architecture"
+git tag -a phase-14-s01 \
+  -m "Complete Stage 14.1: Define Vector Database Architecture"
 
 ---
 
