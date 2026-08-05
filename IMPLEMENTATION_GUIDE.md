@@ -8399,7 +8399,8 @@ chunking strategy or pipeline code was introduced. Verification consisted of:
   chunk-level tenant field is required by the architecture.
 * Source metadata supports citations. — Met: every chunk preserves
   provenance back to its source `NormalisedElement`(s), without this ADR
-  designing the citation system itself (deferred to Phase 16 and the
+  designing the citation system itself (deferred to Phase 16 — now Phase 17
+  following the Phase 15 Ingestion Orchestration insertion — and the
   citation/re-extraction constraint in `PROJECT_ROADMAP.md`).
 * Chunking strategy version is recorded. — Met: strategy identity and
   version are part of the semantic `ChunkingResult` and part of chunk
@@ -10325,11 +10326,212 @@ git tag -a phase-14-s03 \
 
 ---
 
-## Stage 14.4 — Complete Ingestion Pipeline
+## Stage 14.4 — Verify and Close the Vector Storage Foundation
 
 ### Objective
 
-Connect upload, queue consumption, extraction, normalisation, chunking, embedding and vector persistence.
+Verify the completed PostgreSQL and Qdrant foundations against ADR-0014, record
+the final Phase 14 implementation boundary, and explicitly defer cross-service
+ingestion orchestration to Phase 15.
+
+### Status
+
+Not yet executed.
+
+### Corrected stage boundary
+
+R14-S04 was originally scoped as "Complete Ingestion Pipeline." Architecture
+review before implementation began found that scope entirely blocked: connecting
+upload, queue consumption, extraction, normalisation, chunking, embedding and
+vector persistence into one working pipeline requires a cross-service
+orchestration contract between Laravel and the Python ingestion worker that no
+accepted ADR settles. ADR 0009 authenticates only the initial
+`QUEUED → PROCESSING` claim and explicitly scopes itself no further; ADR 0014
+persists canonical chunks and vectors but does not decide how Python's
+processing results reach those stores, or how completion and failure become
+authoritative Document lifecycle transitions.
+
+This is a stage-allocation correction, not a new architectural decision. ADR
+0014 is unchanged and remains authoritative. R14-S04 is rescoped to verification
+and closure of the storage foundation R14-S01 through R14-S03 already
+completed. It introduces no new application implementation.
+
+R14-S04 does not decide or implement ingestion orchestration. Phase 15
+(Stage 15.1 architecture, Stage 15.2 implementation) owns, in full:
+
+* an uploaded Document reaching `INDEXED`;
+* authoritative `PROCESSING → INDEXED`/`FAILED` transitions;
+* authenticated callback/result reporting from the Python worker to Laravel;
+* canonical chunk transfer from Python to Laravel;
+* end-to-end observability across the pipeline;
+* processing-attempt and callback idempotency;
+* duplicate-message resumption;
+* SQS acknowledgement, redelivery and dead-letter behaviour;
+* complete workspace/Document/generation context propagation;
+* end-to-end ingestion tests;
+* initial embedding-space and workspace-corpus-generation provisioning.
+
+None of the above is represented as complete by this stage.
+
+### Acceptance criteria
+
+* PostgreSQL is authoritative for canonical chunks and generation lifecycle.
+* Qdrant is a disposable, rebuildable vector projection.
+* Deterministic point identity makes repeated vector upserts safe.
+* Vector operations require explicit workspace and workspace-corpus-generation
+  scope.
+* Qdrant collection and payload-index provisioning is idempotent.
+* Completeness verification compares identities, payload values and vector
+  schema, not counts alone.
+* PostgreSQL stores active corpus state but never raw vectors.
+* Migrations, Qdrant persistence tests, service health and repository-wide
+  checks pass.
+* Phase 14 documentation accurately records the completed storage boundary.
+
+### Commit boundary
+
+git add apps/api apps/ai IMPLEMENTATION_GUIDE.md tasks.json docs/journal
+git commit -m "Verify and close the vector storage foundation"
+git tag -a phase-14 \
+  -m "Complete Phase 14: Vector Storage"
+
+---
+
+# Phase 15 — Ingestion Orchestration
+
+## Phase objective
+
+Decide and implement the authenticated, idempotent cross-service contract that
+carries a Document from its existing `PROCESSING` claim (ADR 0009) through
+canonical chunk persistence, embedding and vector persistence (ADR 0013, ADR
+0014) to an authoritative `INDEXED` or `FAILED` outcome, closing the gap
+between Phase 14's completed storage foundation and Phase 16's retrieval work.
+
+## Phase 15 insertion note
+
+Recorded 2026-08-05, arising from architecture review of R14-S04 before its
+implementation began. R14-S04's original "Complete Ingestion Pipeline" scope
+required deciding a cross-service orchestration contract — authenticated
+worker callbacks, canonical chunk transfer, completion/failure reporting,
+`event_id` idempotency, SQS acknowledgement, Laravel/Python ownership,
+authoritative lifecycle transitions, duplicate-delivery behaviour and initial
+generation provisioning — that no prior ADR settles. ADR 0009 authenticates
+only the initial `QUEUED → PROCESSING` claim and explicitly scopes itself no
+further ("if more internal principals or permission scopes appear, this
+narrow protocol should be replaced or superseded rather than expanded into an
+improvised general identity system"); ADR 0014 persists canonical chunks and
+vectors but does not decide how Python's processing results reach those
+Laravel-owned and Qdrant-owned stores.
+
+Given the depth of that gap — both an architecture decision and a full
+implementation are required before a Document can reach `INDEXED` — ingestion
+orchestration is promoted to its own phase, inserted between Vector Storage
+(Phase 14) and Retrieval (Phase 16), rather than folded into a single stage of
+either. Every requirement originally listed under R14-S04's "Complete
+Ingestion Pipeline" scope moves here in full; R14-S04 itself is rescoped to
+verification and closure of the already-completed storage foundation (see
+Stage 14.4 above). No completed phase numbering changes; every phase from the
+original Phase 15 (Retrieval) onward shifts by one to make room.
+
+---
+
+## Stage 15.1 — Define End-to-End Ingestion Orchestration and Worker Result Contracts
+
+### Objective
+
+Decide ADR 0015: the authenticated, idempotent orchestration contract between
+Laravel and the Python ingestion worker that carries a Document from its
+existing `PROCESSING` claim (ADR 0009) through canonical chunk persistence,
+embedding and vector persistence (ADR 0013, ADR 0014) to an authoritative
+`INDEXED` or `FAILED` outcome.
+
+### Status
+
+Not yet executed.
+
+### Planned decisions
+
+* authenticated worker callbacks — which operations beyond the existing
+  `QUEUED → PROCESSING` claim (ADR 0009) require their own authenticated
+  Laravel endpoint, and whether they extend ADR 0009's protocol or require a
+  superseding decision, consistent with ADR 0009's own guidance against
+  improvising new scopes onto its narrow claim-only design;
+* canonical chunk transfer — how chunk text and provenance computed in Python
+  reach the Laravel-owned `document_chunks` table, given ADR 0009 already
+  rejects direct Python database access;
+* completion reporting — how Python reports that embedding and vector
+  persistence for a Document succeeded, and how that becomes the authoritative
+  `PROCESSING → INDEXED` transition;
+* failure reporting — how Python reports a permanent or transient processing
+  failure, and how that becomes the authoritative `PROCESSING → FAILED`
+  transition, consistent with ADR 0007's failure semantics;
+* `event_id` idempotency — whether completion/failure reporting reuses the
+  existing claim `event_id` or introduces its own idempotency key, and how
+  duplicate reports are recognised;
+* SQS acknowledgement — when the worker acknowledges the ingestion message
+  relative to claim, chunk persistence, embedding, vector upsert and lifecycle
+  reporting;
+* Laravel/Python ownership — which service is authoritative for each write
+  introduced by Phase 13/14, extending ADR 0002's service boundary and ADR
+  0009's no-direct-write precedent;
+* authoritative lifecycle transitions — which service may request which
+  Document and generation lifecycle transitions, and under what conditions;
+* duplicate-delivery behaviour — what happens when SQS redelivers a message
+  after the worker has already claimed, partially processed, or fully
+  processed it;
+* initial generation provisioning — who creates the first
+  `EmbeddingSpaceGeneration` and activates the first
+  `WorkspaceCorpusGeneration` for a workspace, and when, since no workspace can
+  be indexed before one exists.
+
+### Required roadmap clarification
+
+The insertion of this phase shifted every phase from the original Phase 15
+(Retrieval) onward by one. ADR-0013 and ADR-0014 are accepted and immutable —
+their existing "Phase 15"/"Phase 16" references are not rewritten — but both
+predate this insertion and their forward references are now stale. ADR-0015
+must include a short roadmap-clarification note, in the same style as ADR
+0013's own "Correction to ADR-0006's forward reference" section, recording
+that:
+
+* ADR-0013's and ADR-0014's references to Phase 15 retrieval work now resolve
+  to Phase 16, following insertion of the Phase 15 Ingestion Orchestration
+  phase;
+* their references to later phases (generation, evaluation, and so on) shift
+  by one in the same way, where applicable;
+* this is a citation correction only — the underlying architectural decisions
+  ADR-0013 and ADR-0014 recorded are unchanged.
+
+### Required ADR
+
+docs/adr/ADR-0015-define-end-to-end-ingestion-orchestration-and-worker-result-contracts.md
+
+### Acceptance criteria
+
+* Every new Python-to-Laravel write is authenticated and idempotent.
+* Canonical chunk transfer does not require direct Python database access.
+* Completion and failure reporting map to explicit, authoritative Document
+  lifecycle transitions.
+* Duplicate SQS delivery at every stage of the pipeline is proven safe, not
+  merely assumed.
+* Initial generation provisioning is defined and does not depend on manual
+  operator intervention.
+* Each of Stage 15.2's acceptance criteria is traceable to a specific decision
+  in this ADR.
+
+### Commit boundary
+
+git add docs/adr
+git commit -m "Document end-to-end ingestion orchestration architecture"
+
+---
+
+## Stage 15.2 — Implement End-to-End Ingestion Orchestration
+
+### Objective
+
+Implement the accepted ADR-0015 orchestration contract, completing the
+upload-to-`INDEXED` ingestion path before Retrieval (Phase 16) begins.
 
 ### Status
 
@@ -10337,48 +10539,60 @@ Not yet executed.
 
 ### Acceptance criteria
 
-* An uploaded document reaches the ready state.
-* Each stage is observable.
-* Failures update document status.
-* Retries are idempotent.
-* Duplicate messages do not duplicate vectors.
-* Document and tenant context survives every stage.
-* Dead-letter behaviour is verified.
-* End-to-end ingestion tests exist.
+* An uploaded Document reaches `INDEXED`.
+* Authoritative `PROCESSING → INDEXED`/`FAILED` transitions are implemented
+  per ADR-0015.
+* Authenticated callback/result reporting from the Python worker to Laravel is
+  implemented.
+* Canonical chunk transfer from Python to Laravel is implemented without
+  direct Python database access.
+* Each pipeline stage is observable end to end.
+* Processing-attempt and callback idempotency hold under retry.
+* Duplicate-message resumption does not duplicate chunks, vectors, or
+  lifecycle transitions.
+* SQS acknowledgement, redelivery and dead-letter behaviour are implemented
+  and verified.
+* Workspace, Document and generation context survives every stage of the
+  pipeline.
+* End-to-end ingestion tests exist and pass.
+* Initial embedding-space and workspace-corpus-generation provisioning is
+  implemented.
 
 ### Commit boundary
 
 git add apps/api apps/ai tests contracts
-git commit -m "Complete document ingestion pipeline"
+git commit -m "Complete end-to-end document ingestion orchestration"
+git tag -a phase-15 \
+  -m "Complete Phase 15: Ingestion Orchestration"
 
 ---
 
-# Phase 15 — Retrieval
+# Phase 16 — Retrieval
 
 ## Phase objective
 
 Retrieve relevant, tenant-safe source chunks for a user query.
 
-## Phase 15 restructuring note
+## Phase 16 restructuring note
 
-Recorded 2026-08-03. Phase 15 was originally scoped as four stages (contract,
-semantic implementation, evaluation, enhancements). Before any Phase 15
+Recorded 2026-08-03. Phase 16 was originally scoped as four stages (contract,
+semantic implementation, evaluation, enhancements). Before any Phase 16
 implementation began, this was restructured to seven stages so that document
 freshness/archival semantics and the evaluation/quality-gate harness are
 architectural decisions made explicitly, with their own ADRs, rather than
 implicit assumptions inside the retrieval contract or an under-scoped
 evaluation task. No completed stage numbering was changed by this
-restructuring — Phase 15 had not yet started.
+restructuring — Phase 16 had not yet started.
 
 ---
 
-## Stage 15.1 — Define Document Freshness and Archival Policy
+## Stage 16.1 — Define Document Freshness and Archival Policy
 
 ### Objective
 
 Decide what "obsolete" or "archived" means for a Document, extending
 ADR-0007's lifecycle rather than replacing it, so that retrieval (Stage
-15.2) and evaluation (Stage 15.4) have a settled definition of "active" to
+15.2) and evaluation (Stage 16.4) have a settled definition of "active" to
 filter against.
 
 ### Status
@@ -10406,7 +10620,7 @@ docs/adr/ADR-XXX-document-freshness-and-archival-policy.md
 * Archival is defined without contradicting or silently rewriting ADR-0007.
 * Retrieval has an explicit, typed way to exclude archived/obsolete
   documents.
-* The evaluation harness (Stage 15.4) can express obsolete/current-document
+* The evaluation harness (Stage 16.4) can express obsolete/current-document
   test cases against this same definition.
 * No versioning scheme is introduced as a side effect.
 
@@ -10417,12 +10631,12 @@ git commit -m "Define document freshness and archival policy"
 
 ---
 
-## Stage 15.2 — Define Retrieval Contract
+## Stage 16.2 — Define Retrieval Contract
 
 ### Objective
 
 Define the input, output and diagnostics of the retrieval subsystem,
-including the query-planning boundary and freshness filtering Stage 15.1
+including the query-planning boundary and freshness filtering Stage 16.1
 requires.
 
 ### Status
@@ -10443,7 +10657,7 @@ queries even though V1 only ever exercises an identity/no-op planner.
 * query text;
 * optional document filters;
 * optional metadata filters;
-* active/archival filter, per Stage 15.1's policy;
+* active/archival filter, per Stage 16.1's policy;
 * result limit;
 * retrieval configuration.
 
@@ -10478,7 +10692,7 @@ git commit -m "Define retrieval contract"
 
 ---
 
-## Stage 15.3 — Implement Semantic Retrieval
+## Stage 16.3 — Implement Semantic Retrieval
 
 ### Objective
 
@@ -10493,7 +10707,7 @@ Not yet executed.
 * Query embeddings use the compatible model.
 * Every search includes tenant filtering.
 * Optional document filters work.
-* Archived/obsolete documents are excluded per Stage 15.1's policy.
+* Archived/obsolete documents are excluded per Stage 16.1's policy.
 * Result limits are bounded.
 * No cross-tenant chunks are returned.
 * Empty results are represented normally.
@@ -10506,13 +10720,13 @@ git commit -m "Implement semantic document retrieval"
 
 ---
 
-## Stage 15.4 — Define Evaluation and Quality-Gate Architecture
+## Stage 16.4 — Define Evaluation and Quality-Gate Architecture
 
 ### Objective
 
 Define a repository-owned evaluation harness and quality-gate policy that
 grows with the pipeline, starting with retrieval and extending to
-generation (Stage 16.4) without redesign.
+generation (Stage 17.4) without redesign.
 
 ### Status
 
@@ -10527,7 +10741,7 @@ Not yet executed.
 * required case coverage: answerable and unanswerable questions,
   exact-wording and paraphrased questions, table-based questions,
   multi-evidence questions, conflicting-document cases,
-  obsolete/current-document cases (per Stage 15.1), cross-workspace and
+  obsolete/current-document cases (per Stage 16.1), cross-workspace and
   authorisation cases, and adversarial/prompt-injection cases;
 * the metrics catalogue: Recall@k, MRR, nDCG, context precision, context
   recall, faithfulness, answer correctness/relevancy, citation support,
@@ -10542,7 +10756,7 @@ Not yet executed.
   citation support, correct abstention, workspace isolation/authorisation,
   and unacceptable latency/cost regression;
 * that the gate begins as a documented/manual acceptance step and may later
-  be automated in CI (Phase 21).
+  be automated in CI (Phase 22).
 
 ### Required ADR
 
@@ -10556,7 +10770,7 @@ docs/adr/ADR-XXX-evaluation-and-quality-gate-architecture.md
   named explicitly, even where V1 only populates a subset.
 * The quality-gate policy is defined even though its enforcement starts
   manual.
-* Stage 16.4 (Add Answer Evaluation) can extend this same harness rather
+* Stage 17.4 (Add Answer Evaluation) can extend this same harness rather
   than defining its own.
 
 ### Commit boundary
@@ -10566,11 +10780,11 @@ git commit -m "Define evaluation and quality-gate architecture"
 
 ---
 
-## Stage 15.5 — Implement Retrieval Evaluation
+## Stage 16.5 — Implement Retrieval Evaluation
 
 ### Objective
 
-Measure retrieval quality against the Stage 15.4 harness's curated
+Measure retrieval quality against the Stage 16.4 harness's curated
 question-and-source dataset.
 
 ### Status
@@ -10603,13 +10817,13 @@ git commit -m "Add retrieval evaluation suite"
 
 ---
 
-## Stage 15.6 — Define Hybrid Retrieval and Reranking Architecture
+## Stage 16.6 — Define Hybrid Retrieval and Reranking Architecture
 
 ### Objective
 
 Define one combined candidate-selection architecture — dense retrieval,
 sparse/keyword retrieval, fusion, reranking and evidence thresholds — as a
-single ADR, evaluated only after the Stage 15.3/15.5 semantic baseline is
+single ADR, evaluated only after the Stage 16.3/15.5 semantic baseline is
 measured.
 
 ### Status
@@ -10629,7 +10843,7 @@ Not yet executed.
 * calibrated evidence thresholds and explicit abstention where the system
   cannot find sufficient evidence;
 * hard workspace, authorisation, active-document and lifecycle filters
-  (per Stage 15.1) applied to candidate selection, not only to final
+  (per Stage 16.1) applied to candidate selection, not only to final
   results;
 * preservation of source identity and provenance through fusion and
   reranking.
@@ -10640,7 +10854,7 @@ docs/adr/ADR-XXX-hybrid-retrieval-and-reranking.md
 
 ### Acceptance criteria
 
-* A semantic-retrieval baseline exists and is measured (Stage 15.5) before
+* A semantic-retrieval baseline exists and is measured (Stage 16.5) before
   this architecture is adopted.
 * The `Reranker` contract is provider-neutral, matching the `Embedder`
   pattern's replaceability requirements.
@@ -10658,11 +10872,11 @@ git commit -m "Define hybrid retrieval and reranking architecture"
 
 ---
 
-## Stage 15.7 — Implement Hybrid Retrieval and Reranking
+## Stage 16.7 — Implement Hybrid Retrieval and Reranking
 
 ### Objective
 
-Implement the Stage 15.6 architecture: sparse retrieval, RRF fusion, the
+Implement the Stage 16.6 architecture: sparse retrieval, RRF fusion, the
 `Reranker` contract with Voyage as its V1 provider, calibrated thresholds
 and abstention.
 
@@ -10680,7 +10894,7 @@ Not yet executed.
   not a low-confidence answer presented as if grounded.
 * Tenant, authorisation and freshness filtering are verified through the
   complete fused/reranked path, not only the semantic baseline.
-* Stage 15.5's evaluation harness shows a measured improvement over the
+* Stage 16.5's evaluation harness shows a measured improvement over the
   semantic-only baseline before this becomes the default retrieval path.
 * Tests cover fusion, reranking, threshold/abstention behaviour and
   isolation.
@@ -10692,7 +10906,7 @@ git commit -m "Implement hybrid retrieval and reranking"
 
 ---
 
-# Phase 16 — Grounded Generation
+# Phase 17 — Grounded Generation
 
 ## Phase objective
 
@@ -10700,7 +10914,7 @@ Generate answers that are constrained by retrieved evidence and accompanied by v
 
 ---
 
-## Stage 16.1 — Define Generation Provider Boundary
+## Stage 17.1 — Define Generation Provider Boundary
 
 ### Objective
 
@@ -10742,7 +10956,7 @@ git commit -m "Define generation provider boundary"
 
 ---
 
-## Stage 16.2 — Build Grounded Prompt Assembly
+## Stage 17.2 — Build Grounded Prompt Assembly
 
 ### Objective
 
@@ -10778,7 +10992,7 @@ git commit -m "Build grounded prompt assembly"
 
 ---
 
-## Stage 16.3 — Generate Answers with Citations
+## Stage 17.3 — Generate Answers with Citations
 
 ### Objective
 
@@ -10810,7 +11024,7 @@ git commit -m "Generate grounded answers with citations"
 
 ---
 
-## Stage 16.4 — Add Answer Evaluation
+## Stage 17.4 — Add Answer Evaluation
 
 ### Objective
 
@@ -10819,7 +11033,7 @@ Evaluate groundedness, citation correctness and answer usefulness.
 ### Design constraint
 
 Extend the repository-owned evaluation and quality-gate harness defined in
-Stage 15.4 (`docs/adr/ADR-XXX-evaluation-and-quality-gate-architecture.md`)
+Stage 16.4 (`docs/adr/ADR-XXX-evaluation-and-quality-gate-architecture.md`)
 with generation-specific metrics, rather than defining a second, separate
 harness. See also `PROJECT_ROADMAP.md`'s "Design constraint — Quality
 lineage across the pipeline."
@@ -10855,7 +11069,7 @@ git commit -m "Add grounded answer evaluation"
 
 ---
 
-# Phase 17 — Conversation and Streaming
+# Phase 18 — Conversation and Streaming
 
 ## Phase objective
 
@@ -10863,7 +11077,7 @@ Expose the RAG workflow as a persistent, streaming conversational experience.
 
 ---
 
-## Stage 17.1 — Define Conversation Domain
+## Stage 18.1 — Define Conversation Domain
 
 ### Objective
 
@@ -10899,7 +11113,7 @@ git commit -m "Define conversation domain"
 
 ---
 
-## Stage 17.2 — Implement Chat Orchestration API
+## Stage 18.2 — Implement Chat Orchestration API
 
 ### Objective
 
@@ -10936,7 +11150,7 @@ git commit -m "Implement chat orchestration API"
 
 ---
 
-## Stage 17.3 — Implement Streaming Responses
+## Stage 18.3 — Implement Streaming Responses
 
 ### Objective
 
@@ -10974,7 +11188,7 @@ git commit -m "Add streaming chat responses"
 
 ---
 
-## Stage 17.4 — Build Chat Interface
+## Stage 18.4 — Build Chat Interface
 
 ### Objective
 
@@ -11014,7 +11228,7 @@ git commit -m "Build streaming RAG chat interface"
 
 ---
 
-# Phase 18 — Administration
+# Phase 19 — Administration
 
 ## Phase objective
 
@@ -11022,7 +11236,7 @@ Provide operational visibility and safe tenant-level controls.
 
 ---
 
-## Stage 18.1 — Build Document Administration
+## Stage 19.1 — Build Document Administration
 
 ### Objective
 
@@ -11059,7 +11273,7 @@ git commit -m "Add document administration"
 
 ---
 
-## Stage 18.2 — Build Tenant and Membership Administration
+## Stage 19.2 — Build Tenant and Membership Administration
 
 ### Objective
 
@@ -11085,7 +11299,7 @@ git commit -m "Add tenant membership administration"
 
 ---
 
-## Stage 18.3 — Add Usage Visibility
+## Stage 19.3 — Add Usage Visibility
 
 ### Objective
 
@@ -11122,7 +11336,7 @@ git commit -m "Add tenant usage visibility"
 
 ---
 
-# Phase 19 — Observability and Operations
+# Phase 20 — Observability and Operations
 
 ## Phase objective
 
@@ -11130,15 +11344,15 @@ Make failures, latency and cross-service behaviour diagnosable.
 
 ### Design constraint
 
-Review the "Phase 19 should operationalise, not rebuild, observability"
+Review the "Phase 20 should operationalise, not rebuild, observability"
 design constraint recorded in `PROJECT_ROADMAP.md` before implementation
-begins. Stage 19.2 and Stage 19.3 in particular predate Phase 12's
+begins. Stage 20.2 and Stage 20.3 in particular predate Phase 12's
 OpenTelemetry foundation (ADR-0012) and are expected to be rescoped before
 this phase starts, not implemented as currently written.
 
 ---
 
-## Stage 19.1 — Standardise Structured Logging
+## Stage 20.1 — Standardise Structured Logging
 
 ### Objective
 
@@ -11179,7 +11393,7 @@ git commit -m "Standardise structured platform logging"
 
 ---
 
-## Stage 19.2 — Add Metrics
+## Stage 20.2 — Add Metrics
 
 ### Objective
 
@@ -11219,7 +11433,7 @@ git commit -m "Add platform metrics"
 
 ---
 
-## Stage 19.3 — Add Distributed Tracing
+## Stage 20.3 — Add Distributed Tracing
 
 ### Objective
 
@@ -11249,7 +11463,7 @@ git commit -m "Add distributed tracing"
 
 ---
 
-## Stage 19.4 — Define Operational Alerts
+## Stage 20.4 — Define Operational Alerts
 
 ### Objective
 
@@ -11287,7 +11501,7 @@ git commit -m "Document operational alerts and runbooks"
 
 ---
 
-# Phase 20 — Testing and Quality Strategy
+# Phase 21 — Testing and Quality Strategy
 
 ## Phase objective
 
@@ -11295,7 +11509,7 @@ Create a layered test strategy that catches regressions without requiring every 
 
 ---
 
-## Stage 20.1 — Establish Test Taxonomy
+## Stage 21.1 — Establish Test Taxonomy
 
 ### Objective
 
@@ -11336,7 +11550,7 @@ git commit -m "Document platform testing strategy"
 
 ---
 
-## Stage 20.2 — Add Contract Tests
+## Stage 21.2 — Add Contract Tests
 
 ### Objective
 
@@ -11363,7 +11577,7 @@ git commit -m "Add shared contract tests"
 
 ---
 
-## Stage 20.3 — Add End-to-End Ingestion Tests
+## Stage 21.3 — Add End-to-End Ingestion Tests
 
 ### Objective
 
@@ -11395,7 +11609,7 @@ git commit -m "Add end-to-end ingestion tests"
 
 ---
 
-## Stage 20.4 — Add End-to-End Chat Tests
+## Stage 21.4 — Add End-to-End Chat Tests
 
 ### Objective
 
@@ -11423,7 +11637,7 @@ git commit -m "Add end-to-end RAG chat tests"
 
 ---
 
-## Stage 20.5 — Add Security-Focused Tests
+## Stage 21.5 — Add Security-Focused Tests
 
 ### Objective
 
@@ -11463,7 +11677,7 @@ git commit -m "Add security regression tests"
 
 ---
 
-# Phase 21 — CI/CD and Production Readiness
+# Phase 22 — CI/CD and Production Readiness
 
 ## Phase objective
 
@@ -11471,7 +11685,7 @@ Make the platform reproducibly testable, buildable, deployable and operable outs
 
 ---
 
-## Stage 21.1 — Add Continuous Integration
+## Stage 22.1 — Add Continuous Integration
 
 ### Objective
 
@@ -11511,7 +11725,7 @@ git commit -m "Add continuous integration pipeline"
 
 ---
 
-## Stage 21.2 — Create Production Container Builds
+## Stage 22.2 — Create Production Container Builds
 
 ### Objective
 
@@ -11552,7 +11766,7 @@ git commit -m "Add production container builds"
 
 ---
 
-## Stage 21.3 — Add Infrastructure as Code
+## Stage 22.3 — Add Infrastructure as Code
 
 ### Objective
 
@@ -11602,7 +11816,7 @@ git commit -m "Define production infrastructure"
 
 ---
 
-## Stage 21.4 — Configure Secrets and Environment Management
+## Stage 22.4 — Configure Secrets and Environment Management
 
 ### Objective
 
@@ -11639,7 +11853,7 @@ git commit -m "Harden environment and secret management"
 
 ---
 
-## Stage 21.5 — Add Database Backup and Recovery
+## Stage 22.5 — Add Database Backup and Recovery
 
 ### Objective
 
@@ -11666,7 +11880,7 @@ git commit -m "Add database backup and recovery plan"
 
 ---
 
-## Stage 21.6 — Define Vector Index Recovery
+## Stage 22.6 — Define Vector Index Recovery
 
 ### Objective
 
@@ -11703,7 +11917,7 @@ git commit -m "Define vector index recovery"
 
 ---
 
-## Stage 21.7 — Perform Security Hardening
+## Stage 22.7 — Perform Security Hardening
 
 ### Objective
 
@@ -11753,7 +11967,7 @@ git commit -m "Harden platform security"
 
 ---
 
-## Stage 21.8 — Create Staging Deployment
+## Stage 22.8 — Create Staging Deployment
 
 ### Objective
 
@@ -11781,7 +11995,7 @@ To be defined based on the deployment platform.
 
 ---
 
-## Stage 21.9 — Production Readiness Review
+## Stage 22.9 — Production Readiness Review
 
 ### Objective
 
@@ -11829,7 +12043,7 @@ git commit -m "Complete production readiness review"
 
 ---
 
-# Phase 22 — Documentation and Demonstration Readiness
+# Phase 23 — Documentation and Demonstration Readiness
 
 ## Phase objective
 
@@ -11837,7 +12051,7 @@ Document the platform clearly and provide a reproducible way to demonstrate its 
 
 ---
 
-## Stage 22.1 — Write Architecture Documentation
+## Stage 23.1 — Write Architecture Documentation
 
 ### Objective
 
@@ -11875,7 +12089,7 @@ git commit -m "Document platform architecture"
 
 ---
 
-## Stage 22.2 — Create Demonstration Dataset and Scenario
+## Stage 23.2 — Create Demonstration Dataset and Scenario
 
 ### Objective
 
@@ -11902,7 +12116,7 @@ git commit -m "Add repeatable platform demonstration"
 
 ---
 
-## Stage 22.3 — Finalise Repository README
+## Stage 23.3 — Finalise Repository README
 
 ### Objective
 

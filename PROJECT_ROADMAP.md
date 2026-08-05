@@ -418,7 +418,7 @@ Persist tenant-isolated chunk vectors and metadata in a dedicated vector databas
 - Define Vector Database Architecture
 - Add Qdrant Development Service
 - Persist Chunk Vectors
-- Complete Ingestion Pipeline
+- Verify and Close the Vector Storage Foundation
 
 ### Deliverable
 
@@ -426,7 +426,28 @@ Working vector search.
 
 ---
 
-## Phase 15 — Retrieval
+## Phase 15 — Ingestion Orchestration
+
+### Objectives
+
+Decide and implement the authenticated, idempotent cross-service contract that
+carries a Document from its existing processing claim through canonical chunk
+persistence, embedding and vector persistence to an authoritative INDEXED or
+FAILED outcome.
+
+### Tasks
+
+- Define End-to-End Ingestion Orchestration and Worker Result Contracts
+- Implement End-to-End Ingestion Orchestration
+
+### Deliverable
+
+A working, authenticated, idempotent, end-to-end ingestion pipeline: an
+uploaded document reliably reaches INDEXED or a diagnosable FAILED state.
+
+---
+
+## Phase 16 — Retrieval
 
 ### Objectives
 
@@ -453,8 +474,8 @@ top of it.
 ### Design constraint — Query decomposition and the retrieval pipeline shape
 
 Recorded 2026-08-03, arising from Phase 13 (ADR-0013)'s embedding/retrieval
-boundary discussion, to be formalised in Phase 15's Retrieval Contract ADR
-(Stage 15.2).
+boundary discussion, to be formalised in Phase 16's Retrieval Contract ADR
+(Stage 16.2).
 
 The retrieval architecture must be shaped so query decomposition can be
 enabled later without rewriting the retrieval pipeline:
@@ -474,15 +495,15 @@ exercised: an identity/no-op planner returns only the original query, and
 model-assisted decomposition remains disabled by default. Enabling it later
 is an additive change to the planner, not a retrieval-pipeline rewrite — but
 it must not be turned on until the repository-owned evaluation harness
-(Stage 15.4) demonstrates that the quality gain justifies the added latency,
+(Stage 16.4) demonstrates that the quality gain justifies the added latency,
 cost and complexity of a second model call per query.
 
-This is intentionally deferred rather than actioned now — no Phase 15
+This is intentionally deferred rather than actioned now — no Phase 16
 implementation exists yet for this constraint to apply to.
 
 ---
 
-## Phase 16 — Grounded Generation
+## Phase 17 — Grounded Generation
 
 ### Objectives
 
@@ -511,7 +532,7 @@ extraction run. If the platform later supports re-extracting an already-processe
 document, any citation, chunk or embedding linked directly to elements from the
 previous extraction may no longer reference the active extraction.
 
-Before Phase 16 citation and answer-generation work begins implementation, the
+Before Phase 17 citation and answer-generation work begins implementation, the
 citation and re-extraction design must explicitly decide:
 
 - whether an extraction is permanently retained once referenced;
@@ -541,8 +562,8 @@ used, prompt-template version, and generation provider/model/configuration.
 
 No single ADR owns this whole chain. ADR-0013 owns the embedding-profile
 link; the Phase 14 vector-storage ADR owns the vector-generation link; the
-Phase 15 retrieval and hybrid-retrieval/reranking ADRs own the retrieval,
-fusion and reranker links; the Phase 16 generation ADR owns the
+Phase 16 retrieval and hybrid-retrieval/reranking ADRs own the retrieval,
+fusion and reranker links; the Phase 17 generation ADR owns the
 prompt-template and generation-configuration links. Each future ADR is
 expected to record its own piece of this chain explicitly, consistent with
 how it stores and exposes that configuration, rather than this constraint
@@ -555,7 +576,7 @@ lineage fields when it is actually written.
 
 ---
 
-## Phase 17 — Conversation and Streaming
+## Phase 18 — Conversation and Streaming
 
 ### Objectives
 
@@ -574,7 +595,7 @@ Production-quality chat interface.
 
 ---
 
-## Phase 18 — Administration
+## Phase 19 — Administration
 
 ### Objectives
 
@@ -592,7 +613,7 @@ Complete administration tools.
 
 ---
 
-## Phase 19 — Observability and Operations
+## Phase 20 — Observability and Operations
 
 ### Objectives
 
@@ -611,7 +632,7 @@ Observable platform.
 
 ---
 
-### Design constraint — Phase 19 should operationalise, not rebuild, observability
+### Design constraint — Phase 20 should operationalise, not rebuild, observability
 
 Recorded 2026-07-30, arising from Phase 12 (ADR-0012) and its OpenTelemetry
 observability foundation.
@@ -624,7 +645,7 @@ otherwise need to invent from scratch. This phase's Tasks list — in
 particular "Add Metrics" and "Add Distributed Tracing" — predates that
 decision and, read literally, now substantially duplicates it.
 
-When Phase 19 is eventually reviewed, before implementation begins, its
+When Phase 20 is eventually reviewed, before implementation begins, its
 scope should shift from *building* observability to *operationalising* it:
 assume the OpenTelemetry foundation from Phase 12 is already in place, and
 focus this phase on what that foundation does not itself provide —
@@ -639,7 +660,7 @@ phase's Tasks, Objectives or Deliverable has been made yet.
 
 ---
 
-## Phase 20 — Testing and Quality Strategy
+## Phase 21 — Testing and Quality Strategy
 
 ### Objectives
 
@@ -660,7 +681,7 @@ Comprehensive test suite.
 
 ---
 
-## Phase 21 — CI/CD and Production Readiness
+## Phase 22 — CI/CD and Production Readiness
 
 ### Objectives
 
@@ -685,7 +706,7 @@ Production-ready platform.
 
 ---
 
-## Phase 22 — Documentation and Demonstration Readiness
+## Phase 23 — Documentation and Demonstration Readiness
 
 ### Objectives
 
@@ -760,6 +781,7 @@ A phase is complete only when:
 | Observability Foundation | ✅ Complete |
 | Embeddings | ⏳ In Progress |
 | Vector Storage | ⬜ Not Started |
+| Ingestion Orchestration | ⬜ Not Started |
 | Retrieval | ⬜ Not Started |
 | Grounded Generation | ⬜ Not Started |
 | Conversation and Streaming | ⬜ Not Started |

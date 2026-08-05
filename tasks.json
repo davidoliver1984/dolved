@@ -40,10 +40,10 @@
   "progress": {
     "current_phase": "R14",
     "current_session": "R14-S04",
-    "next_action": "Begin R14-S04 — Complete Ingestion Pipeline with Ralph before implementation.",
+    "next_action": "Begin R14-S04 \u2014 Verify and Close the Vector Storage Foundation with Ralph before implementation.",
     "completed_through": "R14-S03",
     "completed_phase_count": 14,
-    "total_phase_count": 23
+    "total_phase_count": 24
   },
   "phases": [
     {
@@ -167,48 +167,6 @@
           "guide_start_line": 270,
           "guide_end_line": 495,
           "status": "completed",
-          "objective": null,
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 1 \u2014 Application Scaffolding",
-            "stage": "Stage 1.2 \u2014 Scaffold Laravel API",
-            "source_lines": {
-              "start": 270,
-              "end": 495
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r01-s02-scaffold-laravel-api.md",
-            "status": "completed"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R01-S02",
-          "guide_stage": "Stage 1.2 \u2014 Scaffold Laravel API",
-          "title": "Scaffold Laravel API",
-          "guide_start_line": 270,
-          "guide_end_line": 495,
-          "status": "completed",
           "objective": "Generate a Laravel 13 application at apps/api using a disposable Composer/PHP container.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -240,48 +198,6 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r01-s02-scaffold-laravel-api.md",
-            "status": "completed"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R01-S03",
-          "guide_stage": "Stage 1.3 \u2014 Scaffold Python AI Service",
-          "title": "Scaffold Python AI Service",
-          "guide_start_line": 496,
-          "guide_end_line": 871,
-          "status": "completed",
-          "objective": null,
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 1 \u2014 Application Scaffolding",
-            "stage": "Stage 1.3 \u2014 Scaffold Python AI Service",
-            "source_lines": {
-              "start": 496,
-              "end": 871
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r01-s03-scaffold-python-ai-service.md",
             "status": "completed"
           },
           "completion_evidence": []
@@ -2513,14 +2429,14 @@
       "id": "R14",
       "guide_phase": "Phase 14 \u2014 Vector Storage",
       "title": "Vector Storage",
-      "guide_start_line": 9852,
+      "guide_start_line": 9853,
       "sessions": [
         {
           "id": "R14-S01",
           "guide_stage": "Stage 14.1 \u2014 Define Vector Database Architecture",
           "title": "Define Vector Database Architecture",
-          "guide_start_line": 9860,
-          "guide_end_line": 9982,
+          "guide_start_line": 9861,
+          "guide_end_line": 9983,
           "status": "completed",
           "objective": "Confirm Qdrant as the vector store and document collection, tenancy and filtering strategy.",
           "session_mode": "architecture",
@@ -2529,8 +2445,8 @@
             "phase": "Phase 14 \u2014 Vector Storage",
             "stage": "Stage 14.1 \u2014 Define Vector Database Architecture",
             "source_lines": {
-              "start": 9860,
-              "end": 9982
+              "start": 9861,
+              "end": 9983
             }
           },
           "workflow": [
@@ -2566,8 +2482,8 @@
           "id": "R14-S02",
           "guide_stage": "Stage 14.2 \u2014 Add Qdrant Development Service",
           "title": "Add Qdrant Development Service",
-          "guide_start_line": 9983,
-          "guide_end_line": 10110,
+          "guide_start_line": 9984,
+          "guide_end_line": 10111,
           "status": "completed",
           "objective": "Add Qdrant to Docker Compose with persistent local storage and health checks.",
           "session_mode": "implementation",
@@ -2576,8 +2492,8 @@
             "phase": "Phase 14 \u2014 Vector Storage",
             "stage": "Stage 14.2 \u2014 Add Qdrant Development Service",
             "source_lines": {
-              "start": 9983,
-              "end": 10110
+              "start": 9984,
+              "end": 10111
             }
           },
           "workflow": [
@@ -2614,8 +2530,8 @@
           "id": "R14-S03",
           "guide_stage": "Stage 14.3 \u2014 Persist Chunk Vectors",
           "title": "Persist Chunk Vectors",
-          "guide_start_line": 10111,
-          "guide_end_line": 10327,
+          "guide_start_line": 10112,
+          "guide_end_line": 10328,
           "status": "completed",
           "objective": "Persist canonical chunks and generation lifecycle authoritatively in PostgreSQL, and store tenant-scoped embedded chunk projections in Qdrant behind the Python VectorStore boundary.",
           "session_mode": "implementation",
@@ -2624,8 +2540,8 @@
             "phase": "Phase 14 \u2014 Vector Storage",
             "stage": "Stage 14.3 \u2014 Persist Chunk Vectors",
             "source_lines": {
-              "start": 10111,
-              "end": 10327
+              "start": 10112,
+              "end": 10328
             }
           },
           "workflow": [
@@ -2661,20 +2577,20 @@
         },
         {
           "id": "R14-S04",
-          "guide_stage": "Stage 14.4 \u2014 Complete Ingestion Pipeline",
-          "title": "Complete Ingestion Pipeline",
-          "guide_start_line": 10328,
-          "guide_end_line": 10355,
+          "guide_stage": "Stage 14.4 \u2014 Verify and Close the Vector Storage Foundation",
+          "title": "Verify and Close the Vector Storage Foundation",
+          "guide_start_line": 10329,
+          "guide_end_line": 10399,
           "status": "not_started",
-          "objective": "Connect upload, queue consumption, extraction, normalisation, chunking, embedding and vector persistence.",
+          "objective": "Verify the completed PostgreSQL and Qdrant foundations against ADR-0014, record the final Phase 14 implementation boundary, and explicitly defer cross-service ingestion orchestration to Phase 15.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 14 \u2014 Vector Storage",
-            "stage": "Stage 14.4 \u2014 Complete Ingestion Pipeline",
+            "stage": "Stage 14.4 \u2014 Verify and Close the Vector Storage Foundation",
             "source_lines": {
-              "start": 10328,
-              "end": 10355
+              "start": 10329,
+              "end": 10399
             }
           },
           "workflow": [
@@ -2696,13 +2612,13 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r14-s04-complete-ingestion-pipeline.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r14-s04-verify-and-close-vector-storage-foundation.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 10355,
+      "guide_end_line": 10399,
       "status": "not_started",
       "objective": "Persist tenant-isolated chunk vectors and metadata in a dedicated vector database.",
       "gate": {
@@ -2721,26 +2637,27 @@
     },
     {
       "id": "R15",
-      "guide_phase": "Phase 15 \u2014 Retrieval",
-      "title": "Retrieval",
-      "guide_start_line": 10356,
+      "guide_phase": "Phase 15 \u2014 Ingestion Orchestration",
+      "title": "Ingestion Orchestration",
+      "guide_start_line": 10400,
+      "guide_end_line": 10569,
       "sessions": [
         {
           "id": "R15-S01",
-          "guide_stage": "Stage 15.1 \u2014 Define Document Freshness and Archival Policy",
-          "title": "Define Document Freshness and Archival Policy",
-          "guide_start_line": 10375,
-          "guide_end_line": 10419,
+          "guide_stage": "Stage 15.1 \u2014 Define End-to-End Ingestion Orchestration and Worker Result Contracts",
+          "title": "Define End-to-End Ingestion Orchestration and Worker Result Contracts",
+          "guide_start_line": 10438,
+          "guide_end_line": 10528,
           "status": "not_started",
-          "objective": "Decide what \"obsolete\" or \"archived\" means for a Document, extending ADR-0007's lifecycle rather than replacing it, so that retrieval and evaluation have a settled definition of \"active\" to filter against.",
+          "objective": "Decide ADR 0015: the authenticated, idempotent orchestration contract between Laravel and the Python ingestion worker that carries a Document from its existing PROCESSING claim through canonical chunk persistence, embedding and vector persistence to an authoritative INDEXED or FAILED outcome.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.1 \u2014 Define Document Freshness and Archival Policy",
+            "phase": "Phase 15 \u2014 Ingestion Orchestration",
+            "stage": "Stage 15.1 \u2014 Define End-to-End Ingestion Orchestration and Worker Result Contracts",
             "source_lines": {
-              "start": 10375,
-              "end": 10419
+              "start": 10438,
+              "end": 10528
             }
           },
           "workflow": [
@@ -2762,236 +2679,133 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s01-define-document-freshness-and-archival-policy.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r15-s01-define-end-to-end-ingestion-orchestration-and-worker-result-contracts.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R15-S02",
-          "guide_stage": "Stage 15.2 \u2014 Define Retrieval Contract",
+          "guide_stage": "Stage 15.2 \u2014 Implement End-to-End Ingestion Orchestration",
+          "title": "Implement End-to-End Ingestion Orchestration",
+          "guide_start_line": 10529,
+          "guide_end_line": 10569,
+          "status": "not_started",
+          "objective": "Implement the accepted ADR-0015 orchestration contract, completing the upload-to-INDEXED ingestion path before Retrieval begins.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 15 \u2014 Ingestion Orchestration",
+            "stage": "Stage 15.2 \u2014 Implement End-to-End Ingestion Orchestration",
+            "source_lines": {
+              "start": 10529,
+              "end": 10569
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r15-s02-implement-end-to-end-ingestion-orchestration.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        }
+      ],
+      "status": "not_started",
+      "objective": "Decide and implement the authenticated, idempotent cross-service contract that carries a Document from its existing PROCESSING claim through canonical chunk persistence, embedding and vector persistence to an authoritative INDEXED or FAILED outcome, closing the gap between Phase 14's completed storage foundation and Phase 16's retrieval work.",
+      "gate": {
+        "id": "R15-GATE",
+        "title": "Ingestion Orchestration Acceptance Gate",
+        "status": "not_started",
+        "requirements": [
+          "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
+          "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
+          "Ensure relevant ADRs and the ADR index are current.",
+          "Commit the completed phase.",
+          "Create annotated Git tag phase-15 where required by the guide."
+        ],
+        "completion_evidence": []
+      }
+    },
+    {
+      "id": "R16",
+      "guide_phase": "Phase 16 \u2014 Retrieval",
+      "title": "Retrieval",
+      "guide_start_line": 10570,
+      "sessions": [
+        {
+          "id": "R16-S01",
+          "guide_stage": "Stage 16.1 \u2014 Define Document Freshness and Archival Policy",
+          "title": "Define Document Freshness and Archival Policy",
+          "guide_start_line": 10589,
+          "guide_end_line": 10633,
+          "status": "not_started",
+          "objective": "Decide what \"obsolete\" or \"archived\" means for a Document, extending ADR-0007's lifecycle rather than replacing it, so that retrieval and evaluation have a settled definition of \"active\" to filter against.",
+          "session_mode": "architecture",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 16 \u2014 Retrieval",
+            "stage": "Stage 16.1 \u2014 Define Document Freshness and Archival Policy",
+            "source_lines": {
+              "start": 10589,
+              "end": 10633
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": true,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r16-s01-define-document-freshness-and-archival-policy.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R16-S02",
+          "guide_stage": "Stage 16.2 \u2014 Define Retrieval Contract",
           "title": "Define Retrieval Contract",
-          "guide_start_line": 10420,
-          "guide_end_line": 10480,
+          "guide_start_line": 10634,
+          "guide_end_line": 10694,
           "status": "not_started",
           "objective": "Define the input, output and diagnostics of the retrieval subsystem, including the query-planning boundary and freshness filtering Stage 15.1 requires.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.2 \u2014 Define Retrieval Contract",
+            "phase": "Phase 16 \u2014 Retrieval",
+            "stage": "Stage 16.2 \u2014 Define Retrieval Contract",
             "source_lines": {
-              "start": 10420,
-              "end": 10480
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": true,
-          "requires_adr": true,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s02-define-retrieval-contract.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R15-S03",
-          "guide_stage": "Stage 15.3 \u2014 Implement Semantic Retrieval",
-          "title": "Implement Semantic Retrieval",
-          "guide_start_line": 10481,
-          "guide_end_line": 10508,
-          "status": "not_started",
-          "objective": "Embed a user query and retrieve tenant-filtered chunks from Qdrant.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.3 \u2014 Implement Semantic Retrieval",
-            "source_lines": {
-              "start": 10481,
-              "end": 10508
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s03-implement-semantic-retrieval.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R15-S04",
-          "guide_stage": "Stage 15.4 \u2014 Define Evaluation and Quality-Gate Architecture",
-          "title": "Define Evaluation and Quality-Gate Architecture",
-          "guide_start_line": 10509,
-          "guide_end_line": 10568,
-          "status": "not_started",
-          "objective": "Define a repository-owned evaluation harness and quality-gate policy that grows with the pipeline, starting with retrieval and extending to generation without redesign.",
-          "session_mode": "architecture",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.4 \u2014 Define Evaluation and Quality-Gate Architecture",
-            "source_lines": {
-              "start": 10509,
-              "end": 10568
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": true,
-          "requires_adr": true,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s04-define-evaluation-and-quality-gate-architecture.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R15-S05",
-          "guide_stage": "Stage 15.5 \u2014 Implement Retrieval Evaluation",
-          "title": "Implement Retrieval Evaluation",
-          "guide_start_line": 10569,
-          "guide_end_line": 10605,
-          "status": "not_started",
-          "objective": "Measure retrieval quality against the Stage 15.4 harness's curated question-and-source dataset.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.5 \u2014 Implement Retrieval Evaluation",
-            "source_lines": {
-              "start": 10569,
-              "end": 10605
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s05-implement-retrieval-evaluation.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R15-S06",
-          "guide_stage": "Stage 15.6 \u2014 Define Hybrid Retrieval and Reranking Architecture",
-          "title": "Define Hybrid Retrieval and Reranking Architecture",
-          "guide_start_line": 10606,
-          "guide_end_line": 10660,
-          "status": "not_started",
-          "objective": "Define one combined candidate-selection architecture \u2014 dense retrieval, sparse/keyword retrieval, fusion, reranking and evidence thresholds \u2014 as a single ADR, evaluated only after the semantic baseline is measured.",
-          "session_mode": "architecture",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.6 \u2014 Define Hybrid Retrieval and Reranking Architecture",
-            "source_lines": {
-              "start": 10606,
-              "end": 10660
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": true,
-          "requires_adr": true,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s06-define-hybrid-retrieval-and-reranking-architecture.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R15-S07",
-          "guide_stage": "Stage 15.7 \u2014 Implement Hybrid Retrieval and Reranking",
-          "title": "Implement Hybrid Retrieval and Reranking",
-          "guide_start_line": 10661,
-          "guide_end_line": 10694,
-          "status": "not_started",
-          "objective": "Implement the Stage 15.6 architecture: sparse retrieval, RRF fusion, the Reranker contract with Voyage as its V1 provider, calibrated thresholds and abstention.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 15 \u2014 Retrieval",
-            "stage": "Stage 15.7 \u2014 Implement Hybrid Retrieval and Reranking",
-            "source_lines": {
-              "start": 10661,
+              "start": 10634,
               "end": 10694
             }
           },
@@ -3010,55 +2824,73 @@
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
+          "requires_architecture_review": true,
+          "requires_adr": true,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r16-s02-define-retrieval-contract.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R16-S03",
+          "guide_stage": "Stage 16.3 \u2014 Implement Semantic Retrieval",
+          "title": "Implement Semantic Retrieval",
+          "guide_start_line": 10695,
+          "guide_end_line": 10722,
+          "status": "not_started",
+          "objective": "Embed a user query and retrieve tenant-filtered chunks from Qdrant.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 16 \u2014 Retrieval",
+            "stage": "Stage 16.3 \u2014 Implement Semantic Retrieval",
+            "source_lines": {
+              "start": 10695,
+              "end": 10722
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
           "requires_architecture_review": false,
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r15-s07-implement-hybrid-retrieval-and-reranking.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r16-s03-implement-semantic-retrieval.md",
             "status": "not_started"
           },
           "completion_evidence": []
-        }
-      ],
-      "guide_end_line": 10694,
-      "status": "not_started",
-      "objective": "Retrieve relevant, tenant-safe source chunks for a user query.",
-      "gate": {
-        "id": "R15-GATE",
-        "title": "Retrieval Acceptance Gate",
-        "status": "not_started",
-        "requirements": [
-          "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
-          "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
-          "Ensure relevant ADRs and the ADR index are current.",
-          "Commit the completed phase.",
-          "Create annotated Git tag phase-15 where required by the guide."
-        ],
-        "completion_evidence": []
-      }
-    },
-    {
-      "id": "R16",
-      "guide_phase": "Phase 16 \u2014 Grounded Generation",
-      "title": "Grounded Generation",
-      "guide_start_line": 10695,
-      "sessions": [
+        },
         {
-          "id": "R16-S01",
-          "guide_stage": "Stage 16.1 \u2014 Define Generation Provider Boundary",
-          "title": "Define Generation Provider Boundary",
-          "guide_start_line": 10703,
-          "guide_end_line": 10744,
+          "id": "R16-S04",
+          "guide_stage": "Stage 16.4 \u2014 Define Evaluation and Quality-Gate Architecture",
+          "title": "Define Evaluation and Quality-Gate Architecture",
+          "guide_start_line": 10723,
+          "guide_end_line": 10782,
           "status": "not_started",
-          "objective": "Create a provider-neutral interface for chat or completion models.",
+          "objective": "Define a repository-owned evaluation harness and quality-gate policy that grows with the pipeline, starting with retrieval and extending to generation without redesign.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 16 \u2014 Grounded Generation",
-            "stage": "Stage 16.1 \u2014 Define Generation Provider Boundary",
+            "phase": "Phase 16 \u2014 Retrieval",
+            "stage": "Stage 16.4 \u2014 Define Evaluation and Quality-Gate Architecture",
             "source_lines": {
-              "start": 10703,
-              "end": 10744
+              "start": 10723,
+              "end": 10782
             }
           },
           "workflow": [
@@ -3080,27 +2912,27 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r16-s01-define-generation-provider-boundary.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r16-s04-define-evaluation-and-quality-gate-architecture.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R16-S02",
-          "guide_stage": "Stage 16.2 \u2014 Build Grounded Prompt Assembly",
-          "title": "Build Grounded Prompt Assembly",
-          "guide_start_line": 10745,
-          "guide_end_line": 10780,
+          "id": "R16-S05",
+          "guide_stage": "Stage 16.5 \u2014 Implement Retrieval Evaluation",
+          "title": "Implement Retrieval Evaluation",
+          "guide_start_line": 10783,
+          "guide_end_line": 10819,
           "status": "not_started",
-          "objective": "Construct prompts from the user query, tenant-safe retrieved chunks and explicit grounding instructions.",
+          "objective": "Measure retrieval quality against the Stage 15.4 harness's curated question-and-source dataset.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 16 \u2014 Grounded Generation",
-            "stage": "Stage 16.2 \u2014 Build Grounded Prompt Assembly",
+            "phase": "Phase 16 \u2014 Retrieval",
+            "stage": "Stage 16.5 \u2014 Implement Retrieval Evaluation",
             "source_lines": {
-              "start": 10745,
-              "end": 10780
+              "start": 10783,
+              "end": 10819
             }
           },
           "workflow": [
@@ -3122,27 +2954,69 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r16-s02-build-grounded-prompt-assembly.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r16-s05-implement-retrieval-evaluation.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R16-S03",
-          "guide_stage": "Stage 16.3 \u2014 Generate Answers with Citations",
-          "title": "Generate Answers with Citations",
-          "guide_start_line": 10781,
-          "guide_end_line": 10812,
+          "id": "R16-S06",
+          "guide_stage": "Stage 16.6 \u2014 Define Hybrid Retrieval and Reranking Architecture",
+          "title": "Define Hybrid Retrieval and Reranking Architecture",
+          "guide_start_line": 10820,
+          "guide_end_line": 10874,
           "status": "not_started",
-          "objective": "Produce answers that cite retrieved source locations.",
+          "objective": "Define one combined candidate-selection architecture \u2014 dense retrieval, sparse/keyword retrieval, fusion, reranking and evidence thresholds \u2014 as a single ADR, evaluated only after the semantic baseline is measured.",
+          "session_mode": "architecture",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 16 \u2014 Retrieval",
+            "stage": "Stage 16.6 \u2014 Define Hybrid Retrieval and Reranking Architecture",
+            "source_lines": {
+              "start": 10820,
+              "end": 10874
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": true,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r16-s06-define-hybrid-retrieval-and-reranking-architecture.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R16-S07",
+          "guide_stage": "Stage 16.7 \u2014 Implement Hybrid Retrieval and Reranking",
+          "title": "Implement Hybrid Retrieval and Reranking",
+          "guide_start_line": 10875,
+          "guide_end_line": 10908,
+          "status": "not_started",
+          "objective": "Implement the Stage 15.6 architecture: sparse retrieval, RRF fusion, the Reranker contract with Voyage as its V1 provider, calibrated thresholds and abstention.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 16 \u2014 Grounded Generation",
-            "stage": "Stage 16.3 \u2014 Generate Answers with Citations",
+            "phase": "Phase 16 \u2014 Retrieval",
+            "stage": "Stage 16.7 \u2014 Implement Hybrid Retrieval and Reranking",
             "source_lines": {
-              "start": 10781,
-              "end": 10812
+              "start": 10875,
+              "end": 10908
             }
           },
           "workflow": [
@@ -3164,60 +3038,18 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r16-s03-generate-answers-with-citations.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R16-S04",
-          "guide_stage": "Stage 16.4 \u2014 Add Answer Evaluation",
-          "title": "Add Answer Evaluation",
-          "guide_start_line": 10813,
-          "guide_end_line": 10857,
-          "status": "not_started",
-          "objective": "Evaluate groundedness, citation correctness and answer usefulness.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 16 \u2014 Grounded Generation",
-            "stage": "Stage 16.4 \u2014 Add Answer Evaluation",
-            "source_lines": {
-              "start": 10813,
-              "end": 10857
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r16-s04-add-answer-evaluation.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r16-s07-implement-hybrid-retrieval-and-reranking.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 10857,
+      "guide_end_line": 10908,
       "status": "not_started",
-      "objective": "Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.",
+      "objective": "Retrieve relevant, tenant-safe source chunks for a user query.",
       "gate": {
         "id": "R16-GATE",
-        "title": "Grounded Generation Acceptance Gate",
+        "title": "Retrieval Acceptance Gate",
         "status": "not_started",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
@@ -3231,26 +3063,26 @@
     },
     {
       "id": "R17",
-      "guide_phase": "Phase 17 \u2014 Conversation and Streaming",
-      "title": "Conversation and Streaming",
-      "guide_start_line": 10858,
+      "guide_phase": "Phase 17 \u2014 Grounded Generation",
+      "title": "Grounded Generation",
+      "guide_start_line": 10909,
       "sessions": [
         {
           "id": "R17-S01",
-          "guide_stage": "Stage 17.1 \u2014 Define Conversation Domain",
-          "title": "Define Conversation Domain",
-          "guide_start_line": 10866,
-          "guide_end_line": 10901,
+          "guide_stage": "Stage 17.1 \u2014 Define Generation Provider Boundary",
+          "title": "Define Generation Provider Boundary",
+          "guide_start_line": 10917,
+          "guide_end_line": 10958,
           "status": "not_started",
-          "objective": "Model conversations, messages, citations and generation metadata.",
+          "objective": "Create a provider-neutral interface for chat or completion models.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 17 \u2014 Conversation and Streaming",
-            "stage": "Stage 17.1 \u2014 Define Conversation Domain",
+            "phase": "Phase 17 \u2014 Grounded Generation",
+            "stage": "Stage 17.1 \u2014 Define Generation Provider Boundary",
             "source_lines": {
-              "start": 10866,
-              "end": 10901
+              "start": 10917,
+              "end": 10958
             }
           },
           "workflow": [
@@ -3272,27 +3104,27 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r17-s01-define-conversation-domain.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r17-s01-define-generation-provider-boundary.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R17-S02",
-          "guide_stage": "Stage 17.2 \u2014 Implement Chat Orchestration API",
-          "title": "Implement Chat Orchestration API",
-          "guide_start_line": 10902,
-          "guide_end_line": 10938,
+          "guide_stage": "Stage 17.2 \u2014 Build Grounded Prompt Assembly",
+          "title": "Build Grounded Prompt Assembly",
+          "guide_start_line": 10959,
+          "guide_end_line": 10994,
           "status": "not_started",
-          "objective": "Coordinate retrieval and generation through a stable Laravel-facing API.",
+          "objective": "Construct prompts from the user query, tenant-safe retrieved chunks and explicit grounding instructions.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 17 \u2014 Conversation and Streaming",
-            "stage": "Stage 17.2 \u2014 Implement Chat Orchestration API",
+            "phase": "Phase 17 \u2014 Grounded Generation",
+            "stage": "Stage 17.2 \u2014 Build Grounded Prompt Assembly",
             "source_lines": {
-              "start": 10902,
-              "end": 10938
+              "start": 10959,
+              "end": 10994
             }
           },
           "workflow": [
@@ -3314,27 +3146,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r17-s02-implement-chat-orchestration-api.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r17-s02-build-grounded-prompt-assembly.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R17-S03",
-          "guide_stage": "Stage 17.3 \u2014 Implement Streaming Responses",
-          "title": "Implement Streaming Responses",
-          "guide_start_line": 10939,
-          "guide_end_line": 10976,
+          "guide_stage": "Stage 17.3 \u2014 Generate Answers with Citations",
+          "title": "Generate Answers with Citations",
+          "guide_start_line": 10995,
+          "guide_end_line": 11026,
           "status": "not_started",
-          "objective": "Stream generated answer tokens or events to the browser.",
+          "objective": "Produce answers that cite retrieved source locations.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 17 \u2014 Conversation and Streaming",
-            "stage": "Stage 17.3 \u2014 Implement Streaming Responses",
+            "phase": "Phase 17 \u2014 Grounded Generation",
+            "stage": "Stage 17.3 \u2014 Generate Answers with Citations",
             "source_lines": {
-              "start": 10939,
-              "end": 10976
+              "start": 10995,
+              "end": 11026
             }
           },
           "workflow": [
@@ -3356,27 +3188,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r17-s03-implement-streaming-responses.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r17-s03-generate-answers-with-citations.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R17-S04",
-          "guide_stage": "Stage 17.4 \u2014 Build Chat Interface",
-          "title": "Build Chat Interface",
-          "guide_start_line": 10977,
-          "guide_end_line": 11016,
+          "guide_stage": "Stage 17.4 \u2014 Add Answer Evaluation",
+          "title": "Add Answer Evaluation",
+          "guide_start_line": 11027,
+          "guide_end_line": 11071,
           "status": "not_started",
-          "objective": "Create the tenant-aware conversational UI.",
+          "objective": "Evaluate groundedness, citation correctness and answer usefulness.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 17 \u2014 Conversation and Streaming",
-            "stage": "Stage 17.4 \u2014 Build Chat Interface",
+            "phase": "Phase 17 \u2014 Grounded Generation",
+            "stage": "Stage 17.4 \u2014 Add Answer Evaluation",
             "source_lines": {
-              "start": 10977,
-              "end": 11016
+              "start": 11027,
+              "end": 11071
             }
           },
           "workflow": [
@@ -3398,18 +3230,18 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r17-s04-build-chat-interface.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r17-s04-add-answer-evaluation.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 11016,
+      "guide_end_line": 11071,
       "status": "not_started",
-      "objective": "Expose the RAG workflow as a persistent, streaming conversational experience.",
+      "objective": "Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.",
       "gate": {
         "id": "R17-GATE",
-        "title": "Conversation and Streaming Acceptance Gate",
+        "title": "Grounded Generation Acceptance Gate",
         "status": "not_started",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
@@ -3423,302 +3255,26 @@
     },
     {
       "id": "R18",
-      "guide_phase": "Phase 18 \u2014 Administration",
-      "title": "Administration",
-      "guide_start_line": 11017,
+      "guide_phase": "Phase 18 \u2014 Conversation and Streaming",
+      "title": "Conversation and Streaming",
+      "guide_start_line": 11072,
       "sessions": [
         {
           "id": "R18-S01",
-          "guide_stage": "Stage 18.1 \u2014 Build Document Administration",
-          "title": "Build Document Administration",
-          "guide_start_line": 11025,
-          "guide_end_line": 11061,
+          "guide_stage": "Stage 18.1 \u2014 Define Conversation Domain",
+          "title": "Define Conversation Domain",
+          "guide_start_line": 11080,
+          "guide_end_line": 11115,
           "status": "not_started",
-          "objective": "Allow authorised users to inspect, retry and delete documents.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 18 \u2014 Administration",
-            "stage": "Stage 18.1 \u2014 Build Document Administration",
-            "source_lines": {
-              "start": 11025,
-              "end": 11061
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r18-s01-build-document-administration.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R18-S02",
-          "guide_stage": "Stage 18.2 \u2014 Build Tenant and Membership Administration",
-          "title": "Build Tenant and Membership Administration",
-          "guide_start_line": 11062,
-          "guide_end_line": 11087,
-          "status": "not_started",
-          "objective": "Allow authorised tenant administrators to manage members and roles.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 18 \u2014 Administration",
-            "stage": "Stage 18.2 \u2014 Build Tenant and Membership Administration",
-            "source_lines": {
-              "start": 11062,
-              "end": 11087
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r18-s02-build-tenant-and-membership-administration.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R18-S03",
-          "guide_stage": "Stage 18.3 \u2014 Add Usage Visibility",
-          "title": "Add Usage Visibility",
-          "guide_start_line": 11088,
-          "guide_end_line": 11124,
-          "status": "not_started",
-          "objective": "Expose document, storage, ingestion and model-usage information.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 18 \u2014 Administration",
-            "stage": "Stage 18.3 \u2014 Add Usage Visibility",
-            "source_lines": {
-              "start": 11088,
-              "end": 11124
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r18-s03-add-usage-visibility.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        }
-      ],
-      "guide_end_line": 11124,
-      "status": "not_started",
-      "objective": "Provide operational visibility and safe tenant-level controls.",
-      "gate": {
-        "id": "R18-GATE",
-        "title": "Administration Acceptance Gate",
-        "status": "not_started",
-        "requirements": [
-          "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
-          "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
-          "Ensure relevant ADRs and the ADR index are current.",
-          "Commit the completed phase.",
-          "Create annotated Git tag phase-18 where required by the guide."
-        ],
-        "completion_evidence": []
-      }
-    },
-    {
-      "id": "R19",
-      "guide_phase": "Phase 19 \u2014 Observability and Operations",
-      "title": "Observability and Operations",
-      "guide_start_line": 11125,
-      "sessions": [
-        {
-          "id": "R19-S01",
-          "guide_stage": "Stage 19.1 \u2014 Standardise Structured Logging",
-          "title": "Standardise Structured Logging",
-          "guide_start_line": 11141,
-          "guide_end_line": 11181,
-          "status": "not_started",
-          "objective": "Emit machine-readable, correlated logs from every service.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 19 \u2014 Observability and Operations",
-            "stage": "Stage 19.1 \u2014 Standardise Structured Logging",
-            "source_lines": {
-              "start": 11141,
-              "end": 11181
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r19-s01-standardise-structured-logging.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R19-S02",
-          "guide_stage": "Stage 19.2 \u2014 Add Metrics",
-          "title": "Add Metrics",
-          "guide_start_line": 11182,
-          "guide_end_line": 11221,
-          "status": "not_started",
-          "objective": "Measure platform health, latency, throughput and failures.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 19 \u2014 Observability and Operations",
-            "stage": "Stage 19.2 \u2014 Add Metrics",
-            "source_lines": {
-              "start": 11182,
-              "end": 11221
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r19-s02-add-metrics.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R19-S03",
-          "guide_stage": "Stage 19.3 \u2014 Add Distributed Tracing",
-          "title": "Add Distributed Tracing",
-          "guide_start_line": 11222,
-          "guide_end_line": 11251,
-          "status": "not_started",
-          "objective": "Trace requests across Next.js, Laravel, Python, queues and external providers.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 19 \u2014 Observability and Operations",
-            "stage": "Stage 19.3 \u2014 Add Distributed Tracing",
-            "source_lines": {
-              "start": 11222,
-              "end": 11251
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r19-s03-add-distributed-tracing.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R19-S04",
-          "guide_stage": "Stage 19.4 \u2014 Define Operational Alerts",
-          "title": "Define Operational Alerts",
-          "guide_start_line": 11252,
-          "guide_end_line": 11289,
-          "status": "not_started",
-          "objective": "Document actionable alert conditions and runbooks.",
+          "objective": "Model conversations, messages, citations and generation metadata.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 19 \u2014 Observability and Operations",
-            "stage": "Stage 19.4 \u2014 Define Operational Alerts",
+            "phase": "Phase 18 \u2014 Conversation and Streaming",
+            "stage": "Stage 18.1 \u2014 Define Conversation Domain",
             "source_lines": {
-              "start": 11252,
-              "end": 11289
+              "start": 11080,
+              "end": 11115
             }
           },
           "workflow": [
@@ -3740,50 +3296,260 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r19-s04-define-operational-alerts.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r18-s01-define-conversation-domain.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R18-S02",
+          "guide_stage": "Stage 18.2 \u2014 Implement Chat Orchestration API",
+          "title": "Implement Chat Orchestration API",
+          "guide_start_line": 11116,
+          "guide_end_line": 11152,
+          "status": "not_started",
+          "objective": "Coordinate retrieval and generation through a stable Laravel-facing API.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 18 \u2014 Conversation and Streaming",
+            "stage": "Stage 18.2 \u2014 Implement Chat Orchestration API",
+            "source_lines": {
+              "start": 11116,
+              "end": 11152
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r18-s02-implement-chat-orchestration-api.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R18-S03",
+          "guide_stage": "Stage 18.3 \u2014 Implement Streaming Responses",
+          "title": "Implement Streaming Responses",
+          "guide_start_line": 11153,
+          "guide_end_line": 11190,
+          "status": "not_started",
+          "objective": "Stream generated answer tokens or events to the browser.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 18 \u2014 Conversation and Streaming",
+            "stage": "Stage 18.3 \u2014 Implement Streaming Responses",
+            "source_lines": {
+              "start": 11153,
+              "end": 11190
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r18-s03-implement-streaming-responses.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R18-S04",
+          "guide_stage": "Stage 18.4 \u2014 Build Chat Interface",
+          "title": "Build Chat Interface",
+          "guide_start_line": 11191,
+          "guide_end_line": 11230,
+          "status": "not_started",
+          "objective": "Create the tenant-aware conversational UI.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 18 \u2014 Conversation and Streaming",
+            "stage": "Stage 18.4 \u2014 Build Chat Interface",
+            "source_lines": {
+              "start": 11191,
+              "end": 11230
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r18-s04-build-chat-interface.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 11289,
+      "guide_end_line": 11230,
       "status": "not_started",
-      "objective": "Make failures, latency and cross-service behaviour diagnosable.",
+      "objective": "Expose the RAG workflow as a persistent, streaming conversational experience.",
       "gate": {
-        "id": "R19-GATE",
-        "title": "Observability and Operations Acceptance Gate",
+        "id": "R18-GATE",
+        "title": "Conversation and Streaming Acceptance Gate",
         "status": "not_started",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
           "Ensure relevant ADRs and the ADR index are current.",
           "Commit the completed phase.",
-          "Create annotated Git tag phase-19 where required by the guide."
+          "Create annotated Git tag phase-18 where required by the guide."
         ],
         "completion_evidence": []
       }
     },
     {
-      "id": "R20",
-      "guide_phase": "Phase 20 \u2014 Testing and Quality Strategy",
-      "title": "Testing and Quality Strategy",
-      "guide_start_line": 11290,
+      "id": "R19",
+      "guide_phase": "Phase 19 \u2014 Administration",
+      "title": "Administration",
+      "guide_start_line": 11231,
       "sessions": [
         {
-          "id": "R20-S01",
-          "guide_stage": "Stage 20.1 \u2014 Establish Test Taxonomy",
-          "title": "Establish Test Taxonomy",
-          "guide_start_line": 11298,
-          "guide_end_line": 11338,
+          "id": "R19-S01",
+          "guide_stage": "Stage 19.1 \u2014 Build Document Administration",
+          "title": "Build Document Administration",
+          "guide_start_line": 11239,
+          "guide_end_line": 11275,
           "status": "not_started",
-          "objective": "Document which behaviours belong in unit, integration, contract, feature and end-to-end tests.",
+          "objective": "Allow authorised users to inspect, retry and delete documents.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 20 \u2014 Testing and Quality Strategy",
-            "stage": "Stage 20.1 \u2014 Establish Test Taxonomy",
+            "phase": "Phase 19 \u2014 Administration",
+            "stage": "Stage 19.1 \u2014 Build Document Administration",
             "source_lines": {
-              "start": 11298,
+              "start": 11239,
+              "end": 11275
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r19-s01-build-document-administration.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R19-S02",
+          "guide_stage": "Stage 19.2 \u2014 Build Tenant and Membership Administration",
+          "title": "Build Tenant and Membership Administration",
+          "guide_start_line": 11276,
+          "guide_end_line": 11301,
+          "status": "not_started",
+          "objective": "Allow authorised tenant administrators to manage members and roles.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 19 \u2014 Administration",
+            "stage": "Stage 19.2 \u2014 Build Tenant and Membership Administration",
+            "source_lines": {
+              "start": 11276,
+              "end": 11301
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r19-s02-build-tenant-and-membership-administration.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R19-S03",
+          "guide_stage": "Stage 19.3 \u2014 Add Usage Visibility",
+          "title": "Add Usage Visibility",
+          "guide_start_line": 11302,
+          "guide_end_line": 11338,
+          "status": "not_started",
+          "objective": "Expose document, storage, ingestion and model-usage information.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 19 \u2014 Administration",
+            "stage": "Stage 19.3 \u2014 Add Usage Visibility",
+            "source_lines": {
+              "start": 11302,
               "end": 11338
             }
           },
@@ -3806,27 +3572,93 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r20-s01-establish-test-taxonomy.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r19-s03-add-usage-visibility.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        }
+      ],
+      "guide_end_line": 11338,
+      "status": "not_started",
+      "objective": "Provide operational visibility and safe tenant-level controls.",
+      "gate": {
+        "id": "R19-GATE",
+        "title": "Administration Acceptance Gate",
+        "status": "not_started",
+        "requirements": [
+          "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
+          "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
+          "Ensure relevant ADRs and the ADR index are current.",
+          "Commit the completed phase.",
+          "Create annotated Git tag phase-19 where required by the guide."
+        ],
+        "completion_evidence": []
+      }
+    },
+    {
+      "id": "R20",
+      "guide_phase": "Phase 20 \u2014 Observability and Operations",
+      "title": "Observability and Operations",
+      "guide_start_line": 11339,
+      "sessions": [
+        {
+          "id": "R20-S01",
+          "guide_stage": "Stage 20.1 \u2014 Standardise Structured Logging",
+          "title": "Standardise Structured Logging",
+          "guide_start_line": 11355,
+          "guide_end_line": 11395,
+          "status": "not_started",
+          "objective": "Emit machine-readable, correlated logs from every service.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 20 \u2014 Observability and Operations",
+            "stage": "Stage 20.1 \u2014 Standardise Structured Logging",
+            "source_lines": {
+              "start": 11355,
+              "end": 11395
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r20-s01-standardise-structured-logging.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R20-S02",
-          "guide_stage": "Stage 20.2 \u2014 Add Contract Tests",
-          "title": "Add Contract Tests",
-          "guide_start_line": 11339,
-          "guide_end_line": 11365,
+          "guide_stage": "Stage 20.2 \u2014 Add Metrics",
+          "title": "Add Metrics",
+          "guide_start_line": 11396,
+          "guide_end_line": 11435,
           "status": "not_started",
-          "objective": "Verify that Laravel and Python agree on shared HTTP and event contracts.",
-          "session_mode": "architecture",
+          "objective": "Measure platform health, latency, throughput and failures.",
+          "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 20 \u2014 Testing and Quality Strategy",
-            "stage": "Stage 20.2 \u2014 Add Contract Tests",
+            "phase": "Phase 20 \u2014 Observability and Operations",
+            "stage": "Stage 20.2 \u2014 Add Metrics",
             "source_lines": {
-              "start": 11339,
-              "end": 11365
+              "start": 11396,
+              "end": 11435
             }
           },
           "workflow": [
@@ -3844,114 +3676,30 @@
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
-          "requires_architecture_review": true,
-          "requires_adr": true,
+          "requires_architecture_review": false,
+          "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r20-s02-add-contract-tests.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r20-s02-add-metrics.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R20-S03",
-          "guide_stage": "Stage 20.3 \u2014 Add End-to-End Ingestion Tests",
-          "title": "Add End-to-End Ingestion Tests",
-          "guide_start_line": 11366,
-          "guide_end_line": 11397,
-          "status": "not_started",
-          "objective": "Test the complete document path from upload to searchable vectors.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 20 \u2014 Testing and Quality Strategy",
-            "stage": "Stage 20.3 \u2014 Add End-to-End Ingestion Tests",
-            "source_lines": {
-              "start": 11366,
-              "end": 11397
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r20-s03-add-end-to-end-ingestion-tests.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R20-S04",
-          "guide_stage": "Stage 20.4 \u2014 Add End-to-End Chat Tests",
-          "title": "Add End-to-End Chat Tests",
-          "guide_start_line": 11398,
-          "guide_end_line": 11425,
-          "status": "not_started",
-          "objective": "Test authenticated, tenant-safe retrieval and grounded answer generation.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 20 \u2014 Testing and Quality Strategy",
-            "stage": "Stage 20.4 \u2014 Add End-to-End Chat Tests",
-            "source_lines": {
-              "start": 11398,
-              "end": 11425
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r20-s04-add-end-to-end-chat-tests.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R20-S05",
-          "guide_stage": "Stage 20.5 \u2014 Add Security-Focused Tests",
-          "title": "Add Security-Focused Tests",
-          "guide_start_line": 11426,
+          "guide_stage": "Stage 20.3 \u2014 Add Distributed Tracing",
+          "title": "Add Distributed Tracing",
+          "guide_start_line": 11436,
           "guide_end_line": 11465,
           "status": "not_started",
-          "objective": "Automate checks for the platform\u2019s most important security boundaries.",
+          "objective": "Trace requests across Next.js, Laravel, Python, queues and external providers.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 20 \u2014 Testing and Quality Strategy",
-            "stage": "Stage 20.5 \u2014 Add Security-Focused Tests",
+            "phase": "Phase 20 \u2014 Observability and Operations",
+            "stage": "Stage 20.3 \u2014 Add Distributed Tracing",
             "source_lines": {
-              "start": 11426,
+              "start": 11436,
               "end": 11465
             }
           },
@@ -3974,18 +3722,60 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r20-s05-add-security-focused-tests.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r20-s03-add-distributed-tracing.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R20-S04",
+          "guide_stage": "Stage 20.4 \u2014 Define Operational Alerts",
+          "title": "Define Operational Alerts",
+          "guide_start_line": 11466,
+          "guide_end_line": 11503,
+          "status": "not_started",
+          "objective": "Document actionable alert conditions and runbooks.",
+          "session_mode": "architecture",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 20 \u2014 Observability and Operations",
+            "stage": "Stage 20.4 \u2014 Define Operational Alerts",
+            "source_lines": {
+              "start": 11466,
+              "end": 11503
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": true,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r20-s04-define-operational-alerts.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 11465,
+      "guide_end_line": 11503,
       "status": "not_started",
-      "objective": "Create a layered test strategy that catches regressions without requiring every check to be an expensive end-to-end test.",
+      "objective": "Make failures, latency and cross-service behaviour diagnosable.",
       "gate": {
         "id": "R20-GATE",
-        "title": "Testing and Quality Strategy Acceptance Gate",
+        "title": "Observability and Operations Acceptance Gate",
         "status": "not_started",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
@@ -3999,26 +3789,26 @@
     },
     {
       "id": "R21",
-      "guide_phase": "Phase 21 \u2014 CI/CD and Production Readiness",
-      "title": "CI/CD and Production Readiness",
-      "guide_start_line": 11466,
+      "guide_phase": "Phase 21 \u2014 Testing and Quality Strategy",
+      "title": "Testing and Quality Strategy",
+      "guide_start_line": 11504,
       "sessions": [
         {
           "id": "R21-S01",
-          "guide_stage": "Stage 21.1 \u2014 Add Continuous Integration",
-          "title": "Add Continuous Integration",
-          "guide_start_line": 11474,
-          "guide_end_line": 11513,
+          "guide_stage": "Stage 21.1 \u2014 Establish Test Taxonomy",
+          "title": "Establish Test Taxonomy",
+          "guide_start_line": 11512,
+          "guide_end_line": 11552,
           "status": "not_started",
-          "objective": "Run quality and test checks automatically for every relevant change.",
+          "objective": "Document which behaviours belong in unit, integration, contract, feature and end-to-end tests.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 21.1 \u2014 Add Continuous Integration",
+            "phase": "Phase 21 \u2014 Testing and Quality Strategy",
+            "stage": "Stage 21.1 \u2014 Establish Test Taxonomy",
             "source_lines": {
-              "start": 11474,
-              "end": 11513
+              "start": 11512,
+              "end": 11552
             }
           },
           "workflow": [
@@ -4040,195 +3830,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r21-s01-add-continuous-integration.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r21-s01-establish-test-taxonomy.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R21-S02",
-          "guide_stage": "Stage 21.2 \u2014 Create Production Container Builds",
-          "title": "Create Production Container Builds",
-          "guide_start_line": 11514,
-          "guide_end_line": 11554,
+          "guide_stage": "Stage 21.2 \u2014 Add Contract Tests",
+          "title": "Add Contract Tests",
+          "guide_start_line": 11553,
+          "guide_end_line": 11579,
           "status": "not_started",
-          "objective": "Create minimal, immutable runtime images distinct from development behaviour.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 21.2 \u2014 Create Production Container Builds",
-            "source_lines": {
-              "start": 11514,
-              "end": 11554
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r21-s02-create-production-container-builds.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R21-S03",
-          "guide_stage": "Stage 21.3 \u2014 Add Infrastructure as Code",
-          "title": "Add Infrastructure as Code",
-          "guide_start_line": 11555,
-          "guide_end_line": 11604,
-          "status": "not_started",
-          "objective": "Define production infrastructure under infrastructure/terraform.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 21.3 \u2014 Add Infrastructure as Code",
-            "source_lines": {
-              "start": 11555,
-              "end": 11604
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r21-s03-add-infrastructure-as-code.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R21-S04",
-          "guide_stage": "Stage 21.4 \u2014 Configure Secrets and Environment Management",
-          "title": "Configure Secrets and Environment Management",
-          "guide_start_line": 11605,
-          "guide_end_line": 11641,
-          "status": "not_started",
-          "objective": "Create a secure configuration contract across local, CI, staging and production environments.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 21.4 \u2014 Configure Secrets and Environment Management",
-            "source_lines": {
-              "start": 11605,
-              "end": 11641
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r21-s04-configure-secrets-and-environment-management.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R21-S05",
-          "guide_stage": "Stage 21.5 \u2014 Add Database Backup and Recovery",
-          "title": "Add Database Backup and Recovery",
-          "guide_start_line": 11642,
-          "guide_end_line": 11668,
-          "status": "not_started",
-          "objective": "Define and test relational database backup and restoration.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 21.5 \u2014 Add Database Backup and Recovery",
-            "source_lines": {
-              "start": 11642,
-              "end": 11668
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r21-s05-add-database-backup-and-recovery.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R21-S06",
-          "guide_stage": "Stage 21.6 \u2014 Define Vector Index Recovery",
-          "title": "Define Vector Index Recovery",
-          "guide_start_line": 11669,
-          "guide_end_line": 11705,
-          "status": "not_started",
-          "objective": "Define whether vector data is backed up, recreated or both.",
+          "objective": "Verify that Laravel and Python agree on shared HTTP and event contracts.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 21.6 \u2014 Define Vector Index Recovery",
+            "phase": "Phase 21 \u2014 Testing and Quality Strategy",
+            "stage": "Stage 21.2 \u2014 Add Contract Tests",
             "source_lines": {
-              "start": 11669,
-              "end": 11705
+              "start": 11553,
+              "end": 11579
             }
           },
           "workflow": [
@@ -4250,27 +3872,27 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r21-s06-define-vector-index-recovery.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r21-s02-add-contract-tests.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R21-S07",
-          "guide_stage": "Stage 21.7 \u2014 Perform Security Hardening",
-          "title": "Perform Security Hardening",
-          "guide_start_line": 11706,
-          "guide_end_line": 11755,
+          "id": "R21-S03",
+          "guide_stage": "Stage 21.3 \u2014 Add End-to-End Ingestion Tests",
+          "title": "Add End-to-End Ingestion Tests",
+          "guide_start_line": 11580,
+          "guide_end_line": 11611,
           "status": "not_started",
-          "objective": "Review and harden the complete platform before public deployment.",
+          "objective": "Test the complete document path from upload to searchable vectors.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 21.7 \u2014 Perform Security Hardening",
+            "phase": "Phase 21 \u2014 Testing and Quality Strategy",
+            "stage": "Stage 21.3 \u2014 Add End-to-End Ingestion Tests",
             "source_lines": {
-              "start": 11706,
-              "end": 11755
+              "start": 11580,
+              "end": 11611
             }
           },
           "workflow": [
@@ -4292,27 +3914,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r21-s07-perform-security-hardening.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r21-s03-add-end-to-end-ingestion-tests.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R21-S08",
-          "guide_stage": "Stage 21.8 \u2014 Create Staging Deployment",
-          "title": "Create Staging Deployment",
-          "guide_start_line": 11756,
-          "guide_end_line": 11783,
+          "id": "R21-S04",
+          "guide_stage": "Stage 21.4 \u2014 Add End-to-End Chat Tests",
+          "title": "Add End-to-End Chat Tests",
+          "guide_start_line": 11612,
+          "guide_end_line": 11639,
           "status": "not_started",
-          "objective": "Deploy the complete platform to a production-like staging environment.",
+          "objective": "Test authenticated, tenant-safe retrieval and grounded answer generation.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 21.8 \u2014 Create Staging Deployment",
+            "phase": "Phase 21 \u2014 Testing and Quality Strategy",
+            "stage": "Stage 21.4 \u2014 Add End-to-End Chat Tests",
             "source_lines": {
-              "start": 11756,
-              "end": 11783
+              "start": 11612,
+              "end": 11639
             }
           },
           "workflow": [
@@ -4334,27 +3956,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r21-s08-create-staging-deployment.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r21-s04-add-end-to-end-chat-tests.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R21-S09",
-          "guide_stage": "Stage 21.9 \u2014 Production Readiness Review",
-          "title": "Production Readiness Review",
-          "guide_start_line": 11784,
-          "guide_end_line": 11831,
+          "id": "R21-S05",
+          "guide_stage": "Stage 21.5 \u2014 Add Security-Focused Tests",
+          "title": "Add Security-Focused Tests",
+          "guide_start_line": 11640,
+          "guide_end_line": 11679,
           "status": "not_started",
-          "objective": "Perform a formal go-live review against technical and operational criteria.",
-          "session_mode": "architecture",
+          "objective": "Automate checks for the platform\u2019s most important security boundaries.",
+          "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 21 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 21.9 \u2014 Production Readiness Review",
+            "phase": "Phase 21 \u2014 Testing and Quality Strategy",
+            "stage": "Stage 21.5 \u2014 Add Security-Focused Tests",
             "source_lines": {
-              "start": 11784,
-              "end": 11831
+              "start": 11640,
+              "end": 11679
             }
           },
           "workflow": [
@@ -4372,22 +3994,22 @@
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
-          "requires_architecture_review": true,
+          "requires_architecture_review": false,
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r21-s09-production-readiness-review.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r21-s05-add-security-focused-tests.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 11831,
+      "guide_end_line": 11679,
       "status": "not_started",
-      "objective": "Make the platform reproducibly testable, buildable, deployable and operable outside a developer laptop.",
+      "objective": "Create a layered test strategy that catches regressions without requiring every check to be an expensive end-to-end test.",
       "gate": {
         "id": "R21-GATE",
-        "title": "CI/CD and Production Readiness Acceptance Gate",
+        "title": "Testing and Quality Strategy Acceptance Gate",
         "status": "not_started",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
@@ -4401,26 +4023,236 @@
     },
     {
       "id": "R22",
-      "guide_phase": "Phase 22 \u2014 Documentation and Demonstration Readiness",
-      "title": "Documentation and Demonstration Readiness",
-      "guide_start_line": 11832,
+      "guide_phase": "Phase 22 \u2014 CI/CD and Production Readiness",
+      "title": "CI/CD and Production Readiness",
+      "guide_start_line": 11680,
       "sessions": [
         {
           "id": "R22-S01",
-          "guide_stage": "Stage 22.1 \u2014 Write Architecture Documentation",
-          "title": "Write Architecture Documentation",
-          "guide_start_line": 11840,
-          "guide_end_line": 11877,
+          "guide_stage": "Stage 22.1 \u2014 Add Continuous Integration",
+          "title": "Add Continuous Integration",
+          "guide_start_line": 11688,
+          "guide_end_line": 11727,
           "status": "not_started",
-          "objective": "Explain the system clearly to reviewers, collaborators, clients and future contributors.",
+          "objective": "Run quality and test checks automatically for every relevant change.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 22 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 22.1 \u2014 Add Continuous Integration",
+            "source_lines": {
+              "start": 11688,
+              "end": 11727
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r22-s01-add-continuous-integration.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R22-S02",
+          "guide_stage": "Stage 22.2 \u2014 Create Production Container Builds",
+          "title": "Create Production Container Builds",
+          "guide_start_line": 11728,
+          "guide_end_line": 11768,
+          "status": "not_started",
+          "objective": "Create minimal, immutable runtime images distinct from development behaviour.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 22 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 22.2 \u2014 Create Production Container Builds",
+            "source_lines": {
+              "start": 11728,
+              "end": 11768
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r22-s02-create-production-container-builds.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R22-S03",
+          "guide_stage": "Stage 22.3 \u2014 Add Infrastructure as Code",
+          "title": "Add Infrastructure as Code",
+          "guide_start_line": 11769,
+          "guide_end_line": 11818,
+          "status": "not_started",
+          "objective": "Define production infrastructure under infrastructure/terraform.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 22 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 22.3 \u2014 Add Infrastructure as Code",
+            "source_lines": {
+              "start": 11769,
+              "end": 11818
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r22-s03-add-infrastructure-as-code.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R22-S04",
+          "guide_stage": "Stage 22.4 \u2014 Configure Secrets and Environment Management",
+          "title": "Configure Secrets and Environment Management",
+          "guide_start_line": 11819,
+          "guide_end_line": 11855,
+          "status": "not_started",
+          "objective": "Create a secure configuration contract across local, CI, staging and production environments.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 22 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 22.4 \u2014 Configure Secrets and Environment Management",
+            "source_lines": {
+              "start": 11819,
+              "end": 11855
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r22-s04-configure-secrets-and-environment-management.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R22-S05",
+          "guide_stage": "Stage 22.5 \u2014 Add Database Backup and Recovery",
+          "title": "Add Database Backup and Recovery",
+          "guide_start_line": 11856,
+          "guide_end_line": 11882,
+          "status": "not_started",
+          "objective": "Define and test relational database backup and restoration.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 22 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 22.5 \u2014 Add Database Backup and Recovery",
+            "source_lines": {
+              "start": 11856,
+              "end": 11882
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r22-s05-add-database-backup-and-recovery.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R22-S06",
+          "guide_stage": "Stage 22.6 \u2014 Define Vector Index Recovery",
+          "title": "Define Vector Index Recovery",
+          "guide_start_line": 11883,
+          "guide_end_line": 11919,
+          "status": "not_started",
+          "objective": "Define whether vector data is backed up, recreated or both.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 22 \u2014 Documentation and Demonstration Readiness",
-            "stage": "Stage 22.1 \u2014 Write Architecture Documentation",
+            "phase": "Phase 22 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 22.6 \u2014 Define Vector Index Recovery",
             "source_lines": {
-              "start": 11840,
-              "end": 11877
+              "start": 11883,
+              "end": 11919
             }
           },
           "workflow": [
@@ -4442,27 +4274,27 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r22-s01-write-architecture-documentation.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r22-s06-define-vector-index-recovery.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R22-S02",
-          "guide_stage": "Stage 22.2 \u2014 Create Demonstration Dataset and Scenario",
-          "title": "Create Demonstration Dataset and Scenario",
-          "guide_start_line": 11878,
-          "guide_end_line": 11904,
+          "id": "R22-S07",
+          "guide_stage": "Stage 22.7 \u2014 Perform Security Hardening",
+          "title": "Perform Security Hardening",
+          "guide_start_line": 11920,
+          "guide_end_line": 11969,
           "status": "not_started",
-          "objective": "Provide a safe, repeatable demonstration of ingestion, retrieval, citations and tenant isolation.",
+          "objective": "Review and harden the complete platform before public deployment.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 22 \u2014 Documentation and Demonstration Readiness",
-            "stage": "Stage 22.2 \u2014 Create Demonstration Dataset and Scenario",
+            "phase": "Phase 22 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 22.7 \u2014 Perform Security Hardening",
             "source_lines": {
-              "start": 11878,
-              "end": 11904
+              "start": 11920,
+              "end": 11969
             }
           },
           "workflow": [
@@ -4484,27 +4316,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r22-s02-create-demonstration-dataset-and-scenario.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r22-s07-perform-security-hardening.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R22-S03",
-          "guide_stage": "Stage 22.3 \u2014 Finalise Repository README",
-          "title": "Finalise Repository README",
-          "guide_start_line": 11905,
-          "guide_end_line": 12036,
+          "id": "R22-S08",
+          "guide_stage": "Stage 22.8 \u2014 Create Staging Deployment",
+          "title": "Create Staging Deployment",
+          "guide_start_line": 11970,
+          "guide_end_line": 11997,
           "status": "not_started",
-          "objective": "Make the root README an accurate entry point for technical reviewers.",
+          "objective": "Deploy the complete platform to a production-like staging environment.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 22 \u2014 Documentation and Demonstration Readiness",
-            "stage": "Stage 22.3 \u2014 Finalise Repository README",
+            "phase": "Phase 22 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 22.8 \u2014 Create Staging Deployment",
             "source_lines": {
-              "start": 11905,
-              "end": 12036
+              "start": 11970,
+              "end": 11997
             }
           },
           "workflow": [
@@ -4526,18 +4358,60 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r22-s03-finalise-repository-readme.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r22-s08-create-staging-deployment.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R22-S09",
+          "guide_stage": "Stage 22.9 \u2014 Production Readiness Review",
+          "title": "Production Readiness Review",
+          "guide_start_line": 11998,
+          "guide_end_line": 12045,
+          "status": "not_started",
+          "objective": "Perform a formal go-live review against technical and operational criteria.",
+          "session_mode": "architecture",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 22 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 22.9 \u2014 Production Readiness Review",
+            "source_lines": {
+              "start": 11998,
+              "end": 12045
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r22-s09-production-readiness-review.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 12036,
+      "guide_end_line": 12045,
       "status": "not_started",
-      "objective": "Document the platform clearly and provide a reproducible way to demonstrate its capabilities, without letting presentation work substitute for engineering substance.",
+      "objective": "Make the platform reproducibly testable, buildable, deployable and operable outside a developer laptop.",
       "gate": {
         "id": "R22-GATE",
-        "title": "Documentation and Demonstration Readiness Acceptance Gate",
+        "title": "CI/CD and Production Readiness Acceptance Gate",
         "status": "not_started",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
@@ -4545,6 +4419,156 @@
           "Ensure relevant ADRs and the ADR index are current.",
           "Commit the completed phase.",
           "Create annotated Git tag phase-22 where required by the guide."
+        ],
+        "completion_evidence": []
+      }
+    },
+    {
+      "id": "R23",
+      "guide_phase": "Phase 23 \u2014 Documentation and Demonstration Readiness",
+      "title": "Documentation and Demonstration Readiness",
+      "guide_start_line": 12046,
+      "sessions": [
+        {
+          "id": "R23-S01",
+          "guide_stage": "Stage 23.1 \u2014 Write Architecture Documentation",
+          "title": "Write Architecture Documentation",
+          "guide_start_line": 12054,
+          "guide_end_line": 12091,
+          "status": "not_started",
+          "objective": "Explain the system clearly to reviewers, collaborators, clients and future contributors.",
+          "session_mode": "architecture",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 23 \u2014 Documentation and Demonstration Readiness",
+            "stage": "Stage 23.1 \u2014 Write Architecture Documentation",
+            "source_lines": {
+              "start": 12054,
+              "end": 12091
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": true,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r23-s01-write-architecture-documentation.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R23-S02",
+          "guide_stage": "Stage 23.2 \u2014 Create Demonstration Dataset and Scenario",
+          "title": "Create Demonstration Dataset and Scenario",
+          "guide_start_line": 12092,
+          "guide_end_line": 12118,
+          "status": "not_started",
+          "objective": "Provide a safe, repeatable demonstration of ingestion, retrieval, citations and tenant isolation.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 23 \u2014 Documentation and Demonstration Readiness",
+            "stage": "Stage 23.2 \u2014 Create Demonstration Dataset and Scenario",
+            "source_lines": {
+              "start": 12092,
+              "end": 12118
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r23-s02-create-demonstration-dataset-and-scenario.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R23-S03",
+          "guide_stage": "Stage 23.3 \u2014 Finalise Repository README",
+          "title": "Finalise Repository README",
+          "guide_start_line": 12119,
+          "guide_end_line": 12250,
+          "status": "not_started",
+          "objective": "Make the root README an accurate entry point for technical reviewers.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 23 \u2014 Documentation and Demonstration Readiness",
+            "stage": "Stage 23.3 \u2014 Finalise Repository README",
+            "source_lines": {
+              "start": 12119,
+              "end": 12250
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r23-s03-finalise-repository-readme.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        }
+      ],
+      "guide_end_line": 12250,
+      "status": "not_started",
+      "objective": "Document the platform clearly and provide a reproducible way to demonstrate its capabilities, without letting presentation work substitute for engineering substance.",
+      "gate": {
+        "id": "R23-GATE",
+        "title": "Documentation and Demonstration Readiness Acceptance Gate",
+        "status": "not_started",
+        "requirements": [
+          "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
+          "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
+          "Ensure relevant ADRs and the ADR index are current.",
+          "Commit the completed phase.",
+          "Create annotated Git tag phase-23 where required by the guide."
         ],
         "completion_evidence": []
       }
