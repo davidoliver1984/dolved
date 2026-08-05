@@ -10336,7 +10336,7 @@ ingestion orchestration to Phase 15.
 
 ### Status
 
-Not yet executed.
+Complete.
 
 ### Corrected stage boundary
 
@@ -10373,6 +10373,96 @@ R14-S04 does not decide or implement ingestion orchestration. Phase 15
 
 None of the above is represented as complete by this stage.
 
+### Verified implementation boundary
+
+The Phase 14 foundation satisfies ADR 0014 without adding ingestion
+orchestration:
+
+* PostgreSQL owns canonical chunk text, public identity, ordinal, token count,
+  chunking configuration and source-element provenance.
+* PostgreSQL owns immutable embedding-profile lineage, embedding-space
+  generation lifecycle, workspace corpus generation lifecycle and each
+  workspace's active corpus pointer. Database constraints and triggers enforce
+  tenant-safe relationships, compatible dimensions, usable active embedding
+  spaces and at most one active corpus generation per workspace.
+* PostgreSQL has no raw-vector column. Qdrant contains the disposable,
+  rebuildable vector projection.
+* Python exposes a provider-neutral `VectorStore`; Qdrant client types and
+  behaviour remain isolated in its adapter. Activation is deliberately absent
+  from that boundary.
+* Vector operations require explicit workspace and workspace-corpus-generation
+  scope. Deterministic UUIDv5 point identities make repeated upserts
+  idempotent.
+* Collection creation and the `workspace_id`,
+  `workspace_corpus_generation_id` and `document_id` payload indexes are
+  idempotent. Completeness verification checks expected identities, payload
+  values and vector schema rather than accepting equal counts alone.
+* The V1 Qdrant collection uses the named `dense` vector with 1,024 dimensions
+  and cosine distance, matching ADR 0014.
+
+No application code changed in this closure stage. Its work was to verify the
+accepted implementation, record the evidence and close the phase boundary.
+
+### Commands executed
+
+Focused persistence verification:
+
+```bash
+docker compose exec -T api php artisan test \
+  --filter=VectorPersistenceFoundationTest
+docker compose exec -T ai uv run pytest \
+  tests/test_vector_store_models.py \
+  tests/test_qdrant_vector_store.py
+```
+
+A disposable `rag_platform_r14_s04_verify` PostgreSQL database was created and
+used for a full migration, full rollback and full reapplication. Direct catalog
+queries then verified the authoritative tables, indexes, lifecycle triggers,
+`dense` vector-name default and absence of PostgreSQL vector columns. The
+database was dropped after verification.
+
+Qdrant durability was tested with a disposable
+`r14-s04-persistence-verification` collection: the collection was provisioned
+with the ADR 0014 schema and required payload indexes, a point was written, the
+Qdrant container was force-recreated without removing its volume, and the
+collection schema, indexes, payload and point were verified after restart. The
+temporary collection was then removed.
+
+Repository gates:
+
+```bash
+make format-check
+make lint
+make typecheck
+make test
+make ps
+make qdrant-status
+docker compose config --quiet
+docker compose exec -T api composer validate --strict
+```
+
+### Verification results
+
+* Focused Laravel vector-persistence tests: 19 passed, 59 assertions.
+* Focused Python vector-store tests: 13 passed against local Qdrant.
+* Clean PostgreSQL migration, rollback and reapplication: passed.
+* PostgreSQL authority and invariant inspection: passed; the partial unique
+  active-corpus index and four lifecycle/relationship triggers were present,
+  and no raw-vector storage was found.
+* Qdrant persistence across container recreation: passed; the named `dense`
+  vector remained 1,024-dimensional with cosine distance, all three payload
+  indexes remained present and the test point and five-field payload survived.
+* Frontend tests: 7 files and 26 tests passed.
+* Laravel suite: 146 tests passed, 627 assertions.
+* Python suite: 181 tests passed; the credential-dependent live Voyage test was
+  skipped as designed.
+* ESLint, Pint (131 files), Ruff formatting and lint, TypeScript and MyPy (73
+  source files): passed.
+* Compose validation, Composer validation, container health and Qdrant shard
+  readiness: passed.
+
+No defects were found. No corrective application change was required.
+
 ### Acceptance criteria
 
 * PostgreSQL is authoritative for canonical chunks and generation lifecycle.
@@ -10390,10 +10480,15 @@ None of the above is represented as complete by this stage.
 
 ### Commit boundary
 
-git add apps/api apps/ai IMPLEMENTATION_GUIDE.md tasks.json docs/journal
-git commit -m "Verify and close the vector storage foundation"
+```bash
+git add PROJECT_ROADMAP.md IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-08-05-r14-s04-verify-and-close-vector-storage-foundation.md
+git commit -m "Verify vector storage foundation"
+git tag -a phase-14-s04 \
+  -m "Complete Stage 14.4: Verify and Close the Vector Storage Foundation"
 git tag -a phase-14 \
   -m "Complete Phase 14: Vector Storage"
+```
 
 ---
 

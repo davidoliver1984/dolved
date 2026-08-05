@@ -779,8 +779,8 @@ A phase is complete only when:
 | Text Extraction and Normalisation | ✅ Complete |
 | Chunking | ✅ Complete |
 | Observability Foundation | ✅ Complete |
-| Embeddings | ⏳ In Progress |
-| Vector Storage | ⬜ Not Started |
+| Embeddings | ✅ Complete |
+| Vector Storage | ✅ Complete |
 | Ingestion Orchestration | ⬜ Not Started |
 | Retrieval | ⬜ Not Started |
 | Grounded Generation | ⬜ Not Started |
