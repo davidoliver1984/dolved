@@ -10112,27 +10112,216 @@ git tag -a phase-14-s02 \
 
 ### Objective
 
-Store embedded chunks and retrieval metadata in Qdrant.
+Establish both persistence foundations required by ADR 0014: PostgreSQL as the
+authoritative store for canonical chunks, embedding-profile lineage and generation
+lifecycle, and Qdrant as the derived vector projection behind the provider-neutral
+Python `VectorStore` boundary.
 
 ### Status
 
-Not yet executed.
+Complete.
+
+### Corrected stage boundary
+
+The original stage entry limited its commit boundary to `apps/ai tests`. That was too
+narrow and conflicted with ADR 0014's accepted storage-ownership model and with the
+R14-S01 journal, which assigns the generation state-machine representation to this
+stage. The boundary is corrected before Laravel implementation begins.
+
+This is a stage-allocation correction, not a new architectural decision. ADR 0014 is
+unchanged and remains authoritative.
+
+R14-S03 owns:
+
+* canonical persisted chunks, including text, identity, ordinal and provenance;
+* embedding-profile lineage and fingerprint persistence required by the generation
+  model;
+* embedding-space generation persistence and lifecycle representation;
+* workspace corpus-generation persistence and lifecycle representation;
+* the per-workspace active corpus-generation relationship and relational invariants;
+* Laravel enums, models, migrations, relationships, factories and focused database
+  tests;
+* the provider-neutral Python `VectorStore` contract, immutable request/result
+  models, deterministic point identity and isolated Qdrant adapter;
+* idempotent Qdrant collection/index creation, bounded point upsert, scoped search,
+  count, completeness verification, scoped delete and vector-space removal;
+* focused Python tests, including live local-Qdrant acceptance coverage.
+
+R14-S03 does not connect these foundations to the ingestion worker or Document
+lifecycle. R14-S04 remains responsible for orchestration across authoritative chunk
+persistence, embedding, Qdrant upsert, completeness verification, activation/indexing
+outcomes, retries and terminal failures.
+
+### Expected relational changes
+
+* Add forward-safe tables for canonical chunks, embedding profiles,
+  embedding-space generations and workspace corpus generations.
+* Store canonical chunk text and durable identity, ordinal and provenance in
+  PostgreSQL; never store raw vector arrays there.
+* Represent generation lifecycles with string-backed enums and database checks, not
+  boolean flags.
+* Enforce one workspace and one embedding-space generation per workspace corpus
+  generation through non-null foreign keys.
+* Enforce at most one active workspace corpus generation per workspace at database
+  level.
+* Enforce that activation can reference only an available embedding-space generation
+  through a transactional application operation and focused negative tests; retain
+  database constraints for every invariant PostgreSQL can express without a
+  cross-table trigger.
+* Add model relationships, casts and factories following existing Laravel
+  conventions.
+
+### Expected Python/Qdrant changes
+
+* Add the explicitly pinned official Qdrant Python client.
+* Keep all Qdrant-specific models, filters, exceptions and transport details inside
+  one adapter.
+* Derive stable UUID point IDs from embedding-space generation, workspace, workspace
+  corpus generation and chunk identity.
+* Persist only ADR 0014's five-field payload, with keyword indexes on
+  `workspace_id`, `workspace_corpus_generation_id` and `document_id`.
+* Require explicit tenant and generation scope for every search, count and delete.
+* Surface partial writes as typed failures and make retries safe through deterministic
+  upsert identity.
+* Verify completeness by identity, payload and vector schema, never by count alone.
+
+### Relational implementation
+
+Four forward migrations establish the PostgreSQL-owned foundation:
+
+* `embedding_profiles` stores the immutable semantic profile snapshot and unique
+  SHA-256 fingerprint;
+* `embedding_space_generations` stores the Qdrant collection/vector schema lineage
+  and its `BUILDING → VERIFYING → AVAILABLE → RETIRING → RETIRED` lifecycle;
+* `workspace_corpus_generations` stores each workspace build and its
+  `BUILDING → VERIFYING → ACTIVE → SUPERSEDED → RETIRED` lifecycle;
+* `document_chunks` stores canonical text, public identity, ordinal, token count,
+  chunking configuration/fingerprint and source-element provenance;
+* `workspace_corpus_generation_chunks` records which canonical chunks belong to
+  each corpus generation without duplicating chunk content.
+
+Composite tenant foreign keys prevent a chunk from referring to a Document in a
+different workspace and prevent corpus assignments from crossing workspace
+boundaries. A partial unique PostgreSQL index permits at most one `ACTIVE` corpus
+generation per workspace. A nullable composite foreign key on `workspaces` stores the
+authoritative active-generation pointer and proves the referenced generation belongs
+to that same workspace; `Workspace::activeCorpusGeneration()` exposes it. PostgreSQL
+triggers require profile/generation dimensions to match, require an active corpus to
+use an `AVAILABLE` embedding space, validate a non-null active pointer and prevent
+that referenced space leaving `AVAILABLE`. The activation trigger takes a key-share
+lock so the invariant also holds under concurrent retirement attempts.
+
+Lifecycle timestamp checks, enum constraints, nonblank chunk text, positive token
+counts, unique public identities and fingerprints, and immutable Eloquent models make
+invalid state difficult to construct. Raw vector arrays are deliberately absent from
+all PostgreSQL tables.
+
+### Python and Qdrant implementation
+
+The official `qdrant-client` is pinned at `1.18.0`. The provider-neutral immutable
+models and `VectorStore` protocol contain no Qdrant types. The isolated adapter owns
+collection/index creation, compatibility checks, minimal five-field payload
+translation, deterministic UUIDv5 point identity, bounded synchronous batch upserts,
+scoped search/count/delete, completeness verification and vector-space removal.
+
+Every operational scope requires both workspace and workspace-corpus-generation
+identity. Completeness compares deterministic point identities, all required payload
+fields, collection schema and each returned vector's named schema; equal counts alone
+cannot pass. A failure after an earlier batch succeeded raises a typed partial-write
+error containing the persisted point IDs, while deterministic identity makes the
+whole request safe to retry.
+
+### Commands executed
+
+```bash
+docker compose exec -T ai uv add qdrant-client==1.18.0
+docker compose exec -T ai uv run pytest \
+  tests/test_vector_store_models.py tests/test_qdrant_vector_store.py
+docker compose exec -T ai uv run pytest
+docker compose exec -T ai uv run ruff format --check app/vector_store \
+  tests/test_vector_store_models.py tests/test_qdrant_vector_store.py
+docker compose exec -T ai uv run ruff check app/vector_store \
+  tests/test_vector_store_models.py tests/test_qdrant_vector_store.py
+docker compose exec -T ai uv run mypy app/vector_store \
+  tests/test_vector_store_models.py tests/test_qdrant_vector_store.py
+docker compose exec -T api php artisan test \
+  --filter=VectorPersistenceFoundationTest
+docker compose exec -T postgres dropdb --if-exists \
+  --username=rag_platform rag_platform_r14_s03_verify
+docker compose exec -T postgres createdb \
+  --username=rag_platform rag_platform_r14_s03_verify
+docker compose exec -T -e DB_DATABASE=rag_platform_r14_s03_verify api \
+  php artisan migrate --force
+docker compose exec -T -e DB_DATABASE=rag_platform_r14_s03_verify api \
+  php artisan migrate:rollback --force
+docker compose exec -T -e DB_DATABASE=rag_platform_r14_s03_verify api \
+  php artisan migrate --force
+make migrate
+make format-check
+make lint
+make typecheck
+make test
+make ps
+make qdrant-status
+docker compose exec -T api composer validate --strict
+docker compose config --quiet
+git diff --check
+```
+
+The disposable PostgreSQL database was dropped after verification. Direct
+PostgreSQL checks additionally confirmed rejection of an active corpus backed by a
+non-available embedding space, a second active corpus in one workspace, retirement
+of a referenced available embedding space, and a cross-workspace chunk. The expected
+trigger functions were present after clean reapplication.
+
+### Problems and corrections
+
+* The first PostgreSQL verification command used a nonexistent local role (`rag`);
+  inspecting the container environment identified the configured `rag_platform`
+  role, after which the isolated verification completed successfully.
+* The running development database contained an earlier uncommitted form of migration
+  000009. Its empty R14-S03 tables were safely refreshed, and the down migration was
+  made tolerant of that pre-review state before the final schema was reapplied.
+* The frozen deterministic point-ID expectation was corrected to the UUID generated
+  by the documented V1 namespace and canonical identity input.
+* Pydantic negative tests were changed to construct fresh models because
+  `model_copy(update=...)` intentionally bypasses validation.
+* The final schema review strengthened the active-corpus trigger with a PostgreSQL
+  key-share lock, closing a concurrent activation/retirement race.
+* The final adapter review applied vector-space compatibility validation consistently
+  to count, scoped delete and collection removal as well as search and upsert.
+
+### Verification
+
+Run focused Laravel migration/model/action tests, focused Python model and live local
+Qdrant adapter tests, clean PostgreSQL migration verification, formatting, linting,
+type checking, the complete repository test suites, container health and Qdrant
+readiness. Record only commands and results that actually execute.
 
 ### Acceptance criteria
 
-* Collections are created idempotently.
-* Vector dimensions are validated.
-* Point IDs are deterministic or safely generated.
-* Tenant identifiers are mandatory payload fields.
-* Document identifiers support deletion and re-indexing.
-* Batch upserts are supported.
-* Partial failures are handled.
-* Tests verify tenant filtering.
+* Collections and required keyword indexes are created idempotently.
+* Vector dimensions and existing collection compatibility are validated.
+* Point IDs are deterministic UUIDv5 values derived from all required identities.
+* Tenant and generation identifiers are mandatory payload and operation fields.
+* Document identifiers support scoped deletion and re-indexing.
+* Bounded batch upserts and typed partial failures are implemented.
+* Tests verify workspace, corpus-generation and document filtering.
+* PostgreSQL durably owns canonical chunks and generation lifecycle without storing
+  raw vectors.
+* Database constraints enforce tenant-safe lineage, lifecycle shape, one active
+  corpus per workspace and active-to-available generation compatibility.
+
+All Stage 14.3 acceptance criteria are satisfied. Connecting these completed
+foundations to the ingestion worker remains Stage 14.4 work and has not begun.
 
 ### Commit boundary
 
-git add apps/ai tests
-git commit -m "Persist document vectors in Qdrant"
+git add apps/api apps/ai IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-08-05-r14-s03-persist-chunk-vectors.md
+git commit -m "Persist canonical chunks and document vectors"
+git tag -a phase-14-s03 \
+  -m "Complete Stage 14.3: Persist Chunk Vectors"
 
 ---
 

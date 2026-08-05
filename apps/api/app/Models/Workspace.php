@@ -51,6 +51,33 @@ class Workspace extends Model
     }
 
     /**
+     * @return HasMany<DocumentChunk, $this>
+     */
+    public function documentChunks(): HasMany
+    {
+        return $this->hasMany(DocumentChunk::class);
+    }
+
+    /**
+     * @return HasMany<WorkspaceCorpusGeneration, $this>
+     */
+    public function workspaceCorpusGenerations(): HasMany
+    {
+        return $this->hasMany(WorkspaceCorpusGeneration::class);
+    }
+
+    /**
+     * @return BelongsTo<WorkspaceCorpusGeneration, $this>
+     */
+    public function activeCorpusGeneration(): BelongsTo
+    {
+        return $this->belongsTo(
+            WorkspaceCorpusGeneration::class,
+            'active_workspace_corpus_generation_id'
+        );
+    }
+
+    /**
      * @return HasManyThrough<User, WorkspaceMembership, $this>
      */
     public function members(): HasManyThrough

@@ -34,6 +34,9 @@ class Settings(BaseSettings):
         default=0.12,
         ge=0,
     )
+    qdrant_url: str = "http://qdrant:6333"
+    qdrant_api_key: SecretStr = SecretStr("")
+    qdrant_timeout_seconds: int = Field(default=10, gt=0)
     otel_exporter_otlp_endpoint: str = "http://otel-collector:4318"
     otel_exporter_otlp_protocol: str = "http/protobuf"
     otel_exporter_otlp_timeout: int = Field(default=250, ge=1)
