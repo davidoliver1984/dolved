@@ -26,10 +26,11 @@ make format-check
 make typecheck
 make test
 make aws-status
+make qdrant-status
 ```
 
-`make reset` intentionally deletes all local Compose volumes, including PostgreSQL
-data, and therefore requires typing `RESET` interactively.
+`make reset` intentionally deletes all local Compose volumes, including PostgreSQL,
+Qdrant and telemetry data, and therefore requires typing `RESET` interactively.
 
 ## Local services
 
@@ -42,6 +43,7 @@ data, and therefore requires typing `RESET` interactively.
 | Ingestion worker | Background `worker` process |
 | PostgreSQL | `127.0.0.1:5433` |
 | LocalStack gateway | http://localhost:4566 |
+| Qdrant REST API and dashboard | http://localhost:6333/dashboard |
 | Mailpit | http://localhost:8025 |
 | Grafana telemetry UI | http://localhost:3001 |
 | OpenTelemetry Collector (OTLP/gRPC) | `127.0.0.1:4317` |
@@ -49,8 +51,18 @@ data, and therefore requires typing `RESET` interactively.
 | OpenTelemetry Collector health | http://localhost:13133 |
 
 LocalStack provides local S3 and SQS services. Mailpit captures local verification
-and password-reset messages without sending external email. Qdrant and Redis are
-added in later phases.
+and password-reset messages without sending external email. Qdrant stores its local,
+derived vector projection in the `qdrant_data` volume; `make down` preserves it and
+the deliberately destructive `make reset` removes it. Redis is added in a later
+phase.
+
+Qdrant's REST API is bound only to the host loopback interface for local inspection;
+its gRPC and cluster ports are not published. The Python services connect internally
+through Compose DNS at `http://qdrant:6333`. Verify that route with:
+
+```bash
+make qdrant-status
+```
 
 The ingestion publisher continuously delivers durable Laravel outbox events to
 LocalStack SQS. Inspect it with `docker compose logs publisher`, or run one

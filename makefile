@@ -14,7 +14,7 @@ TAIL ?= 100
 	typecheck typecheck-web typecheck-ai \
 	test test-web test-api test-ai \
 	bootstrap migrate seed reset clean \
-	aws-provision aws-status publish-ingestion consume-ingestion \
+	aws-provision aws-status qdrant-status publish-ingestion consume-ingestion \
 	telemetry-smoke telemetry-verify telemetry-outage \
 	shell-web shell-api shell-ai shell-db shell-aws
 
@@ -36,6 +36,7 @@ help:
 		'  make seed            Run the Laravel database seeder' \
 		'  make aws-provision   Idempotently provision local AWS resources' \
 		'  make aws-status      Verify the bucket, queues and redrive policy' \
+		'  make qdrant-status   Verify Qdrant readiness through Compose DNS' \
 		'  make publish-ingestion  Run one outbox publication batch' \
 		'  make consume-ingestion  Run one ingestion-worker receive batch' \
 		'  make telemetry-smoke Verify Collector-to-Grafana trace and metric flow' \
@@ -147,6 +148,9 @@ aws-provision:
 
 aws-status:
 	$(EXEC) localstack /opt/rag-platform/localstack/verify.sh
+
+qdrant-status:
+	$(EXEC) ai python -c "import os, urllib.request; print(urllib.request.urlopen(os.environ['QDRANT_URL'] + '/readyz', timeout=5).read().decode())"
 
 publish-ingestion:
 	$(EXEC) api php artisan ingestion:publish --once

@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R14",
-    "current_session": "R14-S02",
-    "next_action": "Begin R14-S02 \u2014 Add Qdrant Development Service with Ralph before implementation.",
-    "completed_through": "R14-S01",
+    "current_session": "R14-S03",
+    "next_action": "Begin R14-S03 \u2014 Persist Chunk Vectors with Ralph before implementation.",
+    "completed_through": "R14-S02",
     "completed_phase_count": 14,
     "total_phase_count": 23
   },
@@ -2568,7 +2568,7 @@
           "title": "Add Qdrant Development Service",
           "guide_start_line": 9983,
           "guide_end_line": 10013,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Add Qdrant to Docker Compose with persistent local storage and health checks.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -2600,9 +2600,15 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r14-s02-add-qdrant-development-service.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "compose.yaml (pinned Qdrant service, health gate and persistent volume)",
+            ".env.example and README.md (local Qdrant environment and operating contract)",
+            "makefile (application-path Qdrant readiness command)",
+            "IMPLEMENTATION_GUIDE.md Stage 14.2 (actual commands and verification evidence)",
+            "docs/journal/2026-08-05-r14-s02-add-qdrant-development-service.md"
+          ]
         },
         {
           "id": "R14-S03",

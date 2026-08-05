@@ -9988,11 +9988,101 @@ Add Qdrant to Docker Compose with persistent local storage and health checks.
 
 ### Status
 
-Not yet executed.
+Complete. Qdrant 1.18.1 now runs as the local vector-store service with a
+persistent named volume, a health-gated Compose dependency and an
+application-facing URL resolved through Compose DNS.
 
-### Planned service name
+### Service and network contract
 
-qdrant
+The Compose service is named `qdrant` and uses the explicitly pinned image:
+
+```yaml
+image: qdrant/qdrant:v1.18.1
+```
+
+The AI API and ingestion worker receive:
+
+```dotenv
+QDRANT_URL=http://qdrant:6333
+```
+
+Both services wait for Qdrant's health check before starting. Application
+services therefore use the stable `qdrant` Compose DNS name rather than the
+host-published port. No Qdrant client or application persistence logic was
+introduced in this infrastructure-only stage.
+
+The REST API and dashboard are published only on the host loopback interface:
+
+```text
+http://localhost:6333/dashboard
+```
+
+The Qdrant gRPC and cluster ports are not published to the host. The local
+service has no authentication, so this limited exposure is deliberate; a
+production deployment must provide its own private networking and security
+configuration.
+
+### Persistence and reset behaviour
+
+Qdrant stores local data at `/qdrant/storage`, backed by the Compose named
+volume `qdrant_data`. `make down` removes containers and preserves that volume.
+The deliberately destructive `make reset` removes all Compose volumes,
+including Qdrant data, after its existing interactive confirmation.
+
+The root environment example records the host port and internal service URL:
+
+```dotenv
+QDRANT_HTTP_PORT=6333
+QDRANT_URL=http://qdrant:6333
+```
+
+The repeatable readiness command runs from the AI container so it proves the
+same internal network path the application will use:
+
+```bash
+make qdrant-status
+```
+
+The Compose health check uses a local TCP readiness probe because the pinned
+Qdrant image does not provide `curl` or `wget`. `make qdrant-status` separately
+calls Qdrant's `/readyz` endpoint and verifies application-facing readiness.
+
+### Commands executed
+
+```bash
+docker compose config --quiet
+docker compose up --detach qdrant --wait --wait-timeout 120
+docker compose up --detach ai --wait --wait-timeout 120
+make qdrant-status
+docker compose up --detach qdrant --force-recreate --no-deps \
+  --wait --wait-timeout 120
+make up WAIT_TIMEOUT=180
+docker compose ps qdrant ai worker
+make format-check lint typecheck test
+git diff --check
+```
+
+The persistence check created a temporary one-dimensional cosine collection
+through the Qdrant HTTP API, recreated the Qdrant container without removing
+its named volume, retrieved the still-green collection and then deleted it.
+The final collection list was empty, leaving no verification data behind.
+
+### Verification
+
+* `docker compose config --quiet` passed.
+* Qdrant reported version `1.18.1` and became healthy through Compose.
+* `make qdrant-status` returned `all shards are ready` from the AI container.
+* The AI service and worker resolved `http://qdrant:6333`; only REST port 6333
+  was published to `127.0.0.1`, while port 6334 remained internal.
+* The temporary persistence-check collection survived forced container
+  recreation and was removed successfully afterward.
+* The complete platform started successfully with `make up WAIT_TIMEOUT=180`.
+* Frontend lint and TypeScript checks passed; all 26 frontend tests passed.
+* Laravel Pint passed for 114 files; all 127 tests passed with 568 assertions.
+* Python Ruff formatting and linting passed, MyPy passed for 64 source files,
+  and 168 tests passed; the single credential-dependent live embedding test
+  was skipped as designed.
+* `git diff --check` passed.
 
 ### Acceptance criteria
 
@@ -10004,10 +10094,17 @@ qdrant
 * No public exposure is enabled unnecessarily.
 * Reset behaviour is documented.
 
+All Stage 14.2 acceptance criteria are satisfied. Collection provisioning,
+payload schema, deterministic point identities and the `VectorStore`
+implementation remain correctly deferred to Stage 14.3.
+
 ### Commit boundary
 
-git add compose.yaml .env.example
+git add compose.yaml .env.example makefile README.md IMPLEMENTATION_GUIDE.md \
+  docs/journal/2026-08-05-r14-s02-add-qdrant-development-service.md tasks.json
 git commit -m "Add Qdrant development service"
+git tag -a phase-14-s02 \
+  -m "Complete Stage 14.2: Add Qdrant Development Service"
 
 ---
 
