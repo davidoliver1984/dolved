@@ -8,6 +8,7 @@ from app.vector_store.models import (
     VectorCompletenessRequest,
     VectorPoint,
     VectorPointIdentity,
+    VectorPublicationStatus,
     VectorScope,
     VectorSearchRequest,
     VectorSpace,
@@ -31,6 +32,8 @@ def point(space: VectorSpace, *, chunk_id: UUID | None = None) -> VectorPoint:
         chunk_id=chunk_id or uuid4(),
         workspace_corpus_generation_id=uuid4(),
         embedding_space_generation_id=space.embedding_space_generation_id,
+        event_id=uuid4(),
+        publication_status=VectorPublicationStatus.PROVISIONAL,
         values=(1.0, 0.0, 0.0),
     )
 
@@ -120,6 +123,8 @@ def test_completeness_requires_every_expected_identity_to_match_scope() -> None:
         chunk_id=uuid4(),
         workspace_corpus_generation_id=corpus_generation_id,
         embedding_space_generation_id=space.embedding_space_generation_id,
+        event_id=uuid4(),
+        publication_status=VectorPublicationStatus.PROVISIONAL,
     )
 
     with pytest.raises(ValidationError, match="workspace does not match"):

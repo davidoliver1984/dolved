@@ -21,10 +21,13 @@ class AuthenticateIngestionWorker
     /**
      * @param  Closure(Request): Response  $next
      */
-    public function handle(Request $request, Closure $next): Response
-    {
+    public function handle(
+        Request $request,
+        Closure $next,
+        string $purpose,
+    ): Response {
         try {
-            $this->authenticator->verify($request);
+            $this->authenticator->verify($request, $purpose);
         } catch (IngestionWorkerAuthenticationException $exception) {
             $keyId = $request->header(
                 IngestionWorkerRequestAuthenticator::KEY_ID_HEADER,

@@ -40,4 +40,10 @@ return [
             300,
         ),
     ],
+    'orchestration' => [
+        'lease_seconds' => (int) env('INGESTION_PROCESSING_LEASE_SECONDS', 120),
+        'chunk_batch_size' => (int) env('INGESTION_CHUNK_BATCH_SIZE', 50),
+        'chunk_body_bytes' => (int) env('INGESTION_CHUNK_BODY_BYTES', 1048576),
+        'resume_page_size' => (int) env('INGESTION_RESUME_PAGE_SIZE', 50),
+    ],
 ];

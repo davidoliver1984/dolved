@@ -16,6 +16,7 @@ class SignedHeaders:
     timestamp: str
     event_id: str
     signature: str
+    purpose: str
 
     def as_http_headers(self) -> dict[str, str]:
         return {
@@ -24,6 +25,7 @@ class SignedHeaders:
             "X-Ingestion-Worker-Timestamp": self.timestamp,
             "X-Ingestion-Worker-Event-ID": self.event_id,
             "X-Ingestion-Worker-Signature": self.signature,
+            "X-Ingestion-Worker-Purpose": self.purpose,
         }
 
 
@@ -68,6 +70,7 @@ class IngestionWorkerSigner:
         request_path: str,
         body: bytes,
         event_id: str,
+        purpose: str,
     ) -> SignedHeaders:
         try:
             canonical_event_id = str(uuid.UUID(event_id))
@@ -85,7 +88,7 @@ class IngestionWorkerSigner:
         body_digest = hashlib.sha256(body).hexdigest()
         canonical = (
             f"{timestamp_text}\n{method.upper()}\n{request_path}\n"
-            f"{body_digest}\n{event_id}"
+            f"{body_digest}\n{event_id}\n{purpose}"
         )
         signature = hmac.new(
             self._secret,
@@ -97,5 +100,6 @@ class IngestionWorkerSigner:
             key_id=self._key_id,
             timestamp=timestamp_text,
             event_id=event_id,
-            signature=f"v1={signature}",
+            signature=f"v2={signature}",
+            purpose=purpose,
         )

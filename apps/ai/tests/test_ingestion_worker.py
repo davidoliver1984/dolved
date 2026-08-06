@@ -6,6 +6,7 @@ import pytest
 
 from app.ingestion.claim_client import ClaimDisposition, IngestionClaimClient
 from app.ingestion.contract import CONTRACT_DIRECTORY
+from app.ingestion.orchestrator import IngestionOrchestrator, ProcessingOutcome
 from app.ingestion.sqs import IngestionQueueMessage, SqsIngestionQueue
 from app.ingestion.worker import IngestionWorker
 
@@ -175,3 +176,31 @@ def test_shutdown_during_a_claim_finishes_it_but_starts_no_new_message() -> None
     assert processed == 1
     assert queue.acknowledged == ["transport-1"]
     assert len(claims.event_ids) == 1
+
+
+@pytest.mark.parametrize(
+    ("acknowledge", "expected"),
+    [(True, ["transport-1"]), (False, [])],
+)
+def test_full_orchestration_acknowledges_only_authoritative_terminal_outcomes(
+    acknowledge: bool, expected: list[str]
+) -> None:
+    class FakeOrchestrator:
+        def process(self, **_: object) -> ProcessingOutcome:
+            return ProcessingOutcome(acknowledge, "indexed" if acknowledge else "retry")
+
+    queue = FakeQueue([message("transport-1")])
+    worker = IngestionWorker(
+        queue=cast(SqsIngestionQueue, queue),
+        claim_client=cast(
+            IngestionClaimClient,
+            FakeClaimClient(ClaimDisposition.RETRY),
+        ),
+        stop_event=threading.Event(),
+        error_wait_seconds=0.1,
+        orchestrator=cast(IngestionOrchestrator, FakeOrchestrator()),
+    )
+
+    worker.run_once()
+
+    assert queue.acknowledged == expected

@@ -8,6 +8,7 @@ from opentelemetry.trace import SpanKind, Status, StatusCode
 
 from app.ingestion.claim_client import ClaimDisposition, IngestionClaimClient
 from app.ingestion.contract import InvalidIngestionEvent, parse_and_validate_event
+from app.ingestion.orchestrator import IngestionOrchestrator
 from app.ingestion.sqs import IngestionQueueMessage, SqsIngestionQueue
 from app.telemetry import metric_attributes, trace_attributes
 
@@ -22,11 +23,15 @@ class IngestionWorker:
         claim_client: IngestionClaimClient,
         stop_event: threading.Event,
         error_wait_seconds: float,
+        orchestrator: IngestionOrchestrator | None = None,
+        reconcile_dlq: bool = False,
     ) -> None:
         self._queue = queue
         self._claim_client = claim_client
         self._stop_event = stop_event
         self._error_wait_seconds = error_wait_seconds
+        self._orchestrator = orchestrator
+        self._reconcile_dlq = reconcile_dlq
 
     def run_once(self) -> int:
         messages = self._queue.receive()
@@ -140,6 +145,33 @@ class IngestionWorker:
                 "rag.document.id": event["document_id"],
             }
         )
+        if self._orchestrator is not None:
+            result = (
+                self._orchestrator.reconcile_dlq(
+                    event=event,
+                    raw_body=message.body,
+                    message=message,
+                )
+                if self._reconcile_dlq
+                else self._orchestrator.process(
+                    event=event,
+                    raw_body=message.body,
+                    message=message,
+                )
+            )
+            if result.acknowledge:
+                self._queue.acknowledge(message)
+                logger.info(
+                    "Ingestion event reached an authoritative terminal outcome.",
+                    extra={**context, "processing_outcome": result.code},
+                )
+            else:
+                logger.warning(
+                    "Ingestion event remains unacknowledged for recovery.",
+                    extra={**context, "processing_outcome": result.code},
+                )
+            return result.code
+
         disposition = self._claim_client.claim(
             raw_body=message.body,
             event_id=event_id,

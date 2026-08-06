@@ -15,6 +15,11 @@ class VectorDistance(StrEnum):
     COSINE = "cosine"
 
 
+class VectorPublicationStatus(StrEnum):
+    PROVISIONAL = "provisional"
+    PUBLISHED = "published"
+
+
 class VectorSpace(ImmutableModel):
     collection_name: NonEmptyString
     embedding_space_generation_id: UUID
@@ -30,6 +35,8 @@ class VectorPointIdentity(ImmutableModel):
     chunk_id: UUID
     workspace_corpus_generation_id: UUID
     embedding_space_generation_id: UUID
+    event_id: UUID
+    publication_status: VectorPublicationStatus
 
     @property
     def point_id(self) -> UUID:
@@ -60,6 +67,8 @@ class VectorScope(ImmutableModel):
     workspace_id: UUID
     workspace_corpus_generation_id: UUID
     document_id: UUID | None = None
+    event_id: UUID | None = None
+    publication_status: VectorPublicationStatus | None = None
 
 
 class VectorUpsertRequest(ImmutableModel):
@@ -119,6 +128,8 @@ class VectorSearchHit(ImmutableModel):
     chunk_id: UUID
     workspace_corpus_generation_id: UUID
     embedding_space_generation_id: UUID
+    event_id: UUID
+    publication_status: VectorPublicationStatus
 
     @field_validator("score")
     @classmethod
@@ -159,6 +170,18 @@ class VectorCompletenessRequest(ImmutableModel):
                 and point.document_id != self.scope.document_id
             ):
                 raise ValueError("expected point document does not match scope")
+            if (
+                self.scope.event_id is not None
+                and point.event_id != self.scope.event_id
+            ):
+                raise ValueError("expected point event does not match scope")
+            if (
+                self.scope.publication_status is not None
+                and point.publication_status != self.scope.publication_status
+            ):
+                raise ValueError(
+                    "expected point publication status does not match scope"
+                )
         return self
 
 

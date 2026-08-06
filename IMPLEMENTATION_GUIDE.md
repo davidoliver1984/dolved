@@ -10841,47 +10841,190 @@ Retrieval (Phase 16) begins.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-06.
+
+### Implementation
+
+Laravel now owns a durable, event-scoped ingestion attempt that extends the
+existing `ingestion_event_claims` record with its authoritative Workspace,
+Document, lease generation, open/sealed state, generation identities,
+publication evidence and terminal outcome. Lease tokens are returned once to
+the worker and stored only as SHA-256 digests. Every mutating operation locks
+and revalidates the attempt, Document, Workspace, generation context and
+current lease before changing authoritative state.
+
+The internal worker protocol now implements all eight ADR-0016 `v2` purposes:
+
+```text
+ingestion.claim
+ingestion.lease.renew
+ingestion.chunks.submit
+ingestion.chunks.seal
+ingestion.attempt.resume
+ingestion.publication.authorise
+ingestion.complete
+ingestion.fail
+```
+
+Signatures bind the timestamp, HTTP method, request path, body digest,
+`event_id` and exact operation purpose. The Laravel and Python implementations
+validate the same repository-owned canonicalisation fixtures and normative
+vectors. Version `v1` is rejected. Key-ring rotation, timestamp freshness,
+constant-time comparison and privacy-safe failure logging remain intact.
+
+Canonical chunks are submitted in bounded batches and persisted in
+PostgreSQL with attempt identity, ordinal, text digest and structured source
+provenance. Database uniqueness prevents duplicate ordinals or public
+identities within an attempt. Repeated identical submissions are idempotent;
+conflicting data is rejected. Sealing recomputes the authoritative manifest
+from PostgreSQL and makes the attempt immutable. A successor holding a fresh
+lease can page through a sealed attempt without repeating extraction or
+chunking.
+
+The Python worker now performs the complete recoverable saga: claim, extract,
+normalise, chunk, submit, seal, embed, provision and write provisional Qdrant
+points, verify them, request evidence-bound publication authorisation,
+publish, independently verify the published set, report completion, and only
+then acknowledge SQS. Laravel alone activates the corpus generation, updates
+the Workspace active-generation pointer and transitions the Document to
+`INDEXED`. Permanent source-processing failures are reported through the same
+lease-gated protocol; infrastructure and control-plane uncertainty remains
+retryable and never becomes a false Document failure.
+
+One heartbeat cadence renews the Laravel processing lease and extends SQS
+visibility as two independent operations. If either cannot be confirmed, the
+worker stops authoritative work. Open expired attempts are reclaimed by
+resetting their attempt-scoped chunks and cleaning their provisional vector
+projection. Sealed attempts are preserved and resumed. Duplicate delivery,
+terminal discovery and completion reporting are all keyed by `event_id`, and
+only authoritative `INDEXED` or `FAILED` outcomes permit acknowledgement.
+A dedicated `python -m app.worker --dlq-once` mode provides the deployment
+hook for applying the same event-scoped reconciliation rules to the dead-letter
+queue.
+
+Qdrant payloads now carry `event_id` and `publication_status` alongside the
+ADR-0014 tenant, generation, Document and chunk identities. `VectorStore`
+continues to isolate all Qdrant-specific behaviour, including deterministic
+point identity, provisional cleanup, idempotent publication and completeness
+verification. Search always requires explicit Workspace and corpus-generation
+scope and filters to published points. Raw vectors are never stored in
+PostgreSQL, and Python never writes directly to it.
+
+An idempotent `ingestion:provision-embedding-space` Artisan command creates
+the accepted V1 Voyage embedding profile and available embedding-space
+generation explicitly. The first Workspace corpus generation is then created
+lazily, under Laravel authority, during a valid claim. Business audit records
+capture publication authorisation and terminal outcomes without storing
+document content, vectors, credentials or lease tokens.
+
+### Commands executed
+
+```bash
+docker compose exec -T api ./vendor/bin/pint
+docker compose exec -T api ./vendor/bin/pint --test
+docker compose exec -T api php artisan test
+docker compose exec -T ai uv run ruff format app tests
+docker compose exec -T ai uv run ruff check .
+docker compose exec -T ai uv run mypy app tests
+docker compose exec -T ai uv run pytest
+docker compose exec -T web npm test
+docker compose exec -T web npm run lint
+docker compose exec -T web npx tsc --noEmit
+docker compose exec -T -e NODE_ENV=production web npm run build
+docker compose config --quiet
+docker compose build api publisher ai worker
+docker compose up --detach --force-recreate --no-deps api publisher ai worker
+docker compose up --detach --wait --wait-timeout 180
+docker compose ps
+docker compose exec -T api php artisan ingestion:provision-embedding-space
+git diff --check
+```
+
+A disposable PostgreSQL database was also migrated from empty through every
+migration, including the new orchestration foundation, and then removed. Its
+attempt nullability, foreign keys, check constraints and indexes were inspected
+directly. The Laravel and Python embedding configuration fingerprints were
+compared at runtime and both resolved to:
+
+```text
+ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c
+```
+
+### Verification results
+
+* Laravel: 155 tests passed with 668 assertions.
+* Python: 198 tests passed; the existing credential-dependent live Voyage
+  test was skipped as designed.
+* Frontend: 26 tests passed across seven files.
+* Pint passed across 151 files; Ruff formatting/lint, MyPy across 80 source
+  files, ESLint and TypeScript all passed.
+* The production Next.js build passed with 11 routes. An initial invocation
+  inherited a nonstandard host `NODE_ENV`; explicitly supplying the required
+  production value corrected the environment and the build passed without a
+  code change.
+* Clean PostgreSQL migration and direct constraint inspection passed.
+* Shared PHP/Python canonicalisation, HMAC and point-identity conformance
+  vectors passed.
+* Compose validation, rebuilt service images and all container health checks
+  passed, including the ingestion worker.
+* Provisioning was idempotent and the cross-language embedding fingerprint
+  matched exactly.
+* `git diff --check` passed.
 
 ### Acceptance criteria
 
-* An uploaded Document reaches `INDEXED`.
+* An uploaded Document reaches `INDEXED`. — Met through the tested complete
+  orchestration saga and authoritative Laravel completion transaction.
 * Authoritative `PROCESSING → INDEXED`/`FAILED` transitions are implemented
-  per ADR-0015 and ADR-0016.
+  per ADR-0015 and ADR-0016. — Met; Python requests outcomes, while Laravel
+  validates and performs both terminal transitions.
 * Authenticated callback/result reporting from the Python worker to Laravel
   is implemented for all eight `v2` purposes, each independently
-  purpose-signed.
+  purpose-signed. — Met, including cross-purpose rejection tests.
 * Canonical chunk transfer, sealing, and sealed-attempt resume are
-  implemented without direct Python database access.
+  implemented without direct Python database access. — Met.
 * The provisional-to-published vector lifecycle, evidence-bound publication
   authorisation, and post-publication completeness verification are
   implemented; `ingestion.complete` is unreachable until verification
-  passes.
+  passes. — Met.
 * Retrieval-visibility gating (published Qdrant point and PostgreSQL
   `INDEXED`, both required) is implemented and enforced wherever vectors
-  are queried.
-* Each pipeline stage is observable end to end.
+  are queried. — Met at the storage boundary; Python search filters to
+  published points, while Phase 16 retrieval must independently confirm the
+  authoritative PostgreSQL `INDEXED` gate before exposing results.
+* Each pipeline stage is observable end to end. — Met through trace-context
+  propagation, privacy-safe structured telemetry and durable business audit
+  events for publication and terminal outcomes.
 * Processing-attempt, lease-renewal, and callback idempotency hold under
-  retry.
+  retry. — Met.
 * Duplicate-message resumption does not duplicate chunks, vectors, or
-  lifecycle transitions.
+  lifecycle transitions. — Met through attempt-scoped database uniqueness,
+  deterministic point identity and idempotent terminal actions.
 * SQS acknowledgement, redelivery and dead-letter behaviour are implemented
-  and verified.
+  and verified. — Met; only authoritative terminal outcomes acknowledge, and
+  the DLQ reconciliation entry point uses the same attempt policy.
 * Reclaim reset and DLQ terminal reconciliation share one implemented,
-  `event_id`-scoped cleanup policy.
+  `event_id`-scoped cleanup policy. — Met.
 * Workspace, Document and generation context survives every stage of the
-  pipeline.
+  pipeline. — Met and revalidated by Laravel at every authoritative mutation.
 * End-to-end ingestion tests exist and pass, including sealed-attempt
-  resumption and partial-publication recovery.
+  resumption and partial-publication recovery. — Met.
 * Initial embedding-space and workspace-corpus-generation provisioning is
-  implemented.
+  implemented. — Met through explicit idempotent platform provisioning and
+  lazy, locked Workspace generation creation.
 
 ### Commit boundary
 
-git add apps/api apps/ai tests contracts
+```bash
+git add .env.example compose.yaml apps/api apps/ai \
+  contracts/http/ingestion-worker IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-08-06-r15-s03-implement-end-to-end-ingestion-orchestration.md
 git commit -m "Complete end-to-end document ingestion orchestration"
+git tag -a phase-15-s03 \
+  -m "Complete Stage 15.3: Implement End-to-End Ingestion Orchestration"
 git tag -a phase-15 \
   -m "Complete Phase 15: Ingestion Orchestration"
+```
 
 ---
 

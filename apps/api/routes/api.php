@@ -3,6 +3,7 @@
 use App\Http\Controllers\DocumentIngestionController;
 use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\Internal\DocumentIngestionClaimController;
+use App\Http\Controllers\Internal\IngestionOperationController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -61,7 +62,24 @@ Route::get('/platform/status', function () {
 Route::post(
     '/internal/ingestion/events/{eventId}/claim',
     [DocumentIngestionClaimController::class, 'store'],
-)->middleware('ingestion.worker');
+)->middleware('ingestion.worker:ingestion.claim')->name('ingestion.claim');
+
+Route::prefix('/internal/ingestion/events/{eventId}')->group(function (): void {
+    Route::post('/lease/renew', [IngestionOperationController::class, 'renew'])
+        ->middleware('ingestion.worker:ingestion.lease.renew')->name('ingestion.lease.renew');
+    Route::post('/chunks', [IngestionOperationController::class, 'submit'])
+        ->middleware('ingestion.worker:ingestion.chunks.submit')->name('ingestion.chunks.submit');
+    Route::post('/chunks/seal', [IngestionOperationController::class, 'seal'])
+        ->middleware('ingestion.worker:ingestion.chunks.seal')->name('ingestion.chunks.seal');
+    Route::post('/resume', [IngestionOperationController::class, 'resume'])
+        ->middleware('ingestion.worker:ingestion.attempt.resume')->name('ingestion.attempt.resume');
+    Route::post('/publication/authorise', [IngestionOperationController::class, 'authorise'])
+        ->middleware('ingestion.worker:ingestion.publication.authorise')->name('ingestion.publication.authorise');
+    Route::post('/complete', [IngestionOperationController::class, 'complete'])
+        ->middleware('ingestion.worker:ingestion.complete')->name('ingestion.complete');
+    Route::post('/fail', [IngestionOperationController::class, 'fail'])
+        ->middleware('ingestion.worker:ingestion.fail')->name('ingestion.fail');
+});
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('/workspaces', [WorkspaceController::class, 'index']);

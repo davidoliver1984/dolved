@@ -73,10 +73,27 @@ class DocumentIngestionClaimController extends Controller
             'data' => [
                 'outcome' => $result->outcome->value,
                 'document_status' => $result->documentStatus?->value,
+                'lease_token' => $result->leaseToken,
+                'lease_expires_at' => $result->leaseExpiresAt,
+                'embedding_space_generation_id' => $result->embeddingSpaceGenerationId,
+                'workspace_corpus_generation_id' => $result->workspaceCorpusGenerationId,
+                'vector_space' => $result->collectionName === null ? null : [
+                    'collection_name' => $result->collectionName,
+                    'vector_name' => $result->vectorName,
+                    'dimensions' => $result->dimensions,
+                    'distance' => $result->distance,
+                    'embedding_profile_fingerprint' => $result->embeddingProfileFingerprint,
+                ],
+                'resume_sealed_attempt' => $result->resumeSealedAttempt,
+                'reset_open_attempt' => $result->resetOpenAttempt,
             ],
         ], match ($result->outcome) {
             IngestionClaimOutcome::Claimed,
-            IngestionClaimOutcome::AlreadyClaimed => 200,
+            IngestionClaimOutcome::AlreadyClaimed,
+            IngestionClaimOutcome::Reclaimed,
+            IngestionClaimOutcome::AlreadyCompleted,
+            IngestionClaimOutcome::PermanentlyFailed => 200,
+            IngestionClaimOutcome::OwnedByAnotherWorker => 423,
             IngestionClaimOutcome::StaleEvent,
             IngestionClaimOutcome::IneligibleState => 409,
         });

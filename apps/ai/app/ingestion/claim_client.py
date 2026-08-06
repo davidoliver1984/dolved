@@ -45,6 +45,7 @@ class IngestionClaimClient:
             request_path=path,
             body=body,
             event_id=event_id,
+            purpose="ingestion.claim",
         ).as_http_headers()
         attributes: dict[str, Any] = {
             "http.request.method": "POST",

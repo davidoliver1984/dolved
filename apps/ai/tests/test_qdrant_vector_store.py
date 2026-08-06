@@ -17,6 +17,7 @@ from app.vector_store.factory import create_vector_store
 from app.vector_store.models import (
     VectorCompletenessRequest,
     VectorPoint,
+    VectorPublicationStatus,
     VectorScope,
     VectorSearchRequest,
     VectorSpace,
@@ -53,6 +54,7 @@ def vector_point(
     document_id: UUID | None = None,
     corpus_generation_id: UUID | None = None,
     values: tuple[float, ...] = (1.0, 0.0, 0.0),
+    publication_status: VectorPublicationStatus = VectorPublicationStatus.PROVISIONAL,
 ) -> VectorPoint:
     return VectorPoint(
         workspace_id=workspace_id or uuid4(),
@@ -60,6 +62,8 @@ def vector_point(
         chunk_id=uuid4(),
         workspace_corpus_generation_id=corpus_generation_id or uuid4(),
         embedding_space_generation_id=space.embedding_space_generation_id,
+        event_id=uuid4(),
+        publication_status=publication_status,
         values=values,
     )
 
@@ -188,6 +192,8 @@ def test_upsert_is_bounded_idempotent_and_stores_only_the_minimal_payload(
             "chunk_id",
             "workspace_corpus_generation_id",
             "embedding_space_generation_id",
+            "event_id",
+            "publication_status",
         }
         for record in records
     )
@@ -209,17 +215,20 @@ def test_search_and_document_delete_are_tenant_and_generation_scoped(
         workspace_id=workspace_a,
         document_id=document_a,
         corpus_generation_id=corpus_a,
+        publication_status=VectorPublicationStatus.PUBLISHED,
     )
     other_document = vector_point(
         vector_space,
         workspace_id=workspace_a,
         corpus_generation_id=corpus_a,
         values=(0.9, 0.1, 0.0),
+        publication_status=VectorPublicationStatus.PUBLISHED,
     )
     other_workspace = vector_point(
         vector_space,
         workspace_id=workspace_b,
         corpus_generation_id=corpus_b,
+        publication_status=VectorPublicationStatus.PUBLISHED,
     )
     store.upsert(
         VectorUpsertRequest(
@@ -310,6 +319,8 @@ def test_completeness_compares_identity_payload_and_schema_not_only_count(
                     "chunk_id": str(mismatched.chunk_id),
                     "workspace_corpus_generation_id": str(corpus_generation_id),
                     "embedding_space_generation_id": str(uuid4()),
+                    "event_id": str(mismatched.event_id),
+                    "publication_status": mismatched.publication_status.value,
                 },
             )
         ],
@@ -360,6 +371,42 @@ def test_successful_completeness_and_idempotent_vector_space_removal(
     store.remove_vector_space(vector_space)
     store.remove_vector_space(vector_space)
     assert qdrant_client.collection_exists(vector_space.collection_name) is False
+
+
+@pytest.mark.integration
+def test_publication_is_event_scoped_idempotent_and_verifiably_complete(
+    qdrant_client: QdrantClient, vector_space: VectorSpace
+) -> None:
+    store = QdrantVectorStore(qdrant_client)
+    store.ensure_vector_space(vector_space)
+    event_id = uuid4()
+    point = vector_point(vector_space).model_copy(update={"event_id": event_id})
+    store.upsert(VectorUpsertRequest(vector_space=vector_space, points=(point,)))
+    provisional_scope = VectorScope(
+        vector_space=vector_space,
+        workspace_id=point.workspace_id,
+        workspace_corpus_generation_id=point.workspace_corpus_generation_id,
+        document_id=point.document_id,
+        event_id=event_id,
+        publication_status=VectorPublicationStatus.PROVISIONAL,
+    )
+
+    store.publish(provisional_scope)
+    store.publish(provisional_scope)
+    published = point.identity().model_copy(
+        update={"publication_status": VectorPublicationStatus.PUBLISHED}
+    )
+    report = store.verify_completeness(
+        VectorCompletenessRequest(
+            scope=provisional_scope.model_copy(
+                update={"publication_status": VectorPublicationStatus.PUBLISHED}
+            ),
+            expected_points=(published,),
+        )
+    )
+
+    assert report.is_complete is True
+    assert store.count(provisional_scope) == 0
 
 
 @pytest.mark.integration

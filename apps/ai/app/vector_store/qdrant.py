@@ -19,6 +19,7 @@ from app.vector_store.models import (
     VectorDistance,
     VectorPoint,
     VectorPointIdentity,
+    VectorPublicationStatus,
     VectorScope,
     VectorSearchHit,
     VectorSearchRequest,
@@ -31,6 +32,8 @@ INDEXED_PAYLOAD_FIELDS = (
     "workspace_id",
     "workspace_corpus_generation_id",
     "document_id",
+    "event_id",
+    "publication_status",
 )
 PAYLOAD_FIELDS = (
     "workspace_id",
@@ -38,6 +41,8 @@ PAYLOAD_FIELDS = (
     "chunk_id",
     "workspace_corpus_generation_id",
     "embedding_space_generation_id",
+    "event_id",
+    "publication_status",
 )
 
 
@@ -138,7 +143,13 @@ class QdrantVectorStore:
                 collection_name=request.scope.vector_space.collection_name,
                 query=list(request.query_vector),
                 using=request.scope.vector_space.vector_name,
-                query_filter=self._scope_filter(request.scope),
+                query_filter=self._scope_filter(
+                    request.scope.model_copy(
+                        update={
+                            "publication_status": VectorPublicationStatus.PUBLISHED,
+                        }
+                    )
+                ),
                 limit=request.limit,
                 with_payload=list(PAYLOAD_FIELDS),
                 with_vectors=False,
@@ -223,11 +234,15 @@ class QdrantVectorStore:
         )
 
     def delete(self, scope: VectorScope) -> None:
+        if not self._client.collection_exists(scope.vector_space.collection_name):
+            return
         self._validate_vector_space_safe(scope.vector_space)
         try:
             result = self._client.delete(
                 collection_name=scope.vector_space.collection_name,
-                points_selector=self._scope_filter(scope),
+                points_selector=qdrant_models.FilterSelector(
+                    filter=self._scope_filter(scope)
+                ),
                 wait=True,
             )
             if result.status is not qdrant_models.UpdateStatus.COMPLETED:
@@ -239,6 +254,35 @@ class QdrantVectorStore:
         except Exception as exception:
             raise VectorStoreUnavailableError(
                 "The vector-store scope could not be deleted."
+            ) from exception
+
+    def publish(self, scope: VectorScope) -> None:
+        if scope.event_id is None:
+            raise VectorSpaceCompatibilityError(
+                "Publishing vectors requires an explicit event scope."
+            )
+        self._validate_vector_space_safe(scope.vector_space)
+        provisional_scope = scope.model_copy(
+            update={"publication_status": VectorPublicationStatus.PROVISIONAL}
+        )
+        try:
+            result = self._client.set_payload(
+                collection_name=scope.vector_space.collection_name,
+                payload={"publication_status": VectorPublicationStatus.PUBLISHED.value},
+                points=qdrant_models.FilterSelector(
+                    filter=self._scope_filter(provisional_scope)
+                ),
+                wait=True,
+            )
+            if result.status is not qdrant_models.UpdateStatus.COMPLETED:
+                raise VectorStoreUnavailableError(
+                    "The vector store did not complete publication synchronously."
+                )
+        except VectorStoreError:
+            raise
+        except Exception as exception:
+            raise VectorStoreUnavailableError(
+                "The vector-store publication could not be completed."
             ) from exception
 
     def remove_vector_space(self, vector_space: VectorSpace) -> None:
@@ -352,6 +396,8 @@ class QdrantVectorStore:
                 "embedding_space_generation_id": str(
                     point.embedding_space_generation_id
                 ),
+                "event_id": str(point.event_id),
+                "publication_status": point.publication_status.value,
             },
         )
 
@@ -374,6 +420,22 @@ class QdrantVectorStore:
                 qdrant_models.FieldCondition(
                     key="document_id",
                     match=qdrant_models.MatchValue(value=str(scope.document_id)),
+                )
+            )
+        if scope.event_id is not None:
+            conditions.append(
+                qdrant_models.FieldCondition(
+                    key="event_id",
+                    match=qdrant_models.MatchValue(value=str(scope.event_id)),
+                )
+            )
+        if scope.publication_status is not None:
+            conditions.append(
+                qdrant_models.FieldCondition(
+                    key="publication_status",
+                    match=qdrant_models.MatchValue(
+                        value=scope.publication_status.value
+                    ),
                 )
             )
         return qdrant_models.Filter(must=conditions)
@@ -421,6 +483,10 @@ class QdrantVectorStore:
                 embedding_space_generation_id=UUID(
                     str(payload["embedding_space_generation_id"])
                 ),
+                event_id=UUID(str(payload["event_id"])),
+                publication_status=VectorPublicationStatus(
+                    str(payload["publication_status"])
+                ),
             )
         except TypeError, ValueError:
             return None
@@ -436,6 +502,11 @@ class QdrantVectorStore:
             and identity.embedding_space_generation_id
             == scope.vector_space.embedding_space_generation_id
             and (scope.document_id is None or identity.document_id == scope.document_id)
+            and (scope.event_id is None or identity.event_id == scope.event_id)
+            and (
+                scope.publication_status is None
+                or identity.publication_status == scope.publication_status
+            )
         )
 
     @staticmethod

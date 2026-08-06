@@ -166,4 +166,4 @@ def test_client_sends_the_exact_body_and_signed_internal_path() -> None:
         "event_id": EVENT_ID,
         "signature": captured["signature"],
     }
-    assert str(captured["signature"]).startswith("v1=")
+    assert str(captured["signature"]).startswith("v2=")

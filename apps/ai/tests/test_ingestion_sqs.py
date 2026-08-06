@@ -8,6 +8,7 @@ class FakeSqsClient:
     def __init__(self) -> None:
         self.receive_arguments: dict[str, Any] = {}
         self.delete_arguments: dict[str, Any] = {}
+        self.visibility_arguments: dict[str, Any] = {}
 
     def get_queue_url(self, **arguments: Any) -> dict[str, str]:
         assert arguments == {"QueueName": "ingestion"}
@@ -45,6 +46,9 @@ class FakeSqsClient:
 
     def delete_message(self, **arguments: Any) -> None:
         self.delete_arguments = arguments
+
+    def change_message_visibility(self, **arguments: Any) -> None:
+        self.visibility_arguments = arguments
 
 
 def test_sqs_adapter_preserves_transport_metadata_and_poll_configuration() -> None:
@@ -88,6 +92,12 @@ def test_sqs_adapter_preserves_transport_metadata_and_poll_configuration() -> No
     assert client.delete_arguments == {
         "QueueUrl": "http://localstack/queue/ingestion",
         "ReceiptHandle": "receipt",
+    }
+    queue.extend_visibility(messages[0])
+    assert client.visibility_arguments == {
+        "QueueUrl": "http://localstack/queue/ingestion",
+        "ReceiptHandle": "receipt",
+        "VisibilityTimeout": 30,
     }
 
 

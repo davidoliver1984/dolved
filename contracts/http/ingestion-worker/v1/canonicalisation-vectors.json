@@ -1,0 +1,39 @@
+{
+  "contract_version": 1,
+  "chunk": {
+    "chunk_id": "00000000-0000-0000-0000-000000000003",
+    "ordinal": 0,
+    "text": "Café canonical text.",
+    "token_count": 4,
+    "strategy_name": "baseline-structural",
+    "strategy_version": "1",
+    "configuration": {
+      "overlap_tokens": 40,
+      "target_tokens": 400
+    },
+    "configuration_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "provenance": [
+      {
+        "page": 1,
+        "source_element_ids": [
+          "00000000-0000-0000-0000-000000000004"
+        ],
+        "y": 612.0
+      }
+    ]
+  },
+  "chunk_content_digest": "5dd40d23e77f994c3be8ca5947c475550a0c10727ce730294d53b439a2bf29f2",
+  "chunk_manifest_digest": "da18658a4d984c68df8b136059acf80d1ee2227c60628c7d7e6f0435d99bd51f",
+  "point_ids": [
+    "00000000-0000-0000-0000-000000000006",
+    "00000000-0000-0000-0000-000000000005"
+  ],
+  "point_manifest_digest": "85665ad428d4695632dd523d29c03e8e3ca49f4d4c71a861d97fa26eacda3fa7",
+  "point_identity": {
+    "embedding_space_generation_id": "00000000-0000-0000-0000-000000000001",
+    "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+    "workspace_corpus_generation_id": "00000000-0000-0000-0000-000000000002",
+    "chunk_id": "00000000-0000-0000-0000-000000000003",
+    "expected_point_id": "f76fcae7-7938-55ff-9ce4-6616c81f4fce"
+  }
+}

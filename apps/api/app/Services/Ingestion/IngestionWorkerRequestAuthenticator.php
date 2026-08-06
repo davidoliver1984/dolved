@@ -18,7 +18,9 @@ class IngestionWorkerRequestAuthenticator
 
     public const SIGNATURE_HEADER = 'X-Ingestion-Worker-Signature';
 
-    public function verify(Request $request): void
+    public const PURPOSE_HEADER = 'X-Ingestion-Worker-Purpose';
+
+    public function verify(Request $request, string $expectedPurpose): void
     {
         if ($request->getQueryString() !== null) {
             $this->fail('query_string');
@@ -28,6 +30,7 @@ class IngestionWorkerRequestAuthenticator
         $timestamp = $request->header(self::TIMESTAMP_HEADER);
         $eventId = $request->header(self::EVENT_ID_HEADER);
         $signature = $request->header(self::SIGNATURE_HEADER);
+        $purpose = $request->header(self::PURPOSE_HEADER);
 
         if (
             ! is_string($keyId)
@@ -53,9 +56,13 @@ class IngestionWorkerRequestAuthenticator
 
         if (
             ! is_string($signature)
-            || preg_match('/^v1=[0-9a-f]{64}$/', $signature) !== 1
+            || preg_match('/^v2=[0-9a-f]{64}$/', $signature) !== 1
         ) {
             $this->fail('signature_format');
+        }
+
+        if (! is_string($purpose) || $purpose !== $expectedPurpose) {
+            $this->fail('purpose');
         }
 
         $routeEventId = $request->route('eventId');
@@ -101,6 +108,7 @@ class IngestionWorkerRequestAuthenticator
             $requestPath,
             $bodyDigest,
             $eventId,
+            $purpose,
         ]);
         $expected = hash_hmac('sha256', $canonical, $secret);
         $provided = substr($signature, 3);

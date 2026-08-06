@@ -6,27 +6,40 @@ from types import FrameType
 
 import boto3  # type: ignore[import-untyped]
 
+from app.embedding.factory import create_deferred_embedder, embedding_profile
 from app.ingestion.claim_client import IngestionClaimClient
+from app.ingestion.orchestrator import IngestionOrchestrator
+from app.ingestion.protocol_client import IngestionProtocolClient
 from app.ingestion.signing import IngestionWorkerSigner
 from app.ingestion.sqs import SqsIngestionQueue
 from app.ingestion.worker import IngestionWorker
 from app.settings import get_settings
 from app.structured_logging import configure_structured_logging
 from app.telemetry import configure_telemetry
+from app.vector_store.factory import create_vector_store
 
 logger = logging.getLogger("ingestion.worker")
 
 
-def build_worker(stop_event: threading.Event) -> IngestionWorker:
+def build_worker(
+    stop_event: threading.Event, *, reconcile_dlq: bool = False
+) -> IngestionWorker:
     settings = get_settings()
     sqs_client = boto3.client(
         "sqs",
         region_name=settings.aws_default_region,
         endpoint_url=settings.aws_endpoint_url,
     )
+    s3_client = boto3.client(
+        "s3",
+        region_name=settings.aws_default_region,
+        endpoint_url=settings.aws_endpoint_url,
+    )
     queue = SqsIngestionQueue(
         client=sqs_client,
-        queue_name=settings.ingestion_queue,
+        queue_name=(
+            settings.ingestion_dlq if reconcile_dlq else settings.ingestion_queue
+        ),
         wait_time_seconds=settings.ingestion_worker_wait_time_seconds,
         visibility_timeout_seconds=(
             settings.ingestion_worker_visibility_timeout_seconds
@@ -42,12 +55,33 @@ def build_worker(stop_event: threading.Event) -> IngestionWorker:
         timeout_seconds=settings.ingestion_worker_api_timeout_seconds,
         signer=signer,
     )
+    protocol = IngestionProtocolClient(
+        base_url=settings.ingestion_worker_api_url,
+        timeout_seconds=settings.ingestion_worker_api_timeout_seconds,
+        signer=signer,
+        max_attempts=settings.ingestion_worker_callback_max_attempts,
+        initial_backoff_seconds=settings.ingestion_worker_callback_backoff_seconds,
+    )
+    orchestrator = IngestionOrchestrator(
+        protocol=protocol,
+        object_store=s3_client,
+        embedder=create_deferred_embedder(settings),
+        embedding_profile=embedding_profile(settings),
+        vector_store=create_vector_store(settings),
+        queue=queue,
+        heartbeat_seconds=settings.ingestion_worker_heartbeat_seconds,
+        embedding_batch_size=settings.embedding_batch_size,
+        chunk_batch_size=settings.ingestion_chunk_batch_size,
+        resume_page_size=settings.ingestion_resume_page_size,
+    )
 
     return IngestionWorker(
         queue=queue,
         claim_client=claim_client,
         stop_event=stop_event,
         error_wait_seconds=settings.ingestion_worker_error_wait_seconds,
+        orchestrator=orchestrator,
+        reconcile_dlq=reconcile_dlq,
     )
 
 
@@ -57,6 +91,11 @@ def main() -> int:
         "--once",
         action="store_true",
         help="Process at most one SQS receive batch, then exit.",
+    )
+    parser.add_argument(
+        "--dlq-once",
+        action="store_true",
+        help="Reconcile at most one exhausted DLQ receive batch, then exit.",
     )
     arguments = parser.parse_args()
     configure_structured_logging()
@@ -77,9 +116,13 @@ def main() -> int:
     signal.signal(signal.SIGTERM, request_shutdown)
     signal.signal(signal.SIGINT, request_shutdown)
     try:
-        worker = build_worker(stop_event)
+        worker = (
+            build_worker(stop_event, reconcile_dlq=True)
+            if arguments.dlq_once
+            else build_worker(stop_event)
+        )
 
-        if arguments.once:
+        if arguments.once or arguments.dlq_once:
             worker.run_once()
         else:
             worker.run()

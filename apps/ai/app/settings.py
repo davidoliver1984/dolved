@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     aws_default_region: str = "us-east-1"
     aws_endpoint_url: str | None = None
     ingestion_queue: str = "rag-platform-ingestion-local"
+    ingestion_dlq: str = "rag-platform-ingestion-dlq-local"
     ingestion_worker_wait_time_seconds: int = Field(default=10, ge=0, le=20)
     ingestion_worker_visibility_timeout_seconds: int = Field(
         default=30,
@@ -17,8 +18,13 @@ class Settings(BaseSettings):
     )
     ingestion_worker_batch_size: int = Field(default=1, ge=1, le=10)
     ingestion_worker_error_wait_seconds: float = Field(default=2.0, ge=0.1)
+    ingestion_worker_heartbeat_seconds: float = Field(default=30.0, ge=1)
+    ingestion_chunk_batch_size: int = Field(default=50, ge=1, le=100)
+    ingestion_resume_page_size: int = Field(default=50, ge=1, le=100)
     ingestion_worker_api_url: str = "http://api:8000"
     ingestion_worker_api_timeout_seconds: float = Field(default=10.0, gt=0)
+    ingestion_worker_callback_max_attempts: int = Field(default=3, ge=1, le=10)
+    ingestion_worker_callback_backoff_seconds: float = Field(default=0.25, ge=0)
     ingestion_worker_hmac_key_id: str = "local-v1"
     ingestion_worker_hmac_secret: SecretStr = SecretStr("")
     voyage_api_key: SecretStr = SecretStr("")

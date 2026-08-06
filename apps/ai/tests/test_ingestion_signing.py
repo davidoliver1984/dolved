@@ -10,7 +10,7 @@ EVENT_ID = "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41"
 PATH = f"/api/internal/ingestion/events/{EVENT_ID}/claim"
 
 
-def test_signer_matches_the_normative_adr_0009_test_vector() -> None:
+def test_signer_matches_the_purpose_scoped_v2_test_vector() -> None:
     signer = IngestionWorkerSigner("local-v1", TEST_SECRET)
 
     headers = signer.sign(
@@ -19,10 +19,11 @@ def test_signer_matches_the_normative_adr_0009_test_vector() -> None:
         request_path=PATH,
         body=b"{}",
         event_id=EVENT_ID,
+        purpose="ingestion.claim",
     )
 
     assert headers.signature == (
-        "v1=4b54632a0c852c07c654ef3f4f658fba1759fefe0fa8d5cc3c531b1f83b43da9"
+        "v2=95565bdf500f5dabb99cfa3c1260664e3d94a4c47d5e489c5cd5b69e83751617"
     )
     assert headers.as_http_headers() == {
         "Content-Type": "application/json",
@@ -30,6 +31,7 @@ def test_signer_matches_the_normative_adr_0009_test_vector() -> None:
         "X-Ingestion-Worker-Timestamp": "1785326400",
         "X-Ingestion-Worker-Event-ID": EVENT_ID,
         "X-Ingestion-Worker-Signature": headers.signature,
+        "X-Ingestion-Worker-Purpose": "ingestion.claim",
     }
 
 
@@ -58,6 +60,7 @@ def test_signature_binds_every_canonical_component() -> None:
         request_path=PATH,
         body=b"{}",
         event_id=EVENT_ID,
+        purpose="ingestion.claim",
     ).signature
 
     variants = [
@@ -67,6 +70,7 @@ def test_signature_binds_every_canonical_component() -> None:
             request_path=PATH,
             body=b"{}",
             event_id=EVENT_ID,
+            purpose="ingestion.claim",
         ).signature,
         signer.sign(
             timestamp=1_785_326_400,
@@ -74,6 +78,7 @@ def test_signature_binds_every_canonical_component() -> None:
             request_path=PATH,
             body=b"{}",
             event_id=EVENT_ID,
+            purpose="ingestion.claim",
         ).signature,
         signer.sign(
             timestamp=1_785_326_400,
@@ -81,6 +86,7 @@ def test_signature_binds_every_canonical_component() -> None:
             request_path=f"{PATH}/different",
             body=b"{}",
             event_id=EVENT_ID,
+            purpose="ingestion.claim",
         ).signature,
         signer.sign(
             timestamp=1_785_326_400,
@@ -88,6 +94,7 @@ def test_signature_binds_every_canonical_component() -> None:
             request_path=PATH,
             body=b'{"changed":true}',
             event_id=EVENT_ID,
+            purpose="ingestion.claim",
         ).signature,
         signer.sign(
             timestamp=1_785_326_400,
@@ -95,6 +102,15 @@ def test_signature_binds_every_canonical_component() -> None:
             request_path=PATH,
             body=b"{}",
             event_id="7e6d5c4b-3a29-4180-9f8e-2d1c0b9a8f77",
+            purpose="ingestion.claim",
+        ).signature,
+        signer.sign(
+            timestamp=1_785_326_400,
+            method="POST",
+            request_path=PATH,
+            body=b"{}",
+            event_id=EVENT_ID,
+            purpose="ingestion.complete",
         ).signature,
     ]
 
@@ -120,4 +136,5 @@ def test_signer_requires_a_canonical_lowercase_event_uuid(
             request_path=PATH,
             body=b"{}",
             event_id=event_id,
+            purpose="ingestion.claim",
         )

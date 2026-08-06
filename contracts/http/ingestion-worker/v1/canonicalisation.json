@@ -1,0 +1,24 @@
+{
+  "contract_version": 1,
+  "json_encoding": {
+    "unicode": "utf-8",
+    "object_keys": "lexicographic",
+    "separators": [",", ":"],
+    "escaped_unicode": false
+  },
+  "chunk_content_digest_fields": [
+    "chunk_id",
+    "ordinal",
+    "text",
+    "token_count",
+    "strategy_name",
+    "strategy_version",
+    "configuration",
+    "configuration_fingerprint",
+    "provenance"
+  ],
+  "chunk_manifest_item_fields": ["chunk_id", "ordinal", "content_digest"],
+  "chunk_manifest_order": "ordinal ascending",
+  "point_manifest_encoding": "lowercase UUID strings joined by newline",
+  "point_manifest_order": "lexicographic"
+}

@@ -125,6 +125,22 @@ class SqsIngestionQueue:
             ReceiptHandle=message.receipt_handle,
         )
 
+    def extend_visibility(
+        self,
+        message: IngestionQueueMessage,
+        *,
+        visibility_timeout_seconds: int | None = None,
+    ) -> None:
+        self._client.change_message_visibility(
+            QueueUrl=self._queue_url,
+            ReceiptHandle=message.receipt_handle,
+            VisibilityTimeout=(
+                self._visibility_timeout_seconds
+                if visibility_timeout_seconds is None
+                else visibility_timeout_seconds
+            ),
+        )
+
     @staticmethod
     def _trace_context(message_attributes: object) -> dict[str, str]:
         if not isinstance(message_attributes, dict):

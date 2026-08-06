@@ -7,6 +7,8 @@ namespace Tests\Feature;
 use App\Actions\Ingestion\ClaimDocumentIngestion;
 use App\Enums\DocumentStatus;
 use App\Models\Document;
+use App\Models\EmbeddingProfile;
+use App\Models\EmbeddingSpaceGeneration;
 use App\Models\IngestionEventClaim;
 use App\Models\User;
 use App\Models\Workspace;
@@ -47,6 +49,11 @@ class DocumentIngestionClaimTest extends TestCase
             ],
             'ingestion.worker_auth.max_clock_skew_seconds' => 300,
         ]);
+        $profile = EmbeddingProfile::factory()->voyageV1()->create();
+        EmbeddingSpaceGeneration::factory()->for($profile)->available()->create([
+            'dimensions' => 1024,
+            'collection_name' => 'rag-platform-vectors-v1',
+        ]);
     }
 
     protected function tearDown(): void
@@ -80,7 +87,7 @@ class DocumentIngestionClaimTest extends TestCase
         $this->assertNotNull($claim->claimed_at);
     }
 
-    public function test_identical_event_is_idempotent_after_the_first_claim(): void
+    public function test_duplicate_delivery_cannot_take_over_a_live_lease(): void
     {
         $document = $this->document(DocumentStatus::Queued);
         $event = $this->eventFor($document);
@@ -90,8 +97,8 @@ class DocumentIngestionClaimTest extends TestCase
             ->assertJsonPath('data.outcome', 'claimed');
 
         $this->signedRequest($event)
-            ->assertOk()
-            ->assertJsonPath('data.outcome', 'already_claimed')
+            ->assertStatus(423)
+            ->assertJsonPath('data.outcome', 'owned_by_another_worker')
             ->assertJsonPath('data.document_status', 'processing');
 
         $this->assertDatabaseCount('ingestion_event_claims', 1);
@@ -121,7 +128,7 @@ class DocumentIngestionClaimTest extends TestCase
         $this->assertDatabaseCount('ingestion_event_claims', 2);
     }
 
-    public function test_laravel_accepts_the_normative_adr_0009_signature_vector(): void
+    public function test_version_one_signatures_are_rejected_after_the_bounded_cutover(): void
     {
         CarbonImmutable::setTestNow(
             CarbonImmutable::createFromTimestampUTC(1_785_326_400),
@@ -150,8 +157,8 @@ class DocumentIngestionClaimTest extends TestCase
             ]),
             content: '{}',
         )
-            ->assertUnprocessable()
-            ->assertJsonPath('error.code', 'invalid_event_contract');
+            ->assertUnauthorized()
+            ->assertJsonPath('error.code', 'worker_authentication_failed');
     }
 
     public function test_missing_invalid_and_unknown_credentials_fail_generically(): void
@@ -168,7 +175,7 @@ class DocumentIngestionClaimTest extends TestCase
 
         $this->signedRequest(
             $event,
-            signatureOverride: 'v1='.str_repeat('0', 64),
+            signatureOverride: 'v2='.str_repeat('0', 64),
         )->assertUnauthorized();
 
         $this->signedRequest(
@@ -578,10 +585,11 @@ class DocumentIngestionClaimTest extends TestCase
             $signedPath,
             hash('sha256', $signedBody),
             $eventId,
+            'ingestion.claim',
         ]);
         $secret = base64_decode($encodedSecret, true);
         $this->assertIsString($secret);
-        $signature = $signatureOverride ?? 'v1='.hash_hmac(
+        $signature = $signatureOverride ?? 'v2='.hash_hmac(
             'sha256',
             $canonical,
             $secret,
@@ -594,6 +602,7 @@ class DocumentIngestionClaimTest extends TestCase
             IngestionWorkerRequestAuthenticator::TIMESTAMP_HEADER => $timestampText,
             IngestionWorkerRequestAuthenticator::EVENT_ID_HEADER => $eventId,
             IngestionWorkerRequestAuthenticator::SIGNATURE_HEADER => $signature,
+            IngestionWorkerRequestAuthenticator::PURPOSE_HEADER => 'ingestion.claim',
         ];
     }
 

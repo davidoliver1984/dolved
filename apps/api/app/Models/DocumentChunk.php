@@ -16,6 +16,7 @@ use LogicException;
 #[Fillable([
     'workspace_id',
     'document_id',
+    'ingestion_event_claim_id',
     'ordinal',
     'text',
     'token_count',
@@ -24,6 +25,7 @@ use LogicException;
     'configuration',
     'configuration_fingerprint',
     'provenance',
+    'content_digest',
 ])]
 class DocumentChunk extends Model
 {
@@ -66,6 +68,12 @@ class DocumentChunk extends Model
     public function document(): BelongsTo
     {
         return $this->belongsTo(Document::class);
+    }
+
+    /** @return BelongsTo<IngestionEventClaim, $this> */
+    public function ingestionAttempt(): BelongsTo
+    {
+        return $this->belongsTo(IngestionEventClaim::class, 'ingestion_event_claim_id');
     }
 
     /**

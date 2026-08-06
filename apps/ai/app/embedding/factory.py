@@ -1,5 +1,5 @@
 from app.embedding.errors import EmbeddingConfigurationError
-from app.embedding.models import EmbeddingProfile
+from app.embedding.models import EmbeddingProfile, EmbeddingRequest, EmbeddingResult
 from app.embedding.protocol import Embedder
 from app.embedding.voyage import VoyageEmbedder
 from app.settings import Settings
@@ -37,3 +37,20 @@ def create_embedder(settings: Settings) -> Embedder:
             settings.embedding_estimated_cost_per_million_tokens_usd
         ),
     )
+
+
+class DeferredEmbedder:
+    """Delay provider validation until work actually requires an embedding call."""
+
+    def __init__(self, settings: Settings) -> None:
+        self._settings = settings
+        self._embedder: Embedder | None = None
+
+    def embed(self, request: EmbeddingRequest) -> EmbeddingResult:
+        if self._embedder is None:
+            self._embedder = create_embedder(self._settings)
+        return self._embedder.embed(request)
+
+
+def create_deferred_embedder(settings: Settings) -> Embedder:
+    return DeferredEmbedder(settings)
