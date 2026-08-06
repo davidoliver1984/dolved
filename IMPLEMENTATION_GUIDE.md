@@ -10542,82 +10542,151 @@ embedding and vector persistence (ADR 0013, ADR 0014) to an authoritative
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-06.
 
-### Planned decisions
+### Decision
 
-* authenticated worker callbacks — which operations beyond the existing
-  `QUEUED → PROCESSING` claim (ADR 0009) require their own authenticated
-  Laravel endpoint, and whether they extend ADR 0009's protocol or require a
-  superseding decision, consistent with ADR 0009's own guidance against
-  improvising new scopes onto its narrow claim-only design;
-* canonical chunk transfer — how chunk text and provenance computed in Python
-  reach the Laravel-owned `document_chunks` table, given ADR 0009 already
-  rejects direct Python database access;
-* completion reporting — how Python reports that embedding and vector
-  persistence for a Document succeeded, and how that becomes the authoritative
-  `PROCESSING → INDEXED` transition;
-* failure reporting — how Python reports a permanent or transient processing
-  failure, and how that becomes the authoritative `PROCESSING → FAILED`
-  transition, consistent with ADR 0007's failure semantics;
-* `event_id` idempotency — whether completion/failure reporting reuses the
-  existing claim `event_id` or introduces its own idempotency key, and how
-  duplicate reports are recognised;
-* SQS acknowledgement — when the worker acknowledges the ingestion message
-  relative to claim, chunk persistence, embedding, vector upsert and lifecycle
-  reporting;
-* Laravel/Python ownership — which service is authoritative for each write
-  introduced by Phase 13/14, extending ADR 0002's service boundary and ADR
-  0009's no-direct-write precedent;
-* authoritative lifecycle transitions — which service may request which
-  Document and generation lifecycle transitions, and under what conditions;
-* duplicate-delivery behaviour — what happens when SQS redelivers a message
-  after the worker has already claimed, partially processed, or fully
-  processed it;
-* initial generation provisioning — who creates the first
-  `EmbeddingSpaceGeneration` and activates the first
-  `WorkspaceCorpusGeneration` for a workspace, and when, since no workspace can
-  be indexed before one exists.
+ADR 0015 was accepted before any Phase 15 implementation code, in:
 
-### Required roadmap clarification
+```text
+docs/adr/0015-define-end-to-end-ingestion-orchestration-and-worker-result-contracts.md
+```
 
-The insertion of this phase shifted every phase from the original Phase 15
-(Retrieval) onward by one. ADR-0013 and ADR-0014 are accepted and immutable —
-their existing "Phase 15"/"Phase 16" references are not rewritten — but both
-predate this insertion and their forward references are now stale. ADR-0015
-must include a short roadmap-clarification note, in the same style as ADR
-0013's own "Correction to ADR-0006's forward reference" section, recording
-that:
+It supersedes ADR 0009 **in part**: ADR 0009's cryptographic primitives — HMAC-
+SHA256, the key-ring model, freshness/replay handling, constant-time
+comparison, safe logging — are carried forward unchanged, exactly as ADR
+0009's own text anticipated ("if more internal principals or permission
+scopes appear, this narrow protocol should be replaced or superseded rather
+than expanded"). What is superseded is its claim-only scope: a new,
+purpose-scoped `v2` signature protocol (`ingestion.claim`,
+`ingestion.chunks.submit`, `ingestion.complete`, `ingestion.fail`) replaces
+it, with `v1` retained only as a bounded, claim-only, temporary migration
+accommodation that Stage 15.2 must remove and test the removal of, not a
+permanent second protocol. Service ownership is unchanged (Laravel owns
+Postgres, Documents, lifecycle, canonical chunks and generation lifecycles;
+Python owns extraction, normalisation, chunking, embedding, `VectorStore`
+and Qdrant), and the existing Document lifecycle is unchanged — no
+`INDEXING` state is introduced, since the completion contract is designed as
+one atomic Laravel transaction with no durable midpoint for such a state to
+describe.
 
-* ADR-0013's and ADR-0014's references to Phase 15 retrieval work now resolve
-  to Phase 16, following insertion of the Phase 15 Ingestion Orchestration
-  phase;
-* their references to later phases (generation, evaluation, and so on) shift
-  by one in the same way, where applicable;
-* this is a citation correction only — the underlying architectural decisions
-  ADR-0013 and ADR-0014 recorded are unchanged.
+The central new concept is a **processing lease**: a Laravel-owned,
+time-bounded grant of current authority over one `event_id`'s in-progress
+work, layered on top of the durable `event_id` ADR 0008/0009 already
+established. A claim resolves to one of five outcomes — proceed, owned by
+another live worker, already completed, permanently failed, or reclaimable
+— so a crashed claimant never permanently strands a Document while
+preventing two live workers from ever both believing themselves authorised
+to complete the same attempt. Chunk **ownership** and submission
+**authority** are kept distinct: a chunk belongs durably to the `event_id`
+it was recorded against for the life of that attempt, while only the
+currently valid lease authorises submitting or mutating chunks right now —
+so a successor worker resuming a reclaimed attempt can resume it without
+retransmitting or duplicating chunks a predecessor already persisted.
+Canonical chunk submission (bounded, repeatable, text and provenance, never
+vectors) and final completion (small and referential — manifests, digests,
+counts, generation identities, Qdrant verification evidence, never chunk
+text or vectors) are separate contracts. Laravel independently recomputes
+the chunk count and manifest digest from what it has actually persisted for
+that `event_id` and rejects completion on disagreement; it records Python's
+Qdrant-side evidence honestly as an authenticated assertion, without
+claiming to have independently inspected Qdrant itself.
 
-### Required ADR
+Lease renewal and SQS visibility extension are governed by one coordinated
+timing policy but are explicitly not treated as one atomic distributed
+transaction — the ADR defines both partial-success outcomes (lease renewed
+without visibility extended, and the reverse) and requires a worker unable
+to confirm both are healthy to stop making authoritative callbacks
+immediately. Failure classification is domain-owned: only a failure
+Python's own processing domain (extraction, chunking, embedding, Qdrant)
+classifies as terminal, with a currently valid lease still held, may become
+`ingestion.fail`; control-plane exhaustion (an unreachable callback
+endpoint, a lease or visibility renewal failure, uncertainty over whether a
+prior callback landed) must never be reclassified as a Document processing
+failure — it is left to redelivery, fresh-claim status discovery, and DLQ
+terminal reconciliation instead. DLQ arrival never mutates PostgreSQL
+directly; it requires eventual, idempotent, `event_id`-keyed reconciliation
+to an authoritative Laravel outcome. The platform's embedding-space
+generation is provisioned explicitly and idempotently at setup, never as a
+side effect of the first upload; a workspace's first corpus generation is
+created lazily under Laravel's authority at claim time and activated only
+after verification, per ADR 0014's existing lifecycle rules.
 
-docs/adr/ADR-0015-define-end-to-end-ingestion-orchestration-and-worker-result-contracts.md
+ADR 0015 also records the roadmap citation clarification this stage's
+"Required roadmap clarification" anticipated: ADR-0013's and ADR-0014's
+existing "Phase 15" references now resolve to Phase 16, and their
+later-phase references shift by one in the same way, following the Phase 15
+insertion — a citation correction only, recorded inside ADR-0015 itself
+rather than by rewriting either accepted ADR.
+
+The full set of agreed decisions, rejected alternatives, and required
+invariants — including the exact `v2` canonical string-to-sign, a verified
+normative test vector, and every architectural invariant governing the
+lease, the two contracts, and DLQ reconciliation — is recorded in ADR 0015
+rather than duplicated here. ADR 0015 went through an independent
+architectural review, a first drafting pass, and two further rounds of
+bounded amendment (queue/lease coordination and `v1`/`v2` migration policy;
+then provisional-chunk reclaim semantics, non-atomic renewal, and narrowed
+retry-exhaustion semantics) before acceptance; see the session journal for
+what changed in each round.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No migrations,
+models, HTTP endpoints, or worker code were introduced. Verification
+consisted of:
+
+* independently inspecting ADR 0007, 0008, 0009, 0010, 0011, 0012, 0013 and
+  0014, `PROJECT_ROADMAP.md`, `IMPLEMENTATION_GUIDE.md` and `tasks.json`
+  before forming a recommendation, rather than starting from a stated
+  preference;
+* computing and independently verifying the `v2` signature test vector
+  (reproducing ADR 0009's own published `v1` vector first, to confirm the
+  canonicalisation method, before extending it to the six-field `v2` form)
+  rather than asserting unverified numbers into an ADR intended to be
+  accepted;
+* checking the accepted ADR against each Stage 15.1 acceptance criterion
+  below.
 
 ### Acceptance criteria
 
-* Every new Python-to-Laravel write is authenticated and idempotent.
+* Every new Python-to-Laravel write is authenticated and idempotent. — Met:
+  purpose-scoped `v2` HMAC signing plus `event_id`/lease-scoped idempotent
+  acceptance for chunk submission, completion and failure reporting.
 * Canonical chunk transfer does not require direct Python database access.
+  — Met: chunk submission is an authenticated HTTP contract; Python never
+  writes to Laravel-owned tables directly, consistent with ADR 0009's
+  existing rejection of that alternative.
 * Completion and failure reporting map to explicit, authoritative Document
-  lifecycle transitions.
+  lifecycle transitions. — Met: only Laravel performs `INDEXED`/`FAILED`
+  transitions; Python requests them, purpose-scoped and lease-authorised.
 * Duplicate SQS delivery at every stage of the pipeline is proven safe, not
-  merely assumed.
+  merely assumed. — Met: the processing lease's five outcomes, `event_id`-
+  scoped chunk ownership, and ack-only-after-durable-outcome together cover
+  claim, mid-processing, and post-completion redelivery explicitly.
 * Initial generation provisioning is defined and does not depend on manual
-  operator intervention.
-* Each of Stage 15.2's acceptance criteria is traceable to a specific decision
-  in this ADR.
+  operator intervention. — Met: explicit, idempotent platform bootstrap for
+  the embedding-space generation; lazy, Laravel-authoritative provisioning
+  for a workspace's first corpus generation, resolved at claim time.
+* Each of Stage 15.2's acceptance criteria is traceable to a specific
+  decision in this ADR. — Met: Stage 15.2's acceptance criteria (below) are
+  each satisfied by a named ADR-0015 contract, invariant, or coordination
+  rule.
+
+ADR 0015 was produced through an independent architectural review, not a
+direct implementation of the requester's initial preference, followed by two
+rounds of requested, bounded refinement after the first full draft. No
+structural renumbering occurred in either round; both were additive
+clarifications to an architecture already approved in principle.
 
 ### Commit boundary
 
-git add docs/adr
+git add docs/adr/0015-define-end-to-end-ingestion-orchestration-and-worker-result-contracts.md \
+  docs/adr/README.md docs/journal/2026-08-06-r15-s01-define-end-to-end-ingestion-orchestration-and-worker-result-contracts.md \
+  IMPLEMENTATION_GUIDE.md tasks.json
 git commit -m "Document end-to-end ingestion orchestration architecture"
+git tag -a phase-15-s01 \
+  -m "Complete Stage 15.1: Define End-to-End Ingestion Orchestration and Worker Result Contracts"
 
 ---
 
