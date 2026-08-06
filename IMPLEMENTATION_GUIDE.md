@@ -10690,12 +10690,154 @@ git tag -a phase-15-s01 \
 
 ---
 
-## Stage 15.2 — Implement End-to-End Ingestion Orchestration
+## Stage 15.2 — Define Ingestion Publication and Recovery Semantics
 
 ### Objective
 
-Implement the accepted ADR-0015 orchestration contract, completing the
-upload-to-`INDEXED` ingestion path before Retrieval (Phase 16) begins.
+Decide ADR 0016: the explicit provisional-to-published vector lifecycle,
+dual retrieval-visibility gate, open/sealed chunk-attempt recovery model,
+and complete purpose-scoped worker protocol required to close the
+correctness gaps a post-acceptance review of ADR-0015 found before Stage
+15.3 implementation began.
+
+### Status
+
+Completed on 2026-08-06.
+
+### Decision
+
+ADR 0016 was accepted before any Stage 15.3 implementation code, in:
+
+```text
+docs/adr/0016-define-ingestion-publication-and-recovery-semantics.md
+```
+
+It supersedes ADR 0015 **in part** — provisional-vector visibility,
+cross-worker chunk recovery, the complete purpose-scoped worker protocol,
+and any wording implying the workflow is observationally atomic as one unit
+— and ADR 0014 **in part**, narrowly, for its fixed five-field minimal
+Qdrant payload, which gains exactly two fields: `event_id` and a
+publication-status marker. Nothing else in either ADR is reopened: service
+ownership, the unchanged Document lifecycle, the processing lease's five
+claim outcomes, the `v1`-to-`v2` migration policy, and ADR-0014's collection
+topology, `VectorStore` boundary and generation model all stand exactly as
+previously accepted.
+
+The central addition is an explicit, twelve-step publication saga — chunk,
+submit, seal, Laravel validates and locks the seal, embed, write Qdrant
+points as provisional, verify the provisional set, Laravel durably
+authorises publication bound to the exact evidence it approved, publish,
+independently verify the published set is complete, report completion, and
+only then does Laravel transition the Document to `INDEXED` — described
+throughout as an idempotent, recoverable saga of individually transactional
+steps, never as one distributed transaction spanning PostgreSQL and Qdrant.
+Retrieval visibility requires **both** a Qdrant point marked published
+**and** independent PostgreSQL confirmation the Document is `INDEXED`;
+neither gate substitutes for the other. Because the publication mutation
+itself is a distributed Qdrant operation that can partially succeed,
+`ingestion.complete` is reachable only after independent post-publication
+verification confirms the complete published set against the exact evidence
+Laravel authorised — count equality alone is never sufficient, and
+authorisation is bound to that evidence so it can never be reused, even by
+a legitimate successor, against a differing point set.
+
+Chunk attempts are explicitly open or sealed: an open attempt is never a
+valid resume source and is reset, `event_id`-scoped and idempotently, if its
+lease is lost before sealing; a sealed attempt is immutable and resumable by
+a successor through a new, narrowly-scoped, lease-gated contract,
+`ingestion.attempt.resume`. Sealing must complete before embedding begins,
+so a crash after sealing lets a successor skip re-extraction and
+re-chunking — work that, unlike chunking's own determinism, cannot actually
+be reproduced by recomputation, since fresh per-run extraction-element
+identity (ADR 0010) propagates into chunk identity (ADR 0011) across
+independent extraction runs of the same source content. The complete `v2`
+worker-protocol purpose list is now eight: `ingestion.claim`,
+`ingestion.lease.renew`, `ingestion.chunks.submit`, `ingestion.chunks.seal`,
+`ingestion.attempt.resume`, `ingestion.publication.authorise`,
+`ingestion.complete`, `ingestion.fail` — each independently purpose-signed,
+so a signature valid for one can never authorise another. Reclaim reset and
+DLQ terminal reconciliation are unified under one `event_id`-scoped,
+idempotent cleanup policy that never deletes sealed or published data
+outside authoritative attempt state permitting it. Publication authorisation
+and completion are recorded in the business-audit layer, not telemetry
+alone, and both revalidate Document eligibility before acting so a race with
+deletion resolves in favour of deletion, cross-referencing ADR-0006/ADR-0007's
+already-deferred deletion orchestration rather than redesigning it here.
+
+The full set of agreed decisions, rejected alternatives and required
+invariants — including the normative `v2` test vectors, the exact
+post-publication verification checklist, and every recovery outcome for the
+crash windows this saga introduces — is recorded in ADR 0016 rather than
+duplicated here. ADR 0016 went through an independent post-acceptance
+review of ADR-0015, a first full draft, and one further round of bounded
+amendment (adding explicit post-publication verification and evidence-bound
+publication authorisation, after review found that a partially-succeeded
+Qdrant publication mutation was not otherwise excluded from reaching
+`ingestion.complete`) before acceptance; see the session journal for what
+changed.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No migrations,
+models, HTTP endpoints, or worker code were introduced. Verification
+consisted of:
+
+* independently inspecting ADR 0010, 0011, 0014 and 0015, the completed
+  Phase 14 implementation, the prior R15-S02 planning stub, and `tasks.json`
+  before forming a recommendation;
+* tracing the extraction/chunking identity chain (ADR 0010's fresh
+  per-run `ExtractedElement` UUIDs through ADR 0011's `NormalisedElement`-
+  derived chunk identity) to confirm cross-worker chunk resumption by
+  recomputation was genuinely unachievable, not merely under-specified;
+* computing and independently verifying a new normative `v2` test vector for
+  `ingestion.lease.renew`, using the same method as ADR-0015's own vectors;
+* checking the accepted ADR against each Stage 15.2 acceptance criterion
+  below.
+
+### Acceptance criteria
+
+* The provisional-to-published vector lifecycle and dual retrieval-
+  visibility gate are explicitly defined. — Met.
+* Post-publication completeness verification is required before
+  `ingestion.complete`, and count equality alone is insufficient. — Met.
+* Publication authorisation is bound to immutable, approved evidence, never
+  reusable against a differing point set. — Met.
+* The open/sealed chunk-attempt recovery model is defined, including why
+  cross-worker recomputation is not achievable and how the resume contract
+  closes that gap. — Met.
+* The complete `v2` purpose list, including lease renewal and resume, is
+  defined with purpose-bound signing for each. — Met.
+* Reclaim reset and DLQ terminal reconciliation are unified under one
+  `event_id`-scoped, idempotent cleanup policy. — Met.
+* The ADR-0014 payload amendment is narrow and justified, with index
+  recommendations derived from actual operations, not habit. — Met.
+* Document deletion during publication is cross-referenced to ADR-0006/
+  ADR-0007's existing deferral rather than redesigned. — Met.
+
+ADR 0016 was produced through an independent post-acceptance review, not a
+reopening of ADR-0015's approved-in-principle architecture, followed by one
+round of requested, bounded refinement after the first full draft closing
+the partial-publication verification gap. No structural renumbering
+occurred; the refinement was an additive clarification.
+
+### Commit boundary
+
+git add docs/adr/0016-define-ingestion-publication-and-recovery-semantics.md \
+  docs/adr/README.md docs/journal/2026-08-06-r15-s02-define-ingestion-publication-and-recovery-semantics.md \
+  PROJECT_ROADMAP.md IMPLEMENTATION_GUIDE.md tasks.json
+git commit -m "Document ingestion publication and recovery semantics"
+git tag -a phase-15-s02 \
+  -m "Complete Stage 15.2: Define Ingestion Publication and Recovery Semantics"
+
+---
+
+## Stage 15.3 — Implement End-to-End Ingestion Orchestration
+
+### Objective
+
+Implement the accepted ADR-0015 and ADR-0016 orchestration contract
+together, completing the upload-to-`INDEXED` ingestion path before
+Retrieval (Phase 16) begins.
 
 ### Status
 
@@ -10705,20 +10847,32 @@ Not yet executed.
 
 * An uploaded Document reaches `INDEXED`.
 * Authoritative `PROCESSING → INDEXED`/`FAILED` transitions are implemented
-  per ADR-0015.
-* Authenticated callback/result reporting from the Python worker to Laravel is
-  implemented.
-* Canonical chunk transfer from Python to Laravel is implemented without
-  direct Python database access.
+  per ADR-0015 and ADR-0016.
+* Authenticated callback/result reporting from the Python worker to Laravel
+  is implemented for all eight `v2` purposes, each independently
+  purpose-signed.
+* Canonical chunk transfer, sealing, and sealed-attempt resume are
+  implemented without direct Python database access.
+* The provisional-to-published vector lifecycle, evidence-bound publication
+  authorisation, and post-publication completeness verification are
+  implemented; `ingestion.complete` is unreachable until verification
+  passes.
+* Retrieval-visibility gating (published Qdrant point and PostgreSQL
+  `INDEXED`, both required) is implemented and enforced wherever vectors
+  are queried.
 * Each pipeline stage is observable end to end.
-* Processing-attempt and callback idempotency hold under retry.
+* Processing-attempt, lease-renewal, and callback idempotency hold under
+  retry.
 * Duplicate-message resumption does not duplicate chunks, vectors, or
   lifecycle transitions.
 * SQS acknowledgement, redelivery and dead-letter behaviour are implemented
   and verified.
+* Reclaim reset and DLQ terminal reconciliation share one implemented,
+  `event_id`-scoped cleanup policy.
 * Workspace, Document and generation context survives every stage of the
   pipeline.
-* End-to-end ingestion tests exist and pass.
+* End-to-end ingestion tests exist and pass, including sealed-attempt
+  resumption and partial-publication recovery.
 * Initial embedding-space and workspace-corpus-generation provisioning is
   implemented.
 

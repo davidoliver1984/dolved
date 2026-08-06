@@ -438,6 +438,7 @@ FAILED outcome.
 ### Tasks
 
 - Define End-to-End Ingestion Orchestration and Worker Result Contracts
+- Define Ingestion Publication and Recovery Semantics
 - Implement End-to-End Ingestion Orchestration
 
 ### Deliverable
