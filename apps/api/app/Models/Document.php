@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\DocumentGovernanceStatus;
 use App\Enums\DocumentStatus;
 use Database\Factories\DocumentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use LogicException;
 
 #[Fillable([
@@ -34,6 +36,10 @@ class Document extends Model
 
             if ($document->exists && $document->isDirty('workspace_id')) {
                 throw new LogicException('Document workspace ownership is immutable.');
+            }
+
+            if ($document->exists && $document->isDirty(['document_family_id', 'predecessor_document_id'])) {
+                throw new LogicException('Document family and version lineage are immutable.');
             }
 
             if ($document->exists && $document->isDirty('created_by_user_id')) {
@@ -80,7 +86,11 @@ class Document extends Model
     {
         return [
             'status' => DocumentStatus::class,
+            'governance_status' => DocumentGovernanceStatus::class,
             'size_bytes' => 'integer',
+            'effective_from' => 'immutable_datetime',
+            'approved_at' => 'immutable_datetime',
+            'withdrawn_at' => 'immutable_datetime',
         ];
     }
 
@@ -98,6 +108,36 @@ class Document extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_user_id');
+    }
+
+    /** @return BelongsTo<DocumentFamily, $this> */
+    public function family(): BelongsTo
+    {
+        return $this->belongsTo(DocumentFamily::class, 'document_family_id');
+    }
+
+    /** @return BelongsTo<Document, $this> */
+    public function predecessor(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'predecessor_document_id');
+    }
+
+    /** @return HasOne<Document, $this> */
+    public function successor(): HasOne
+    {
+        return $this->hasOne(self::class, 'predecessor_document_id');
+    }
+
+    /** @return HasOne<DocumentApplicabilitySnapshot, $this> */
+    public function applicabilitySnapshot(): HasOne
+    {
+        return $this->hasOne(DocumentApplicabilitySnapshot::class);
+    }
+
+    /** @return HasMany<DocumentGovernanceAuditEvent, $this> */
+    public function governanceAuditEvents(): HasMany
+    {
+        return $this->hasMany(DocumentGovernanceAuditEvent::class);
     }
 
     /**

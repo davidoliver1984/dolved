@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R16",
-    "current_session": "R16-S03",
-    "next_action": "Begin R16-S03 \u2014 Implement Document Versioning and Temporal Authority Foundation with Codex in teaching mode.",
-    "completed_through": "R16-S02",
+    "current_session": "R16-S04",
+    "next_action": "Begin R16-S04 \u2014 Implement Semantic Retrieval against accepted ADR-0017 and ADR-0018 with Codex in teaching mode.",
+    "completed_through": "R16-S03",
     "completed_phase_count": 16,
     "total_phase_count": 24
   },
@@ -2926,7 +2926,7 @@
           "title": "Implement Document Versioning and Temporal Authority Foundation",
           "guide_start_line": 11387,
           "guide_end_line": 11468,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Implement ADR-0017's relational/domain model: DocumentFamily, explicit linear version lineage, the DRAFT/APPROVED/WITHDRAWN governance model, per-version OrganisationalLocation applicability snapshots, and the structural constraints unambiguous temporal succession depends on.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -2958,9 +2958,18 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r16-s03-implement-document-versioning-and-temporal-authority-foundation.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "apps/api/database/migrations/2026_08_07_000012_add_document_versioning_and_temporal_authority_foundation.php",
+            "Laravel DocumentFamily, governance, authority-resolution and organisational-applicability domain implementation",
+            "apps/api/tests/Feature/DocumentVersioningAndTemporalAuthorityTest.php (11 focused scenarios)",
+            "Laravel full suite: 166 tests passed with 707 assertions",
+            "Repository lint, formatting and type checks passed",
+            "Frontend: 26 tests passed; Python: 198 passed and one credential-dependent live test skipped",
+            "Clean PostgreSQL migration, legacy Document backfill and lineage/temporal index inspection passed",
+            "docs/journal/2026-08-07-r16-s03-implement-document-versioning-and-temporal-authority-foundation.md"
+          ]
         },
         {
           "id": "R16-S04",

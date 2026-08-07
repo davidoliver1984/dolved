@@ -50,6 +50,24 @@ class Workspace extends Model
         return $this->hasMany(Document::class);
     }
 
+    /** @return HasMany<DocumentFamily, $this> */
+    public function documentFamilies(): HasMany
+    {
+        return $this->hasMany(DocumentFamily::class);
+    }
+
+    /** @return HasMany<OrganisationalLocation, $this> */
+    public function organisationalLocations(): HasMany
+    {
+        return $this->hasMany(OrganisationalLocation::class);
+    }
+
+    /** @return HasMany<DocumentGovernanceAuditEvent, $this> */
+    public function documentGovernanceAuditEvents(): HasMany
+    {
+        return $this->hasMany(DocumentGovernanceAuditEvent::class);
+    }
+
     /**
      * @return HasMany<DocumentChunk, $this>
      */

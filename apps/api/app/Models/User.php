@@ -49,6 +49,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * @return HasMany<DocumentGovernanceAuditEvent, $this>
+     */
+    public function documentGovernanceAuditEvents(): HasMany
+    {
+        return $this->hasMany(DocumentGovernanceAuditEvent::class, 'actor_user_id');
+    }
+
+    /**
      * @return HasMany<WorkspaceMembership, $this>
      */
     public function workspaceMemberships(): HasMany

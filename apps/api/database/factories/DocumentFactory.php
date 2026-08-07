@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\DocumentGovernanceStatus;
 use App\Enums\DocumentStatus;
 use App\Models\Document;
+use App\Models\DocumentApplicabilitySnapshot;
+use App\Models\DocumentFamily;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -15,6 +18,21 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class DocumentFactory extends Factory
 {
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Document $document): void {
+            if (! DocumentApplicabilitySnapshot::query()->where('document_id', $document->id)->exists()) {
+                $snapshot = new DocumentApplicabilitySnapshot([
+                    'scope' => 'universal',
+                    'sealed_at' => now(),
+                ]);
+                $snapshot->workspace_id = $document->workspace_id;
+                $snapshot->document_id = $document->id;
+                $snapshot->save();
+            }
+        });
+    }
+
     /**
      * Define the model's default state.
      *
@@ -27,8 +45,16 @@ class DocumentFactory extends Factory
         return [
             'public_id' => $publicId,
             'workspace_id' => Workspace::factory(),
+            'document_family_id' => fn (array $attributes): int => DocumentFamily::factory()->create([
+                'workspace_id' => $attributes['workspace_id'],
+            ])->id,
+            'predecessor_document_id' => null,
             'created_by_user_id' => User::factory(),
             'status' => DocumentStatus::Uploading,
+            'governance_status' => DocumentGovernanceStatus::Draft,
+            'effective_from' => now(),
+            'approved_at' => null,
+            'withdrawn_at' => null,
             'source_filename' => fake()->word().'.pdf',
             'media_type' => 'application/pdf',
             'size_bytes' => fake()->numberBetween(1, 10_000_000),
@@ -40,6 +66,24 @@ class DocumentFactory extends Factory
             'failure_category' => null,
             'failure_message' => null,
         ];
+    }
+
+    public function approved(): static
+    {
+        return $this->state(fn (): array => [
+            'governance_status' => DocumentGovernanceStatus::Approved,
+            'approved_at' => now(),
+            'withdrawn_at' => null,
+        ]);
+    }
+
+    public function withdrawn(): static
+    {
+        return $this->state(fn (): array => [
+            'governance_status' => DocumentGovernanceStatus::Withdrawn,
+            'approved_at' => now()->subMinute(),
+            'withdrawn_at' => now(),
+        ]);
     }
 
     public function uploading(): static

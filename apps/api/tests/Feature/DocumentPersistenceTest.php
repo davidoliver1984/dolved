@@ -8,6 +8,7 @@ use App\Actions\Documents\CreateDocument;
 use App\Enums\DocumentStatus;
 use App\Http\Resources\DocumentResource;
 use App\Models\Document;
+use App\Models\DocumentFamily;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Queries\Documents\FindDocumentForWorkspace;
@@ -30,7 +31,6 @@ class DocumentPersistenceTest extends TestCase
     {
         $workspace = Workspace::factory()->create();
         $creator = User::factory()->create();
-
         $document = $this->createDocument()->handle(
             $workspace,
             $creator,
@@ -117,12 +117,15 @@ class DocumentPersistenceTest extends TestCase
     {
         $workspace = Workspace::factory()->create();
         $creator = User::factory()->create();
+        $family = DocumentFamily::factory()->for($workspace)->create();
         $publicId = (string) Str::uuid();
 
         $documentId = DB::table('documents')->insertGetId([
             'public_id' => $publicId,
             'workspace_id' => $workspace->id,
+            'document_family_id' => $family->id,
             'created_by_user_id' => $creator->id,
+            'effective_from' => now(),
             'source_filename' => 'default.txt',
             'media_type' => 'text/plain',
             'size_bytes' => 7,

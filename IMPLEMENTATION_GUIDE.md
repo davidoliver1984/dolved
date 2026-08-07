@@ -11397,71 +11397,71 @@ the foundation Stage 16.4 (Implement Semantic Retrieval) and
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-07.
 
-### Planned work
+### Implementation
 
-* a backfill migration assigning every existing Document to a new, single-
-  Document `DocumentFamily` — no family-less Document may exist afterward;
-* an explicit, immutable predecessor reference per version, with the
-  effective-date-ordering structural integrity requirement ADR-0017
-  requires;
-* `approved_at` and `withdrawn_at` as explicit, non-derived, required
-  timestamps, distinct from `effective_from`, recorded only at the moment
-  each transition genuinely happens;
-* the derived `CURRENT`/`VALID_AT_DATE` query
-  (`authority_start = max(effective_from, approved_at)`; the
-  attains-authority window derivation, including condition (c)'s
-  lineage-monotonicity check) implemented as a query, never a stored,
-  scheduler-flipped flag;
-* the two uniqueness constraints (`effective_from`; `authority_start`,
-  re-checked at approval time) and the lineage-monotonic ordering
-  constraint (rejecting, at approval time, a `DRAFT → APPROVED` transition
-  that would let an older predecessor attain authority after its own named
-  successor already has);
-* the backdated-governance-correction path: a permission distinct from
-  ordinary approve/withdraw authority, an explicit recorded reason, and a
-  distinct business-audit record — never a silent timestamp overwrite;
-* the generic, self-referencing `OrganisationalLocation` hierarchy,
-  workspace-scoped, with no hard-coded depth;
-* per-version applicability snapshots, immutable at creation time, with
-  `DocumentFamily` holding only a mutable creation-time default that seeds
-  new versions and is never itself consulted for an existing version's
-  eligibility.
+The Laravel API now implements ADR-0017's relational/domain foundation. A backfilling migration creates one workspace-owned DocumentFamily for every existing
+Document, records legacy versions conservatively as DRAFT with effective_from set
+to their creation timestamp, and creates a sealed universal applicability snapshot.
+New uploads atomically create a family, first version and snapshot; CreateDocumentVersion adds an immutable successor within the same family and copies
+preceding applicability unless replaced explicitly.
 
-### Required ADR
+Document governance uses string-backed DRAFT, APPROVED and WITHDRAWN states and
+explicit effective_from, approved_at and withdrawn_at facts. ApproveDocumentVersion,
+WithdrawDocumentVersion and RescheduleDocumentVersion enforce transition rules under
+transactions and row locks. ResolveAuthoritativeDocument derives CURRENT and
+VALID_AT_DATE through DocumentAuthorityTimeline using authority_start =
+max(effective_from, approved_at), lineage order, cancellation before attainment and
+half-open authority windows. No current flag or scheduler was introduced.
 
-None — this stage implements ADR-0017 (accepted `R16-S01`); no new
-architectural decision is made here.
+Ordinary governance requires an owner or administrator membership. Historical
+timestamp correction is owner-only, requires a non-empty reason, and writes old/new
+values to a distinct governance audit event. The workspace-scoped
+OrganisationalLocation adjacency list rejects cycles, supports aliases and arbitrary
+depth, and feeds immutable per-version applicability snapshots. Mutable family
+defaults remain creation-time convenience data only.
+
+PostgreSQL constraints and triggers enforce same-workspace references,
+governance/timestamp consistency, earlier predecessors, one root per family, one
+successor per version, approved effective-date and authority-start uniqueness,
+acyclic location ancestry, and sealed applicability cardinality and immutability.
+Eloquent models, relationships, enum/datetime casts and factories expose the
+foundation without routes or retrieval behaviour.
+
+### Session verification
+
+* `docker compose exec -T api php artisan test` — 166 tests passed with
+  707 assertions, including 11 focused R16-S03 scenarios.
+* `make lint`, `make format-check` and `make typecheck` — passed across
+  Next.js, Laravel and Python.
+* Frontend tests passed with 26 tests after rerunning Vitest with one worker;
+  Python passed 198 tests with one credential-dependent live test skipped.
+* A new isolated PostgreSQL database migrated through migration 000012. A synthetic
+  legacy Document verified the backfill: family present, DRAFT, effective_from equal
+  to created_at, and a sealed universal snapshot. All four lineage/temporal indexes
+  were inspected.
+* `docker compose ps` reported all health-checked services healthy, and
+  `git diff --check` passed.
+
+The first aggregate `make test` attempt ended with exit 137 when the web
+container exhausted its memory allocation. The service was restarted and the
+same frontend suite passed serially; API and AI then passed separately. A second
+migrate:fresh on one reused PostgreSQL database exposed a pre-existing Phase 14
+function-cleanup issue. A genuinely new database passed, so shared historical
+migrations were not rewritten.
 
 ### Acceptance criteria
 
-* Every Document belongs to exactly one `DocumentFamily` after migration.
-* `CURRENT` and `VALID_AT_DATE` are computed at query time; no scheduled
-  job's correctness is load-bearing for either.
-* A withdrawn version's predecessor is never resurrected: `v1`'s authority
-  window closes permanently the moment `v2` attains authority, regardless
-  of `v2`'s later withdrawal.
-* A version cannot be treated as authoritative for a date before it was
-  genuinely approved, even if its scheduled effective date had already
-  passed.
-* The lineage-monotonic ordering invariant is enforced at approval time,
-  rejecting an approval that would let an older predecessor attain
-  authority after its own successor already has.
-* A version withdrawn or cancelled before attaining authority is excluded
-  from the derivation entirely, leaving no gap.
-* Backdated corrections to `approved_at`/`withdrawn_at` require elevated
-  permission, an explicit reason, and produce a distinct audit record.
-* `OrganisationalLocation` supports an arbitrary hierarchy depth, not a
-  hard-coded `Region`/`Site` pair.
-* Tests cover: predecessor-resurrection prevention; retroactive-
-  authorisation prevention via late approval; the lineage-monotonicity
-  approval-time rejection; cancellation and rescheduling of a not-yet-
-  attained version; and per-version applicability snapshot immutability.
+All Stage 16.3 criteria are met: every Document has one family; authority is
+query-derived without retroactive approval or predecessor resurrection; cancelled
+future versions are skipped; non-monotonic approval is rejected; future versions can
+be rescheduled before attainment; corrections are owner-only, reasoned and audited;
+and immutable applicability snapshots plus arbitrary location depth have focused tests.
 
 ### Commit boundary
 
-git add apps/api tests
+git add apps/api IMPLEMENTATION_GUIDE.md tasks.json docs/journal/2026-08-07-r16-s03-implement-document-versioning-and-temporal-authority-foundation.md
 git commit -m "Implement document versioning and temporal authority foundation"
 
 ---
