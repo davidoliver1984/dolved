@@ -11559,63 +11559,163 @@ git commit -m "Implement semantic document retrieval"
 
 ---
 
-## Stage 16.5 — Define Evaluation and Quality-Gate Architecture
+## Stage 16.5 — Define Retrieval Evaluation and Quality Gates
 
 ### Objective
 
 Define a repository-owned evaluation harness and quality-gate policy that
 grows with the pipeline, starting with retrieval and extending to
-generation (Stage 17.4) without redesign.
+generation (Stage 17.4) without redesign. Originally scoped as "Define
+Evaluation and Quality-Gate Architecture"; retitled to match the accepted
+ADR once drafting confirmed the session decides retrieval evaluation
+specifically, with generation evaluation named as an extension point
+rather than designed here.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-07.
 
-### Planned decisions
+### Decision
 
-* a repository-owned, framework-independent corpus format: representative
-  source documents, labelled questions, expected relevant
-  documents/elements/chunks, and reference answers or required answer facts
-  where appropriate;
-* required case coverage: answerable and unanswerable questions,
-  exact-wording and paraphrased questions, table-based questions,
-  multi-evidence questions, conflicting-document cases,
-  obsolete/current-document cases (per Stage 16.1), cross-workspace and
-  authorisation cases, and adversarial/prompt-injection cases;
-* the metrics catalogue: Recall@k, MRR, nDCG, context precision, context
-  recall, faithfulness, answer correctness/relevancy, citation support,
-  abstention accuracy, latency, token usage, provider cost;
-* where Ragas may be used for suitable LLM/RAG metrics, and why the
-  labelled corpus, deterministic retrieval metrics and experiment records
-  must remain repository-owned and framework-independent regardless;
-* the quality-release-gate policy: before a consequential quality-affecting
-  configuration or provider change reaches production, the accepted
-  evaluation corpus is run and compared against the current baseline,
-  protecting at minimum retrieval recall, reranking quality, faithfulness,
-  citation support, correct abstention, workspace isolation/authorisation,
-  and unacceptable latency/cost regression;
-* that the gate begins as a documented/manual acceptance step and may later
-  be automated in CI (Phase 22).
+ADR 0019 was accepted before any Stage 16.6 implementation began, in:
 
-### Required ADR
+```text
+docs/adr/0019-define-retrieval-evaluation-and-quality-gates.md
+```
 
-docs/adr/ADR-XXX-evaluation-and-quality-gate-architecture.md
+It fulfils ADR-0013's forward evaluation commitment, consumes ADR-0017 and
+ADR-0018 without reopening either, and supersedes no accepted ADR. Codex
+correctly paused before beginning Stage 16.6 implementation directly
+against this stage's original, four-year-old stub — which predated
+ADR-0017/ADR-0018 and collapsed retrieval and generation metrics into one
+undifferentiated catalogue — and independently recommended a
+repository-owned harness with optional framework adapters. ADR 0019 is
+that architecture, reviewed and refined rather than transcribed verbatim.
+
+The governing principle: retrieval evaluation is a first-class
+architectural capability, not a testing activity, existing to provide
+objective evidence that a change genuinely improves the system before it
+becomes an accepted baseline — and no single composite score is ever
+computed in its place, since a blended number can improve while a real
+regression hides inside it.
+
+The repository owns the evaluation corpus, its JSON-Schema-defined
+structure, stable case/evidence identities, deterministic metrics, the
+experiment/result schema, baseline lineage, and quality-gate policy — no
+external framework owns any of them. The corpus is versioned and, once
+used for an accepted baseline, immutable; a labelling correction produces
+a new corpus version rather than silently changing an existing baseline's
+meaning. Evaluation case identity (`case_id`) is stable across phrasing
+variants. Relevance ground truth is anchored to `Document`/`DocumentFamily`/
+version identity plus a corpus-authored canonical text excerpt, resolved
+against retrieved chunk text at evaluation time — deliberately never
+anchored to `ExtractedElement`, `NormalisedElement`, or `Chunk` identity,
+none of which ADR-0010/ADR-0016 guarantee stable across an independent
+extraction run, let alone a chunking-strategy change the harness exists
+specifically to compare.
+
+Expectations and results are layered to match ADR-0018's own pipeline
+stages — planner, eligibility, retrieval relevance, operational, with
+generation quality named but deferred to Stage 17.4 — so a failure is
+diagnosable by stage rather than reported as one blended result.
+Deterministic metrics (Recall@K, Precision@K, MRR, nDCG) remain
+application-owned; no numerical release threshold is invented in the ADR,
+deferred instead to Stage 16.6's first measured baseline. First-class
+slice metrics (temporal modes, tables, multi-evidence, applicability,
+paraphrase, isolation, adversarial, and more) prevent a strong aggregate
+from hiding a collapse in one important case family. Absolute invariants
+(cross-workspace, unauthorised, temporally/applicability-ineligible
+evidence; a lost case; non-reproducible metrics) block release regardless
+of any comparative-metric improvement and are never offset by one. An
+experiment run never becomes the accepted baseline automatically; baseline
+promotion is a distinct, deliberately recorded governance action,
+structurally excluding the "regress → overwrite baseline → pass"
+anti-pattern. V1 uses a documented, human-reviewed release gate, not
+automatic promotion.
+
+A provider-neutral `ModelAssistedEvaluator` boundary is introduced and
+built in V1 — not deferred — with a concrete `RagasEvaluator` adapter as
+its first implementation, translating between application-owned request/
+result types and Ragas's own shapes entirely inside that one adapter. Only
+Ragas's context-relevance metric (question plus retrieved evidence, no
+generated answer required) is wired into Phase 16, as an advisory signal
+alongside, never in place of, the deterministic metrics; faithfulness,
+answer relevancy and answer correctness remain deferred to Stage 17.4,
+which extends this same adapter rather than building a second one. A
+model-assisted metric may graduate from advisory to a comparative,
+baseline-tracked quality metric once its stability is demonstrated; it may
+never become the sole authority for a deterministically-testable property
+such as workspace isolation, authorisation, temporal eligibility, or
+applicability, regardless of demonstrated maturity.
+
+The full set of agreed decisions, required V1 case families, the reports
+model, and golden regressions is recorded in ADR 0019 rather than
+duplicated here. ADR 0019 went through an independent review of Codex's
+own architecture recommendation before drafting, a first full draft, and
+two rounds of bounded amendment (removing direct reliance on unstable
+pipeline-generated identifiers for relevance ground truth in favour of
+source-anchored text excerpts, in one round; introducing and building the
+`ModelAssistedEvaluator`/`RagasEvaluator` boundary in V1 rather than
+deferring it, in the other, plus a short philosophy statement added before
+acceptance) before acceptance; see the session journal for what changed at
+each round.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No migrations,
+models, HTTP endpoints, or evaluation code were introduced. Verification
+consisted of:
+
+* independent inspection of ADR-0013, ADR-0017, ADR-0018, ADR-0012 and
+  ADR-0006, and of Codex's own R16-S05 architecture recommendation, before
+  drafting, so the ADR built on settled precedent rather than an
+  approximation of it;
+* tracing the extraction/chunking identity chain (ADR-0010's fresh
+  per-run element identity, via ADR-0016's already-documented consequence
+  for chunk identity) to confirm no pipeline-generated identifier is
+  actually stable enough to anchor evaluation ground truth to, before
+  correcting the draft's relevance-identity strategy;
+* checking the accepted ADR against each Stage 16.5 acceptance criterion
+  below;
+* confirming, after each amendment round and again before acceptance, that
+  only the ADR file itself had changed and that no other accepted ADR or
+  application code was modified.
 
 ### Acceptance criteria
 
-* The corpus schema and metrics catalogue are defined independently of any
-  single evaluation framework.
-* Required case coverage (including adversarial/prompt-injection cases) is
-  named explicitly, even where V1 only populates a subset.
-* The quality-gate policy is defined even though its enforcement starts
-  manual.
-* Stage 17.4 (Add Answer Evaluation) can extend this same harness rather
-  than defining its own.
+* The corpus schema, stable identities and deterministic metrics are
+  defined independently of any single evaluation framework, and remain
+  repository-owned. — Met.
+* Required case coverage (temporal, applicability, isolation, adversarial,
+  and more) is named explicitly, even where V1 only populates a subset. —
+  Met.
+* Relevance ground truth is anchored to source content stable across
+  chunking/extraction changes, never to a pipeline-generated identifier. —
+  Met.
+* The quality-gate policy distinguishes absolute invariants from
+  comparative quality, and is defined even though its enforcement starts
+  manual. — Met.
+* A provider-neutral `ModelAssistedEvaluator` boundary is built in V1 with
+  a concrete Ragas adapter, isolated so no Ragas-specific type leaks
+  outside it. — Met.
+* Stage 17.4 (Add Answer Evaluation) can extend this same harness and
+  adapter rather than defining its own. — Met.
+
+ADR 0019 was produced through an independent review of an
+implementer-originated recommendation, a first full draft, and two rounds
+of requested, bounded refinement, each closing a specific correctness or
+directional gap identified on review rather than reopening already-agreed
+decisions. No structural renumbering of Phase 16 resulted from this
+session.
 
 ### Commit boundary
 
-git add docs/adr
-git commit -m "Define evaluation and quality-gate architecture"
+git add docs/adr/0019-define-retrieval-evaluation-and-quality-gates.md \
+  docs/adr/README.md docs/journal/2026-08-07-r16-s05-define-retrieval-evaluation-and-quality-gates.md \
+  PROJECT_ROADMAP.md IMPLEMENTATION_GUIDE.md tasks.json
+git commit -m "Define retrieval evaluation and quality gates"
+git tag -a phase-16-s05 \
+  -m "Complete Stage 16.5: Define Retrieval Evaluation and Quality Gates"
 
 ---
 

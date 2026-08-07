@@ -460,7 +460,7 @@ Retrieve relevant, tenant-safe source chunks for a user query.
 - Define Retrieval Planning, Eligibility and the Retriever Contract
 - Implement Document Versioning and Temporal Authority Foundation
 - Implement Semantic Retrieval
-- Define Evaluation and Quality-Gate Architecture
+- Define Retrieval Evaluation and Quality Gates
 - Implement Retrieval Evaluation
 - Define Hybrid Retrieval and Reranking Architecture
 - Implement Hybrid Retrieval and Reranking
