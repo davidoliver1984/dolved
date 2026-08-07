@@ -456,7 +456,7 @@ Retrieve relevant, tenant-safe source chunks for a user query.
 
 ### Tasks
 
-- Define Document Freshness and Archival Policy
+- Define Document Versioning and Temporal Authority
 - Define Retrieval Contract
 - Implement Semantic Retrieval
 - Define Evaluation and Quality-Gate Architecture

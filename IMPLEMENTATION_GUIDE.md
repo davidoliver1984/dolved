@@ -11047,48 +11047,158 @@ restructuring — Phase 16 had not yet started.
 
 ---
 
-## Stage 16.1 — Define Document Freshness and Archival Policy
+## Stage 16.1 — Define Document Versioning and Temporal Authority
 
 ### Objective
 
-Decide what "obsolete" or "archived" means for a Document, extending
-ADR-0007's lifecycle rather than replacing it, so that retrieval (Stage
-15.2) and evaluation (Stage 16.4) have a settled definition of "active" to
-filter against.
+Resolve ADR-0007's deliberately deferred versioning question: define what a
+version is, how versions relate across time within one stable identity, and
+what "authoritative at time T" honestly means, so that retrieval (Stage
+16.2) and evaluation (Stage 16.4) have a settled definition to build
+eligibility against. Originally scoped narrower, as "Document Freshness and
+Archival Policy"; broadened before drafting began once independent review
+established that retrieval's actual requirement — `CURRENT`, `VALID_AT_DATE`
+and `COMPARE` — is a versioning decision, not an archival flag, and that
+ADR-0007 had already named this exact shape as the anticipated future
+decision.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-07.
 
-### Planned decisions
+### Decision
 
-* whether archival is a new Document lifecycle state, an orthogonal flag, or
-  a relationship to a superseding Document;
-* whether archival is user/administrator-initiated, time-based, or both;
-* how an archived document's existing chunks and vectors are treated —
-  retained but excluded from retrieval, or removed from the active vector
-  generation;
-* how retrieval and evaluation express an "active documents only" filter;
-* how this interacts with ADR-0007's existing no-versioning decision — this
-  ADR must not silently reintroduce versioning while solving archival.
+ADR 0017 was accepted before any Stage 16.2 implementation or architecture
+work began, in:
 
-### Required ADR
+```text
+docs/adr/0017-define-document-versioning-and-temporal-authority.md
+```
 
-docs/adr/ADR-XXX-document-freshness-and-archival-policy.md
+It supersedes ADR-0007 **in part** — specifically its *"no versioning for
+now"* position, the decision that every upload is an independent, unrelated
+Document with no notion of supersession. Everything else ADR-0007 decided
+stands unchanged: the technical processing lifecycle
+(`UPLOADING → UPLOADED → QUEUED → PROCESSING → INDEXED`, `FAILED` from
+`PROCESSING`, `DELETING → DELETED`), the three-layer relational/object/vector
+separation, deletion as an asynchronous auditable lifecycle, and the
+principle that a Document is an identity and a lifecycle, not a file. No
+other accepted ADR is reopened; ADR-0016's dual retrieval-visibility gate
+(published Qdrant point **and** PostgreSQL `INDEXED`) remains the
+unconditional structural prerequisite for retrievability, with this ADR's
+governance/temporal model applying as a third, additive gate on top of it.
+
+The central additions are: `DocumentFamily` as the stable identity every
+Document belongs to (exactly one, no optionality, requiring a backfill
+migration for existing Documents); explicit, linear, immutable version
+lineage (a chain, not a branching graph); and one derivation rule — `CURRENT`
+is `VALID_AT_DATE` evaluated at the present moment — computed at query time
+from three explicit, non-derived per-version timestamps
+(`effective_from`, `approved_at`, `withdrawn_at`), never a stored,
+scheduler-flipped flag. `authority_start = max(effective_from, approved_at)`
+is the moment a version can first become authoritative — requiring both its
+scheduled date to have arrived and genuine governance approval, so a delayed
+approval can never retroactively authorise dates before it happened. A
+version "attains authority" only if it reaches `authority_start` while still
+governance-eligible, and — the correction that closes the model's central
+failure mode — only if doing so does not move authority history backward
+relative to the family's own declared lineage: a predecessor can never
+attain authority after its own named successor already has, enforced by
+rejecting the offending approval outright at approval time, with the
+derivation itself independently re-asserting the same rule as a defence-in-
+depth backstop. A predecessor's authority window closes permanently the
+moment its successor attains authority, and a later withdrawal of that
+successor never reopens it — no resurrection of a superseded predecessor.
+Withdrawal is forward-only throughout; historical `VALID_AT_DATE` answers
+never change because of a later withdrawal.
+
+Governance state (`DRAFT → APPROVED → WITHDRAWN`, `WITHDRAWN` reachable only
+from `APPROVED`) is a deliberately minimal model, orthogonal to the existing
+technical processing lifecycle — a version can be `INDEXED` while still
+`DRAFT`, mirroring ADR-0014's precedent of separate, coordinated state
+machines rather than one collapsed machine. An unapproved `DRAFT` that is
+abandoned is not a `WITHDRAWN` transition; it was never governance-eligible
+and never attains authority regardless. Correcting an already-recorded
+`approved_at` or `withdrawn_at` requires a permission distinct from ordinary
+approve/withdraw authority, an explicit recorded reason, and its own
+business-audit record — ordinary transitions always record the actual
+current time and are never backdated directly.
+
+Document applicability to organisational locations is modelled as a single,
+generic, self-referencing `OrganisationalLocation` hierarchy (not hard-coded
+`Region`/`Site` tables), recorded as an immutable snapshot on each version at
+creation time; `DocumentFamily` holds only a mutable creation-time default
+used to seed new versions, never consulted when resolving an existing
+version's eligibility.
+
+The full set of agreed decisions, worked examples, rejected alternatives and
+architectural invariants — including the three structural constraints
+unambiguous succession depends on (`effective_from` uniqueness,
+`authority_start` uniqueness, and lineage-monotonic ordering) — is recorded
+in ADR 0017 rather than duplicated here. ADR 0017 went through an
+independent architectural review of the proposed Phase 16 direction before
+any drafting began, a first full draft, and three rounds of bounded
+amendment (correcting a predecessor-resurrection derivation bug and moving
+applicability to per-version snapshots; introducing `authority_start` to
+close a retroactive-authorisation-through-late-approval gap and adding
+backdated-correction guardrails; and adding the lineage-monotonic ordering
+invariant plus correcting `DRAFT`-versus-`WITHDRAWN` wording) before
+acceptance; see the session journal for what changed at each round.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No migrations,
+models, HTTP endpoints, or retrieval code were introduced. Verification
+consisted of:
+
+* an independent architectural review of the proposed Phase 16 direction —
+  covering document versioning, `RetrievalPlanner`, `EligibilityResolver`,
+  the retrieval contract, evaluation and reranking — conducted before any
+  ADR drafting began, resulting in a revised Stage 16.1–16.7 sequence;
+* tracing each worked temporal-authority example by hand (predecessor
+  resurrection, retroactive authorisation via late approval, and lineage-
+  order violation via delayed predecessor approval) to confirm each
+  correction actually closes the failure it targets;
+* checking the accepted ADR against each Stage 16.1 acceptance criterion
+  below;
+* confirming, after each amendment round, that only the ADR file itself had
+  changed and that no other accepted ADR or application code was modified.
 
 ### Acceptance criteria
 
-* Archival is defined without contradicting or silently rewriting ADR-0007.
-* Retrieval has an explicit, typed way to exclude archived/obsolete
-  documents.
-* The evaluation harness (Stage 16.4) can express obsolete/current-document
-  test cases against this same definition.
-* No versioning scheme is introduced as a side effect.
+* Versioning is defined by explicitly and formally resolving ADR-0007's
+  deferred decision, not by silently reinterpreting or rewriting it. — Met.
+* `CURRENT` and `VALID_AT_DATE` share one derivation rule, computed at query
+  time, with no scheduled job's correctness load-bearing for temporal
+  authority. — Met.
+* A withdrawn version's predecessor is never silently resurrected. — Met.
+* A version cannot be treated as authoritative for a date before it was
+  genuinely approved, regardless of its scheduled effective date. — Met.
+* Authority history cannot move backward relative to explicit version
+  lineage; an older predecessor can never attain authority after its own
+  successor already has. — Met.
+* Governance state remains orthogonal to, and independent of, ADR-0007's
+  technical processing lifecycle. — Met.
+* Document applicability to organisational locations is recorded per version
+  as an immutable snapshot, using a generic hierarchy rather than hard-coded
+  levels. — Met.
+* ADR-0016's dual retrieval-visibility gate is unchanged; this ADR's model
+  applies as an additive third gate, never a redefinition of `INDEXED`. —
+  Met.
+
+ADR 0017 was produced through an independent architectural review, a first
+full draft, and three rounds of requested, bounded refinement, each closing
+a specific correctness gap identified on review rather than reopening
+already-agreed decisions. No structural renumbering occurred.
 
 ### Commit boundary
 
-git add docs/adr
-git commit -m "Define document freshness and archival policy"
+git add docs/adr/0017-define-document-versioning-and-temporal-authority.md \
+  docs/adr/README.md docs/journal/2026-08-07-r16-s01-define-document-versioning-and-temporal-authority.md \
+  PROJECT_ROADMAP.md IMPLEMENTATION_GUIDE.md tasks.json
+git commit -m "Define document versioning and temporal authority"
+git tag -a phase-16-s01 \
+  -m "Complete Stage 16.1: Define Document Versioning and Temporal Authority"
 
 ---
 
@@ -11264,7 +11374,7 @@ Not yet executed.
 ### Acceptance criteria
 
 * Evaluation questions have expected source chunks or documents, per Stage
-  15.4's corpus format.
+  16.4's corpus format.
 * Metrics are reproducible.
 * Baseline results are recorded.
 * Retrieval changes can be compared against the recorded baseline.
@@ -11284,7 +11394,7 @@ git commit -m "Add retrieval evaluation suite"
 
 Define one combined candidate-selection architecture — dense retrieval,
 sparse/keyword retrieval, fusion, reranking and evidence thresholds — as a
-single ADR, evaluated only after the Stage 16.3/15.5 semantic baseline is
+single ADR, evaluated only after the Stage 16.3/16.5 semantic baseline is
 measured.
 
 ### Status
