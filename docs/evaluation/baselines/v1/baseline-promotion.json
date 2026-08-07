@@ -1,0 +1,11 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "retrieval-v1-offline-baseline",
+  "corpus_version": "1",
+  "corpus_digest": "d7c44d45780dc327870458224c995f71fa1ad98117706f489164f48999665ba0",
+  "policy_version": "1",
+  "policy_digest": "f362010a8cc5239e8ce36759b5fa8eee2d3b5d22b69717ec8a2c199acb80b83f",
+  "promoted_by": "David Oliver",
+  "promoted_at": "2026-08-07T19:03:51.970269Z",
+  "reason": "Accepted initial R16-S06 retrieval evaluation baseline after implementation review and full verification."
+}

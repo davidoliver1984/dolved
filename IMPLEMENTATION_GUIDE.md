@@ -11741,62 +11741,113 @@ versioned question-and-source corpus.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-07.
 
-### Expected changes
+### Implementation
 
-* Add versioned, JSON-Schema-validated corpus, quality-policy,
-  experiment-result, baseline-promotion and manual-gate record formats with
-  canonical content digests.
-* Add stable semantic cases, phrasing variants, source-anchored
-  `EvidenceUnit` ground truth, deterministic/versioned text matching and
-  combined multi-chunk coverage.
-* Implement Recall@K, Precision@K, MRR and nDCG over distinct evidence units,
-  case-first aggregation and first-class slice metrics.
-* Record planner, eligibility, retrieval, outcome and operational results
-  separately with complete experiment lineage and absolute-invariant failures.
-* Produce machine-readable experiment results and human-readable
-  baseline-comparison reports; keep experiment execution, manual gate decisions
-  and baseline promotion as distinct actions.
-* Add provider-neutral `ModelAssistedEvaluator` request/result types, a concrete
-  isolated `RagasEvaluator` context-relevance adapter, injected judge-model
-  configuration, deterministic fakes and controlled advisory failure handling.
-* Keep ordinary tests credential-free and offline; make the real
-  Ragas-plus-provider integration test explicit and opt-in.
-* Add a representative synthetic V1 corpus spanning ADR-0017/0018 temporal,
-  applicability, comparison, structure, isolation, outcome and adversarial case
-  families, plus an accepted initial deterministic baseline.
+The repository now owns versioned JSON Schemas and immutable application types
+for the evaluation corpus, quality policy, experiment result, accepted-baseline
+promotion and manual release gate. Canonical JSON SHA-256 digests bind corpus
+and policy content to experiment lineage, so a version label cannot conceal an
+in-place mutation. Experiment execution, comparison, manual review and baseline
+promotion remain separate commands and records.
+
+The synthetic V1 corpus contains 23 stable semantic cases and 25 question
+variants across 33 slices. It covers ADR-0017/0018's temporal modes and edge
+cases, applicability and location inheritance, comparison, prose, tables,
+multi-evidence, phrasing variation, workspace membership/concealment, controlled
+empty outcomes and adversarial input. Every `EvidenceUnit` is anchored to a
+committed source excerpt plus durable document family/version identity, never a
+generated chunk or element identifier.
+
+The deterministic `normalised-token-coverage-v1` matcher supports combined
+coverage across multiple chunks. Recall@K, Precision@K, MRR and nDCG operate on
+distinct evidence units, award duplicate evidence only once and evaluate
+`COMPARE`'s `PRIMARY` and `COMPARISON` sides independently before aggregation.
+Question variants aggregate within their semantic case before equally weighted
+case and slice aggregation. Lost cases and supplied absolute-invariant failures
+remain explicit rather than being hidden by an overall score.
+
+`ModelAssistedEvaluator` is provider neutral and application owned. The first
+adapter, `RagasEvaluator`, contains every Ragas-specific import and shape,
+receives its evaluator model/client through injection, evaluates context
+relevance over each query's complete retrieved context set and translates any
+provider/framework failure into a controlled advisory result. Normal tests use
+the deterministic fake; the real Ragas-plus-provider test is explicitly opt-in.
+Ragas 0.4.3 and its compatible LangChain integration are pinned. The Python 3.14
+ARM development image includes the build toolchain required by Ragas's locked
+`scikit-network` dependency while the dependency layer remains reproducible.
+
+`make evaluation-run` writes outside the repository and records the exact Git
+revision supplied by the host. The accepted V1 result was generated only after
+implementation commit `bcd04346eb3e662bcf79279e589fe1a1ce2063d5` existed. The
+accepted experiment identifier is `retrieval-v1-offline-baseline`; corpus
+version 1 has digest
+`d7c44d45780dc327870458224c995f71fa1ad98117706f489164f48999665ba0`, and policy
+version 1 has digest
+`f362010a8cc5239e8ce36759b5fa8eee2d3b5d22b69717ec8a2c199acb80b83f`.
+The result has no absolute failures. David Oliver recorded an `ACCEPTED` manual
+gate and deliberately promoted that exact experiment as the initial baseline;
+the checked-in self-comparison report records a passing zero-delta reference.
+
+### Commands and verification
+
+* `docker compose build ai worker` rebuilt the locked Python environment.
+* `docker compose run --rm --no-deps ai uv sync --locked` refreshed the existing
+  development dependency volume after the Ragas dependency change.
+* `make lint`, `make format-check`, `make typecheck` and `make test` passed.
+* The frontend suite passed 26 tests; Laravel passed 177 tests with 736
+  assertions; Python passed 229 tests with two credential-gated live tests
+  skipped as designed.
+* The focused evaluation suite passed 20 tests with the opt-in live Ragas test
+  skipped. Corpus/schema/source anchoring, deterministic metrics, multi-chunk
+  credit, side-separated comparison, case-first aggregation, digest mutation,
+  governance and controlled evaluator failures are covered.
+* `NODE_ENV=production npm run build` completed the Next.js production build.
+  The first attempt inside the development container correctly exposed its
+  non-production `NODE_ENV`; rerunning with the production build environment
+  passed without changing frontend code.
+* `make evaluation-run` generated the accepted result from the immutable
+  implementation commit. Separate `promote`, `gate` and `compare` commands
+  produced the checked-in promotion, manual decision and report.
+* Docker Compose configuration validation, service health, JSON Schema
+  validation, dependency imports and `git diff --check` passed.
+
+### Problems and corrections
+
+Ragas 0.4.3 transitively requires `scikit-network`, for which no Python 3.14 ARM
+wheel exists. The image first built dependencies successfully in a compiler
+stage, but repository-wide verification showed that an existing Compose venv
+also needs to compile the locked package when refreshed. The development image
+was corrected to provide that toolchain, the shared volume was synchronised in
+a one-off container, and the complete gate then passed.
+
+Final metric review also found that combined multi-chunk evidence initially
+contributed to recall without receiving first credit at the rank where coverage
+became complete, and that comparison evidence lacked explicit side identity.
+Both were corrected before commit: prefix coverage now determines first credit,
+ground truth carries its side, and per-side metrics are retained in the result.
 
 ### Acceptance criteria
 
-* Corpus, policy and result artefacts validate against repository-owned schemas;
-  canonical digests detect an in-place mutation of a baselined version.
-* Relevance is resolved through distinct `EvidenceUnit` coverage without
-  coupling ground truth to element/chunk IDs or rewarding duplicate chunks.
-* Deterministic metrics reproduce exactly for identical recorded inputs;
-  variants aggregate within a case before cases contribute equally to
-  corpus/slice metrics.
-* Planner, eligibility, retrieval, outcome and operational failures remain
-  separately inspectable, and important case-family slices cannot hide behind
-  aggregate results.
-* Tenancy, authorisation, temporal and applicability violations, lost cases and
-  metric non-reproducibility are absolute failures that comparative gains cannot
-  offset.
-* Ragas-specific types remain inside `RagasEvaluator`; ordinary tests use fakes,
-  the live test is opt-in, and evaluator failure cannot erase deterministic
-  results.
-* A versioned initial baseline, comparison report, deliberate promotion record
-  and manual gate record demonstrate the complete V1 governance path.
-* Full dependency compatibility and repository-wide quality checks pass after
-  adding the explicitly pinned Ragas dependency.
+* Repository-owned corpus, policy, result, promotion and gate artefacts validate
+  against their schemas and content digests detect mutation. — Met.
+* Distinct source-anchored evidence, combined multi-chunk coverage, duplicate
+  handling and side-separated comparison do not depend on generated IDs. — Met.
+* Metrics reproduce from recorded inputs and variants aggregate case first. — Met.
+* Layered correctness, slice results and absolute failures remain inspectable. — Met.
+* Deterministic invariant failures cannot be offset by comparative quality. — Met.
+* Ragas remains isolated, injected, advisory, offline-testable and opt-in live. — Met.
+* The initial baseline, comparison, promotion and accepted manual gate are
+  versioned repository artefacts bound to the implementation commit. — Met.
+* Dependency compatibility and repository-wide quality checks pass. — Met.
 
 ### Commit boundary
 
-git add apps/ai contracts/evaluation tests/evaluation scripts/evaluation \
-  docs/evaluation docs/adr/0020-clarify-retrieval-evaluation-evidence-and-model-assisted-evaluation-semantics.md \
-  docs/adr/README.md IMPLEMENTATION_GUIDE.md tasks.json \
-  docs/journal/2026-08-07-r16-s06-implement-retrieval-evaluation.md
 git commit -m "Add retrieval evaluation suite"
+git commit -m "Record initial retrieval evaluation baseline"
+git tag -a phase-16-s06 \
+  -m "Complete Stage 16.6: Implement Retrieval Evaluation"
 
 ---
 

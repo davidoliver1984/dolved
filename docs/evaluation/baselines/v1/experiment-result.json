@@ -1,0 +1,1474 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "retrieval-v1-offline-baseline",
+  "executed_at": "2026-08-07T19:03:23.708484Z",
+  "candidate_k": 3,
+  "lineage": {
+    "repository_commit": "bcd04346eb3e662bcf79279e589fe1a1ce2063d5",
+    "corpus_version": "1",
+    "corpus_digest": "d7c44d45780dc327870458224c995f71fa1ad98117706f489164f48999665ba0",
+    "policy_version": "1",
+    "policy_digest": "f362010a8cc5239e8ce36759b5fa8eee2d3b5d22b69717ec8a2c199acb80b83f",
+    "harness_version": "retrieval-evaluation-v1",
+    "matching_algorithm": "normalised-token-coverage-v1",
+    "planner": {
+      "provider": "deterministic-fake",
+      "model": "fixed-v1"
+    },
+    "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+    "chunking_configuration": {
+      "strategy": "structure-aware",
+      "version": "v1"
+    },
+    "retrieval_configuration": {
+      "method": "dense",
+      "candidate_k": 3
+    },
+    "evaluator": {
+      "implementation": "deterministic-fake",
+      "version": "v1"
+    },
+    "trial_count": 1
+  },
+  "aggregate": {
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.20289855072463767,
+      "mrr": 0.5978260869565217,
+      "ndcg_at_k": 0.9919767337732925
+    },
+    "planner_accuracy": 1.0,
+    "eligibility_accuracy": 1.0,
+    "outcome_accuracy": 1.0,
+    "case_count": 23
+  },
+  "slices": {
+    "COMPARE": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.16666666666666666,
+        "mrr": 0.375,
+        "ndcg_at_k": 0.9077324383928643
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 2
+    },
+    "CURRENT": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.25,
+        "mrr": 0.75,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 8
+    },
+    "VALID_AT_DATE": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.25,
+        "mrr": 0.75,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 4
+    },
+    "active-member": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "adversarial": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 2
+    },
+    "applicability": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.26666666666666666,
+        "mrr": 0.8,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 5
+    },
+    "authorisation": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.16666666666666666,
+        "mrr": 0.5,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 2
+    },
+    "authority-gap": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "clarification": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "cross-workspace": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "descendant-site": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "empty-eligible-scope": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "late-approval": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "location-alias": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "multi-evidence": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 0.75,
+        "ndcg_at_k": 0.8154648767857287
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "never-authoritative": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "non-member": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "paraphrase": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "planner": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "predecessor-resurrection": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "prose": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 2
+    },
+    "region-specific": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "scheduled-future": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "site-specific": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "synonymous-terminology": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "tables": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "temporal-authority": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.2,
+        "mrr": 0.6,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 5
+    },
+    "unauthorised": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "universal": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "withdrawn": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "workspace-concealment": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "zero-candidates": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 1
+    },
+    "zero-evidence": {
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "planner_accuracy": 1.0,
+      "eligibility_accuracy": 1.0,
+      "outcome_accuracy": 1.0,
+      "case_count": 9
+    }
+  },
+  "variants": [
+    {
+      "case_id": "current.policy.leave",
+      "variant_id": "exact",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "leave.current.allowance"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "current.policy.leave",
+      "variant_id": "paraphrase",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "leave.current.allowance"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "current.policy.leave",
+      "variant_id": "synonym",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "leave.current.allowance"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "compare.policy.leave",
+      "variant_id": "exact",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 0.75,
+        "ndcg_at_k": 0.8154648767857287
+      },
+      "side_metrics": {
+        "COMPARISON": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        },
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 0.5,
+          "ndcg_at_k": 0.6309297535714574
+        }
+      },
+      "covered_evidence_ids": [
+        "leave.previous.allowance",
+        "leave.current.allowance"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "location.alias.safety",
+      "variant_id": "alias",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "safety.london"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "workspace.isolation",
+      "variant_id": "exact",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {},
+      "covered_evidence_ids": [],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "valid-at-date.leave",
+      "variant_id": "historical",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "leave.previous.allowance"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "table.leave.carry-over",
+      "variant_id": "exact",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "leave.carry-over.long-service"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "applicability.ambiguous",
+      "variant_id": "ambiguous",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {},
+      "covered_evidence_ids": [],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "retrieval.zero-candidates",
+      "variant_id": "exact",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {},
+      "covered_evidence_ids": [],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "temporal.unresolved",
+      "variant_id": "gap",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {},
+      "covered_evidence_ids": [],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "compare.incomplete",
+      "variant_id": "missing-side",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {},
+      "covered_evidence_ids": [],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "planner.adversarial-question",
+      "variant_id": "manipulative",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "leave.previous.allowance"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "adversarial.ranking",
+      "variant_id": "exact",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "expenses.limit"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "temporal.scheduled-future",
+      "variant_id": "current",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "temporal.scheduled.future"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "temporal.late-approval",
+      "variant_id": "historical",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "temporal.late.approval"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "temporal.withdrawn",
+      "variant_id": "current",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {},
+      "covered_evidence_ids": [],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "temporal.never-authoritative",
+      "variant_id": "current",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {},
+      "covered_evidence_ids": [],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "temporal.predecessor-resurrection",
+      "variant_id": "current",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "temporal.predecessor.resurrection"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "applicability.universal",
+      "variant_id": "exact",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "applicability.universal"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "applicability.site-specific",
+      "variant_id": "exact",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "applicability.site"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "applicability.region-descendant",
+      "variant_id": "inheritance",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "applicability.region.descendant"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "membership.active",
+      "variant_id": "member",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      "covered_evidence_ids": [
+        "leave.current.allowance"
+      ],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "membership.non-member",
+      "variant_id": "concealed",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {},
+      "covered_evidence_ids": [],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    },
+    {
+      "case_id": "retrieval.empty-eligible-scope",
+      "variant_id": "exact",
+      "metrics": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_k": 1.0
+      },
+      "side_metrics": {},
+      "covered_evidence_ids": [],
+      "planner_correct": true,
+      "eligibility_correct": true,
+      "outcome_correct": true,
+      "hard_failures": [],
+      "operational": {
+        "latency_ms": 0.0,
+        "token_usage": 0,
+        "provider_cost": 0.0,
+        "request_count": 0
+      }
+    }
+  ],
+  "hard_failures": [],
+  "model_assisted": [
+    {
+      "case_id": "current.policy.leave",
+      "variant_id": "exact",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "current.policy.leave",
+      "variant_id": "paraphrase",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "current.policy.leave",
+      "variant_id": "synonym",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "compare.policy.leave",
+      "variant_id": "exact",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "location.alias.safety",
+      "variant_id": "alias",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "workspace.isolation",
+      "variant_id": "exact",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "valid-at-date.leave",
+      "variant_id": "historical",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "table.leave.carry-over",
+      "variant_id": "exact",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "applicability.ambiguous",
+      "variant_id": "ambiguous",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "retrieval.zero-candidates",
+      "variant_id": "exact",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "temporal.unresolved",
+      "variant_id": "gap",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "compare.incomplete",
+      "variant_id": "missing-side",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "planner.adversarial-question",
+      "variant_id": "manipulative",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "adversarial.ranking",
+      "variant_id": "exact",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "temporal.scheduled-future",
+      "variant_id": "current",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "temporal.late-approval",
+      "variant_id": "historical",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "temporal.withdrawn",
+      "variant_id": "current",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "temporal.never-authoritative",
+      "variant_id": "current",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "temporal.predecessor-resurrection",
+      "variant_id": "current",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "applicability.universal",
+      "variant_id": "exact",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "applicability.site-specific",
+      "variant_id": "exact",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "applicability.region-descendant",
+      "variant_id": "inheritance",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "membership.active",
+      "variant_id": "member",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "membership.non-member",
+      "variant_id": "concealed",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    },
+    {
+      "case_id": "retrieval.empty-eligible-scope",
+      "variant_id": "exact",
+      "status": "COMPLETED",
+      "scores": {
+        "CONTEXT_RELEVANCE": 1.0
+      },
+      "evaluator_identity": {
+        "implementation": "deterministic-fake",
+        "version": "v1"
+      },
+      "failure_code": null
+    }
+  ]
+}

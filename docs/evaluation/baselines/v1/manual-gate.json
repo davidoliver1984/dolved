@@ -1,0 +1,9 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "retrieval-v1-offline-baseline",
+  "decision": "ACCEPTED",
+  "reviewer": "David Oliver",
+  "decided_at": "2026-08-07T19:03:52.209545Z",
+  "reason": "R16-S06 implementation and initial deterministic baseline approved after review; all absolute and repository-wide gates passed.",
+  "waiver_expires_at": null
+}
