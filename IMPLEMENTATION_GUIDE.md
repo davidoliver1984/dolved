@@ -11054,7 +11054,7 @@ restructuring — Phase 16 had not yet started.
 Resolve ADR-0007's deliberately deferred versioning question: define what a
 version is, how versions relate across time within one stable identity, and
 what "authoritative at time T" honestly means, so that retrieval (Stage
-16.2) and evaluation (Stage 16.4) have a settled definition to build
+16.2) and evaluation (Stage 16.5) have a settled definition to build
 eligibility against. Originally scoped narrower, as "Document Freshness and
 Archival Policy"; broadened before drafting began once independent review
 established that retrieval's actual requirement — `CURRENT`, `VALID_AT_DATE`
@@ -11202,68 +11202,271 @@ git tag -a phase-16-s01 \
 
 ---
 
-## Stage 16.2 — Define Retrieval Contract
+## Stage 16.2 — Define Retrieval Planning, Eligibility and the Retriever Contract
 
 ### Objective
 
-Define the input, output and diagnostics of the retrieval subsystem,
-including the query-planning boundary and freshness filtering Stage 16.1
-requires.
+Define how an authorised user's question becomes a resolved retrieval
+request: the provider-neutral, LLM-backed `RetrievalPlanner` and typed
+`RetrievalPlan`; the Laravel-owned, deterministic `EligibilityResolver` and
+`EligibleRetrievalScope`, consuming ADR-0017's temporal-authority model;
+the provider-neutral `Retriever`; a controlled retrieval outcome taxonomy;
+and a new synchronous Laravel-to-Python protocol — so that Stage 16.4
+(Implement Semantic Retrieval) has a settled contract to build against.
+Originally scoped as "Define Retrieval Contract"; broadened to its actual
+title once drafting confirmed the session's real scope spans planning,
+eligibility and the retriever boundary together, not a single narrow
+input/output contract.
+
+### Status
+
+Completed on 2026-08-07.
+
+### Decision
+
+ADR 0018 was accepted before any Stage 16.3/16.4 implementation began, in:
+
+```text
+docs/adr/0018-define-retrieval-planning-eligibility-and-the-retriever-contract.md
+```
+
+It consumes ADR-0017 without reopening it, and extends ADR-0016's dual
+retrieval-visibility gate as a third, additive gate rather than redefining
+it. It supersedes no other accepted ADR; a new, independently-versioned
+Laravel-to-Python synchronous protocol (`rc1`) is added alongside, not
+replacing, ADR-0009/0015/0016's asynchronous ingestion-worker protocol.
+
+The central decision is the request flow: Laravel resolves
+`AuthorisedKnowledgeScope` from the authenticated user; Laravel calls
+Python's provider-neutral, LLM-backed `RetrievalPlanner` (`rc1`, purpose
+`retrieval.plan`) to classify the question into a typed `RetrievalPlan` —
+`temporal_mode` (`CURRENT`/`VALID_AT_DATE`/`COMPARE`/`CLARIFICATION_REQUIRED`),
+the `retrieval_queries` decomposition seam ADR-0013 already committed to
+(V1: always exactly one), and an optional, singular `applicability_reference`
+semantic hint; Laravel's deterministic, narrowing-only `EligibilityResolver`
+combines the plan, the authorised scope, and ADR-0017's authoritative
+temporal/governance/lineage data into an `EligibleRetrievalScope`; Laravel
+calls Python's provider-neutral `Retriever` (`rc1`, purpose
+`retrieval.search`), which performs scoped vector search only and returns
+candidate identities, scores and lineage — never PostgreSQL access, direct
+or indirect; Laravel then batch-hydrates chunk text/provenance, rechecks
+eligibility against the returned candidates, and assembles the final
+`RetrievalResult` against a controlled outcome taxonomy (`EVIDENCE_FOUND`,
+`NO_ELIGIBLE_EVIDENCE`, `NO_RETRIEVAL_CANDIDATES`, `TEMPORAL_SCOPE_UNRESOLVED`,
+`COMPARISON_SCOPE_INCOMPLETE`, `CLARIFICATION_REQUIRED`, `RETRIEVAL_FAILED`).
+
+`COMPARE` resolves two independently-labelled sides (`PRIMARY`/`COMPARISON`)
+via symbolic anchors (`CURRENT`, `AT_DATE(date)`, `PREVIOUS`) the planner
+never resolves to IDs itself; either side failing to resolve safely
+produces `COMPARISON_SCOPE_INCOMPLETE`, never a silent substitute.
+`applicability_reference` is resolved deterministically by
+`EligibilityResolver` against authoritative `OrganisationalLocation` names
+and aliases, and validated against `AuthorisedKnowledgeScope`, before
+narrowing anything; an unresolved or ambiguous reference produces
+`CLARIFICATION_REQUIRED` rather than being silently dropped or guessed.
+Raw retrieval scores are never treated as calibrated probabilities, and V1
+defines no similarity threshold — every non-empty candidate set is
+`EVIDENCE_FOUND`, with evidence-quality judgement deliberately deferred to
+the evaluation and hybrid-retrieval/reranking architecture (Stage 16.6,
+Stage 16.8, per the corrected sequence below).
+
+The new `rc1` protocol (Retrieval Call, version 1) is independently
+versioned from, and shares no principal, key ring or purpose namespace
+with, ingestion's `v1`/`v2` protocol: a new `retrieval-caller` principal,
+Laravel signs/Python verifies (reversed from ingestion's direction), a
+seven-field string-to-sign (adding a signed `request_id` beyond the
+six-field ingestion shape), mandatory authenticated TLS stated explicitly
+(HMAC provides authentication/integrity only, never confidentiality), and a
+bounded, freshness-window-scoped server-side replay-suppression cache —
+deliberately lighter than ingestion's durable event ledger, since
+retrieval is a synchronous, read-only call with no lease or attempt to
+make idempotent. A normative, independently cross-verified test vector for
+`retrieval.search` is recorded in the ADR.
+
+The full set of agreed decisions, worked examples, rejected alternatives
+and architectural invariants — including the complete metadata
+classification (security/eligibility/descriptive), the
+`EligibleRetrievalScope` shape, and forward-compatibility commitments for
+hybrid retrieval, reranking and evaluation — is recorded in ADR 0018
+rather than duplicated here. ADR 0018 went through an independent
+architectural review of the proposed Phase 16 direction before any
+drafting began, a first full draft, and two rounds of bounded amendment
+(removing direct Python PostgreSQL access and closing the
+eligibility-staleness trade-off by moving hydration and a final recheck to
+Laravel, adding the `applicability_reference` contract, and correcting
+`NO_SEMANTIC_MATCH` to the truthful, count-based `NO_RETRIEVAL_CANDIDATES`
+in one round; adding `rc1`'s mandatory-TLS requirement and bounded replay
+defence in the other) before acceptance; see the session journal for what
+changed at each round.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No migrations,
+models, HTTP endpoints, or retrieval code were introduced. Verification
+consisted of:
+
+* independent inspection of ADR-0017, ADR-0016, ADR-0014, ADR-0013,
+  ADR-0012, ADR-0009, ADR-0007 and ADR-0006 before drafting, so every
+  consumed concept was grounded in its actual accepted text rather than an
+  approximation of it;
+* computing and independently cross-verifying (via two separate
+  HMAC-SHA256 implementations) two successive normative `rc1` test
+  vectors — a six-field vector superseded by the seven-field vector once
+  `request_id` was added — before trusting either;
+* tracing each rejected design (Python PostgreSQL hydration, a raw-score
+  `NO_SEMANTIC_MATCH` threshold, a timestamp-only replay defence) against
+  the specific correctness or confidentiality gap it left open, to confirm
+  each correction actually closes the gap it targets;
+* checking the accepted ADR against each Stage 16.2 acceptance criterion
+  below;
+* confirming, after each amendment round and again before acceptance, that
+  only the ADR file itself had changed and that no other accepted ADR or
+  application code was modified.
+
+### Acceptance criteria
+
+* Retrieval's request flow, from an authorised question to a typed
+  `RetrievalResult`, is fully specified. — Met.
+* `RetrievalPlanner` is provider-neutral and LLM-backed for V1,
+  structurally prevented from authorising, resolving IDs, or touching
+  PostgreSQL/Qdrant. — Met.
+* `EligibilityResolver` is Laravel-owned, deterministic, and
+  narrowing-only, consuming ADR-0017's temporal-authority model without
+  redeciding it. — Met.
+* The Python `Retriever` has zero PostgreSQL access; batch hydration and
+  the final eligibility recheck are Laravel's responsibility. — Met.
+* `COMPARE` resolves two independently-labelled, never-merged sides, with
+  no silent substitute version. — Met.
+* `applicability_reference` is deterministically resolved and validated
+  before narrowing anything, never invented, never a hard filter pushed to
+  Qdrant. — Met.
+* The retrieval outcome taxonomy makes no untruthful claim about semantic
+  match quality; V1 defines no similarity threshold. — Met.
+* The new `rc1` protocol is independently versioned, requires
+  authenticated TLS, and includes a bounded replay defence appropriate to
+  a synchronous, read-only call. — Met.
+* ADR-0016's dual gate remains unchanged and unconditional; this ADR's
+  model is additive only. — Met.
+
+ADR 0018 was produced through an independent architectural review, a first
+full draft, and two rounds of requested, bounded refinement, each closing
+a specific correctness, security, or truthfulness gap identified on review
+rather than reopening already-agreed decisions. No structural renumbering
+of Phase 16 occurred as a result of ADR-0018's own content, but ADR-0018
+did surface that Phase 16 was missing an implementation stage for ADR-0017
+— see the restructuring below.
+
+### Commit boundary
+
+git add docs/adr/0018-define-retrieval-planning-eligibility-and-the-retriever-contract.md \
+  docs/adr/README.md docs/journal/2026-08-07-r16-s02-define-retrieval-planning-eligibility-and-the-retriever-contract.md \
+  PROJECT_ROADMAP.md IMPLEMENTATION_GUIDE.md tasks.json
+git commit -m "Define retrieval planning, eligibility and the retriever contract"
+git tag -a phase-16-s02 \
+  -m "Complete Stage 16.2: Define Retrieval Planning, Eligibility and the Retriever Contract"
+
+---
+
+## Phase 16 restructuring note (second)
+
+Recorded 2026-08-07, arising from ADR-0018's own "Roadmap clarification"
+section. ADR-0018's review found that Phase 16, as sequenced after Stage
+16.1 (ADR-0017), moved directly from defining the versioning/temporal-
+authority domain model to defining the retrieval contract, without a
+session that actually builds ADR-0017's relational/domain foundation (the
+`DocumentFamily` backfill migration, lineage and governance tables, the
+structural constraints "Unambiguous temporal succession" fixes) before
+retrieval implementation would need it. Phase 16 is corrected from seven
+stages to eight: a new Stage 16.3 is inserted, and every stage after it is
+renumbered by one. No completed stage's own record is rewritten by this
+correction — Stage 16.1's and Stage 16.2's completed records, commits and
+tags are unchanged.
+
+---
+
+## Stage 16.3 — Implement Document Versioning and Temporal Authority Foundation
+
+### Objective
+
+Implement ADR-0017's relational/domain model: `DocumentFamily`, explicit
+linear version lineage, the `DRAFT`/`APPROVED`/`WITHDRAWN` governance
+model, per-version `OrganisationalLocation` applicability snapshots, and
+the structural constraints unambiguous temporal succession depends on —
+the foundation Stage 16.4 (Implement Semantic Retrieval) and
+`EligibilityResolver` (ADR-0018, Stage 16.2) both require.
 
 ### Status
 
 Not yet executed.
 
-### Design constraint
+### Planned work
 
-Record the query-decomposition direction agreed alongside ADR-0013 (see
-`PROJECT_ROADMAP.md`'s "Design constraint — Query decomposition and the
-retrieval pipeline shape") before implementation begins. The contract must
-carry a query-planning boundary that accepts one or more bounded retrieval
-queries even though V1 only ever exercises an identity/no-op planner.
-
-### Planned input
-
-* tenant identifier;
-* query text;
-* optional document filters;
-* optional metadata filters;
-* active/archival filter, per Stage 16.1's policy;
-* result limit;
-* retrieval configuration.
-
-### Planned output
-
-* ranked chunks;
-* similarity score;
-* document metadata;
-* source location;
-* retrieval diagnostics;
-* strategy version.
+* a backfill migration assigning every existing Document to a new, single-
+  Document `DocumentFamily` — no family-less Document may exist afterward;
+* an explicit, immutable predecessor reference per version, with the
+  effective-date-ordering structural integrity requirement ADR-0017
+  requires;
+* `approved_at` and `withdrawn_at` as explicit, non-derived, required
+  timestamps, distinct from `effective_from`, recorded only at the moment
+  each transition genuinely happens;
+* the derived `CURRENT`/`VALID_AT_DATE` query
+  (`authority_start = max(effective_from, approved_at)`; the
+  attains-authority window derivation, including condition (c)'s
+  lineage-monotonicity check) implemented as a query, never a stored,
+  scheduler-flipped flag;
+* the two uniqueness constraints (`effective_from`; `authority_start`,
+  re-checked at approval time) and the lineage-monotonic ordering
+  constraint (rejecting, at approval time, a `DRAFT → APPROVED` transition
+  that would let an older predecessor attain authority after its own named
+  successor already has);
+* the backdated-governance-correction path: a permission distinct from
+  ordinary approve/withdraw authority, an explicit recorded reason, and a
+  distinct business-audit record — never a silent timestamp overwrite;
+* the generic, self-referencing `OrganisationalLocation` hierarchy,
+  workspace-scoped, with no hard-coded depth;
+* per-version applicability snapshots, immutable at creation time, with
+  `DocumentFamily` holding only a mutable creation-time default that seeds
+  new versions and is never itself consulted for an existing version's
+  eligibility.
 
 ### Required ADR
 
-docs/adr/ADR-XXX-retrieval-contract.md
+None — this stage implements ADR-0017 (accepted `R16-S01`); no new
+architectural decision is made here.
 
 ### Acceptance criteria
 
-* Tenant context is mandatory.
-* Retrieval results include citation metadata.
-* Scores and ranking are inspectable.
-* Filters are typed, including the active/archival filter.
-* The query-planning boundary exists in the contract, exercised only by an
-  identity/no-op planner for V1.
-* Empty-query behaviour is defined.
-* No generation concerns leak into the retrieval contract.
+* Every Document belongs to exactly one `DocumentFamily` after migration.
+* `CURRENT` and `VALID_AT_DATE` are computed at query time; no scheduled
+  job's correctness is load-bearing for either.
+* A withdrawn version's predecessor is never resurrected: `v1`'s authority
+  window closes permanently the moment `v2` attains authority, regardless
+  of `v2`'s later withdrawal.
+* A version cannot be treated as authoritative for a date before it was
+  genuinely approved, even if its scheduled effective date had already
+  passed.
+* The lineage-monotonic ordering invariant is enforced at approval time,
+  rejecting an approval that would let an older predecessor attain
+  authority after its own successor already has.
+* A version withdrawn or cancelled before attaining authority is excluded
+  from the derivation entirely, leaving no gap.
+* Backdated corrections to `approved_at`/`withdrawn_at` require elevated
+  permission, an explicit reason, and produce a distinct audit record.
+* `OrganisationalLocation` supports an arbitrary hierarchy depth, not a
+  hard-coded `Region`/`Site` pair.
+* Tests cover: predecessor-resurrection prevention; retroactive-
+  authorisation prevention via late approval; the lineage-monotonicity
+  approval-time rejection; cancellation and rescheduling of a not-yet-
+  attained version; and per-version applicability snapshot immutability.
 
 ### Commit boundary
 
-git add apps/ai contracts docs/adr
-git commit -m "Define retrieval contract"
+git add apps/api tests
+git commit -m "Implement document versioning and temporal authority foundation"
 
 ---
 
-## Stage 16.3 — Implement Semantic Retrieval
+## Stage 16.4 — Implement Semantic Retrieval
 
 ### Objective
 
@@ -11291,7 +11494,7 @@ git commit -m "Implement semantic document retrieval"
 
 ---
 
-## Stage 16.4 — Define Evaluation and Quality-Gate Architecture
+## Stage 16.5 — Define Evaluation and Quality-Gate Architecture
 
 ### Objective
 
@@ -11351,11 +11554,11 @@ git commit -m "Define evaluation and quality-gate architecture"
 
 ---
 
-## Stage 16.5 — Implement Retrieval Evaluation
+## Stage 16.6 — Implement Retrieval Evaluation
 
 ### Objective
 
-Measure retrieval quality against the Stage 16.4 harness's curated
+Measure retrieval quality against the Stage 16.5 harness's curated
 question-and-source dataset.
 
 ### Status
@@ -11374,7 +11577,7 @@ Not yet executed.
 ### Acceptance criteria
 
 * Evaluation questions have expected source chunks or documents, per Stage
-  16.4's corpus format.
+  16.5's corpus format.
 * Metrics are reproducible.
 * Baseline results are recorded.
 * Retrieval changes can be compared against the recorded baseline.
@@ -11388,13 +11591,13 @@ git commit -m "Add retrieval evaluation suite"
 
 ---
 
-## Stage 16.6 — Define Hybrid Retrieval and Reranking Architecture
+## Stage 16.7 — Define Hybrid Retrieval and Reranking Architecture
 
 ### Objective
 
 Define one combined candidate-selection architecture — dense retrieval,
 sparse/keyword retrieval, fusion, reranking and evidence thresholds — as a
-single ADR, evaluated only after the Stage 16.3/16.5 semantic baseline is
+single ADR, evaluated only after the Stage 16.4/16.6 semantic baseline is
 measured.
 
 ### Status
@@ -11425,7 +11628,7 @@ docs/adr/ADR-XXX-hybrid-retrieval-and-reranking.md
 
 ### Acceptance criteria
 
-* A semantic-retrieval baseline exists and is measured (Stage 16.5) before
+* A semantic-retrieval baseline exists and is measured (Stage 16.6) before
   this architecture is adopted.
 * The `Reranker` contract is provider-neutral, matching the `Embedder`
   pattern's replaceability requirements.
@@ -11443,11 +11646,11 @@ git commit -m "Define hybrid retrieval and reranking architecture"
 
 ---
 
-## Stage 16.7 — Implement Hybrid Retrieval and Reranking
+## Stage 16.8 — Implement Hybrid Retrieval and Reranking
 
 ### Objective
 
-Implement the Stage 16.6 architecture: sparse retrieval, RRF fusion, the
+Implement the Stage 16.7 architecture: sparse retrieval, RRF fusion, the
 `Reranker` contract with Voyage as its V1 provider, calibrated thresholds
 and abstention.
 
@@ -11465,7 +11668,7 @@ Not yet executed.
   not a low-confidence answer presented as if grounded.
 * Tenant, authorisation and freshness filtering are verified through the
   complete fused/reranked path, not only the semantic baseline.
-* Stage 16.5's evaluation harness shows a measured improvement over the
+* Stage 16.6's evaluation harness shows a measured improvement over the
   semantic-only baseline before this becomes the default retrieval path.
 * Tests cover fusion, reranking, threshold/abstention behaviour and
   isolation.
@@ -11604,7 +11807,7 @@ Evaluate groundedness, citation correctness and answer usefulness.
 ### Design constraint
 
 Extend the repository-owned evaluation and quality-gate harness defined in
-Stage 16.4 (`docs/adr/ADR-XXX-evaluation-and-quality-gate-architecture.md`)
+Stage 16.5 (`docs/adr/ADR-XXX-evaluation-and-quality-gate-architecture.md`)
 with generation-specific metrics, rather than defining a second, separate
 harness. See also `PROJECT_ROADMAP.md`'s "Design constraint — Quality
 lineage across the pipeline."

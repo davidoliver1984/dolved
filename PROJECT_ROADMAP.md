@@ -457,7 +457,8 @@ Retrieve relevant, tenant-safe source chunks for a user query.
 ### Tasks
 
 - Define Document Versioning and Temporal Authority
-- Define Retrieval Contract
+- Define Retrieval Planning, Eligibility and the Retriever Contract
+- Implement Document Versioning and Temporal Authority Foundation
 - Implement Semantic Retrieval
 - Define Evaluation and Quality-Gate Architecture
 - Implement Retrieval Evaluation
@@ -475,8 +476,11 @@ top of it.
 ### Design constraint — Query decomposition and the retrieval pipeline shape
 
 Recorded 2026-08-03, arising from Phase 13 (ADR-0013)'s embedding/retrieval
-boundary discussion, to be formalised in Phase 16's Retrieval Contract ADR
-(Stage 16.2).
+boundary discussion, formalised in Phase 16's Retrieval Planning,
+Eligibility and Retriever Contract ADR (Stage 16.2, ADR-0018, accepted
+2026-08-07): `RetrievalPlan.retrieval_queries` is the query-planning
+boundary this constraint describes, exercised for V1 only by an
+identity/no-op planner exactly as anticipated here.
 
 The retrieval architecture must be shaped so query decomposition can be
 enabled later without rewriting the retrieval pipeline:
@@ -496,7 +500,7 @@ exercised: an identity/no-op planner returns only the original query, and
 model-assisted decomposition remains disabled by default. Enabling it later
 is an additive change to the planner, not a retrieval-pipeline rewrite — but
 it must not be turned on until the repository-owned evaluation harness
-(Stage 16.4) demonstrates that the quality gain justifies the added latency,
+(Stage 16.5) demonstrates that the quality gain justifies the added latency,
 cost and complexity of a second model call per query.
 
 This is intentionally deferred rather than actioned now — no Phase 16
