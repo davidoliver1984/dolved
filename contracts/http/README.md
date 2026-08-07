@@ -1,5 +1,8 @@
 # HTTP Contracts
 
+- `retrieval-call/rc1/` defines ADR-0018's synchronous, purpose-scoped
+  Laravel-to-Python retrieval protocol.
+
 This directory contains HTTP interface definitions shared between services.
 
 The primary artifact will be an OpenAPI specification describing the private

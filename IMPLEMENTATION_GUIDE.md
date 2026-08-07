@@ -11470,26 +11470,91 @@ git commit -m "Implement document versioning and temporal authority foundation"
 
 ### Objective
 
-Embed a user query and retrieve tenant-filtered chunks from Qdrant.
+Implement ADR-0018's complete Laravel-to-Python semantic-retrieval path against ADR-0017's completed temporal-authority and applicability foundation.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-07.
+
+### Implementation
+
+The end-to-end semantic-retrieval path accepted by ADR-0017 and ADR-0018 is
+implemented across Laravel, Python and shared contracts. Laravel builds the
+authenticated `AuthorisedKnowledgeScope`, calls the provider-neutral Python
+`RetrievalPlanner`, resolves the resulting typed plan deterministically against
+PostgreSQL temporal-authority and applicability facts, and sends only the
+resulting `EligibleRetrievalScope` to Python for vector retrieval.
+
+The independently-versioned `rc1` protocol uses a dedicated retrieval caller,
+purpose-bound HMAC signatures, signed request identities, bounded freshness and
+replay defence, compact canonical JSON, fresh request IDs on retry, bounded
+timeouts and production HTTPS enforcement. Shared JSON Schemas and a normative
+canonicalisation vector are validated independently by both languages. The
+retrieval key ring and purpose namespace remain separate from ingestion's
+worker protocol.
+
+Python exposes authenticated plan and search endpoints. Its structured-output
+planner is isolated behind `RetrievalPlanner`, and its PostgreSQL-free
+`Retriever` validates embedding-profile compatibility, embeds the query for the
+query purpose, and searches exclusively through `VectorStore`. Qdrant receives
+explicit workspace, active corpus-generation and bounded eligible-document
+scope. `COMPARE` sides are searched independently and remain labelled in the
+returned candidate lineage.
+
+Laravel batch-hydrates candidate chunks from authoritative PostgreSQL and
+performs the final eligibility recheck before returning any evidence. Candidates
+that became stale during the call are discarded. Typed results distinguish
+evidence, valid empty results, unresolved temporal/comparison scope,
+clarification and operational failure without introducing an uncalibrated score
+threshold. Retrieval telemetry is allowlisted and excludes raw questions, chunk
+text, candidate content, credentials and signatures.
+
+The public API boundary is `POST
+/api/workspaces/{workspacePublicId}/retrieval`; it remains protected by the
+existing authenticated, verified Laravel route group. No frontend, migration,
+answer-generation, citation, evaluation, hybrid-search or reranking behaviour
+was introduced.
+
+### Session verification
+
+* `make format-check`, `make lint` and `make typecheck` passed across Laravel,
+  Python and Next.js; mypy checked 92 Python source and test files.
+* The full Laravel suite passed 177 tests with 736 assertions.
+* The full Python suite passed 209 tests with one credential-dependent live test
+  skipped as designed.
+* The full frontend suite passed 26 tests across seven files.
+* Focused retrieval and Qdrant Python tests passed 22 scenarios; focused Laravel
+  semantic-retrieval tests passed nine scenarios with 25 assertions; the
+  existing temporal-authority suite passed 11 scenarios with 39 assertions.
+* Docker Compose configuration validation, service health checks, Laravel and
+  Python route inspection, contract JSON parsing and `git diff --check` passed.
+* Python's configured V1 embedding-profile fingerprint matched Laravel's
+  persisted fingerprint exactly.
+
+### Problems and corrections
+
+Focused verification found and corrected three implementation defects before
+review: a Laravel collection filter whose callback signature did not match
+Collection's value-and-key invocation; a stale-candidate path that initially
+returned the eligibility outcome instead of the truthful final
+`NO_RETRIEVAL_CANDIDATES` result; and a test whose second HTTP fake remained
+shadowed by the first callback. The empty-result and operational-failure cases
+were separated so their distinct contracts are exercised independently.
 
 ### Acceptance criteria
 
-* Query embeddings use the compatible model.
-* Every search includes tenant filtering.
-* Optional document filters work.
-* Archived/obsolete documents are excluded per Stage 16.1's policy.
-* Result limits are bounded.
-* No cross-tenant chunks are returned.
-* Empty results are represented normally.
-* Tests cover ranking and isolation.
+* A provider-neutral, V1 LLM-backed `RetrievalPlanner` produces typed `RetrievalPlan` values for `CURRENT`, `VALID_AT_DATE`, `COMPARE` and `CLARIFICATION_REQUIRED`; clarification short-circuits before eligibility or search. — Met.
+* Laravel consumes `AuthorisedKnowledgeScope`; its deterministic, narrowing-only `EligibilityResolver` applies ADR-0017 temporal authority, governance, lineage, locations and aliases to construct typed `EligibleRetrievalScope` values for single- and two-sided comparison retrieval. — Met.
+* Laravel calls Python synchronously through the independently-versioned, purpose-scoped `rc1` protocol with signed request identity, freshness/replay defence, bounded timeouts and the authenticated-TLS production requirement defined by ADR-0018. — Met.
+* Python's PostgreSQL-free `Retriever` validates embedding-profile compatibility, embeds bounded queries and searches only through `VectorStore` with explicit workspace, active-corpus-generation and eligible-document scope plus bounded optional document filters and result limits. — Met.
+* Python returns candidate identity, raw score and lineage only; Laravel batch-hydrates canonical chunk text/provenance from PostgreSQL and performs the final defensive eligibility recheck before exposing evidence. — Met.
+* Laravel assembles typed `RetrievalResult` values using ADR-0018's controlled outcomes, including evidence, empty candidates, no eligible evidence, unresolved temporal/comparison scope, clarification and operational failure without inventing an evidence threshold. — Met.
+* Cross-language contracts and tests cover canonicalisation/signing, replay and purpose isolation, plan validation, temporal and applicability eligibility, `COMPARE`, profile compatibility, vector filtering/ranking, hydration, final recheck, bounded results, empty results and cross-tenant isolation. — Met.
+* Evaluation, hybrid retrieval, reranking, evidence thresholds, answer generation and citations remain explicitly outside Stage 16.4. — Met.
 
 ### Commit boundary
 
-git add apps/ai tests
+git add apps/api apps/ai contracts tests IMPLEMENTATION_GUIDE.md tasks.json docs/journal/2026-08-07-r16-s04-implement-semantic-retrieval.md
 git commit -m "Implement semantic document retrieval"
 
 ---

@@ -7,6 +7,7 @@ from opentelemetry import metrics, trace
 from opentelemetry.propagate import extract
 from opentelemetry.trace import SpanKind, Status, StatusCode
 
+from app.retrieval.routes import router as retrieval_router
 from app.settings import get_settings
 from app.telemetry import (
     configure_telemetry,
@@ -31,6 +32,7 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+app.include_router(retrieval_router)
 
 
 @app.middleware("http")

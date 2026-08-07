@@ -1,0 +1,18 @@
+{
+  "protocol": "rc1",
+  "vectors": [
+    {
+      "name": "adr-0018-retrieval-search",
+      "secret_base64": "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=",
+      "timestamp": "1785326400",
+      "method": "POST",
+      "request_path": "/api/internal/retrieval/search",
+      "exact_body": "{\"contract_version\":1,\"workspace_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"embedding_space_generation_id\":\"7c1a2b3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d\"}",
+      "body_sha256": "9baff7b79505e18f84ab1a202ea9c42109876e09e23003c67f407d94c9aab215",
+      "workspace_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+      "purpose": "retrieval.search",
+      "request_id": "b6e4a1d2-9f3c-4b7a-8e2d-5c1f0a9b8d7e",
+      "expected_signature": "rc1=f2329579bdd74d6871d52c52b06095a7ce2fdb42d57ffdb9fe541990040195e8"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/http/retrieval-call/rc1/plan-v1.schema.json",
+  "title": "Retrieval plan request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "request_id", "workspace_id", "question", "evaluated_at"],
+  "properties": {
+    "contract_version": {"const": 1},
+    "request_id": {"type": "string", "format": "uuid"},
+    "workspace_id": {"type": "string", "format": "uuid"},
+    "question": {"type": "string", "minLength": 1, "maxLength": 8000},
+    "evaluated_at": {"type": "string", "format": "date-time"}
+  }
+}

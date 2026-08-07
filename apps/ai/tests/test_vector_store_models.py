@@ -108,6 +108,27 @@ def test_vectors_reject_non_finite_values_and_invalid_search_dimensions() -> Non
         VectorSearchRequest(scope=scope, query_vector=(1.0, 0.0), limit=10)
 
 
+def test_vector_scope_requires_one_unambiguous_document_filter_shape() -> None:
+    space = vector_space()
+    document_id = uuid4()
+    with pytest.raises(ValidationError, match="mutually exclusive"):
+        VectorScope(
+            vector_space=space,
+            workspace_id=uuid4(),
+            workspace_corpus_generation_id=uuid4(),
+            document_id=document_id,
+            document_ids=(document_id,),
+        )
+
+    with pytest.raises(ValidationError, match="must be unique"):
+        VectorScope(
+            vector_space=space,
+            workspace_id=uuid4(),
+            workspace_corpus_generation_id=uuid4(),
+            document_ids=(document_id, document_id),
+        )
+
+
 def test_completeness_requires_every_expected_identity_to_match_scope() -> None:
     space = vector_space()
     workspace_id = uuid4()

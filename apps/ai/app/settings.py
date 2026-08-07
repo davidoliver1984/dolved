@@ -43,6 +43,20 @@ class Settings(BaseSettings):
     qdrant_url: str = "http://qdrant:6333"
     qdrant_api_key: SecretStr = SecretStr("")
     qdrant_timeout_seconds: int = Field(default=10, gt=0)
+    retrieval_caller_hmac_keys: dict[str, SecretStr] = Field(
+        default_factory=lambda: {
+            "local-rc1": SecretStr("MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=")
+        }
+    )
+    retrieval_caller_max_clock_skew_seconds: int = Field(default=300, ge=1)
+    retrieval_max_body_bytes: int = Field(default=262_144, ge=1)
+    retrieval_max_eligible_documents: int = Field(default=500, ge=1, le=5000)
+    retrieval_candidate_k_max: int = Field(default=100, ge=1, le=1000)
+    retrieval_planner_api_url: str = "https://api.openai.com/v1/chat/completions"
+    retrieval_planner_api_key: SecretStr = SecretStr("")
+    retrieval_planner_provider: str = "openai"
+    retrieval_planner_model: str = "gpt-5-mini"
+    retrieval_planner_timeout_seconds: float = Field(default=10.0, gt=0)
     otel_exporter_otlp_endpoint: str = "http://otel-collector:4318"
     otel_exporter_otlp_protocol: str = "http/protobuf"
     otel_exporter_otlp_timeout: int = Field(default=250, ge=1)

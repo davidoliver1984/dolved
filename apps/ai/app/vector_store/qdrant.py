@@ -422,6 +422,15 @@ class QdrantVectorStore:
                     match=qdrant_models.MatchValue(value=str(scope.document_id)),
                 )
             )
+        if scope.document_ids:
+            conditions.append(
+                qdrant_models.FieldCondition(
+                    key="document_id",
+                    match=qdrant_models.MatchAny(
+                        any=[str(document_id) for document_id in scope.document_ids]
+                    ),
+                )
+            )
         if scope.event_id is not None:
             conditions.append(
                 qdrant_models.FieldCondition(
@@ -502,6 +511,7 @@ class QdrantVectorStore:
             and identity.embedding_space_generation_id
             == scope.vector_space.embedding_space_generation_id
             and (scope.document_id is None or identity.document_id == scope.document_id)
+            and (not scope.document_ids or identity.document_id in scope.document_ids)
             and (scope.event_id is None or identity.event_id == scope.event_id)
             and (
                 scope.publication_status is None

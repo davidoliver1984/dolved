@@ -4,6 +4,7 @@ use App\Http\Controllers\DocumentIngestionController;
 use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\Internal\DocumentIngestionClaimController;
 use App\Http\Controllers\Internal\IngestionOperationController;
+use App\Http\Controllers\RetrievalController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -99,5 +100,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::post(
         '/workspaces/{workspacePublicId}/documents/{documentPublicId}/ingestion-requests',
         [DocumentIngestionController::class, 'store'],
+    );
+    Route::post(
+        '/workspaces/{workspacePublicId}/retrieval',
+        [RetrievalController::class, 'store'],
     );
 });

@@ -254,6 +254,15 @@ def test_search_and_document_delete_are_tenant_and_generation_scoped(
     assert all(hit.workspace_id == workspace_a for hit in hits)
     assert all(hit.workspace_corpus_generation_id == corpus_a for hit in hits)
 
+    eligible_hits = store.search(
+        VectorSearchRequest(
+            scope=workspace_scope.model_copy(update={"document_ids": (document_a,)}),
+            query_vector=(1.0, 0.0, 0.0),
+            limit=10,
+        )
+    )
+    assert [hit.point_id for hit in eligible_hits] == [own.point_id]
+
     store.delete(workspace_scope.model_copy(update={"document_id": document_a}))
     assert store.count(workspace_scope) == 1
     assert (

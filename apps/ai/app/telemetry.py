@@ -45,6 +45,11 @@ TRACE_ATTRIBUTE_ALLOWLIST = frozenset(
         "rag.embedding.purpose",
         "rag.embedding.retry_count",
         "rag.processing.outcome",
+        "rag.retrieval.candidate_count",
+        "rag.retrieval.eligible_scope_size",
+        "rag.retrieval.method",
+        "rag.retrieval.side",
+        "rag.retrieval.temporal_mode",
         "rag.workspace.id",
     }
 )
@@ -65,6 +70,8 @@ METRIC_ATTRIBUTE_ALLOWLIST = frozenset(
         "rag.event.version",
         "rag.embedding.purpose",
         "rag.processing.outcome",
+        "rag.retrieval.method",
+        "rag.retrieval.side",
     }
 )
 

@@ -67,8 +67,17 @@ class VectorScope(ImmutableModel):
     workspace_id: UUID
     workspace_corpus_generation_id: UUID
     document_id: UUID | None = None
+    document_ids: tuple[UUID, ...] = Field(default=(), max_length=5000)
     event_id: UUID | None = None
     publication_status: VectorPublicationStatus | None = None
+
+    @model_validator(mode="after")
+    def validate_document_scope(self) -> VectorScope:
+        if self.document_id is not None and self.document_ids:
+            raise ValueError("document_id and document_ids are mutually exclusive")
+        if len(set(self.document_ids)) != len(self.document_ids):
+            raise ValueError("document_ids must be unique")
+        return self
 
 
 class VectorUpsertRequest(ImmutableModel):
