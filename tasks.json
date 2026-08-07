@@ -3075,8 +3075,8 @@
           "id": "R16-S06",
           "guide_stage": "Stage 16.6 \u2014 Implement Retrieval Evaluation",
           "title": "Implement Retrieval Evaluation",
-          "guide_start_line": 11722,
-          "guide_end_line": 11853,
+          "guide_start_line": 11734,
+          "guide_end_line": 11875,
           "status": "completed",
           "objective": "Implement ADR-0019 and ADR-0020's repository-owned evaluation harness: versioned corpus and EvidenceUnits, deterministic layered/sliced metrics, digested experiments and baselines, manual quality gates, and the isolated Ragas context-relevance adapter.",
           "session_mode": "implementation",
@@ -3085,8 +3085,8 @@
             "phase": "Phase 16 \u2014 Retrieval",
             "stage": "Stage 16.6 \u2014 Implement Retrieval Evaluation",
             "source_lines": {
-              "start": 11722,
-              "end": 11853
+              "start": 11734,
+              "end": 11875
             }
           },
           "workflow": [
@@ -3116,8 +3116,9 @@
             "23 semantic cases, 25 variants and 33 slices covering the required ADR-0019/0020 V1 families",
             "Distinct EvidenceUnit metrics with multi-chunk coverage, side-separated comparison and case-first aggregation",
             "Provider-neutral ModelAssistedEvaluator and isolated injected RagasEvaluator context-relevance adapter",
-            "Accepted baseline retrieval-v1-offline-baseline bound to implementation commit bcd04346eb3e662bcf79279e589fe1a1ce2063d5",
-            "Manual gate ACCEPTED and baseline deliberately promoted by David Oliver",
+            "Current accepted baseline retrieval-v2-offline-baseline bound to corrective commit 735654291e2f5e085f83e98f1229768c0237edaf and corpus digest 0e78f8e57a3d9c358ae08bdf7e97ded151cc4111cf934f48342427a2a187c1af",
+            "Immutable V1 baseline retained as historical evidence after its predecessor-resurrection fixture was corrected in V2 to comply with ADR-0017",
+            "Corrected V2 manual gate ACCEPTED and baseline deliberately promoted by David Oliver; offline model-assisted scores identify deterministic-fake/v1 rather than live RAGAS",
             "Frontend 26 tests, Laravel 177 tests/736 assertions, Python 229 tests; two credential-gated live tests skipped",
             "Repository lint, formatting, type checks, production build, Compose health and evaluation governance path passed",
             "docs/journal/2026-08-07-r16-s06-implement-retrieval-evaluation.md"
@@ -3127,8 +3128,8 @@
           "id": "R16-S07",
           "guide_stage": "Stage 16.7 \u2014 Define Hybrid Retrieval and Reranking Architecture",
           "title": "Define Hybrid Retrieval and Reranking Architecture",
-          "guide_start_line": 11854,
-          "guide_end_line": 11908,
+          "guide_start_line": 11876,
+          "guide_end_line": 11930,
           "status": "not_started",
           "objective": "Define one combined candidate-selection architecture \u2014 dense retrieval, sparse/keyword retrieval, fusion, reranking and evidence thresholds \u2014 as a single ADR, evaluated only after the semantic baseline is measured.",
           "session_mode": "architecture",
@@ -3137,8 +3138,8 @@
             "phase": "Phase 16 \u2014 Retrieval",
             "stage": "Stage 16.7 \u2014 Define Hybrid Retrieval and Reranking Architecture",
             "source_lines": {
-              "start": 11854,
-              "end": 11908
+              "start": 11876,
+              "end": 11930
             }
           },
           "workflow": [
@@ -3169,8 +3170,8 @@
           "id": "R16-S08",
           "guide_stage": "Stage 16.8 \u2014 Implement Hybrid Retrieval and Reranking",
           "title": "Implement Hybrid Retrieval and Reranking",
-          "guide_start_line": 11909,
-          "guide_end_line": 11942,
+          "guide_start_line": 11931,
+          "guide_end_line": 11964,
           "status": "not_started",
           "objective": "Implement the Stage 16.7 architecture: sparse retrieval, RRF fusion, the Reranker contract with Voyage as its V1 provider, calibrated thresholds and abstention.",
           "session_mode": "implementation",
@@ -3179,8 +3180,8 @@
             "phase": "Phase 16 \u2014 Retrieval",
             "stage": "Stage 16.8 \u2014 Implement Hybrid Retrieval and Reranking",
             "source_lines": {
-              "start": 11909,
-              "end": 11942
+              "start": 11931,
+              "end": 11964
             }
           },
           "workflow": [
@@ -3208,7 +3209,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 11847,
+      "guide_end_line": 11964,
       "status": "not_started",
       "objective": "Retrieve relevant, tenant-safe source chunks for a user query.",
       "gate": {
