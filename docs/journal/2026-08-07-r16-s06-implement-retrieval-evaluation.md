@@ -44,6 +44,25 @@ exact result as the initial baseline. The comparison report is intentionally a
 self-comparison: it establishes the zero-delta reference future candidates will
 be assessed against; it does not claim the baseline is universally optimal.
 
+### Post-closure correction
+
+Subsequent review found that the immutable V1 corpus's
+`temporal.predecessor-resurrection` case contradicted ADR-0017 by rewarding an
+earlier predecessor becoming authoritative again after an attained successor
+was withdrawn. The Laravel domain implementation and its focused test already
+enforced ADR-0017 correctly; the defect was confined to the evaluation fixture
+and its derived baseline.
+
+V1 was not rewritten. Corrective commit
+`735654291e2f5e085f83e98f1229768c0237edaf` introduced corpus V2, where the case
+expects `NO_ELIGIBLE_EVIDENCE` and has neither EvidenceUnits nor candidates.
+The regenerated experiment `retrieval-v2-offline-baseline` records corpus
+digest `0e78f8e57a3d9c358ae08bdf7e97ded151cc4111cf934f48342427a2a187c1af`, passed
+the manual gate and was deliberately promoted as the current baseline. V1
+remains immutable historical evidence. The recorded model-assisted scores were
+produced by `deterministic-fake/v1`, not live RAGAS, and therefore demonstrate
+harness/reporting behaviour rather than live model quality.
+
 ## Verification performed
 
 * All lint, formatting and type-check commands passed.

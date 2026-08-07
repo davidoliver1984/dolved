@@ -24,6 +24,12 @@ the implementation commit and recorded separately before the stage tag is
 created; a pre-commit working-tree run is verification evidence, not an accepted
 baseline.
 
+The current accepted baseline is corpus V2 under `baselines/v2`. It supersedes
+the immutable historical V1 baseline because V1's
+`temporal.predecessor-resurrection` expectation contradicted ADR-0017. V1 is
+retained unchanged for auditability and must not be used as the current
+comparison baseline.
+
 The `promote`, `compare`, and `gate` subcommands in
 `scripts/evaluation/run.py` keep experiment execution, baseline promotion,
 comparison, and the human release decision as separate records. A waiver must

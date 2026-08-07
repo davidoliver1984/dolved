@@ -11790,6 +11790,28 @@ The result has no absolute failures. David Oliver recorded an `ACCEPTED` manual
 gate and deliberately promoted that exact experiment as the initial baseline;
 the checked-in self-comparison report records a passing zero-delta reference.
 
+#### Post-closure corpus correction
+
+Review after the initial promotion found that V1's
+`temporal.predecessor-resurrection` case incorrectly rewarded resurrection of
+an earlier predecessor after its attained successor was withdrawn. ADR-0017
+explicitly prohibits that behaviour, and the Laravel authority resolver already
+implemented the correct invariant. In accordance with ADR-0019's corpus
+immutability rule, V1 was preserved unchanged and corpus V2 was created rather
+than edited in place.
+
+V2 expects `NO_ELIGIBLE_EVIDENCE`, declares no EvidenceUnit and records no
+candidate for that case. Corrective commit
+`735654291e2f5e085f83e98f1229768c0237edaf` added V2 and made it the default
+offline corpus. The accepted experiment is `retrieval-v2-offline-baseline`;
+its corpus digest is
+`0e78f8e57a3d9c358ae08bdf7e97ded151cc4111cf934f48342427a2a187c1af`.
+David Oliver accepted the corrected manual gate and deliberately promoted V2,
+which supersedes V1 as the current baseline while retaining V1 as immutable
+historical evidence. The offline `model_assisted` results use the explicitly
+identified `deterministic-fake` evaluator; live RAGAS was not used to produce
+either accepted baseline.
+
 ### Commands and verification
 
 * `docker compose build ai worker` rebuilt the locked Python environment.

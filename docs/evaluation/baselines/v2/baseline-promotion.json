@@ -1,0 +1,11 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "retrieval-v2-offline-baseline",
+  "corpus_version": "2",
+  "corpus_digest": "0e78f8e57a3d9c358ae08bdf7e97ded151cc4111cf934f48342427a2a187c1af",
+  "policy_version": "1",
+  "policy_digest": "f362010a8cc5239e8ce36759b5fa8eee2d3b5d22b69717ec8a2c199acb80b83f",
+  "promoted_by": "David Oliver",
+  "promoted_at": "2026-08-07T19:35:01.067066Z",
+  "reason": "Accepted corrected V2 retrieval evaluation baseline; supersedes V1 because temporal.predecessor-resurrection in the historical V1 corpus contradicted ADR-0017."
+}

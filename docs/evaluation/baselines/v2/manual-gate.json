@@ -1,0 +1,9 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "retrieval-v2-offline-baseline",
+  "decision": "ACCEPTED",
+  "reviewer": "David Oliver",
+  "decided_at": "2026-08-07T19:35:26.389984Z",
+  "reason": "Corrected V2 corpus reviewed and accepted after reconciling temporal.predecessor-resurrection with ADR-0017; all focused and repository-wide verification passed.",
+  "waiver_expires_at": null
+}
