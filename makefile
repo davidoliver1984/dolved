@@ -16,6 +16,7 @@ TAIL ?= 100
 	bootstrap migrate seed reset clean \
 	aws-provision aws-status qdrant-status publish-ingestion consume-ingestion \
 	telemetry-smoke telemetry-verify telemetry-outage \
+	evaluation-run \
 	shell-web shell-api shell-ai shell-db shell-aws
 
 help:
@@ -42,6 +43,7 @@ help:
 		'  make telemetry-smoke Verify Collector-to-Grafana trace and metric flow' \
 		'  make telemetry-verify Verify cross-service trace, privacy and cardinality' \
 		'  make telemetry-outage Verify requests survive a Collector outage' \
+		'  make evaluation-run   Run the offline retrieval evaluation corpus' \
 		'  make reset           Delete local volumes and bootstrap again' \
 		'' \
 		'Quality' \
@@ -166,6 +168,22 @@ telemetry-verify:
 
 telemetry-outage:
 	./scripts/telemetry/verify-collector-outage.sh
+
+evaluation-run:
+	@mkdir -p /tmp/rag-platform-evaluation
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace" \
+		--volume "$(CURDIR)/apps/ai/app:/app/app:ro" \
+		--volume "/app/.venv" \
+		--volume "/tmp/rag-platform-evaluation:/output" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		ai python scripts/evaluation/run.py run \
+			--corpus tests/evaluation/corpus/v1/corpus.json \
+			--policy tests/evaluation/policies/v1/policy.json \
+			--observations tests/evaluation/observations/v1/offline-baseline.json \
+			--repository-commit "$(shell git rev-parse HEAD)" \
+			--output /output/result.json
 
 reset:
 	@printf '%s\n' \

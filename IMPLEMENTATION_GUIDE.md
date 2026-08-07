@@ -11717,41 +11717,85 @@ git commit -m "Define retrieval evaluation and quality gates"
 git tag -a phase-16-s05 \
   -m "Complete Stage 16.5: Define Retrieval Evaluation and Quality Gates"
 
+### Post-acceptance clarification
+
+Before Stage 16.6 implementation began, the required implementation review
+identified bounded ambiguities and two factual overclaims in ADR-0019. Accepted
+ADR-0020 records the corrections without rewriting ADR-0019: repository-owned
+`EvidenceUnit` semantics; distinct-unit metric and duplicate-credit rules;
+correct adversarial input ownership; injected evaluator-model configuration;
+offline and opt-in live Ragas testing; retrieval-only Phase 16 evaluator
+requests; aggregate context-relevance semantics; membership-scoped V1 security
+cases; corpus/policy content digests; case-first variant aggregation; and the
+deterministic-versus-stochastic reproducibility distinction.
+
 ---
 
 ## Stage 16.6 — Implement Retrieval Evaluation
 
 ### Objective
 
-Measure retrieval quality against the Stage 16.5 harness's curated
-question-and-source dataset.
+Implement ADR-0019 and ADR-0020's repository-owned evaluation harness and
+measure the Stage 16.4 semantic-retrieval baseline against a curated,
+versioned question-and-source corpus.
 
 ### Status
 
 Not yet executed.
 
-### Planned metrics
+### Expected changes
 
-* Recall@k;
-* MRR;
-* nDCG where useful;
-* tenant-isolation correctness;
-* latency;
-* no-result and abstention behaviour.
+* Add versioned, JSON-Schema-validated corpus, quality-policy,
+  experiment-result, baseline-promotion and manual-gate record formats with
+  canonical content digests.
+* Add stable semantic cases, phrasing variants, source-anchored
+  `EvidenceUnit` ground truth, deterministic/versioned text matching and
+  combined multi-chunk coverage.
+* Implement Recall@K, Precision@K, MRR and nDCG over distinct evidence units,
+  case-first aggregation and first-class slice metrics.
+* Record planner, eligibility, retrieval, outcome and operational results
+  separately with complete experiment lineage and absolute-invariant failures.
+* Produce machine-readable experiment results and human-readable
+  baseline-comparison reports; keep experiment execution, manual gate decisions
+  and baseline promotion as distinct actions.
+* Add provider-neutral `ModelAssistedEvaluator` request/result types, a concrete
+  isolated `RagasEvaluator` context-relevance adapter, injected judge-model
+  configuration, deterministic fakes and controlled advisory failure handling.
+* Keep ordinary tests credential-free and offline; make the real
+  Ragas-plus-provider integration test explicit and opt-in.
+* Add a representative synthetic V1 corpus spanning ADR-0017/0018 temporal,
+  applicability, comparison, structure, isolation, outcome and adversarial case
+  families, plus an accepted initial deterministic baseline.
 
 ### Acceptance criteria
 
-* Evaluation questions have expected source chunks or documents, per Stage
-  16.5's corpus format.
-* Metrics are reproducible.
-* Baseline results are recorded.
-* Retrieval changes can be compared against the recorded baseline.
-* Failures are inspectable rather than represented only by one aggregate
-  score.
+* Corpus, policy and result artefacts validate against repository-owned schemas;
+  canonical digests detect an in-place mutation of a baselined version.
+* Relevance is resolved through distinct `EvidenceUnit` coverage without
+  coupling ground truth to element/chunk IDs or rewarding duplicate chunks.
+* Deterministic metrics reproduce exactly for identical recorded inputs;
+  variants aggregate within a case before cases contribute equally to
+  corpus/slice metrics.
+* Planner, eligibility, retrieval, outcome and operational failures remain
+  separately inspectable, and important case-family slices cannot hide behind
+  aggregate results.
+* Tenancy, authorisation, temporal and applicability violations, lost cases and
+  metric non-reproducibility are absolute failures that comparative gains cannot
+  offset.
+* Ragas-specific types remain inside `RagasEvaluator`; ordinary tests use fakes,
+  the live test is opt-in, and evaluator failure cannot erase deterministic
+  results.
+* A versioned initial baseline, comparison report, deliberate promotion record
+  and manual gate record demonstrate the complete V1 governance path.
+* Full dependency compatibility and repository-wide quality checks pass after
+  adding the explicitly pinned Ragas dependency.
 
 ### Commit boundary
 
-git add tests docs scripts
+git add apps/ai contracts/evaluation tests/evaluation scripts/evaluation \
+  docs/evaluation docs/adr/0020-clarify-retrieval-evaluation-evidence-and-model-assisted-evaluation-semantics.md \
+  docs/adr/README.md IMPLEMENTATION_GUIDE.md tasks.json \
+  docs/journal/2026-08-07-r16-s06-implement-retrieval-evaluation.md
 git commit -m "Add retrieval evaluation suite"
 
 ---

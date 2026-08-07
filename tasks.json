@@ -3076,9 +3076,9 @@
           "guide_stage": "Stage 16.6 \u2014 Implement Retrieval Evaluation",
           "title": "Implement Retrieval Evaluation",
           "guide_start_line": 11722,
-          "guide_end_line": 11758,
+          "guide_end_line": 11802,
           "status": "not_started",
-          "objective": "Measure retrieval quality against the Stage 16.5 harness's curated question-and-source dataset.",
+          "objective": "Implement ADR-0019 and ADR-0020's repository-owned evaluation harness: versioned corpus and EvidenceUnits, deterministic layered/sliced metrics, digested experiments and baselines, manual quality gates, and the isolated Ragas context-relevance adapter.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
@@ -3086,7 +3086,7 @@
             "stage": "Stage 16.6 \u2014 Implement Retrieval Evaluation",
             "source_lines": {
               "start": 11722,
-              "end": 11758
+              "end": 11802
             }
           },
           "workflow": [
@@ -3117,8 +3117,8 @@
           "id": "R16-S07",
           "guide_stage": "Stage 16.7 \u2014 Define Hybrid Retrieval and Reranking Architecture",
           "title": "Define Hybrid Retrieval and Reranking Architecture",
-          "guide_start_line": 11759,
-          "guide_end_line": 11813,
+          "guide_start_line": 11803,
+          "guide_end_line": 11857,
           "status": "not_started",
           "objective": "Define one combined candidate-selection architecture \u2014 dense retrieval, sparse/keyword retrieval, fusion, reranking and evidence thresholds \u2014 as a single ADR, evaluated only after the semantic baseline is measured.",
           "session_mode": "architecture",
@@ -3127,8 +3127,8 @@
             "phase": "Phase 16 \u2014 Retrieval",
             "stage": "Stage 16.7 \u2014 Define Hybrid Retrieval and Reranking Architecture",
             "source_lines": {
-              "start": 11759,
-              "end": 11813
+              "start": 11803,
+              "end": 11857
             }
           },
           "workflow": [
@@ -3159,8 +3159,8 @@
           "id": "R16-S08",
           "guide_stage": "Stage 16.8 \u2014 Implement Hybrid Retrieval and Reranking",
           "title": "Implement Hybrid Retrieval and Reranking",
-          "guide_start_line": 11814,
-          "guide_end_line": 11847,
+          "guide_start_line": 11858,
+          "guide_end_line": 11891,
           "status": "not_started",
           "objective": "Implement the Stage 16.7 architecture: sparse retrieval, RRF fusion, the Reranker contract with Voyage as its V1 provider, calibrated thresholds and abstention.",
           "session_mode": "implementation",
@@ -3169,8 +3169,8 @@
             "phase": "Phase 16 \u2014 Retrieval",
             "stage": "Stage 16.8 \u2014 Implement Hybrid Retrieval and Reranking",
             "source_lines": {
-              "start": 11814,
-              "end": 11847
+              "start": 11858,
+              "end": 11891
             }
           },
           "workflow": [

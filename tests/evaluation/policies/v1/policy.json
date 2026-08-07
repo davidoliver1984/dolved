@@ -1,0 +1,8 @@
+{
+  "schema_version": "v1",
+  "policy_version": "1",
+  "absolute_failures": ["cross_workspace_evidence", "unauthorised_evidence", "temporally_ineligible_evidence", "applicability_ineligible_evidence", "lost_evaluation_case", "metric_non_reproducibility"],
+  "load_bearing_slices": ["CURRENT", "COMPARE", "applicability", "cross-workspace", "adversarial"],
+  "allowed_regressions": {"recall_at_k": 0.0, "mrr": 0.0, "ndcg_at_k": 0.0},
+  "advisory_metrics": ["CONTEXT_RELEVANCE", "latency_ms", "provider_cost"]
+}

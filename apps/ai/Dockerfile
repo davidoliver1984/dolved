@@ -2,6 +2,23 @@
 
 ARG UV_IMAGE=ghcr.io/astral-sh/uv:0.11.31-python3.14-trixie-slim
 
+FROM ${UV_IMAGE} AS dependencies
+
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
+ENV UV_PROJECT_ENVIRONMENT=/app/.venv
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY pyproject.toml uv.lock ./
+RUN uv sync \
+    --locked \
+    --no-install-project
+
 FROM ${UV_IMAGE} AS development
 
 ENV UV_COMPILE_BYTECODE=1
@@ -9,6 +26,10 @@ ENV UV_LINK_MODE=copy
 ENV UV_PROJECT_ENVIRONMENT=/app/.venv
 ENV TIKTOKEN_CACHE_DIR=/opt/tiktoken-cache
 ENV PATH="/app/.venv/bin:${PATH}"
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends build-essential libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd --gid 10001 app \
     && useradd \
@@ -20,10 +41,7 @@ RUN groupadd --gid 10001 app \
 
 WORKDIR /app
 
-COPY pyproject.toml uv.lock ./
-RUN uv sync \
-    --locked \
-    --no-install-project
+COPY --from=dependencies /app/.venv /app/.venv
 
 COPY --chown=app:app . .
 RUN uv sync --locked \

@@ -216,6 +216,7 @@ services:
     volumes:
       - ./apps/ai:/app
       - ./contracts:/contracts:ro
+      - ./tests/evaluation:/evaluation:ro
       - ai_venv:/app/.venv
     healthcheck:
       test:
@@ -279,6 +280,7 @@ services:
     volumes:
       - ./apps/ai:/app
       - ./contracts:/contracts:ro
+      - ./tests/evaluation:/evaluation:ro
       - ai_venv:/app/.venv
     depends_on:
       api:

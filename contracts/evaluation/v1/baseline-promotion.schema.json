@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_id", "corpus_version", "corpus_digest", "policy_version", "policy_digest", "promoted_by", "promoted_at", "reason"],
+  "properties": {
+    "schema_version": {"const": "v1"}, "experiment_id": {"type": "string"},
+    "corpus_version": {"type": "string"}, "corpus_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "policy_version": {"type": "string"}, "policy_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "promoted_by": {"type": "string"}, "promoted_at": {"type": "string", "format": "date-time"}, "reason": {"type": "string", "minLength": 1}
+  }
+}
