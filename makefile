@@ -169,6 +169,8 @@ telemetry-verify:
 telemetry-outage:
 	./scripts/telemetry/verify-collector-outage.sh
 
+EVALUATION_CORPUS_VERSION ?= v2
+
 evaluation-run:
 	@mkdir -p /tmp/rag-platform-evaluation
 	$(COMPOSE) run --rm --no-deps \
@@ -179,9 +181,9 @@ evaluation-run:
 		--workdir /workspace \
 		--env PYTHONPATH=/app \
 		ai python scripts/evaluation/run.py run \
-			--corpus tests/evaluation/corpus/v1/corpus.json \
+			--corpus tests/evaluation/corpus/$(EVALUATION_CORPUS_VERSION)/corpus.json \
 			--policy tests/evaluation/policies/v1/policy.json \
-			--observations tests/evaluation/observations/v1/offline-baseline.json \
+			--observations tests/evaluation/observations/$(EVALUATION_CORPUS_VERSION)/offline-baseline.json \
 			--repository-commit "$(shell git rev-parse HEAD)" \
 			--output /output/result.json
 

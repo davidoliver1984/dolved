@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import jsonschema
+import pytest
 
 from app.evaluation.canonical import content_digest
 from app.evaluation.models import (
@@ -21,10 +22,13 @@ CONTRACT_ROOT = Path("/contracts/evaluation/v1")
 EVALUATION_ROOT = Path("/evaluation")
 
 
-def test_corpus_and_policy_validate_against_shared_schemas() -> None:
+@pytest.mark.parametrize("corpus_version", ["v1", "v2"])
+def test_corpus_and_policy_validate_against_shared_schemas(
+    corpus_version: str,
+) -> None:
     pairs = (
         (
-            EVALUATION_ROOT / "corpus/v1/corpus.json",
+            EVALUATION_ROOT / f"corpus/{corpus_version}/corpus.json",
             CONTRACT_ROOT / "corpus.schema.json",
         ),
         (
@@ -42,9 +46,12 @@ def test_corpus_and_policy_validate_against_shared_schemas() -> None:
     QualityGatePolicy.model_validate_json(pairs[1][0].read_text())
 
 
-def test_every_canonical_excerpt_exists_in_its_committed_source() -> None:
+@pytest.mark.parametrize("corpus_version", ["v1", "v2"])
+def test_every_canonical_excerpt_exists_in_its_committed_source(
+    corpus_version: str,
+) -> None:
     corpus = EvaluationCorpus.model_validate_json(
-        (EVALUATION_ROOT / "corpus/v1/corpus.json").read_text()
+        (EVALUATION_ROOT / f"corpus/{corpus_version}/corpus.json").read_text()
     )
     for case in corpus.cases:
         for unit in case.evidence_units:
@@ -53,9 +60,10 @@ def test_every_canonical_excerpt_exists_in_its_committed_source() -> None:
                 assert excerpt in source
 
 
-def test_corpus_covers_every_required_v1_case_family() -> None:
+@pytest.mark.parametrize("corpus_version", ["v1", "v2"])
+def test_corpus_covers_every_required_v1_case_family(corpus_version: str) -> None:
     corpus = EvaluationCorpus.model_validate_json(
-        (EVALUATION_ROOT / "corpus/v1/corpus.json").read_text()
+        (EVALUATION_ROOT / f"corpus/{corpus_version}/corpus.json").read_text()
     )
     slices = {slice_name for case in corpus.cases for slice_name in case.slices}
     assert {
@@ -86,6 +94,20 @@ def test_corpus_covers_every_required_v1_case_family() -> None:
         "paraphrase",
         "synonymous-terminology",
     } <= slices
+
+
+def test_v2_predecessor_resurrection_case_enforces_adr_0017() -> None:
+    corpus = EvaluationCorpus.model_validate_json(
+        (EVALUATION_ROOT / "corpus/v2/corpus.json").read_text()
+    )
+    case = next(
+        item
+        for item in corpus.cases
+        if item.case_id == "temporal.predecessor-resurrection"
+    )
+
+    assert case.expected_outcome == "NO_ELIGIBLE_EVIDENCE"
+    assert case.evidence_units == ()
 
 
 def test_result_and_governance_records_validate_against_shared_schemas() -> None:
