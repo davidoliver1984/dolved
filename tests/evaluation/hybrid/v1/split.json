@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "corpus_version": "2",
+  "corpus_digest": "0e78f8e57a3d9c358ae08bdf7e97ded151cc4111cf934f48342427a2a187c1af",
+  "selection_rule": "case IDs are assigned once; held-out cases cannot influence threshold selection",
+  "calibration_case_ids": [
+    "current.policy.leave",
+    "location.alias.safety",
+    "table.leave.carry-over",
+    "adversarial.ranking"
+  ],
+  "held_out_case_ids": [
+    "compare.policy.leave",
+    "valid-at-date.leave",
+    "applicability.universal",
+    "membership.active"
+  ]
+}

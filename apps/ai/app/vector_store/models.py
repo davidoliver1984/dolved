@@ -6,6 +6,7 @@ from uuid import UUID
 from pydantic import Field, StringConstraints, field_validator, model_validator
 
 from app.extraction.models import ImmutableModel
+from app.sparse.models import SparseVector
 from app.vector_store.identity import deterministic_point_id
 
 NonEmptyString = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
@@ -27,6 +28,13 @@ class VectorSpace(ImmutableModel):
     vector_name: NonEmptyString = "dense"
     dimensions: int = Field(gt=0)
     distance: VectorDistance = VectorDistance.COSINE
+    sparse: SparseVectorSpace | None = None
+
+
+class SparseVectorSpace(ImmutableModel):
+    sparse_space_generation_id: UUID
+    profile_fingerprint: NonEmptyString
+    vector_name: NonEmptyString = "sparse"
 
 
 class VectorPointIdentity(ImmutableModel):
@@ -35,6 +43,7 @@ class VectorPointIdentity(ImmutableModel):
     chunk_id: UUID
     workspace_corpus_generation_id: UUID
     embedding_space_generation_id: UUID
+    sparse_space_generation_id: UUID | None = None
     event_id: UUID
     publication_status: VectorPublicationStatus
 
@@ -50,6 +59,7 @@ class VectorPointIdentity(ImmutableModel):
 
 class VectorPoint(VectorPointIdentity):
     values: tuple[float, ...] = Field(min_length=1)
+    sparse_vector: SparseVector | None = None
 
     @field_validator("values")
     @classmethod
@@ -59,7 +69,9 @@ class VectorPoint(VectorPointIdentity):
         return values
 
     def identity(self) -> VectorPointIdentity:
-        return VectorPointIdentity(**self.model_dump(exclude={"values"}))
+        return VectorPointIdentity(
+            **self.model_dump(exclude={"values", "sparse_vector"})
+        )
 
 
 class VectorScope(ImmutableModel):
@@ -100,6 +112,20 @@ class VectorUpsertRequest(ImmutableModel):
                 )
             if len(point.values) != self.vector_space.dimensions:
                 raise ValueError("point dimensions do not match vector space")
+            if self.vector_space.sparse is None:
+                if (
+                    point.sparse_vector is not None
+                    or point.sparse_space_generation_id is not None
+                ):
+                    raise ValueError(
+                        "dense-only vector space cannot receive sparse values"
+                    )
+            elif (
+                point.sparse_vector is None
+                or point.sparse_space_generation_id
+                != self.vector_space.sparse.sparse_space_generation_id
+            ):
+                raise ValueError("point sparse generation does not match vector space")
         return self
 
 
@@ -129,6 +155,18 @@ class VectorSearchRequest(ImmutableModel):
         return self
 
 
+class SparseVectorSearchRequest(ImmutableModel):
+    scope: VectorScope
+    query_vector: SparseVector
+    limit: int = Field(ge=1, le=1000)
+
+    @model_validator(mode="after")
+    def require_sparse_space(self) -> SparseVectorSearchRequest:
+        if self.scope.vector_space.sparse is None:
+            raise ValueError("sparse search requires an explicit sparse vector space")
+        return self
+
+
 class VectorSearchHit(ImmutableModel):
     point_id: UUID
     score: float
@@ -137,6 +175,7 @@ class VectorSearchHit(ImmutableModel):
     chunk_id: UUID
     workspace_corpus_generation_id: UUID
     embedding_space_generation_id: UUID
+    sparse_space_generation_id: UUID | None = None
     event_id: UUID
     publication_status: VectorPublicationStatus
 

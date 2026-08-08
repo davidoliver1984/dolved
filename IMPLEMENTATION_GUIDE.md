@@ -12094,41 +12094,88 @@ invented as a hard-coded number.
 
 ### Status
 
-Not yet executed.
+Implemented and evaluated for review on 2026-08-08. All code, contract,
+migration and repository verification work is complete. A preliminary live
+Voyage calibration and a complete live dense-versus-hybrid evaluation were run
+from the uncommitted working tree. The hybrid path improved recall, MRR and
+nDCG without a hard failure, but the calibrated threshold was not sufficiently
+selective on the actual retrieved candidate distribution. Stage closure remains
+pending human review and deliberate recalibration; no fake, uncommitted or
+insufficiently selective threshold has been activated as production policy.
 
-### Planned work
+### Implementation
 
-* `apps/ai`: `SparseEncoder`/`SparseEmbeddingProfile` (FastEmbed/SPLADE++,
-  input-length validation, no silent truncation); `FusionStrategy`/RRF
-  (1-based ranks, versioned `rrf_k`, deterministic tie-break, `COMPARE`
-  sides fused independently); `Reranker`/Voyage `rerank-2.5` (injected
-  client, typed failure taxonomy, strict provider-response validation,
-  deterministic fake, opt-in live test);
-* `apps/api`: `EvidenceThresholdPolicy` persistence, resolution and
-  identity-binding validation; the final eligibility recheck after
-  reranking; `INSUFFICIENT_EVIDENCE` and post-threshold
-  `COMPARISON_SCOPE_INCOMPLETE` outcome selection; Laravel-side reranker-
-  response validation;
-* `contracts`: the `retrieval.rerank` `rc1` purpose (request/response
-  shape, signed alongside the existing `rc1` fields);
-* PostgreSQL migrations, models and relationships for sparse-profile and
-  sparse-space-generation identity and lineage, and for
-  `EvidenceThresholdPolicy`'s versioned, digest-bound configuration;
-* ingestion/generation-completeness changes: the coordinated corpus
-  rebuild producing a complete new (dense + sparse) point set under
-  newly-derived point identities, verified across both axes before
-  activation, plus the lifecycle-correct `SUPERSEDED -> ACTIVE` rollback
-  operation;
-* Qdrant collection/named-vector configuration for the new sparse vector;
-* evaluation/calibration artefacts: the calibration/tuning split and the
-  separate held-out acceptance split ADR-0021 requires, using ADR-0019's
-  repository-owned corpus and metrics;
-* cross-service tests spanning `apps/ai` and `apps/api`, including the
-  monotonic candidate-bound validation and rollback lifecycle transitions;
-* configuration/dependency files (FastEmbed/SPLADE++, Voyage reranking
-  client), including the dependency/regression verification ADR-0021
-  requires before adopting the Ragas-adjacent transitive dependency set
-  Codex's compatibility review already flagged for the evaluation harness.
+* Added a provider-neutral `SparseEncoder`, an immutable and fingerprinted
+  SPLADE++ profile, a FastEmbed adapter with explicit input-length checks,
+  and deterministic fakes. FastEmbed is locked to the compatible 0.7 release
+  line and the model artefacts are pinned to repository
+  `Qdrant/Splade_PP_en_v1` revision
+  `efcd182bc7eb351e81a9445752d4388c2bab500b`; its resolved transitive
+  dependency set passed the complete Python regression suite.
+* Added a provider-neutral `FusionStrategy` and deterministic RRF
+  implementation with 1-based ranks, one contribution per source list,
+  canonical-chunk deduplication, retained rank/score lineage and the precise
+  ADR-0021 tie-break. `COMPARE` sides are fused independently.
+* Added a provider-neutral `Reranker`, deterministic fake and isolated Voyage
+  `rerank-2.5` adapter. The adapter uses an injected client, disables provider
+  truncation, classifies failures, retries only transient failures and rejects
+  unknown/duplicate candidates, invalid ranks, non-finite scores, malformed
+  usage and incorrect model lineage.
+  `COMPARE` sides are reranked independently and response identity is the
+  side-qualified `(side, chunk_id)` pair, so the same canonical chunk may
+  legitimately occur on both independently resolved temporal sides without
+  merging their rankings.
+* Extended the purpose-scoped HMAC `rc1` protocol with
+  `retrieval.rerank`, `retrieval.corpus.rebuild` and
+  `retrieval.corpus.verify` operations and repository-owned JSON Schemas.
+  Reranking telemetry records safe counts and lineage only, never query or
+  chunk text.
+* Extended Qdrant's existing collection with a named sparse vector, explicit
+  sparse-generation payload/index scope, hybrid upserts and sparse search.
+  Completeness verification now validates exact point identities, dense and
+  sparse vector schema, and payload lineage rather than counts alone.
+* Added PostgreSQL persistence for immutable sparse profiles and sparse-space
+  generations, evidence-threshold policy lineage/configuration and audited
+  generation rollback. Database constraints enforce fingerprints, lifecycle
+  timestamps, monotonic candidate bounds, threshold range, one active policy
+  per dense/sparse lineage, compatible available sparse space for active
+  hybrid corpora and protection against retiring an actively referenced
+  sparse space. Threshold precision preserves Voyage's calibrated score
+  boundary without rounding it to a different policy. PostgreSQL stores no raw
+  vectors.
+* Added explicit Laravel commands and actions for sparse-space provisioning,
+  bounded/resumable hybrid corpus rebuild, exact dual-axis verification,
+  atomic activation and audited `SUPERSEDED -> ACTIVE` rollback. The old
+  active generation remains serving until the replacement verifies and
+  activates; deterministic point identities make retries idempotent.
+* Extended ingestion so an explicitly selected sparse lineage produces and
+  verifies dense and sparse vectors together. Laravel remains authoritative
+  for generation and lifecycle transitions; Python still has no PostgreSQL
+  access and all vector operations remain behind `VectorStore`.
+* Extended semantic retrieval to resolve an exact active
+  `EvidenceThresholdPolicy`, validate search/reranker lineage, hydrate and
+  eligibility-check before reranking, recheck after reranking, apply the
+  Laravel-owned threshold and final evidence bound, and return
+  `INSUFFICIENT_EVIDENCE` or post-threshold
+  `COMPARISON_SCOPE_INCOMPLETE` explicitly. Any sparse/reranker/policy
+  failure produces `RETRIEVAL_FAILED`; there is no silent dense-only
+  downgrade.
+* Added a versioned hybrid calibration/held-out split, source-anchored live
+  candidate set, deterministic calibration mechanics and a rate-limit-aware
+  Voyage calibration command. Observation identity is candidate-specific while
+  split isolation is enforced at case level. The checked-in offline fixture is
+  explicitly labelled `deterministic-fake` and verifies mechanics only. A
+  preliminary live run proposed `0.337890625`, with precision, recall and F1 of
+  `1.0` on calibration and untouched held-out cases; it is verification
+  evidence rather than an accepted policy because the implementation was not
+  committed when it ran.
+* Added an opt-in live pipeline evaluation that creates and removes a disposable
+  Qdrant collection, embeds the repository evaluation chunks with Voyage,
+  computes pinned SPLADE++ vectors, executes real dense and sparse searches,
+  applies deterministic RRF, reranks through Voyage and evaluates the final
+  thresholded evidence with ADR-0019's harness. Provider calls are paced at the
+  actual HTTP-call boundary for account-specific rate limits; ordinary tests
+  remain wholly offline.
 
 ### Required ADR
 
@@ -12138,28 +12185,97 @@ docs/adr/0021-define-hybrid-retrieval-and-reranking-architecture.md
 ### Acceptance criteria
 
 * Sparse and dense candidates are fused deterministically before
-  reranking, not merged ad hoc per call site.
+  reranking, not merged ad hoc per call site. — Met.
 * Reranking reduces a broader candidate set to a smaller evidence set
-  through the `Reranker` contract, not a direct Voyage SDK call.
+  through the `Reranker` contract, not a direct Voyage SDK call. — Met.
 * Evidence below the calibrated `evidence_threshold` results in explicit
   `INSUFFICIENT_EVIDENCE`, not a low-confidence answer presented as if
-  grounded.
+  grounded. — Implemented and tested; production activation awaits the live
+  calibrated policy.
 * Workspace membership, authorisation, temporal authority (ADR-0017) and
   applicability eligibility are verified through the complete
-  fused/reranked path, not only the semantic baseline.
+  fused/reranked path, not only the semantic baseline. — Met.
 * `evidence_threshold` and any configuration claimed as an improvement are
   selected on a calibration/tuning split and assessed on a separate
   held-out acceptance split that did not influence selection, using
-  Stage 16.6's evaluation harness.
+  Stage 16.6's evaluation harness. — Split isolation and calibration mechanics
+  are implemented and tested. The first live end-to-end assessment found that
+  `0.337890625` remained recall-safe but was not selective enough on actual
+  retrieved held-out candidates, so acceptance and activation remain pending a
+  deliberate recalibration from the committed pipeline.
 * No stage can be configured to exceed the candidates an upstream stage
   actually produced; statically-knowable violations are rejected at
-  configuration-validation time.
+  configuration-validation time. — Met in database, application and Python
+  contract validation.
 * Rollback is the lifecycle-correct, atomic, audited `SUPERSEDED -> ACTIVE`
   operation; a mid-request sparse/reranker failure returns
-  `RETRIEVAL_FAILED`, never a silent dense-only downgrade.
+  `RETRIEVAL_FAILED`, never a silent dense-only downgrade. — Met.
 * Tests cover fusion determinism, reranking, threshold/abstention
   behaviour, isolation, monotonic candidate bounds, and rollback lifecycle
-  transitions.
+  transitions. — Met.
+
+### Commands and verification
+
+* The live Voyage `rerank-2.5` adapter smoke test passed. The preliminary
+  rate-limit-paced calibration scored 17 source-anchored passages in eight
+  case-isolated cases using 276 provider input tokens.
+* The complete Python suite passed 253 tests with three opt-in live tests
+  skipped; Ruff lint and formatting passed, and Mypy reported no issues in
+  130 source files.
+* The complete Laravel suite passed 188 tests with 786 assertions; Pint
+  passed across 209 files.
+* The frontend suite passed 26 tests; ESLint and TypeScript passed. The
+  Next.js production build passed when run with `NODE_ENV=production`. An
+  initial attempt inherited the development container's
+  `NODE_ENV=development` and failed during framework prerendering; no
+  frontend change was required.
+* Every migration, including the new hybrid foundation migration, ran cleanly
+  against a newly-created disposable PostgreSQL database. Read-only catalogue
+  inspection confirmed the expected lifecycle constraints, partial active-
+  policy index and sparse-space protection triggers; the disposable database
+  was then removed.
+* Qdrant integration coverage verified idempotent collection/index
+  provisioning, dual-vector upsert/search and exact dense/sparse completeness
+  checks.
+* Shared schemas, HMAC purposes, dependency locks, `git diff --check` and the
+  repository-wide formatting/lint/type/test gates passed.
+* The live end-to-end run used dense `40`, sparse `40`, fusion `15`, reranker
+  `15`, threshold `0.337890625`, final evidence `5` and RRF `60`. Against the
+  same corpus and eligibility fixture, dense-only at K=3 scored recall
+  `0.9565217391`, precision `0.1739130435`, MRR `0.5` and nDCG
+  `0.9404752067`; hybrid at final K=5 scored recall `1.0`, precision
+  `0.1130434783`, MRR `0.5014492754` and nDCG `0.9516022960`. Both had zero
+  hard failures and perfect planner, eligibility and outcome accuracy. Because
+  the compared K values differ, precision is reported rather than claimed as a
+  like-for-like regression. The accepted recorded V2 dense baseline remains
+  recall `1.0`, precision `0.1884057971`, MRR `0.5543478261` and nDCG
+  `0.9919767338`; it is retained as historical lineage, but is not treated as a
+  direct provider comparison because it used recorded observations rather than
+  this live source-anchored Qdrant run.
+* Hybrid achieved recall `1.0` on `CURRENT`, `VALID_AT_DATE`, `COMPARE`,
+  applicability, adversarial and every held-out acceptance case. The held-out
+  evidence cases each returned five threshold-qualified candidates (precision
+  at K `0.2`), demonstrating that the source-anchored calibration result did
+  not establish sufficient selectivity for the actual retrieval distribution.
+* The live run processed 246 Voyage embedding input tokens (estimated
+  `$0.00002952` under the configured embedding cost), 2,207 reranker input
+  tokens and 11 chunks across 15 queries. Search latency was 403.5 ms mean,
+  417.1 ms p50 and 767.2 ms p95. Recorded rerank wall time includes deliberate
+  25-second provider pacing (24.6 s mean; 49.4 s maximum for the two-sided
+  `COMPARE` call) and therefore is not represented as Voyage model latency.
+  No reranker price was configured, so no reranker cost was invented.
+
+### Remaining closure item
+
+Review the preliminary live result and retain `0.337890625` only as the current
+experimental value for its exact source-anchored calibration lineage. Before
+activation, commit the implementation, regenerate actual-pipeline calibration
+observations from that exact immutable commit using only the calibration cases,
+select the policy without consulting held-out cases, and then assess it once on
+the untouched held-out split. Persist/activate a policy only if that result is
+accepted and bind it to the exact provider, model, adapter, dense/sparse
+profiles, RRF, candidate configuration and corpus digest. Until then the hybrid
+path deliberately fails closed because there is no authoritative active policy.
 
 ### Commit boundary
 

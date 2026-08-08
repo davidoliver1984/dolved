@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\Services\Retrieval;
 
 use App\Exceptions\RetrievalException;
+use App\Models\DocumentChunk;
 use App\Models\EmbeddingProfile;
 use App\Models\EmbeddingSpaceGeneration;
+use App\Models\EvidenceThresholdPolicy;
+use App\Models\SparseEmbeddingProfile;
+use App\Models\SparseSpaceGeneration;
 use App\Models\Workspace;
 use App\Models\WorkspaceCorpusGeneration;
 use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\RetrievalPlan;
+use App\Support\Retrieval\RetrievalSearchResult;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
@@ -50,14 +55,14 @@ final readonly class RetrievalClient
         }
     }
 
-    /** @return list<array<string, mixed>> */
     public function search(
         Workspace $workspace,
         WorkspaceCorpusGeneration $corpus,
         EligibleRetrievalScope $eligible,
         string $query,
         int $candidateK,
-    ): array {
+        ?EvidenceThresholdPolicy $policy = null,
+    ): RetrievalSearchResult {
         $space = $corpus->embeddingSpaceGeneration;
         $profile = $space->embeddingProfile;
         $scopes = [];
@@ -70,7 +75,7 @@ final readonly class RetrievalClient
                 'eligible_document_ids' => array_values($documentIds),
             ];
         }
-        $response = $this->call('/api/internal/retrieval/search', 'retrieval.search', $workspace, [
+        $payload = [
             'contract_version' => 1,
             'workspace_id' => $workspace->public_id,
             'query' => $query,
@@ -80,9 +85,26 @@ final readonly class RetrievalClient
             'workspace_corpus_generation_id' => $corpus->public_id,
             'candidate_k' => $candidateK,
             'scopes' => $scopes,
-        ]);
+        ];
+        $sparse = $corpus->sparseSpaceGeneration;
+        if ($sparse !== null) {
+            if ($policy === null) {
+                throw new RetrievalException('Hybrid retrieval requires an evidence-threshold policy.');
+            }
+            $sparse->loadMissing('sparseEmbeddingProfile');
+            $payload += [
+                'sparse_embedding_profile' => $this->sparseProfile($sparse->sparseEmbeddingProfile),
+                'sparse_profile_fingerprint' => $sparse->sparseEmbeddingProfile->fingerprint,
+                'sparse_vector_space' => $this->sparseVectorSpace($sparse),
+                'hybrid_configuration' => $this->hybridConfiguration($policy),
+            ];
+            $payload['vector_space']['sparse'] = $payload['sparse_vector_space'];
+            $payload['candidate_k'] = $policy->dense_candidate_k;
+        }
+        $response = $this->call('/api/internal/retrieval/search', 'retrieval.search', $workspace, $payload);
         $candidates = $response->json('candidates');
-        if (! is_array($candidates)) {
+        $lineage = $response->json('lineage');
+        if (! is_array($candidates) || ! is_array($lineage)) {
             throw new RetrievalException('The retriever returned an invalid response.');
         }
         $validated = [];
@@ -96,6 +118,7 @@ final readonly class RetrievalClient
                 || ! is_numeric($candidate['score'] ?? null)
                 || ! is_int($candidate['rank'] ?? null)
                 || ! is_string($candidate['retrieval_method'] ?? null)
+                || ! in_array($candidate['retrieval_method'], ['dense', 'sparse', 'hybrid'], true)
                 || ! in_array($candidate['side'] ?? null, ['primary', 'comparison'], true)
             ) {
                 throw new RetrievalException('The retriever returned a malformed candidate.');
@@ -103,7 +126,151 @@ final readonly class RetrievalClient
             $validated[] = $candidate;
         }
 
-        return $validated;
+        return new RetrievalSearchResult($validated, $lineage);
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $candidates
+     * @return array{candidates: list<array<string, mixed>>, profile: array<string, mixed>}
+     */
+    public function rerank(
+        Workspace $workspace,
+        string $query,
+        array $candidates,
+        EvidenceThresholdPolicy $policy,
+    ): array {
+        if ($candidates === []) {
+            throw new RetrievalException('Reranking requires at least one eligible candidate.');
+        }
+        $requestedKeys = collect($candidates)->map(
+            fn (array $candidate): string => $candidate['side'].':'.$candidate['chunk_id']
+        )->all();
+        if (count($requestedKeys) !== count(array_unique($requestedKeys))) {
+            throw new RetrievalException('Reranking side-qualified candidate identities must be unique.');
+        }
+        $profile = [
+            'provider' => $policy->reranker_provider,
+            'model' => $policy->reranker_model,
+            'adapter_version' => $policy->reranker_adapter_version,
+            'truncation' => false,
+        ];
+        $response = $this->call('/api/internal/retrieval/rerank', 'retrieval.rerank', $workspace, [
+            'contract_version' => 1,
+            'workspace_id' => $workspace->public_id,
+            'query' => $query,
+            'profile' => $profile,
+            'candidates' => array_map(fn (array $candidate): array => [
+                'chunk_id' => $candidate['chunk_id'],
+                'document_id' => $candidate['document_id'],
+                'document_family_id' => $candidate['document_family_id'],
+                'version_position' => $candidate['version_position'],
+                'side' => $candidate['side'],
+                'text' => $candidate['chunk_text'],
+                'fused_score' => $candidate['score'],
+                'fused_rank' => $candidate['rank'],
+            ], $candidates),
+            'top_k' => min($policy->reranker_candidate_k, count($candidates)),
+        ]);
+        $returned = $response->json('candidates');
+        $returnedProfile = $response->json('profile');
+        if (! is_array($returned) || ! is_array($returnedProfile)) {
+            throw new RetrievalException('The reranker returned an invalid response.');
+        }
+        $seen = [];
+        $nextRankBySide = [];
+        foreach ($returned as $candidate) {
+            $side = is_array($candidate) ? ($candidate['side'] ?? null) : null;
+            $chunkId = is_array($candidate) ? ($candidate['chunk_id'] ?? null) : null;
+            $key = is_string($side) && is_string($chunkId) ? $side.':'.$chunkId : null;
+            $expectedRank = is_string($side) ? (($nextRankBySide[$side] ?? 0) + 1) : null;
+            if (
+                ! is_array($candidate)
+                || $key === null
+                || ! in_array($key, $requestedKeys, true)
+                || isset($seen[$key])
+                || ! is_numeric($candidate['score'] ?? null)
+                || ! is_finite((float) $candidate['score'])
+                || ($candidate['rank'] ?? null) !== $expectedRank
+            ) {
+                throw new RetrievalException('The reranker returned a malformed candidate.');
+            }
+            $seen[$key] = true;
+            $nextRankBySide[$side] = $expectedRank;
+        }
+
+        return ['candidates' => $returned, 'profile' => $returnedProfile];
+    }
+
+    /**
+     * @param  list<DocumentChunk>  $chunks
+     * @return list<string>
+     */
+    public function rebuildCorpusBatch(
+        Workspace $workspace,
+        WorkspaceCorpusGeneration $corpus,
+        array $chunks,
+    ): array {
+        if ($corpus->sparseSpaceGeneration === null || $corpus->rebuild_event_id === null) {
+            throw new RetrievalException('A hybrid corpus rebuild requires explicit sparse and event lineage.');
+        }
+        $payload = $this->corpusPayload($workspace, $corpus) + [
+            'rebuild_event_id' => $corpus->rebuild_event_id,
+            'chunks' => array_map(static fn (DocumentChunk $chunk): array => [
+                'chunk_id' => $chunk->public_id,
+                'document_id' => $chunk->document->public_id,
+                'text' => $chunk->text,
+            ], $chunks),
+        ];
+        $response = $this->call(
+            '/api/internal/retrieval/corpus/rebuild-batch',
+            'retrieval.corpus.rebuild',
+            $workspace,
+            $payload,
+        );
+        $pointIds = $response->json('point_ids');
+        if (! is_array($pointIds) || collect($pointIds)->contains(fn (mixed $id): bool => ! is_string($id))) {
+            throw new RetrievalException('The corpus rebuild returned invalid point identities.');
+        }
+
+        return array_values($pointIds);
+    }
+
+    /** @return array{complete: bool, point_ids: list<string>} */
+    public function verifyCorpus(
+        Workspace $workspace,
+        WorkspaceCorpusGeneration $corpus,
+    ): array {
+        $corpus->loadMissing([
+            'embeddingSpaceGeneration.embeddingProfile',
+            'sparseSpaceGeneration.sparseEmbeddingProfile',
+            'documentChunks.document',
+            'documentChunks.ingestionAttempt',
+        ]);
+        $points = $corpus->documentChunks->map(fn (DocumentChunk $chunk): array => [
+            'chunk_id' => $chunk->public_id,
+            'document_id' => $chunk->document->public_id,
+            'event_id' => $corpus->rebuild_event_id
+                ?? $chunk->ingestionAttempt->event_id,
+        ])->values()->all();
+        if ($points === []) {
+            throw new RetrievalException('A corpus generation with no canonical chunks cannot be verified.');
+        }
+        $response = $this->call(
+            '/api/internal/retrieval/corpus/verify',
+            'retrieval.corpus.verify',
+            $workspace,
+            collect($this->corpusPayload($workspace, $corpus))->only([
+                'contract_version', 'workspace_id', 'vector_space',
+                'workspace_corpus_generation_id',
+            ])->all() + ['points' => $points],
+        );
+        $complete = $response->json('complete');
+        $pointIds = $response->json('point_ids');
+        if (! is_bool($complete) || ! is_array($pointIds) || collect($pointIds)->contains(fn (mixed $id): bool => ! is_string($id))) {
+            throw new RetrievalException('The corpus verifier returned invalid evidence.');
+        }
+
+        return ['complete' => $complete, 'point_ids' => array_values($pointIds)];
     }
 
     /** @param array<string, mixed> $payload */
@@ -189,6 +356,71 @@ final readonly class RetrievalClient
             'vector_name' => $space->vector_name,
             'dimensions' => $space->dimensions,
             'distance' => $space->distance,
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function sparseProfile(SparseEmbeddingProfile $profile): array
+    {
+        return collect($profile->getAttributes())->only([
+            'provider', 'model', 'tokenizer', 'tokenizer_revision',
+            'output_representation', 'max_input_tokens', 'document_input_type',
+            'query_input_type', 'model_revision', 'adapter_version',
+        ])->all();
+    }
+
+    /** @return array<string, mixed> */
+    private function sparseVectorSpace(SparseSpaceGeneration $space): array
+    {
+        return [
+            'sparse_space_generation_id' => $space->public_id,
+            'profile_fingerprint' => $space->sparseEmbeddingProfile->fingerprint,
+            'vector_name' => $space->vector_name,
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function hybridConfiguration(EvidenceThresholdPolicy $policy): array
+    {
+        return [
+            'version' => $policy->version,
+            'dense_candidate_k' => $policy->dense_candidate_k,
+            'sparse_candidate_k' => $policy->sparse_candidate_k,
+            'fusion_candidate_k' => $policy->fusion_candidate_k,
+            'reranker_candidate_k' => $policy->reranker_candidate_k,
+            'final_evidence_k' => $policy->final_evidence_k,
+            'fusion_strategy' => $policy->fusion_strategy,
+            'fusion_version' => $policy->fusion_version,
+            'rrf_k' => $policy->rrf_k,
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function corpusPayload(
+        Workspace $workspace,
+        WorkspaceCorpusGeneration $corpus,
+    ): array {
+        $corpus->loadMissing([
+            'embeddingSpaceGeneration.embeddingProfile',
+            'sparseSpaceGeneration.sparseEmbeddingProfile',
+        ]);
+        $space = $corpus->embeddingSpaceGeneration;
+        $profile = $space->embeddingProfile;
+        $sparse = $corpus->sparseSpaceGeneration;
+        $vectorSpace = $this->vectorSpace($space, $profile);
+        if ($sparse !== null) {
+            $vectorSpace['sparse'] = $this->sparseVectorSpace($sparse);
+        }
+
+        return [
+            'contract_version' => 1,
+            'workspace_id' => $workspace->public_id,
+            'embedding_profile' => $this->profile($profile),
+            'sparse_embedding_profile' => $sparse === null
+                ? null
+                : $this->sparseProfile($sparse->sparseEmbeddingProfile),
+            'vector_space' => $vectorSpace,
+            'workspace_corpus_generation_id' => $corpus->public_id,
         ];
     }
 }

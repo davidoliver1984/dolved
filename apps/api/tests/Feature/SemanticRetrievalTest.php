@@ -12,8 +12,11 @@ use App\Models\Document;
 use App\Models\DocumentChunk;
 use App\Models\EmbeddingProfile;
 use App\Models\EmbeddingSpaceGeneration;
+use App\Models\EvidenceThresholdPolicy;
 use App\Models\OrganisationalLocation;
 use App\Models\OrganisationalLocationAlias;
+use App\Models\SparseEmbeddingProfile;
+use App\Models\SparseSpaceGeneration;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceCorpusGeneration;
@@ -123,6 +126,9 @@ class SemanticRetrievalTest extends TestCase
             return Http::response([
                 'contract_version' => 1,
                 'request_id' => $requestId,
+                'lineage' => [
+                    'embedding_profile_fingerprint' => $generation->embeddingSpaceGeneration->embeddingProfile->fingerprint,
+                ],
                 'candidates' => [[
                     'chunk_id' => $chunk->public_id,
                     'document_id' => $document->public_id,
@@ -204,6 +210,9 @@ class SemanticRetrievalTest extends TestCase
 
             return Http::response([
                 'request_id' => $body['request_id'],
+                'lineage' => [
+                    'embedding_profile_fingerprint' => $generation->embeddingSpaceGeneration->embeddingProfile->fingerprint,
+                ],
                 'candidates' => [[
                     'chunk_id' => $chunk->public_id,
                     'document_id' => $document->public_id,
@@ -297,7 +306,7 @@ class SemanticRetrievalTest extends TestCase
     {
         [$workspace, $user, $generation] = $this->retrievalWorkspace();
         $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
-        Http::fake(function (Request $request) {
+        Http::fake(function (Request $request) use ($generation) {
             $body = $request->data();
             if (str_ends_with($request->url(), '/plan')) {
                 return Http::response([
@@ -311,6 +320,9 @@ class SemanticRetrievalTest extends TestCase
 
             return Http::response([
                 'request_id' => $body['request_id'],
+                'lineage' => [
+                    'embedding_profile_fingerprint' => $generation->embeddingSpaceGeneration->embeddingProfile->fingerprint,
+                ],
                 'candidates' => [],
             ]);
         });
@@ -329,6 +341,60 @@ class SemanticRetrievalTest extends TestCase
             "/api/workspaces/{$workspace->public_id}/retrieval",
             ['question' => 'Unavailable?'],
         )->assertJsonPath('data.outcome', 'retrieval_failed');
+    }
+
+    public function test_hybrid_path_reranks_rechecks_and_applies_laravel_threshold(): void
+    {
+        [$workspace, $user, $generation, $policy] = $this->hybridRetrievalWorkspace();
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        $chunk = $document->chunks()->firstOrFail();
+        $this->fakeHybridRetrieval($generation, $policy, $document, $chunk, 0.79);
+
+        $this->actingAs($user)->postJson(
+            "/api/workspaces/{$workspace->public_id}/retrieval",
+            ['question' => 'What is the current policy?'],
+        )->assertOk()->assertJsonPath('data.outcome', 'insufficient_evidence');
+
+        Http::assertSentCount(3);
+        Http::assertSent(fn (Request $request): bool => $request->hasHeader(
+            'X-Retrieval-Caller-Purpose',
+            'retrieval.rerank',
+        ));
+    }
+
+    public function test_hybrid_path_returns_qualified_lineage(): void
+    {
+        [$workspace, $user, $generation, $policy] = $this->hybridRetrievalWorkspace();
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        $chunk = $document->chunks()->firstOrFail();
+        $this->fakeHybridRetrieval($generation, $policy, $document, $chunk, 0.91);
+
+        $response = $this->actingAs($user)->postJson(
+            "/api/workspaces/{$workspace->public_id}/retrieval",
+            ['question' => 'What is the current policy?'],
+        );
+
+        $response->assertOk()
+            ->assertJsonPath('data.outcome', 'evidence_found')
+            ->assertJsonPath('data.candidates.0.score', 0.91)
+            ->assertJsonPath('data.candidates.0.fused_score', 0.04)
+            ->assertJsonPath('data.candidates.0.evidence_threshold_policy_version', $policy->version)
+            ->assertJsonPath('data.candidates.0.reranker_model', $policy->reranker_model);
+    }
+
+    public function test_hybrid_path_rejects_mismatched_sparse_lineage(): void
+    {
+        [$workspace, $user, $generation, $policy] = $this->hybridRetrievalWorkspace();
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        $chunk = $document->chunks()->firstOrFail();
+        $this->fakeHybridRetrieval($generation, $policy, $document, $chunk, 0.91, true);
+
+        $this->actingAs($user)->postJson(
+            "/api/workspaces/{$workspace->public_id}/retrieval",
+            ['question' => 'What is the current policy?'],
+        )->assertOk()->assertJsonPath('data.outcome', 'retrieval_failed');
+
+        Http::assertSentCount(2);
     }
 
     /** @return array{Workspace, User, WorkspaceCorpusGeneration} */
@@ -352,6 +418,119 @@ class SemanticRetrievalTest extends TestCase
         $workspace->save();
 
         return [$workspace->fresh(), $user, $generation->fresh(['embeddingSpaceGeneration.embeddingProfile'])];
+    }
+
+    /** @return array{Workspace, User, WorkspaceCorpusGeneration, EvidenceThresholdPolicy} */
+    private function hybridRetrievalWorkspace(): array
+    {
+        $workspace = Workspace::factory()->create();
+        $user = User::factory()->create(['email_verified_at' => now()]);
+        WorkspaceMembership::factory()->for($workspace)->for($user)->create([
+            'role' => WorkspaceRole::Owner,
+        ]);
+        $profile = EmbeddingProfile::factory()->create();
+        $space = EmbeddingSpaceGeneration::factory()->available()->create([
+            'embedding_profile_id' => $profile->id,
+            'dimensions' => $profile->dimensions,
+        ]);
+        $sparseProfile = SparseEmbeddingProfile::factory()->create();
+        $sparse = SparseSpaceGeneration::factory()->available()->create([
+            'sparse_embedding_profile_id' => $sparseProfile->id,
+            'embedding_space_generation_id' => $space->id,
+        ]);
+        $generation = WorkspaceCorpusGeneration::factory()->active()->create([
+            'workspace_id' => $workspace->id,
+            'embedding_space_generation_id' => $space->id,
+            'sparse_space_generation_id' => $sparse->id,
+            'expected_point_count' => 1,
+            'point_manifest_digest' => hash('sha256', 'hybrid-test'),
+            'verified_at' => now(),
+        ]);
+        $workspace->active_workspace_corpus_generation_id = $generation->id;
+        $workspace->save();
+        $policy = EvidenceThresholdPolicy::factory()->active()->create([
+            'embedding_profile_fingerprint' => $profile->fingerprint,
+            'sparse_profile_fingerprint' => $sparseProfile->fingerprint,
+        ]);
+
+        return [
+            $workspace->fresh(),
+            $user,
+            $generation->fresh([
+                'embeddingSpaceGeneration.embeddingProfile',
+                'sparseSpaceGeneration.sparseEmbeddingProfile',
+            ]),
+            $policy,
+        ];
+    }
+
+    private function fakeHybridRetrieval(
+        WorkspaceCorpusGeneration $generation,
+        EvidenceThresholdPolicy $policy,
+        Document $document,
+        DocumentChunk $chunk,
+        float $rerankerScore,
+        bool $mismatchedLineage = false,
+    ): void {
+        Http::fake(function (Request $request) use ($generation, $policy, $document, $chunk, $rerankerScore, $mismatchedLineage) {
+            $body = $request->data();
+            if (str_ends_with($request->url(), '/plan')) {
+                return Http::response([
+                    'request_id' => $body['request_id'],
+                    'plan' => [
+                        'retrieval_queries' => [$body['question']],
+                        'temporal_mode' => 'current',
+                    ],
+                ]);
+            }
+            if (str_ends_with($request->url(), '/search')) {
+                return Http::response([
+                    'request_id' => $body['request_id'],
+                    'lineage' => [
+                        'embedding_profile_fingerprint' => $policy->embedding_profile_fingerprint,
+                        'sparse_profile_fingerprint' => $mismatchedLineage
+                            ? str_repeat('0', 64)
+                            : $policy->sparse_profile_fingerprint,
+                        'sparse_space_generation_id' => $generation->sparseSpaceGeneration->public_id,
+                        'fusion_strategy' => $policy->fusion_strategy,
+                        'fusion_version' => $policy->fusion_version,
+                        'rrf_k' => $policy->rrf_k,
+                        'configuration_version' => $policy->version,
+                    ],
+                    'candidates' => [[
+                        'chunk_id' => $chunk->public_id,
+                        'document_id' => $document->public_id,
+                        'workspace_corpus_generation_id' => $generation->public_id,
+                        'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
+                        'sparse_space_generation_id' => $generation->sparseSpaceGeneration->public_id,
+                        'score' => 0.04,
+                        'rank' => 1,
+                        'retrieval_method' => 'hybrid',
+                        'side' => 'primary',
+                        'dense_score' => 0.8,
+                        'dense_rank' => 1,
+                        'sparse_score' => 8.0,
+                        'sparse_rank' => 1,
+                    ]],
+                ]);
+            }
+
+            return Http::response([
+                'request_id' => $body['request_id'],
+                'profile' => [
+                    'provider' => $policy->reranker_provider,
+                    'model' => $policy->reranker_model,
+                    'adapter_version' => $policy->reranker_adapter_version,
+                    'truncation' => false,
+                ],
+                'candidates' => [[
+                    'chunk_id' => $chunk->public_id,
+                    'side' => 'primary',
+                    'score' => $rerankerScore,
+                    'rank' => 1,
+                ]],
+            ]);
+        });
     }
 
     private function eligibleDocument(

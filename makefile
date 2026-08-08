@@ -17,6 +17,7 @@ TAIL ?= 100
 	aws-provision aws-status qdrant-status publish-ingestion consume-ingestion \
 	telemetry-smoke telemetry-verify telemetry-outage \
 	evaluation-run \
+	evaluation-live-hybrid \
 	shell-web shell-api shell-ai shell-db shell-aws
 
 help:
@@ -44,6 +45,7 @@ help:
 		'  make telemetry-verify Verify cross-service trace, privacy and cardinality' \
 		'  make telemetry-outage Verify requests survive a Collector outage' \
 		'  make evaluation-run   Run the offline retrieval evaluation corpus' \
+		'  make evaluation-live-hybrid  Run the opt-in live hybrid retrieval evaluation' \
 		'  make reset           Delete local volumes and bootstrap again' \
 		'' \
 		'Quality' \
@@ -186,6 +188,23 @@ evaluation-run:
 			--observations tests/evaluation/observations/$(EVALUATION_CORPUS_VERSION)/offline-baseline.json \
 			--repository-commit "$(shell git rev-parse HEAD)" \
 			--output /output/result.json
+
+evaluation-live-hybrid:
+	@test "$${RUN_LIVE_HYBRID_EVALUATION:-}" = "1" || \
+		{ printf '%s\n' 'Set RUN_LIVE_HYBRID_EVALUATION=1 to permit paid live-provider calls.'; exit 1; }
+	@mkdir -p /tmp/rag-platform-evaluation
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace" \
+		--volume "$(CURDIR)/apps/ai/app:/app/app:ro" \
+		--volume "/tmp/rag-platform-evaluation:/output" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		ai python scripts/evaluation/run.py live-hybrid \
+			--corpus tests/evaluation/corpus/$(EVALUATION_CORPUS_VERSION)/corpus.json \
+			--policy tests/evaluation/policies/v1/policy.json \
+			--repository-commit "$$(git rev-parse HEAD)-dirty" \
+			--evidence-threshold 0.337890625 \
+			--output /output/live-hybrid-result.json
 
 reset:
 	@printf '%s\n' \

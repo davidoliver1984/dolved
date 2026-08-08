@@ -14,6 +14,7 @@ from app.ingestion.signing import IngestionWorkerSigner
 from app.ingestion.sqs import SqsIngestionQueue
 from app.ingestion.worker import IngestionWorker
 from app.settings import get_settings
+from app.sparse.factory import create_deferred_sparse_encoder
 from app.structured_logging import configure_structured_logging
 from app.telemetry import configure_telemetry
 from app.vector_store.factory import create_vector_store
@@ -67,6 +68,7 @@ def build_worker(
         object_store=s3_client,
         embedder=create_deferred_embedder(settings),
         embedding_profile=embedding_profile(settings),
+        sparse_encoder=create_deferred_sparse_encoder(settings),
         vector_store=create_vector_store(settings),
         queue=queue,
         heartbeat_seconds=settings.ingestion_worker_heartbeat_seconds,

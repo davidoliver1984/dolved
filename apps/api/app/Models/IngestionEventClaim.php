@@ -23,6 +23,7 @@ use LogicException;
     'payload_sha256',
     'claimed_at',
     'embedding_space_generation_id',
+    'sparse_space_generation_id',
     'workspace_corpus_generation_id',
     'status',
     'lease_token_hash',
@@ -34,6 +35,7 @@ use LogicException;
     'expected_point_count',
     'point_manifest_digest',
     'embedding_profile_fingerprint',
+    'sparse_profile_fingerprint',
     'publication_evidence',
     'publication_authorised_at',
     'completed_at',
@@ -55,7 +57,7 @@ class IngestionEventClaim extends Model
             ])) {
                 throw new LogicException('Ingestion attempt identity is immutable.');
             }
-            foreach (['embedding_space_generation_id', 'workspace_corpus_generation_id'] as $field) {
+            foreach (['embedding_space_generation_id', 'sparse_space_generation_id', 'workspace_corpus_generation_id'] as $field) {
                 if ($claim->isDirty($field) && $claim->getOriginal($field) !== null) {
                     throw new LogicException('Ingestion attempt generation identity is immutable.');
                 }
@@ -99,6 +101,12 @@ class IngestionEventClaim extends Model
     public function embeddingSpaceGeneration(): BelongsTo
     {
         return $this->belongsTo(EmbeddingSpaceGeneration::class);
+    }
+
+    /** @return BelongsTo<SparseSpaceGeneration, $this> */
+    public function sparseSpaceGeneration(): BelongsTo
+    {
+        return $this->belongsTo(SparseSpaceGeneration::class);
     }
 
     /** @return BelongsTo<WorkspaceCorpusGeneration, $this> */

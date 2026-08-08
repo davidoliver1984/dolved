@@ -84,6 +84,12 @@ class Workspace extends Model
         return $this->hasMany(WorkspaceCorpusGeneration::class);
     }
 
+    /** @return HasMany<WorkspaceCorpusGenerationRollback, $this> */
+    public function corpusGenerationRollbacks(): HasMany
+    {
+        return $this->hasMany(WorkspaceCorpusGenerationRollback::class);
+    }
+
     /**
      * @return BelongsTo<WorkspaceCorpusGeneration, $this>
      */

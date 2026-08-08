@@ -9,12 +9,15 @@ from qdrant_client import QdrantClient
 from qdrant_client import models as qdrant_models
 
 from app.settings import Settings
+from app.sparse.models import SparseVector
 from app.vector_store.errors import (
     VectorSpaceCompatibilityError,
     VectorStorePartialWriteError,
 )
 from app.vector_store.factory import create_vector_store
 from app.vector_store.models import (
+    SparseVectorSearchRequest,
+    SparseVectorSpace,
     VectorCompletenessRequest,
     VectorPoint,
     VectorPublicationStatus,
@@ -101,6 +104,73 @@ def test_ensure_is_idempotent_and_creates_the_required_schema_and_indexes(
         is qdrant_models.PayloadSchemaType.KEYWORD
         for field in INDEXED_PAYLOAD_FIELDS
     )
+
+
+@pytest.mark.integration
+def test_hybrid_space_upsert_search_and_completeness_cover_both_vector_axes(
+    qdrant_client: QdrantClient,
+) -> None:
+    sparse_generation_id = uuid4()
+    space = VectorSpace(
+        collection_name=f"test-r16-s08-{uuid4().hex}",
+        embedding_space_generation_id=uuid4(),
+        profile_fingerprint="dense-profile",
+        vector_name="dense",
+        dimensions=3,
+        sparse=SparseVectorSpace(
+            sparse_space_generation_id=sparse_generation_id,
+            profile_fingerprint="sparse-profile",
+            vector_name="sparse",
+        ),
+    )
+    store = QdrantVectorStore(qdrant_client)
+    workspace_id = uuid4()
+    corpus_id = uuid4()
+    point = VectorPoint(
+        workspace_id=workspace_id,
+        document_id=uuid4(),
+        chunk_id=uuid4(),
+        workspace_corpus_generation_id=corpus_id,
+        embedding_space_generation_id=space.embedding_space_generation_id,
+        sparse_space_generation_id=sparse_generation_id,
+        event_id=uuid4(),
+        publication_status=VectorPublicationStatus.PUBLISHED,
+        values=(1.0, 0.0, 0.0),
+        sparse_vector=SparseVector(indices=(3, 9), values=(0.8, 0.2)),
+    )
+    scope = VectorScope(
+        vector_space=space,
+        workspace_id=workspace_id,
+        workspace_corpus_generation_id=corpus_id,
+        publication_status=VectorPublicationStatus.PUBLISHED,
+    )
+    try:
+        store.ensure_vector_space(space)
+        store.ensure_vector_space(space)
+        store.upsert(VectorUpsertRequest(vector_space=space, points=(point,)))
+        store.upsert(VectorUpsertRequest(vector_space=space, points=(point,)))
+
+        hits = store.search_sparse(
+            SparseVectorSearchRequest(
+                scope=scope,
+                query_vector=SparseVector(indices=(3,), values=(1.0,)),
+                limit=5,
+            )
+        )
+        report = store.verify_completeness(
+            VectorCompletenessRequest(scope=scope, expected_points=(point.identity(),))
+        )
+        collection = qdrant_client.get_collection(space.collection_name)
+
+        assert [hit.chunk_id for hit in hits] == [point.chunk_id]
+        assert hits[0].sparse_space_generation_id == sparse_generation_id
+        assert report.is_complete
+        assert collection.config.params.sparse_vectors is not None
+        assert "sparse" in collection.config.params.sparse_vectors
+        assert "sparse_space_generation_id" in collection.payload_schema
+    finally:
+        if qdrant_client.collection_exists(space.collection_name):
+            qdrant_client.delete_collection(space.collection_name)
 
 
 @pytest.mark.integration

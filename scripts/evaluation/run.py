@@ -17,6 +17,7 @@ from app.evaluation.governance import (
     verify_baseline_identity,
 )
 from app.evaluation.harness import RetrievalEvaluationHarness
+from app.evaluation.live_hybrid_retrieval import evaluate_live_hybrid_retrieval
 from app.evaluation.model_assisted import (
     FakeModelAssistedEvaluator,
     evaluate_recorded_contexts,
@@ -30,6 +31,8 @@ from app.evaluation.models import (
     QualityGatePolicy,
     VariantObservation,
 )
+from app.retrieval.models import HybridRetrievalConfiguration
+from app.settings import get_settings
 from app.evaluation.reporting import comparison_report
 
 
@@ -121,6 +124,32 @@ def gate(args: argparse.Namespace) -> None:
     write_model(args.output, record)
 
 
+def live_hybrid(args: argparse.Namespace) -> None:
+    corpus_data = load_json(args.corpus)
+    policy_data = load_json(args.policy)
+    result = evaluate_live_hybrid_retrieval(
+        settings=get_settings(),
+        corpus=EvaluationCorpus.model_validate(corpus_data),
+        corpus_data=corpus_data,
+        quality_policy=QualityGatePolicy.model_validate(policy_data),
+        quality_policy_data=policy_data,
+        repository_revision=args.repository_commit,
+        evidence_threshold=args.evidence_threshold,
+        configuration=HybridRetrievalConfiguration(
+            version="experimental-v1",
+            dense_candidate_k=40,
+            sparse_candidate_k=40,
+            fusion_candidate_k=15,
+            reranker_candidate_k=15,
+            final_evidence_k=5,
+            rrf_k=60,
+        ),
+        rerank_delay_seconds=args.rerank_delay_seconds,
+    )
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(result.as_json(), indent=2) + "\n")
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser()
     commands = root.add_subparsers(required=True)
@@ -154,6 +183,14 @@ def parser() -> argparse.ArgumentParser:
     gate_parser.add_argument("--waiver-expires-at")
     gate_parser.add_argument("--output", type=Path, required=True)
     gate_parser.set_defaults(handler=gate)
+    live_parser = commands.add_parser("live-hybrid")
+    live_parser.add_argument("--corpus", type=Path, required=True)
+    live_parser.add_argument("--policy", type=Path, required=True)
+    live_parser.add_argument("--output", type=Path, required=True)
+    live_parser.add_argument("--repository-commit", required=True)
+    live_parser.add_argument("--evidence-threshold", type=float, required=True)
+    live_parser.add_argument("--rerank-delay-seconds", type=float, default=25)
+    live_parser.set_defaults(handler=live_hybrid)
     return root
 
 

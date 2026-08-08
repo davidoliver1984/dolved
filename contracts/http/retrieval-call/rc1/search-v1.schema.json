@@ -15,6 +15,25 @@
     "vector_space": {"type": "object"},
     "workspace_corpus_generation_id": {"type": "string", "format": "uuid"},
     "candidate_k": {"type": "integer", "minimum": 1, "maximum": 100},
+    "sparse_embedding_profile": {"type": ["object", "null"]},
+    "sparse_profile_fingerprint": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "sparse_vector_space": {"type": ["object", "null"]},
+    "hybrid_configuration": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["version", "dense_candidate_k", "sparse_candidate_k", "fusion_candidate_k", "reranker_candidate_k", "final_evidence_k", "fusion_strategy", "fusion_version", "rrf_k"],
+      "properties": {
+        "version": {"type": "string", "minLength": 1, "maxLength": 255},
+        "dense_candidate_k": {"type": "integer", "minimum": 1, "maximum": 100},
+        "sparse_candidate_k": {"type": "integer", "minimum": 1, "maximum": 100},
+        "fusion_candidate_k": {"type": "integer", "minimum": 1, "maximum": 100},
+        "reranker_candidate_k": {"type": "integer", "minimum": 1, "maximum": 100},
+        "final_evidence_k": {"type": "integer", "minimum": 1, "maximum": 100},
+        "fusion_strategy": {"const": "rrf"},
+        "fusion_version": {"const": "1"},
+        "rrf_k": {"type": "integer", "minimum": 1}
+      }
+    },
     "scopes": {
       "type": "array", "minItems": 1, "maxItems": 2,
       "items": {

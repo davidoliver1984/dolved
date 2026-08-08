@@ -9,6 +9,7 @@ use App\Exceptions\RetrievalException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
 use App\Services\Retrieval\EligibilityResolver;
+use App\Services\Retrieval\ResolveEvidenceThresholdPolicy;
 use App\Services\Retrieval\RetrievalClient;
 use App\Support\Documents\DocumentAuthorityTimeline;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
@@ -20,6 +21,7 @@ final readonly class RetrieveWorkspaceEvidence
     public function __construct(
         private RetrievalClient $client,
         private EligibilityResolver $eligibility,
+        private ResolveEvidenceThresholdPolicy $policies,
         private DocumentAuthorityTimeline $timeline,
     ) {}
 
@@ -39,15 +41,29 @@ final readonly class RetrieveWorkspaceEvidence
             if ($corpus === null) {
                 return new RetrievalResult(RetrievalOutcome::NoEligibleEvidence);
             }
-            $candidates = $this->client->search(
+            $policy = $corpus->sparse_space_generation_id === null
+                ? null
+                : $this->policies->handle($corpus);
+            $search = $this->client->search(
                 $authorised->workspace,
                 $corpus,
                 $eligible,
                 $plan->query,
                 $candidateK,
+                $policy,
             );
+            $candidates = $search->candidates;
             if ($candidates === []) {
                 return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates);
+            }
+            if ($policy !== null) {
+                $this->policies->assertSearchLineage($policy, $search->lineage);
+                if (
+                    ($search->lineage['sparse_space_generation_id'] ?? null)
+                    !== $corpus->sparseSpaceGeneration?->public_id
+                ) {
+                    throw new RetrievalException('Sparse generation lineage does not match the active corpus.');
+                }
             }
 
             $freshEligible = $this->eligibility->handle($authorised, $plan, $evaluatedAt);
@@ -59,12 +75,75 @@ final readonly class RetrieveWorkspaceEvidence
                 $authorised,
             );
 
-            return new RetrievalResult(
-                $hydrated === []
-                    ? RetrievalOutcome::NoRetrievalCandidates
-                    : RetrievalOutcome::EvidenceFound,
+            if ($hydrated === []) {
+                return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates);
+            }
+            if ($policy === null) {
+                return new RetrievalResult(RetrievalOutcome::EvidenceFound, $hydrated);
+            }
+
+            $reranked = $this->client->rerank(
+                $authorised->workspace,
+                $plan->query,
                 $hydrated,
+                $policy,
             );
+            $this->policies->assertRerankerLineage($policy, $reranked['profile']);
+            $rerankedByChunk = collect($reranked['candidates'])->keyBy(
+                fn (array $candidate): string => $candidate['side'].':'.$candidate['chunk_id']
+            );
+            $candidateByChunk = collect($candidates)->keyBy(
+                fn (array $candidate): string => $candidate['side'].':'.$candidate['chunk_id']
+            );
+            $rerankCandidates = collect($reranked['candidates'])->map(
+                fn (array $rerankedCandidate): ?array => $candidateByChunk->get(
+                    $rerankedCandidate['side'].':'.$rerankedCandidate['chunk_id']
+                )
+            )->filter()->values()->all();
+            $finalEligible = $this->eligibility->handle($authorised, $plan, $evaluatedAt);
+            $final = $this->hydrateAndRecheck(
+                $rerankCandidates,
+                $finalEligible->canSearch() ? $finalEligible->documentPublicIdsBySide : [],
+                $authorised,
+            );
+            $qualified = collect($final)->map(function (array $candidate) use ($rerankedByChunk, $policy): ?array {
+                $rerankedCandidate = $rerankedByChunk->get(
+                    $candidate['side'].':'.$candidate['chunk_id']
+                );
+                if (! is_array($rerankedCandidate) || (float) $rerankedCandidate['score'] < $policy->evidence_threshold) {
+                    return null;
+                }
+
+                return [
+                    ...$candidate,
+                    'fused_score' => $candidate['score'],
+                    'fused_rank' => $candidate['rank'],
+                    'score' => (float) $rerankedCandidate['score'],
+                    'rank' => $rerankedCandidate['rank'],
+                    'evidence_threshold_policy_version' => $policy->version,
+                    'evidence_threshold_policy_fingerprint' => $policy->fingerprint,
+                    'reranker_provider' => $policy->reranker_provider,
+                    'reranker_model' => $policy->reranker_model,
+                    'reranker_adapter_version' => $policy->reranker_adapter_version,
+                ];
+            })->filter()->sortBy('rank')->values();
+            if ($qualified->isEmpty()) {
+                return new RetrievalResult(RetrievalOutcome::InsufficientEvidence);
+            }
+
+            $sides = array_keys($eligible->documentPublicIdsBySide);
+            if (count($sides) === 2 && collect($sides)->contains(
+                fn (string $side): bool => ! $qualified->contains(
+                    fn (array $candidate): bool => $candidate['side'] === $side
+                )
+            )) {
+                return new RetrievalResult(RetrievalOutcome::ComparisonScopeIncomplete);
+            }
+            $accepted = $qualified->groupBy('side')->flatMap(
+                fn ($sideCandidates) => $sideCandidates->take($policy->final_evidence_k)
+            )->sortBy('rank')->values()->all();
+
+            return new RetrievalResult(RetrievalOutcome::EvidenceFound, $accepted);
         } catch (RetrievalException) {
             return new RetrievalResult(RetrievalOutcome::RetrievalFailed);
         }
@@ -115,6 +194,10 @@ final readonly class RetrieveWorkspaceEvidence
             ) {
                 continue;
             }
+            $expectedSparse = $authorised->activeCorpusGeneration?->sparseSpaceGeneration?->public_id;
+            if (($candidate['sparse_space_generation_id'] ?? null) !== $expectedSparse) {
+                continue;
+            }
             if ($generationId === null || ! $chunk->workspaceCorpusGenerations()->whereKey($generationId)->exists()) {
                 continue;
             }
@@ -145,6 +228,11 @@ final readonly class RetrieveWorkspaceEvidence
             'side' => $candidate['side'],
             'workspace_corpus_generation_id' => $candidate['workspace_corpus_generation_id'],
             'embedding_space_generation_id' => $candidate['embedding_space_generation_id'],
+            'sparse_space_generation_id' => $candidate['sparse_space_generation_id'] ?? null,
+            'dense_score' => $candidate['dense_score'] ?? null,
+            'dense_rank' => $candidate['dense_rank'] ?? null,
+            'sparse_score' => $candidate['sparse_score'] ?? null,
+            'sparse_rank' => $candidate['sparse_rank'] ?? null,
         ];
     }
 }

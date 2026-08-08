@@ -7,6 +7,7 @@ from pydantic import ValidationError
 from app.embedding.fake import DeterministicFakeEmbedder
 from app.embedding.models import V1_VOYAGE_PROFILE
 from app.retrieval.models import (
+    HybridRetrievalConfiguration,
     RetrievalPlan,
     RetrievalSide,
     SearchRequest,
@@ -16,7 +17,10 @@ from app.retrieval.models import (
     TemporalMode,
 )
 from app.retrieval.retriever import DenseRetriever
+from app.sparse.fake import DeterministicSparseEncoder
+from app.sparse.models import SparseEmbeddingProfile
 from app.vector_store.models import (
+    SparseVectorSpace,
     VectorPublicationStatus,
     VectorSearchHit,
     VectorSearchRequest,
@@ -41,6 +45,23 @@ class RecordingVectorStore:
                 chunk_id=uuid4(),
                 workspace_corpus_generation_id=request.scope.workspace_corpus_generation_id,
                 embedding_space_generation_id=request.scope.vector_space.embedding_space_generation_id,
+                event_id=uuid4(),
+                publication_status=VectorPublicationStatus.PUBLISHED,
+            ),
+        )
+
+    def search_sparse(self, request):
+        document_id = request.scope.document_ids[0]
+        return (
+            VectorSearchHit(
+                point_id=uuid4(),
+                score=4.25,
+                workspace_id=request.scope.workspace_id,
+                document_id=document_id,
+                chunk_id=uuid4(),
+                workspace_corpus_generation_id=request.scope.workspace_corpus_generation_id,
+                embedding_space_generation_id=request.scope.vector_space.embedding_space_generation_id,
+                sparse_space_generation_id=request.scope.vector_space.sparse.sparse_space_generation_id,
                 event_id=uuid4(),
                 publication_status=VectorPublicationStatus.PUBLISHED,
             ),
@@ -138,3 +159,78 @@ def test_search_contract_rejects_profile_lineage_mismatch() -> None:
             candidate_k=5,
             scopes=(SearchScope(eligible_document_ids=(uuid4(),)),),
         )
+
+
+def test_hybrid_retriever_fuses_compare_sides_independently_and_reports_lineage() -> (
+    None
+):
+    sparse_profile = SparseEmbeddingProfile(
+        provider="test",
+        model="deterministic-sparse",
+        tokenizer="test",
+        max_input_tokens=100,
+        adapter_version="1",
+    )
+    sparse_space = SparseVectorSpace(
+        sparse_space_generation_id=uuid4(),
+        profile_fingerprint=sparse_profile.fingerprint(),
+    )
+    vector_space = VectorSpace(
+        collection_name="test",
+        embedding_space_generation_id=uuid4(),
+        profile_fingerprint=V1_VOYAGE_PROFILE.fingerprint(),
+        dimensions=V1_VOYAGE_PROFILE.dimensions,
+        sparse=sparse_space,
+    )
+    request = SearchRequest(
+        contract_version=1,
+        request_id=uuid4(),
+        workspace_id=uuid4(),
+        query="What changed?",
+        embedding_profile=V1_VOYAGE_PROFILE,
+        embedding_profile_fingerprint=V1_VOYAGE_PROFILE.fingerprint(),
+        vector_space=vector_space,
+        workspace_corpus_generation_id=uuid4(),
+        candidate_k=4,
+        sparse_embedding_profile=sparse_profile,
+        sparse_profile_fingerprint=sparse_profile.fingerprint(),
+        sparse_vector_space=sparse_space,
+        hybrid_configuration=HybridRetrievalConfiguration(
+            version="test-v1",
+            dense_candidate_k=4,
+            sparse_candidate_k=4,
+            fusion_candidate_k=4,
+            reranker_candidate_k=2,
+            final_evidence_k=1,
+            rrf_k=60,
+        ),
+        scopes=(
+            SearchScope(side=RetrievalSide.PRIMARY, eligible_document_ids=(uuid4(),)),
+            SearchScope(
+                side=RetrievalSide.COMPARISON,
+                eligible_document_ids=(uuid4(),),
+            ),
+        ),
+    )
+
+    result = DenseRetriever(
+        embedder=DeterministicFakeEmbedder(),
+        sparse_encoder=DeterministicSparseEncoder(),
+        vector_store=cast(VectorStore, RecordingVectorStore()),
+    ).search(request)
+
+    assert [candidate.side for candidate in result.candidates] == [
+        RetrievalSide.PRIMARY,
+        RetrievalSide.PRIMARY,
+        RetrievalSide.COMPARISON,
+        RetrievalSide.COMPARISON,
+    ]
+    assert all(
+        candidate.retrieval_method == "hybrid" for candidate in result.candidates
+    )
+    assert result.lineage.sparse_profile_fingerprint == sparse_profile.fingerprint()
+    assert (
+        result.lineage.sparse_space_generation_id
+        == sparse_space.sparse_space_generation_id
+    )
+    assert result.lineage.fusion_strategy == "rrf"

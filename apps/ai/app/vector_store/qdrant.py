@@ -14,6 +14,7 @@ from app.vector_store.errors import (
     VectorStoreUnavailableError,
 )
 from app.vector_store.models import (
+    SparseVectorSearchRequest,
     VectorCompletenessReport,
     VectorCompletenessRequest,
     VectorDistance,
@@ -34,6 +35,7 @@ INDEXED_PAYLOAD_FIELDS = (
     "document_id",
     "event_id",
     "publication_status",
+    "sparse_space_generation_id",
 )
 PAYLOAD_FIELDS = (
     "workspace_id",
@@ -44,6 +46,7 @@ PAYLOAD_FIELDS = (
     "event_id",
     "publication_status",
 )
+OPTIONAL_PAYLOAD_FIELDS = ("sparse_space_generation_id",)
 
 
 class QdrantVectorStore:
@@ -80,10 +83,24 @@ class QdrantVectorStore:
                                 distance=self._distance(vector_space.distance),
                             )
                         },
+                        sparse_vectors_config=(
+                            {
+                                vector_space.sparse.vector_name: (
+                                    qdrant_models.SparseVectorParams(
+                                        index=qdrant_models.SparseIndexParams(
+                                            on_disk=False
+                                        )
+                                    )
+                                )
+                            }
+                            if vector_space.sparse is not None
+                            else None
+                        ),
                     )
                 except Exception:
                     if not self._client.collection_exists(vector_space.collection_name):
                         raise
+            self._ensure_sparse_vector(vector_space)
             self._validate_vector_space(vector_space)
             self._ensure_payload_indexes(vector_space)
         except VectorStoreError:
@@ -151,7 +168,7 @@ class QdrantVectorStore:
                     )
                 ),
                 limit=request.limit,
-                with_payload=list(PAYLOAD_FIELDS),
+                with_payload=list(PAYLOAD_FIELDS + OPTIONAL_PAYLOAD_FIELDS),
                 with_vectors=False,
             )
             return tuple(
@@ -162,6 +179,42 @@ class QdrantVectorStore:
         except Exception as exception:
             raise VectorStoreUnavailableError(
                 "The vector store search could not be completed."
+            ) from exception
+
+    def search_sparse(
+        self, request: SparseVectorSearchRequest
+    ) -> tuple[VectorSearchHit, ...]:
+        self._validate_vector_space_safe(request.scope.vector_space)
+        sparse = request.scope.vector_space.sparse
+        if sparse is None:
+            raise VectorSpaceCompatibilityError(
+                "Sparse search requires an explicit sparse vector space."
+            )
+        try:
+            response = self._client.query_points(
+                collection_name=request.scope.vector_space.collection_name,
+                query=qdrant_models.SparseVector(
+                    indices=list(request.query_vector.indices),
+                    values=list(request.query_vector.values),
+                ),
+                using=sparse.vector_name,
+                query_filter=self._scope_filter(
+                    request.scope.model_copy(
+                        update={"publication_status": VectorPublicationStatus.PUBLISHED}
+                    )
+                ),
+                limit=request.limit,
+                with_payload=list(PAYLOAD_FIELDS + OPTIONAL_PAYLOAD_FIELDS),
+                with_vectors=False,
+            )
+            return tuple(
+                self._search_hit(point, request.scope) for point in response.points
+            )
+        except VectorStoreError:
+            raise
+        except Exception as exception:
+            raise VectorStoreUnavailableError(
+                "The sparse vector-store search could not be completed."
             ) from exception
 
     def count(self, scope: VectorScope) -> int:
@@ -192,8 +245,15 @@ class QdrantVectorStore:
                     scroll_filter=self._scope_filter(request.scope),
                     limit=256,
                     offset=offset,
-                    with_payload=list(PAYLOAD_FIELDS),
-                    with_vectors=[request.scope.vector_space.vector_name],
+                    with_payload=list(PAYLOAD_FIELDS + OPTIONAL_PAYLOAD_FIELDS),
+                    with_vectors=[
+                        request.scope.vector_space.vector_name,
+                        *(
+                            [request.scope.vector_space.sparse.vector_name]
+                            if request.scope.vector_space.sparse is not None
+                            else []
+                        ),
+                    ],
                 )
                 for record in records:
                     point_id = self._point_id(record.id)
@@ -337,6 +397,22 @@ class QdrantVectorStore:
                     f"Required payload index {field_name!r} is unavailable."
                 )
 
+    def _ensure_sparse_vector(self, vector_space: VectorSpace) -> None:
+        if vector_space.sparse is None:
+            return
+        collection = self._client.get_collection(vector_space.collection_name)
+        sparse_vectors = collection.config.params.sparse_vectors or {}
+        if vector_space.sparse.vector_name in sparse_vectors:
+            return
+        self._client.update_collection(
+            collection_name=vector_space.collection_name,
+            sparse_vectors_config={
+                vector_space.sparse.vector_name: qdrant_models.SparseVectorParams(
+                    index=qdrant_models.SparseIndexParams(on_disk=False)
+                )
+            },
+        )
+
     def _validate_vector_space_safe(self, vector_space: VectorSpace) -> None:
         try:
             self._validate_vector_space(vector_space)
@@ -361,6 +437,14 @@ class QdrantVectorStore:
             raise VectorSpaceCompatibilityError(
                 "The existing vector-space schema is incompatible."
             )
+        sparse_vectors = collection.config.params.sparse_vectors or {}
+        if (
+            vector_space.sparse is not None
+            and vector_space.sparse.vector_name not in sparse_vectors
+        ):
+            raise VectorSpaceCompatibilityError(
+                "The existing sparse vector-space schema is incompatible."
+            )
 
     def _is_vector_space_compatible(self, vector_space: VectorSpace) -> bool:
         try:
@@ -383,22 +467,29 @@ class QdrantVectorStore:
     def _qdrant_point(
         vector_space: VectorSpace, point: VectorPoint
     ) -> qdrant_models.PointStruct:
+        vectors: dict[str, Any] = {vector_space.vector_name: list(point.values)}
+        if vector_space.sparse is not None and point.sparse_vector is not None:
+            vectors[vector_space.sparse.vector_name] = qdrant_models.SparseVector(
+                indices=list(point.sparse_vector.indices),
+                values=list(point.sparse_vector.values),
+            )
+        payload = {
+            "workspace_id": str(point.workspace_id),
+            "document_id": str(point.document_id),
+            "chunk_id": str(point.chunk_id),
+            "workspace_corpus_generation_id": str(point.workspace_corpus_generation_id),
+            "embedding_space_generation_id": str(point.embedding_space_generation_id),
+            "event_id": str(point.event_id),
+            "publication_status": point.publication_status.value,
+        }
+        if point.sparse_space_generation_id is not None:
+            payload["sparse_space_generation_id"] = str(
+                point.sparse_space_generation_id
+            )
         return qdrant_models.PointStruct(
             id=str(point.point_id),
-            vector={vector_space.vector_name: list(point.values)},
-            payload={
-                "workspace_id": str(point.workspace_id),
-                "document_id": str(point.document_id),
-                "chunk_id": str(point.chunk_id),
-                "workspace_corpus_generation_id": str(
-                    point.workspace_corpus_generation_id
-                ),
-                "embedding_space_generation_id": str(
-                    point.embedding_space_generation_id
-                ),
-                "event_id": str(point.event_id),
-                "publication_status": point.publication_status.value,
-            },
+            vector=vectors,
+            payload=payload,
         )
 
     @staticmethod
@@ -447,6 +538,15 @@ class QdrantVectorStore:
                     ),
                 )
             )
+        if scope.vector_space.sparse is not None:
+            conditions.append(
+                qdrant_models.FieldCondition(
+                    key="sparse_space_generation_id",
+                    match=qdrant_models.MatchValue(
+                        value=str(scope.vector_space.sparse.sparse_space_generation_id)
+                    ),
+                )
+            )
         return qdrant_models.Filter(must=conditions)
 
     def _search_hit(
@@ -492,6 +592,11 @@ class QdrantVectorStore:
                 embedding_space_generation_id=UUID(
                     str(payload["embedding_space_generation_id"])
                 ),
+                sparse_space_generation_id=(
+                    UUID(str(payload["sparse_space_generation_id"]))
+                    if payload.get("sparse_space_generation_id") is not None
+                    else None
+                ),
                 event_id=UUID(str(payload["event_id"])),
                 publication_status=VectorPublicationStatus(
                     str(payload["publication_status"])
@@ -510,6 +615,11 @@ class QdrantVectorStore:
             == scope.workspace_corpus_generation_id
             and identity.embedding_space_generation_id
             == scope.vector_space.embedding_space_generation_id
+            and (
+                scope.vector_space.sparse is None
+                or identity.sparse_space_generation_id
+                == scope.vector_space.sparse.sparse_space_generation_id
+            )
             and (scope.document_id is None or identity.document_id == scope.document_id)
             and (not scope.document_ids or identity.document_id in scope.document_ids)
             and (scope.event_id is None or identity.event_id == scope.event_id)
@@ -529,4 +639,35 @@ class QdrantVectorStore:
             and len(values) == vector_space.dimensions
             and all(isinstance(value, int | float) for value in values)
             and all(math.isfinite(float(value)) for value in values)
+            and QdrantVectorStore._record_sparse_vector_compatible(vector, vector_space)
+        )
+
+    @staticmethod
+    def _record_sparse_vector_compatible(
+        vector: Any, vector_space: VectorSpace
+    ) -> bool:
+        if vector_space.sparse is None:
+            return True
+        sparse = vector.get(vector_space.sparse.vector_name)
+        indices: Any
+        values: Any
+        if isinstance(sparse, qdrant_models.SparseVector):
+            indices = sparse.indices
+            values = sparse.values
+        elif isinstance(sparse, dict):
+            indices = sparse.get("indices")
+            values = sparse.get("values")
+        else:
+            return False
+        return (
+            isinstance(indices, list)
+            and isinstance(values, list)
+            and len(indices) == len(values)
+            and len(indices) > 0
+            and len(set(indices)) == len(indices)
+            and all(isinstance(index, int) and index >= 0 for index in indices)
+            and all(isinstance(value, int | float) for value in values)
+            and all(
+                math.isfinite(float(value)) and float(value) != 0 for value in values
+            )
         )

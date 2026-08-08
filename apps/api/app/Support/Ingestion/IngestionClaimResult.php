@@ -21,6 +21,11 @@ final readonly class IngestionClaimResult
         public ?int $dimensions = null,
         public ?string $distance = null,
         public ?string $embeddingProfileFingerprint = null,
+        public ?string $sparseSpaceGenerationId = null,
+        public ?string $sparseVectorName = null,
+        public ?string $sparseProfileFingerprint = null,
+        /** @var array<string, mixed>|null */
+        public ?array $sparseProfile = null,
         public bool $resumeSealedAttempt = false,
         public bool $resetOpenAttempt = false,
     ) {}

@@ -83,6 +83,12 @@ class DocumentIngestionClaimController extends Controller
                     'dimensions' => $result->dimensions,
                     'distance' => $result->distance,
                     'embedding_profile_fingerprint' => $result->embeddingProfileFingerprint,
+                    'sparse' => $result->sparseSpaceGenerationId === null ? null : [
+                        'sparse_space_generation_id' => $result->sparseSpaceGenerationId,
+                        'vector_name' => $result->sparseVectorName,
+                        'profile_fingerprint' => $result->sparseProfileFingerprint,
+                        'profile' => $result->sparseProfile,
+                    ],
                 ],
                 'resume_sealed_attempt' => $result->resumeSealedAttempt,
                 'reset_open_attempt' => $result->resetOpenAttempt,

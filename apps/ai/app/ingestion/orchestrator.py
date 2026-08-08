@@ -33,8 +33,18 @@ from app.ingestion.heartbeat import CoordinatedHeartbeat, HeartbeatLost
 from app.ingestion.protocol_client import ClaimGrant, IngestionProtocolClient
 from app.ingestion.sqs import IngestionQueueMessage, SqsIngestionQueue
 from app.normalisation.structural import StructuralNormaliser
+from app.sparse.errors import SparseEncodingError
+from app.sparse.models import (
+    SparseEmbeddingProfile,
+    SparseEncodedVector,
+    SparseEncodingInput,
+    SparseEncodingPurpose,
+    SparseEncodingRequest,
+)
+from app.sparse.protocol import SparseEncoder
 from app.vector_store.errors import VectorStoreError
 from app.vector_store.models import (
+    SparseVectorSpace,
     VectorCompletenessRequest,
     VectorDistance,
     VectorPoint,
@@ -68,6 +78,7 @@ class IngestionOrchestrator:
         embedder: Embedder,
         vector_store: VectorStore,
         embedding_profile: EmbeddingProfile,
+        sparse_encoder: SparseEncoder | None = None,
         queue: SqsIngestionQueue,
         heartbeat_seconds: float,
         embedding_batch_size: int,
@@ -79,6 +90,7 @@ class IngestionOrchestrator:
         self._embedder = embedder
         self._vector_store = vector_store
         self._embedding_profile = embedding_profile
+        self._sparse_encoder = sparse_encoder
         self._queue = queue
         self._heartbeat_seconds = heartbeat_seconds
         self._embedding_batch_size = embedding_batch_size
@@ -182,6 +194,13 @@ class IngestionOrchestrator:
                         EmbeddingDimensionMismatchError,
                     ),
                 ),
+            )
+        except SparseEncodingError as exception:
+            return self._processing_failure(
+                context,
+                f"sparse.{exception.code}",
+                str(exception),
+                not exception.retryable,
             )
         except VectorStoreError as exception:
             return self._processing_failure(
@@ -318,6 +337,10 @@ class IngestionOrchestrator:
         if profile.fingerprint() != grant.vector_space["embedding_profile_fingerprint"]:  # type: ignore[index]
             raise RuntimeError("embedding_profile_mismatch")
         embeddings: list[EmbeddedVector] = []
+        sparse_embeddings: list[SparseEncodedVector] = []
+        sparse_profile = self._sparse_profile(grant)
+        if sparse_profile is not None and self._sparse_encoder is None:
+            raise RuntimeError("sparse_encoder_unavailable")
         for start in range(0, len(chunks), self._embedding_batch_size):
             heartbeat.assert_healthy()
             batch = chunks[start : start + self._embedding_batch_size]
@@ -337,10 +360,29 @@ class IngestionOrchestrator:
                 )
             )
             embeddings.extend(result.embeddings)
+            if sparse_profile is not None:
+                assert self._sparse_encoder is not None
+                sparse_result = self._sparse_encoder.encode(
+                    SparseEncodingRequest(
+                        correlation_id=UUID(str(event["correlation_id"])),
+                        workspace_id=UUID(str(event["workspace_id"])),
+                        document_id=UUID(str(event["document_id"])),
+                        profile=sparse_profile,
+                        purpose=SparseEncodingPurpose.DOCUMENT,
+                        items=tuple(
+                            SparseEncodingInput(
+                                source_id=UUID(chunk["chunk_id"]), text=chunk["text"]
+                            )
+                            for chunk in batch
+                        ),
+                    )
+                )
+                sparse_embeddings.extend(sparse_result.encodings)
         vector_space = self._vector_space(grant)
         self._vector_store.ensure_vector_space(vector_space)
         identities = self._point_identities(event, grant, chunks)
         by_chunk = {item.source_id: item for item in embeddings}
+        sparse_by_chunk = {item.source_id: item for item in sparse_embeddings}
         self._vector_store.upsert(
             VectorUpsertRequest(
                 vector_space=vector_space,
@@ -348,6 +390,11 @@ class IngestionOrchestrator:
                     VectorPoint(
                         **identity.model_dump(),
                         values=by_chunk[identity.chunk_id].values,
+                        sparse_vector=(
+                            sparse_by_chunk[identity.chunk_id].vector
+                            if sparse_profile is not None
+                            else None
+                        ),
                     )
                     for identity in identities
                 ),
@@ -369,7 +416,17 @@ class IngestionOrchestrator:
             "point_ids": point_ids,
             "point_manifest_digest": point_manifest_digest(point_ids),
             "embedding_profile_fingerprint": profile.fingerprint(),
+            "sparse_profile_fingerprint": (
+                sparse_profile.fingerprint() if sparse_profile is not None else None
+            ),
             "embedding_space_generation_id": grant.embedding_space_generation_id,
+            "sparse_space_generation_id": (
+                (grant.vector_space or {})
+                .get("sparse", {})
+                .get("sparse_space_generation_id")
+                if isinstance((grant.vector_space or {}).get("sparse"), dict)
+                else None
+            ),
             "workspace_corpus_generation_id": grant.workspace_corpus_generation_id,
             "warnings": [],
         }
@@ -387,6 +444,17 @@ class IngestionOrchestrator:
                 ),
                 embedding_space_generation_id=UUID(
                     str(grant.embedding_space_generation_id)
+                ),
+                sparse_space_generation_id=(
+                    UUID(
+                        str(
+                            (grant.vector_space or {})["sparse"][
+                                "sparse_space_generation_id"
+                            ]
+                        )
+                    )
+                    if isinstance((grant.vector_space or {}).get("sparse"), dict)
+                    else None
                 ),
                 event_id=UUID(str(event["event_id"])),
                 publication_status=VectorPublicationStatus.PROVISIONAL,
@@ -424,6 +492,7 @@ class IngestionOrchestrator:
     @staticmethod
     def _vector_space(grant: ClaimGrant) -> VectorSpace:
         value = grant.vector_space or {}
+        sparse_value = value.get("sparse")
         return VectorSpace(
             collection_name=value["collection_name"],
             embedding_space_generation_id=UUID(
@@ -433,7 +502,29 @@ class IngestionOrchestrator:
             vector_name=value["vector_name"],
             dimensions=value["dimensions"],
             distance=VectorDistance(value["distance"]),
+            sparse=(
+                SparseVectorSpace(
+                    sparse_space_generation_id=UUID(
+                        str(sparse_value["sparse_space_generation_id"])
+                    ),
+                    profile_fingerprint=sparse_value["profile_fingerprint"],
+                    vector_name=sparse_value["vector_name"],
+                )
+                if isinstance(sparse_value, dict)
+                else None
+            ),
         )
+
+    @staticmethod
+    def _sparse_profile(grant: ClaimGrant) -> SparseEmbeddingProfile | None:
+        value = grant.vector_space or {}
+        sparse = value.get("sparse")
+        if not isinstance(sparse, dict):
+            return None
+        profile = SparseEmbeddingProfile.model_validate(sparse["profile"])
+        if profile.fingerprint() != sparse["profile_fingerprint"]:
+            raise RuntimeError("sparse_profile_mismatch")
+        return profile
 
     def _cleanup_provisional(self, context: dict[str, Any], grant: ClaimGrant) -> None:
         event = context

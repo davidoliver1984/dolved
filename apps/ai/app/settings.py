@@ -52,6 +52,20 @@ class Settings(BaseSettings):
     retrieval_max_body_bytes: int = Field(default=262_144, ge=1)
     retrieval_max_eligible_documents: int = Field(default=500, ge=1, le=5000)
     retrieval_candidate_k_max: int = Field(default=100, ge=1, le=1000)
+    sparse_embedding_model: str = "prithivida/Splade_PP_en_v1"
+    sparse_embedding_source_repository: str = "Qdrant/Splade_PP_en_v1"
+    sparse_embedding_tokenizer: str = "bert-base-uncased"
+    sparse_embedding_tokenizer_revision: str | None = None
+    sparse_embedding_model_revision: str = "efcd182bc7eb351e81a9445752d4388c2bab500b"
+    sparse_embedding_cache_dir: str = "/opt/fastembed-cache"
+    sparse_embedding_max_input_tokens: int = Field(default=512, ge=1)
+    sparse_embedding_batch_size: int = Field(default=64, ge=1, le=1000)
+    voyage_rerank_api_url: str = "https://api.voyageai.com/v1/rerank"
+    reranker_model: str = "rerank-2.5"
+    reranker_timeout_seconds: float = Field(default=10.0, gt=0)
+    reranker_max_attempts: int = Field(default=3, ge=1, le=10)
+    reranker_initial_backoff_seconds: float = Field(default=0.25, ge=0)
+    reranker_max_backoff_seconds: float = Field(default=2.0, ge=0)
     retrieval_planner_api_url: str = "https://api.openai.com/v1/chat/completions"
     retrieval_planner_api_key: SecretStr = SecretStr("")
     retrieval_planner_provider: str = "openai"

@@ -18,6 +18,12 @@ use LogicException;
 #[Fillable([
     'workspace_id',
     'embedding_space_generation_id',
+    'rebuilt_from_generation_id',
+    'rebuild_event_id',
+    'sparse_space_generation_id',
+    'expected_point_count',
+    'point_manifest_digest',
+    'verified_at',
     'status',
     'activated_at',
     'superseded_at',
@@ -37,10 +43,13 @@ class WorkspaceCorpusGeneration extends Model
                     'public_id',
                     'workspace_id',
                     'embedding_space_generation_id',
+                    'rebuilt_from_generation_id',
+                    'rebuild_event_id',
+                    'sparse_space_generation_id',
                 ])
             ) {
                 throw new LogicException(
-                    'Workspace corpus ownership and embedding-space lineage are immutable.'
+                    'Workspace corpus ownership and vector-space lineage are immutable.'
                 );
             }
 
@@ -57,6 +66,21 @@ class WorkspaceCorpusGeneration extends Model
                         'An active corpus generation requires an available embedding space.'
                     );
                 }
+
+                if ($generation->sparse_space_generation_id !== null) {
+                    $sparseSpace = SparseSpaceGeneration::query()
+                        ->find($generation->sparse_space_generation_id);
+                    if (
+                        $sparseSpace === null
+                        || $sparseSpace->status !== EmbeddingSpaceGenerationStatus::Available
+                        || $sparseSpace->embedding_space_generation_id !== $generation->embedding_space_generation_id
+                        || $generation->verified_at === null
+                    ) {
+                        throw new LogicException(
+                            'An active hybrid corpus generation requires a compatible available sparse space.'
+                        );
+                    }
+                }
             }
         });
     }
@@ -71,6 +95,8 @@ class WorkspaceCorpusGeneration extends Model
             'activated_at' => 'datetime',
             'superseded_at' => 'datetime',
             'retired_at' => 'datetime',
+            'expected_point_count' => 'integer',
+            'verified_at' => 'immutable_datetime',
         ];
     }
 
@@ -88,6 +114,24 @@ class WorkspaceCorpusGeneration extends Model
     public function embeddingSpaceGeneration(): BelongsTo
     {
         return $this->belongsTo(EmbeddingSpaceGeneration::class);
+    }
+
+    /** @return BelongsTo<SparseSpaceGeneration, $this> */
+    public function sparseSpaceGeneration(): BelongsTo
+    {
+        return $this->belongsTo(SparseSpaceGeneration::class);
+    }
+
+    /** @return BelongsTo<WorkspaceCorpusGeneration, $this> */
+    public function rebuiltFromGeneration(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'rebuilt_from_generation_id');
+    }
+
+    /** @return HasMany<WorkspaceCorpusGeneration, $this> */
+    public function rebuiltGenerations(): HasMany
+    {
+        return $this->hasMany(self::class, 'rebuilt_from_generation_id');
     }
 
     /**

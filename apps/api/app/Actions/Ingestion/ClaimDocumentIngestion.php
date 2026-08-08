@@ -57,6 +57,7 @@ class ClaimDocumentIngestion
                 if ($attempt->embedding_space_generation_id === null || $attempt->workspace_corpus_generation_id === null) {
                     [$embeddingSpace, $corpus] = $this->resolveGenerations($document);
                     $attempt->embedding_space_generation_id = $embeddingSpace->id;
+                    $attempt->sparse_space_generation_id = $corpus->sparse_space_generation_id;
                     $attempt->workspace_corpus_generation_id = $corpus->id;
                 }
 
@@ -102,6 +103,7 @@ class ClaimDocumentIngestion
                 'payload_sha256' => $payloadSha256,
                 'claimed_at' => now(),
                 'embedding_space_generation_id' => $embeddingSpace->id,
+                'sparse_space_generation_id' => $corpus->sparse_space_generation_id,
                 'workspace_corpus_generation_id' => $corpus->id,
                 'status' => IngestionAttemptStatus::Open,
                 'lease_token_hash' => hash('sha256', $token),
@@ -186,7 +188,10 @@ class ClaimDocumentIngestion
         bool $reset = false,
     ): IngestionClaimResult {
         $embedding = $attempt->embeddingSpaceGeneration()->with('embeddingProfile')->firstOrFail();
-        $corpus = $attempt->workspaceCorpusGeneration()->firstOrFail();
+        $corpus = $attempt->workspaceCorpusGeneration()
+            ->with('sparseSpaceGeneration.sparseEmbeddingProfile')
+            ->firstOrFail();
+        $sparse = $corpus->sparseSpaceGeneration;
 
         return new IngestionClaimResult(
             outcome: $outcome,
@@ -200,6 +205,16 @@ class ClaimDocumentIngestion
             dimensions: $embedding->dimensions,
             distance: $embedding->distance,
             embeddingProfileFingerprint: $embedding->embeddingProfile->fingerprint,
+            sparseSpaceGenerationId: $sparse?->public_id,
+            sparseVectorName: $sparse?->vector_name,
+            sparseProfileFingerprint: $sparse?->sparseEmbeddingProfile->fingerprint,
+            sparseProfile: $sparse === null ? null : collect(
+                $sparse->sparseEmbeddingProfile->getAttributes()
+            )->only([
+                'provider', 'model', 'tokenizer', 'tokenizer_revision',
+                'output_representation', 'max_input_tokens', 'document_input_type',
+                'query_input_type', 'model_revision', 'adapter_version',
+            ])->all(),
             resumeSealedAttempt: $resume,
             resetOpenAttempt: $reset,
         );

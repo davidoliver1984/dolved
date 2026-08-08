@@ -54,6 +54,12 @@ class CompleteIngestionAttempt
                 ]);
             }
             if ($generation->status !== WorkspaceCorpusGenerationStatus::Active) {
+                if ($generation->sparse_space_generation_id !== null) {
+                    throw IngestionAttemptException::invalid(
+                        'hybrid_generation_not_activated',
+                        'A hybrid corpus generation must be verified and activated by the coordinated rebuild workflow.',
+                    );
+                }
                 $generation->forceFill([
                     'status' => WorkspaceCorpusGenerationStatus::Active,
                     'activated_at' => now(),

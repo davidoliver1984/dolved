@@ -27,6 +27,7 @@ class ClaimGrant:
     embedding_space_generation_id: str | None = None
     workspace_corpus_generation_id: str | None = None
     vector_space: dict[str, Any] | None = None
+    sparse_space_generation_id: str | None = None
     resume_sealed_attempt: bool = False
     reset_open_attempt: bool = False
 

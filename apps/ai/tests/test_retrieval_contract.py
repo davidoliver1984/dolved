@@ -6,8 +6,16 @@ from uuid import uuid4
 from jsonschema import Draft202012Validator, FormatChecker
 
 from app.embedding.models import V1_VOYAGE_PROFILE
-from app.retrieval.models import PlanRequest, SearchRequest, SearchScope
-from app.vector_store.models import VectorSpace
+from app.reranking.models import RerankCandidate, RerankerProfile, RerankRequest
+from app.retrieval.corpus_rebuild import (
+    CorpusPointIdentity,
+    CorpusRebuildBatchRequest,
+    CorpusRebuildChunk,
+    CorpusVerificationRequest,
+)
+from app.retrieval.models import PlanRequest, RetrievalSide, SearchRequest, SearchScope
+from app.sparse.models import SparseEmbeddingProfile
+from app.vector_store.models import SparseVectorSpace, VectorSpace
 
 CONTRACT = Path("/contracts/http/retrieval-call/rc1")
 
@@ -17,7 +25,7 @@ def validate(name: str, payload: dict[str, object]) -> None:
     Draft202012Validator(schema, format_checker=FormatChecker()).validate(payload)
 
 
-def test_python_request_models_match_both_shared_rc1_schemas() -> None:
+def test_python_request_models_match_shared_rc1_schemas() -> None:
     workspace_id = uuid4()
     plan = PlanRequest(
         contract_version=1,
@@ -47,3 +55,69 @@ def test_python_request_models_match_both_shared_rc1_schemas() -> None:
 
     validate("plan-v1.schema.json", plan.model_dump(mode="json"))
     validate("search-v1.schema.json", search.model_dump(mode="json"))
+
+    rerank = RerankRequest(
+        request_id=uuid4(),
+        workspace_id=workspace_id,
+        query="What is current?",
+        profile=RerankerProfile(
+            provider="voyage",
+            model="rerank-2.5",
+            adapter_version="1",
+        ),
+        candidates=(
+            RerankCandidate(
+                chunk_id=uuid4(),
+                document_id=uuid4(),
+                document_family_id=uuid4(),
+                version_position=1,
+                side=RetrievalSide.PRIMARY,
+                text="Canonical policy text.",
+                fused_score=0.04,
+                fused_rank=1,
+            ),
+        ),
+        top_k=1,
+    )
+    validate("rerank-v1.schema.json", rerank.model_dump(mode="json"))
+
+    sparse_profile = SparseEmbeddingProfile(
+        provider="test",
+        model="sparse",
+        tokenizer="test",
+        max_input_tokens=100,
+        adapter_version="1",
+    )
+    sparse_space = SparseVectorSpace(
+        sparse_space_generation_id=uuid4(),
+        profile_fingerprint=sparse_profile.fingerprint(),
+    )
+    hybrid_space = vector_space.model_copy(update={"sparse": sparse_space})
+    chunk = CorpusRebuildChunk(
+        chunk_id=uuid4(), document_id=uuid4(), text="Canonical policy text."
+    )
+    rebuild = CorpusRebuildBatchRequest(
+        request_id=uuid4(),
+        workspace_id=workspace_id,
+        rebuild_event_id=uuid4(),
+        embedding_profile=V1_VOYAGE_PROFILE,
+        sparse_embedding_profile=sparse_profile,
+        vector_space=hybrid_space,
+        workspace_corpus_generation_id=uuid4(),
+        chunks=(chunk,),
+    )
+    validate("corpus-rebuild-batch-v1.schema.json", rebuild.model_dump(mode="json"))
+    verification = CorpusVerificationRequest(
+        request_id=uuid4(),
+        workspace_id=workspace_id,
+        vector_space=hybrid_space,
+        workspace_corpus_generation_id=rebuild.workspace_corpus_generation_id,
+        points=(
+            CorpusPointIdentity(
+                chunk_id=chunk.chunk_id,
+                document_id=chunk.document_id,
+                event_id=rebuild.rebuild_event_id,
+            ),
+        ),
+    )
+    validate("corpus-verify-v1.schema.json", verification.model_dump(mode="json"))

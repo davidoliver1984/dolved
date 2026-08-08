@@ -102,6 +102,12 @@ class EmbeddingSpaceGeneration extends Model
         return $this->hasMany(WorkspaceCorpusGeneration::class);
     }
 
+    /** @return HasMany<SparseSpaceGeneration, $this> */
+    public function sparseSpaceGenerations(): HasMany
+    {
+        return $this->hasMany(SparseSpaceGeneration::class);
+    }
+
     private function assertLifecycleTimestamps(): void
     {
         $valid = match ($this->status) {

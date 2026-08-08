@@ -30,7 +30,12 @@ class AuthoriseIngestionPublication
         return DB::transaction(function () use ($eventId, $payload): IngestionEventClaim {
             $attempt = IngestionEventClaim::query()->where('event_id', $eventId)->lockForUpdate()->firstOrFail();
             $this->authorizer->assert($attempt, $payload['event_id'], $payload['workspace_id'], $payload['document_id'], $payload['lease_token']);
-            $attempt->loadMissing(['document', 'embeddingSpaceGeneration.embeddingProfile', 'chunks']);
+            $attempt->loadMissing([
+                'document',
+                'embeddingSpaceGeneration.embeddingProfile',
+                'workspaceCorpusGeneration.sparseSpaceGeneration.sparseEmbeddingProfile',
+                'chunks',
+            ]);
 
             if ($attempt->document->status !== DocumentStatus::Processing) {
                 throw IngestionAttemptException::invalid('document_ineligible', 'The Document is not eligible for publication.');
@@ -55,6 +60,13 @@ class AuthoriseIngestionPublication
                 || $attempt->workspaceCorpusGeneration->public_id !== $payload['workspace_corpus_generation_id']
             ) {
                 throw IngestionAttemptException::invalid('generation_mismatch', 'Publication generation identity does not match the attempt.');
+            }
+            $sparse = $attempt->workspaceCorpusGeneration->sparseSpaceGeneration;
+            if (
+                ($payload['sparse_space_generation_id'] ?? null) !== $sparse?->public_id
+                || ($payload['sparse_profile_fingerprint'] ?? null) !== $sparse?->sparseEmbeddingProfile?->fingerprint
+            ) {
+                throw IngestionAttemptException::invalid('sparse_generation_mismatch', 'Publication sparse generation lineage does not match the attempt.');
             }
             if (
                 $attempt->expected_chunk_count !== $payload['expected_chunk_count']
@@ -86,6 +98,7 @@ class AuthoriseIngestionPublication
                 'expected_point_count' => count($pointManifest),
                 'point_manifest_digest' => $pointDigest,
                 'embedding_profile_fingerprint' => $payload['embedding_profile_fingerprint'],
+                'sparse_profile_fingerprint' => $payload['sparse_profile_fingerprint'] ?? null,
                 'publication_evidence' => $this->evidence($payload),
                 'publication_authorised_at' => now(),
             ])->save();
@@ -107,7 +120,8 @@ class AuthoriseIngestionPublication
         return collect($payload)->only([
             'expected_chunk_count', 'chunk_manifest_digest', 'expected_point_count',
             'point_manifest_digest', 'embedding_profile_fingerprint',
-            'embedding_space_generation_id', 'workspace_corpus_generation_id',
+            'sparse_profile_fingerprint', 'embedding_space_generation_id',
+            'sparse_space_generation_id', 'workspace_corpus_generation_id',
         ])->all();
     }
 }

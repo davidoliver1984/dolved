@@ -1,6 +1,7 @@
 from typing import Protocol
 
 from app.vector_store.models import (
+    SparseVectorSearchRequest,
     VectorCompletenessReport,
     VectorCompletenessRequest,
     VectorScope,
@@ -18,6 +19,10 @@ class VectorStore(Protocol):
     def upsert(self, request: VectorUpsertRequest) -> VectorUpsertResult: ...
 
     def search(self, request: VectorSearchRequest) -> tuple[VectorSearchHit, ...]: ...
+
+    def search_sparse(
+        self, request: SparseVectorSearchRequest
+    ) -> tuple[VectorSearchHit, ...]: ...
 
     def count(self, scope: VectorScope) -> int: ...
 

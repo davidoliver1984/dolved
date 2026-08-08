@@ -25,6 +25,7 @@ ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
 ENV UV_PROJECT_ENVIRONMENT=/app/.venv
 ENV TIKTOKEN_CACHE_DIR=/opt/tiktoken-cache
+ENV FASTEMBED_CACHE_PATH=/opt/fastembed-cache
 ENV PATH="/app/.venv/bin:${PATH}"
 
 RUN apt-get update \
@@ -46,8 +47,9 @@ COPY --from=dependencies /app/.venv /app/.venv
 COPY --chown=app:app . .
 RUN uv sync --locked \
     && mkdir --parents "${TIKTOKEN_CACHE_DIR}" \
+    && mkdir --parents "${FASTEMBED_CACHE_PATH}" \
     && uv run python -c "import tiktoken; tiktoken.get_encoding('o200k_base')" \
-    && chown -R app:app /app "${TIKTOKEN_CACHE_DIR}"
+    && chown -R app:app /app "${TIKTOKEN_CACHE_DIR}" "${FASTEMBED_CACHE_PATH}"
 
 USER app
 
