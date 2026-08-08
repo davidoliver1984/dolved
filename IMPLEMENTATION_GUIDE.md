@@ -11877,54 +11877,205 @@ git tag -a phase-16-s06 \
 
 ### Objective
 
-Define one combined candidate-selection architecture — dense retrieval,
-sparse/keyword retrieval, fusion, reranking and evidence thresholds — as a
-single ADR, evaluated only after the Stage 16.4/16.6 semantic baseline is
-measured.
+Define the hybrid retrieval pipeline as a sequence of independently
+configured narrowing stages — dense and sparse candidate retrieval,
+application-owned fusion, reranking, and a calibrated evidence-threshold
+policy — while preserving deterministic eligibility, provider neutrality,
+and measurable improvement over the Stage 16.6 baseline through ADR-0019's
+evaluation harness.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-08.
 
-### Planned decisions
+### Decision
 
-* sparse/keyword retrieval alongside the existing dense retrieval;
-* hybrid candidate fusion, with Reciprocal Rank Fusion (RRF) as the initial
-  likely method;
-* a distinct, provider-neutral `Reranker` contract within this same ADR —
-  not a separate ADR — mirroring ADR-0013's `Embedder` abstraction shape;
-* Voyage as the initial V1 reranking provider;
-* retrieving a broader candidate set before reranking, then reranking down
-  to a smaller evidence set;
-* calibrated evidence thresholds and explicit abstention where the system
-  cannot find sufficient evidence;
-* hard workspace, authorisation, active-document and lifecycle filters
-  (per Stage 16.1) applied to candidate selection, not only to final
-  results;
-* preservation of source identity and provenance through fusion and
-  reranking.
+ADR 0021 was accepted before any Stage 16.8 implementation began, in:
 
-### Required ADR
+```text
+docs/adr/0021-define-hybrid-retrieval-and-reranking-architecture.md
+```
 
-docs/adr/ADR-XXX-hybrid-retrieval-and-reranking.md
+It extends ADR-0014's vector storage model (a symmetric sparse-space
+generation alongside embedding-space generation, reusing the existing
+named-vector and rebuild/activation machinery ADR-0014 already
+anticipated) and ADR-0018's pipeline and outcome taxonomy (a new `rc1`
+purpose, `retrieval.rerank`, already named as a legitimate future
+extension by ADR-0018; one new outcome, `INSUFFICIENT_EVIDENCE`, exercising
+the calibrated-acceptance policy ADR-0018 explicitly deferred to this
+session). It supersedes no accepted ADR and consumes ADR-0017, ADR-0019
+and ADR-0020 unchanged.
+
+The V1 pipeline: `AuthorisedKnowledgeScope` → `RetrievalPlanner` →
+`EligibilityResolver` → `EligibleRetrievalScope` → dense retrieval fused
+with sparse retrieval (application-owned RRF) → Laravel hydration and
+eligibility recheck → Voyage `rerank-2.5` reranking → a final Laravel
+eligibility recheck → `EvidenceThresholdPolicy` → final evidence. Every
+stage narrows; none may widen the eligible evidence universe
+`EligibilityResolver` established.
+
+A provider-neutral `SparseEncoder` boundary, with FastEmbed running
+SPLADE++ (`prithivida/Splade_PP_en_v1`) as the V1 implementation — a
+learned, corpus-independent sparse encoder, required (not merely
+preferred) by this platform's shared-collection tenancy model: BM25's
+corpus-statistical term weights would either couple one workspace's
+ranking to other workspaces' term distributions (collection-wide
+statistics) or turn every single-document ingestion into a workspace-wide
+re-weighting operation (per-workspace statistics), violating ADR-0006's
+and ADR-0014's already-accepted invariants either way. `SparseEmbeddingProfile`
+is immutable and fingerprinted exactly as `EmbeddingProfile` already is,
+records its supported input-length bound, and `SparseEncoder` never
+silently truncates an over-length input. Sparse vectors live as an
+additional named vector on existing Qdrant points — no new collection, no
+duplicated canonical text — via a new sparse-space generation, symmetric
+to embedding-space generation. Enabling hybrid retrieval for a workspace
+is a coordinated corpus rebuild producing a complete new point set under
+newly-derived point identities (ADR-0014's identity derivation includes
+the generation identity itself), verified complete across both the dense
+and sparse axes before activation; sparse-profile and sparse-space-
+generation identity and lineage require real PostgreSQL migrations,
+models, and relationships, honestly acknowledged rather than assumed away.
+
+Fusion stays application-owned — never Qdrant-native — for provider
+neutrality, deterministic testability, per-stage evaluation lineage, and
+adapter portability. `FusionStrategy` is introduced with Reciprocal Rank
+Fusion as its V1, fully deterministic implementation: 1-based ranks, a
+versioned `rrf_k`, canonical-chunk-identity deduplication, at most one
+contribution per candidate per list, preserved per-list rank/score
+lineage, and a fixed tie-break (fused score descending, then best source
+rank ascending, then canonical chunk identity ascending — never provider
+return order). `COMPARE` sides are fused independently, never merged.
+
+Six independently-versioned candidate-pipeline parameters —
+`dense_candidate_k`, `sparse_candidate_k`, `fusion_candidate_k`,
+`reranker_candidate_k`, `evidence_threshold`, `final_evidence_k` — each
+answer a distinct optimisation question and are semantically uncoupled,
+while remaining structurally bounded by pipeline data flow (a downstream
+stage can never be configured to expect more candidates than an upstream
+stage actually produced). None is hard-coded as an architectural constant;
+Codex's recommended starting values are recorded as the initial
+experimental configuration only, calibrated for production by Stage 16.8
+against ADR-0019's evaluation harness.
+
+`Reranker` is a provider-neutral boundary mirroring `Embedder`'s exact
+disciplines, with Voyage `rerank-2.5` as V1: no silent truncation, a typed
+failure taxonomy, a deterministic fake, opt-in credential-dependent live
+tests, and an injected, configuration-owned client. The Voyage adapter
+strictly validates every provider response before returning it; Laravel
+independently validates reranked candidate identities and lineage before
+acting on them. Python never reads PostgreSQL; Laravel hydrates canonical
+text and rechecks eligibility both before sending candidates to the
+Reranker and after receiving reranked results back — two round trips, not
+one, extending ADR-0018's existing hydration boundary rather than
+replacing it. `retrieval.rerank` is a new `rc1` purpose inheriting every
+existing `rc1` requirement in full (TLS, purpose-scoped HMAC, versioning,
+workspace binding, signed `request_id`/replay suppression, freshness,
+key rotation, trace propagation), with ADR-0012's privacy allowlist
+applied explicitly since this call's request body carries real chunk text.
+
+`EvidenceThresholdPolicy` finally exercises the calibrated-acceptance
+policy ADR-0018 deferred to this session. Ownership is pinned explicitly:
+Python computes and returns scores and lineage only; Laravel owns policy
+persistence/resolution, threshold application, `final_evidence_k`
+enforcement, authoritative outcome selection (including the new
+`INSUFFICIENT_EVIDENCE` and post-threshold `COMPARISON_SCOPE_INCOMPLETE`),
+the final eligibility recheck, and the evidence set forwarded to
+generation — Python never independently decides evidence is "good enough."
+A policy is immutably bound to the exact reranker, sparse-profile,
+embedding-profile, fusion, candidate-configuration, and calibration-corpus
+lineage it was calibrated against, and Laravel rejects applying it to
+mismatched lineage. Stage 16.8 must select `evidence_threshold` (and any
+configuration claimed as an improvement) on a calibration/tuning split and
+assess it against a separate held-out acceptance split that never
+influenced selection.
+
+Rollback reuses ADR-0014's generation lifecycle precisely: an explicit,
+atomic `SUPERSEDED → ACTIVE` operation (retention-window check,
+completeness re-verification, atomic demote-and-promote, audit record),
+never a direct pointer or identifier mutation, and never a request-time,
+undeclared dense-only fallback — a mid-request sparse/reranker failure
+produces `RETRIEVAL_FAILED` instead.
+
+`R16-S08`'s implementation boundary is explicitly broad — `apps/ai`,
+`apps/api`, `contracts`, PostgreSQL migrations/models/relationships,
+ingestion/generation-completeness changes, Qdrant collection/vector
+configuration, cross-service tests, evaluation/calibration artefacts,
+configuration/dependency files, and factual guide/tracker/journal
+updates — superseding the narrower "apps/ai plus tests" framing this
+stage's original stub implied.
+
+The full set of agreed decisions, worked examples, rejected alternatives
+and architectural invariants is recorded in ADR 0021 rather than
+duplicated here. ADR 0021 went through an independent architectural review
+of Codex's implementation-driven recommendation before any drafting began,
+a first full draft, and two rounds of bounded amendment (making the six
+candidate-pipeline parameters' independence and structural bounds
+explicit, and correcting the philosophy wording, in one round; correcting
+adversarial-case-style factual gaps — monotonic candidate bounds,
+deterministic RRF tie-break, honest dense/sparse rebuild and migration
+semantics, `SparseEncoder` input-length behaviour, `EvidenceThresholdPolicy`
+ownership/identity-binding/calibration-split, rollback lifecycle
+correctness, `retrieval.rerank` security, strict reranker response
+validation, and the corrected SPLADE++ "only" claim, in the other) before
+acceptance; see the session journal for what changed at each round.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No migrations,
+models, HTTP endpoints, or retrieval code were introduced. Verification
+consisted of:
+
+* independent inspection of ADR-0014, ADR-0017, ADR-0018, ADR-0019 and
+  ADR-0020, and of Codex's implementation-driven recommendation, before
+  drafting, so every consumed concept was grounded in its actual accepted
+  text rather than an approximation of it;
+* tracing ADR-0014's deterministic point-identity derivation to confirm a
+  hybrid-enabled generation genuinely produces new point identities,
+  before correcting the first draft's "dense vectors reused unchanged"
+  claim;
+* independently reasoning through why BM25's corpus-statistical weights
+  are structurally incompatible with this platform's shared-collection
+  tenancy and cheap-incremental-ingestion invariants, rather than treating
+  SPLADE++'s selection as a given;
+* confirming, after each amendment round and again before acceptance, that
+  only the ADR file itself had changed and that no other accepted ADR or
+  application code was modified;
+* checking the accepted ADR against each Stage 16.7 acceptance criterion
+  below.
 
 ### Acceptance criteria
 
-* A semantic-retrieval baseline exists and is measured (Stage 16.6) before
-  this architecture is adopted.
-* The `Reranker` contract is provider-neutral, matching the `Embedder`
-  pattern's replaceability requirements.
-* Fusion, thresholds and abstention are each explicit, typed decisions, not
-  implicit behaviour.
-* Tenant, authorisation and freshness filtering remain mandatory through
-  fusion and reranking.
-* The simpler semantic-only baseline remains the fallback if hybrid/rerank
-  evaluation does not show a measured improvement.
+* `SparseEncoder`, `FusionStrategy` and `Reranker` are each provider-
+  neutral, matching the `Embedder`/`VectorStore` replaceability pattern. —
+  Met.
+* Fusion, thresholds and abstention are each explicit, typed, versioned
+  decisions, never implicit behaviour or an invented numerical constant. —
+  Met.
+* Workspace, authorisation and temporal/applicability eligibility remain
+  mandatory and Laravel-owned through fusion, reranking and thresholding —
+  Python never independently authorises evidence. — Met.
+* The candidate pipeline's six parameters are independently versioned and
+  structurally, not semantically, bounded. — Met.
+* Hybrid rollout reuses ADR-0014's generation lifecycle, including a
+  lifecycle-correct rollback operation; no silent request-time downgrade
+  is possible. — Met.
+* `R16-S08`'s implementation boundary is stated honestly, including the
+  required PostgreSQL migrations. — Met.
+
+ADR 0021 was produced through an independent architectural review, a first
+full draft, and two rounds of requested, bounded refinement, each closing
+a specific independence, determinism, honesty, or security gap identified
+on review rather than reopening already-agreed decisions. No structural
+renumbering of Phase 16 resulted from this session.
 
 ### Commit boundary
 
-git add docs/adr
+git add docs/adr/0021-define-hybrid-retrieval-and-reranking-architecture.md \
+  docs/adr/README.md docs/journal/2026-08-08-r16-s07-define-hybrid-retrieval-and-reranking-architecture.md \
+  PROJECT_ROADMAP.md IMPLEMENTATION_GUIDE.md tasks.json
 git commit -m "Define hybrid retrieval and reranking architecture"
+git tag -a phase-16-s07 \
+  -m "Complete Stage 16.7: Define Hybrid Retrieval and Reranking Architecture"
 
 ---
 
@@ -11932,32 +12083,87 @@ git commit -m "Define hybrid retrieval and reranking architecture"
 
 ### Objective
 
-Implement the Stage 16.7 architecture: sparse retrieval, RRF fusion, the
-`Reranker` contract with Voyage as its V1 provider, calibrated thresholds
-and abstention.
+Implement the Stage 16.7 (ADR-0021) architecture in full: the
+`SparseEncoder` boundary (FastEmbed/SPLADE++), the sparse-space generation
+extending ADR-0014's model, deterministic application-owned RRF fusion,
+the `Reranker` boundary (Voyage `rerank-2.5`), the extended two-round-trip
+Laravel hydration sequence and the new `retrieval.rerank` `rc1` purpose,
+and the Laravel-owned `EvidenceThresholdPolicy` — calibrated against
+ADR-0019's evaluation harness using a held-out acceptance split, never
+invented as a hard-coded number.
 
 ### Status
 
 Not yet executed.
 
+### Planned work
+
+* `apps/ai`: `SparseEncoder`/`SparseEmbeddingProfile` (FastEmbed/SPLADE++,
+  input-length validation, no silent truncation); `FusionStrategy`/RRF
+  (1-based ranks, versioned `rrf_k`, deterministic tie-break, `COMPARE`
+  sides fused independently); `Reranker`/Voyage `rerank-2.5` (injected
+  client, typed failure taxonomy, strict provider-response validation,
+  deterministic fake, opt-in live test);
+* `apps/api`: `EvidenceThresholdPolicy` persistence, resolution and
+  identity-binding validation; the final eligibility recheck after
+  reranking; `INSUFFICIENT_EVIDENCE` and post-threshold
+  `COMPARISON_SCOPE_INCOMPLETE` outcome selection; Laravel-side reranker-
+  response validation;
+* `contracts`: the `retrieval.rerank` `rc1` purpose (request/response
+  shape, signed alongside the existing `rc1` fields);
+* PostgreSQL migrations, models and relationships for sparse-profile and
+  sparse-space-generation identity and lineage, and for
+  `EvidenceThresholdPolicy`'s versioned, digest-bound configuration;
+* ingestion/generation-completeness changes: the coordinated corpus
+  rebuild producing a complete new (dense + sparse) point set under
+  newly-derived point identities, verified across both axes before
+  activation, plus the lifecycle-correct `SUPERSEDED -> ACTIVE` rollback
+  operation;
+* Qdrant collection/named-vector configuration for the new sparse vector;
+* evaluation/calibration artefacts: the calibration/tuning split and the
+  separate held-out acceptance split ADR-0021 requires, using ADR-0019's
+  repository-owned corpus and metrics;
+* cross-service tests spanning `apps/ai` and `apps/api`, including the
+  monotonic candidate-bound validation and rollback lifecycle transitions;
+* configuration/dependency files (FastEmbed/SPLADE++, Voyage reranking
+  client), including the dependency/regression verification ADR-0021
+  requires before adopting the Ragas-adjacent transitive dependency set
+  Codex's compatibility review already flagged for the evaluation harness.
+
+### Required ADR
+
+docs/adr/0021-define-hybrid-retrieval-and-reranking-architecture.md
+(accepted `R16-S07`)
+
 ### Acceptance criteria
 
-* Sparse and dense candidates are fused before reranking, not merged
-  ad hoc per call site.
+* Sparse and dense candidates are fused deterministically before
+  reranking, not merged ad hoc per call site.
 * Reranking reduces a broader candidate set to a smaller evidence set
   through the `Reranker` contract, not a direct Voyage SDK call.
-* Evidence below the calibrated threshold results in explicit abstention,
-  not a low-confidence answer presented as if grounded.
-* Tenant, authorisation and freshness filtering are verified through the
-  complete fused/reranked path, not only the semantic baseline.
-* Stage 16.6's evaluation harness shows a measured improvement over the
-  semantic-only baseline before this becomes the default retrieval path.
-* Tests cover fusion, reranking, threshold/abstention behaviour and
-  isolation.
+* Evidence below the calibrated `evidence_threshold` results in explicit
+  `INSUFFICIENT_EVIDENCE`, not a low-confidence answer presented as if
+  grounded.
+* Workspace membership, authorisation, temporal authority (ADR-0017) and
+  applicability eligibility are verified through the complete
+  fused/reranked path, not only the semantic baseline.
+* `evidence_threshold` and any configuration claimed as an improvement are
+  selected on a calibration/tuning split and assessed on a separate
+  held-out acceptance split that did not influence selection, using
+  Stage 16.6's evaluation harness.
+* No stage can be configured to exceed the candidates an upstream stage
+  actually produced; statically-knowable violations are rejected at
+  configuration-validation time.
+* Rollback is the lifecycle-correct, atomic, audited `SUPERSEDED -> ACTIVE`
+  operation; a mid-request sparse/reranker failure returns
+  `RETRIEVAL_FAILED`, never a silent dense-only downgrade.
+* Tests cover fusion determinism, reranking, threshold/abstention
+  behaviour, isolation, monotonic candidate bounds, and rollback lifecycle
+  transitions.
 
 ### Commit boundary
 
-git add apps/ai tests
+git add apps/ai apps/api contracts docs/adr tests
 git commit -m "Implement hybrid retrieval and reranking"
 
 ---
