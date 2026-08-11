@@ -66,7 +66,62 @@
         "eligibility_correct": {"type": "boolean"},
         "outcome_correct": {"type": "boolean"},
         "hard_failures": {"type": "array", "items": {"$ref": "#/$defs/identifier"}},
-        "operational": {"$ref": "#/$defs/operational"}
+        "operational": {"$ref": "#/$defs/operational"},
+        "text_capture_mode": {"enum": ["DISABLED", "REDACTED", "BENCHMARK_TEXT"]},
+        "question": {"type": ["string", "null"]},
+        "expected_evidence": {"type": "array", "items": {"$ref": "#/$defs/expected_evidence"}},
+        "expected_outcome": {"type": ["string", "null"]},
+        "candidate_lineage": {"type": "array", "items": {"$ref": "#/$defs/candidate_lineage"}},
+        "candidate_funnel": {"type": "array", "items": {"$ref": "#/$defs/candidate_funnel"}}
+      }
+    },
+    "expected_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_unit_id", "document_family_id", "document_version_id", "side", "source_path"],
+      "properties": {
+        "evidence_unit_id": {"$ref": "#/$defs/identifier"},
+        "document_family_id": {"$ref": "#/$defs/identifier"},
+        "document_version_id": {"$ref": "#/$defs/identifier"},
+        "side": {"enum": ["PRIMARY", "COMPARISON"]},
+        "source_path": {"type": ["string", "null"]}
+      }
+    },
+    "candidate_lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "chunk_id", "document_family_id", "document_version_id", "side", "dense_rank", "dense_score", "sparse_rank", "sparse_score", "fused_rank", "fused_score", "reranker_rank", "reranker_score", "passed_evidence_threshold", "included_in_final_evidence", "covered_evidence_unit_ids"],
+      "properties": {
+        "candidate_id": {"$ref": "#/$defs/identifier"},
+        "chunk_id": {"type": "string", "format": "uuid"},
+        "document_family_id": {"$ref": "#/$defs/identifier"},
+        "document_version_id": {"$ref": "#/$defs/identifier"},
+        "side": {"enum": ["PRIMARY", "COMPARISON"]},
+        "dense_rank": {"type": ["integer", "null"], "minimum": 1},
+        "dense_score": {"type": ["number", "null"]},
+        "sparse_rank": {"type": ["integer", "null"], "minimum": 1},
+        "sparse_score": {"type": ["number", "null"]},
+        "fused_rank": {"type": ["integer", "null"], "minimum": 1},
+        "fused_score": {"type": ["number", "null"]},
+        "reranker_rank": {"type": ["integer", "null"], "minimum": 1},
+        "reranker_score": {"type": ["number", "null"]},
+        "passed_evidence_threshold": {"type": ["boolean", "null"]},
+        "included_in_final_evidence": {"type": "boolean"},
+        "covered_evidence_unit_ids": {"type": "array", "items": {"$ref": "#/$defs/identifier"}}
+      }
+    },
+    "candidate_funnel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["side", "dense_candidate_count", "sparse_candidate_count", "unique_post_fusion_count", "candidates_sent_to_reranker", "candidates_surviving_threshold", "final_evidence_count"],
+      "properties": {
+        "side": {"enum": ["PRIMARY", "COMPARISON"]},
+        "dense_candidate_count": {"type": ["integer", "null"], "minimum": 0},
+        "sparse_candidate_count": {"type": ["integer", "null"], "minimum": 0},
+        "unique_post_fusion_count": {"type": ["integer", "null"], "minimum": 0},
+        "candidates_sent_to_reranker": {"type": ["integer", "null"], "minimum": 0},
+        "candidates_surviving_threshold": {"type": ["integer", "null"], "minimum": 0},
+        "final_evidence_count": {"type": ["integer", "null"], "minimum": 0}
       }
     },
     "lineage": {

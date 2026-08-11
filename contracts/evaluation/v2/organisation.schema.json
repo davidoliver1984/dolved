@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/organisation.schema.json",
+  "title": "Engineering evaluation organisation blueprint",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "benchmark_id",
+    "organisation",
+    "evaluation_clock",
+    "locations",
+    "aliases",
+    "terminology"
+  ],
+  "properties": {
+    "schema_version": {"const": "v2"},
+    "benchmark_id": {"const": "dolved-care-engineering"},
+    "organisation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["organisation_id", "name", "description", "fictional"],
+      "properties": {
+        "organisation_id": {"$ref": "#/$defs/identifier"},
+        "name": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "fictional": {"const": true}
+      }
+    },
+    "evaluation_clock": {"type": "string", "format": "date-time"},
+    "locations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["location_id", "name", "kind", "parent_location_id"],
+        "properties": {
+          "location_id": {"$ref": "#/$defs/identifier"},
+          "name": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["REGION", "CARE_HOME", "COMMUNITY_SERVICE", "OFFICE"]},
+          "parent_location_id": {
+            "anyOf": [{"$ref": "#/$defs/identifier"}, {"type": "null"}]
+          }
+        }
+      }
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["alias", "location_ids"],
+        "properties": {
+          "alias": {"type": "string", "minLength": 1},
+          "location_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"$ref": "#/$defs/identifier"}
+          }
+        }
+      }
+    },
+    "terminology": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["term", "meaning", "aliases"],
+        "properties": {
+          "term": {"type": "string", "minLength": 1},
+          "meaning": {"type": "string", "minLength": 1},
+          "aliases": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[a-zA-Z0-9._:-]+$"
+    }
+  }
+}

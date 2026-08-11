@@ -1,0 +1,603 @@
+{
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "1",
+  "evaluation_clock": "2026-08-01T12:00:00Z",
+  "windows": {
+    "family.complaints.advocacy": [
+      {
+        "version_id": "doc.complaints.advocacy.v1",
+        "authority_start": "2025-05-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.complaints.duty-candour": [
+      {
+        "version_id": "doc.complaints.duty-candour.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.complaints.feedback": [
+      {
+        "version_id": "doc.complaints.feedback.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.complaints.form": [
+      {
+        "version_id": "doc.complaints.form.v1",
+        "authority_start": "2025-07-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.complaints.handling": [
+      {
+        "version_id": "doc.complaints.handling.v1",
+        "authority_start": "2023-07-01T00:00:00Z",
+        "authority_end": "2025-07-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.complaints.handling.v2",
+        "authority_start": "2025-07-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.fire.drills": [
+      {
+        "version_id": "doc.fire.drills.v1",
+        "authority_start": "2023-04-01T00:00:00Z",
+        "authority_end": "2025-04-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.fire.drills.v2",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.fire.harbour-view-evacuation": [
+      {
+        "version_id": "doc.fire.harbour-view-evacuation.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.fire.midlands-evacuation": [
+      {
+        "version_id": "doc.fire.midlands-evacuation.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.fire.north-west-evacuation": [
+      {
+        "version_id": "doc.fire.north-west-evacuation.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.fire.peep": [
+      {
+        "version_id": "doc.fire.peep.v1",
+        "authority_start": "2024-04-01T00:00:00Z",
+        "authority_end": "2026-11-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.fire.peep.v2",
+        "authority_start": "2026-11-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.fire.south-west-evacuation": [
+      {
+        "version_id": "doc.fire.south-west-evacuation.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.gdpr.breach": [
+      {
+        "version_id": "doc.gdpr.breach.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.gdpr.cctv": [
+      {
+        "version_id": "doc.gdpr.cctv.v1",
+        "authority_start": "2025-06-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.gdpr.data-protection": [
+      {
+        "version_id": "doc.gdpr.data-protection.v1",
+        "authority_start": "2024-01-01T00:00:00Z",
+        "authority_end": "2026-01-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.gdpr.data-protection.v2",
+        "authority_start": "2026-01-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.gdpr.retention": [
+      {
+        "version_id": "doc.gdpr.retention.v1",
+        "authority_start": "2025-05-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.gdpr.subject-access": [
+      {
+        "version_id": "doc.gdpr.subject-access.v1",
+        "authority_start": "2024-04-01T00:00:00Z",
+        "authority_end": "2026-12-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.gdpr.subject-access.v2",
+        "authority_start": "2026-12-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.health-safety.accident-reporting": [
+      {
+        "version_id": "doc.health-safety.accident-reporting.v1",
+        "authority_start": "2023-07-01T00:00:00Z",
+        "authority_end": "2025-07-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.health-safety.accident-reporting.v2",
+        "authority_start": "2025-07-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.health-safety.coshh": [
+      {
+        "version_id": "doc.health-safety.coshh.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.health-safety.equipment-checks": [
+      {
+        "version_id": "doc.health-safety.equipment-checks.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.health-safety.lone-working": [
+      {
+        "version_id": "doc.health-safety.lone-working.v1",
+        "authority_start": "2025-05-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.health-safety.moving-handling": [
+      {
+        "version_id": "doc.health-safety.moving-handling.v1",
+        "authority_start": "2023-10-01T00:00:00Z",
+        "authority_end": "2025-10-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.health-safety.moving-handling.v2",
+        "authority_start": "2025-10-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.health-safety.risk-assessment": [
+      {
+        "version_id": "doc.health-safety.risk-assessment.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.health-safety.slips-trips": [
+      {
+        "version_id": "doc.health-safety.slips-trips.v1",
+        "authority_start": "2025-06-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.hr.annual-leave": [
+      {
+        "version_id": "doc.hr.annual-leave.v1",
+        "authority_start": "2023-01-01T00:00:00Z",
+        "authority_end": "2025-01-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.hr.annual-leave.v2",
+        "authority_start": "2025-01-01T00:00:00Z",
+        "authority_end": "2026-10-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.hr.annual-leave.v3",
+        "authority_start": "2026-10-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.hr.disciplinary": [
+      {
+        "version_id": "doc.hr.disciplinary.v1",
+        "authority_start": "2024-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.hr.family-leave": [
+      {
+        "version_id": "doc.hr.family-leave.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.hr.flexible-working": [
+      {
+        "version_id": "doc.hr.flexible-working.v1",
+        "authority_start": "2024-04-15T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.hr.grievance": [
+      {
+        "version_id": "doc.hr.grievance.v1",
+        "authority_start": "2024-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.hr.lone-worker-welfare": [
+      {
+        "version_id": "doc.hr.lone-worker-welfare.v1",
+        "authority_start": "2025-05-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.hr.new-starter-form": [
+      {
+        "version_id": "doc.hr.new-starter-form.v1",
+        "authority_start": "2025-05-19T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.hr.recruitment": [
+      {
+        "version_id": "doc.hr.recruitment.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.hr.sickness-absence": [
+      {
+        "version_id": "doc.hr.sickness-absence.v1",
+        "authority_start": "2023-03-01T00:00:00Z",
+        "authority_end": "2025-04-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.hr.sickness-absence.v2",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.infection.clinical-waste": [
+      {
+        "version_id": "doc.infection.clinical-waste.v1",
+        "authority_start": "2025-05-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.infection.hand-hygiene": [
+      {
+        "version_id": "doc.infection.hand-hygiene.v1",
+        "authority_start": "2023-04-01T00:00:00Z",
+        "authority_end": "2025-04-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.infection.hand-hygiene.v2",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.infection.isolation": [
+      {
+        "version_id": "doc.infection.isolation.v1",
+        "authority_start": "2025-10-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.infection.laundry": [
+      {
+        "version_id": "doc.infection.laundry.v1",
+        "authority_start": "2025-06-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.infection.outbreak-management": [
+      {
+        "version_id": "doc.infection.outbreak-management.v1",
+        "authority_start": "2024-10-01T00:00:00Z",
+        "authority_end": "2025-10-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.infection.outbreak-management.v2",
+        "authority_start": "2025-10-01T00:00:00Z",
+        "authority_end": "2026-06-01T12:00:00Z"
+      }
+    ],
+    "family.infection.ppe": [
+      {
+        "version_id": "doc.infection.ppe.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.infection.respiratory-ppe": [
+      {
+        "version_id": "doc.infection.respiratory-ppe.v1",
+        "authority_start": "2025-10-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.medication.administration": [
+      {
+        "version_id": "doc.medication.administration.v1",
+        "authority_start": "2024-01-01T00:00:00Z",
+        "authority_end": "2025-05-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.medication.administration.v2",
+        "authority_start": "2025-05-01T00:00:00Z",
+        "authority_end": "2026-10-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.medication.administration.v3",
+        "authority_start": "2026-10-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.medication.controlled-drugs": [
+      {
+        "version_id": "doc.medication.controlled-drugs.v1",
+        "authority_start": "2023-06-01T00:00:00Z",
+        "authority_end": "2025-07-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.medication.controlled-drugs.v2",
+        "authority_start": "2025-07-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.medication.covert": [
+      {
+        "version_id": "doc.medication.covert.v1",
+        "authority_start": "2025-08-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.medication.errors": [
+      {
+        "version_id": "doc.medication.errors.v1",
+        "authority_start": "2025-05-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.medication.fridge-reference": [
+      {
+        "version_id": "doc.medication.fridge-reference.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.medication.prn": [
+      {
+        "version_id": "doc.medication.prn.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.medication.self-administration": [
+      {
+        "version_id": "doc.medication.self-administration.v1",
+        "authority_start": "2025-09-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.medication.storage": [
+      {
+        "version_id": "doc.medication.storage.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.payroll.calendar": [
+      {
+        "version_id": "doc.payroll.calendar.v1",
+        "authority_start": "2026-01-01T00:00:00Z",
+        "authority_end": "2027-01-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.payroll.calendar.v2",
+        "authority_start": "2027-01-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.payroll.expenses": [
+      {
+        "version_id": "doc.payroll.expenses.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.payroll.mileage": [
+      {
+        "version_id": "doc.payroll.mileage.v1",
+        "authority_start": "2025-05-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.payroll.overtime": [
+      {
+        "version_id": "doc.payroll.overtime.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.payroll.pension": [
+      {
+        "version_id": "doc.payroll.pension.v1",
+        "authority_start": "2025-05-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.reference.abbreviations": [
+      {
+        "version_id": "doc.reference.abbreviations.v1",
+        "authority_start": "2026-01-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.reference.contacts": [
+      {
+        "version_id": "doc.reference.contacts.v1",
+        "authority_start": "2026-01-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.reference.emergency-numbers": [
+      {
+        "version_id": "doc.reference.emergency-numbers.v1",
+        "authority_start": "2026-01-01T00:00:00Z",
+        "authority_end": "2027-01-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.reference.emergency-numbers.v2",
+        "authority_start": "2027-01-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.safeguarding.adult-reporting": [
+      {
+        "version_id": "doc.safeguarding.adult-reporting.v1",
+        "authority_start": "2024-07-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.safeguarding.allegations-staff": [
+      {
+        "version_id": "doc.safeguarding.allegations-staff.v1",
+        "authority_start": "2023-10-01T00:00:00Z",
+        "authority_end": "2025-10-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.safeguarding.allegations-staff.v2",
+        "authority_start": "2025-10-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.safeguarding.body-map": [
+      {
+        "version_id": "doc.safeguarding.body-map.v1",
+        "authority_start": "2025-05-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.safeguarding.dols": [
+      {
+        "version_id": "doc.safeguarding.dols.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.safeguarding.mental-capacity": [
+      {
+        "version_id": "doc.safeguarding.mental-capacity.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.safeguarding.missing-person": [
+      {
+        "version_id": "doc.safeguarding.missing-person.v1",
+        "authority_start": "2025-07-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.safeguarding.whistleblowing": [
+      {
+        "version_id": "doc.safeguarding.whistleblowing.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.training.fire": [
+      {
+        "version_id": "doc.training.fire.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.training.induction": [
+      {
+        "version_id": "doc.training.induction.v1",
+        "authority_start": "2025-01-01T00:00:00Z",
+        "authority_end": "2026-11-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.training.induction.v2",
+        "authority_start": "2026-11-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.training.matrix": [
+      {
+        "version_id": "doc.training.matrix.v1",
+        "authority_start": "2026-01-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.training.medication-competency": [
+      {
+        "version_id": "doc.training.medication-competency.v1",
+        "authority_start": "2024-01-01T00:00:00Z",
+        "authority_end": "2026-01-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.training.medication-competency.v2",
+        "authority_start": "2026-01-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.training.safeguarding": [
+      {
+        "version_id": "doc.training.safeguarding.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.visitors.contractor-sign-in": [
+      {
+        "version_id": "doc.visitors.contractor-sign-in.v1",
+        "authority_start": "2025-04-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.visitors.general": [
+      {
+        "version_id": "doc.visitors.general.v1",
+        "authority_start": "2025-03-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.visitors.outbreak-restrictions": [
+      {
+        "version_id": "doc.visitors.outbreak-restrictions.v1",
+        "authority_start": "2023-10-01T00:00:00Z",
+        "authority_end": "2025-10-01T00:00:00Z"
+      },
+      {
+        "version_id": "doc.visitors.outbreak-restrictions.v2",
+        "authority_start": "2025-10-01T00:00:00Z",
+        "authority_end": null
+      }
+    ],
+    "family.visitors.search-optimised-draft": []
+  }
+}

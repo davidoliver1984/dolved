@@ -39,3 +39,20 @@ the exact arguments; never promote a result merely because it completed.
 Ragas context relevance is advisory. Normal tests use fakes and require no
 credentials. The live integration test runs only when explicitly enabled with
 `RUN_LIVE_RAGAS_TESTS=1` and evaluator credentials.
+
+## Persisted experiment reports
+
+Durable experiment artefacts live under `docs/evaluation/runs/`. Each run keeps
+its raw result, exact configuration and optional saved comparison separate from
+generated Markdown/HTML projections and human notes. See
+`docs/evaluation/runs/README.md` for the contract and commands.
+
+Generate or regenerate a report without provider calls using:
+
+```bash
+make evaluation-report RUN=EXP-0001-short-description
+```
+
+The generated `docs/evaluation/EXPERIMENTS.md` index retains every run directory.
+Report generation never accepts or promotes an experiment and never changes the
+retrieval configuration or policy.

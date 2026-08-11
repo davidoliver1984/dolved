@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
 
 import pytest
+from pydantic import ValidationError
 
 from app.evaluation.canonical import content_digest
 from app.evaluation.harness import RetrievalEvaluationHarness
@@ -9,6 +10,7 @@ from app.evaluation.metrics import evaluate_metrics, evaluate_metrics_by_side
 from app.evaluation.models import (
     EvaluationCase,
     EvaluationCorpus,
+    EvaluationTextCaptureMode,
     EvidenceUnit,
     ExperimentLineage,
     QuestionVariant,
@@ -207,3 +209,47 @@ def test_missing_variant_is_an_absolute_lost_case_failure() -> None:
     )
     assert "lost_evaluation_case" in result.hard_failures
     assert "lost_case:case.one:one" in result.hard_failures
+
+
+def test_question_capture_is_privacy_safe_by_default_and_explicit_for_benchmarks() -> (
+    None
+):
+    assert (
+        VariantObservation(
+            case_id="case.one",
+            variant_id="one",
+            planner_correct=True,
+            eligibility_correct=True,
+            outcome_correct=True,
+        ).question
+        is None
+    )
+    with pytest.raises(ValidationError, match="text capture is disabled"):
+        VariantObservation(
+            case_id="case.one",
+            variant_id="one",
+            planner_correct=True,
+            eligibility_correct=True,
+            outcome_correct=True,
+            question="customer question",
+        )
+    with pytest.raises(ValidationError, match="cannot retain the raw question"):
+        VariantObservation(
+            case_id="case.one",
+            variant_id="one",
+            planner_correct=True,
+            eligibility_correct=True,
+            outcome_correct=True,
+            text_capture_mode=EvaluationTextCaptureMode.REDACTED,
+            question="customer question",
+        )
+    benchmark = VariantObservation(
+        case_id="case.one",
+        variant_id="one",
+        planner_correct=True,
+        eligibility_correct=True,
+        outcome_correct=True,
+        text_capture_mode=EvaluationTextCaptureMode.BENCHMARK_TEXT,
+        question="fictional benchmark question",
+    )
+    assert benchmark.question == "fictional benchmark question"

@@ -17,7 +17,10 @@ TAIL ?= 100
 	aws-provision aws-status qdrant-status publish-ingestion consume-ingestion \
 	telemetry-smoke telemetry-verify telemetry-outage \
 	evaluation-run \
+	evaluation-benchmark-sync \
+	evaluation-benchmark-compile \
 	evaluation-live-hybrid \
+	evaluation-report evaluation-index \
 	shell-web shell-api shell-ai shell-db shell-aws
 
 help:
@@ -45,7 +48,11 @@ help:
 		'  make telemetry-verify Verify cross-service trace, privacy and cardinality' \
 		'  make telemetry-outage Verify requests survive a Collector outage' \
 		'  make evaluation-run   Run the offline retrieval evaluation corpus' \
+		'  make evaluation-benchmark-sync  Synchronise authored Markdown paths into the benchmark catalogue' \
+		'  make evaluation-benchmark-compile  Validate and compile the engineering benchmark pilot' \
 		'  make evaluation-live-hybrid  Run the opt-in live hybrid retrieval evaluation' \
+		'  make evaluation-report RUN=<id>  Regenerate one persisted evaluation report' \
+		'  make evaluation-index  Regenerate the persisted experiment index' \
 		'  make reset           Delete local volumes and bootstrap again' \
 		'' \
 		'Quality' \
@@ -173,6 +180,23 @@ telemetry-outage:
 
 EVALUATION_CORPUS_VERSION ?= v2
 
+evaluation-benchmark-sync:
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace" \
+		--volume "$(CURDIR)/apps/ai/app:/app/app:ro" \
+		--workdir /workspace \
+		ai python scripts/evaluation/sync_engineering_benchmark_catalog.py \
+			--benchmark-root tests/evaluation/benchmarks/dolved-care-engineering/v1
+
+evaluation-benchmark-compile:
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace" \
+		--volume "$(CURDIR)/apps/ai/app:/app/app:ro" \
+		--workdir /workspace \
+		ai python scripts/evaluation/compile_engineering_benchmark.py \
+			--benchmark-root tests/evaluation/benchmarks/dolved-care-engineering/v1 \
+			--contract-root contracts/evaluation/v2
+
 evaluation-run:
 	@mkdir -p /tmp/rag-platform-evaluation
 	$(COMPOSE) run --rm --no-deps \
@@ -204,7 +228,32 @@ evaluation-live-hybrid:
 			--policy tests/evaluation/policies/v1/policy.json \
 			--repository-commit "$$(git rev-parse HEAD)-dirty" \
 			--evidence-threshold 0.337890625 \
+			--text-capture-mode BENCHMARK_TEXT \
 			--output /output/live-hybrid-result.json
+
+evaluation-report:
+	@test -n "$(RUN)" || { printf '%s\n' 'RUN is required (for example EXP-0001-first-run).'; exit 1; }
+	@test -d "docs/evaluation/runs/$(RUN)" || { printf '%s\n' 'Unknown evaluation run: $(RUN)'; exit 1; }
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace" \
+		--volume "$(CURDIR)/apps/ai/app:/app/app:ro" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		ai python scripts/evaluation/report.py generate \
+			--run-dir "docs/evaluation/runs/$(RUN)" \
+			--runs-root docs/evaluation/runs \
+			--index docs/evaluation/EXPERIMENTS.md \
+			$(if $(BASELINE),--baseline-result "$(BASELINE)",)
+
+evaluation-index:
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace" \
+		--volume "$(CURDIR)/apps/ai/app:/app/app:ro" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		ai python scripts/evaluation/report.py index \
+			--runs-root docs/evaluation/runs \
+			--index docs/evaluation/EXPERIMENTS.md
 
 reset:
 	@printf '%s\n' \

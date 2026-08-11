@@ -1,6 +1,7 @@
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+from uuid import UUID
 
 import jsonschema
 import pytest
@@ -9,13 +10,19 @@ from app.evaluation.canonical import content_digest
 from app.evaluation.models import (
     AggregateResult,
     BaselinePromotion,
+    CandidateFunnel,
+    CandidateStageLineage,
     EvaluationCorpus,
+    EvaluationTextCaptureMode,
+    ExpectedEvidenceIdentity,
     ExperimentLineage,
     ExperimentResult,
     GateDecision,
     ManualGateRecord,
     MetricValues,
+    OperationalObservation,
     QualityGatePolicy,
+    VariantResult,
 )
 
 CONTRACT_ROOT = Path("/contracts/evaluation/v1")
@@ -138,7 +145,58 @@ def test_result_and_governance_records_validate_against_shared_schemas() -> None
         ),
         aggregate=aggregate,
         slices={"CURRENT": aggregate},
-        variants=(),
+        variants=(
+            VariantResult(
+                case_id="case.current",
+                variant_id="direct",
+                metrics=aggregate.metrics,
+                side_metrics={"PRIMARY": aggregate.metrics},
+                covered_evidence_ids=("evidence.current",),
+                planner_correct=True,
+                eligibility_correct=True,
+                outcome_correct=True,
+                hard_failures=(),
+                operational=OperationalObservation(),
+                text_capture_mode=EvaluationTextCaptureMode.BENCHMARK_TEXT,
+                question="What is the current procedure?",
+                expected_outcome="EVIDENCE_FOUND",
+                expected_evidence=(
+                    ExpectedEvidenceIdentity(
+                        evidence_unit_id="evidence.current",
+                        document_family_id="family.policy",
+                        document_version_id="policy.v2",
+                        source_path="documents/policy-v2.md",
+                    ),
+                ),
+                candidate_lineage=(
+                    CandidateStageLineage(
+                        candidate_id="candidate.current",
+                        chunk_id=UUID("11111111-1111-4111-8111-111111111111"),
+                        document_family_id="family.policy",
+                        document_version_id="policy.v2",
+                        dense_rank=1,
+                        dense_score=0.8,
+                        fused_rank=1,
+                        fused_score=0.032,
+                        reranker_rank=1,
+                        reranker_score=0.7,
+                        passed_evidence_threshold=True,
+                        included_in_final_evidence=True,
+                        covered_evidence_unit_ids=("evidence.current",),
+                    ),
+                ),
+                candidate_funnel=(
+                    CandidateFunnel(
+                        dense_candidate_count=10,
+                        sparse_candidate_count=10,
+                        unique_post_fusion_count=8,
+                        candidates_sent_to_reranker=8,
+                        candidates_surviving_threshold=2,
+                        final_evidence_count=1,
+                    ),
+                ),
+            ),
+        ),
         hard_failures=(),
     )
     records = (

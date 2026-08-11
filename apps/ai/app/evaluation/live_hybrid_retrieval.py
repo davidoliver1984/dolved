@@ -19,9 +19,14 @@ from app.embedding.models import (
 )
 from app.evaluation.canonical import content_digest
 from app.evaluation.harness import RetrievalEvaluationHarness
+from app.evaluation.matching import candidate_covers
 from app.evaluation.models import (
+    CandidateFunnel,
+    CandidateStageLineage,
     EvaluationCase,
     EvaluationCorpus,
+    EvaluationTextCaptureMode,
+    ExpectedEvidenceIdentity,
     ExperimentLineage,
     ExperimentResult,
     OperationalObservation,
@@ -31,6 +36,7 @@ from app.evaluation.models import (
 )
 from app.reranking.models import (
     RerankCandidate,
+    RerankedCandidate,
     RerankerProfile,
     RerankRequest,
 )
@@ -42,7 +48,7 @@ from app.retrieval.models import (
     SearchRequest,
     SearchScope,
 )
-from app.retrieval.retriever import DenseRetriever
+from app.retrieval.retriever import DenseRetriever, RetrievalStageSnapshot
 from app.settings import Settings
 from app.sparse.factory import create_sparse_encoder, sparse_embedding_profile
 from app.sparse.models import (
@@ -127,6 +133,7 @@ def evaluate_live_hybrid_retrieval(
     evidence_threshold: float,
     configuration: HybridRetrievalConfiguration,
     rerank_delay_seconds: float,
+    text_capture_mode: EvaluationTextCaptureMode = EvaluationTextCaptureMode.DISABLED,
 ) -> LiveHybridEvaluation:
     chunks = _evaluation_chunks(corpus)
     chunk_by_id = {chunk.chunk_id: chunk for chunk in chunks}
@@ -246,10 +253,12 @@ def evaluate_live_hybrid_retrieval(
             variants, query_embeddings.embeddings, strict=True
         )
     }
+    stage_snapshots: list[RetrievalStageSnapshot] = []
     retriever = DenseRetriever(
         embedder=CachedQueryEmbedder(profile=profile, vectors_by_text=query_vectors),
         sparse_encoder=sparse_encoder,
         vector_store=vector_store,
+        stage_observer=stage_snapshots.append,
     )
     reranker = VoyageReranker(
         api_key=settings.voyage_api_key,
@@ -276,11 +285,13 @@ def evaluate_live_hybrid_retrieval(
                         eligibility_correct=True,
                         outcome_correct=True,
                         candidates=(),
+                        **_variant_context(case, variant.question, text_capture_mode),
                     )
                     dense_observations.append(controlled)
                     hybrid_observations.append(controlled)
                     continue
                 scopes = _eligible_scopes(case, chunks)
+                stage_snapshots.clear()
                 search_started = time.perf_counter()
                 response = retriever.search(
                     SearchRequest(
@@ -305,6 +316,10 @@ def evaluate_live_hybrid_retrieval(
                 search_ms = (time.perf_counter() - search_started) * 1000
                 search_latencies.append(search_ms)
                 dense_candidates = _dense_candidates(response.candidates)
+                dense_final_keys = {
+                    (candidate.side, candidate.chunk_id)
+                    for candidate in dense_candidates
+                }
                 dense_observations.append(
                     VariantObservation(
                         case_id=case.case_id,
@@ -317,6 +332,23 @@ def evaluate_live_hybrid_retrieval(
                             for candidate in dense_candidates
                         ),
                         operational=OperationalObservation(latency_ms=search_ms),
+                        candidate_lineage=_candidate_lineage(
+                            case=case,
+                            chunks=chunk_by_id,
+                            snapshots=tuple(stage_snapshots),
+                            reranked=(),
+                            evidence_threshold=None,
+                            final_keys=dense_final_keys,
+                            dense_only=True,
+                        ),
+                        candidate_funnel=_candidate_funnels(
+                            snapshots=tuple(stage_snapshots),
+                            sent_to_reranker=(),
+                            threshold_survivors=(),
+                            final_keys=dense_final_keys,
+                            dense_only=True,
+                        ),
+                        **_variant_context(case, variant.question, text_capture_mode),
                     )
                 )
                 fused = tuple(
@@ -367,7 +399,7 @@ def evaluate_live_hybrid_retrieval(
                 rerank_latencies.append(rerank_ms)
                 reranker_tokens += reranked.provider_input_tokens or 0
                 fused_by_id = {(item.side, item.chunk_id): item for item in fused}
-                accepted = tuple(
+                qualified = tuple(
                     item
                     for side in sorted(
                         {item.side for item in reranked.candidates},
@@ -378,6 +410,15 @@ def evaluate_live_hybrid_retrieval(
                         for candidate in reranked.candidates
                         if candidate.side is side
                         and candidate.score >= evidence_threshold
+                    )
+                )
+                accepted = tuple(
+                    item
+                    for side in sorted(
+                        {item.side for item in qualified}, key=lambda item: item.value
+                    )
+                    for item in tuple(
+                        candidate for candidate in qualified if candidate.side is side
                     )[: configuration.final_evidence_k]
                 )
                 accepted_candidates = tuple(
@@ -410,6 +451,27 @@ def evaluate_live_hybrid_retrieval(
                             token_usage=reranked.provider_input_tokens or 0,
                             request_count=1,
                         ),
+                        candidate_lineage=_candidate_lineage(
+                            case=case,
+                            chunks=chunk_by_id,
+                            snapshots=tuple(stage_snapshots),
+                            reranked=reranked.candidates,
+                            evidence_threshold=evidence_threshold,
+                            final_keys={
+                                (item.side, item.chunk_id) for item in accepted
+                            },
+                            dense_only=False,
+                        ),
+                        candidate_funnel=_candidate_funnels(
+                            snapshots=tuple(stage_snapshots),
+                            sent_to_reranker=fused,
+                            threshold_survivors=qualified,
+                            final_keys={
+                                (item.side, item.chunk_id) for item in accepted
+                            },
+                            dense_only=False,
+                        ),
+                        **_variant_context(case, variant.question, text_capture_mode),
                     )
                 )
     finally:
@@ -602,6 +664,171 @@ def _retrieved(
         text=chunk.text,
         side=side,
     )
+
+
+def _variant_context(
+    case: EvaluationCase,
+    question: str,
+    text_capture_mode: EvaluationTextCaptureMode,
+) -> dict[str, Any]:
+    captured_question = None
+    if text_capture_mode is EvaluationTextCaptureMode.BENCHMARK_TEXT:
+        captured_question = question
+    elif text_capture_mode is EvaluationTextCaptureMode.REDACTED:
+        captured_question = "[REDACTED]"
+    return {
+        "text_capture_mode": text_capture_mode,
+        "question": captured_question,
+        "expected_evidence": tuple(
+            ExpectedEvidenceIdentity(
+                evidence_unit_id=unit.evidence_id,
+                document_family_id=unit.document_family_id,
+                document_version_id=unit.document_version_id,
+                side=unit.side,
+                source_path=(
+                    unit.source_path
+                    if text_capture_mode is EvaluationTextCaptureMode.BENCHMARK_TEXT
+                    else None
+                ),
+            )
+            for unit in case.evidence_units
+        ),
+        "expected_outcome": case.expected_outcome,
+    }
+
+
+def _candidate_lineage(
+    *,
+    case: EvaluationCase,
+    chunks: dict[UUID, EvaluationChunk],
+    snapshots: tuple[RetrievalStageSnapshot, ...],
+    reranked: tuple[RerankedCandidate, ...],
+    evidence_threshold: float | None,
+    final_keys: set[tuple[RetrievalSide, UUID]],
+    dense_only: bool,
+) -> tuple[CandidateStageLineage, ...]:
+    dense: dict[tuple[RetrievalSide, UUID], RetrievalCandidate] = {}
+    sparse: dict[tuple[RetrievalSide, UUID], RetrievalCandidate] = {}
+    fused: dict[tuple[RetrievalSide, UUID], RetrievalCandidate] = {}
+    for snapshot in snapshots:
+        dense.update(
+            {(item.side, item.chunk_id): item for item in snapshot.dense_candidates}
+        )
+        sparse.update(
+            {
+                (item.side, item.chunk_id): item
+                for item in (snapshot.sparse_candidates or ())
+            }
+        )
+        fused.update(
+            {
+                (item.side, item.chunk_id): item
+                for item in (snapshot.fused_candidates or ())
+            }
+        )
+    reranked_by_key = {(item.side, item.chunk_id): item for item in reranked}
+    keys = set(dense) | set(sparse) | set(fused) | set(reranked_by_key)
+    result: list[CandidateStageLineage] = []
+    for key in sorted(keys, key=lambda item: (item[0].value, str(item[1]))):
+        dense_item = dense.get(key)
+        sparse_item = sparse.get(key)
+        fused_item = fused.get(key)
+        reranked_item = reranked_by_key.get(key)
+        representative = fused_item or dense_item or sparse_item
+        assert representative is not None
+        chunk = chunks[representative.chunk_id]
+        side = _evaluation_side(representative.side)
+        coverage_candidate = RetrievedCandidate(
+            candidate_id=chunk.candidate_id,
+            document_family_id=chunk.document_family_id,
+            document_version_id=chunk.document_version_id,
+            rank=(
+                reranked_item.rank if reranked_item is not None else representative.rank
+            ),
+            text=chunk.text,
+            side=side,
+        )
+        result.append(
+            CandidateStageLineage(
+                candidate_id=chunk.candidate_id,
+                chunk_id=chunk.chunk_id,
+                document_family_id=chunk.document_family_id,
+                document_version_id=chunk.document_version_id,
+                side=side,
+                dense_rank=dense_item.rank if dense_item is not None else None,
+                dense_score=dense_item.score if dense_item is not None else None,
+                sparse_rank=sparse_item.rank if sparse_item is not None else None,
+                sparse_score=sparse_item.score if sparse_item is not None else None,
+                fused_rank=(
+                    None if dense_only or fused_item is None else fused_item.rank
+                ),
+                fused_score=(
+                    None if dense_only or fused_item is None else fused_item.score
+                ),
+                reranker_rank=(
+                    reranked_item.rank if reranked_item is not None else None
+                ),
+                reranker_score=(
+                    reranked_item.score if reranked_item is not None else None
+                ),
+                passed_evidence_threshold=(
+                    reranked_item.score >= evidence_threshold
+                    if reranked_item is not None and evidence_threshold is not None
+                    else None
+                ),
+                included_in_final_evidence=key in final_keys,
+                covered_evidence_unit_ids=tuple(
+                    unit.evidence_id
+                    for unit in case.evidence_units
+                    if candidate_covers(unit, coverage_candidate)
+                ),
+            )
+        )
+    return tuple(result)
+
+
+def _candidate_funnels(
+    *,
+    snapshots: tuple[RetrievalStageSnapshot, ...],
+    sent_to_reranker: tuple[RetrievalCandidate, ...],
+    threshold_survivors: tuple[RerankedCandidate, ...],
+    final_keys: set[tuple[RetrievalSide, UUID]],
+    dense_only: bool,
+) -> tuple[CandidateFunnel, ...]:
+    return tuple(
+        CandidateFunnel(
+            side=_evaluation_side(snapshot.side),
+            dense_candidate_count=len(snapshot.dense_candidates),
+            sparse_candidate_count=(
+                None
+                if snapshot.sparse_candidates is None
+                else len(snapshot.sparse_candidates)
+            ),
+            unique_post_fusion_count=(
+                None
+                if snapshot.fused_candidates is None
+                else len(snapshot.fused_candidates)
+            ),
+            candidates_sent_to_reranker=(
+                None
+                if dense_only
+                else sum(item.side is snapshot.side for item in sent_to_reranker)
+            ),
+            candidates_surviving_threshold=(
+                None
+                if dense_only
+                else sum(item.side is snapshot.side for item in threshold_survivors)
+            ),
+            final_evidence_count=sum(
+                side is snapshot.side for side, _chunk_id in final_keys
+            ),
+        )
+        for snapshot in sorted(snapshots, key=lambda item: item.side.value)
+    )
+
+
+def _evaluation_side(side: RetrievalSide) -> Literal["PRIMARY", "COMPARISON"]:
+    return "PRIMARY" if side is RetrievalSide.PRIMARY else "COMPARISON"
 
 
 def _evaluate(

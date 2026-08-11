@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/benchmark-manifest.schema.json",
+  "title": "Engineering evaluation benchmark manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "benchmark_id",
+    "corpus_version",
+    "status",
+    "evaluation_clock",
+    "canonical_source_format",
+    "paths",
+    "planned_counts",
+    "pilot_counts",
+    "authored_counts"
+  ],
+  "properties": {
+    "schema_version": {"const": "v2"},
+    "benchmark_id": {"const": "dolved-care-engineering"},
+    "corpus_version": {"type": "string", "pattern": "^[1-9][0-9]*$"},
+    "status": {"enum": ["PILOT", "EXPANDING", "COMPLETE", "BASELINED"]},
+    "evaluation_clock": {"type": "string", "format": "date-time"},
+    "canonical_source_format": {"const": "text/markdown"},
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["organisation", "document_catalog", "case_sources", "split", "compiled_corpus", "checksums"],
+      "properties": {
+        "organisation": {"type": "string", "minLength": 1},
+        "document_catalog": {"type": "string", "minLength": 1},
+        "case_sources": {"type": "string", "minLength": 1},
+        "split": {"type": "string", "minLength": 1},
+        "compiled_corpus": {"type": "string", "minLength": 1},
+        "checksums": {"type": "string", "minLength": 1}
+      }
+    },
+    "planned_counts": {"$ref": "#/$defs/counts"},
+    "pilot_counts": {"$ref": "#/$defs/counts"},
+    "authored_counts": {"$ref": "#/$defs/counts"}
+  },
+  "$defs": {
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_families", "document_versions", "semantic_cases"],
+      "properties": {
+        "document_families": {"type": "integer", "minimum": 0},
+        "document_versions": {"type": "integer", "minimum": 0},
+        "semantic_cases": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

@@ -1,0 +1,2637 @@
+{
+  "schema_version": "v2",
+  "benchmark_id": "dolved-care-engineering",
+  "catalog_version": "1",
+  "families": [
+    {
+      "family_id": "family.hr.annual-leave",
+      "domain": "hr",
+      "title": "Annual Leave Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "CURRENT",
+        "VALID_AT_DATE",
+        "COMPARE",
+        "table-evidence",
+        "near-version-duplicate"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.hr.annual-leave.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/annual-leave-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2022-11-01T09:00:00Z",
+          "approved_at": "2022-12-15T10:00:00Z",
+          "effective_from": "2023-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.hr.annual-leave.v2",
+          "version_number": "2.0",
+          "source_path": "documents/hr/annual-leave-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-11-04T09:00:00Z",
+          "approved_at": "2024-12-16T10:00:00Z",
+          "effective_from": "2025-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.hr.annual-leave.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.hr.annual-leave.v3",
+          "version_number": "3.0",
+          "source_path": "documents/hr/annual-leave-v3-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-15T10:00:00Z",
+          "effective_from": "2026-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.hr.annual-leave.v2",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.sickness-absence",
+      "domain": "hr",
+      "title": "Sickness Absence Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "CURRENT",
+        "VALID_AT_DATE",
+        "abbreviation"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.hr.sickness-absence.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/sickness-absence-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-02-01T09:00:00Z",
+          "approved_at": "2023-02-20T10:00:00Z",
+          "effective_from": "2023-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.hr.sickness-absence.v2",
+          "version_number": "2.0",
+          "source_path": "documents/hr/sickness-absence-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-10T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.hr.sickness-absence.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.disciplinary",
+      "domain": "hr",
+      "title": "Disciplinary Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "long-form",
+        "multi-evidence"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.hr.grievance",
+          "notes": "Employee queries often confuse the two processes."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.disciplinary.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/disciplinary-policy.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-01-08T09:00:00Z",
+          "approved_at": "2024-02-12T10:00:00Z",
+          "effective_from": "2024-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.grievance",
+      "domain": "hr",
+      "title": "Grievance Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "long-form",
+        "near-duplicate-terminology"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.hr.disciplinary",
+          "notes": "Distinct employee-led process with similar hearing terminology."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.grievance.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/grievance-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-01-08T09:00:00Z",
+          "approved_at": "2024-02-12T10:00:00Z",
+          "effective_from": "2024-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.recruitment",
+      "domain": "hr",
+      "title": "Safer Recruitment Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "DBS-alias",
+        "multi-document",
+        "long-form"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.safeguarding.allegations-staff",
+          "notes": "Employment checks and safeguarding suitability overlap."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.recruitment.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/safer-recruitment-policy.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-10T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.flexible-working",
+      "domain": "hr",
+      "title": "Flexible Working Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "CURRENT",
+        "form-discovery"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.hr.flexible-working.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/flexible-working-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-03-01T09:00:00Z",
+          "approved_at": "2024-04-08T10:00:00Z",
+          "effective_from": "2024-04-15T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.lone-worker-welfare",
+      "domain": "hr",
+      "title": "Lone Worker Welfare Check Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "regional-applicability",
+        "near-duplicate"
+      ],
+      "relationships": [
+        {
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.health-safety.lone-working",
+          "notes": "Welfare escalation procedure is distinct from the risk-control policy."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.lone-worker-welfare.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/midlands-lone-worker-welfare.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-21T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.region.midlands"
+            ]
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.new-starter-form",
+      "domain": "hr",
+      "title": "New Starter Information Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "field-labels"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.hr.new-starter-form.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/new-starter-information-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-05-12T10:00:00Z",
+          "effective_from": "2025-05-19T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.family-leave",
+      "domain": "hr",
+      "title": "Family Leave Reference Table",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "aliases",
+        "near-numeric-values"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.hr.family-leave.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/family-leave-reference.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.administration",
+      "domain": "medication",
+      "title": "Safe Administration of Medicines Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "CURRENT",
+        "VALID_AT_DATE",
+        "COMPARE",
+        "scheduled-future",
+        "near-version-duplicate",
+        "abbreviation"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.storage",
+          "notes": "Storage checks are required before administration."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.administration.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/safe-administration-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-10-02T09:00:00Z",
+          "approved_at": "2023-11-15T10:00:00Z",
+          "effective_from": "2024-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        },
+        {
+          "version_id": "doc.medication.administration.v2",
+          "version_number": "2.0",
+          "source_path": "documents/medication/safe-administration-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-04-15T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.medication.administration.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        },
+        {
+          "version_id": "doc.medication.administration.v3",
+          "version_number": "3.0",
+          "source_path": "documents/medication/safe-administration-v3.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-05-04T09:00:00Z",
+          "approved_at": "2026-07-01T10:00:00Z",
+          "effective_from": "2026-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.medication.administration.v2",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.storage",
+      "domain": "medication",
+      "title": "Medicines Storage and Temperature Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "multi-document",
+        "table-evidence",
+        "numeric-range"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.fridge-reference",
+          "notes": "The procedure explains escalation; the table gives monitoring limits."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.storage.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/storage-temperature-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-10T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.prn",
+      "domain": "medication",
+      "title": "PRN Medicines Protocol",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "abbreviation",
+        "synonym",
+        "multi-evidence"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.medication.prn.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/prn-protocol.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-03T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.controlled-drugs",
+      "domain": "medication",
+      "title": "Controlled Drugs Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "CURRENT",
+        "VALID_AT_DATE",
+        "near-version-duplicate",
+        "long-form"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.medication.controlled-drugs.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/controlled-drugs-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-05-01T09:00:00Z",
+          "approved_at": "2023-05-22T10:00:00Z",
+          "effective_from": "2023-06-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.medication.controlled-drugs.v2",
+          "version_number": "2.0",
+          "source_path": "documents/medication/controlled-drugs-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-06-16T10:00:00Z",
+          "effective_from": "2025-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.medication.controlled-drugs.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.errors",
+      "domain": "medication",
+      "title": "Medication Error Reporting Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "abbreviation",
+        "multi-document"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.medication.errors.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/medication-error-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.covert",
+      "domain": "medication",
+      "title": "Covert Administration of Medicines Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "MCA-alias",
+        "long-form",
+        "multi-evidence"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.safeguarding.mental-capacity",
+          "notes": "Covert administration requires capacity and best-interest evidence."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.covert.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/covert-administration-policy.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-06-02T09:00:00Z",
+          "approved_at": "2025-07-14T10:00:00Z",
+          "effective_from": "2025-08-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.fridge-reference",
+      "domain": "medication",
+      "title": "Medication Fridge Monitoring Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "numeric-range",
+        "multi-document"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.storage",
+          "notes": "Reference limits support the storage escalation procedure."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.fridge-reference.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/fridge-monitoring-reference.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-10T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.self-administration",
+      "domain": "medication",
+      "title": "Self-Administration Risk Assessment",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "MCA-alias",
+        "field-labels"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.medication.self-administration.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/self-administration-risk-assessment.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-08-18T10:00:00Z",
+          "effective_from": "2025-09-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.adult-reporting",
+      "domain": "safeguarding",
+      "title": "Adult Safeguarding Reporting Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "CURRENT",
+        "scheduled-withdrawn-before-authority",
+        "long-form",
+        "multi-evidence"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.adult-reporting.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/adult-reporting-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-05-01T09:00:00Z",
+          "approved_at": "2024-06-10T10:00:00Z",
+          "effective_from": "2024-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        },
+        {
+          "version_id": "doc.safeguarding.adult-reporting.v2",
+          "version_number": "2.0",
+          "source_path": "documents/safeguarding/adult-reporting-v2-withdrawn.md",
+          "governance_state": "WITHDRAWN",
+          "created_at": "2026-03-02T09:00:00Z",
+          "approved_at": "2026-05-15T10:00:00Z",
+          "effective_from": "2026-09-01T00:00:00Z",
+          "withdrawn_at": "2026-07-10T10:00:00Z",
+          "supersedes_version_id": "doc.safeguarding.adult-reporting.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.whistleblowing",
+      "domain": "safeguarding",
+      "title": "Whistleblowing Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "alias",
+        "conflicting-contact-details"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.whistleblowing.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/whistleblowing-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-03T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.mental-capacity",
+      "domain": "safeguarding",
+      "title": "Mental Capacity and Best Interests Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "MCA-alias",
+        "long-form",
+        "multi-evidence"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.covert",
+          "notes": "Capacity decisions may inform medicines decisions."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.mental-capacity.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/mental-capacity-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.dols",
+      "domain": "safeguarding",
+      "title": "DoLS Application Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "DoLS-alias",
+        "table-evidence",
+        "near-numeric-values"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.dols.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/dols-reference.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.missing-person",
+      "domain": "safeguarding",
+      "title": "Missing Person Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "site-contact",
+        "multi-document",
+        "long-form"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.missing-person.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/missing-person-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-06-02T10:00:00Z",
+          "effective_from": "2025-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.allegations-staff",
+      "domain": "safeguarding",
+      "title": "Allegations Against Staff Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "CURRENT",
+        "VALID_AT_DATE",
+        "near-version-duplicate"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.hr.recruitment",
+          "notes": "Safeguarding suitability findings can affect employment checks."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.allegations-staff.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/allegations-staff-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-08-01T09:00:00Z",
+          "approved_at": "2023-09-11T10:00:00Z",
+          "effective_from": "2023-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.safeguarding.allegations-staff.v2",
+          "version_number": "2.0",
+          "source_path": "documents/safeguarding/allegations-staff-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.safeguarding.allegations-staff.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.body-map",
+      "domain": "safeguarding",
+      "title": "Injury Body Map Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "field-labels",
+        "multi-document"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.body-map.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/body-map-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.south-west-evacuation",
+      "domain": "fire-safety",
+      "title": "South West Emergency Evacuation Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "regional-applicability",
+        "descendant-site",
+        "near-duplicate",
+        "conflicting-guidance"
+      ],
+      "relationships": [
+        {
+          "type": "CONFLICTS_WITH",
+          "target_family_id": "family.fire.harbour-view-evacuation",
+          "notes": "Harbour View has a site-specific assembly point while both documents remain eligible there."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.fire.south-west-evacuation.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/south-west-evacuation.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-10T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.region.south-west"
+            ]
+          },
+          "pilot": true
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.harbour-view-evacuation",
+      "domain": "fire-safety",
+      "title": "Harbour View Fire Evacuation Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "site-applicability",
+        "location-alias",
+        "near-duplicate",
+        "conflicting-guidance"
+      ],
+      "relationships": [
+        {
+          "type": "CONFLICTS_WITH",
+          "target_family_id": "family.fire.south-west-evacuation",
+          "notes": "The site-specific assembly point differs from the regional fallback."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.fire.harbour-view-evacuation.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/harbour-view-evacuation.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.harbour-view"
+            ]
+          },
+          "pilot": true
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.north-west-evacuation",
+      "domain": "fire-safety",
+      "title": "North West Emergency Evacuation Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "regional-applicability",
+        "near-duplicate"
+      ],
+      "relationships": [
+        {
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.fire.south-west-evacuation",
+          "notes": "Shared template with different assembly arrangements."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.fire.north-west-evacuation.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/north-west-evacuation.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-10T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.region.north-west"
+            ]
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.midlands-evacuation",
+      "domain": "fire-safety",
+      "title": "Midlands Emergency Evacuation Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "regional-applicability",
+        "near-duplicate"
+      ],
+      "relationships": [
+        {
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.fire.south-west-evacuation",
+          "notes": "Shared template with different escalation contacts."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.fire.midlands-evacuation.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/midlands-evacuation.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-10T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.region.midlands"
+            ]
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.drills",
+      "domain": "fire-safety",
+      "title": "Fire Drill and Debrief Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "CURRENT",
+        "VALID_AT_DATE",
+        "table-evidence"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.fire.drills.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/fire-drills-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-02-01T09:00:00Z",
+          "approved_at": "2023-03-13T10:00:00Z",
+          "effective_from": "2023-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.fire.drills.v2",
+          "version_number": "2.0",
+          "source_path": "documents/fire-safety/fire-drills-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.fire.drills.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.peep",
+      "domain": "fire-safety",
+      "title": "Personal Emergency Evacuation Plan",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "PEEP-alias",
+        "CURRENT",
+        "scheduled-future"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.fire.peep.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/peep-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-02-01T09:00:00Z",
+          "approved_at": "2024-03-11T10:00:00Z",
+          "effective_from": "2024-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.fire.peep.v2",
+          "version_number": "2.0",
+          "source_path": "documents/fire-safety/peep-v2-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-20T10:00:00Z",
+          "effective_from": "2026-11-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.fire.peep.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.accident-reporting",
+      "domain": "health-safety",
+      "title": "Accident and Incident Reporting Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "RIDDOR-alias",
+        "CURRENT",
+        "VALID_AT_DATE",
+        "multi-evidence"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.accident-reporting.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/accident-reporting-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-05-01T09:00:00Z",
+          "approved_at": "2023-06-12T10:00:00Z",
+          "effective_from": "2023-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.health-safety.accident-reporting.v2",
+          "version_number": "2.0",
+          "source_path": "documents/health-safety/accident-reporting-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-06-16T10:00:00Z",
+          "effective_from": "2025-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.health-safety.accident-reporting.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.coshh",
+      "domain": "health-safety",
+      "title": "COSHH Assessment Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "COSHH-alias",
+        "form-discovery",
+        "long-form"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.coshh.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/coshh-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.moving-handling",
+      "domain": "health-safety",
+      "title": "Moving and Handling Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "CURRENT",
+        "COMPARE",
+        "long-form",
+        "near-version-duplicate"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.moving-handling.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/moving-handling-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-08-01T09:00:00Z",
+          "approved_at": "2023-09-11T10:00:00Z",
+          "effective_from": "2023-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.health-safety.moving-handling.v2",
+          "version_number": "2.0",
+          "source_path": "documents/health-safety/moving-handling-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.health-safety.moving-handling.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.lone-working",
+      "domain": "health-safety",
+      "title": "Lone Working Risk Control Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "near-duplicate",
+        "multi-document",
+        "location-specific"
+      ],
+      "relationships": [
+        {
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.hr.lone-worker-welfare",
+          "notes": "Risk controls differ from the missed welfare-check escalation."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.lone-working.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/lone-working-policy.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-21T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.risk-assessment",
+      "domain": "health-safety",
+      "title": "Workplace Risk Assessment Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "field-labels"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.risk-assessment.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/workplace-risk-assessment-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.equipment-checks",
+      "domain": "health-safety",
+      "title": "Safety Equipment Inspection Schedule",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "near-numeric-values"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.equipment-checks.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/equipment-inspection-schedule.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.slips-trips",
+      "domain": "health-safety",
+      "title": "Slips, Trips and Falls Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "synonym",
+        "multi-evidence"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.slips-trips.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/slips-trips-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-05-19T10:00:00Z",
+          "effective_from": "2025-06-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.outbreak-management",
+      "domain": "infection-control",
+      "title": "Respiratory Outbreak Management Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "withdrawn-after-authority",
+        "no-predecessor-resurrection",
+        "CURRENT",
+        "long-form"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.infection.outbreak-management.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/outbreak-management-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-08-01T09:00:00Z",
+          "approved_at": "2024-09-16T10:00:00Z",
+          "effective_from": "2024-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        },
+        {
+          "version_id": "doc.infection.outbreak-management.v2",
+          "version_number": "2.0",
+          "source_path": "documents/infection-control/outbreak-management-v2-withdrawn.md",
+          "governance_state": "WITHDRAWN",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": "2026-06-01T12:00:00Z",
+          "supersedes_version_id": "doc.infection.outbreak-management.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.ppe",
+      "domain": "infection-control",
+      "title": "PPE Selection Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "PPE-alias",
+        "table-evidence",
+        "near-duplicate-rows"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.infection.ppe.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/ppe-reference.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.hand-hygiene",
+      "domain": "infection-control",
+      "title": "Hand Hygiene Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "CURRENT",
+        "COMPARE",
+        "near-version-duplicate"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.infection.hand-hygiene.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/hand-hygiene-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-02-01T09:00:00Z",
+          "approved_at": "2023-03-13T10:00:00Z",
+          "effective_from": "2023-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.infection.hand-hygiene.v2",
+          "version_number": "2.0",
+          "source_path": "documents/infection-control/hand-hygiene-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.infection.hand-hygiene.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.clinical-waste",
+      "domain": "infection-control",
+      "title": "Clinical Waste Segregation Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "colour-table",
+        "near-numeric-values"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.infection.clinical-waste.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/clinical-waste-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.laundry",
+      "domain": "infection-control",
+      "title": "Infected Linen and Laundry Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "synonym",
+        "multi-step"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.infection.laundry.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/laundry-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-05-12T10:00:00Z",
+          "effective_from": "2025-06-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.respiratory-ppe",
+      "domain": "infection-control",
+      "title": "Respiratory Infection PPE Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "near-duplicate",
+        "conflicting-guidance",
+        "multi-document"
+      ],
+      "relationships": [
+        {
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.infection.ppe",
+          "notes": "Procedure prose overlaps with the PPE selection table."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.infection.respiratory-ppe.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/respiratory-ppe-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.isolation",
+      "domain": "infection-control",
+      "title": "Resident Isolation Risk Assessment",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "MCA-alias",
+        "field-labels"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.infection.isolation.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/isolation-risk-assessment.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-09-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.visitors.general",
+      "domain": "visitors",
+      "title": "Visitors and Contractors Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "CURRENT",
+        "multi-evidence",
+        "location-neutral"
+      ],
+      "relationships": [
+        {
+          "type": "CONFLICTS_WITH",
+          "target_family_id": "family.visitors.search-optimised-draft",
+          "notes": "The ineligible draft contains false visitor rules and keyword stuffing."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.visitors.general.v1",
+          "version_number": "1.0",
+          "source_path": "documents/visitors/visitors-contractors.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-10T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        }
+      ]
+    },
+    {
+      "family_id": "family.visitors.search-optimised-draft",
+      "domain": "visitors",
+      "title": "Visitor Access Search Notes",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "adversarial",
+        "keyword-stuffing",
+        "never-authoritative",
+        "negative"
+      ],
+      "relationships": [
+        {
+          "type": "CONFLICTS_WITH",
+          "target_family_id": "family.visitors.general",
+          "notes": "Deliberately misleading and ineligible retrieval negative."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.visitors.search-optimised-draft.v1",
+          "version_number": "0.1",
+          "source_path": "documents/visitors/search-optimised-draft-withdrawn.md",
+          "governance_state": "WITHDRAWN",
+          "created_at": "2026-05-01T09:00:00Z",
+          "approved_at": null,
+          "effective_from": "2026-06-01T00:00:00Z",
+          "withdrawn_at": "2026-05-20T10:00:00Z",
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        }
+      ]
+    },
+    {
+      "family_id": "family.visitors.outbreak-restrictions",
+      "domain": "visitors",
+      "title": "Outbreak Visiting Restrictions Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "CURRENT",
+        "VALID_AT_DATE",
+        "conflicting-guidance",
+        "near-version-duplicate"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.infection.outbreak-management",
+          "notes": "Visiting restrictions depend on outbreak management decisions."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.visitors.outbreak-restrictions.v1",
+          "version_number": "1.0",
+          "source_path": "documents/visitors/outbreak-restrictions-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-08-01T09:00:00Z",
+          "approved_at": "2023-09-11T10:00:00Z",
+          "effective_from": "2023-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.visitors.outbreak-restrictions.v2",
+          "version_number": "2.0",
+          "source_path": "documents/visitors/outbreak-restrictions-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.visitors.outbreak-restrictions.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.visitors.contractor-sign-in",
+      "domain": "visitors",
+      "title": "Contractor Sign-In and Permit Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "field-labels",
+        "near-duplicate"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.visitors.contractor-sign-in.v1",
+          "version_number": "1.0",
+          "source_path": "documents/visitors/contractor-sign-in-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.gdpr.data-protection",
+      "domain": "gdpr",
+      "title": "Data Protection Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "CURRENT",
+        "COMPARE",
+        "long-form",
+        "near-version-duplicate"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.gdpr.data-protection.v1",
+          "version_number": "1.0",
+          "source_path": "documents/gdpr/data-protection-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-11-01T09:00:00Z",
+          "approved_at": "2023-12-11T10:00:00Z",
+          "effective_from": "2024-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.gdpr.data-protection.v2",
+          "version_number": "2.0",
+          "source_path": "documents/gdpr/data-protection-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.gdpr.data-protection.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.gdpr.subject-access",
+      "domain": "gdpr",
+      "title": "Subject Access Request Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "SAR-alias",
+        "CURRENT",
+        "scheduled-future",
+        "near-numeric-values"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.gdpr.subject-access.v1",
+          "version_number": "1.0",
+          "source_path": "documents/gdpr/subject-access-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-02-01T09:00:00Z",
+          "approved_at": "2024-03-11T10:00:00Z",
+          "effective_from": "2024-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.gdpr.subject-access.v2",
+          "version_number": "2.0",
+          "source_path": "documents/gdpr/subject-access-v2-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-20T10:00:00Z",
+          "effective_from": "2026-12-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.gdpr.subject-access.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.gdpr.breach",
+      "domain": "gdpr",
+      "title": "Personal Data Breach Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "near-numeric-values",
+        "multi-evidence",
+        "long-form"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.gdpr.breach.v1",
+          "version_number": "1.0",
+          "source_path": "documents/gdpr/personal-data-breach.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.gdpr.retention",
+      "domain": "gdpr",
+      "title": "Records Retention Schedule",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "near-numeric-values",
+        "multi-evidence"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.gdpr.retention.v1",
+          "version_number": "1.0",
+          "source_path": "documents/gdpr/records-retention-schedule.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.gdpr.cctv",
+      "domain": "gdpr",
+      "title": "CCTV Access Request Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "SAR-alias",
+        "field-labels"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.gdpr.cctv.v1",
+          "version_number": "1.0",
+          "source_path": "documents/gdpr/cctv-access-request-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-05-19T10:00:00Z",
+          "effective_from": "2025-06-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.complaints.handling",
+      "domain": "complaints",
+      "title": "Complaints Handling Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "CURRENT",
+        "VALID_AT_DATE",
+        "near-numeric-values",
+        "long-form"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.complaints.handling.v1",
+          "version_number": "1.0",
+          "source_path": "documents/complaints/handling-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-05-01T09:00:00Z",
+          "approved_at": "2023-06-12T10:00:00Z",
+          "effective_from": "2023-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.complaints.handling.v2",
+          "version_number": "2.0",
+          "source_path": "documents/complaints/handling-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-06-16T10:00:00Z",
+          "effective_from": "2025-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.complaints.handling.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.complaints.duty-candour",
+      "domain": "complaints",
+      "title": "Duty of Candour Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "multi-document",
+        "near-duplicate-terminology",
+        "long-form"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.complaints.handling",
+          "notes": "A complaint may also trigger duty of candour."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.complaints.duty-candour.v1",
+          "version_number": "1.0",
+          "source_path": "documents/complaints/duty-of-candour.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.complaints.feedback",
+      "domain": "complaints",
+      "title": "Compliments and Feedback Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "near-duplicate-terminology",
+        "form-discovery"
+      ],
+      "relationships": [
+        {
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.complaints.handling",
+          "notes": "Uses similar contact channels but is not the formal complaint process."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.complaints.feedback.v1",
+          "version_number": "1.0",
+          "source_path": "documents/complaints/feedback-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.complaints.advocacy",
+      "domain": "complaints",
+      "title": "Independent Advocacy Contact Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "regional-contact",
+        "multi-document"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.complaints.advocacy.v1",
+          "version_number": "1.0",
+          "source_path": "documents/complaints/advocacy-contacts.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.complaints.form",
+      "domain": "complaints",
+      "title": "Complaint Record Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "field-labels"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.complaints.form.v1",
+          "version_number": "1.0",
+          "source_path": "documents/complaints/complaint-record-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-06-02T09:00:00Z",
+          "approved_at": "2025-06-16T10:00:00Z",
+          "effective_from": "2025-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.payroll.calendar",
+      "domain": "payroll",
+      "title": "Payroll Cut-Off Calendar",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "CURRENT",
+        "scheduled-future",
+        "table-evidence",
+        "near-date-values"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.payroll.calendar.v1",
+          "version_number": "2026",
+          "source_path": "documents/payroll/calendar-2026.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-01T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.payroll.calendar.v2",
+          "version_number": "2027",
+          "source_path": "documents/payroll/calendar-2027-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-20T10:00:00Z",
+          "effective_from": "2027-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.payroll.calendar.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.payroll.overtime",
+      "domain": "payroll",
+      "title": "Overtime and Additional Hours Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "near-numeric-values",
+        "alias",
+        "multi-evidence"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.payroll.overtime.v1",
+          "version_number": "1.0",
+          "source_path": "documents/payroll/overtime-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.payroll.expenses",
+      "domain": "payroll",
+      "title": "Employee Expenses Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "near-numeric-values",
+        "table-evidence",
+        "adversarial-negative"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.payroll.expenses.v1",
+          "version_number": "1.0",
+          "source_path": "documents/payroll/expenses-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.payroll.pension",
+      "domain": "payroll",
+      "title": "Workplace Pension Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "near-percentages",
+        "synonym"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.payroll.pension.v1",
+          "version_number": "1.0",
+          "source_path": "documents/payroll/pension-reference.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.payroll.mileage",
+      "domain": "payroll",
+      "title": "Mileage Claim Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "near-numeric-values",
+        "field-labels"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.payroll.mileage.v1",
+          "version_number": "1.0",
+          "source_path": "documents/payroll/mileage-claim-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.training.matrix",
+      "domain": "training",
+      "title": "Mandatory Training Matrix",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "role-alias",
+        "near-numeric-values"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.training.matrix.v1",
+          "version_number": "1.0",
+          "source_path": "documents/training/mandatory-training-matrix.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        }
+      ]
+    },
+    {
+      "family_id": "family.training.induction",
+      "domain": "training",
+      "title": "New Starter Induction Programme",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "CURRENT",
+        "scheduled-future",
+        "table-evidence"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.training.induction.v1",
+          "version_number": "1.0",
+          "source_path": "documents/training/induction-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-11-04T09:00:00Z",
+          "approved_at": "2024-12-16T10:00:00Z",
+          "effective_from": "2025-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.training.induction.v2",
+          "version_number": "2.0",
+          "source_path": "documents/training/induction-v2-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-20T10:00:00Z",
+          "effective_from": "2026-11-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.training.induction.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.training.medication-competency",
+      "domain": "training",
+      "title": "Medication Competency Assessment",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "CURRENT",
+        "VALID_AT_DATE",
+        "form",
+        "near-version-duplicate"
+      ],
+      "relationships": [
+        {
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.administration",
+          "notes": "Competency evidence supports permission to administer medicines."
+        }
+      ],
+      "versions": [
+        {
+          "version_id": "doc.training.medication-competency.v1",
+          "version_number": "1.0",
+          "source_path": "documents/training/medication-competency-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-11-01T09:00:00Z",
+          "approved_at": "2023-12-11T10:00:00Z",
+          "effective_from": "2024-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.training.medication-competency.v2",
+          "version_number": "2.0",
+          "source_path": "documents/training/medication-competency-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.training.medication-competency.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.training.safeguarding",
+      "domain": "training",
+      "title": "Safeguarding Training Levels Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "role-alias",
+        "near-numeric-values"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.training.safeguarding.v1",
+          "version_number": "1.0",
+          "source_path": "documents/training/safeguarding-levels.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.training.fire",
+      "domain": "training",
+      "title": "Fire Safety Training Record",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form",
+        "field-labels",
+        "role-alias"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.training.fire.v1",
+          "version_number": "1.0",
+          "source_path": "documents/training/fire-training-record.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.reference.abbreviations",
+      "domain": "reference",
+      "title": "Care and Compliance Abbreviations",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "abbreviation",
+        "table-evidence",
+        "alias"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.reference.abbreviations.v1",
+          "version_number": "1.0",
+          "source_path": "documents/reference/care-abbreviations.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": true
+        }
+      ]
+    },
+    {
+      "family_id": "family.reference.contacts",
+      "domain": "reference",
+      "title": "Operational Escalation Contacts",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "regional-contact",
+        "table-evidence",
+        "location-alias"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.reference.contacts.v1",
+          "version_number": "1.0",
+          "source_path": "documents/reference/operational-contacts.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    },
+    {
+      "family_id": "family.reference.emergency-numbers",
+      "domain": "reference",
+      "title": "Emergency and On-Call Numbers",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "CURRENT",
+        "scheduled-future",
+        "near-numeric-values",
+        "regional-contact"
+      ],
+      "relationships": [],
+      "versions": [
+        {
+          "version_id": "doc.reference.emergency-numbers.v1",
+          "version_number": "2026",
+          "source_path": "documents/reference/emergency-numbers-2026.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        },
+        {
+          "version_id": "doc.reference.emergency-numbers.v2",
+          "version_number": "2027",
+          "source_path": "documents/reference/emergency-numbers-2027-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-20T10:00:00Z",
+          "effective_from": "2027-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.reference.emergency-numbers.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "pilot": false
+        }
+      ]
+    }
+  ]
+}

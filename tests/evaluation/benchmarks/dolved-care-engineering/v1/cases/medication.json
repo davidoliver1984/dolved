@@ -1,0 +1,235 @@
+[
+  {
+    "case_id": "pilot.current.medication-administration",
+    "cluster_id": "cluster.medication-administration-lineage",
+    "variants": [
+      {"variant_id": "direct", "question": "When should I sign the MAR after giving a medicine?"},
+      {"variant_id": "colloquial", "question": "Do I tick the meds chart before or after the resident takes it?"},
+      {"variant_id": "abbreviation", "question": "What does the current policy say about signing a MAR?"}
+    ],
+    "slices": ["CURRENT", "abbreviation", "prose", "near-version-duplicate"],
+    "planner_expectation": {
+      "temporal_mode": "CURRENT",
+      "valid_at": null,
+      "primary_anchor": null,
+      "comparison_anchor": null,
+      "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false},
+      "expected_outcome": "PLAN_READY"
+    },
+    "eligibility_expectation": {
+      "eligible_versions": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}
+      ],
+      "excluded_versions": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "reason": "HISTORICAL_FOR_CURRENT"},
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v3", "reason": "SCHEDULED_FUTURE"}
+      ],
+      "expected_outcome": "ELIGIBLE_SCOPE_READY"
+    },
+    "retrieval_expectation": {
+      "evidence_units": [
+        {"evidence_id": "medication.mar.sign-after-observation", "document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "side": "PRIMARY", "source_path": "documents/medication/safe-administration-v2.md", "canonical_excerpts": ["The member of staff must sign the Medication Administration Record (MAR) immediately after observing that the person has taken the dose."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": "Recording administration", "notes": "Tests abbreviation and colloquial chart terminology."}
+      ]
+    },
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "pilot.valid-at-date.medication-administration",
+    "cluster_id": "cluster.medication-administration-lineage",
+    "variants": [
+      {"variant_id": "dated", "question": "What MAR code applied to a refused dose on 1 June 2024?"},
+      {"variant_id": "historical", "question": "In June 2024, how did staff record medicine refusal?"},
+      {"variant_id": "colloquial", "question": "What did the old meds policy say to put on the chart when someone refused?"}
+    ],
+    "slices": ["VALID_AT_DATE", "abbreviation", "historical", "near-version-duplicate"],
+    "planner_expectation": {
+      "temporal_mode": "VALID_AT_DATE",
+      "valid_at": "2024-06-01T12:00:00Z",
+      "primary_anchor": "2024-06-01T12:00:00Z",
+      "comparison_anchor": null,
+      "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false},
+      "expected_outcome": "PLAN_READY"
+    },
+    "eligibility_expectation": {
+      "eligible_versions": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}
+      ],
+      "excluded_versions": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "reason": "SCHEDULED_FUTURE"},
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v3", "reason": "SCHEDULED_FUTURE"}
+      ],
+      "expected_outcome": "ELIGIBLE_SCOPE_READY"
+    },
+    "retrieval_expectation": {
+      "evidence_units": [
+        {"evidence_id": "medication.v1.refused-code", "document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "side": "PRIMARY", "source_path": "documents/medication/safe-administration-v1.md", "canonical_excerpts": ["A refused dose must be recorded using code R."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Missed or refused doses", "notes": null}
+      ]
+    },
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "pilot.compare.medication-administration",
+    "cluster_id": "cluster.medication-administration-lineage",
+    "variants": [
+      {"variant_id": "direct", "question": "Compare the current medicine checks with the previous policy."},
+      {"variant_id": "change", "question": "What changed in the checks before giving medication?"},
+      {"variant_id": "colloquial", "question": "What extra check was added to the newer meds policy?"}
+    ],
+    "slices": ["COMPARE", "multi-evidence", "near-version-duplicate", "prose"],
+    "planner_expectation": {
+      "temporal_mode": "COMPARE",
+      "valid_at": null,
+      "primary_anchor": "CURRENT",
+      "comparison_anchor": "PREVIOUS_AUTHORITY",
+      "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false},
+      "expected_outcome": "PLAN_READY"
+    },
+    "eligibility_expectation": {
+      "eligible_versions": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}},
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "side": "COMPARISON", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}
+      ],
+      "excluded_versions": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v3", "reason": "SCHEDULED_FUTURE"}
+      ],
+      "expected_outcome": "ELIGIBLE_SCOPE_READY"
+    },
+    "retrieval_expectation": {
+      "evidence_units": [
+        {"evidence_id": "medication.v2.seven-checks", "document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "side": "PRIMARY", "source_path": "documents/medication/safe-administration-v2.md", "canonical_excerpts": ["Immediately before administration, the member of staff must confirm the right person, medicine, dose, route, time, reason and documentation."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": "Seven checks", "notes": "Current policy adds reason and documentation."},
+        {"evidence_id": "medication.v1.six-checks", "document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "side": "COMPARISON", "source_path": "documents/medication/safe-administration-v1.md", "canonical_excerpts": ["Before giving a medicine, staff must confirm the person's identity, medicine, dose, route and scheduled time against the MAR."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": "Checks before administration", "notes": "Previous policy has a smaller explicit set."}
+      ]
+    },
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "pilot.current.scheduled-medication-version",
+    "cluster_id": "cluster.medication-administration-lineage",
+    "variants": [
+      {"variant_id": "direct", "question": "Do omitted doses currently need an electronic incident reference on the MAR?"},
+      {"variant_id": "scheduled", "question": "Has the October electronic MAR rule started yet?"},
+      {"variant_id": "colloquial", "question": "Do we have to add the incident number to the meds chart now?"}
+    ],
+    "slices": ["CURRENT", "scheduled-future", "near-version-duplicate", "negative-exclusion"],
+    "planner_expectation": {
+      "temporal_mode": "CURRENT",
+      "valid_at": null,
+      "primary_anchor": null,
+      "comparison_anchor": null,
+      "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false},
+      "expected_outcome": "PLAN_READY"
+    },
+    "eligibility_expectation": {
+      "eligible_versions": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}
+      ],
+      "excluded_versions": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "reason": "HISTORICAL_FOR_CURRENT"},
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v3", "reason": "SCHEDULED_FUTURE"}
+      ],
+      "expected_outcome": "ELIGIBLE_SCOPE_READY"
+    },
+    "retrieval_expectation": {
+      "evidence_units": [
+        {"evidence_id": "medication.v2.omission-current-rule", "document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "side": "PRIMARY", "source_path": "documents/medication/safe-administration-v2.md", "canonical_excerpts": ["If the medicine is not given, the correct exception code and a contemporaneous note are required."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": "Recording administration", "notes": "The scheduled electronic incident-reference requirement must not leak into current evidence."}
+      ]
+    },
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "pilot.multi-document.medication-storage",
+    "cluster_id": "cluster.refrigerated-medicines",
+    "variants": [
+      {"variant_id": "direct", "question": "What should I do if the medicines fridge reads 9°C before the drug round?"},
+      {"variant_id": "colloquial", "question": "The meds fridge is too warm — can I still give the medicine and who do I call?"},
+      {"variant_id": "numeric", "question": "What do the policy and storage procedure require for a 9 degree fridge reading?"}
+    ],
+    "slices": ["CURRENT", "multi-document", "multi-evidence", "numeric-range"],
+    "planner_expectation": {
+      "temporal_mode": "CURRENT",
+      "valid_at": null,
+      "primary_anchor": null,
+      "comparison_anchor": null,
+      "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false},
+      "expected_outcome": "PLAN_READY"
+    },
+    "eligibility_expectation": {
+      "eligible_versions": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}},
+        {"document_family_id": "family.medication.storage", "document_version_id": "doc.medication.storage.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}
+      ],
+      "excluded_versions": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "reason": "HISTORICAL_FOR_CURRENT"},
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v3", "reason": "SCHEDULED_FUTURE"}
+      ],
+      "expected_outcome": "ELIGIBLE_SCOPE_READY"
+    },
+    "retrieval_expectation": {
+      "evidence_units": [
+        {"evidence_id": "medication.administration.fridge-gate", "document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "side": "PRIMARY", "source_path": "documents/medication/safe-administration-v2.md", "canonical_excerpts": ["If it is outside that range, the medicine must be quarantined and the medicines storage procedure followed; staff must not decide independently that the medicine remains usable."], "relevance_grade": 2, "minimum_token_coverage": 0.85, "locator": "Storage checks", "notes": null},
+        {"evidence_id": "medication.storage.out-of-range-response", "document_family_id": "family.medication.storage", "document_version_id": "doc.medication.storage.v1", "side": "PRIMARY", "source_path": "documents/medication/storage-temperature-procedure.md", "canonical_excerpts": ["When any reading is outside 2°C to 8°C, staff must label the affected medicines “QUARANTINED — DO NOT USE”, keep them secure, and record the earliest possible time the excursion began.", "The shift leader must contact the supplying pharmacist for medicine-specific stability advice."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Out-of-range response", "notes": "Combined coverage across chunks is permitted by ADR-0020."}
+      ]
+    },
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "medication.prn.minimum-interval",
+    "cluster_id": "cluster.medication-prn",
+    "variants": [{"variant_id": "direct", "question": "What must I check before giving a PRN medicine?"}, {"variant_id": "expanded", "question": "What information is needed before giving when-required medication?"}, {"variant_id": "colloquial", "question": "It is on the meds chart as needed — is that enough to give it?"}],
+    "slices": ["CURRENT", "abbreviation", "multi-evidence", "colloquial"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.medication.prn", "document_version_id": "doc.medication.prn.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "medication.prn.prechecks", "document_family_id": "family.medication.prn", "document_version_id": "doc.medication.prn.v1", "side": "PRIMARY", "source_path": "documents/medication/prn-protocol.md", "canonical_excerpts": ["Before offering a PRN medicine, staff must check the person's current protocol for the indication, minimum interval, maximum dose in 24 hours and non-medicine measures to try first.", "A PRN entry on the MAR is not, by itself, enough information to administer safely."], "relevance_grade": 2, "minimum_token_coverage": 0.85, "locator": "PRN Medicines Protocol", "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "medication.controlled-drugs.current-discrepancy",
+    "cluster_id": "cluster.controlled-drugs-lineage",
+    "variants": [{"variant_id": "direct", "question": "When must a controlled-drug discrepancy be escalated now?"}, {"variant_id": "contrast", "question": "Can a controlled drugs stock mismatch wait until shift end?"}, {"variant_id": "colloquial", "question": "The CD count is wrong — what do we do straight away?"}],
+    "slices": ["CURRENT", "abbreviation", "near-version-duplicate"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "reason": "HISTORICAL_FOR_CURRENT"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "medication.cd.immediate-escalation", "document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v2", "side": "PRIMARY", "source_path": "documents/medication/controlled-drugs-v2.md", "canonical_excerpts": ["A discrepancy must be escalated immediately, not at the end of the shift."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": "Near-duplicate v1 says before shift end."}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "medication.controlled-drugs.valid-at-date",
+    "cluster_id": "cluster.controlled-drugs-lineage",
+    "variants": [{"variant_id": "dated", "question": "In January 2024, when did a controlled-drug discrepancy have to be reported?"}, {"variant_id": "historical", "question": "What was the old CD stock discrepancy deadline?"}, {"variant_id": "contrast", "question": "Did the 2023 procedure allow reporting by the end of the shift?"}],
+    "slices": ["VALID_AT_DATE", "historical", "near-version-duplicate"],
+    "planner_expectation": {"temporal_mode": "VALID_AT_DATE", "valid_at": "2024-01-15T12:00:00Z", "primary_anchor": "2024-01-15T12:00:00Z", "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v2", "reason": "SCHEDULED_FUTURE"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "medication.cd.v1.shift-end", "document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "side": "PRIMARY", "source_path": "documents/medication/controlled-drugs-v1.md", "canonical_excerpts": ["A discrepancy is reported to the registered manager before the end of the shift and the stock is secured while the check is repeated."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "medication.error-form.immediate-safety",
+    "cluster_id": "cluster.medication-error-form",
+    "variants": [{"variant_id": "direct", "question": "What goes on the medication error form?"}, {"variant_id": "priority", "question": "Should I finish the medicines incident form before calling for clinical advice?"}, {"variant_id": "colloquial", "question": "What details do I write down after a meds mistake?"}],
+    "slices": ["CURRENT", "forms", "table-evidence", "multi-evidence"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.medication.errors", "document_version_id": "doc.medication.errors.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "medication.error-form.fields", "document_family_id": "family.medication.errors", "document_version_id": "doc.medication.errors.v1", "side": "PRIMARY", "source_path": "documents/medication/medication-error-form.md", "canonical_excerpts": ["| Immediate safety | Observations, clinical advice and protective action |", "Complete the form after immediate safety actions. Do not delay clinical advice while gathering administrative detail."], "relevance_grade": 2, "minimum_token_coverage": 0.85, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "medication.covert.capacity-requirements",
+    "cluster_id": "cluster.covert-medication",
+    "variants": [{"variant_id": "direct", "question": "What approvals are required before medicine can be given covertly?"}, {"variant_id": "refusal", "question": "Can we hide medicine in food because a resident refuses it?"}, {"variant_id": "abbreviation", "question": "Does covert medication need an MCA and best-interests decision?"}],
+    "slices": ["CURRENT", "MCA-alias", "multi-evidence", "long-form"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.medication.covert", "document_version_id": "doc.medication.covert.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "medication.covert.required-decisions", "document_family_id": "family.medication.covert", "document_version_id": "doc.medication.covert.v1", "side": "PRIMARY", "source_path": "documents/medication/covert-administration-policy.md", "canonical_excerpts": ["It is never justified merely because a person refuses medicine.", "A decision requires a decision-specific assessment that the person lacks capacity, a recorded best-interests process, prescriber agreement and pharmacy advice confirming the proposed method will not alter the medicine unsafely."], "relevance_grade": 2, "minimum_token_coverage": 0.85, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "medication.fridge.boundary-table",
+    "cluster_id": "cluster.refrigerated-medicines",
+    "variants": [{"variant_id": "upper", "question": "Is a medicines fridge reading of exactly 8°C in range?"}, {"variant_id": "decimal", "question": "What action is required at 8.1 degrees?"}, {"variant_id": "colloquial", "question": "Is eight okay but just over eight too warm?"}],
+    "slices": ["CURRENT", "tables", "numeric-boundary", "near-numeric-values"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.medication.fridge-reference", "document_version_id": "doc.medication.fridge-reference.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "medication.fridge.boundaries", "document_family_id": "family.medication.fridge-reference", "document_version_id": "doc.medication.fridge-reference.v1", "side": "PRIMARY", "source_path": "documents/medication/fridge-monitoring-reference.md", "canonical_excerpts": ["| 2°C to 8°C inclusive | In range | Record and continue normal use |", "| 8.1°C or above | Too warm | Quarantine stock and seek pharmacy advice |"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  }
+]

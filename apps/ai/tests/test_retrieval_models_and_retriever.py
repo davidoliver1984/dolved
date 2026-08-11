@@ -16,7 +16,7 @@ from app.retrieval.models import (
     TemporalAnchorKind,
     TemporalMode,
 )
-from app.retrieval.retriever import DenseRetriever
+from app.retrieval.retriever import DenseRetriever, RetrievalStageSnapshot
 from app.sparse.fake import DeterministicSparseEncoder
 from app.sparse.models import SparseEmbeddingProfile
 from app.vector_store.models import (
@@ -164,6 +164,7 @@ def test_search_contract_rejects_profile_lineage_mismatch() -> None:
 def test_hybrid_retriever_fuses_compare_sides_independently_and_reports_lineage() -> (
     None
 ):
+    snapshots: list[RetrievalStageSnapshot] = []
     sparse_profile = SparseEmbeddingProfile(
         provider="test",
         model="deterministic-sparse",
@@ -217,6 +218,7 @@ def test_hybrid_retriever_fuses_compare_sides_independently_and_reports_lineage(
         embedder=DeterministicFakeEmbedder(),
         sparse_encoder=DeterministicSparseEncoder(),
         vector_store=cast(VectorStore, RecordingVectorStore()),
+        stage_observer=snapshots.append,
     ).search(request)
 
     assert [candidate.side for candidate in result.candidates] == [
@@ -234,3 +236,16 @@ def test_hybrid_retriever_fuses_compare_sides_independently_and_reports_lineage(
         == sparse_space.sparse_space_generation_id
     )
     assert result.lineage.fusion_strategy == "rrf"
+    assert [snapshot.side for snapshot in snapshots] == [
+        RetrievalSide.PRIMARY,
+        RetrievalSide.COMPARISON,
+    ]
+    assert all(len(snapshot.dense_candidates) == 1 for snapshot in snapshots)
+    assert all(
+        snapshot.sparse_candidates is not None and len(snapshot.sparse_candidates) == 1
+        for snapshot in snapshots
+    )
+    assert all(
+        snapshot.fused_candidates is not None and len(snapshot.fused_candidates) == 2
+        for snapshot in snapshots
+    )

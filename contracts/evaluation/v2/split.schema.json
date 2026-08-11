@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/split.schema.json",
+  "title": "Engineering evaluation split manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "benchmark_id",
+    "corpus_version",
+    "split_version",
+    "assignment_status",
+    "targets",
+    "assignments",
+    "rules"
+  ],
+  "properties": {
+    "schema_version": {"const": "v2"},
+    "benchmark_id": {"const": "dolved-care-engineering"},
+    "corpus_version": {"type": "string", "pattern": "^[1-9][0-9]*$"},
+    "split_version": {"type": "string", "pattern": "^[1-9][0-9]*$"},
+    "assignment_status": {"enum": ["PILOT_ONLY", "EXPANDING", "COMPLETE"]},
+    "targets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engineering_tuning", "threshold_calibration", "sealed_held_out"],
+      "properties": {
+        "engineering_tuning": {"const": 42},
+        "threshold_calibration": {"const": 28},
+        "sealed_held_out": {"const": 22}
+      }
+    },
+    "assignments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engineering_tuning", "threshold_calibration", "sealed_held_out", "unassigned"],
+      "properties": {
+        "engineering_tuning": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "threshold_calibration": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "sealed_held_out": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "unassigned": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}}
+      }
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[a-zA-Z0-9._:-]+$"
+    }
+  }
+}

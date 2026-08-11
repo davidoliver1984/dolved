@@ -25,15 +25,16 @@ from app.evaluation.model_assisted import (
 from app.evaluation.models import (
     BaselinePromotion,
     EvaluationCorpus,
+    EvaluationTextCaptureMode,
     ExperimentLineage,
     ExperimentResult,
     GateDecision,
     QualityGatePolicy,
     VariantObservation,
 )
+from app.evaluation.reporting import comparison_report
 from app.retrieval.models import HybridRetrievalConfiguration
 from app.settings import get_settings
-from app.evaluation.reporting import comparison_report
 
 
 def load_json(path: Path) -> Any:
@@ -145,6 +146,7 @@ def live_hybrid(args: argparse.Namespace) -> None:
             rrf_k=60,
         ),
         rerank_delay_seconds=args.rerank_delay_seconds,
+        text_capture_mode=EvaluationTextCaptureMode(args.text_capture_mode),
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result.as_json(), indent=2) + "\n")
@@ -190,6 +192,15 @@ def parser() -> argparse.ArgumentParser:
     live_parser.add_argument("--repository-commit", required=True)
     live_parser.add_argument("--evidence-threshold", type=float, required=True)
     live_parser.add_argument("--rerank-delay-seconds", type=float, default=25)
+    live_parser.add_argument(
+        "--text-capture-mode",
+        choices=tuple(EvaluationTextCaptureMode),
+        default=EvaluationTextCaptureMode.DISABLED,
+        help=(
+            "Defaults to privacy-safe disabled capture; BENCHMARK_TEXT is only "
+            "for approved fictional corpora."
+        ),
+    )
     live_parser.set_defaults(handler=live_hybrid)
     return root
 

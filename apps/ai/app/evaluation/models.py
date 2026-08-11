@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from enum import StrEnum
 from typing import Annotated, Any, Literal
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -86,6 +87,49 @@ class OperationalObservation(StrictModel):
     request_count: Annotated[int, Field(ge=0)] = 0
 
 
+class EvaluationTextCaptureMode(StrEnum):
+    DISABLED = "DISABLED"
+    REDACTED = "REDACTED"
+    BENCHMARK_TEXT = "BENCHMARK_TEXT"
+
+
+class ExpectedEvidenceIdentity(StrictModel):
+    evidence_unit_id: Identifier
+    document_family_id: Identifier
+    document_version_id: Identifier
+    side: Literal["PRIMARY", "COMPARISON"] = "PRIMARY"
+    source_path: str | None = None
+
+
+class CandidateStageLineage(StrictModel):
+    candidate_id: Identifier
+    chunk_id: UUID
+    document_family_id: Identifier
+    document_version_id: Identifier
+    side: Literal["PRIMARY", "COMPARISON"] = "PRIMARY"
+    dense_rank: Annotated[int, Field(ge=1)] | None = None
+    dense_score: float | None = None
+    sparse_rank: Annotated[int, Field(ge=1)] | None = None
+    sparse_score: float | None = None
+    fused_rank: Annotated[int, Field(ge=1)] | None = None
+    fused_score: float | None = None
+    reranker_rank: Annotated[int, Field(ge=1)] | None = None
+    reranker_score: float | None = None
+    passed_evidence_threshold: bool | None = None
+    included_in_final_evidence: bool = False
+    covered_evidence_unit_ids: tuple[Identifier, ...] = ()
+
+
+class CandidateFunnel(StrictModel):
+    side: Literal["PRIMARY", "COMPARISON"] = "PRIMARY"
+    dense_candidate_count: Annotated[int, Field(ge=0)] | None = None
+    sparse_candidate_count: Annotated[int, Field(ge=0)] | None = None
+    unique_post_fusion_count: Annotated[int, Field(ge=0)] | None = None
+    candidates_sent_to_reranker: Annotated[int, Field(ge=0)] | None = None
+    candidates_surviving_threshold: Annotated[int, Field(ge=0)] | None = None
+    final_evidence_count: Annotated[int, Field(ge=0)] | None = None
+
+
 class VariantObservation(StrictModel):
     case_id: Identifier
     variant_id: Identifier
@@ -95,6 +139,33 @@ class VariantObservation(StrictModel):
     outcome_correct: bool
     hard_failures: tuple[Identifier, ...] = ()
     operational: OperationalObservation = OperationalObservation()
+    text_capture_mode: EvaluationTextCaptureMode = EvaluationTextCaptureMode.DISABLED
+    question: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
+    expected_evidence: tuple[ExpectedEvidenceIdentity, ...] = ()
+    expected_outcome: str | None = None
+    candidate_lineage: tuple[CandidateStageLineage, ...] = ()
+    candidate_funnel: tuple[CandidateFunnel, ...] = ()
+
+    @model_validator(mode="after")
+    def protect_question_text(self) -> VariantObservation:
+        if self.text_capture_mode is EvaluationTextCaptureMode.DISABLED:
+            if self.question is not None:
+                raise ValueError(
+                    "question must be omitted when text capture is disabled"
+                )
+        elif self.text_capture_mode is EvaluationTextCaptureMode.REDACTED:
+            if self.question not in (None, "[REDACTED]"):
+                raise ValueError("redacted text capture cannot retain the raw question")
+        elif self.question is None:
+            raise ValueError("benchmark text capture requires the question")
+        if (
+            self.text_capture_mode is not EvaluationTextCaptureMode.BENCHMARK_TEXT
+            and any(item.source_path is not None for item in self.expected_evidence)
+        ):
+            raise ValueError(
+                "expected source paths require explicit benchmark text capture"
+            )
+        return self
 
 
 class MetricValues(StrictModel):
@@ -115,6 +186,33 @@ class VariantResult(StrictModel):
     outcome_correct: bool
     hard_failures: tuple[Identifier, ...]
     operational: OperationalObservation
+    text_capture_mode: EvaluationTextCaptureMode = EvaluationTextCaptureMode.DISABLED
+    question: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
+    expected_evidence: tuple[ExpectedEvidenceIdentity, ...] = ()
+    expected_outcome: str | None = None
+    candidate_lineage: tuple[CandidateStageLineage, ...] = ()
+    candidate_funnel: tuple[CandidateFunnel, ...] = ()
+
+    @model_validator(mode="after")
+    def protect_question_text(self) -> VariantResult:
+        if self.text_capture_mode is EvaluationTextCaptureMode.DISABLED:
+            if self.question is not None:
+                raise ValueError(
+                    "question must be omitted when text capture is disabled"
+                )
+        elif self.text_capture_mode is EvaluationTextCaptureMode.REDACTED:
+            if self.question not in (None, "[REDACTED]"):
+                raise ValueError("redacted text capture cannot retain the raw question")
+        elif self.question is None:
+            raise ValueError("benchmark text capture requires the question")
+        if (
+            self.text_capture_mode is not EvaluationTextCaptureMode.BENCHMARK_TEXT
+            and any(item.source_path is not None for item in self.expected_evidence)
+        ):
+            raise ValueError(
+                "expected source paths require explicit benchmark text capture"
+            )
+        return self
 
 
 class AggregateResult(StrictModel):

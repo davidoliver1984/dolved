@@ -1,3 +1,5 @@
+from collections.abc import Callable
+from dataclasses import dataclass
 from uuid import NAMESPACE_URL, uuid5
 
 from opentelemetry import trace
@@ -8,6 +10,7 @@ from app.embedding.protocol import Embedder
 from app.retrieval.fusion import ReciprocalRankFusion
 from app.retrieval.models import (
     RetrievalCandidate,
+    RetrievalSide,
     SearchLineage,
     SearchRequest,
     SearchResponse,
@@ -27,6 +30,16 @@ from app.vector_store.models import (
 from app.vector_store.protocol import VectorStore
 
 
+@dataclass(frozen=True)
+class RetrievalStageSnapshot:
+    """Optional in-process diagnostics; never changes the retrieval response."""
+
+    side: RetrievalSide
+    dense_candidates: tuple[RetrievalCandidate, ...]
+    sparse_candidates: tuple[RetrievalCandidate, ...] | None
+    fused_candidates: tuple[RetrievalCandidate, ...] | None
+
+
 class DenseRetriever:
     def __init__(
         self,
@@ -34,10 +47,12 @@ class DenseRetriever:
         embedder: Embedder,
         vector_store: VectorStore,
         sparse_encoder: SparseEncoder | None = None,
+        stage_observer: Callable[[RetrievalStageSnapshot], None] | None = None,
     ) -> None:
         self._embedder = embedder
         self._vector_store = vector_store
         self._sparse_encoder = sparse_encoder
+        self._stage_observer = stage_observer
 
     def search(self, request: SearchRequest) -> SearchResponse:
         source_id = uuid5(NAMESPACE_URL, f"retrieval-query:{request.request_id}")
@@ -113,6 +128,14 @@ class DenseRetriever:
             )
             if request.hybrid_configuration is None or sparse_query is None:
                 candidates.extend(dense_candidates)
+                self._observe(
+                    RetrievalStageSnapshot(
+                        side=scope.side,
+                        dense_candidates=dense_candidates,
+                        sparse_candidates=None,
+                        fused_candidates=None,
+                    )
+                )
                 continue
             with trace.get_tracer("maketime.python.retrieval").start_as_current_span(
                 "search eligible sparse vectors",
@@ -168,6 +191,14 @@ class DenseRetriever:
                     )
                 )
             candidates.extend(fused)
+            self._observe(
+                RetrievalStageSnapshot(
+                    side=scope.side,
+                    dense_candidates=dense_candidates,
+                    sparse_candidates=sparse_candidates,
+                    fused_candidates=fused,
+                )
+            )
         return SearchResponse(
             request_id=request.request_id,
             candidates=tuple(candidates),
@@ -201,6 +232,10 @@ class DenseRetriever:
                 ),
             ),
         )
+
+    def _observe(self, snapshot: RetrievalStageSnapshot) -> None:
+        if self._stage_observer is not None:
+            self._stage_observer(snapshot)
 
     @staticmethod
     def _candidate(hit, rank, side, method):  # type: ignore[no-untyped-def]

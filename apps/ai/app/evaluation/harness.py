@@ -65,6 +65,12 @@ class RetrievalEvaluationHarness:
                     outcome_correct=observation.outcome_correct,
                     hard_failures=observation.hard_failures,
                     operational=observation.operational,
+                    text_capture_mode=observation.text_capture_mode,
+                    question=observation.question,
+                    expected_evidence=observation.expected_evidence,
+                    expected_outcome=observation.expected_outcome,
+                    candidate_lineage=observation.candidate_lineage,
+                    candidate_funnel=observation.candidate_funnel,
                 )
             )
 
