@@ -1,0 +1,55 @@
+[
+  {
+    "case_id": "pilot.adversarial.visitor-negative",
+    "cluster_id": "cluster.visitor-access",
+    "variants": [
+      {"variant_id": "direct", "question": "What must a visitor do when the fire alarm sounds?"},
+      {"variant_id": "sign-in", "question": "Do visitors have to sign in and what happens during an evacuation?"},
+      {"variant_id": "colloquial", "question": "Can a visitor use the lift in a fire and skip the reception book?"}
+    ],
+    "slices": ["CURRENT", "adversarial", "keyword-stuffing", "never-authoritative", "negative-exclusion"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {
+      "eligible_versions": [{"document_family_id": "family.visitors.general", "document_version_id": "doc.visitors.general.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}],
+      "excluded_versions": [{"document_family_id": "family.visitors.search-optimised-draft", "document_version_id": "doc.visitors.search-optimised-draft.v1", "reason": "NEVER_ATTAINED_AUTHORITY"}],
+      "expected_outcome": "ELIGIBLE_SCOPE_READY"
+    },
+    "retrieval_expectation": {"evidence_units": [
+      {"evidence_id": "visitors.fire-instructions", "document_family_id": "family.visitors.general", "document_version_id": "doc.visitors.general.v1", "side": "PRIMARY", "source_path": "documents/visitors/visitors-contractors.md", "canonical_excerpts": ["Visitors must not use lifts during an evacuation and must remain with their host or follow staff instructions."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": "Fire information", "notes": "The false, keyword-stuffed withdrawn draft must remain excluded."},
+      {"evidence_id": "visitors.sign-in", "document_family_id": "family.visitors.general", "document_version_id": "doc.visitors.general.v1", "side": "PRIMARY", "source_path": "documents/visitors/visitors-contractors.md", "canonical_excerpts": ["All visitors must sign in at reception and wear the issued visitor badge."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Arrival and identity", "notes": null}
+    ]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "visitors.outbreak.current-essential", "cluster_id": "cluster.visitor-outbreak-lineage",
+    "variants": [{"variant_id": "direct", "question": "Can residents still receive a visitor during an outbreak?"}, {"variant_id": "blanket", "question": "Do we stop every visit when an outbreak is declared?"}, {"variant_id": "colloquial", "question": "Is all visiting banned during an outbreak now?"}],
+    "slices": ["CURRENT", "near-version-duplicate", "conflicting-guidance"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.visitors.outbreak-restrictions", "document_version_id": "doc.visitors.outbreak-restrictions.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.visitors.outbreak-restrictions", "document_version_id": "doc.visitors.outbreak-restrictions.v1", "reason": "HISTORICAL_FOR_CURRENT"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "visitors.outbreak.v2-essential", "document_family_id": "family.visitors.outbreak-restrictions", "document_version_id": "doc.visitors.outbreak-restrictions.v2", "side": "PRIMARY", "source_path": "documents/visitors/outbreak-restrictions-v2.md", "canonical_excerpts": ["During a declared outbreak, each resident may continue to receive one nominated essential visitor unless an individual risk assessment identifies a specific reason to pause that visit.", "Blanket suspension of all visits is not the default response."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": null, "notes": null}]}, "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "visitors.outbreak.valid-at-date", "cluster_id": "cluster.visitor-outbreak-lineage",
+    "variants": [{"variant_id": "dated", "question": "What visiting restriction applied in January 2024?"}, {"variant_id": "historical", "question": "Did the old outbreak procedure pause routine visiting?"}, {"variant_id": "contrast", "question": "Was the nominated visitor rule in force in 2024?"}],
+    "slices": ["VALID_AT_DATE", "historical", "conflicting-guidance"],
+    "planner_expectation": {"temporal_mode": "VALID_AT_DATE", "valid_at": "2024-01-15T12:00:00Z", "primary_anchor": "2024-01-15T12:00:00Z", "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.visitors.outbreak-restrictions", "document_version_id": "doc.visitors.outbreak-restrictions.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.visitors.outbreak-restrictions", "document_version_id": "doc.visitors.outbreak-restrictions.v2", "reason": "SCHEDULED_FUTURE"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "visitors.outbreak.v1-pause", "document_family_id": "family.visitors.outbreak-restrictions", "document_version_id": "doc.visitors.outbreak-restrictions.v1", "side": "PRIMARY", "source_path": "documents/visitors/outbreak-restrictions-v1.md", "canonical_excerpts": ["During a declared outbreak, routine indoor visiting is paused for all residents."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]}, "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "visitors.contractor.permit", "cluster_id": "cluster.visitor-contractor-form",
+    "variants": [{"variant_id": "direct", "question": "Does a visitor badge replace a contractor permit to work?"}, {"variant_id": "form", "question": "What must a contractor record before intrusive work?"}, {"variant_id": "colloquial", "question": "The engineer signed in — can they start drilling?"}],
+    "slices": ["CURRENT", "forms", "table-evidence", "negative-instruction"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.visitors.contractor-sign-in", "document_version_id": "doc.visitors.contractor-sign-in.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "visitors.contractor.permit-boundary", "document_family_id": "family.visitors.contractor-sign-in", "document_version_id": "doc.visitors.contractor-sign-in.v1", "side": "PRIMARY", "source_path": "documents/visitors/contractor-sign-in-form.md", "canonical_excerpts": ["| Asbestos register checked where intrusive work is planned | Yes / No / Not applicable |", "A visitor badge does not replace a permit to work."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]}, "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "visitors.pet-visits.no-evidence", "cluster_id": "cluster.visitor-pets-no-evidence",
+    "variants": [{"variant_id": "direct", "question": "What is the approved procedure for visitors bringing pets?"}, {"variant_id": "dog", "question": "Can a visitor bring a dog into the home?"}, {"variant_id": "colloquial", "question": "Are visiting pets allowed?"}],
+    "slices": ["CURRENT", "zero-evidence", "negative-control"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.visitors.general", "document_version_id": "doc.visitors.general.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": []}, "outcome_expectation": {"outcome": "NO_RETRIEVAL_CANDIDATES"}
+  }
+]

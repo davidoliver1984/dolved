@@ -1,0 +1,31 @@
+{
+  "schema_version": "v2",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "2",
+  "status": "COMPLETE",
+  "evaluation_clock": "2026-08-01T12:00:00Z",
+  "canonical_source_format": "text/markdown",
+  "paths": {
+    "organisation": "organisation.json",
+    "document_catalog": "document-catalog.json",
+    "case_sources": "cases",
+    "split": "splits/v1.json",
+    "compiled_corpus": "compiled/corpus.json",
+    "checksums": "compiled/checksums.json"
+  },
+  "planned_counts": {
+    "document_families": 71,
+    "document_versions": 93,
+    "semantic_cases": 92
+  },
+  "pilot_counts": {
+    "document_families": 10,
+    "document_versions": 14,
+    "semantic_cases": 13
+  },
+  "authored_counts": {
+    "document_families": 71,
+    "document_versions": 93,
+    "semantic_cases": 92
+  }
+}

@@ -1,0 +1,103 @@
+[
+  {
+    "case_id": "pilot.current.withdrawn-no-resurrection",
+    "cluster_id": "cluster.outbreak-management-lineage",
+    "variants": [
+      {"variant_id": "direct", "question": "What is the current respiratory outbreak procedure?"},
+      {"variant_id": "withdrawn", "question": "After version 2 was withdrawn, did the old outbreak procedure become current again?"},
+      {"variant_id": "colloquial", "question": "Which outbreak rules do we use now that the newer one was pulled?"}
+    ],
+    "slices": ["CURRENT", "withdrawn", "predecessor-resurrection", "zero-evidence"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {
+      "eligible_versions": [],
+      "excluded_versions": [
+        {"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v1", "reason": "HISTORICAL_FOR_CURRENT"},
+        {"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v2", "reason": "WITHDRAWN"}
+      ],
+      "expected_outcome": "NO_ELIGIBLE_EVIDENCE"
+    },
+    "retrieval_expectation": {"evidence_units": []},
+    "outcome_expectation": {"outcome": "NO_ELIGIBLE_EVIDENCE"}
+  },
+  {
+    "case_id": "infection.ppe.body-fluid-splash",
+    "cluster_id": "cluster.ppe-selection",
+    "variants": [{"variant_id": "direct", "question": "What PPE is needed when a body-fluid splash is possible?"}, {"variant_id": "expanded", "question": "Do I need face protection for contact with blood?"}, {"variant_id": "colloquial", "question": "What protective kit do I wear if blood might splash?"}],
+    "slices": ["CURRENT", "PPE-alias", "tables", "multi-evidence"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.infection.ppe", "document_version_id": "doc.infection.ppe.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "infection.ppe.body-fluid-row", "document_family_id": "family.infection.ppe", "document_version_id": "doc.infection.ppe.v1", "side": "PRIMARY", "source_path": "documents/infection-control/ppe-reference.md", "canonical_excerpts": ["| Contact with blood or body fluids | Yes | Apron | Eye/face protection if splash risk |", "PPE is selected for the task and exposure risk, not solely for a diagnosis."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "infection.hand-hygiene.current-spores",
+    "cluster_id": "cluster.hand-hygiene-lineage",
+    "variants": [{"variant_id": "direct", "question": "When is soap and water required instead of alcohol hand rub?"}, {"variant_id": "spores", "question": "Can alcohol gel be used when a spore-forming infection is suspected?"}, {"variant_id": "colloquial", "question": "Is hand gel enough after diarrhoea care?"}],
+    "slices": ["CURRENT", "near-version-duplicate", "multi-evidence"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v1", "reason": "HISTORICAL_FOR_CURRENT"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "infection.hand-hygiene.soap-triggers", "document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v2", "side": "PRIMARY", "source_path": "documents/infection-control/hand-hygiene-v2.md", "canonical_excerpts": ["Use liquid soap and water when hands are visibly dirty, after caring for a person with vomiting or diarrhoea, and whenever spore-forming infection is suspected."], "relevance_grade": 2, "minimum_token_coverage": 0.95, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "infection.hand-hygiene.compare",
+    "cluster_id": "cluster.hand-hygiene-lineage",
+    "variants": [{"variant_id": "direct", "question": "What was added to the current hand-hygiene soap-and-water rule?"}, {"variant_id": "compare", "question": "Compare the old and new hand hygiene triggers."}, {"variant_id": "colloquial", "question": "Did the newer handwashing policy add suspected spores?"}],
+    "slices": ["COMPARE", "multi-evidence", "near-version-duplicate"],
+    "planner_expectation": {"temporal_mode": "COMPARE", "valid_at": null, "primary_anchor": "CURRENT", "comparison_anchor": "PREVIOUS_AUTHORITY", "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}, {"document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v1", "side": "COMPARISON", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "infection.hand.v2-spores", "document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v2", "side": "PRIMARY", "source_path": "documents/infection-control/hand-hygiene-v2.md", "canonical_excerpts": ["Use liquid soap and water when hands are visibly dirty, after caring for a person with vomiting or diarrhoea, and whenever spore-forming infection is suspected."], "relevance_grade": 2, "minimum_token_coverage": 0.95, "locator": null, "notes": null}, {"evidence_id": "infection.hand.v1-triggers", "document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v1", "side": "COMPARISON", "source_path": "documents/infection-control/hand-hygiene-v1.md", "canonical_excerpts": ["Use liquid soap and water when hands are visibly dirty and after caring for a person with vomiting or diarrhoea."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "infection.waste.sharps-colours",
+    "cluster_id": "cluster.clinical-waste",
+    "variants": [{"variant_id": "direct", "question": "Which sharps bin is used for medicine-contaminated sharps?"}, {"variant_id": "contrast", "question": "Are medicinal sharps placed in an orange or yellow-lidded container?"}, {"variant_id": "colloquial", "question": "What colour lid does a used medicine needle go in?"}],
+    "slices": ["CURRENT", "tables", "near-duplicate-rows", "colour-terminology"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.infection.clinical-waste", "document_version_id": "doc.infection.clinical-waste.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "infection.waste.medicinal-sharps", "document_family_id": "family.infection.clinical-waste", "document_version_id": "doc.infection.clinical-waste.v1", "side": "PRIMARY", "source_path": "documents/infection-control/clinical-waste-procedure.md", "canonical_excerpts": ["| Sharps contaminated with medicine | Yellow-lidded sharps container |"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "infection.laundry.do-not-shake",
+    "cluster_id": "cluster.infected-laundry",
+    "variants": [{"variant_id": "direct", "question": "How should infected linen be bagged?"}, {"variant_id": "negative", "question": "Should staff shake soiled linen before putting it in a bag?"}, {"variant_id": "colloquial", "question": "What bag does body-fluid laundry go into and can I shake it out?"}],
+    "slices": ["CURRENT", "multi-evidence", "negative-instruction"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.infection.laundry", "document_version_id": "doc.infection.laundry.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "infection.laundry.bagging", "document_family_id": "family.infection.laundry", "document_version_id": "doc.infection.laundry.v1", "side": "PRIMARY", "source_path": "documents/infection-control/laundry-procedure.md", "canonical_excerpts": ["Do not shake used linen.", "Wear task-appropriate PPE and place linen contaminated with body fluids directly into a water-soluble inner bag and the designated outer bag at the point of use."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "infection.respiratory-ppe.multi-document",
+    "cluster_id": "cluster.ppe-selection",
+    "variants": [{"variant_id": "direct", "question": "What PPE is required for an aerosol-generating respiratory procedure?"}, {"variant_id": "abbreviation", "question": "Which PPE does the respiratory procedure add for an AGP?"}, {"variant_id": "multi", "question": "What do the generic PPE table and respiratory procedure say about aerosol work?"}],
+    "slices": ["CURRENT", "PPE-alias", "multi-document", "multi-evidence", "near-duplicate"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.infection.ppe", "document_version_id": "doc.infection.ppe.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}, {"document_family_id": "family.infection.respiratory-ppe", "document_version_id": "doc.infection.respiratory-ppe.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "infection.ppe.agp-table", "document_family_id": "family.infection.ppe", "document_version_id": "doc.infection.ppe.v1", "side": "PRIMARY", "source_path": "documents/infection-control/ppe-reference.md", "canonical_excerpts": ["| Respiratory aerosol-generating procedure | Yes | Long-sleeved gown | Respirator and eye protection |"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}, {"evidence_id": "infection.respiratory.agp-prose", "document_family_id": "family.infection.respiratory-ppe", "document_version_id": "doc.infection.respiratory-ppe.v1", "side": "PRIMARY", "source_path": "documents/infection-control/respiratory-ppe-procedure.md", "canonical_excerpts": ["An aerosol-generating procedure requires a fit-tested respirator, long-sleeved gown, gloves and eye protection."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "infection.isolation.least-restrictive",
+    "cluster_id": "cluster.isolation-assessment",
+    "variants": [{"variant_id": "direct", "question": "What must be considered before isolating a resident?"}, {"variant_id": "capacity", "question": "Does an isolation risk assessment include capacity and alternatives?"}, {"variant_id": "colloquial", "question": "Can we keep someone in their room because staffing is easier?"}],
+    "slices": ["CURRENT", "forms", "tables", "MCA-alias", "negative-instruction"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.infection.isolation", "document_version_id": "doc.infection.isolation.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "infection.isolation.alternatives", "document_family_id": "family.infection.isolation", "document_version_id": "doc.infection.isolation.v1", "side": "PRIMARY", "source_path": "documents/infection-control/isolation-risk-assessment.md", "canonical_excerpts": ["| Alternatives | Cohorting, ventilation, PPE and adjusted activities |", "Isolation is never imposed solely because it is convenient for staffing."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "infection.outbreak.valid-before-withdrawal",
+    "cluster_id": "cluster.outbreak-management-lineage",
+    "variants": [{"variant_id": "dated", "question": "What outbreak monitoring applied on 1 January 2026?"}, {"variant_id": "historical", "question": "Before it was withdrawn, what did outbreak version 2 require?"}, {"variant_id": "contrast", "question": "Was twice-daily symptom monitoring authoritative in January 2026?"}],
+    "slices": ["VALID_AT_DATE", "withdrawn", "historical", "temporal-authority"],
+    "planner_expectation": {"temporal_mode": "VALID_AT_DATE", "valid_at": "2026-01-01T12:00:00Z", "primary_anchor": "2026-01-01T12:00:00Z", "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v1", "reason": "HISTORICAL_FOR_CURRENT"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "infection.outbreak.v2.twice-daily", "document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v2", "side": "PRIMARY", "source_path": "documents/infection-control/outbreak-management-v2-withdrawn.md", "canonical_excerpts": ["Two or more epidemiologically linked respiratory symptoms require the registered", "manager to open an outbreak record, seek clinical advice and begin twice-daily", "monitoring of new symptoms."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  }
+]

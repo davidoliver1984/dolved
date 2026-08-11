@@ -1,0 +1,123 @@
+[
+  {
+    "case_id": "pilot.location-alias.bristol",
+    "cluster_id": "cluster.south-west-fire-applicability",
+    "variants": [
+      {"variant_id": "alias", "question": "Where do visitors assemble during a fire at the Bristol home?"},
+      {"variant_id": "canonical", "question": "What is the Harbour View fire assembly point?"},
+      {"variant_id": "colloquial", "question": "If the alarm goes at Bristol, where should visitors wait outside?"}
+    ],
+    "slices": ["CURRENT", "applicability", "site-specific", "location-alias", "near-duplicate"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": "Bristol home", "resolved_location_id": "location.harbour-view", "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {
+      "eligible_versions": [
+        {"document_family_id": "family.fire.harbour-view-evacuation", "document_version_id": "doc.fire.harbour-view-evacuation.v1", "side": "PRIMARY", "applicability": {"kind": "DIRECT", "governing_location_id": "location.harbour-view", "requested_location_id": "location.harbour-view"}},
+        {"document_family_id": "family.fire.south-west-evacuation", "document_version_id": "doc.fire.south-west-evacuation.v1", "side": "PRIMARY", "applicability": {"kind": "ANCESTOR", "governing_location_id": "location.region.south-west", "requested_location_id": "location.harbour-view"}}
+      ],
+      "excluded_versions": [],
+      "expected_outcome": "ELIGIBLE_SCOPE_READY"
+    },
+    "retrieval_expectation": {"evidence_units": [
+      {"evidence_id": "fire.harbour-view.assembly-point", "document_family_id": "family.fire.harbour-view-evacuation", "document_version_id": "doc.fire.harbour-view-evacuation.v1", "side": "PRIMARY", "source_path": "documents/fire-safety/harbour-view-evacuation.md", "canonical_excerpts": ["At Harbour View, staff and visitors assemble in the east garden beyond the laundry gate, not in the front visitor car park."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": "Harbour View assembly point", "notes": "The regional document remains eligible but is not sufficient for the site-specific answer."}
+    ]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "pilot.applicability.regional-exeter",
+    "cluster_id": "cluster.south-west-fire-applicability",
+    "variants": [
+      {"variant_id": "alias", "question": "Which evacuation procedure applies at the Exeter home?"},
+      {"variant_id": "canonical", "question": "Where does Meadow Court assemble under the regional procedure?"},
+      {"variant_id": "inheritance", "question": "Does the South West fire procedure cover Meadow Court?"}
+    ],
+    "slices": ["CURRENT", "applicability", "region-specific", "descendant-site", "location-alias"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": "Exeter home", "resolved_location_id": "location.meadow-court", "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {
+      "eligible_versions": [{"document_family_id": "family.fire.south-west-evacuation", "document_version_id": "doc.fire.south-west-evacuation.v1", "side": "PRIMARY", "applicability": {"kind": "ANCESTOR", "governing_location_id": "location.region.south-west", "requested_location_id": "location.meadow-court"}}],
+      "excluded_versions": [{"document_family_id": "family.fire.harbour-view-evacuation", "document_version_id": "doc.fire.harbour-view-evacuation.v1", "reason": "APPLICABILITY_MISMATCH"}],
+      "expected_outcome": "ELIGIBLE_SCOPE_READY"
+    },
+    "retrieval_expectation": {"evidence_units": [
+      {"evidence_id": "fire.south-west.regional-fallback", "document_family_id": "family.fire.south-west-evacuation", "document_version_id": "doc.fire.south-west-evacuation.v1", "side": "PRIMARY", "source_path": "documents/fire-safety/south-west-evacuation.md", "canonical_excerpts": ["Unless an approved site procedure names a different location, South West staff and visitors assemble at the signed front visitor car park."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": "Regional fallback assembly arrangement", "notes": null}
+    ]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "pilot.applicability.bristol-conflict",
+    "cluster_id": "cluster.south-west-fire-applicability",
+    "variants": [
+      {"variant_id": "direct", "question": "What regional and local fire instructions apply at Harbour View?"},
+      {"variant_id": "conflict", "question": "Why do the South West and Bristol procedures name different assembly points?"},
+      {"variant_id": "multi-document", "question": "Show me both applicable evacuation instructions for the Bristol home."}
+    ],
+    "slices": ["CURRENT", "applicability", "conflicting-guidance", "multi-document", "multi-evidence", "near-duplicate"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": "Bristol home", "resolved_location_id": "location.harbour-view", "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {
+      "eligible_versions": [
+        {"document_family_id": "family.fire.south-west-evacuation", "document_version_id": "doc.fire.south-west-evacuation.v1", "side": "PRIMARY", "applicability": {"kind": "ANCESTOR", "governing_location_id": "location.region.south-west", "requested_location_id": "location.harbour-view"}},
+        {"document_family_id": "family.fire.harbour-view-evacuation", "document_version_id": "doc.fire.harbour-view-evacuation.v1", "side": "PRIMARY", "applicability": {"kind": "DIRECT", "governing_location_id": "location.harbour-view", "requested_location_id": "location.harbour-view"}}
+      ],
+      "excluded_versions": [],
+      "expected_outcome": "ELIGIBLE_SCOPE_READY"
+    },
+    "retrieval_expectation": {"evidence_units": [
+      {"evidence_id": "fire.south-west.fallback-condition", "document_family_id": "family.fire.south-west-evacuation", "document_version_id": "doc.fire.south-west-evacuation.v1", "side": "PRIMARY", "source_path": "documents/fire-safety/south-west-evacuation.md", "canonical_excerpts": ["Unless an approved site procedure names a different location, South West staff and visitors assemble at the signed front visitor car park."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": "Regional fallback assembly arrangement", "notes": null},
+      {"evidence_id": "fire.harbour-view.local-override", "document_family_id": "family.fire.harbour-view-evacuation", "document_version_id": "doc.fire.harbour-view-evacuation.v1", "side": "PRIMARY", "source_path": "documents/fire-safety/harbour-view-evacuation.md", "canonical_excerpts": ["At Harbour View, staff and visitors assemble in the east garden beyond the laundry gate, not in the front visitor car park."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": "Harbour View assembly point", "notes": "Both documents are eligible; the benchmark does not invent a new precedence model."}
+    ]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "pilot.applicability.ambiguous-home",
+    "cluster_id": "cluster.south-west-fire-applicability",
+    "variants": [
+      {"variant_id": "ambiguous", "question": "Where is the fire assembly point at the home?"},
+      {"variant_id": "pronoun", "question": "Which evacuation plan applies there?"},
+      {"variant_id": "underspecified", "question": "What should visitors do when the alarm sounds at our care home?"}
+    ],
+    "slices": ["CURRENT", "applicability", "clarification", "ambiguous-alias", "zero-evidence"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": "the home", "resolved_location_id": null, "requires_clarification": true}, "expected_outcome": "CLARIFICATION_REQUIRED"},
+    "eligibility_expectation": {"eligible_versions": [], "excluded_versions": [], "expected_outcome": "NO_ELIGIBLE_EVIDENCE"},
+    "retrieval_expectation": {"evidence_units": []},
+    "outcome_expectation": {"outcome": "CLARIFICATION_REQUIRED"}
+  },
+  {
+    "case_id": "fire.north-west.manchester-alias",
+    "cluster_id": "cluster.regional-fire-near-duplicates",
+    "variants": [{"variant_id": "alias", "question": "Where is the regional fire assembly point for the Manchester home?"}, {"variant_id": "canonical", "question": "What fallback assembly point applies at Riverside House?"}, {"variant_id": "contrast", "question": "Does Riverside use the South West front car park assembly point?"}],
+    "slices": ["CURRENT", "location-alias", "regional-applicability", "near-duplicate"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": "Manchester home", "resolved_location_id": "location.riverside-house", "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.fire.north-west-evacuation", "document_version_id": "doc.fire.north-west-evacuation.v1", "side": "PRIMARY", "applicability": {"kind": "ANCESTOR", "governing_location_id": "location.region.north-west", "requested_location_id": "location.riverside-house"}}], "excluded_versions": [{"document_family_id": "family.fire.south-west-evacuation", "document_version_id": "doc.fire.south-west-evacuation.v1", "reason": "APPLICABILITY_MISMATCH"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "fire.north-west.fallback", "document_family_id": "family.fire.north-west-evacuation", "document_version_id": "doc.fire.north-west-evacuation.v1", "side": "PRIMARY", "source_path": "documents/fire-safety/north-west-evacuation.md", "canonical_excerpts": ["Unless a site plan states otherwise, the regional assembly point is the rear service-yard gate."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "fire.midlands.community-difference",
+    "cluster_id": "cluster.regional-fire-near-duplicates",
+    "variants": [{"variant_id": "alias", "question": "How does the Coventry community team evacuate?"}, {"variant_id": "canonical", "question": "What evacuation approach applies at Willow Bank Community Service?"}, {"variant_id": "contrast", "question": "Does Willow Bank use progressive horizontal evacuation like Oakfield?"}],
+    "slices": ["CURRENT", "location-alias", "regional-applicability", "near-duplicate"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": "Coventry community team", "resolved_location_id": "location.willow-bank", "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.fire.midlands-evacuation", "document_version_id": "doc.fire.midlands-evacuation.v1", "side": "PRIMARY", "applicability": {"kind": "ANCESTOR", "governing_location_id": "location.region.midlands", "requested_location_id": "location.willow-bank"}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "fire.midlands.community-route", "document_family_id": "family.fire.midlands-evacuation", "document_version_id": "doc.fire.midlands-evacuation.v1", "side": "PRIMARY", "source_path": "documents/fire-safety/midlands-evacuation.md", "canonical_excerpts": ["Oakfield staff use progressive horizontal evacuation; community staff leave by the nearest safe exit."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "fire.drills.current-frequency",
+    "cluster_id": "cluster.fire-drills-lineage",
+    "variants": [{"variant_id": "direct", "question": "How often must a residential service run a fire drill now?"}, {"variant_id": "contrast", "question": "Are care-home fire drills still every six months?"}, {"variant_id": "colloquial", "question": "Do homes practise fire evacuation twice a year or quarterly?"}],
+    "slices": ["CURRENT", "near-version-duplicate", "near-numeric-values"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.fire.drills", "document_version_id": "doc.fire.drills.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.fire.drills", "document_version_id": "doc.fire.drills.v1", "reason": "HISTORICAL_FOR_CURRENT"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "fire.drills.v2.residential-quarterly", "document_family_id": "family.fire.drills", "document_version_id": "doc.fire.drills.v2", "side": "PRIMARY", "source_path": "documents/fire-safety/fire-drills-v2.md", "canonical_excerpts": ["Each residential service completes a fire drill at least quarterly; community and office services complete one at least every six months."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "fire.peep.scheduled-form",
+    "cluster_id": "cluster.peep-lineage",
+    "variants": [{"variant_id": "direct", "question": "Does the current PEEP form require the new overnight staffing scenario?"}, {"variant_id": "scheduled", "question": "When does PEEP version 2 take effect?"}, {"variant_id": "colloquial", "question": "Are we using the new evacuation plan form yet?"}],
+    "slices": ["CURRENT", "scheduled-future", "forms", "PEEP-alias"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.fire.peep", "document_version_id": "doc.fire.peep.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.fire.peep", "document_version_id": "doc.fire.peep.v2", "reason": "SCHEDULED_FUTURE"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "fire.peep.v1.current-review", "document_family_id": "family.fire.peep", "document_version_id": "doc.fire.peep.v1", "side": "PRIMARY", "source_path": "documents/fire-safety/peep-v1.md", "canonical_excerpts": ["| Review | Six-month review date or earlier trigger |"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": "Scheduled v2 must remain excluded at the fixed clock."}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  }
+]

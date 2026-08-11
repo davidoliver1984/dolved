@@ -179,6 +179,7 @@ telemetry-outage:
 	./scripts/telemetry/verify-collector-outage.sh
 
 EVALUATION_CORPUS_VERSION ?= v2
+EVALUATION_BENCHMARK_VERSION ?= v2
 
 evaluation-benchmark-sync:
 	$(COMPOSE) run --rm --no-deps \
@@ -186,7 +187,7 @@ evaluation-benchmark-sync:
 		--volume "$(CURDIR)/apps/ai/app:/app/app:ro" \
 		--workdir /workspace \
 		ai python scripts/evaluation/sync_engineering_benchmark_catalog.py \
-			--benchmark-root tests/evaluation/benchmarks/dolved-care-engineering/v1
+			--benchmark-root tests/evaluation/benchmarks/dolved-care-engineering/$(EVALUATION_BENCHMARK_VERSION)
 
 evaluation-benchmark-compile:
 	$(COMPOSE) run --rm --no-deps \
@@ -194,7 +195,7 @@ evaluation-benchmark-compile:
 		--volume "$(CURDIR)/apps/ai/app:/app/app:ro" \
 		--workdir /workspace \
 		ai python scripts/evaluation/compile_engineering_benchmark.py \
-			--benchmark-root tests/evaluation/benchmarks/dolved-care-engineering/v1 \
+			--benchmark-root tests/evaluation/benchmarks/dolved-care-engineering/$(EVALUATION_BENCHMARK_VERSION) \
 			--contract-root contracts/evaluation/v2
 
 evaluation-run:

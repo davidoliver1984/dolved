@@ -5,10 +5,11 @@ for retrieval engineering. It models the deliberately fictional Alderbridge
 Care Group and is designed to coexist with the smaller foundation corpus and
 future separately governed customer corpora.
 
-The benchmark is authored in controlled releases. Version 1 contains the
-complete initial engineering corpus, including its organisation blueprint,
-document catalogue, canonical Markdown documents, semantic cases and frozen
-split assignments.
+The benchmark is authored in controlled releases. Version 1 remains the
+byte-for-byte historical initial release. Version 2 narrowly corrects one
+never-approved visitor document from an impossible `WITHDRAWN` state to the
+ADR-0017-valid `DRAFT` state; its cases and frozen split assignments are
+otherwise unchanged. Version 2 is the current engineering corpus.
 
 The catalogue's 71-family, 93-version plan and the 92-case split targets are
 coverage guides, not filler quotas. A planned item may be revised or removed

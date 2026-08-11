@@ -1,0 +1,92 @@
+[
+  {
+    "case_id": "health-safety.accident.current-riddor-timing",
+    "cluster_id": "cluster.accident-reporting-lineage",
+    "variants": [{"variant_id": "direct", "question": "How quickly must a possible RIDDOR incident reach the health and safety lead now?"}, {"variant_id": "expanded", "question": "What is the current deadline for escalating a potentially reportable incident?"}, {"variant_id": "colloquial", "question": "How soon do we tell safety about something that might need RIDDOR reporting?"}],
+    "slices": ["CURRENT", "RIDDOR-alias", "near-version-duplicate"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.health-safety.accident-reporting", "document_version_id": "doc.health-safety.accident-reporting.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.health-safety.accident-reporting", "document_version_id": "doc.health-safety.accident-reporting.v1", "reason": "HISTORICAL_FOR_CURRENT"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "health-safety.riddor.v2-one-day", "document_family_id": "family.health-safety.accident-reporting", "document_version_id": "doc.health-safety.accident-reporting.v2", "side": "PRIMARY", "source_path": "documents/health-safety/accident-reporting-v2.md", "canonical_excerpts": ["The manager must notify the health and safety lead within one working day where RIDDOR may apply; the health and safety lead owns the formal reporting decision."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "health-safety.accident.valid-at-date",
+    "cluster_id": "cluster.accident-reporting-lineage",
+    "variants": [{"variant_id": "dated", "question": "What RIDDOR escalation deadline applied in January 2024?"}, {"variant_id": "historical", "question": "How long did managers have under the old accident procedure?"}, {"variant_id": "contrast", "question": "Was the safety-lead deadline two working days in 2024?"}],
+    "slices": ["VALID_AT_DATE", "RIDDOR-alias", "historical", "near-time-values"],
+    "planner_expectation": {"temporal_mode": "VALID_AT_DATE", "valid_at": "2024-01-15T12:00:00Z", "primary_anchor": "2024-01-15T12:00:00Z", "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.health-safety.accident-reporting", "document_version_id": "doc.health-safety.accident-reporting.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.health-safety.accident-reporting", "document_version_id": "doc.health-safety.accident-reporting.v2", "reason": "SCHEDULED_FUTURE"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "health-safety.riddor.v1-two-days", "document_family_id": "family.health-safety.accident-reporting", "document_version_id": "doc.health-safety.accident-reporting.v1", "side": "PRIMARY", "source_path": "documents/health-safety/accident-reporting-v1.md", "canonical_excerpts": ["The manager reviews whether the event may be reportable under RIDDOR and contacts the health and safety lead within two working days."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "health-safety.coshh.review-trigger",
+    "cluster_id": "cluster.coshh",
+    "variants": [{"variant_id": "direct", "question": "When must a COSHH assessment be reviewed?"}, {"variant_id": "product", "question": "Do we need a new hazardous-substance assessment when a product formulation changes?"}, {"variant_id": "colloquial", "question": "The cleaning chemical changed — can we wait for the annual COSHH review?"}],
+    "slices": ["CURRENT", "COSHH-alias", "multi-evidence"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.health-safety.coshh", "document_version_id": "doc.health-safety.coshh.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "health-safety.coshh.review", "document_family_id": "family.health-safety.coshh", "document_version_id": "doc.health-safety.coshh.v1", "side": "PRIMARY", "source_path": "documents/health-safety/coshh-procedure.md", "canonical_excerpts": ["Assessments are reviewed annually and immediately after a formulation, task or control changes."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "health-safety.moving-handling.current-staffing",
+    "cluster_id": "cluster.moving-handling-lineage",
+    "variants": [{"variant_id": "direct", "question": "Do all hoist transfers require two staff under the current policy?"}, {"variant_id": "assessment", "question": "What decides whether one or two trained staff perform a hoist transfer?"}, {"variant_id": "colloquial", "question": "Is two carers always the rule for using a hoist?"}],
+    "slices": ["CURRENT", "near-version-duplicate", "conflicting-guidance"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.health-safety.moving-handling", "document_version_id": "doc.health-safety.moving-handling.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.health-safety.moving-handling", "document_version_id": "doc.health-safety.moving-handling.v1", "reason": "HISTORICAL_FOR_CURRENT"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "health-safety.hoist.assessment-controls-staffing", "document_family_id": "family.health-safety.moving-handling", "document_version_id": "doc.health-safety.moving-handling.v2", "side": "PRIMARY", "source_path": "documents/health-safety/moving-handling-v2.md", "canonical_excerpts": ["The assessment, rather than a universal rule, determines whether one or two trained staff are required for a hoist transfer."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "health-safety.moving-handling.compare",
+    "cluster_id": "cluster.moving-handling-lineage",
+    "variants": [{"variant_id": "direct", "question": "How did the hoist staffing rule change from the previous policy?"}, {"variant_id": "compare", "question": "Compare old and current requirements for two-person hoist transfers."}, {"variant_id": "colloquial", "question": "Did the old policy say two staff for every hoist?"}],
+    "slices": ["COMPARE", "multi-evidence", "conflicting-guidance"],
+    "planner_expectation": {"temporal_mode": "COMPARE", "valid_at": null, "primary_anchor": "CURRENT", "comparison_anchor": "PREVIOUS_AUTHORITY", "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.health-safety.moving-handling", "document_version_id": "doc.health-safety.moving-handling.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}, {"document_family_id": "family.health-safety.moving-handling", "document_version_id": "doc.health-safety.moving-handling.v1", "side": "COMPARISON", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "health-safety.hoist.v2-assessed", "document_family_id": "family.health-safety.moving-handling", "document_version_id": "doc.health-safety.moving-handling.v2", "side": "PRIMARY", "source_path": "documents/health-safety/moving-handling-v2.md", "canonical_excerpts": ["The assessment, rather than a universal rule, determines whether one or two trained staff are required for a hoist transfer."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}, {"evidence_id": "health-safety.hoist.v1-universal-two", "document_family_id": "family.health-safety.moving-handling", "document_version_id": "doc.health-safety.moving-handling.v1", "side": "COMPARISON", "source_path": "documents/health-safety/moving-handling-v1.md", "canonical_excerpts": ["Two staff are required for every full-body hoist transfer."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "health-safety.lone-working.phone-signal",
+    "cluster_id": "cluster.lone-working",
+    "variants": [{"variant_id": "direct", "question": "Is a mobile phone an adequate lone-working control where signal is unreliable?"}, {"variant_id": "risk", "question": "What controls should be considered before allocating lone work?"}, {"variant_id": "colloquial", "question": "Can we send someone alone just because they have a phone?"}],
+    "slices": ["CURRENT", "multi-evidence", "negative-instruction"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.health-safety.lone-working", "document_version_id": "doc.health-safety.lone-working.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "health-safety.lone-working.controls", "document_family_id": "family.health-safety.lone-working", "document_version_id": "doc.health-safety.lone-working.v1", "side": "PRIMARY", "source_path": "documents/health-safety/lone-working-policy.md", "canonical_excerpts": ["Controls may include scheduled welfare calls, paired visits, personal alarms or a decision that the task cannot be completed alone.", "Staff must not treat a mobile phone signal as the only control where coverage is unreliable."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "health-safety.risk-form.controls",
+    "cluster_id": "cluster.workplace-risk-form",
+    "variants": [{"variant_id": "direct", "question": "What fields belong in a workplace risk assessment?"}, {"variant_id": "generic", "question": "Is 'staff to take care' an acceptable risk control?"}, {"variant_id": "colloquial", "question": "What do I put on the risk form besides the hazard?"}],
+    "slices": ["CURRENT", "forms", "tables", "negative-instruction"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.health-safety.risk-assessment", "document_version_id": "doc.health-safety.risk-assessment.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "health-safety.risk-form.required-controls", "document_family_id": "family.health-safety.risk-assessment", "document_version_id": "doc.health-safety.risk-assessment.v1", "side": "PRIMARY", "source_path": "documents/health-safety/workplace-risk-assessment-form.md", "canonical_excerpts": ["| Further action | Owner and completion date |", "Generic phrases such as “staff to take care” are not adequate controls."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "health-safety.equipment.hoist-inspection",
+    "cluster_id": "cluster.equipment-schedule",
+    "variants": [{"variant_id": "direct", "question": "How often does a mobile hoist need formal inspection?"}, {"variant_id": "contrast", "question": "Is a hoist inspection annual or every six months?"}, {"variant_id": "damage", "question": "Can damaged equipment stay in use until its scheduled inspection?"}],
+    "slices": ["CURRENT", "tables", "near-numeric-values", "multi-evidence"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.health-safety.equipment-checks", "document_version_id": "doc.health-safety.equipment-checks.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "health-safety.equipment.hoist-six-months", "document_family_id": "family.health-safety.equipment-checks", "document_version_id": "doc.health-safety.equipment-checks.v1", "side": "PRIMARY", "source_path": "documents/health-safety/equipment-inspection-schedule.md", "canonical_excerpts": ["| Mobile hoist | Before each use | Every 6 months |", "An inspection interval never authorises continued use of visibly damaged equipment."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "health-safety.fall.do-not-move",
+    "cluster_id": "cluster.slips-trips-falls",
+    "variants": [{"variant_id": "direct", "question": "Should staff move someone immediately after a fall?"}, {"variant_id": "safety", "question": "What is the first response when a resident falls?"}, {"variant_id": "colloquial", "question": "A resident is on the floor — do we lift them straight away?"}],
+    "slices": ["CURRENT", "colloquial", "negative-instruction"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.health-safety.slips-trips", "document_version_id": "doc.health-safety.slips-trips.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "health-safety.fall.assess-before-moving", "document_family_id": "family.health-safety.slips-trips", "document_version_id": "doc.health-safety.slips-trips.v1", "side": "PRIMARY", "source_path": "documents/health-safety/slips-trips-procedure.md", "canonical_excerpts": ["After a fall, staff protect the person, obtain clinical assessment as required and avoid moving them unless remaining in place creates greater danger."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  }
+]

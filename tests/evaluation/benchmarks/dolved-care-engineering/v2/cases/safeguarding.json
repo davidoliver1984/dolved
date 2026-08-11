@@ -1,0 +1,102 @@
+[
+  {
+    "case_id": "pilot.current.withdrawn-before-authority",
+    "cluster_id": "cluster.safeguarding-reporting-lineage",
+    "variants": [
+      {"variant_id": "direct", "question": "Who must staff tell immediately about a safeguarding concern?"},
+      {"variant_id": "scheduled", "question": "Did the proposed central safeguarding mailbox replace reporting to the manager?"},
+      {"variant_id": "colloquial", "question": "Do I email triage first or tell the home manager straight away?"}
+    ],
+    "slices": ["CURRENT", "withdrawn-before-authority", "never-authoritative", "multi-evidence"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {
+      "eligible_versions": [{"document_family_id": "family.safeguarding.adult-reporting", "document_version_id": "doc.safeguarding.adult-reporting.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}],
+      "excluded_versions": [{"document_family_id": "family.safeguarding.adult-reporting", "document_version_id": "doc.safeguarding.adult-reporting.v2", "reason": "NEVER_ATTAINED_AUTHORITY"}],
+      "expected_outcome": "ELIGIBLE_SCOPE_READY"
+    },
+    "retrieval_expectation": {"evidence_units": [
+      {"evidence_id": "safeguarding.immediate-manager-report", "document_family_id": "family.safeguarding.adult-reporting", "document_version_id": "doc.safeguarding.adult-reporting.v1", "side": "PRIMARY", "source_path": "documents/safeguarding/adult-reporting-v1.md", "canonical_excerpts": ["Every safeguarding concern must be reported to the shift leader or registered manager immediately and recorded before the staff member finishes the shift."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": "Reporting", "notes": null}
+    ]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "safeguarding.whistleblowing.manager-involved",
+    "cluster_id": "cluster.safeguarding-speaking-up",
+    "variants": [{"variant_id": "direct", "question": "Who can I tell if my manager is involved in a safeguarding concern?"}, {"variant_id": "whistleblowing", "question": "How do I whistleblow when the concern is about my line manager?"}, {"variant_id": "colloquial", "question": "I cannot report this to my boss because it is about them — where do I go?"}],
+    "slices": ["CURRENT", "colloquial", "multi-route"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.safeguarding.whistleblowing", "document_version_id": "doc.safeguarding.whistleblowing.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "safeguarding.whistleblowing.alternative-routes", "document_family_id": "family.safeguarding.whistleblowing", "document_version_id": "doc.safeguarding.whistleblowing.v1", "side": "PRIMARY", "source_path": "documents/safeguarding/whistleblowing-procedure.md", "canonical_excerpts": ["If the concern involves the line manager, the employee should use either of the latter routes."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": "The latter routes are safeguarding lead or confidential speaking-up contact."}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "safeguarding.capacity.unwise-decision",
+    "cluster_id": "cluster.mental-capacity",
+    "variants": [{"variant_id": "direct", "question": "Does making an unwise decision mean someone lacks capacity?"}, {"variant_id": "MCA", "question": "Under the MCA, is capacity assessed once for every decision?"}, {"variant_id": "colloquial", "question": "Can we say a resident has no capacity just because we disagree with their choice?"}],
+    "slices": ["CURRENT", "MCA-alias", "multi-evidence", "colloquial"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.safeguarding.mental-capacity", "document_version_id": "doc.safeguarding.mental-capacity.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "safeguarding.capacity.decision-specific", "document_family_id": "family.safeguarding.mental-capacity", "document_version_id": "doc.safeguarding.mental-capacity.v1", "side": "PRIMARY", "source_path": "documents/safeguarding/mental-capacity-procedure.md", "canonical_excerpts": ["Capacity is assessed for the particular decision at the time it must be made.", "An unwise decision does not by itself demonstrate lack of capacity."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "safeguarding.dols.own-home",
+    "cluster_id": "cluster.dols-routes",
+    "variants": [{"variant_id": "direct", "question": "Does the care-home DoLS application route apply in someone's own home?"}, {"variant_id": "expanded", "question": "Which deprivation of liberty route applies to community support at home?"}, {"variant_id": "colloquial", "question": "Can the home-use DoLS form be used for someone we support in their flat?"}],
+    "slices": ["CURRENT", "DoLS-alias", "tables", "applicability-context"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.safeguarding.dols", "document_version_id": "doc.safeguarding.dols.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "safeguarding.dols.own-home-route", "document_family_id": "family.safeguarding.dols", "document_version_id": "doc.safeguarding.dols.v1", "side": "PRIMARY", "source_path": "documents/safeguarding/dols-reference.md", "canonical_excerpts": ["| Person is supported in their own home | Seek legal advice; the care-home DoLS route does not apply |"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "safeguarding.missing-person.immediate-police",
+    "cluster_id": "cluster.missing-person",
+    "variants": [{"variant_id": "direct", "question": "When should police be called immediately for a missing person?"}, {"variant_id": "risk", "question": "Do staff have to finish searching before calling police for a high-risk resident?"}, {"variant_id": "colloquial", "question": "Someone high risk is missing — do we search everywhere first or ring police now?"}],
+    "slices": ["CURRENT", "multi-evidence", "colloquial"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.safeguarding.missing-person", "document_version_id": "doc.safeguarding.missing-person.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "safeguarding.missing.police-trigger", "document_family_id": "family.safeguarding.missing-person", "document_version_id": "doc.safeguarding.missing-person.v1", "side": "PRIMARY", "source_path": "documents/safeguarding/missing-person-procedure.md", "canonical_excerpts": ["Police must be contacted immediately where the person's risk plan requires it or there is reason to believe they face imminent harm."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "safeguarding.allegations.current-hr-timing",
+    "cluster_id": "cluster.allegations-lineage",
+    "variants": [{"variant_id": "direct", "question": "When must HR be informed about an allegation against staff now?"}, {"variant_id": "contrast", "question": "Can the manager wait one working day before telling HR?"}, {"variant_id": "colloquial", "question": "How quickly do we tell HR when a staff safeguarding allegation comes in?"}],
+    "slices": ["CURRENT", "near-version-duplicate", "near-time-values"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [{"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v1", "reason": "HISTORICAL_FOR_CURRENT"}], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "safeguarding.allegations.hr-immediate", "document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v2", "side": "PRIMARY", "source_path": "documents/safeguarding/allegations-staff-v2.md", "canonical_excerpts": ["HR must be informed immediately rather than within one working day."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "safeguarding.allegations.compare-process",
+    "cluster_id": "cluster.allegations-lineage",
+    "variants": [{"variant_id": "direct", "question": "How did the HR notification rule change between allegations procedures?"}, {"variant_id": "compare", "question": "Compare the old and current deadlines for telling HR about a staff allegation."}, {"variant_id": "colloquial", "question": "Did HR used to be told later than they are now?"}],
+    "slices": ["COMPARE", "multi-evidence", "near-version-duplicate"],
+    "planner_expectation": {"temporal_mode": "COMPARE", "valid_at": null, "primary_anchor": "CURRENT", "comparison_anchor": "PREVIOUS_AUTHORITY", "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}, {"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v1", "side": "COMPARISON", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "safeguarding.allegations.v2-hr", "document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v2", "side": "PRIMARY", "source_path": "documents/safeguarding/allegations-staff-v2.md", "canonical_excerpts": ["HR must be informed immediately rather than within one working day."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}, {"evidence_id": "safeguarding.allegations.v1-hr", "document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v1", "side": "COMPARISON", "source_path": "documents/safeguarding/allegations-staff-v1.md", "canonical_excerpts": ["The manager informs HR within one working day and coordinates external notifications with safeguarding and police where required."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "safeguarding.body-map.observable-facts",
+    "cluster_id": "cluster.body-map",
+    "variants": [{"variant_id": "direct", "question": "What should be recorded on an injury body map?"}, {"variant_id": "cause", "question": "Should staff write what they think caused a bruise on the body map?"}, {"variant_id": "colloquial", "question": "Do I guess how the mark happened or just describe what I can see?"}],
+    "slices": ["CURRENT", "forms", "tables", "negative-instruction"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.safeguarding.body-map", "document_version_id": "doc.safeguarding.body-map.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "safeguarding.body-map.facts-only", "document_family_id": "family.safeguarding.body-map", "document_version_id": "doc.safeguarding.body-map.v1", "side": "PRIMARY", "source_path": "documents/safeguarding/body-map-form.md", "canonical_excerpts": ["| Appearance | Size, colour, shape and observable condition |", "Do not guess the cause of an injury."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  },
+  {
+    "case_id": "safeguarding.covert-medication.multi-document",
+    "cluster_id": "cluster.covert-medication",
+    "variants": [{"variant_id": "direct", "question": "What capacity and medicines evidence is needed for covert administration?"}, {"variant_id": "multi", "question": "Which policies together govern hiding medicine in food?"}, {"variant_id": "colloquial", "question": "If someone cannot decide about tablets, what do both the MCA and meds rules require?"}],
+    "slices": ["CURRENT", "multi-document", "multi-evidence", "MCA-alias"],
+    "planner_expectation": {"temporal_mode": "CURRENT", "valid_at": null, "primary_anchor": null, "comparison_anchor": null, "applicability_reference": {"input": null, "resolved_location_id": null, "requires_clarification": false}, "expected_outcome": "PLAN_READY"},
+    "eligibility_expectation": {"eligible_versions": [{"document_family_id": "family.medication.covert", "document_version_id": "doc.medication.covert.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}, {"document_family_id": "family.safeguarding.mental-capacity", "document_version_id": "doc.safeguarding.mental-capacity.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}], "excluded_versions": [], "expected_outcome": "ELIGIBLE_SCOPE_READY"},
+    "retrieval_expectation": {"evidence_units": [{"evidence_id": "covert-medication.medicines-controls", "document_family_id": "family.medication.covert", "document_version_id": "doc.medication.covert.v1", "side": "PRIMARY", "source_path": "documents/medication/covert-administration-policy.md", "canonical_excerpts": ["A decision requires a decision-specific assessment that the person lacks capacity, a recorded best-interests process, prescriber agreement and pharmacy advice confirming the proposed method will not alter the medicine unsafely."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": null, "notes": null}, {"evidence_id": "covert-medication.capacity-controls", "document_family_id": "family.safeguarding.mental-capacity", "document_version_id": "doc.safeguarding.mental-capacity.v1", "side": "PRIMARY", "source_path": "documents/safeguarding/mental-capacity-procedure.md", "canonical_excerpts": ["When a person cannot make the specific decision, the best-interests record must consider their wishes, feelings, beliefs, relevant alternatives and the views of appropriate others."], "relevance_grade": 2, "minimum_token_coverage": 0.9, "locator": null, "notes": null}]},
+    "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}
+  }
+]

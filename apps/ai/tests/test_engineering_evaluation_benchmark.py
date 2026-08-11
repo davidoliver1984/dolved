@@ -6,7 +6,11 @@ from typing import Any
 
 import jsonschema
 
-BENCHMARK_ROOT = Path("/evaluation/benchmarks/dolved-care-engineering/v1")
+BENCHMARK_ROOTS = (
+    Path("/evaluation/benchmarks/dolved-care-engineering/v1"),
+    Path("/evaluation/benchmarks/dolved-care-engineering/v2"),
+)
+BENCHMARK_ROOT = BENCHMARK_ROOTS[-1]
 CONTRACT_ROOT = Path("/contracts/evaluation/v2")
 FORBIDDEN_GROUND_TRUTH_KEYS = {
     "chunk_id",
@@ -55,13 +59,38 @@ def test_v2_benchmark_artifacts_validate_against_shared_contracts() -> None:
         ("splits/v1.json", "split.schema.json"),
         ("compiled/corpus.json", "corpus.schema.json"),
     )
-    for value_name, schema_name in pairs:
-        value = load_json(BENCHMARK_ROOT / value_name)
-        schema = load_json(CONTRACT_ROOT / schema_name)
-        jsonschema.Draft202012Validator.check_schema(schema)
-        jsonschema.Draft202012Validator(
-            schema, format_checker=jsonschema.FormatChecker()
-        ).validate(value)
+    for benchmark_root in BENCHMARK_ROOTS:
+        for value_name, schema_name in pairs:
+            value = load_json(benchmark_root / value_name)
+            schema = load_json(CONTRACT_ROOT / schema_name)
+            jsonschema.Draft202012Validator.check_schema(schema)
+            jsonschema.Draft202012Validator(
+                schema, format_checker=jsonschema.FormatChecker()
+            ).validate(value)
+
+
+def test_v2_corrects_the_unapproved_draft_without_mutating_exclusion_semantics() -> None:
+    catalog = load_json(BENCHMARK_ROOT / "document-catalog.json")
+    version = next(
+        version
+        for family in catalog["families"]
+        for version in family["versions"]
+        if version["version_id"] == "doc.visitors.search-optimised-draft.v1"
+    )
+    assert version["governance_state"] == "DRAFT"
+    assert version["approved_at"] is None
+    assert version["withdrawn_at"] is None
+
+    corpus = load_json(BENCHMARK_ROOT / "compiled/corpus.json")
+    exclusions = [
+        exclusion
+        for case in corpus["cases"]
+        for exclusion in case["eligibility_expectation"]["excluded_versions"]
+        if exclusion["document_version_id"]
+        == "doc.visitors.search-optimised-draft.v1"
+    ]
+    assert exclusions
+    assert {item["reason"] for item in exclusions} == {"NEVER_ATTAINED_AUTHORITY"}
 
 
 def test_catalogue_and_authored_counts_are_truthful() -> None:
