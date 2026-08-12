@@ -179,20 +179,26 @@ final readonly class RunEngineeringBenchmarkExperiment
         ];
         $manifest = $this->progress->initialise(self::RUN_ID, $lineage);
         $lineageDigest = (string) $manifest['lineage_digest'];
-        $observations = $this->progress->observations(self::RUN_ID, $lineageDigest);
-        $expectedKeys = $cases->flatMap(
+        $completed = $this->progress->completedIdentities(self::RUN_ID, $lineageDigest);
+        $expectedIdentities = $cases->flatMap(
             fn (array $case) => collect($case['variants'])->map(
-                fn (array $variant): string => $case['case_id'].'::'.$variant['variant_id']
+                fn (array $variant): array => [
+                    'case_id' => $case['case_id'],
+                    'variant_id' => $variant['variant_id'],
+                ]
             )
         )->all();
-        if (array_diff(array_keys($observations), $expectedKeys) !== []) {
+        $expectedKeys = collect($expectedIdentities)->map(
+            fn (array $identity): string => $identity['case_id'].'::'.$identity['variant_id']
+        )->all();
+        if (array_diff(array_keys($completed), $expectedKeys) !== []) {
             throw new RuntimeException('Durable '.self::RUN_ID.' progress contains an unexpected variant.');
         }
-        $resumedCount = count($observations);
+        $resumedCount = count($completed);
         foreach ($cases as $case) {
             foreach ($case['variants'] as $variant) {
                 $key = $case['case_id'].'::'.$variant['variant_id'];
-                if (isset($observations[$key])) {
+                if (isset($completed[$key])) {
                     continue;
                 }
                 $started = hrtime(true);
@@ -258,20 +264,26 @@ final readonly class RunEngineeringBenchmarkExperiment
                     $variant['variant_id'],
                     $observation,
                 );
-                $observations[$key] = $observation;
+                $completed[$key] = true;
+                unset($observation, $pair);
+                gc_collect_cycles();
             }
         }
-        if (count($observations) !== EngineeringBenchmark::EXPECTED_ENGINEERING_VARIANTS) {
+        if (count($completed) !== EngineeringBenchmark::EXPECTED_ENGINEERING_VARIANTS) {
             throw new RuntimeException(self::RUN_ID.' did not durably finalise all engineering variants.');
         }
-        $payload = [
+        $header = [
             'schema_version' => 'v2',
             'run_id' => self::RUN_ID,
             'executed_at' => $manifest['started_at'],
             ...$lineage,
-            'observations' => collect($expectedKeys)->map(fn (string $key): array => $observations[$key])->all(),
         ];
-        $path = $this->progress->finalise(self::RUN_ID, $payload);
+        $path = $this->progress->finaliseFromCheckpoints(
+            self::RUN_ID,
+            $lineageDigest,
+            $header,
+            $expectedIdentities,
+        );
 
         return [
             'path' => $path,

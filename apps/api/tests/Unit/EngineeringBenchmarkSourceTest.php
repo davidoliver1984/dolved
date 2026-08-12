@@ -47,5 +47,11 @@ final class EngineeringBenchmarkSourceTest extends TestCase
         $this->assertStringContainsString("'reliability' => [", $runner);
         $this->assertStringContainsString("'python_retry_owner' => true", $runner);
         $this->assertStringContainsString("'typed_provider_rate_limit_replay' => false", $runner);
+        $skip = strpos($runner, 'if (isset($completed[$key]))');
+        $providerCall = strpos($runner, '$this->retrieval->handlePairForLocalEvaluation(');
+        $this->assertIsInt($skip);
+        $this->assertIsInt($providerCall);
+        $this->assertLessThan($providerCall, $skip);
+        $this->assertStringNotContainsString('$observations[$key] = $observation', $runner);
     }
 }
