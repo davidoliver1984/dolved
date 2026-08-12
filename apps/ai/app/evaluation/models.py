@@ -12,6 +12,9 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 Identifier = Annotated[
     str, Field(min_length=1, max_length=160, pattern=r"^[a-zA-Z0-9._:-]+$")
 ]
+ProviderModelIdentity = Annotated[
+    str, Field(min_length=1, max_length=240, pattern=r"^[a-zA-Z0-9._:/-]+$")
+]
 
 
 class StrictModel(BaseModel):
@@ -89,8 +92,8 @@ class CostBasis(StrEnum):
 
 class StageUsageObservation(StrictModel):
     stage: Identifier
-    provider: Identifier | None = None
-    model: Identifier | None = None
+    provider: ProviderModelIdentity | None = None
+    model: ProviderModelIdentity | None = None
     execution: Literal["PROVIDER_API", "LOCAL", "INFRASTRUCTURE", "NOT_EXECUTED"]
     request_count: Annotated[int, Field(ge=0)] = 0
     retry_count: Annotated[int, Field(ge=0)] | None = None
@@ -141,8 +144,8 @@ class PlanningStatus(StrEnum):
 
 
 class PlannerFailureObservation(StrictModel):
-    provider: Identifier
-    model: Identifier
+    provider: ProviderModelIdentity
+    model: ProviderModelIdentity
     category: Identifier
     provider_status: Annotated[int, Field(ge=100, le=599)] | None = None
     attempt_count: Annotated[int, Field(ge=1)]

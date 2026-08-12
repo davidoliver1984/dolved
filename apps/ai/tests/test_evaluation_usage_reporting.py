@@ -22,7 +22,7 @@ def test_usage_aggregation_is_deterministic_and_preserves_pricing_lineage() -> N
     sparse = StageUsageObservation(
         stage="sparse_encoding",
         provider="fastembed",
-        model="splade-pp",
+        model="prithivida/Splade_PP_en_v1",
         execution="LOCAL",
         request_count=1,
         retry_count=0,
@@ -50,6 +50,33 @@ def test_usage_aggregation_is_deterministic_and_preserves_pricing_lineage() -> N
     assert first["generation"]["execution"] == "NOT_EXECUTED"
     assert first["stages"][0]["latency_ms"]["p50"] == 25
     assert first["stages"][0]["latency_ms"]["p95"] == 25
+
+
+def test_stage_usage_accepts_repository_qualified_model_identity() -> None:
+    usage = StageUsageObservation(
+        stage="sparse_encoding",
+        provider="fastembed",
+        model="prithivida/Splade_PP_en_v1",
+        execution="LOCAL",
+        request_count=1,
+        cost_basis=CostBasis.ZERO_COST_LOCAL,
+        cost_usd=0,
+    )
+
+    assert usage.model == "prithivida/Splade_PP_en_v1"
+
+
+def test_stage_usage_rejects_unsafe_model_identity_characters() -> None:
+    with pytest.raises(ValidationError, match="String should match pattern"):
+        StageUsageObservation(
+            stage="sparse_encoding",
+            provider="fastembed",
+            model="prithivida/Splade PP en v1",
+            execution="LOCAL",
+            request_count=1,
+            cost_basis=CostBasis.ZERO_COST_LOCAL,
+            cost_usd=0,
+        )
 
 
 def test_unavailable_pricing_is_never_reported_as_zero() -> None:
