@@ -1,0 +1,200 @@
+{
+    "case_id": "medication.controlled-drugs.valid-at-date",
+    "lineage_digest": "4933fd9e4150a20b1c286dbc1e007b1b00a78b02dd32a9ec767b2ab4a96e955e",
+    "observation": {
+        "case": {
+            "case_id": "medication.controlled-drugs.valid-at-date",
+            "cluster_id": "cluster.controlled-drugs-lineage",
+            "eligibility_expectation": {
+                "eligible_versions": [
+                    {
+                        "applicability": {
+                            "governing_location_id": null,
+                            "kind": "UNIVERSAL",
+                            "requested_location_id": null
+                        },
+                        "document_family_id": "family.medication.controlled-drugs",
+                        "document_version_id": "doc.medication.controlled-drugs.v1",
+                        "side": "PRIMARY"
+                    }
+                ],
+                "excluded_versions": [
+                    {
+                        "document_family_id": "family.medication.controlled-drugs",
+                        "document_version_id": "doc.medication.controlled-drugs.v2",
+                        "reason": "SCHEDULED_FUTURE"
+                    }
+                ],
+                "expected_outcome": "ELIGIBLE_SCOPE_READY"
+            },
+            "outcome_expectation": {
+                "outcome": "EVIDENCE_FOUND"
+            },
+            "planner_expectation": {
+                "applicability_reference": {
+                    "input": null,
+                    "requires_clarification": false,
+                    "resolved_location_id": null
+                },
+                "comparison_anchor": null,
+                "expected_outcome": "PLAN_READY",
+                "primary_anchor": "2024-01-15T12:00:00Z",
+                "temporal_mode": "VALID_AT_DATE",
+                "valid_at": "2024-01-15T12:00:00Z"
+            },
+            "retrieval_expectation": {
+                "evidence_units": [
+                    {
+                        "canonical_excerpts": [
+                            "A discrepancy is reported to the registered manager before the end of the shift and the stock is secured while the check is repeated."
+                        ],
+                        "document_family_id": "family.medication.controlled-drugs",
+                        "document_version_id": "doc.medication.controlled-drugs.v1",
+                        "evidence_id": "medication.cd.v1.shift-end",
+                        "locator": null,
+                        "minimum_token_coverage": 0.9,
+                        "notes": null,
+                        "relevance_grade": 2,
+                        "side": "PRIMARY",
+                        "source_path": "documents/medication/controlled-drugs-v1.md"
+                    }
+                ]
+            },
+            "slices": [
+                "VALID_AT_DATE",
+                "historical",
+                "near-version-duplicate"
+            ],
+            "variants": [
+                {
+                    "question": "In January 2024, when did a controlled-drug discrepancy have to be reported?",
+                    "variant_id": "dated"
+                },
+                {
+                    "question": "What was the old CD stock discrepancy deadline?",
+                    "variant_id": "historical"
+                },
+                {
+                    "question": "Did the 2023 procedure allow reporting by the end of the shift?",
+                    "variant_id": "contrast"
+                }
+            ]
+        },
+        "dense": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "ambiguous_authority_window_for_period"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "ambiguous_authority_window_for_period"
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [],
+                    "query": "Did the 2023 procedure allow reporting by the end of the shift?",
+                    "temporal_mode": "historical_reference",
+                    "temporal_reference": {
+                        "kind": "historical_reference",
+                        "value": "2023 procedure"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 612,
+                            "latency_ms": 5516.948126998614,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 358,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "hybrid": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "ambiguous_authority_window_for_period"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "ambiguous_authority_window_for_period"
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [],
+                    "query": "Did the 2023 procedure allow reporting by the end of the shift?",
+                    "temporal_mode": "historical_reference",
+                    "temporal_reference": {
+                        "kind": "historical_reference",
+                        "value": "2023 procedure"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 612,
+                            "latency_ms": 5516.948126998614,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 358,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "latency_ms": 5574.211461,
+        "observed_at": "2026-08-12T21:34:18+00:00",
+        "planning": {
+            "attempt_count": 1,
+            "model": "gpt-5-mini",
+            "provider": "openai",
+            "status": "succeeded"
+        },
+        "retrieval_executed": true,
+        "variant": {
+            "question": "Did the 2023 procedure allow reporting by the end of the shift?",
+            "variant_id": "contrast"
+        }
+    },
+    "record_digest": "86a646da4158701c68f94b437b1e1d8724be96734149127303c36ec7001ca42a",
+    "schema_version": "v1",
+    "variant_id": "contrast"
+}

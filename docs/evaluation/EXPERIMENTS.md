@@ -4,5 +4,6 @@ This index is generated from immutable run directories. Raw JSON remains authori
 
 | Experiment | Date | Change | Benchmark | Recall | Precision | MRR | nDCG | Gate/status | Decision | Baseline |
 |---|---|---|---|---:|---:|---:|---:|---|---|---|
-
-No persisted experiment runs yet.
+| [EXP-0001-alderbridge-initial-hybrid](runs/EXP-0001-alderbridge-initial-hybrid/report.md) | 2026-08-11 | First truthful V2 engineering-split dense versus hybrid retrieval baseline | dolved-care-engineering v2 | 0.0569 | 0.0008 | 0.0041 | 0.0569 | EXPERIMENTAL | — | — |
+| [EXP-0002-adr0022-corrected-planning-baseline](runs/EXP-0002-adr0022-corrected-planning-baseline/report.md) | 2026-08-12 | First exact-commit ADR-0022 full-pipeline engineering baseline | dolved-care-engineering v2 | 0.1389 | 0.0183 | 0.0913 | 0.1398 | EXPERIMENTAL | — | — |
+| [EXP-0003-post-reliability-corrected-engineering-baseline](runs/EXP-0003-post-reliability-corrected-engineering-baseline/report.md) | 2026-08-12 | Post-reliability corrected full-pipeline engineering baseline | dolved-care-engineering v2 | 0.8849 | 0.1786 | 0.8181 | 0.8576 | EXPERIMENTAL | — | — |

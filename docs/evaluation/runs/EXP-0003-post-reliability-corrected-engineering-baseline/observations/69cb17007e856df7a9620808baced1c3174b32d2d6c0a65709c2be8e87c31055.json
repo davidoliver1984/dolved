@@ -1,0 +1,229 @@
+{
+    "case_id": "pilot.multi-document.medication-storage",
+    "lineage_digest": "4933fd9e4150a20b1c286dbc1e007b1b00a78b02dd32a9ec767b2ab4a96e955e",
+    "observation": {
+        "case": {
+            "case_id": "pilot.multi-document.medication-storage",
+            "cluster_id": "cluster.refrigerated-medicines",
+            "eligibility_expectation": {
+                "eligible_versions": [
+                    {
+                        "applicability": {
+                            "governing_location_id": null,
+                            "kind": "UNIVERSAL",
+                            "requested_location_id": null
+                        },
+                        "document_family_id": "family.medication.administration",
+                        "document_version_id": "doc.medication.administration.v2",
+                        "side": "PRIMARY"
+                    },
+                    {
+                        "applicability": {
+                            "governing_location_id": null,
+                            "kind": "UNIVERSAL",
+                            "requested_location_id": null
+                        },
+                        "document_family_id": "family.medication.storage",
+                        "document_version_id": "doc.medication.storage.v1",
+                        "side": "PRIMARY"
+                    }
+                ],
+                "excluded_versions": [
+                    {
+                        "document_family_id": "family.medication.administration",
+                        "document_version_id": "doc.medication.administration.v1",
+                        "reason": "HISTORICAL_FOR_CURRENT"
+                    },
+                    {
+                        "document_family_id": "family.medication.administration",
+                        "document_version_id": "doc.medication.administration.v3",
+                        "reason": "SCHEDULED_FUTURE"
+                    }
+                ],
+                "expected_outcome": "ELIGIBLE_SCOPE_READY"
+            },
+            "outcome_expectation": {
+                "outcome": "EVIDENCE_FOUND"
+            },
+            "planner_expectation": {
+                "applicability_reference": {
+                    "input": null,
+                    "requires_clarification": false,
+                    "resolved_location_id": null
+                },
+                "comparison_anchor": null,
+                "expected_outcome": "PLAN_READY",
+                "primary_anchor": null,
+                "temporal_mode": "CURRENT",
+                "valid_at": null
+            },
+            "retrieval_expectation": {
+                "evidence_units": [
+                    {
+                        "canonical_excerpts": [
+                            "If it is outside that range, the medicine must be quarantined and the medicines storage procedure followed; staff must not decide independently that the medicine remains usable."
+                        ],
+                        "document_family_id": "family.medication.administration",
+                        "document_version_id": "doc.medication.administration.v2",
+                        "evidence_id": "medication.administration.fridge-gate",
+                        "locator": "Storage checks",
+                        "minimum_token_coverage": 0.85,
+                        "notes": null,
+                        "relevance_grade": 2,
+                        "side": "PRIMARY",
+                        "source_path": "documents/medication/safe-administration-v2.md"
+                    },
+                    {
+                        "canonical_excerpts": [
+                            "When any reading is outside 2°C to 8°C, staff must label the affected medicines “QUARANTINED — DO NOT USE”, keep them secure, and record the earliest possible time the excursion began.",
+                            "The shift leader must contact the supplying pharmacist for medicine-specific stability advice."
+                        ],
+                        "document_family_id": "family.medication.storage",
+                        "document_version_id": "doc.medication.storage.v1",
+                        "evidence_id": "medication.storage.out-of-range-response",
+                        "locator": "Out-of-range response",
+                        "minimum_token_coverage": 0.8,
+                        "notes": "Combined coverage across chunks is permitted by ADR-0020.",
+                        "relevance_grade": 2,
+                        "side": "PRIMARY",
+                        "source_path": "documents/medication/storage-temperature-procedure.md"
+                    }
+                ]
+            },
+            "slices": [
+                "CURRENT",
+                "multi-document",
+                "multi-evidence",
+                "numeric-range"
+            ],
+            "variants": [
+                {
+                    "question": "What should I do if the medicines fridge reads 9°C before the drug round?",
+                    "variant_id": "direct"
+                },
+                {
+                    "question": "The meds fridge is too warm — can I still give the medicine and who do I call?",
+                    "variant_id": "colloquial"
+                },
+                {
+                    "question": "What do the policy and storage procedure require for a 9 degree fridge reading?",
+                    "variant_id": "numeric"
+                }
+            ]
+        },
+        "dense": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "unresolved_location_reference"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "unresolved_location_reference"
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [
+                        "meds fridge"
+                    ],
+                    "query": "The meds fridge is too warm — can I still give the medicine and who do I call?",
+                    "temporal_mode": "current",
+                    "temporal_reference": null,
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 616,
+                            "latency_ms": 6297.118711008807,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 477,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "hybrid": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "unresolved_location_reference"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "unresolved_location_reference"
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [
+                        "meds fridge"
+                    ],
+                    "query": "The meds fridge is too warm — can I still give the medicine and who do I call?",
+                    "temporal_mode": "current",
+                    "temporal_reference": null,
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 616,
+                            "latency_ms": 6297.118711008807,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 477,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "latency_ms": 6317.999711,
+        "observed_at": "2026-08-12T21:39:51+00:00",
+        "planning": {
+            "attempt_count": 1,
+            "model": "gpt-5-mini",
+            "provider": "openai",
+            "status": "succeeded"
+        },
+        "retrieval_executed": true,
+        "variant": {
+            "question": "The meds fridge is too warm — can I still give the medicine and who do I call?",
+            "variant_id": "colloquial"
+        }
+    },
+    "record_digest": "a5cd959d2b3468930d77108467a673bb343e6eef7bf536c172434b6010257814",
+    "schema_version": "v1",
+    "variant_id": "colloquial"
+}

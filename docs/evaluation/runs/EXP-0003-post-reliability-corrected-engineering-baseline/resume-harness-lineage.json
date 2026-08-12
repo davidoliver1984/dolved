@@ -1,0 +1,9 @@
+{
+  "evaluated_application_retrieval_commit": "0adf1619d1a46f79a0b39b210152dcbae066bdcb",
+  "experiment_id": "EXP-0003-post-reliability-corrected-engineering-baseline",
+  "initial_checkpoint_count": 30,
+  "new_checkpoint_count": 96,
+  "resume_execution_harness_commit": "c3bc27190a36a0a6a98a6d6609a5835ae6c62bf7",
+  "schema_version": "v1",
+  "total_checkpoint_count": 126
+}

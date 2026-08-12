@@ -1,0 +1,201 @@
+{
+    "case_id": "health-safety.accident.valid-at-date",
+    "lineage_digest": "4933fd9e4150a20b1c286dbc1e007b1b00a78b02dd32a9ec767b2ab4a96e955e",
+    "observation": {
+        "case": {
+            "case_id": "health-safety.accident.valid-at-date",
+            "cluster_id": "cluster.accident-reporting-lineage",
+            "eligibility_expectation": {
+                "eligible_versions": [
+                    {
+                        "applicability": {
+                            "governing_location_id": null,
+                            "kind": "UNIVERSAL",
+                            "requested_location_id": null
+                        },
+                        "document_family_id": "family.health-safety.accident-reporting",
+                        "document_version_id": "doc.health-safety.accident-reporting.v1",
+                        "side": "PRIMARY"
+                    }
+                ],
+                "excluded_versions": [
+                    {
+                        "document_family_id": "family.health-safety.accident-reporting",
+                        "document_version_id": "doc.health-safety.accident-reporting.v2",
+                        "reason": "SCHEDULED_FUTURE"
+                    }
+                ],
+                "expected_outcome": "ELIGIBLE_SCOPE_READY"
+            },
+            "outcome_expectation": {
+                "outcome": "EVIDENCE_FOUND"
+            },
+            "planner_expectation": {
+                "applicability_reference": {
+                    "input": null,
+                    "requires_clarification": false,
+                    "resolved_location_id": null
+                },
+                "comparison_anchor": null,
+                "expected_outcome": "PLAN_READY",
+                "primary_anchor": "2024-01-15T12:00:00Z",
+                "temporal_mode": "VALID_AT_DATE",
+                "valid_at": "2024-01-15T12:00:00Z"
+            },
+            "retrieval_expectation": {
+                "evidence_units": [
+                    {
+                        "canonical_excerpts": [
+                            "The manager reviews whether the event may be reportable under RIDDOR and contacts the health and safety lead within two working days."
+                        ],
+                        "document_family_id": "family.health-safety.accident-reporting",
+                        "document_version_id": "doc.health-safety.accident-reporting.v1",
+                        "evidence_id": "health-safety.riddor.v1-two-days",
+                        "locator": null,
+                        "minimum_token_coverage": 1,
+                        "notes": null,
+                        "relevance_grade": 2,
+                        "side": "PRIMARY",
+                        "source_path": "documents/health-safety/accident-reporting-v1.md"
+                    }
+                ]
+            },
+            "slices": [
+                "VALID_AT_DATE",
+                "RIDDOR-alias",
+                "historical",
+                "near-time-values"
+            ],
+            "variants": [
+                {
+                    "question": "What RIDDOR escalation deadline applied in January 2024?",
+                    "variant_id": "dated"
+                },
+                {
+                    "question": "How long did managers have under the old accident procedure?",
+                    "variant_id": "historical"
+                },
+                {
+                    "question": "Was the safety-lead deadline two working days in 2024?",
+                    "variant_id": "contrast"
+                }
+            ]
+        },
+        "dense": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "ambiguous_authority_window_for_period"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "ambiguous_authority_window_for_period"
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [],
+                    "query": "Was the safety-lead deadline two working days in 2024?",
+                    "temporal_mode": "valid_at_date",
+                    "temporal_reference": {
+                        "kind": "calendar_period",
+                        "value": "2024"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 611,
+                            "latency_ms": 5656.588294004905,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 457,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "hybrid": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "ambiguous_authority_window_for_period"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "ambiguous_authority_window_for_period"
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [],
+                    "query": "Was the safety-lead deadline two working days in 2024?",
+                    "temporal_mode": "valid_at_date",
+                    "temporal_reference": {
+                        "kind": "calendar_period",
+                        "value": "2024"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 611,
+                            "latency_ms": 5656.588294004905,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 457,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "latency_ms": 5709.10442,
+        "observed_at": "2026-08-12T20:54:00+00:00",
+        "planning": {
+            "attempt_count": 1,
+            "model": "gpt-5-mini",
+            "provider": "openai",
+            "status": "succeeded"
+        },
+        "retrieval_executed": true,
+        "variant": {
+            "question": "Was the safety-lead deadline two working days in 2024?",
+            "variant_id": "contrast"
+        }
+    },
+    "record_digest": "179d0fcb3a913ebfc5936d5b02a67bc7d0adde6fe1bff28cd378a81524df40b4",
+    "schema_version": "v1",
+    "variant_id": "contrast"
+}

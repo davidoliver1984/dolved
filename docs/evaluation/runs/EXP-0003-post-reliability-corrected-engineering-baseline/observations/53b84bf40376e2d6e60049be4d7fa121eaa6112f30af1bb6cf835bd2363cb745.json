@@ -1,0 +1,2320 @@
+{
+    "case_id": "infection.outbreak.valid-before-withdrawal",
+    "lineage_digest": "4933fd9e4150a20b1c286dbc1e007b1b00a78b02dd32a9ec767b2ab4a96e955e",
+    "observation": {
+        "case": {
+            "case_id": "infection.outbreak.valid-before-withdrawal",
+            "cluster_id": "cluster.outbreak-management-lineage",
+            "eligibility_expectation": {
+                "eligible_versions": [
+                    {
+                        "applicability": {
+                            "governing_location_id": null,
+                            "kind": "UNIVERSAL",
+                            "requested_location_id": null
+                        },
+                        "document_family_id": "family.infection.outbreak-management",
+                        "document_version_id": "doc.infection.outbreak-management.v2",
+                        "side": "PRIMARY"
+                    }
+                ],
+                "excluded_versions": [
+                    {
+                        "document_family_id": "family.infection.outbreak-management",
+                        "document_version_id": "doc.infection.outbreak-management.v1",
+                        "reason": "HISTORICAL_FOR_CURRENT"
+                    }
+                ],
+                "expected_outcome": "ELIGIBLE_SCOPE_READY"
+            },
+            "outcome_expectation": {
+                "outcome": "EVIDENCE_FOUND"
+            },
+            "planner_expectation": {
+                "applicability_reference": {
+                    "input": null,
+                    "requires_clarification": false,
+                    "resolved_location_id": null
+                },
+                "comparison_anchor": null,
+                "expected_outcome": "PLAN_READY",
+                "primary_anchor": "2026-01-01T12:00:00Z",
+                "temporal_mode": "VALID_AT_DATE",
+                "valid_at": "2026-01-01T12:00:00Z"
+            },
+            "retrieval_expectation": {
+                "evidence_units": [
+                    {
+                        "canonical_excerpts": [
+                            "Two or more epidemiologically linked respiratory symptoms require the registered",
+                            "manager to open an outbreak record, seek clinical advice and begin twice-daily",
+                            "monitoring of new symptoms."
+                        ],
+                        "document_family_id": "family.infection.outbreak-management",
+                        "document_version_id": "doc.infection.outbreak-management.v2",
+                        "evidence_id": "infection.outbreak.v2.twice-daily",
+                        "locator": null,
+                        "minimum_token_coverage": 0.9,
+                        "notes": null,
+                        "relevance_grade": 2,
+                        "side": "PRIMARY",
+                        "source_path": "documents/infection-control/outbreak-management-v2-withdrawn.md"
+                    }
+                ]
+            },
+            "slices": [
+                "VALID_AT_DATE",
+                "withdrawn",
+                "historical",
+                "temporal-authority"
+            ],
+            "variants": [
+                {
+                    "question": "What outbreak monitoring applied on 1 January 2026?",
+                    "variant_id": "dated"
+                },
+                {
+                    "question": "Before it was withdrawn, what did outbreak version 2 require?",
+                    "variant_id": "historical"
+                },
+                {
+                    "question": "Was twice-daily symptom monitoring authoritative in January 2026?",
+                    "variant_id": "contrast"
+                }
+            ]
+        },
+        "dense": {
+            "result": {
+                "candidates": [
+                    {
+                        "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                        "chunk_text": "# Respiratory Outbreak Management Procedure\n\nDocument family: `family.infection.outbreak-management`\nVersion: 2.0\nEffective: 1 October 2025\nWithdrawn: 1 June 2026\nSynthetic engineering benchmark material\n\n## Initial response\n\nTwo or more epidemiologically linked respiratory symptoms require the registered\nmanager to open an outbreak record, seek clinical advice and begin twice-daily\nmonitoring of new symptoms.\n\n## Withdrawal consequence\n\nThis version attained authority on 1 October 2025 and was withdrawn on 1 June\n2026. Its withdrawal closed its authority window. Version 1.0 does not become\nauthoritative again, so no current version exists at the benchmark clock.\n\n## Protective measures\n\nStaff use the current PPE selection reference, increase cleaning of shared touch\npoints and document individual decisions about visits and communal activities.",
+                        "dense_rank": null,
+                        "dense_score": null,
+                        "document_family_id": "d8373d67-c7ae-4f46-9d59-7f7938c6aaf3",
+                        "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                        "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                        "provenance": [
+                            {
+                                "chunk_end_character": 43,
+                                "chunk_start_character": 0,
+                                "element_end_character": 43,
+                                "element_start_character": 0,
+                                "normalised_element_id": "87a74d1e-4cbc-5ca2-9796-ecd974f6324c",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "ef1a9de8-fc3c-43e1-bc83-57a8204df547"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 43,
+                                        "end_line": 1,
+                                        "kind": "text",
+                                        "start_character": 0,
+                                        "start_line": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 203,
+                                "chunk_start_character": 45,
+                                "element_end_character": 158,
+                                "element_start_character": 0,
+                                "normalised_element_id": "b3fb94a4-437c-566f-947e-e1161cd46f2d",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1b736566-8b2f-476b-8f9b-9de1154e3a60"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 203,
+                                        "end_line": 7,
+                                        "kind": "text",
+                                        "start_character": 45,
+                                        "start_line": 3
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 224,
+                                "chunk_start_character": 205,
+                                "element_end_character": 19,
+                                "element_start_character": 0,
+                                "normalised_element_id": "bae9dd71-9437-5797-a11e-cadd075f03c6",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "30ab759c-1c8c-4382-821c-0bb3df2fd947"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 224,
+                                        "end_line": 9,
+                                        "kind": "text",
+                                        "start_character": 205,
+                                        "start_line": 9
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 413,
+                                "chunk_start_character": 226,
+                                "element_end_character": 187,
+                                "element_start_character": 0,
+                                "normalised_element_id": "8850a8c5-75c8-51dc-89e1-12ba9e0b3bae",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "de31473b-bfae-4a0d-a418-a89c57188201"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 413,
+                                        "end_line": 13,
+                                        "kind": "text",
+                                        "start_character": 226,
+                                        "start_line": 11
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 440,
+                                "chunk_start_character": 415,
+                                "element_end_character": 25,
+                                "element_start_character": 0,
+                                "normalised_element_id": "26b2a15e-3938-5646-849f-de901810a043",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "13cc3554-448c-4d92-9f3d-25a648871db0"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 440,
+                                        "end_line": 15,
+                                        "kind": "text",
+                                        "start_character": 415,
+                                        "start_line": 15
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 671,
+                                "chunk_start_character": 442,
+                                "element_end_character": 229,
+                                "element_start_character": 0,
+                                "normalised_element_id": "65acc972-ef1f-5ad8-ae9c-b680fc52c7da",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1732521d-3262-46c8-bef4-af7d9be211ac"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 671,
+                                        "end_line": 19,
+                                        "kind": "text",
+                                        "start_character": 442,
+                                        "start_line": 17
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 695,
+                                "chunk_start_character": 673,
+                                "element_end_character": 22,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c987a58c-dab4-555e-810d-8087de583fea",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "7905cceb-ef06-4da5-ad83-30c3537f8edb"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 695,
+                                        "end_line": 21,
+                                        "kind": "text",
+                                        "start_character": 673,
+                                        "start_line": 21
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 856,
+                                "chunk_start_character": 697,
+                                "element_end_character": 159,
+                                "element_start_character": 0,
+                                "normalised_element_id": "ce9cf175-451e-5d01-8082-028826fb92e8",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1def2b28-767d-470b-939d-51efac4c1eb3"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 856,
+                                        "end_line": 24,
+                                        "kind": "text",
+                                        "start_character": 697,
+                                        "start_line": 23
+                                    }
+                                ]
+                            }
+                        ],
+                        "rank": 1,
+                        "retrieval_method": "dense",
+                        "score": 0.32841396,
+                        "side": "primary",
+                        "source_filename": "outbreak-management-v2-withdrawn.md",
+                        "sparse_rank": null,
+                        "sparse_score": null,
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                        "version_position": 2,
+                        "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                    }
+                ],
+                "outcome": "evidence_found",
+                "reason": null
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": {
+                        "primary": [
+                            "add406d7-d283-4cd0-9f93-8e8194da0d1a"
+                        ]
+                    },
+                    "outcome": "evidence_found",
+                    "reason": null
+                },
+                "hydrated": [
+                    {
+                        "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                        "chunk_text": "# Respiratory Outbreak Management Procedure\n\nDocument family: `family.infection.outbreak-management`\nVersion: 2.0\nEffective: 1 October 2025\nWithdrawn: 1 June 2026\nSynthetic engineering benchmark material\n\n## Initial response\n\nTwo or more epidemiologically linked respiratory symptoms require the registered\nmanager to open an outbreak record, seek clinical advice and begin twice-daily\nmonitoring of new symptoms.\n\n## Withdrawal consequence\n\nThis version attained authority on 1 October 2025 and was withdrawn on 1 June\n2026. Its withdrawal closed its authority window. Version 1.0 does not become\nauthoritative again, so no current version exists at the benchmark clock.\n\n## Protective measures\n\nStaff use the current PPE selection reference, increase cleaning of shared touch\npoints and document individual decisions about visits and communal activities.",
+                        "dense_rank": null,
+                        "dense_score": null,
+                        "document_family_id": "d8373d67-c7ae-4f46-9d59-7f7938c6aaf3",
+                        "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                        "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                        "provenance": [
+                            {
+                                "chunk_end_character": 43,
+                                "chunk_start_character": 0,
+                                "element_end_character": 43,
+                                "element_start_character": 0,
+                                "normalised_element_id": "87a74d1e-4cbc-5ca2-9796-ecd974f6324c",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "ef1a9de8-fc3c-43e1-bc83-57a8204df547"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 43,
+                                        "end_line": 1,
+                                        "kind": "text",
+                                        "start_character": 0,
+                                        "start_line": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 203,
+                                "chunk_start_character": 45,
+                                "element_end_character": 158,
+                                "element_start_character": 0,
+                                "normalised_element_id": "b3fb94a4-437c-566f-947e-e1161cd46f2d",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1b736566-8b2f-476b-8f9b-9de1154e3a60"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 203,
+                                        "end_line": 7,
+                                        "kind": "text",
+                                        "start_character": 45,
+                                        "start_line": 3
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 224,
+                                "chunk_start_character": 205,
+                                "element_end_character": 19,
+                                "element_start_character": 0,
+                                "normalised_element_id": "bae9dd71-9437-5797-a11e-cadd075f03c6",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "30ab759c-1c8c-4382-821c-0bb3df2fd947"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 224,
+                                        "end_line": 9,
+                                        "kind": "text",
+                                        "start_character": 205,
+                                        "start_line": 9
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 413,
+                                "chunk_start_character": 226,
+                                "element_end_character": 187,
+                                "element_start_character": 0,
+                                "normalised_element_id": "8850a8c5-75c8-51dc-89e1-12ba9e0b3bae",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "de31473b-bfae-4a0d-a418-a89c57188201"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 413,
+                                        "end_line": 13,
+                                        "kind": "text",
+                                        "start_character": 226,
+                                        "start_line": 11
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 440,
+                                "chunk_start_character": 415,
+                                "element_end_character": 25,
+                                "element_start_character": 0,
+                                "normalised_element_id": "26b2a15e-3938-5646-849f-de901810a043",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "13cc3554-448c-4d92-9f3d-25a648871db0"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 440,
+                                        "end_line": 15,
+                                        "kind": "text",
+                                        "start_character": 415,
+                                        "start_line": 15
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 671,
+                                "chunk_start_character": 442,
+                                "element_end_character": 229,
+                                "element_start_character": 0,
+                                "normalised_element_id": "65acc972-ef1f-5ad8-ae9c-b680fc52c7da",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1732521d-3262-46c8-bef4-af7d9be211ac"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 671,
+                                        "end_line": 19,
+                                        "kind": "text",
+                                        "start_character": 442,
+                                        "start_line": 17
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 695,
+                                "chunk_start_character": 673,
+                                "element_end_character": 22,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c987a58c-dab4-555e-810d-8087de583fea",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "7905cceb-ef06-4da5-ad83-30c3537f8edb"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 695,
+                                        "end_line": 21,
+                                        "kind": "text",
+                                        "start_character": 673,
+                                        "start_line": 21
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 856,
+                                "chunk_start_character": 697,
+                                "element_end_character": 159,
+                                "element_start_character": 0,
+                                "normalised_element_id": "ce9cf175-451e-5d01-8082-028826fb92e8",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1def2b28-767d-470b-939d-51efac4c1eb3"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 856,
+                                        "end_line": 24,
+                                        "kind": "text",
+                                        "start_character": 697,
+                                        "start_line": 23
+                                    }
+                                ]
+                            }
+                        ],
+                        "rank": 1,
+                        "retrieval_method": "dense",
+                        "score": 0.32841396,
+                        "side": "primary",
+                        "source_filename": "outbreak-management-v2-withdrawn.md",
+                        "sparse_rank": null,
+                        "sparse_score": null,
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                        "version_position": 2,
+                        "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                    }
+                ],
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [],
+                    "query": "Before it was withdrawn, what did outbreak version 2 require?",
+                    "temporal_mode": "historical_reference",
+                    "temporal_reference": {
+                        "kind": "historical_reference",
+                        "value": "Before it was withdrawn"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 610,
+                            "latency_ms": 4887.502461002441,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 293,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                },
+                "search": {
+                    "candidates": [
+                        {
+                            "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                            "dense_rank": null,
+                            "dense_score": null,
+                            "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                            "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                            "rank": 1,
+                            "retrieval_method": "dense",
+                            "score": 0.32841396,
+                            "side": "primary",
+                            "sparse_rank": null,
+                            "sparse_score": null,
+                            "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                            "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                        }
+                    ],
+                    "diagnostics": [
+                        {
+                            "dense_candidates": [
+                                {
+                                    "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                                    "chunk_text": "# Respiratory Outbreak Management Procedure\n\nDocument family: `family.infection.outbreak-management`\nVersion: 2.0\nEffective: 1 October 2025\nWithdrawn: 1 June 2026\nSynthetic engineering benchmark material\n\n## Initial response\n\nTwo or more epidemiologically linked respiratory symptoms require the registered\nmanager to open an outbreak record, seek clinical advice and begin twice-daily\nmonitoring of new symptoms.\n\n## Withdrawal consequence\n\nThis version attained authority on 1 October 2025 and was withdrawn on 1 June\n2026. Its withdrawal closed its authority window. Version 1.0 does not become\nauthoritative again, so no current version exists at the benchmark clock.\n\n## Protective measures\n\nStaff use the current PPE selection reference, increase cleaning of shared touch\npoints and document individual decisions about visits and communal activities.",
+                                    "dense_rank": null,
+                                    "dense_score": null,
+                                    "document_family_id": "d8373d67-c7ae-4f46-9d59-7f7938c6aaf3",
+                                    "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                                    "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                                    "provenance": [
+                                        {
+                                            "chunk_end_character": 43,
+                                            "chunk_start_character": 0,
+                                            "element_end_character": 43,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "87a74d1e-4cbc-5ca2-9796-ecd974f6324c",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "ef1a9de8-fc3c-43e1-bc83-57a8204df547"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 43,
+                                                    "end_line": 1,
+                                                    "kind": "text",
+                                                    "start_character": 0,
+                                                    "start_line": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 203,
+                                            "chunk_start_character": 45,
+                                            "element_end_character": 158,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "b3fb94a4-437c-566f-947e-e1161cd46f2d",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1b736566-8b2f-476b-8f9b-9de1154e3a60"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 203,
+                                                    "end_line": 7,
+                                                    "kind": "text",
+                                                    "start_character": 45,
+                                                    "start_line": 3
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 224,
+                                            "chunk_start_character": 205,
+                                            "element_end_character": 19,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "bae9dd71-9437-5797-a11e-cadd075f03c6",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "30ab759c-1c8c-4382-821c-0bb3df2fd947"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 224,
+                                                    "end_line": 9,
+                                                    "kind": "text",
+                                                    "start_character": 205,
+                                                    "start_line": 9
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 413,
+                                            "chunk_start_character": 226,
+                                            "element_end_character": 187,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "8850a8c5-75c8-51dc-89e1-12ba9e0b3bae",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "de31473b-bfae-4a0d-a418-a89c57188201"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 413,
+                                                    "end_line": 13,
+                                                    "kind": "text",
+                                                    "start_character": 226,
+                                                    "start_line": 11
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 440,
+                                            "chunk_start_character": 415,
+                                            "element_end_character": 25,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "26b2a15e-3938-5646-849f-de901810a043",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "13cc3554-448c-4d92-9f3d-25a648871db0"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 440,
+                                                    "end_line": 15,
+                                                    "kind": "text",
+                                                    "start_character": 415,
+                                                    "start_line": 15
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 671,
+                                            "chunk_start_character": 442,
+                                            "element_end_character": 229,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "65acc972-ef1f-5ad8-ae9c-b680fc52c7da",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1732521d-3262-46c8-bef4-af7d9be211ac"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 671,
+                                                    "end_line": 19,
+                                                    "kind": "text",
+                                                    "start_character": 442,
+                                                    "start_line": 17
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 695,
+                                            "chunk_start_character": 673,
+                                            "element_end_character": 22,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c987a58c-dab4-555e-810d-8087de583fea",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "7905cceb-ef06-4da5-ad83-30c3537f8edb"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 695,
+                                                    "end_line": 21,
+                                                    "kind": "text",
+                                                    "start_character": 673,
+                                                    "start_line": 21
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 856,
+                                            "chunk_start_character": 697,
+                                            "element_end_character": 159,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "ce9cf175-451e-5d01-8082-028826fb92e8",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1def2b28-767d-470b-939d-51efac4c1eb3"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 856,
+                                                    "end_line": 24,
+                                                    "kind": "text",
+                                                    "start_character": 697,
+                                                    "start_line": 23
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "rank": 1,
+                                    "retrieval_method": "dense",
+                                    "score": 0.32841396,
+                                    "side": "primary",
+                                    "source_filename": "outbreak-management-v2-withdrawn.md",
+                                    "sparse_rank": null,
+                                    "sparse_score": null,
+                                    "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                                    "version_position": 2,
+                                    "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                                }
+                            ],
+                            "fused_candidates": [],
+                            "side": "primary",
+                            "sparse_candidates": []
+                        }
+                    ],
+                    "lineage": {
+                        "configuration_version": null,
+                        "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                        "fusion_strategy": null,
+                        "fusion_version": null,
+                        "rrf_k": null,
+                        "sparse_profile_fingerprint": null,
+                        "sparse_space_generation_id": null
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "estimated",
+                            "cost_usd": 1.44e-6,
+                            "execution": "provider_api",
+                            "final_provider_success_at": "2026-08-12T21:33:18.964671Z",
+                            "first_provider_attempt_at": "2026-08-12T21:33:18.570633Z",
+                            "input_tokens": 12,
+                            "latency_ms": 398.71424999728333,
+                            "model": "voyage-4-large",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": "voyage-pricing-2026-08-12",
+                            "provider": "voyage",
+                            "provider_attempt_count": 1,
+                            "provider_retry_count": 0,
+                            "provider_retry_elapsed_ms": 0,
+                            "rate_limit_event_count": 0,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "dense_embedding"
+                        },
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "unavailable",
+                            "cost_usd": null,
+                            "execution": "infrastructure",
+                            "final_provider_success_at": null,
+                            "first_provider_attempt_at": null,
+                            "input_tokens": null,
+                            "latency_ms": 7.703249997575767,
+                            "model": "rag-platform-vectors-v1",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": null,
+                            "provider": "qdrant",
+                            "provider_attempt_count": null,
+                            "provider_retry_count": null,
+                            "provider_retry_elapsed_ms": null,
+                            "rate_limit_event_count": null,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "qdrant_dense_search"
+                        }
+                    ]
+                }
+            }
+        },
+        "hybrid": {
+            "result": {
+                "candidates": [
+                    {
+                        "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                        "chunk_text": "# Respiratory Outbreak Management Procedure\n\nDocument family: `family.infection.outbreak-management`\nVersion: 2.0\nEffective: 1 October 2025\nWithdrawn: 1 June 2026\nSynthetic engineering benchmark material\n\n## Initial response\n\nTwo or more epidemiologically linked respiratory symptoms require the registered\nmanager to open an outbreak record, seek clinical advice and begin twice-daily\nmonitoring of new symptoms.\n\n## Withdrawal consequence\n\nThis version attained authority on 1 October 2025 and was withdrawn on 1 June\n2026. Its withdrawal closed its authority window. Version 1.0 does not become\nauthoritative again, so no current version exists at the benchmark clock.\n\n## Protective measures\n\nStaff use the current PPE selection reference, increase cleaning of shared touch\npoints and document individual decisions about visits and communal activities.",
+                        "dense_rank": 1,
+                        "dense_score": 0.32740185,
+                        "document_family_id": "d8373d67-c7ae-4f46-9d59-7f7938c6aaf3",
+                        "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                        "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                        "evidence_threshold_policy_fingerprint": "11386497e6316bf199abb75ad0c6ca8baaafe759c297d5044dfc7ce07630eb21",
+                        "evidence_threshold_policy_version": "exp-0001-dolved-care-v2-observational",
+                        "fused_rank": 1,
+                        "fused_score": 0.03278688524590164,
+                        "provenance": [
+                            {
+                                "chunk_end_character": 43,
+                                "chunk_start_character": 0,
+                                "element_end_character": 43,
+                                "element_start_character": 0,
+                                "normalised_element_id": "87a74d1e-4cbc-5ca2-9796-ecd974f6324c",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "ef1a9de8-fc3c-43e1-bc83-57a8204df547"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 43,
+                                        "end_line": 1,
+                                        "kind": "text",
+                                        "start_character": 0,
+                                        "start_line": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 203,
+                                "chunk_start_character": 45,
+                                "element_end_character": 158,
+                                "element_start_character": 0,
+                                "normalised_element_id": "b3fb94a4-437c-566f-947e-e1161cd46f2d",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1b736566-8b2f-476b-8f9b-9de1154e3a60"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 203,
+                                        "end_line": 7,
+                                        "kind": "text",
+                                        "start_character": 45,
+                                        "start_line": 3
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 224,
+                                "chunk_start_character": 205,
+                                "element_end_character": 19,
+                                "element_start_character": 0,
+                                "normalised_element_id": "bae9dd71-9437-5797-a11e-cadd075f03c6",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "30ab759c-1c8c-4382-821c-0bb3df2fd947"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 224,
+                                        "end_line": 9,
+                                        "kind": "text",
+                                        "start_character": 205,
+                                        "start_line": 9
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 413,
+                                "chunk_start_character": 226,
+                                "element_end_character": 187,
+                                "element_start_character": 0,
+                                "normalised_element_id": "8850a8c5-75c8-51dc-89e1-12ba9e0b3bae",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "de31473b-bfae-4a0d-a418-a89c57188201"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 413,
+                                        "end_line": 13,
+                                        "kind": "text",
+                                        "start_character": 226,
+                                        "start_line": 11
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 440,
+                                "chunk_start_character": 415,
+                                "element_end_character": 25,
+                                "element_start_character": 0,
+                                "normalised_element_id": "26b2a15e-3938-5646-849f-de901810a043",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "13cc3554-448c-4d92-9f3d-25a648871db0"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 440,
+                                        "end_line": 15,
+                                        "kind": "text",
+                                        "start_character": 415,
+                                        "start_line": 15
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 671,
+                                "chunk_start_character": 442,
+                                "element_end_character": 229,
+                                "element_start_character": 0,
+                                "normalised_element_id": "65acc972-ef1f-5ad8-ae9c-b680fc52c7da",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1732521d-3262-46c8-bef4-af7d9be211ac"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 671,
+                                        "end_line": 19,
+                                        "kind": "text",
+                                        "start_character": 442,
+                                        "start_line": 17
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 695,
+                                "chunk_start_character": 673,
+                                "element_end_character": 22,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c987a58c-dab4-555e-810d-8087de583fea",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "7905cceb-ef06-4da5-ad83-30c3537f8edb"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 695,
+                                        "end_line": 21,
+                                        "kind": "text",
+                                        "start_character": 673,
+                                        "start_line": 21
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 856,
+                                "chunk_start_character": 697,
+                                "element_end_character": 159,
+                                "element_start_character": 0,
+                                "normalised_element_id": "ce9cf175-451e-5d01-8082-028826fb92e8",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1def2b28-767d-470b-939d-51efac4c1eb3"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 856,
+                                        "end_line": 24,
+                                        "kind": "text",
+                                        "start_character": 697,
+                                        "start_line": 23
+                                    }
+                                ]
+                            }
+                        ],
+                        "rank": 1,
+                        "reranker_adapter_version": "1",
+                        "reranker_model": "rerank-2.5",
+                        "reranker_provider": "voyage",
+                        "retrieval_method": "hybrid",
+                        "score": 0.765625,
+                        "side": "primary",
+                        "source_filename": "outbreak-management-v2-withdrawn.md",
+                        "sparse_rank": 1,
+                        "sparse_score": 17.425442,
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                        "version_position": 2,
+                        "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                    }
+                ],
+                "outcome": "evidence_found",
+                "reason": null
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": {
+                        "primary": [
+                            "add406d7-d283-4cd0-9f93-8e8194da0d1a"
+                        ]
+                    },
+                    "outcome": "evidence_found",
+                    "reason": null
+                },
+                "final_evidence": [
+                    {
+                        "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                        "chunk_text": "# Respiratory Outbreak Management Procedure\n\nDocument family: `family.infection.outbreak-management`\nVersion: 2.0\nEffective: 1 October 2025\nWithdrawn: 1 June 2026\nSynthetic engineering benchmark material\n\n## Initial response\n\nTwo or more epidemiologically linked respiratory symptoms require the registered\nmanager to open an outbreak record, seek clinical advice and begin twice-daily\nmonitoring of new symptoms.\n\n## Withdrawal consequence\n\nThis version attained authority on 1 October 2025 and was withdrawn on 1 June\n2026. Its withdrawal closed its authority window. Version 1.0 does not become\nauthoritative again, so no current version exists at the benchmark clock.\n\n## Protective measures\n\nStaff use the current PPE selection reference, increase cleaning of shared touch\npoints and document individual decisions about visits and communal activities.",
+                        "dense_rank": 1,
+                        "dense_score": 0.32740185,
+                        "document_family_id": "d8373d67-c7ae-4f46-9d59-7f7938c6aaf3",
+                        "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                        "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                        "evidence_threshold_policy_fingerprint": "11386497e6316bf199abb75ad0c6ca8baaafe759c297d5044dfc7ce07630eb21",
+                        "evidence_threshold_policy_version": "exp-0001-dolved-care-v2-observational",
+                        "fused_rank": 1,
+                        "fused_score": 0.03278688524590164,
+                        "provenance": [
+                            {
+                                "chunk_end_character": 43,
+                                "chunk_start_character": 0,
+                                "element_end_character": 43,
+                                "element_start_character": 0,
+                                "normalised_element_id": "87a74d1e-4cbc-5ca2-9796-ecd974f6324c",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "ef1a9de8-fc3c-43e1-bc83-57a8204df547"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 43,
+                                        "end_line": 1,
+                                        "kind": "text",
+                                        "start_character": 0,
+                                        "start_line": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 203,
+                                "chunk_start_character": 45,
+                                "element_end_character": 158,
+                                "element_start_character": 0,
+                                "normalised_element_id": "b3fb94a4-437c-566f-947e-e1161cd46f2d",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1b736566-8b2f-476b-8f9b-9de1154e3a60"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 203,
+                                        "end_line": 7,
+                                        "kind": "text",
+                                        "start_character": 45,
+                                        "start_line": 3
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 224,
+                                "chunk_start_character": 205,
+                                "element_end_character": 19,
+                                "element_start_character": 0,
+                                "normalised_element_id": "bae9dd71-9437-5797-a11e-cadd075f03c6",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "30ab759c-1c8c-4382-821c-0bb3df2fd947"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 224,
+                                        "end_line": 9,
+                                        "kind": "text",
+                                        "start_character": 205,
+                                        "start_line": 9
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 413,
+                                "chunk_start_character": 226,
+                                "element_end_character": 187,
+                                "element_start_character": 0,
+                                "normalised_element_id": "8850a8c5-75c8-51dc-89e1-12ba9e0b3bae",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "de31473b-bfae-4a0d-a418-a89c57188201"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 413,
+                                        "end_line": 13,
+                                        "kind": "text",
+                                        "start_character": 226,
+                                        "start_line": 11
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 440,
+                                "chunk_start_character": 415,
+                                "element_end_character": 25,
+                                "element_start_character": 0,
+                                "normalised_element_id": "26b2a15e-3938-5646-849f-de901810a043",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "13cc3554-448c-4d92-9f3d-25a648871db0"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 440,
+                                        "end_line": 15,
+                                        "kind": "text",
+                                        "start_character": 415,
+                                        "start_line": 15
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 671,
+                                "chunk_start_character": 442,
+                                "element_end_character": 229,
+                                "element_start_character": 0,
+                                "normalised_element_id": "65acc972-ef1f-5ad8-ae9c-b680fc52c7da",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1732521d-3262-46c8-bef4-af7d9be211ac"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 671,
+                                        "end_line": 19,
+                                        "kind": "text",
+                                        "start_character": 442,
+                                        "start_line": 17
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 695,
+                                "chunk_start_character": 673,
+                                "element_end_character": 22,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c987a58c-dab4-555e-810d-8087de583fea",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "7905cceb-ef06-4da5-ad83-30c3537f8edb"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 695,
+                                        "end_line": 21,
+                                        "kind": "text",
+                                        "start_character": 673,
+                                        "start_line": 21
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 856,
+                                "chunk_start_character": 697,
+                                "element_end_character": 159,
+                                "element_start_character": 0,
+                                "normalised_element_id": "ce9cf175-451e-5d01-8082-028826fb92e8",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1def2b28-767d-470b-939d-51efac4c1eb3"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 856,
+                                        "end_line": 24,
+                                        "kind": "text",
+                                        "start_character": 697,
+                                        "start_line": 23
+                                    }
+                                ]
+                            }
+                        ],
+                        "rank": 1,
+                        "reranker_adapter_version": "1",
+                        "reranker_model": "rerank-2.5",
+                        "reranker_provider": "voyage",
+                        "retrieval_method": "hybrid",
+                        "score": 0.765625,
+                        "side": "primary",
+                        "source_filename": "outbreak-management-v2-withdrawn.md",
+                        "sparse_rank": 1,
+                        "sparse_score": 17.425442,
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                        "version_position": 2,
+                        "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                    }
+                ],
+                "hydrated": [
+                    {
+                        "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                        "chunk_text": "# Respiratory Outbreak Management Procedure\n\nDocument family: `family.infection.outbreak-management`\nVersion: 2.0\nEffective: 1 October 2025\nWithdrawn: 1 June 2026\nSynthetic engineering benchmark material\n\n## Initial response\n\nTwo or more epidemiologically linked respiratory symptoms require the registered\nmanager to open an outbreak record, seek clinical advice and begin twice-daily\nmonitoring of new symptoms.\n\n## Withdrawal consequence\n\nThis version attained authority on 1 October 2025 and was withdrawn on 1 June\n2026. Its withdrawal closed its authority window. Version 1.0 does not become\nauthoritative again, so no current version exists at the benchmark clock.\n\n## Protective measures\n\nStaff use the current PPE selection reference, increase cleaning of shared touch\npoints and document individual decisions about visits and communal activities.",
+                        "dense_rank": 1,
+                        "dense_score": 0.32740185,
+                        "document_family_id": "d8373d67-c7ae-4f46-9d59-7f7938c6aaf3",
+                        "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                        "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                        "provenance": [
+                            {
+                                "chunk_end_character": 43,
+                                "chunk_start_character": 0,
+                                "element_end_character": 43,
+                                "element_start_character": 0,
+                                "normalised_element_id": "87a74d1e-4cbc-5ca2-9796-ecd974f6324c",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "ef1a9de8-fc3c-43e1-bc83-57a8204df547"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 43,
+                                        "end_line": 1,
+                                        "kind": "text",
+                                        "start_character": 0,
+                                        "start_line": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 203,
+                                "chunk_start_character": 45,
+                                "element_end_character": 158,
+                                "element_start_character": 0,
+                                "normalised_element_id": "b3fb94a4-437c-566f-947e-e1161cd46f2d",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1b736566-8b2f-476b-8f9b-9de1154e3a60"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 203,
+                                        "end_line": 7,
+                                        "kind": "text",
+                                        "start_character": 45,
+                                        "start_line": 3
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 224,
+                                "chunk_start_character": 205,
+                                "element_end_character": 19,
+                                "element_start_character": 0,
+                                "normalised_element_id": "bae9dd71-9437-5797-a11e-cadd075f03c6",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "30ab759c-1c8c-4382-821c-0bb3df2fd947"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 224,
+                                        "end_line": 9,
+                                        "kind": "text",
+                                        "start_character": 205,
+                                        "start_line": 9
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 413,
+                                "chunk_start_character": 226,
+                                "element_end_character": 187,
+                                "element_start_character": 0,
+                                "normalised_element_id": "8850a8c5-75c8-51dc-89e1-12ba9e0b3bae",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "de31473b-bfae-4a0d-a418-a89c57188201"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 413,
+                                        "end_line": 13,
+                                        "kind": "text",
+                                        "start_character": 226,
+                                        "start_line": 11
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 440,
+                                "chunk_start_character": 415,
+                                "element_end_character": 25,
+                                "element_start_character": 0,
+                                "normalised_element_id": "26b2a15e-3938-5646-849f-de901810a043",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "13cc3554-448c-4d92-9f3d-25a648871db0"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 440,
+                                        "end_line": 15,
+                                        "kind": "text",
+                                        "start_character": 415,
+                                        "start_line": 15
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 671,
+                                "chunk_start_character": 442,
+                                "element_end_character": 229,
+                                "element_start_character": 0,
+                                "normalised_element_id": "65acc972-ef1f-5ad8-ae9c-b680fc52c7da",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1732521d-3262-46c8-bef4-af7d9be211ac"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 671,
+                                        "end_line": 19,
+                                        "kind": "text",
+                                        "start_character": 442,
+                                        "start_line": 17
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 695,
+                                "chunk_start_character": 673,
+                                "element_end_character": 22,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c987a58c-dab4-555e-810d-8087de583fea",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "7905cceb-ef06-4da5-ad83-30c3537f8edb"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 695,
+                                        "end_line": 21,
+                                        "kind": "text",
+                                        "start_character": 673,
+                                        "start_line": 21
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 856,
+                                "chunk_start_character": 697,
+                                "element_end_character": 159,
+                                "element_start_character": 0,
+                                "normalised_element_id": "ce9cf175-451e-5d01-8082-028826fb92e8",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1def2b28-767d-470b-939d-51efac4c1eb3"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 856,
+                                        "end_line": 24,
+                                        "kind": "text",
+                                        "start_character": 697,
+                                        "start_line": 23
+                                    }
+                                ]
+                            }
+                        ],
+                        "rank": 1,
+                        "retrieval_method": "hybrid",
+                        "score": 0.03278688524590164,
+                        "side": "primary",
+                        "source_filename": "outbreak-management-v2-withdrawn.md",
+                        "sparse_rank": 1,
+                        "sparse_score": 17.425442,
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                        "version_position": 2,
+                        "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                    }
+                ],
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [],
+                    "query": "Before it was withdrawn, what did outbreak version 2 require?",
+                    "temporal_mode": "historical_reference",
+                    "temporal_reference": {
+                        "kind": "historical_reference",
+                        "value": "Before it was withdrawn"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 610,
+                            "latency_ms": 4887.502461002441,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 293,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                },
+                "reranked": {
+                    "candidates": [
+                        {
+                            "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                            "rank": 1,
+                            "score": 0.765625,
+                            "side": "primary"
+                        }
+                    ],
+                    "profile": {
+                        "adapter_version": "1",
+                        "model": "rerank-2.5",
+                        "provider": "voyage",
+                        "truncation": false
+                    },
+                    "provider_input_tokens": 193,
+                    "provider_retry_count": 0,
+                    "usage": [
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "final_provider_success_at": "2026-08-12T21:33:20.821913Z",
+                            "first_provider_attempt_at": "2026-08-12T21:33:20.557556Z",
+                            "input_tokens": 193,
+                            "latency_ms": 272.535875,
+                            "model": "rerank-2.5",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": null,
+                            "provider": "voyage",
+                            "provider_attempt_count": 1,
+                            "provider_retry_count": 0,
+                            "provider_retry_elapsed_ms": 0,
+                            "rate_limit_event_count": 0,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "reranking"
+                        }
+                    ]
+                },
+                "search": {
+                    "candidates": [
+                        {
+                            "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                            "dense_rank": 1,
+                            "dense_score": 0.32740185,
+                            "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                            "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                            "rank": 1,
+                            "retrieval_method": "hybrid",
+                            "score": 0.03278688524590164,
+                            "side": "primary",
+                            "sparse_rank": 1,
+                            "sparse_score": 17.425442,
+                            "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                            "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                        }
+                    ],
+                    "diagnostics": [
+                        {
+                            "dense_candidates": [
+                                {
+                                    "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                                    "chunk_text": "# Respiratory Outbreak Management Procedure\n\nDocument family: `family.infection.outbreak-management`\nVersion: 2.0\nEffective: 1 October 2025\nWithdrawn: 1 June 2026\nSynthetic engineering benchmark material\n\n## Initial response\n\nTwo or more epidemiologically linked respiratory symptoms require the registered\nmanager to open an outbreak record, seek clinical advice and begin twice-daily\nmonitoring of new symptoms.\n\n## Withdrawal consequence\n\nThis version attained authority on 1 October 2025 and was withdrawn on 1 June\n2026. Its withdrawal closed its authority window. Version 1.0 does not become\nauthoritative again, so no current version exists at the benchmark clock.\n\n## Protective measures\n\nStaff use the current PPE selection reference, increase cleaning of shared touch\npoints and document individual decisions about visits and communal activities.",
+                                    "dense_rank": null,
+                                    "dense_score": null,
+                                    "document_family_id": "d8373d67-c7ae-4f46-9d59-7f7938c6aaf3",
+                                    "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                                    "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                                    "provenance": [
+                                        {
+                                            "chunk_end_character": 43,
+                                            "chunk_start_character": 0,
+                                            "element_end_character": 43,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "87a74d1e-4cbc-5ca2-9796-ecd974f6324c",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "ef1a9de8-fc3c-43e1-bc83-57a8204df547"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 43,
+                                                    "end_line": 1,
+                                                    "kind": "text",
+                                                    "start_character": 0,
+                                                    "start_line": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 203,
+                                            "chunk_start_character": 45,
+                                            "element_end_character": 158,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "b3fb94a4-437c-566f-947e-e1161cd46f2d",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1b736566-8b2f-476b-8f9b-9de1154e3a60"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 203,
+                                                    "end_line": 7,
+                                                    "kind": "text",
+                                                    "start_character": 45,
+                                                    "start_line": 3
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 224,
+                                            "chunk_start_character": 205,
+                                            "element_end_character": 19,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "bae9dd71-9437-5797-a11e-cadd075f03c6",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "30ab759c-1c8c-4382-821c-0bb3df2fd947"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 224,
+                                                    "end_line": 9,
+                                                    "kind": "text",
+                                                    "start_character": 205,
+                                                    "start_line": 9
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 413,
+                                            "chunk_start_character": 226,
+                                            "element_end_character": 187,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "8850a8c5-75c8-51dc-89e1-12ba9e0b3bae",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "de31473b-bfae-4a0d-a418-a89c57188201"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 413,
+                                                    "end_line": 13,
+                                                    "kind": "text",
+                                                    "start_character": 226,
+                                                    "start_line": 11
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 440,
+                                            "chunk_start_character": 415,
+                                            "element_end_character": 25,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "26b2a15e-3938-5646-849f-de901810a043",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "13cc3554-448c-4d92-9f3d-25a648871db0"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 440,
+                                                    "end_line": 15,
+                                                    "kind": "text",
+                                                    "start_character": 415,
+                                                    "start_line": 15
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 671,
+                                            "chunk_start_character": 442,
+                                            "element_end_character": 229,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "65acc972-ef1f-5ad8-ae9c-b680fc52c7da",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1732521d-3262-46c8-bef4-af7d9be211ac"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 671,
+                                                    "end_line": 19,
+                                                    "kind": "text",
+                                                    "start_character": 442,
+                                                    "start_line": 17
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 695,
+                                            "chunk_start_character": 673,
+                                            "element_end_character": 22,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c987a58c-dab4-555e-810d-8087de583fea",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "7905cceb-ef06-4da5-ad83-30c3537f8edb"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 695,
+                                                    "end_line": 21,
+                                                    "kind": "text",
+                                                    "start_character": 673,
+                                                    "start_line": 21
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 856,
+                                            "chunk_start_character": 697,
+                                            "element_end_character": 159,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "ce9cf175-451e-5d01-8082-028826fb92e8",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1def2b28-767d-470b-939d-51efac4c1eb3"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 856,
+                                                    "end_line": 24,
+                                                    "kind": "text",
+                                                    "start_character": 697,
+                                                    "start_line": 23
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "rank": 1,
+                                    "retrieval_method": "dense",
+                                    "score": 0.32740185,
+                                    "side": "primary",
+                                    "source_filename": "outbreak-management-v2-withdrawn.md",
+                                    "sparse_rank": null,
+                                    "sparse_score": null,
+                                    "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                                    "version_position": 2,
+                                    "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                                }
+                            ],
+                            "fused_candidates": [
+                                {
+                                    "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                                    "chunk_text": "# Respiratory Outbreak Management Procedure\n\nDocument family: `family.infection.outbreak-management`\nVersion: 2.0\nEffective: 1 October 2025\nWithdrawn: 1 June 2026\nSynthetic engineering benchmark material\n\n## Initial response\n\nTwo or more epidemiologically linked respiratory symptoms require the registered\nmanager to open an outbreak record, seek clinical advice and begin twice-daily\nmonitoring of new symptoms.\n\n## Withdrawal consequence\n\nThis version attained authority on 1 October 2025 and was withdrawn on 1 June\n2026. Its withdrawal closed its authority window. Version 1.0 does not become\nauthoritative again, so no current version exists at the benchmark clock.\n\n## Protective measures\n\nStaff use the current PPE selection reference, increase cleaning of shared touch\npoints and document individual decisions about visits and communal activities.",
+                                    "dense_rank": 1,
+                                    "dense_score": 0.32740185,
+                                    "document_family_id": "d8373d67-c7ae-4f46-9d59-7f7938c6aaf3",
+                                    "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                                    "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                                    "provenance": [
+                                        {
+                                            "chunk_end_character": 43,
+                                            "chunk_start_character": 0,
+                                            "element_end_character": 43,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "87a74d1e-4cbc-5ca2-9796-ecd974f6324c",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "ef1a9de8-fc3c-43e1-bc83-57a8204df547"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 43,
+                                                    "end_line": 1,
+                                                    "kind": "text",
+                                                    "start_character": 0,
+                                                    "start_line": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 203,
+                                            "chunk_start_character": 45,
+                                            "element_end_character": 158,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "b3fb94a4-437c-566f-947e-e1161cd46f2d",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1b736566-8b2f-476b-8f9b-9de1154e3a60"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 203,
+                                                    "end_line": 7,
+                                                    "kind": "text",
+                                                    "start_character": 45,
+                                                    "start_line": 3
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 224,
+                                            "chunk_start_character": 205,
+                                            "element_end_character": 19,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "bae9dd71-9437-5797-a11e-cadd075f03c6",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "30ab759c-1c8c-4382-821c-0bb3df2fd947"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 224,
+                                                    "end_line": 9,
+                                                    "kind": "text",
+                                                    "start_character": 205,
+                                                    "start_line": 9
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 413,
+                                            "chunk_start_character": 226,
+                                            "element_end_character": 187,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "8850a8c5-75c8-51dc-89e1-12ba9e0b3bae",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "de31473b-bfae-4a0d-a418-a89c57188201"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 413,
+                                                    "end_line": 13,
+                                                    "kind": "text",
+                                                    "start_character": 226,
+                                                    "start_line": 11
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 440,
+                                            "chunk_start_character": 415,
+                                            "element_end_character": 25,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "26b2a15e-3938-5646-849f-de901810a043",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "13cc3554-448c-4d92-9f3d-25a648871db0"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 440,
+                                                    "end_line": 15,
+                                                    "kind": "text",
+                                                    "start_character": 415,
+                                                    "start_line": 15
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 671,
+                                            "chunk_start_character": 442,
+                                            "element_end_character": 229,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "65acc972-ef1f-5ad8-ae9c-b680fc52c7da",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1732521d-3262-46c8-bef4-af7d9be211ac"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 671,
+                                                    "end_line": 19,
+                                                    "kind": "text",
+                                                    "start_character": 442,
+                                                    "start_line": 17
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 695,
+                                            "chunk_start_character": 673,
+                                            "element_end_character": 22,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c987a58c-dab4-555e-810d-8087de583fea",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "7905cceb-ef06-4da5-ad83-30c3537f8edb"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 695,
+                                                    "end_line": 21,
+                                                    "kind": "text",
+                                                    "start_character": 673,
+                                                    "start_line": 21
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 856,
+                                            "chunk_start_character": 697,
+                                            "element_end_character": 159,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "ce9cf175-451e-5d01-8082-028826fb92e8",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1def2b28-767d-470b-939d-51efac4c1eb3"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 856,
+                                                    "end_line": 24,
+                                                    "kind": "text",
+                                                    "start_character": 697,
+                                                    "start_line": 23
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "rank": 1,
+                                    "retrieval_method": "hybrid",
+                                    "score": 0.03278688524590164,
+                                    "side": "primary",
+                                    "source_filename": "outbreak-management-v2-withdrawn.md",
+                                    "sparse_rank": 1,
+                                    "sparse_score": 17.425442,
+                                    "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                                    "version_position": 2,
+                                    "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                                }
+                            ],
+                            "side": "primary",
+                            "sparse_candidates": [
+                                {
+                                    "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                                    "chunk_text": "# Respiratory Outbreak Management Procedure\n\nDocument family: `family.infection.outbreak-management`\nVersion: 2.0\nEffective: 1 October 2025\nWithdrawn: 1 June 2026\nSynthetic engineering benchmark material\n\n## Initial response\n\nTwo or more epidemiologically linked respiratory symptoms require the registered\nmanager to open an outbreak record, seek clinical advice and begin twice-daily\nmonitoring of new symptoms.\n\n## Withdrawal consequence\n\nThis version attained authority on 1 October 2025 and was withdrawn on 1 June\n2026. Its withdrawal closed its authority window. Version 1.0 does not become\nauthoritative again, so no current version exists at the benchmark clock.\n\n## Protective measures\n\nStaff use the current PPE selection reference, increase cleaning of shared touch\npoints and document individual decisions about visits and communal activities.",
+                                    "dense_rank": null,
+                                    "dense_score": null,
+                                    "document_family_id": "d8373d67-c7ae-4f46-9d59-7f7938c6aaf3",
+                                    "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                                    "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                                    "provenance": [
+                                        {
+                                            "chunk_end_character": 43,
+                                            "chunk_start_character": 0,
+                                            "element_end_character": 43,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "87a74d1e-4cbc-5ca2-9796-ecd974f6324c",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "ef1a9de8-fc3c-43e1-bc83-57a8204df547"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 43,
+                                                    "end_line": 1,
+                                                    "kind": "text",
+                                                    "start_character": 0,
+                                                    "start_line": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 203,
+                                            "chunk_start_character": 45,
+                                            "element_end_character": 158,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "b3fb94a4-437c-566f-947e-e1161cd46f2d",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1b736566-8b2f-476b-8f9b-9de1154e3a60"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 203,
+                                                    "end_line": 7,
+                                                    "kind": "text",
+                                                    "start_character": 45,
+                                                    "start_line": 3
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 224,
+                                            "chunk_start_character": 205,
+                                            "element_end_character": 19,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "bae9dd71-9437-5797-a11e-cadd075f03c6",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "30ab759c-1c8c-4382-821c-0bb3df2fd947"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 224,
+                                                    "end_line": 9,
+                                                    "kind": "text",
+                                                    "start_character": 205,
+                                                    "start_line": 9
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 413,
+                                            "chunk_start_character": 226,
+                                            "element_end_character": 187,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "8850a8c5-75c8-51dc-89e1-12ba9e0b3bae",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "de31473b-bfae-4a0d-a418-a89c57188201"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 413,
+                                                    "end_line": 13,
+                                                    "kind": "text",
+                                                    "start_character": 226,
+                                                    "start_line": 11
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 440,
+                                            "chunk_start_character": 415,
+                                            "element_end_character": 25,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "26b2a15e-3938-5646-849f-de901810a043",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "13cc3554-448c-4d92-9f3d-25a648871db0"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 440,
+                                                    "end_line": 15,
+                                                    "kind": "text",
+                                                    "start_character": 415,
+                                                    "start_line": 15
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 671,
+                                            "chunk_start_character": 442,
+                                            "element_end_character": 229,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "65acc972-ef1f-5ad8-ae9c-b680fc52c7da",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1732521d-3262-46c8-bef4-af7d9be211ac"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 671,
+                                                    "end_line": 19,
+                                                    "kind": "text",
+                                                    "start_character": 442,
+                                                    "start_line": 17
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 695,
+                                            "chunk_start_character": 673,
+                                            "element_end_character": 22,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c987a58c-dab4-555e-810d-8087de583fea",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "7905cceb-ef06-4da5-ad83-30c3537f8edb"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 695,
+                                                    "end_line": 21,
+                                                    "kind": "text",
+                                                    "start_character": 673,
+                                                    "start_line": 21
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 856,
+                                            "chunk_start_character": 697,
+                                            "element_end_character": 159,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "ce9cf175-451e-5d01-8082-028826fb92e8",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "1def2b28-767d-470b-939d-51efac4c1eb3"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 856,
+                                                    "end_line": 24,
+                                                    "kind": "text",
+                                                    "start_character": 697,
+                                                    "start_line": 23
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "rank": 1,
+                                    "retrieval_method": "sparse",
+                                    "score": 17.425442,
+                                    "side": "primary",
+                                    "source_filename": "outbreak-management-v2-withdrawn.md",
+                                    "sparse_rank": null,
+                                    "sparse_score": null,
+                                    "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                                    "version_position": 2,
+                                    "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                                }
+                            ]
+                        }
+                    ],
+                    "lineage": {
+                        "configuration_version": "exp-0001-dolved-care-v2-observational",
+                        "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                        "fusion_strategy": "rrf",
+                        "fusion_version": "1",
+                        "rrf_k": 60,
+                        "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "estimated",
+                            "cost_usd": 1.44e-6,
+                            "execution": "provider_api",
+                            "final_provider_success_at": "2026-08-12T21:33:19.352500Z",
+                            "first_provider_attempt_at": "2026-08-12T21:33:19.089931Z",
+                            "input_tokens": 12,
+                            "latency_ms": 265.64108399907127,
+                            "model": "voyage-4-large",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": "voyage-pricing-2026-08-12",
+                            "provider": "voyage",
+                            "provider_attempt_count": 1,
+                            "provider_retry_count": 0,
+                            "provider_retry_elapsed_ms": 0,
+                            "rate_limit_event_count": 0,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "dense_embedding"
+                        },
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "unavailable",
+                            "cost_usd": null,
+                            "execution": "infrastructure",
+                            "final_provider_success_at": null,
+                            "first_provider_attempt_at": null,
+                            "input_tokens": null,
+                            "latency_ms": 12.096459002350457,
+                            "model": "rag-platform-vectors-v1",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": null,
+                            "provider": "qdrant",
+                            "provider_attempt_count": null,
+                            "provider_retry_count": null,
+                            "provider_retry_elapsed_ms": null,
+                            "rate_limit_event_count": null,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "qdrant_dense_search"
+                        },
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "zero_cost_local",
+                            "cost_usd": 0,
+                            "execution": "local",
+                            "final_provider_success_at": null,
+                            "first_provider_attempt_at": null,
+                            "input_tokens": null,
+                            "latency_ms": 1057.3960009933216,
+                            "model": "prithivida/Splade_PP_en_v1",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": null,
+                            "provider": "fastembed",
+                            "provider_attempt_count": null,
+                            "provider_retry_count": null,
+                            "provider_retry_elapsed_ms": null,
+                            "rate_limit_event_count": null,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "sparse_encoding"
+                        },
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "unavailable",
+                            "cost_usd": null,
+                            "execution": "infrastructure",
+                            "final_provider_success_at": null,
+                            "first_provider_attempt_at": null,
+                            "input_tokens": null,
+                            "latency_ms": 44.17408299923409,
+                            "model": "rag-platform-vectors-v1",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": null,
+                            "provider": "qdrant",
+                            "provider_attempt_count": null,
+                            "provider_retry_count": null,
+                            "provider_retry_elapsed_ms": null,
+                            "rate_limit_event_count": null,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "qdrant_sparse_search"
+                        }
+                    ]
+                },
+                "threshold_qualified": [
+                    {
+                        "chunk_id": "5a0cc694-4db2-5316-a10c-e82535d31594",
+                        "chunk_text": "# Respiratory Outbreak Management Procedure\n\nDocument family: `family.infection.outbreak-management`\nVersion: 2.0\nEffective: 1 October 2025\nWithdrawn: 1 June 2026\nSynthetic engineering benchmark material\n\n## Initial response\n\nTwo or more epidemiologically linked respiratory symptoms require the registered\nmanager to open an outbreak record, seek clinical advice and begin twice-daily\nmonitoring of new symptoms.\n\n## Withdrawal consequence\n\nThis version attained authority on 1 October 2025 and was withdrawn on 1 June\n2026. Its withdrawal closed its authority window. Version 1.0 does not become\nauthoritative again, so no current version exists at the benchmark clock.\n\n## Protective measures\n\nStaff use the current PPE selection reference, increase cleaning of shared touch\npoints and document individual decisions about visits and communal activities.",
+                        "dense_rank": 1,
+                        "dense_score": 0.32740185,
+                        "document_family_id": "d8373d67-c7ae-4f46-9d59-7f7938c6aaf3",
+                        "document_id": "add406d7-d283-4cd0-9f93-8e8194da0d1a",
+                        "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                        "evidence_threshold_policy_fingerprint": "11386497e6316bf199abb75ad0c6ca8baaafe759c297d5044dfc7ce07630eb21",
+                        "evidence_threshold_policy_version": "exp-0001-dolved-care-v2-observational",
+                        "fused_rank": 1,
+                        "fused_score": 0.03278688524590164,
+                        "provenance": [
+                            {
+                                "chunk_end_character": 43,
+                                "chunk_start_character": 0,
+                                "element_end_character": 43,
+                                "element_start_character": 0,
+                                "normalised_element_id": "87a74d1e-4cbc-5ca2-9796-ecd974f6324c",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "ef1a9de8-fc3c-43e1-bc83-57a8204df547"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 43,
+                                        "end_line": 1,
+                                        "kind": "text",
+                                        "start_character": 0,
+                                        "start_line": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 203,
+                                "chunk_start_character": 45,
+                                "element_end_character": 158,
+                                "element_start_character": 0,
+                                "normalised_element_id": "b3fb94a4-437c-566f-947e-e1161cd46f2d",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1b736566-8b2f-476b-8f9b-9de1154e3a60"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 203,
+                                        "end_line": 7,
+                                        "kind": "text",
+                                        "start_character": 45,
+                                        "start_line": 3
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 224,
+                                "chunk_start_character": 205,
+                                "element_end_character": 19,
+                                "element_start_character": 0,
+                                "normalised_element_id": "bae9dd71-9437-5797-a11e-cadd075f03c6",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "30ab759c-1c8c-4382-821c-0bb3df2fd947"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 224,
+                                        "end_line": 9,
+                                        "kind": "text",
+                                        "start_character": 205,
+                                        "start_line": 9
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 413,
+                                "chunk_start_character": 226,
+                                "element_end_character": 187,
+                                "element_start_character": 0,
+                                "normalised_element_id": "8850a8c5-75c8-51dc-89e1-12ba9e0b3bae",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "de31473b-bfae-4a0d-a418-a89c57188201"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 413,
+                                        "end_line": 13,
+                                        "kind": "text",
+                                        "start_character": 226,
+                                        "start_line": 11
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 440,
+                                "chunk_start_character": 415,
+                                "element_end_character": 25,
+                                "element_start_character": 0,
+                                "normalised_element_id": "26b2a15e-3938-5646-849f-de901810a043",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "13cc3554-448c-4d92-9f3d-25a648871db0"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 440,
+                                        "end_line": 15,
+                                        "kind": "text",
+                                        "start_character": 415,
+                                        "start_line": 15
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 671,
+                                "chunk_start_character": 442,
+                                "element_end_character": 229,
+                                "element_start_character": 0,
+                                "normalised_element_id": "65acc972-ef1f-5ad8-ae9c-b680fc52c7da",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1732521d-3262-46c8-bef4-af7d9be211ac"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 671,
+                                        "end_line": 19,
+                                        "kind": "text",
+                                        "start_character": 442,
+                                        "start_line": 17
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 695,
+                                "chunk_start_character": 673,
+                                "element_end_character": 22,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c987a58c-dab4-555e-810d-8087de583fea",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "7905cceb-ef06-4da5-ad83-30c3537f8edb"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 695,
+                                        "end_line": 21,
+                                        "kind": "text",
+                                        "start_character": 673,
+                                        "start_line": 21
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 856,
+                                "chunk_start_character": 697,
+                                "element_end_character": 159,
+                                "element_start_character": 0,
+                                "normalised_element_id": "ce9cf175-451e-5d01-8082-028826fb92e8",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "1def2b28-767d-470b-939d-51efac4c1eb3"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 856,
+                                        "end_line": 24,
+                                        "kind": "text",
+                                        "start_character": 697,
+                                        "start_line": 23
+                                    }
+                                ]
+                            }
+                        ],
+                        "rank": 1,
+                        "reranker_adapter_version": "1",
+                        "reranker_model": "rerank-2.5",
+                        "reranker_provider": "voyage",
+                        "retrieval_method": "hybrid",
+                        "score": 0.765625,
+                        "side": "primary",
+                        "source_filename": "outbreak-management-v2-withdrawn.md",
+                        "sparse_rank": 1,
+                        "sparse_score": 17.425442,
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                        "version_position": 2,
+                        "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                    }
+                ]
+            }
+        },
+        "latency_ms": 7309.416087,
+        "observed_at": "2026-08-12T21:33:20+00:00",
+        "planning": {
+            "attempt_count": 1,
+            "model": "gpt-5-mini",
+            "provider": "openai",
+            "status": "succeeded"
+        },
+        "retrieval_executed": true,
+        "variant": {
+            "question": "Before it was withdrawn, what did outbreak version 2 require?",
+            "variant_id": "historical"
+        }
+    },
+    "record_digest": "a7ea3febdc3bbf74a84b7d659a024e45a3073dbfb04ce232e8b8a1842b080a4d",
+    "schema_version": "v1",
+    "variant_id": "historical"
+}

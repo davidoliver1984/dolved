@@ -1,0 +1,180 @@
+{
+    "case_id": "pilot.current.withdrawn-no-resurrection",
+    "lineage_digest": "4933fd9e4150a20b1c286dbc1e007b1b00a78b02dd32a9ec767b2ab4a96e955e",
+    "observation": {
+        "case": {
+            "case_id": "pilot.current.withdrawn-no-resurrection",
+            "cluster_id": "cluster.outbreak-management-lineage",
+            "eligibility_expectation": {
+                "eligible_versions": [],
+                "excluded_versions": [
+                    {
+                        "document_family_id": "family.infection.outbreak-management",
+                        "document_version_id": "doc.infection.outbreak-management.v1",
+                        "reason": "HISTORICAL_FOR_CURRENT"
+                    },
+                    {
+                        "document_family_id": "family.infection.outbreak-management",
+                        "document_version_id": "doc.infection.outbreak-management.v2",
+                        "reason": "WITHDRAWN"
+                    }
+                ],
+                "expected_outcome": "NO_ELIGIBLE_EVIDENCE"
+            },
+            "outcome_expectation": {
+                "outcome": "NO_ELIGIBLE_EVIDENCE"
+            },
+            "planner_expectation": {
+                "applicability_reference": {
+                    "input": null,
+                    "requires_clarification": false,
+                    "resolved_location_id": null
+                },
+                "comparison_anchor": null,
+                "expected_outcome": "PLAN_READY",
+                "primary_anchor": null,
+                "temporal_mode": "CURRENT",
+                "valid_at": null
+            },
+            "retrieval_expectation": {
+                "evidence_units": []
+            },
+            "slices": [
+                "CURRENT",
+                "withdrawn",
+                "predecessor-resurrection",
+                "zero-evidence"
+            ],
+            "variants": [
+                {
+                    "question": "What is the current respiratory outbreak procedure?",
+                    "variant_id": "direct"
+                },
+                {
+                    "question": "After version 2 was withdrawn, did the old outbreak procedure become current again?",
+                    "variant_id": "withdrawn"
+                },
+                {
+                    "question": "Which outbreak rules do we use now that the newer one was pulled?",
+                    "variant_id": "colloquial"
+                }
+            ]
+        },
+        "dense": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "unresolvable_temporal_period"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "unresolvable_temporal_period"
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [],
+                    "query": "After version 2 was withdrawn, did the old outbreak procedure become current again?",
+                    "temporal_mode": "compare",
+                    "temporal_reference": {
+                        "kind": "calendar_period",
+                        "value": "After version 2 was withdrawn"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 613,
+                            "latency_ms": 6619.124253003974,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 423,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "hybrid": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "unresolvable_temporal_period"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "unresolvable_temporal_period"
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [],
+                    "query": "After version 2 was withdrawn, did the old outbreak procedure become current again?",
+                    "temporal_mode": "compare",
+                    "temporal_reference": {
+                        "kind": "calendar_period",
+                        "value": "After version 2 was withdrawn"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 613,
+                            "latency_ms": 6619.124253003974,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 423,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "latency_ms": 6746.089754,
+        "observed_at": "2026-08-12T21:39:06+00:00",
+        "planning": {
+            "attempt_count": 1,
+            "model": "gpt-5-mini",
+            "provider": "openai",
+            "status": "succeeded"
+        },
+        "retrieval_executed": true,
+        "variant": {
+            "question": "After version 2 was withdrawn, did the old outbreak procedure become current again?",
+            "variant_id": "withdrawn"
+        }
+    },
+    "record_digest": "0a2df3eb1f56d081f07b1e0f44dab759a25924c43129fffb43f5aedb2949d47c",
+    "schema_version": "v1",
+    "variant_id": "withdrawn"
+}
