@@ -10,6 +10,7 @@ from uuid import UUID
 
 from app.evaluation.canonical import content_digest
 from app.evaluation.harness import RetrievalEvaluationHarness
+from app.evaluation.historical_result import ComparisonResult, load_comparison_result
 from app.evaluation.matching import candidate_covers
 from app.evaluation.models import (
     CandidateFunnel,
@@ -755,19 +756,62 @@ def _historical_comparison(
 ) -> dict[str, Any]:
     baseline_raw = _object(json.loads(baseline_path.read_text()), "EXP-0001 result")
     baseline_value = baseline_raw.get("hybrid", baseline_raw)
-    baseline = ExperimentResult.model_validate(baseline_value)
+    baseline = load_comparison_result(_object(baseline_value, "EXP-0001 hybrid result"))
     if (
-        baseline.lineage.corpus_version != candidate.lineage.corpus_version
-        or baseline.lineage.corpus_digest != candidate.lineage.corpus_digest
+        baseline.corpus_version != candidate.lineage.corpus_version
+        or baseline.corpus_digest != candidate.lineage.corpus_digest
     ):
         raise ValueError("EXP-0001 and EXP-0002 do not share benchmark lineage")
-    comparison = _comparison(baseline, candidate, envelope)
+    comparison = _historical_comparison_values(baseline, candidate, envelope)
     comparison["comparison_note"] = (
         "EXP-0001 versus EXP-0002 uses the same benchmark but changed ADR-0022 "
         "planner semantics and successful-retrieval denominators; interpret deltas with "
         "the classifier/resolution populations shown in result.json."
     )
     comparison["within_run_dense_comparison"] = within_run
+    return comparison
+
+
+def _historical_comparison_values(
+    baseline: ComparisonResult,
+    candidate: ExperimentResult,
+    envelope: dict[str, Any],
+) -> dict[str, Any]:
+    metrics = ("recall_at_k", "precision_at_k", "mrr", "ndcg_at_k")
+    if baseline.aggregate.metrics is None:
+        raise ValueError("historical comparison requires retrieval metric observations")
+    comparison: dict[str, Any] = {
+        "schema_version": "v1",
+        "baseline_experiment_id": baseline.experiment_id,
+        "baseline_repository_commit": baseline.repository_commit,
+        "baseline_result_digest": baseline.source_digest,
+        "candidate_result_digest": content_digest(envelope),
+        "metrics": {
+            metric: {
+                "baseline": float(getattr(baseline.aggregate.metrics, metric)),
+                "candidate": _aggregate_metric(candidate, metric),
+                "delta": _aggregate_metric(candidate, metric)
+                - float(getattr(baseline.aggregate.metrics, metric)),
+            }
+            for metric in metrics
+        },
+        "slices": {
+            name: {
+                metric: (
+                    getattr(candidate.slices[name].metrics, metric)
+                    - getattr(baseline.slices[name].metrics, metric)
+                    if candidate.slices[name].metrics is not None
+                    and baseline.slices[name].metrics is not None
+                    else None
+                )
+                for metric in metrics
+            }
+            for name in sorted(set(baseline.slices) & set(candidate.slices))
+        },
+        "gate": None,
+    }
+    if baseline.unavailable_fields is not None:
+        comparison["historical_unavailable_fields"] = baseline.unavailable_fields
     return comparison
 
 

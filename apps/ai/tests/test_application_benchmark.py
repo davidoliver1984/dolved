@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -6,6 +7,7 @@ from uuid import uuid4
 import pytest
 
 from app.evaluation.application_benchmark import compile_application_benchmark_run
+from app.evaluation.historical_result import load_comparison_result
 
 
 def test_application_benchmark_compiler_enforces_engineering_split_and_writes_both_arms(
@@ -268,3 +270,104 @@ def test_application_benchmark_compiler_enforces_engineering_split_and_writes_bo
     assert comparison["within_run_dense_comparison"]["baseline_experiment_id"].endswith(
         "-dense-control"
     )
+    assert "historical_unavailable_fields" not in comparison
+
+    historical_v1 = deepcopy(result)
+    historical_v1["schema_version"] = "v1"
+    historical_v1["hybrid"]["schema_version"] = "v1"
+    historical_v1_path = tmp_path / "exp-0001-v1-result.json"
+    historical_v1_path.write_text(json.dumps(historical_v1))
+    compile_application_benchmark_run(
+        raw_path=raw_path,
+        output_directory=tmp_path / "run-with-v1-historical-baseline",
+        planner={"provider": "openai", "model": "gpt-5-mini", "adapter_version": "1"},
+        historical_baseline_path=historical_v1_path,
+    )
+    v1_comparison = json.loads(
+        (tmp_path / "run-with-v1-historical-baseline" / "comparison.json").read_text()
+    )
+    assert v1_comparison["baseline_experiment_id"] == result["hybrid"]["experiment_id"]
+    assert v1_comparison["historical_unavailable_fields"] == {
+        "generation_usage": None,
+        "planner_contract_schema_version": None,
+        "pricing": None,
+        "stage_usage": None,
+    }
+
+
+def test_comparison_loader_leaves_native_v2_result_unchanged() -> None:
+    raw = _minimal_result("v2")
+    before = deepcopy(raw)
+
+    loaded = load_comparison_result(raw)
+
+    assert loaded.schema_version == "v2"
+    assert loaded.unavailable_fields is None
+    assert raw == before
+
+
+def test_comparison_loader_validates_and_adapts_v1_without_inventing_v2_fields() -> (
+    None
+):
+    raw = _minimal_result("v1")
+
+    loaded = load_comparison_result(raw)
+
+    assert loaded.schema_version == "v1"
+    assert loaded.aggregate.metrics is not None
+    assert loaded.unavailable_fields == {
+        "generation_usage": None,
+        "planner_contract_schema_version": None,
+        "pricing": None,
+        "stage_usage": None,
+    }
+
+
+def _minimal_result(schema_version: str) -> dict[str, Any]:
+    return {
+        "schema_version": schema_version,
+        "experiment_id": "historical-result",
+        "executed_at": "2026-08-01T12:00:00+00:00",
+        "candidate_k": 5,
+        "lineage": {
+            "repository_commit": "a" * 40,
+            "corpus_version": "v2",
+            "corpus_digest": "b" * 64,
+            "policy_version": "policy-v1",
+            "policy_digest": "c" * 64,
+            "harness_version": "harness-v1",
+            "matching_algorithm": "matching-v1",
+            "planner": {"provider": "openai", "model": "gpt-5-mini"},
+            "embedding_profile_fingerprint": "d" * 64,
+            "chunking_configuration": {},
+            "retrieval_configuration": {},
+            "evaluator": None,
+            "trial_count": 1,
+        },
+        "aggregate": _minimal_aggregate(),
+        "slices": {"CURRENT": _minimal_aggregate()},
+        "variants": [],
+        "hard_failures": [],
+        "model_assisted": [],
+    }
+
+
+def _minimal_aggregate() -> dict[str, Any]:
+    return {
+        "metrics": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 1.0,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+        },
+        "planner_accuracy": 1.0,
+        "eligibility_accuracy": 1.0,
+        "outcome_accuracy": 1.0,
+        "case_count": 1,
+        "variant_count": 1,
+        "retrieval_metric_variant_count": 1,
+        "planner_success_count": 1,
+        "planner_failure_count": 0,
+        "planner_reliability": 1.0,
+        "planner_failure_categories": {},
+    }
