@@ -71,16 +71,67 @@ final readonly class EngineeringBenchmarkSource
     }
 
     /** @return array<string, mixed> */
+    public function engineeringCorpus(): array
+    {
+        $snapshot = $this->absoluteJson(EngineeringBenchmark::ENGINEERING_SNAPSHOT);
+        $recordedDigest = $snapshot['snapshot_digest'] ?? null;
+        unset($snapshot['snapshot_digest']);
+        $caseIds = $snapshot['split']['case_ids'] ?? null;
+        $cases = $snapshot['cases'] ?? null;
+        if (
+            ! is_string($recordedDigest)
+            || ! hash_equals($recordedDigest, $this->canonical->digest($snapshot))
+            || ($snapshot['schema_version'] ?? null) !== 'v1'
+            || ($snapshot['benchmark']['id'] ?? null) !== EngineeringBenchmark::ID
+            || ($snapshot['benchmark']['version'] ?? null) !== EngineeringBenchmark::VERSION
+            || ($snapshot['benchmark']['digest'] ?? null) !== EngineeringBenchmark::DIGEST
+            || ($snapshot['split']['name'] ?? null) !== 'engineering_tuning'
+            || ! is_array($caseIds)
+            || count($caseIds) !== EngineeringBenchmark::EXPECTED_ENGINEERING_CASES
+            || ($snapshot['split']['case_ids_digest'] ?? null) !== $this->canonical->digest($caseIds)
+            || ($snapshot['split']['case_ids_digest'] ?? null) !== EngineeringBenchmark::ENGINEERING_CASE_IDS_DIGEST
+            || ! is_array($cases)
+            || count($cases) !== EngineeringBenchmark::EXPECTED_ENGINEERING_CASES
+            || ($snapshot['case_count'] ?? null) !== EngineeringBenchmark::EXPECTED_ENGINEERING_CASES
+            || ($snapshot['variant_count'] ?? null) !== EngineeringBenchmark::EXPECTED_ENGINEERING_VARIANTS
+            || ($snapshot['source']['experiment_id'] ?? null) !== 'EXP-0001-alderbridge-initial-hybrid'
+            || ($snapshot['source']['application_observations_sha256'] ?? null) !== EngineeringBenchmark::ENGINEERING_SNAPSHOT_SOURCE_DIGEST
+        ) {
+            throw new RuntimeException('The engineering-only benchmark snapshot is invalid.');
+        }
+        $actualIds = collect($cases)->map(
+            fn (mixed $case): mixed => is_array($case) ? ($case['case_id'] ?? null) : null,
+        )->all();
+        $variantCount = collect($cases)->sum(
+            fn (mixed $case): int => is_array($case) && is_array($case['variants'] ?? null)
+                ? count($case['variants'])
+                : 0,
+        );
+        if ($actualIds !== $caseIds || count(array_unique($actualIds)) !== count($actualIds)
+            || $variantCount !== EngineeringBenchmark::EXPECTED_ENGINEERING_VARIANTS) {
+            throw new RuntimeException('The engineering-only benchmark cases are inconsistent.');
+        }
+        $snapshot['snapshot_digest'] = $recordedDigest;
+
+        return $snapshot;
+    }
+
+    /** @return array<string, mixed> */
     private function json(string $relativePath): array
     {
-        $path = EngineeringBenchmark::ROOT.'/'.$relativePath;
+        return $this->absoluteJson(EngineeringBenchmark::ROOT.'/'.$relativePath);
+    }
+
+    /** @return array<string, mixed> */
+    private function absoluteJson(string $path): array
+    {
         try {
             $decoded = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            throw new RuntimeException("Invalid benchmark JSON: {$relativePath}", 0, $exception);
+            throw new RuntimeException("Invalid benchmark JSON: {$path}", 0, $exception);
         }
         if (! is_array($decoded)) {
-            throw new RuntimeException("Benchmark JSON is not an object: {$relativePath}");
+            throw new RuntimeException("Benchmark JSON is not an object: {$path}");
         }
 
         return $decoded;

@@ -45,7 +45,9 @@ final readonly class RunEngineeringBenchmarkExperiment
         $state = $this->states->read();
         if (
             ($state['status'] ?? null) !== 'hybrid_verified'
+            || ($state['benchmark']['id'] ?? null) !== EngineeringBenchmark::ID
             || ($state['benchmark']['version'] ?? null) !== EngineeringBenchmark::VERSION
+            || ($state['benchmark']['digest'] ?? null) !== EngineeringBenchmark::DIGEST
             || ($state['workspace']['slug'] ?? null) !== EngineeringBenchmark::WORKSPACE_SLUG
         ) {
             throw new RuntimeException('EXP-0002 requires the trusted, fully verified V2 hybrid corpus.');
@@ -69,22 +71,19 @@ final readonly class RunEngineeringBenchmarkExperiment
             throw new RuntimeException('EXP-0002 requires one consistent chunking configuration.');
         }
         $chunkConfiguration = $chunkConfigurations->firstOrFail();
-        $benchmark = $this->source->load();
-        $compiled = $this->source->compiledCorpus();
-        $engineeringIds = $benchmark['split']['assignments']['engineering_tuning'] ?? null;
+        $engineering = $this->source->engineeringCorpus();
+        $engineeringIds = $engineering['split']['case_ids'] ?? null;
         if (! is_array($engineeringIds) || count($engineeringIds) !== EngineeringBenchmark::EXPECTED_ENGINEERING_CASES) {
             throw new RuntimeException('The immutable engineering split does not contain exactly 42 cases.');
         }
-        $cases = collect($compiled['cases'] ?? [])->filter(
-            fn (mixed $case): bool => is_array($case)
-                && in_array($case['case_id'] ?? null, $engineeringIds, true),
-        )->sortBy(fn (array $case): string => $case['case_id'])->values();
+        $cases = collect($engineering['cases'] ?? [])
+            ->sortBy(fn (array $case): string => $case['case_id'])->values();
         $variantCount = $cases->sum(fn (array $case): int => count($case['variants'] ?? []));
         if ($cases->count() !== 42 || $variantCount !== 126) {
             throw new RuntimeException('EXP-0002 is restricted to exactly 42 engineering cases and 126 variants.');
         }
 
-        $evaluatedAt = CarbonImmutable::parse($compiled['evaluation_clock']);
+        $evaluatedAt = CarbonImmutable::parse($engineering['benchmark']['evaluation_clock']);
         $mapping = [
             'schema_version' => 'v1',
             'benchmark' => $state['benchmark'],
@@ -129,7 +128,9 @@ final readonly class RunEngineeringBenchmarkExperiment
                 'version' => EngineeringBenchmark::VERSION,
                 'digest' => $state['benchmark']['digest'],
                 'evaluation_clock' => $evaluatedAt->toIso8601String(),
-                'split_version' => $benchmark['split']['split_version'],
+                'split_version' => $engineering['split']['version'],
+                'engineering_snapshot_digest' => $engineering['snapshot_digest'],
+                'engineering_case_ids_digest' => $engineering['split']['case_ids_digest'],
                 'engineering_case_ids' => $engineeringIds,
             ],
             'mapping' => $mapping,

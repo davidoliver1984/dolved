@@ -1,0 +1,3509 @@
+{
+  "benchmark": {
+    "digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
+    "evaluation_clock": "2026-08-01T12:00:00+00:00",
+    "id": "dolved-care-engineering",
+    "version": "v2"
+  },
+  "case_count": 42,
+  "cases": [
+    {
+      "case_id": "complaints.handling.compare",
+      "cluster_id": "cluster.complaints-handling-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v1",
+            "side": "COMPARISON"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": "PREVIOUS_AUTHORITY",
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "CURRENT",
+        "temporal_mode": "COMPARE",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Staff acknowledge a complaint within two working days.",
+              "The investigating manager agrees a response plan with the complainant and aims to issue the written outcome within fifteen working days."
+            ],
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "evidence_id": "complaints.compare-current",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/complaints/handling-v2.md"
+          },
+          {
+            "canonical_excerpts": [
+              "Staff acknowledge a complaint within three working days.",
+              "The investigating manager aims to issue the written outcome within twenty working days and explains any unavoidable delay."
+            ],
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v1",
+            "evidence_id": "complaints.compare-old",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "COMPARISON",
+            "source_path": "documents/complaints/handling-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "near-time-values"
+      ],
+      "variants": [
+        {
+          "question": "How did complaint response times change from the old policy?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Compare version 1 and version 2 complaint deadlines.",
+          "variant_id": "compare"
+        },
+        {
+          "question": "Did complaint handling get faster?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "complaints.handling.current-deadlines",
+      "cluster_id": "cluster.complaints-handling-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Staff acknowledge a complaint within two working days.",
+              "The investigating manager agrees a response plan with the complainant and aims to issue the written outcome within fifteen working days."
+            ],
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "evidence_id": "complaints.handling.v2-deadlines",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/complaints/handling-v2.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "near-version-duplicate",
+        "near-time-values"
+      ],
+      "variants": [
+        {
+          "question": "What are the current complaint acknowledgement and response targets?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "How quickly should we reply to a complaint now?",
+          "variant_id": "colloquial"
+        },
+        {
+          "question": "Is the acknowledgement deadline three days or two?",
+          "variant_id": "contrast"
+        }
+      ]
+    },
+    {
+      "case_id": "gdpr.breach.ico-owner",
+      "cluster_id": "cluster.gdpr-breach",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.gdpr.breach",
+            "document_version_id": "doc.gdpr.breach.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Only the Data Protection Officer decides whether the Information Commissioner's Office must be notified within seventy-two hours."
+            ],
+            "document_family_id": "family.gdpr.breach",
+            "document_version_id": "doc.gdpr.breach.v1",
+            "evidence_id": "gdpr.breach.dpo-decision",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/gdpr/personal-data-breach.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "ICO-alias",
+        "negative-instruction"
+      ],
+      "variants": [
+        {
+          "question": "Who decides whether a data breach is reported to the ICO?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Should frontline staff contact the ICO within 72 hours?",
+          "variant_id": "timing"
+        },
+        {
+          "question": "Do I tell the regulator myself after a privacy incident?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "gdpr.data-protection.compare",
+      "cluster_id": "cluster.gdpr-data-protection-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v2",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v1",
+            "side": "COMPARISON"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": "PREVIOUS_AUTHORITY",
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "CURRENT",
+        "temporal_mode": "COMPARE",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Suspected loss, misdirection or unauthorised disclosure must be reported through the privacy incident channel immediately and no later than four hours after discovery."
+            ],
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v2",
+            "evidence_id": "gdpr.policy.compare-current",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/gdpr/data-protection-v2.md"
+          },
+          {
+            "canonical_excerpts": [
+              "Suspected disclosure to the wrong person must be reported to the Data Protection Officer within twenty-four hours."
+            ],
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v1",
+            "evidence_id": "gdpr.policy.compare-old",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "COMPARISON",
+            "source_path": "documents/gdpr/data-protection-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "near-time-values"
+      ],
+      "variants": [
+        {
+          "question": "Compare the old and current privacy incident reporting deadlines.",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Did data-loss reporting change from 24 hours to four hours?",
+          "variant_id": "change"
+        },
+        {
+          "question": "What changed in the data protection policy?",
+          "variant_id": "history"
+        }
+      ]
+    },
+    {
+      "case_id": "gdpr.data-protection.current-reporting",
+      "cluster_id": "cluster.gdpr-data-protection-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Suspected loss, misdirection or unauthorised disclosure must be reported through the privacy incident channel immediately and no later than four hours after discovery."
+            ],
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v2",
+            "evidence_id": "gdpr.policy.v2-four-hours",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/gdpr/data-protection-v2.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "near-version-duplicate",
+        "near-time-values"
+      ],
+      "variants": [
+        {
+          "question": "How quickly must suspected personal-data loss be reported now?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "I sent information to the wrong person — when do I report it?",
+          "variant_id": "email"
+        },
+        {
+          "question": "How fast do I tell privacy about a data mistake?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "health-safety.accident.current-riddor-timing",
+      "cluster_id": "cluster.accident-reporting-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "The manager must notify the health and safety lead within one working day where RIDDOR may apply; the health and safety lead owns the formal reporting decision."
+            ],
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v2",
+            "evidence_id": "health-safety.riddor.v2-one-day",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/health-safety/accident-reporting-v2.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "RIDDOR-alias",
+        "near-version-duplicate"
+      ],
+      "variants": [
+        {
+          "question": "How quickly must a possible RIDDOR incident reach the health and safety lead now?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "What is the current deadline for escalating a potentially reportable incident?",
+          "variant_id": "expanded"
+        },
+        {
+          "question": "How soon do we tell safety about something that might need RIDDOR reporting?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "health-safety.accident.valid-at-date",
+      "cluster_id": "cluster.accident-reporting-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v2",
+            "reason": "SCHEDULED_FUTURE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "2024-01-15T12:00:00Z",
+        "temporal_mode": "VALID_AT_DATE",
+        "valid_at": "2024-01-15T12:00:00Z"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "The manager reviews whether the event may be reportable under RIDDOR and contacts the health and safety lead within two working days."
+            ],
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v1",
+            "evidence_id": "health-safety.riddor.v1-two-days",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/health-safety/accident-reporting-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "VALID_AT_DATE",
+        "RIDDOR-alias",
+        "historical",
+        "near-time-values"
+      ],
+      "variants": [
+        {
+          "question": "What RIDDOR escalation deadline applied in January 2024?",
+          "variant_id": "dated"
+        },
+        {
+          "question": "How long did managers have under the old accident procedure?",
+          "variant_id": "historical"
+        },
+        {
+          "question": "Was the safety-lead deadline two working days in 2024?",
+          "variant_id": "contrast"
+        }
+      ]
+    },
+    {
+      "case_id": "health-safety.coshh.review-trigger",
+      "cluster_id": "cluster.coshh",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.health-safety.coshh",
+            "document_version_id": "doc.health-safety.coshh.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Assessments are reviewed annually and immediately after a formulation, task or control changes."
+            ],
+            "document_family_id": "family.health-safety.coshh",
+            "document_version_id": "doc.health-safety.coshh.v1",
+            "evidence_id": "health-safety.coshh.review",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/health-safety/coshh-procedure.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "COSHH-alias",
+        "multi-evidence"
+      ],
+      "variants": [
+        {
+          "question": "When must a COSHH assessment be reviewed?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Do we need a new hazardous-substance assessment when a product formulation changes?",
+          "variant_id": "product"
+        },
+        {
+          "question": "The cleaning chemical changed — can we wait for the annual COSHH review?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "health-safety.moving-handling.compare",
+      "cluster_id": "cluster.moving-handling-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v2",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v1",
+            "side": "COMPARISON"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": "PREVIOUS_AUTHORITY",
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "CURRENT",
+        "temporal_mode": "COMPARE",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "The assessment, rather than a universal rule, determines whether one or two trained staff are required for a hoist transfer."
+            ],
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v2",
+            "evidence_id": "health-safety.hoist.v2-assessed",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/health-safety/moving-handling-v2.md"
+          },
+          {
+            "canonical_excerpts": [
+              "Two staff are required for every full-body hoist transfer."
+            ],
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v1",
+            "evidence_id": "health-safety.hoist.v1-universal-two",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "COMPARISON",
+            "source_path": "documents/health-safety/moving-handling-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "conflicting-guidance"
+      ],
+      "variants": [
+        {
+          "question": "How did the hoist staffing rule change from the previous policy?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Compare old and current requirements for two-person hoist transfers.",
+          "variant_id": "compare"
+        },
+        {
+          "question": "Did the old policy say two staff for every hoist?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "health-safety.moving-handling.current-staffing",
+      "cluster_id": "cluster.moving-handling-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "The assessment, rather than a universal rule, determines whether one or two trained staff are required for a hoist transfer."
+            ],
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v2",
+            "evidence_id": "health-safety.hoist.assessment-controls-staffing",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/health-safety/moving-handling-v2.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "near-version-duplicate",
+        "conflicting-guidance"
+      ],
+      "variants": [
+        {
+          "question": "Do all hoist transfers require two staff under the current policy?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "What decides whether one or two trained staff perform a hoist transfer?",
+          "variant_id": "assessment"
+        },
+        {
+          "question": "Is two carers always the rule for using a hoist?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "hr.annual-leave.compare",
+      "cluster_id": "cluster.hr-annual-leave-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v2",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v1",
+            "side": "COMPARISON"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": "PREVIOUS_AUTHORITY",
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "CURRENT",
+        "temporal_mode": "COMPARE",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Full-time employees receive 30 days of paid annual leave including public holidays.",
+              "Requests for five or more consecutive working days must be submitted at least six weeks in advance."
+            ],
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v2",
+            "evidence_id": "hr.leave.compare-current",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/hr/annual-leave-v2.md"
+          },
+          {
+            "canonical_excerpts": [
+              "Full-time employees receive 28 days of paid annual leave including public holidays.",
+              "Requests for five or more consecutive working days must be submitted at least four weeks in advance."
+            ],
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v1",
+            "evidence_id": "hr.leave.compare-old",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "COMPARISON",
+            "source_path": "documents/hr/annual-leave-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "near-version-duplicate"
+      ],
+      "variants": [
+        {
+          "question": "Compare the current annual leave notice rule with the previous policy.",
+          "variant_id": "direct"
+        },
+        {
+          "question": "What changed for booking a week off?",
+          "variant_id": "change"
+        },
+        {
+          "question": "How did the leave allowance and booking notice change?",
+          "variant_id": "allowance"
+        }
+      ]
+    },
+    {
+      "case_id": "hr.annual-leave.current-notice",
+      "cluster_id": "cluster.hr-annual-leave-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          },
+          {
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v3",
+            "reason": "SCHEDULED_FUTURE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "| Five or more working days | Six weeks |"
+            ],
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v2",
+            "evidence_id": "hr.leave.v2-six-weeks",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/hr/annual-leave-v2.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "table-evidence",
+        "near-version-duplicate"
+      ],
+      "variants": [
+        {
+          "question": "How much notice do I need now for a week of annual leave?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "How early should I book five days off?",
+          "variant_id": "colloquial"
+        },
+        {
+          "question": "What is the current notice period for five working days' holiday?",
+          "variant_id": "table"
+        }
+      ]
+    },
+    {
+      "case_id": "hr.annual-leave.valid-at-date",
+      "cluster_id": "cluster.hr-annual-leave-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v2",
+            "reason": "SCHEDULED_FUTURE"
+          },
+          {
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v3",
+            "reason": "SCHEDULED_FUTURE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "2024-06-01T12:00:00Z",
+        "temporal_mode": "VALID_AT_DATE",
+        "valid_at": "2024-06-01T12:00:00Z"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Full-time employees receive 28 days of paid annual leave including public holidays."
+            ],
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v1",
+            "evidence_id": "hr.leave.v1-allowance",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/hr/annual-leave-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "VALID_AT_DATE",
+        "historical",
+        "near-numeric-values"
+      ],
+      "variants": [
+        {
+          "question": "How much leave did full-time staff receive in June 2024?",
+          "variant_id": "dated"
+        },
+        {
+          "question": "What was the annual leave allowance under version 1?",
+          "variant_id": "old"
+        },
+        {
+          "question": "Was the allowance 28 days in 2024?",
+          "variant_id": "contrast"
+        }
+      ]
+    },
+    {
+      "case_id": "hr.disciplinary.suspension-neutral",
+      "cluster_id": "cluster.hr-disciplinary",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.hr.disciplinary",
+            "document_version_id": "doc.hr.disciplinary.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Suspension is a neutral precaution, not a disciplinary sanction, and must be reviewed every ten working days."
+            ],
+            "document_family_id": "family.hr.disciplinary",
+            "document_version_id": "doc.hr.disciplinary.v1",
+            "evidence_id": "hr.disciplinary.suspension",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/hr/disciplinary-policy.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "negative-instruction"
+      ],
+      "variants": [
+        {
+          "question": "Is suspension a disciplinary punishment?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "How often must a precautionary suspension be reviewed?",
+          "variant_id": "review"
+        },
+        {
+          "question": "Does being suspended mean the allegation is proven?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "hr.lone-worker.coventry-overdue",
+      "cluster_id": "cluster.hr-midlands-lone-worker",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": "location.region.midlands",
+              "kind": "ANCESTOR",
+              "requested_location_id": "location.willow-bank"
+            },
+            "document_family_id": "family.hr.lone-worker-welfare",
+            "document_version_id": "doc.hr.lone-worker-welfare.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": "Coventry community team",
+          "requires_clarification": false,
+          "resolved_location_id": "location.willow-bank"
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "If an end-of-visit check-in is fifteen minutes overdue, the coordinator calls the worker.",
+              "If there is no response after a further ten minutes, the coordinator follows the emergency escalation contact and considers police assistance according to the known risk."
+            ],
+            "document_family_id": "family.hr.lone-worker-welfare",
+            "document_version_id": "doc.hr.lone-worker-welfare.v1",
+            "evidence_id": "hr.lone-worker.overdue-sequence",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/hr/midlands-lone-worker-welfare.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "regional-applicability",
+        "location-alias",
+        "near-time-values"
+      ],
+      "variants": [
+        {
+          "question": "What happens when a Coventry community worker misses their check-out?",
+          "variant_id": "alias"
+        },
+        {
+          "question": "When does the Midlands coordinator escalate an overdue welfare check?",
+          "variant_id": "timing"
+        },
+        {
+          "question": "Our lone worker is 15 minutes late checking in — what next?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "infection.outbreak.valid-before-withdrawal",
+      "cluster_id": "cluster.outbreak-management-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.infection.outbreak-management",
+            "document_version_id": "doc.infection.outbreak-management.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.infection.outbreak-management",
+            "document_version_id": "doc.infection.outbreak-management.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "2026-01-01T12:00:00Z",
+        "temporal_mode": "VALID_AT_DATE",
+        "valid_at": "2026-01-01T12:00:00Z"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Two or more epidemiologically linked respiratory symptoms require the registered",
+              "manager to open an outbreak record, seek clinical advice and begin twice-daily",
+              "monitoring of new symptoms."
+            ],
+            "document_family_id": "family.infection.outbreak-management",
+            "document_version_id": "doc.infection.outbreak-management.v2",
+            "evidence_id": "infection.outbreak.v2.twice-daily",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/infection-control/outbreak-management-v2-withdrawn.md"
+          }
+        ]
+      },
+      "slices": [
+        "VALID_AT_DATE",
+        "withdrawn",
+        "historical",
+        "temporal-authority"
+      ],
+      "variants": [
+        {
+          "question": "What outbreak monitoring applied on 1 January 2026?",
+          "variant_id": "dated"
+        },
+        {
+          "question": "Before it was withdrawn, what did outbreak version 2 require?",
+          "variant_id": "historical"
+        },
+        {
+          "question": "Was twice-daily symptom monitoring authoritative in January 2026?",
+          "variant_id": "contrast"
+        }
+      ]
+    },
+    {
+      "case_id": "medication.controlled-drugs.current-discrepancy",
+      "cluster_id": "cluster.controlled-drugs-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.controlled-drugs",
+            "document_version_id": "doc.medication.controlled-drugs.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.medication.controlled-drugs",
+            "document_version_id": "doc.medication.controlled-drugs.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "A discrepancy must be escalated immediately, not at the end of the shift."
+            ],
+            "document_family_id": "family.medication.controlled-drugs",
+            "document_version_id": "doc.medication.controlled-drugs.v2",
+            "evidence_id": "medication.cd.immediate-escalation",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": "Near-duplicate v1 says before shift end.",
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/controlled-drugs-v2.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "abbreviation",
+        "near-version-duplicate"
+      ],
+      "variants": [
+        {
+          "question": "When must a controlled-drug discrepancy be escalated now?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Can a controlled drugs stock mismatch wait until shift end?",
+          "variant_id": "contrast"
+        },
+        {
+          "question": "The CD count is wrong — what do we do straight away?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "medication.controlled-drugs.valid-at-date",
+      "cluster_id": "cluster.controlled-drugs-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.controlled-drugs",
+            "document_version_id": "doc.medication.controlled-drugs.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.medication.controlled-drugs",
+            "document_version_id": "doc.medication.controlled-drugs.v2",
+            "reason": "SCHEDULED_FUTURE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "2024-01-15T12:00:00Z",
+        "temporal_mode": "VALID_AT_DATE",
+        "valid_at": "2024-01-15T12:00:00Z"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "A discrepancy is reported to the registered manager before the end of the shift and the stock is secured while the check is repeated."
+            ],
+            "document_family_id": "family.medication.controlled-drugs",
+            "document_version_id": "doc.medication.controlled-drugs.v1",
+            "evidence_id": "medication.cd.v1.shift-end",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/controlled-drugs-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "VALID_AT_DATE",
+        "historical",
+        "near-version-duplicate"
+      ],
+      "variants": [
+        {
+          "question": "In January 2024, when did a controlled-drug discrepancy have to be reported?",
+          "variant_id": "dated"
+        },
+        {
+          "question": "What was the old CD stock discrepancy deadline?",
+          "variant_id": "historical"
+        },
+        {
+          "question": "Did the 2023 procedure allow reporting by the end of the shift?",
+          "variant_id": "contrast"
+        }
+      ]
+    },
+    {
+      "case_id": "medication.covert.capacity-requirements",
+      "cluster_id": "cluster.covert-medication",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.covert",
+            "document_version_id": "doc.medication.covert.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "It is never justified merely because a person refuses medicine.",
+              "A decision requires a decision-specific assessment that the person lacks capacity, a recorded best-interests process, prescriber agreement and pharmacy advice confirming the proposed method will not alter the medicine unsafely."
+            ],
+            "document_family_id": "family.medication.covert",
+            "document_version_id": "doc.medication.covert.v1",
+            "evidence_id": "medication.covert.required-decisions",
+            "locator": null,
+            "minimum_token_coverage": 0.85,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/covert-administration-policy.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "MCA-alias",
+        "multi-evidence",
+        "long-form"
+      ],
+      "variants": [
+        {
+          "question": "What approvals are required before medicine can be given covertly?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Can we hide medicine in food because a resident refuses it?",
+          "variant_id": "refusal"
+        },
+        {
+          "question": "Does covert medication need an MCA and best-interests decision?",
+          "variant_id": "abbreviation"
+        }
+      ]
+    },
+    {
+      "case_id": "medication.error-form.immediate-safety",
+      "cluster_id": "cluster.medication-error-form",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.errors",
+            "document_version_id": "doc.medication.errors.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "| Immediate safety | Observations, clinical advice and protective action |",
+              "Complete the form after immediate safety actions. Do not delay clinical advice while gathering administrative detail."
+            ],
+            "document_family_id": "family.medication.errors",
+            "document_version_id": "doc.medication.errors.v1",
+            "evidence_id": "medication.error-form.fields",
+            "locator": null,
+            "minimum_token_coverage": 0.85,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/medication-error-form.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "forms",
+        "table-evidence",
+        "multi-evidence"
+      ],
+      "variants": [
+        {
+          "question": "What goes on the medication error form?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Should I finish the medicines incident form before calling for clinical advice?",
+          "variant_id": "priority"
+        },
+        {
+          "question": "What details do I write down after a meds mistake?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "medication.fridge.boundary-table",
+      "cluster_id": "cluster.refrigerated-medicines",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.fridge-reference",
+            "document_version_id": "doc.medication.fridge-reference.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "| 2°C to 8°C inclusive | In range | Record and continue normal use |",
+              "| 8.1°C or above | Too warm | Quarantine stock and seek pharmacy advice |"
+            ],
+            "document_family_id": "family.medication.fridge-reference",
+            "document_version_id": "doc.medication.fridge-reference.v1",
+            "evidence_id": "medication.fridge.boundaries",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/fridge-monitoring-reference.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "tables",
+        "numeric-boundary",
+        "near-numeric-values"
+      ],
+      "variants": [
+        {
+          "question": "Is a medicines fridge reading of exactly 8°C in range?",
+          "variant_id": "upper"
+        },
+        {
+          "question": "What action is required at 8.1 degrees?",
+          "variant_id": "decimal"
+        },
+        {
+          "question": "Is eight okay but just over eight too warm?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "medication.prn.minimum-interval",
+      "cluster_id": "cluster.medication-prn",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.prn",
+            "document_version_id": "doc.medication.prn.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Before offering a PRN medicine, staff must check the person's current protocol for the indication, minimum interval, maximum dose in 24 hours and non-medicine measures to try first.",
+              "A PRN entry on the MAR is not, by itself, enough information to administer safely."
+            ],
+            "document_family_id": "family.medication.prn",
+            "document_version_id": "doc.medication.prn.v1",
+            "evidence_id": "medication.prn.prechecks",
+            "locator": "PRN Medicines Protocol",
+            "minimum_token_coverage": 0.85,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/prn-protocol.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "abbreviation",
+        "multi-evidence",
+        "colloquial"
+      ],
+      "variants": [
+        {
+          "question": "What must I check before giving a PRN medicine?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "What information is needed before giving when-required medication?",
+          "variant_id": "expanded"
+        },
+        {
+          "question": "It is on the meds chart as needed — is that enough to give it?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.adversarial.visitor-negative",
+      "cluster_id": "cluster.visitor-access",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.visitors.general",
+            "document_version_id": "doc.visitors.general.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.visitors.search-optimised-draft",
+            "document_version_id": "doc.visitors.search-optimised-draft.v1",
+            "reason": "NEVER_ATTAINED_AUTHORITY"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Visitors must not use lifts during an evacuation and must remain with their host or follow staff instructions."
+            ],
+            "document_family_id": "family.visitors.general",
+            "document_version_id": "doc.visitors.general.v1",
+            "evidence_id": "visitors.fire-instructions",
+            "locator": "Fire information",
+            "minimum_token_coverage": 0.9,
+            "notes": "The false, keyword-stuffed withdrawn draft must remain excluded.",
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/visitors/visitors-contractors.md"
+          },
+          {
+            "canonical_excerpts": [
+              "All visitors must sign in at reception and wear the issued visitor badge."
+            ],
+            "document_family_id": "family.visitors.general",
+            "document_version_id": "doc.visitors.general.v1",
+            "evidence_id": "visitors.sign-in",
+            "locator": "Arrival and identity",
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/visitors/visitors-contractors.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "adversarial",
+        "keyword-stuffing",
+        "never-authoritative",
+        "negative-exclusion"
+      ],
+      "variants": [
+        {
+          "question": "What must a visitor do when the fire alarm sounds?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Do visitors have to sign in and what happens during an evacuation?",
+          "variant_id": "sign-in"
+        },
+        {
+          "question": "Can a visitor use the lift in a fire and skip the reception book?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.applicability.ambiguous-home",
+      "cluster_id": "cluster.south-west-fire-applicability",
+      "eligibility_expectation": {
+        "eligible_versions": [],
+        "excluded_versions": [],
+        "expected_outcome": "NO_ELIGIBLE_EVIDENCE"
+      },
+      "outcome_expectation": {
+        "outcome": "CLARIFICATION_REQUIRED"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": "the home",
+          "requires_clarification": true,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "CLARIFICATION_REQUIRED",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": []
+      },
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "clarification",
+        "ambiguous-alias",
+        "zero-evidence"
+      ],
+      "variants": [
+        {
+          "question": "Where is the fire assembly point at the home?",
+          "variant_id": "ambiguous"
+        },
+        {
+          "question": "Which evacuation plan applies there?",
+          "variant_id": "pronoun"
+        },
+        {
+          "question": "What should visitors do when the alarm sounds at our care home?",
+          "variant_id": "underspecified"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.applicability.bristol-conflict",
+      "cluster_id": "cluster.south-west-fire-applicability",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": "location.region.south-west",
+              "kind": "ANCESTOR",
+              "requested_location_id": "location.harbour-view"
+            },
+            "document_family_id": "family.fire.south-west-evacuation",
+            "document_version_id": "doc.fire.south-west-evacuation.v1",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": "location.harbour-view",
+              "kind": "DIRECT",
+              "requested_location_id": "location.harbour-view"
+            },
+            "document_family_id": "family.fire.harbour-view-evacuation",
+            "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": "Bristol home",
+          "requires_clarification": false,
+          "resolved_location_id": "location.harbour-view"
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Unless an approved site procedure names a different location, South West staff and visitors assemble at the signed front visitor car park."
+            ],
+            "document_family_id": "family.fire.south-west-evacuation",
+            "document_version_id": "doc.fire.south-west-evacuation.v1",
+            "evidence_id": "fire.south-west.fallback-condition",
+            "locator": "Regional fallback assembly arrangement",
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/fire-safety/south-west-evacuation.md"
+          },
+          {
+            "canonical_excerpts": [
+              "At Harbour View, staff and visitors assemble in the east garden beyond the laundry gate, not in the front visitor car park."
+            ],
+            "document_family_id": "family.fire.harbour-view-evacuation",
+            "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+            "evidence_id": "fire.harbour-view.local-override",
+            "locator": "Harbour View assembly point",
+            "minimum_token_coverage": 0.9,
+            "notes": "Both documents are eligible; the benchmark does not invent a new precedence model.",
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/fire-safety/harbour-view-evacuation.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "conflicting-guidance",
+        "multi-document",
+        "multi-evidence",
+        "near-duplicate"
+      ],
+      "variants": [
+        {
+          "question": "What regional and local fire instructions apply at Harbour View?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Why do the South West and Bristol procedures name different assembly points?",
+          "variant_id": "conflict"
+        },
+        {
+          "question": "Show me both applicable evacuation instructions for the Bristol home.",
+          "variant_id": "multi-document"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.applicability.regional-exeter",
+      "cluster_id": "cluster.south-west-fire-applicability",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": "location.region.south-west",
+              "kind": "ANCESTOR",
+              "requested_location_id": "location.meadow-court"
+            },
+            "document_family_id": "family.fire.south-west-evacuation",
+            "document_version_id": "doc.fire.south-west-evacuation.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.fire.harbour-view-evacuation",
+            "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+            "reason": "APPLICABILITY_MISMATCH"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": "Exeter home",
+          "requires_clarification": false,
+          "resolved_location_id": "location.meadow-court"
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Unless an approved site procedure names a different location, South West staff and visitors assemble at the signed front visitor car park."
+            ],
+            "document_family_id": "family.fire.south-west-evacuation",
+            "document_version_id": "doc.fire.south-west-evacuation.v1",
+            "evidence_id": "fire.south-west.regional-fallback",
+            "locator": "Regional fallback assembly arrangement",
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/fire-safety/south-west-evacuation.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "region-specific",
+        "descendant-site",
+        "location-alias"
+      ],
+      "variants": [
+        {
+          "question": "Which evacuation procedure applies at the Exeter home?",
+          "variant_id": "alias"
+        },
+        {
+          "question": "Where does Meadow Court assemble under the regional procedure?",
+          "variant_id": "canonical"
+        },
+        {
+          "question": "Does the South West fire procedure cover Meadow Court?",
+          "variant_id": "inheritance"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.compare.medication-administration",
+      "cluster_id": "cluster.medication-administration-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v2",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v1",
+            "side": "COMPARISON"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v3",
+            "reason": "SCHEDULED_FUTURE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": "PREVIOUS_AUTHORITY",
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "CURRENT",
+        "temporal_mode": "COMPARE",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Immediately before administration, the member of staff must confirm the right person, medicine, dose, route, time, reason and documentation."
+            ],
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v2",
+            "evidence_id": "medication.v2.seven-checks",
+            "locator": "Seven checks",
+            "minimum_token_coverage": 0.9,
+            "notes": "Current policy adds reason and documentation.",
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/safe-administration-v2.md"
+          },
+          {
+            "canonical_excerpts": [
+              "Before giving a medicine, staff must confirm the person's identity, medicine, dose, route and scheduled time against the MAR."
+            ],
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v1",
+            "evidence_id": "medication.v1.six-checks",
+            "locator": "Checks before administration",
+            "minimum_token_coverage": 0.9,
+            "notes": "Previous policy has a smaller explicit set.",
+            "relevance_grade": 2,
+            "side": "COMPARISON",
+            "source_path": "documents/medication/safe-administration-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "near-version-duplicate",
+        "prose"
+      ],
+      "variants": [
+        {
+          "question": "Compare the current medicine checks with the previous policy.",
+          "variant_id": "direct"
+        },
+        {
+          "question": "What changed in the checks before giving medication?",
+          "variant_id": "change"
+        },
+        {
+          "question": "What extra check was added to the newer meds policy?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.current.medication-administration",
+      "cluster_id": "cluster.medication-administration-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          },
+          {
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v3",
+            "reason": "SCHEDULED_FUTURE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "The member of staff must sign the Medication Administration Record (MAR) immediately after observing that the person has taken the dose."
+            ],
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v2",
+            "evidence_id": "medication.mar.sign-after-observation",
+            "locator": "Recording administration",
+            "minimum_token_coverage": 0.9,
+            "notes": "Tests abbreviation and colloquial chart terminology.",
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/safe-administration-v2.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "abbreviation",
+        "prose",
+        "near-version-duplicate"
+      ],
+      "variants": [
+        {
+          "question": "When should I sign the MAR after giving a medicine?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Do I tick the meds chart before or after the resident takes it?",
+          "variant_id": "colloquial"
+        },
+        {
+          "question": "What does the current policy say about signing a MAR?",
+          "variant_id": "abbreviation"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.current.scheduled-medication-version",
+      "cluster_id": "cluster.medication-administration-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          },
+          {
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v3",
+            "reason": "SCHEDULED_FUTURE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "If the medicine is not given, the correct exception code and a contemporaneous note are required."
+            ],
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v2",
+            "evidence_id": "medication.v2.omission-current-rule",
+            "locator": "Recording administration",
+            "minimum_token_coverage": 0.9,
+            "notes": "The scheduled electronic incident-reference requirement must not leak into current evidence.",
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/safe-administration-v2.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "scheduled-future",
+        "near-version-duplicate",
+        "negative-exclusion"
+      ],
+      "variants": [
+        {
+          "question": "Do omitted doses currently need an electronic incident reference on the MAR?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Has the October electronic MAR rule started yet?",
+          "variant_id": "scheduled"
+        },
+        {
+          "question": "Do we have to add the incident number to the meds chart now?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.current.withdrawn-before-authority",
+      "cluster_id": "cluster.safeguarding-reporting-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.safeguarding.adult-reporting",
+            "document_version_id": "doc.safeguarding.adult-reporting.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.safeguarding.adult-reporting",
+            "document_version_id": "doc.safeguarding.adult-reporting.v2",
+            "reason": "NEVER_ATTAINED_AUTHORITY"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Every safeguarding concern must be reported to the shift leader or registered manager immediately and recorded before the staff member finishes the shift."
+            ],
+            "document_family_id": "family.safeguarding.adult-reporting",
+            "document_version_id": "doc.safeguarding.adult-reporting.v1",
+            "evidence_id": "safeguarding.immediate-manager-report",
+            "locator": "Reporting",
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/safeguarding/adult-reporting-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "withdrawn-before-authority",
+        "never-authoritative",
+        "multi-evidence"
+      ],
+      "variants": [
+        {
+          "question": "Who must staff tell immediately about a safeguarding concern?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Did the proposed central safeguarding mailbox replace reporting to the manager?",
+          "variant_id": "scheduled"
+        },
+        {
+          "question": "Do I email triage first or tell the home manager straight away?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.current.withdrawn-no-resurrection",
+      "cluster_id": "cluster.outbreak-management-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.infection.outbreak-management",
+            "document_version_id": "doc.infection.outbreak-management.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          },
+          {
+            "document_family_id": "family.infection.outbreak-management",
+            "document_version_id": "doc.infection.outbreak-management.v2",
+            "reason": "WITHDRAWN"
+          }
+        ],
+        "expected_outcome": "NO_ELIGIBLE_EVIDENCE"
+      },
+      "outcome_expectation": {
+        "outcome": "NO_ELIGIBLE_EVIDENCE"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": []
+      },
+      "slices": [
+        "CURRENT",
+        "withdrawn",
+        "predecessor-resurrection",
+        "zero-evidence"
+      ],
+      "variants": [
+        {
+          "question": "What is the current respiratory outbreak procedure?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "After version 2 was withdrawn, did the old outbreak procedure become current again?",
+          "variant_id": "withdrawn"
+        },
+        {
+          "question": "Which outbreak rules do we use now that the newer one was pulled?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.location-alias.bristol",
+      "cluster_id": "cluster.south-west-fire-applicability",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": "location.harbour-view",
+              "kind": "DIRECT",
+              "requested_location_id": "location.harbour-view"
+            },
+            "document_family_id": "family.fire.harbour-view-evacuation",
+            "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": "location.region.south-west",
+              "kind": "ANCESTOR",
+              "requested_location_id": "location.harbour-view"
+            },
+            "document_family_id": "family.fire.south-west-evacuation",
+            "document_version_id": "doc.fire.south-west-evacuation.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": "Bristol home",
+          "requires_clarification": false,
+          "resolved_location_id": "location.harbour-view"
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "At Harbour View, staff and visitors assemble in the east garden beyond the laundry gate, not in the front visitor car park."
+            ],
+            "document_family_id": "family.fire.harbour-view-evacuation",
+            "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+            "evidence_id": "fire.harbour-view.assembly-point",
+            "locator": "Harbour View assembly point",
+            "minimum_token_coverage": 0.9,
+            "notes": "The regional document remains eligible but is not sufficient for the site-specific answer.",
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/fire-safety/harbour-view-evacuation.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "site-specific",
+        "location-alias",
+        "near-duplicate"
+      ],
+      "variants": [
+        {
+          "question": "Where do visitors assemble during a fire at the Bristol home?",
+          "variant_id": "alias"
+        },
+        {
+          "question": "What is the Harbour View fire assembly point?",
+          "variant_id": "canonical"
+        },
+        {
+          "question": "If the alarm goes at Bristol, where should visitors wait outside?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.multi-document.medication-storage",
+      "cluster_id": "cluster.refrigerated-medicines",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v2",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.storage",
+            "document_version_id": "doc.medication.storage.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          },
+          {
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v3",
+            "reason": "SCHEDULED_FUTURE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "If it is outside that range, the medicine must be quarantined and the medicines storage procedure followed; staff must not decide independently that the medicine remains usable."
+            ],
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v2",
+            "evidence_id": "medication.administration.fridge-gate",
+            "locator": "Storage checks",
+            "minimum_token_coverage": 0.85,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/safe-administration-v2.md"
+          },
+          {
+            "canonical_excerpts": [
+              "When any reading is outside 2°C to 8°C, staff must label the affected medicines “QUARANTINED — DO NOT USE”, keep them secure, and record the earliest possible time the excursion began.",
+              "The shift leader must contact the supplying pharmacist for medicine-specific stability advice."
+            ],
+            "document_family_id": "family.medication.storage",
+            "document_version_id": "doc.medication.storage.v1",
+            "evidence_id": "medication.storage.out-of-range-response",
+            "locator": "Out-of-range response",
+            "minimum_token_coverage": 0.8,
+            "notes": "Combined coverage across chunks is permitted by ADR-0020.",
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/storage-temperature-procedure.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "multi-document",
+        "multi-evidence",
+        "numeric-range"
+      ],
+      "variants": [
+        {
+          "question": "What should I do if the medicines fridge reads 9°C before the drug round?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "The meds fridge is too warm — can I still give the medicine and who do I call?",
+          "variant_id": "colloquial"
+        },
+        {
+          "question": "What do the policy and storage procedure require for a 9 degree fridge reading?",
+          "variant_id": "numeric"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.table.training-refresh",
+      "cluster_id": "cluster.training-matrix",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.training.matrix",
+            "document_version_id": "doc.training.matrix.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "| Fire marshal | Fire marshal practical course | 24 months |"
+            ],
+            "document_family_id": "family.training.matrix",
+            "document_version_id": "doc.training.matrix.v1",
+            "evidence_id": "training.fire-marshal.interval",
+            "locator": "Mandatory Training Matrix",
+            "minimum_token_coverage": 1,
+            "notes": "Tests a table row and the fire warden alias.",
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/training/mandatory-training-matrix.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "tables",
+        "role-alias",
+        "near-numeric-values"
+      ],
+      "variants": [
+        {
+          "question": "How often must a fire marshal repeat practical training?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "When does the fire warden course need renewing?",
+          "variant_id": "colloquial"
+        },
+        {
+          "question": "Is fire marshal refresher training yearly or every two years?",
+          "variant_id": "contrast"
+        }
+      ]
+    },
+    {
+      "case_id": "pilot.valid-at-date.medication-administration",
+      "cluster_id": "cluster.medication-administration-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v2",
+            "reason": "SCHEDULED_FUTURE"
+          },
+          {
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v3",
+            "reason": "SCHEDULED_FUTURE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "2024-06-01T12:00:00Z",
+        "temporal_mode": "VALID_AT_DATE",
+        "valid_at": "2024-06-01T12:00:00Z"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "A refused dose must be recorded using code R."
+            ],
+            "document_family_id": "family.medication.administration",
+            "document_version_id": "doc.medication.administration.v1",
+            "evidence_id": "medication.v1.refused-code",
+            "locator": "Missed or refused doses",
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/safe-administration-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "VALID_AT_DATE",
+        "abbreviation",
+        "historical",
+        "near-version-duplicate"
+      ],
+      "variants": [
+        {
+          "question": "What MAR code applied to a refused dose on 1 June 2024?",
+          "variant_id": "dated"
+        },
+        {
+          "question": "In June 2024, how did staff record medicine refusal?",
+          "variant_id": "historical"
+        },
+        {
+          "question": "What did the old meds policy say to put on the chart when someone refused?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "safeguarding.allegations.compare-process",
+      "cluster_id": "cluster.allegations-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.safeguarding.allegations-staff",
+            "document_version_id": "doc.safeguarding.allegations-staff.v2",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.safeguarding.allegations-staff",
+            "document_version_id": "doc.safeguarding.allegations-staff.v1",
+            "side": "COMPARISON"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": "PREVIOUS_AUTHORITY",
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "CURRENT",
+        "temporal_mode": "COMPARE",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "HR must be informed immediately rather than within one working day."
+            ],
+            "document_family_id": "family.safeguarding.allegations-staff",
+            "document_version_id": "doc.safeguarding.allegations-staff.v2",
+            "evidence_id": "safeguarding.allegations.v2-hr",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/safeguarding/allegations-staff-v2.md"
+          },
+          {
+            "canonical_excerpts": [
+              "The manager informs HR within one working day and coordinates external notifications with safeguarding and police where required."
+            ],
+            "document_family_id": "family.safeguarding.allegations-staff",
+            "document_version_id": "doc.safeguarding.allegations-staff.v1",
+            "evidence_id": "safeguarding.allegations.v1-hr",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "COMPARISON",
+            "source_path": "documents/safeguarding/allegations-staff-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "near-version-duplicate"
+      ],
+      "variants": [
+        {
+          "question": "How did the HR notification rule change between allegations procedures?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Compare the old and current deadlines for telling HR about a staff allegation.",
+          "variant_id": "compare"
+        },
+        {
+          "question": "Did HR used to be told later than they are now?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "safeguarding.allegations.current-hr-timing",
+      "cluster_id": "cluster.allegations-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.safeguarding.allegations-staff",
+            "document_version_id": "doc.safeguarding.allegations-staff.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.safeguarding.allegations-staff",
+            "document_version_id": "doc.safeguarding.allegations-staff.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "HR must be informed immediately rather than within one working day."
+            ],
+            "document_family_id": "family.safeguarding.allegations-staff",
+            "document_version_id": "doc.safeguarding.allegations-staff.v2",
+            "evidence_id": "safeguarding.allegations.hr-immediate",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/safeguarding/allegations-staff-v2.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "near-version-duplicate",
+        "near-time-values"
+      ],
+      "variants": [
+        {
+          "question": "When must HR be informed about an allegation against staff now?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Can the manager wait one working day before telling HR?",
+          "variant_id": "contrast"
+        },
+        {
+          "question": "How quickly do we tell HR when a staff safeguarding allegation comes in?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "safeguarding.body-map.observable-facts",
+      "cluster_id": "cluster.body-map",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.safeguarding.body-map",
+            "document_version_id": "doc.safeguarding.body-map.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "| Appearance | Size, colour, shape and observable condition |",
+              "Do not guess the cause of an injury."
+            ],
+            "document_family_id": "family.safeguarding.body-map",
+            "document_version_id": "doc.safeguarding.body-map.v1",
+            "evidence_id": "safeguarding.body-map.facts-only",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/safeguarding/body-map-form.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "forms",
+        "tables",
+        "negative-instruction"
+      ],
+      "variants": [
+        {
+          "question": "What should be recorded on an injury body map?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Should staff write what they think caused a bruise on the body map?",
+          "variant_id": "cause"
+        },
+        {
+          "question": "Do I guess how the mark happened or just describe what I can see?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "safeguarding.capacity.unwise-decision",
+      "cluster_id": "cluster.mental-capacity",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.safeguarding.mental-capacity",
+            "document_version_id": "doc.safeguarding.mental-capacity.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "Capacity is assessed for the particular decision at the time it must be made.",
+              "An unwise decision does not by itself demonstrate lack of capacity."
+            ],
+            "document_family_id": "family.safeguarding.mental-capacity",
+            "document_version_id": "doc.safeguarding.mental-capacity.v1",
+            "evidence_id": "safeguarding.capacity.decision-specific",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/safeguarding/mental-capacity-procedure.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "MCA-alias",
+        "multi-evidence",
+        "colloquial"
+      ],
+      "variants": [
+        {
+          "question": "Does making an unwise decision mean someone lacks capacity?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Under the MCA, is capacity assessed once for every decision?",
+          "variant_id": "MCA"
+        },
+        {
+          "question": "Can we say a resident has no capacity just because we disagree with their choice?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "safeguarding.covert-medication.multi-document",
+      "cluster_id": "cluster.covert-medication",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.medication.covert",
+            "document_version_id": "doc.medication.covert.v1",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.safeguarding.mental-capacity",
+            "document_version_id": "doc.safeguarding.mental-capacity.v1",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "A decision requires a decision-specific assessment that the person lacks capacity, a recorded best-interests process, prescriber agreement and pharmacy advice confirming the proposed method will not alter the medicine unsafely."
+            ],
+            "document_family_id": "family.medication.covert",
+            "document_version_id": "doc.medication.covert.v1",
+            "evidence_id": "covert-medication.medicines-controls",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/medication/covert-administration-policy.md"
+          },
+          {
+            "canonical_excerpts": [
+              "When a person cannot make the specific decision, the best-interests record must consider their wishes, feelings, beliefs, relevant alternatives and the views of appropriate others."
+            ],
+            "document_family_id": "family.safeguarding.mental-capacity",
+            "document_version_id": "doc.safeguarding.mental-capacity.v1",
+            "evidence_id": "covert-medication.capacity-controls",
+            "locator": null,
+            "minimum_token_coverage": 0.9,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/safeguarding/mental-capacity-procedure.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "multi-document",
+        "multi-evidence",
+        "MCA-alias"
+      ],
+      "variants": [
+        {
+          "question": "What capacity and medicines evidence is needed for covert administration?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Which policies together govern hiding medicine in food?",
+          "variant_id": "multi"
+        },
+        {
+          "question": "If someone cannot decide about tablets, what do both the MCA and meds rules require?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "training.medication.compare",
+      "cluster_id": "cluster.training-medication-competency-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v2",
+            "side": "PRIMARY"
+          },
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v1",
+            "side": "COMPARISON"
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": "PREVIOUS_AUTHORITY",
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": "CURRENT",
+        "temporal_mode": "COMPARE",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "| Administration | Four directly observed medication rounds, including one controlled-drug round where the role requires it |"
+            ],
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v2",
+            "evidence_id": "training.medication.compare-current",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/training/medication-competency-v2.md"
+          },
+          {
+            "canonical_excerpts": [
+              "| Administration | Three directly observed medication rounds |"
+            ],
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v1",
+            "evidence_id": "training.medication.compare-old",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "COMPARISON",
+            "source_path": "documents/training/medication-competency-v1.md"
+          }
+        ]
+      },
+      "slices": [
+        "COMPARE",
+        "forms",
+        "multi-evidence",
+        "near-numeric-values"
+      ],
+      "variants": [
+        {
+          "question": "How did the medication competency assessment change?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Compare old and current observed-round requirements.",
+          "variant_id": "compare"
+        },
+        {
+          "question": "Did med sign-off change from three rounds to four?",
+          "variant_id": "colloquial"
+        }
+      ]
+    },
+    {
+      "case_id": "training.medication.current-rounds",
+      "cluster_id": "cluster.training-medication-competency-lineage",
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "applicability": {
+              "governing_location_id": null,
+              "kind": "UNIVERSAL",
+              "requested_location_id": null
+            },
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v2",
+            "side": "PRIMARY"
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND"
+      },
+      "planner_expectation": {
+        "applicability_reference": {
+          "input": null,
+          "requires_clarification": false,
+          "resolved_location_id": null
+        },
+        "comparison_anchor": null,
+        "expected_outcome": "PLAN_READY",
+        "primary_anchor": null,
+        "temporal_mode": "CURRENT",
+        "valid_at": null
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "canonical_excerpts": [
+              "| Administration | Four directly observed medication rounds, including one controlled-drug round where the role requires it |"
+            ],
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v2",
+            "evidence_id": "training.medication.v2-rounds",
+            "locator": null,
+            "minimum_token_coverage": 1,
+            "notes": null,
+            "relevance_grade": 2,
+            "side": "PRIMARY",
+            "source_path": "documents/training/medication-competency-v2.md"
+          }
+        ]
+      },
+      "slices": [
+        "CURRENT",
+        "forms",
+        "table-evidence",
+        "near-numeric-values"
+      ],
+      "variants": [
+        {
+          "question": "How many observed medication rounds are required now?",
+          "variant_id": "direct"
+        },
+        {
+          "question": "Must the medication competency include a controlled-drug round?",
+          "variant_id": "controlled"
+        },
+        {
+          "question": "How many med rounds do I need signed off?",
+          "variant_id": "colloquial"
+        }
+      ]
+    }
+  ],
+  "schema_version": "v1",
+  "snapshot_digest": "8f67bb00ad22fe8f74ecdc834f66f22a00bf97bffe409d6857ce44fc0a0a5de5",
+  "source": {
+    "application_observations_sha256": "0f67713c99ec6afc023e0f8e71bc746949d71ec8f2dd4dc858ed96417209b710",
+    "experiment_id": "EXP-0001-alderbridge-initial-hybrid"
+  },
+  "split": {
+    "case_ids": [
+      "complaints.handling.compare",
+      "complaints.handling.current-deadlines",
+      "gdpr.breach.ico-owner",
+      "gdpr.data-protection.compare",
+      "gdpr.data-protection.current-reporting",
+      "health-safety.accident.current-riddor-timing",
+      "health-safety.accident.valid-at-date",
+      "health-safety.coshh.review-trigger",
+      "health-safety.moving-handling.compare",
+      "health-safety.moving-handling.current-staffing",
+      "hr.annual-leave.compare",
+      "hr.annual-leave.current-notice",
+      "hr.annual-leave.valid-at-date",
+      "hr.disciplinary.suspension-neutral",
+      "hr.lone-worker.coventry-overdue",
+      "infection.outbreak.valid-before-withdrawal",
+      "medication.controlled-drugs.current-discrepancy",
+      "medication.controlled-drugs.valid-at-date",
+      "medication.covert.capacity-requirements",
+      "medication.error-form.immediate-safety",
+      "medication.fridge.boundary-table",
+      "medication.prn.minimum-interval",
+      "pilot.adversarial.visitor-negative",
+      "pilot.applicability.ambiguous-home",
+      "pilot.applicability.bristol-conflict",
+      "pilot.applicability.regional-exeter",
+      "pilot.compare.medication-administration",
+      "pilot.current.medication-administration",
+      "pilot.current.scheduled-medication-version",
+      "pilot.current.withdrawn-before-authority",
+      "pilot.current.withdrawn-no-resurrection",
+      "pilot.location-alias.bristol",
+      "pilot.multi-document.medication-storage",
+      "pilot.table.training-refresh",
+      "pilot.valid-at-date.medication-administration",
+      "safeguarding.allegations.compare-process",
+      "safeguarding.allegations.current-hr-timing",
+      "safeguarding.body-map.observable-facts",
+      "safeguarding.capacity.unwise-decision",
+      "safeguarding.covert-medication.multi-document",
+      "training.medication.compare",
+      "training.medication.current-rounds"
+    ],
+    "case_ids_digest": "fca770615b5fbf20e81b494454969d54dbab2bfa66abf728455e95832b57465f",
+    "name": "engineering_tuning",
+    "version": "1"
+  },
+  "variant_count": 126
+}
