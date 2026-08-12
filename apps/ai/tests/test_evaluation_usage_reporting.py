@@ -1,7 +1,11 @@
 import pytest
 from pydantic import ValidationError
 
-from app.evaluation.models import CostBasis, StageUsageObservation
+from app.evaluation.models import (
+    CostBasis,
+    RetrievalFailureObservation,
+    StageUsageObservation,
+)
 from app.evaluation.usage_reporting import aggregate_usage
 
 
@@ -115,3 +119,36 @@ def test_cost_semantics_reject_estimates_without_a_pricing_snapshot() -> None:
             cost_basis=CostBasis.ESTIMATED,
             cost_usd=0.1,
         )
+
+
+def test_failed_stage_retains_known_usage_without_fabricating_zero_results() -> None:
+    known_usage = StageUsageObservation(
+        stage="dense_embedding",
+        provider="voyage",
+        model="voyage-3.5",
+        execution="PROVIDER_API",
+        request_count=1,
+        retry_count=0,
+        input_tokens=8,
+        latency_ms=20,
+        cost_basis=CostBasis.UNAVAILABLE,
+    )
+    failure = RetrievalFailureObservation(
+        stage="qdrant_dense_search",
+        execution="infrastructure",
+        provider="qdrant",
+        model="rag-platform-vectors-v1",
+        category="infrastructure_error",
+        http_status=503,
+        retry_count=1,
+        request_count=2,
+        latency_ms=125.5,
+        usage=(known_usage,),
+        downstream_request_attempted=True,
+        candidate_lineage_produced=False,
+    )
+
+    assert failure.request_count == 2
+    assert failure.usage[0].input_tokens == 8
+    assert failure.candidate_lineage_produced is False
+    assert "exception" not in failure.model_dump(mode="json")

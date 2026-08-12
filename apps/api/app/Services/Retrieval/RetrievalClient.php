@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Retrieval;
 
 use App\Exceptions\RetrievalException;
+use App\Exceptions\RetrievalExecutionException;
 use App\Exceptions\RetrievalPlannerException;
 use App\Models\DocumentChunk;
 use App\Models\EmbeddingProfile;
@@ -15,9 +16,11 @@ use App\Models\SparseSpaceGeneration;
 use App\Models\Workspace;
 use App\Models\WorkspaceCorpusGeneration;
 use App\Support\Retrieval\EligibleRetrievalScope;
+use App\Support\Retrieval\RetrievalFailureObservation;
 use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\RetrievalSearchResult;
 use Carbon\CarbonImmutable;
+use GuzzleHttp\Psr7\Response as PsrResponse;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -193,7 +196,14 @@ final readonly class RetrievalClient
         $returned = $response->json('candidates');
         $returnedProfile = $response->json('profile');
         $providerInputTokens = $response->json('provider_input_tokens');
+        $providerAttemptCount = $response->json('provider_attempt_count');
         $providerRetryCount = $response->json('provider_retry_count');
+        $rateLimitEventCount = $response->json('rate_limit_event_count');
+        $retryDelays = $response->json('retry_delays');
+        $firstProviderAttemptAt = $response->json('first_provider_attempt_at');
+        $finalProviderSuccessAt = $response->json('final_provider_success_at');
+        $providerRetryElapsedSeconds = $response->json('provider_retry_elapsed_seconds');
+        $outerAttemptCount = $response->json('_outer_attempt_count');
         if (! is_array($returned) || ! is_array($returnedProfile)) {
             throw new RetrievalException('The reranker returned an invalid response.');
         }
@@ -225,6 +235,19 @@ final readonly class RetrievalClient
         if (! is_int($providerRetryCount) || $providerRetryCount < 0) {
             throw new RetrievalException('The reranker returned invalid provider retry usage.');
         }
+        if (
+            ! is_int($providerAttemptCount) || $providerAttemptCount < 1
+            || ! is_int($rateLimitEventCount) || $rateLimitEventCount < 0
+            || ! is_array($retryDelays)
+            || ($firstProviderAttemptAt !== null && ! is_string($firstProviderAttemptAt))
+            || ($finalProviderSuccessAt !== null && ! is_string($finalProviderSuccessAt))
+            || ! is_numeric($providerRetryElapsedSeconds) || $providerRetryElapsedSeconds < 0
+        ) {
+            throw new RetrievalException('The reranker returned invalid provider attempt telemetry.');
+        }
+        if (! is_int($outerAttemptCount) || $outerAttemptCount < 1) {
+            throw new RetrievalException('The reranker returned invalid outer-attempt usage.');
+        }
 
         return [
             'candidates' => $returned,
@@ -236,8 +259,17 @@ final readonly class RetrievalClient
                 'provider' => $returnedProfile['provider'] ?? $policy->reranker_provider,
                 'model' => $returnedProfile['model'] ?? $policy->reranker_model,
                 'execution' => 'PROVIDER_API',
-                'request_count' => 1,
+                'request_count' => $providerAttemptCount,
                 'retry_count' => $providerRetryCount,
+                'provider_attempt_count' => $providerAttemptCount,
+                'provider_retry_count' => $providerRetryCount,
+                'outer_attempt_count' => $outerAttemptCount,
+                'outer_retry_count' => $outerAttemptCount - 1,
+                'rate_limit_event_count' => $rateLimitEventCount,
+                'retry_delays' => array_values($retryDelays),
+                'first_provider_attempt_at' => $firstProviderAttemptAt,
+                'final_provider_success_at' => $finalProviderSuccessAt,
+                'provider_retry_elapsed_ms' => (float) $providerRetryElapsedSeconds * 1000,
                 'input_tokens' => $providerInputTokens,
                 'cached_input_tokens' => null,
                 'output_tokens' => null,
@@ -328,12 +360,15 @@ final readonly class RetrievalClient
         Workspace $workspace,
         array $payload,
     ): Response {
+        $this->assertTimeoutEnvelope();
+        $started = hrtime(true);
         $baseUrl = rtrim((string) config('retrieval.ai_url'), '/');
         if (app()->environment('production') && ! str_starts_with($baseUrl, 'https://')) {
             throw new RetrievalException('Production retrieval calls require authenticated TLS.');
         }
         $attempts = max(1, (int) config('retrieval.max_attempts'));
         $last = null;
+        $previousTypedFailure = null;
         for ($attempt = 1; $attempt <= $attempts; $attempt++) {
             $requestId = (string) Str::uuid();
             $attemptPayload = ['request_id' => $requestId] + $payload;
@@ -359,6 +394,13 @@ final readonly class RetrievalClient
                     ->withBody($body, 'application/json')
                     ->post($baseUrl.$path);
                 if ($response->successful()) {
+                    if ($path !== '/api/internal/retrieval/plan') {
+                        $response = $this->withOuterAttemptHistory(
+                            $response,
+                            $attempt,
+                            $previousTypedFailure,
+                        );
+                    }
                     if ($response->json('request_id') !== $requestId) {
                         throw new RetrievalException('The retrieval response identity does not match the request.');
                     }
@@ -381,8 +423,46 @@ final readonly class RetrievalClient
 
                     continue;
                 }
-                $last = new RetrievalException('The retrieval service rejected the request.');
-                if ($response->status() < 500) {
+                $failure = $response->json('detail.failure');
+                if (is_array($failure)) {
+                    try {
+                        $failure = $this->withFailureOuterAttempt($failure, $attempt);
+                        $observation = RetrievalFailureObservation::fromArray($failure);
+                        if ($previousTypedFailure instanceof RetrievalFailureObservation) {
+                            $observation = $this->combineFailureAttempts(
+                                $previousTypedFailure,
+                                $observation,
+                                (hrtime(true) - $started) / 1_000_000,
+                            );
+                        }
+                        $last = new RetrievalExecutionException(
+                            $observation,
+                        );
+                        $previousTypedFailure = $observation;
+                    } catch (InvalidArgumentException) {
+                        $last = new RetrievalException('The retrieval service returned an invalid failure observation.');
+                    }
+                } else {
+                    $last = new RetrievalExecutionException(new RetrievalFailureObservation(
+                        'transport_orchestration',
+                        'orchestration',
+                        'ai-service',
+                        null,
+                        'provider_http_error',
+                        $response->status(),
+                        $attempt - 1,
+                        $attempt,
+                        (hrtime(true) - $started) / 1_000_000,
+                        [],
+                        true,
+                        false,
+                    ));
+                }
+                if (
+                    $response->status() < 500
+                    || ($last instanceof RetrievalExecutionException
+                        && ! $this->shouldRetryFailure($last->observation))
+                ) {
                     break;
                 }
             } catch (ConnectionException $exception) {
@@ -395,11 +475,140 @@ final readonly class RetrievalClient
                         false,
                         $exception,
                     )
-                    : new RetrievalException('The retrieval service is unavailable.', 0, $exception);
+                    : new RetrievalExecutionException(new RetrievalFailureObservation(
+                        'transport_orchestration',
+                        'orchestration',
+                        'ai-service',
+                        null,
+                        'connection_error',
+                        null,
+                        $attempt - 1,
+                        $attempt,
+                        (hrtime(true) - $started) / 1_000_000,
+                        [],
+                        true,
+                        false,
+                    ), $exception);
             }
         }
 
         throw $last ?? new RetrievalException('The retrieval call failed.');
+    }
+
+    private function assertTimeoutEnvelope(): void
+    {
+        $configured = (float) config('retrieval.timeout_seconds');
+        $minimum = (float) config('retrieval.minimum_timeout_seconds');
+        if ($configured < $minimum) {
+            throw new RetrievalException(sprintf(
+                'The retrieval timeout %.3fs cannot contain the bounded inner retry budget %.3fs.',
+                $configured,
+                $minimum,
+            ));
+        }
+    }
+
+    private function withOuterAttemptHistory(
+        Response $response,
+        int $outerAttempt,
+        ?RetrievalFailureObservation $previousFailure,
+    ): Response {
+        $payload = $response->json();
+        if (! is_array($payload)) {
+            return $response;
+        }
+        $usage = $payload['usage'] ?? [];
+        if (! is_array($usage)) {
+            return $response;
+        }
+        $current = collect($usage)->map(function (mixed $item) use ($outerAttempt): mixed {
+            if (! is_array($item)) {
+                return $item;
+            }
+
+            return array_replace($item, [
+                'outer_attempt_count' => $outerAttempt,
+                'outer_retry_count' => $outerAttempt - 1,
+            ]);
+        })->all();
+        $payload['usage'] = [
+            ...($previousFailure?->usage ?? []),
+            ...$current,
+        ];
+        $payload['_outer_attempt_count'] = $outerAttempt;
+        $body = json_encode(
+            $payload,
+            JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+        );
+
+        return new Response(new PsrResponse(
+            $response->status(),
+            $response->headers(),
+            $body,
+        ));
+    }
+
+    /** @param array<string, mixed> $failure */
+    private function withFailureOuterAttempt(array $failure, int $outerAttempt): array
+    {
+        $usage = is_array($failure['usage'] ?? null) ? $failure['usage'] : [];
+        $failure['usage'] = collect($usage)->map(function (mixed $item) use ($outerAttempt): mixed {
+            if (! is_array($item)) {
+                return $item;
+            }
+
+            return array_replace($item, [
+                'outer_attempt_count' => $outerAttempt,
+                'outer_retry_count' => $outerAttempt - 1,
+            ]);
+        })->all();
+        $failure['outer_retry_count'] = $outerAttempt - 1;
+
+        return $failure;
+    }
+
+    private function shouldRetryFailure(RetrievalFailureObservation $failure): bool
+    {
+        // Provider-specific retries belong to the Python adapter. Laravel retries only
+        // failures at its service/infrastructure boundary, never a completed provider
+        // retry sequence or deterministic local/contract failure.
+        return in_array($failure->execution, ['infrastructure', 'orchestration'], true)
+            && in_array($failure->category, [
+                'timeout', 'connection_error', 'infrastructure_error', 'unknown',
+            ], true);
+    }
+
+    private function combineFailureAttempts(
+        RetrievalFailureObservation $previous,
+        RetrievalFailureObservation $current,
+        float $totalLatencyMs,
+    ): RetrievalFailureObservation {
+        $providerRetries = ($previous->providerRetryCount ?? 0) + ($current->providerRetryCount ?? 0);
+        $outerRetries = ($previous->outerRetryCount ?? 0) + 1;
+
+        return new RetrievalFailureObservation(
+            $current->stage,
+            $current->execution,
+            $current->provider,
+            $current->model,
+            $current->category,
+            $current->httpStatus,
+            $providerRetries + $outerRetries,
+            ($previous->requestCount ?? 0) + ($current->requestCount ?? 0),
+            $totalLatencyMs,
+            [...$previous->usage, ...$current->usage],
+            $previous->downstreamRequestAttempted || $current->downstreamRequestAttempted,
+            $previous->candidateLineageProduced || $current->candidateLineageProduced,
+            $providerRetries,
+            $outerRetries,
+            $previous->firstFailureAt ?? $current->firstFailureAt,
+            $current->finalFailureAt ?? $previous->finalFailureAt,
+            ($previous->retryDelayMs ?? 0) + ($current->retryDelayMs ?? 0),
+            $current->providerRetryAfterSeconds ?? $previous->providerRetryAfterSeconds,
+            $current->providerTimingSource ?? $previous->providerTimingSource,
+            ($previous->rateLimitEventCount ?? 0) + ($current->rateLimitEventCount ?? 0),
+            [...$previous->retryDelays, ...$current->retryDelays],
+        );
     }
 
     private function plannerFailure(Response $response, int $attempt): RetrievalPlannerException

@@ -1,8 +1,53 @@
 <?php
 
+$embeddingAttempts = max(1, (int) env('EMBEDDING_MAX_ATTEMPTS', 4));
+$embeddingRequestTimeout = (float) env('EMBEDDING_TIMEOUT_SECONDS', 10);
+$embeddingInitialBackoff = (float) env('EMBEDDING_INITIAL_BACKOFF_SECONDS', 15);
+$embeddingMaximumBackoff = (float) env('EMBEDDING_MAX_BACKOFF_SECONDS', 120);
+$providerCooldownMaximum = (float) env('EMBEDDING_MAX_PROVIDER_COOLDOWN_SECONDS', 120);
+$qdrantRequestTimeout = (float) env('QDRANT_TIMEOUT_SECONDS', 10);
+$rerankerAttempts = max(1, (int) env('RERANKER_MAX_ATTEMPTS', 3));
+$rerankerRequestTimeout = (float) env('RERANKER_TIMEOUT_SECONDS', 10);
+$rerankerInitialBackoff = (float) env('RERANKER_INITIAL_BACKOFF_SECONDS', 15);
+$rerankerMaximumBackoff = (float) env('RERANKER_MAX_BACKOFF_SECONDS', 90);
+$rerankerCooldownMaximum = (float) env('RERANKER_MAX_PROVIDER_COOLDOWN_SECONDS', 90);
+$localExecutionAllowance = (float) env('RETRIEVAL_LOCAL_EXECUTION_ALLOWANCE_SECONDS', 20);
+$timeoutSafetyMargin = (float) env('RETRIEVAL_TIMEOUT_SAFETY_MARGIN_SECONDS', 20);
+$searchMinimumTimeout = ($embeddingAttempts * $embeddingRequestTimeout)
+    + (($embeddingAttempts - 1) * $providerCooldownMaximum)
+    + (4 * $qdrantRequestTimeout)
+    + $localExecutionAllowance
+    + $timeoutSafetyMargin;
+$rerankerMaximumSides = 2;
+$rerankerMinimumTimeout = $rerankerMaximumSides * (
+    ($rerankerAttempts * $rerankerRequestTimeout)
+    + (($rerankerAttempts - 1) * $rerankerCooldownMaximum)
+) + $localExecutionAllowance + $timeoutSafetyMargin;
+$minimumTimeout = max($searchMinimumTimeout, $rerankerMinimumTimeout);
+
 return [
     'ai_url' => env('RETRIEVAL_AI_URL', 'http://ai:8001'),
-    'timeout_seconds' => (float) env('RETRIEVAL_TIMEOUT_SECONDS', 10),
+    'timeout_seconds' => (float) env('RETRIEVAL_TIMEOUT_SECONDS', 480),
+    'minimum_timeout_seconds' => $minimumTimeout,
+    'timeout_budget' => [
+        'embedding_attempts' => $embeddingAttempts,
+        'embedding_request_timeout_seconds' => $embeddingRequestTimeout,
+        'embedding_initial_backoff_seconds' => $embeddingInitialBackoff,
+        'embedding_maximum_backoff_seconds' => $embeddingMaximumBackoff,
+        'provider_cooldown_maximum_seconds' => $providerCooldownMaximum,
+        'qdrant_request_timeout_seconds' => $qdrantRequestTimeout,
+        'maximum_qdrant_requests' => 4,
+        'local_execution_allowance_seconds' => $localExecutionAllowance,
+        'safety_margin_seconds' => $timeoutSafetyMargin,
+        'search_minimum_timeout_seconds' => $searchMinimumTimeout,
+        'reranker_attempts_per_side' => $rerankerAttempts,
+        'reranker_request_timeout_seconds' => $rerankerRequestTimeout,
+        'reranker_initial_backoff_seconds' => $rerankerInitialBackoff,
+        'reranker_maximum_backoff_seconds' => $rerankerMaximumBackoff,
+        'reranker_provider_cooldown_maximum_seconds' => $rerankerCooldownMaximum,
+        'reranker_maximum_sides' => $rerankerMaximumSides,
+        'reranker_minimum_timeout_seconds' => $rerankerMinimumTimeout,
+    ],
     'max_attempts' => (int) env('RETRIEVAL_MAX_ATTEMPTS', 2),
     'candidate_k' => (int) env('RETRIEVAL_CANDIDATE_K', 10),
     'candidate_k_max' => (int) env('RETRIEVAL_CANDIDATE_K_MAX', 100),

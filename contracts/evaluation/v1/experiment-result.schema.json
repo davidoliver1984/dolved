@@ -34,11 +34,17 @@
       "additionalProperties": false,
       "required": ["metrics", "planner_accuracy", "eligibility_accuracy", "outcome_accuracy", "case_count"],
       "properties": {
-        "metrics": {"$ref": "#/$defs/metric_values"},
+        "metrics": {"anyOf": [{"$ref": "#/$defs/metric_values"}, {"type": "null"}]},
         "planner_accuracy": {"type": "number", "minimum": 0, "maximum": 1},
-        "eligibility_accuracy": {"type": "number", "minimum": 0, "maximum": 1},
-        "outcome_accuracy": {"type": "number", "minimum": 0, "maximum": 1},
-        "case_count": {"type": "integer", "minimum": 0}
+        "eligibility_accuracy": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "outcome_accuracy": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "case_count": {"type": "integer", "minimum": 0},
+        "variant_count": {"type": "integer", "minimum": 0},
+        "retrieval_metric_variant_count": {"type": "integer", "minimum": 0},
+        "planner_success_count": {"type": "integer", "minimum": 0},
+        "planner_failure_count": {"type": "integer", "minimum": 0},
+        "planner_reliability": {"type": "number", "minimum": 0, "maximum": 1},
+        "planner_failure_categories": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}}
       }
     },
     "operational": {
@@ -59,12 +65,12 @@
       "properties": {
         "case_id": {"$ref": "#/$defs/identifier"},
         "variant_id": {"$ref": "#/$defs/identifier"},
-        "metrics": {"$ref": "#/$defs/metric_values"},
+        "metrics": {"anyOf": [{"$ref": "#/$defs/metric_values"}, {"type": "null"}]},
         "side_metrics": {"type": "object", "additionalProperties": {"$ref": "#/$defs/metric_values"}},
         "covered_evidence_ids": {"type": "array", "items": {"$ref": "#/$defs/identifier"}},
         "planner_correct": {"type": "boolean"},
-        "eligibility_correct": {"type": "boolean"},
-        "outcome_correct": {"type": "boolean"},
+        "eligibility_correct": {"type": ["boolean", "null"]},
+        "outcome_correct": {"type": ["boolean", "null"]},
         "hard_failures": {"type": "array", "items": {"$ref": "#/$defs/identifier"}},
         "operational": {"$ref": "#/$defs/operational"},
         "text_capture_mode": {"enum": ["DISABLED", "REDACTED", "BENCHMARK_TEXT"]},
@@ -72,7 +78,52 @@
         "expected_evidence": {"type": "array", "items": {"$ref": "#/$defs/expected_evidence"}},
         "expected_outcome": {"type": ["string", "null"]},
         "candidate_lineage": {"type": "array", "items": {"$ref": "#/$defs/candidate_lineage"}},
-        "candidate_funnel": {"type": "array", "items": {"$ref": "#/$defs/candidate_funnel"}}
+        "candidate_funnel": {"type": "array", "items": {"$ref": "#/$defs/candidate_funnel"}},
+        "planning_status": {"enum": ["SUCCEEDED", "FAILED"]},
+        "retrieval_executed": {"type": "boolean"},
+        "contributes_retrieval_metrics": {"type": "boolean"},
+        "planner_failure": {"anyOf": [{"$ref": "#/$defs/planner_failure"}, {"type": "null"}]},
+        "planner_evaluation": {"anyOf": [{"$ref": "#/$defs/planner_evaluation"}, {"type": "null"}]}
+      }
+    },
+    "planner_evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected_contract", "actual_plan", "differences", "correct"],
+      "properties": {
+        "expected_contract": {"type": "object"},
+        "actual_plan": {"type": ["object", "null"]},
+        "differences": {"type": "array", "items": {"$ref": "#/$defs/planner_difference"}},
+        "correct": {"type": "boolean"}
+      }
+    },
+    "planner_difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "expected", "actual", "classification"],
+      "properties": {
+        "field": {"$ref": "#/$defs/identifier"},
+        "expected": {},
+        "actual": {},
+        "classification": {
+          "enum": [
+            "SEMANTIC_AFTER_NORMALISATION",
+            "POTENTIAL_ALIAS_OR_REPRESENTATION_MISMATCH"
+          ]
+        }
+      }
+    },
+    "planner_failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model", "category", "provider_status", "attempt_count", "occurred_at"],
+      "properties": {
+        "provider": {"$ref": "#/$defs/identifier"},
+        "model": {"$ref": "#/$defs/identifier"},
+        "category": {"$ref": "#/$defs/identifier"},
+        "provider_status": {"type": ["integer", "null"], "minimum": 100, "maximum": 599},
+        "attempt_count": {"type": "integer", "minimum": 1},
+        "occurred_at": {"type": "string", "format": "date-time"}
       }
     },
     "expected_evidence": {

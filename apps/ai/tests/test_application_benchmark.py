@@ -6,8 +6,42 @@ from uuid import uuid4
 
 import pytest
 
-from app.evaluation.application_benchmark import compile_application_benchmark_run
+from app.evaluation.application_benchmark import (
+    _candidate_records,
+    compile_application_benchmark_run,
+)
 from app.evaluation.historical_result import load_comparison_result
+from app.evaluation.models import EvidenceUnit
+
+
+def test_failed_search_does_not_fabricate_zero_candidate_funnel_counts() -> None:
+    unit = EvidenceUnit(
+        evidence_id="unit.one",
+        document_family_id="family.one",
+        document_version_id="version.one",
+        source_path="documents/example.md",
+        canonical_excerpts=("Expected evidence",),
+    )
+
+    _, lineage, funnel = _candidate_records(
+        trace={
+            "failure": {
+                "stage": "qdrant_dense_search",
+                "category": "infrastructure_error",
+            }
+        },
+        result={"outcome": "retrieval_failed", "candidates": []},
+        units=(unit,),
+        documents={},
+        dense_only=False,
+    )
+
+    assert lineage == ()
+    assert len(funnel) == 1
+    assert funnel[0].dense_candidate_count is None
+    assert funnel[0].sparse_candidate_count is None
+    assert funnel[0].unique_post_fusion_count is None
+    assert funnel[0].final_evidence_count is None
 
 
 def test_application_benchmark_compiler_enforces_engineering_split_and_writes_both_arms(
@@ -145,6 +179,17 @@ def test_application_benchmark_compiler_enforces_engineering_split_and_writes_bo
             "model": "gpt-5-mini",
             "adapter_version": "1",
         },
+        "reliability": {
+            "python_retry_owner": True,
+            "embedding": {"maximum_attempts": 4},
+            "reranker": {"maximum_attempts": 3},
+            "shared_voyage_cooldown": {"scope": "python_process"},
+            "laravel": {
+                "timeout_seconds": 480,
+                "outer_maximum_attempts": 2,
+                "typed_provider_rate_limit_replay": False,
+            },
+        },
         "pricing": {
             "embedding_cost_per_million_tokens_usd": 0.12,
             "embedding_pricing_snapshot": "voyage-pricing-2026-08-12",
@@ -251,6 +296,8 @@ def test_application_benchmark_compiler_enforces_engineering_split_and_writes_bo
     assert result["operational"]["experiment"]["generation"]["execution"] == (
         "NOT_EXECUTED"
     )
+    config = json.loads((tmp_path / "run" / "config.json").read_text())
+    assert config["reliability"] == raw["reliability"]
     assert (tmp_path / "run" / "result.json").is_file()
     assert (tmp_path / "run" / "comparison.json").is_file()
     assert (tmp_path / "run" / "provisioning-mapping.json").is_file()

@@ -1,4 +1,6 @@
 import json
+from collections.abc import Iterator
+from datetime import UTC, datetime
 from typing import Literal
 from uuid import UUID, uuid4
 
@@ -6,6 +8,15 @@ import httpx
 import pytest
 from pydantic import SecretStr
 
+from app.embedding.errors import EmbeddingRateLimitError
+from app.embedding.models import (
+    V1_VOYAGE_PROFILE,
+    EmbeddingInput,
+    EmbeddingPurpose,
+    EmbeddingRequest,
+)
+from app.embedding.voyage import VoyageEmbedder
+from app.provider_retry import ProviderCooldown, voyage_provider_cooldown
 from app.reranking.errors import (
     MalformedRerankerResponseError,
     RerankerInputTooLargeError,
@@ -20,6 +31,13 @@ from app.reranking.models import (
 from app.reranking.voyage import VoyageReranker
 from app.retrieval.fusion import ReciprocalRankFusion
 from app.retrieval.models import RetrievalCandidate, RetrievalSide
+
+
+@pytest.fixture(autouse=True)
+def clear_voyage_cooldown() -> Iterator[None]:
+    voyage_provider_cooldown.clear()
+    yield
+    voyage_provider_cooldown.clear()
 
 
 def retrieval_candidate(
@@ -158,7 +176,10 @@ def test_voyage_adapter_disables_truncation_and_maps_provider_identity() -> None
         request.candidates[0].chunk_id,
     ]
     assert result.provider_input_tokens == 18
+    assert result.provider_attempt_count == 1
     assert result.provider_retry_count == 0
+    assert result.rate_limit_event_count == 0
+    assert result.retry_delays == ()
 
 
 def test_voyage_adapter_reranks_compare_sides_independently() -> None:
@@ -224,6 +245,7 @@ def test_voyage_adapter_reranks_compare_sides_independently() -> None:
         (RetrievalSide.PRIMARY, shared_chunk_id, 1),
     ]
     assert result.provider_input_tokens == 10
+    assert result.provider_attempt_count == 2
     assert result.provider_retry_count == 0
     assert sleeps == [25]
 
@@ -259,15 +281,15 @@ def test_voyage_adapter_retries_only_transient_failures() -> None:
     def handler(_: httpx.Request) -> httpx.Response:
         nonlocal calls
         calls += 1
-        return httpx.Response(429, headers={"Retry-After": "0"})
+        return httpx.Response(429)
 
     adapter = VoyageReranker(
         api_key=SecretStr("secret"),
         api_url="https://api.voyage.test/v1/rerank",
         timeout_seconds=1,
         max_attempts=2,
-        initial_backoff_seconds=0,
-        max_backoff_seconds=0,
+        initial_backoff_seconds=15,
+        max_backoff_seconds=90,
         client=httpx.Client(transport=httpx.MockTransport(handler)),
         sleep=lambda _: None,
         jitter=lambda: 0,
@@ -278,16 +300,26 @@ def test_voyage_adapter_retries_only_transient_failures() -> None:
 
     assert calls == 2
     assert raised.value.attempts == 2
+    assert raised.value.provider_retry_count == 1
+    assert raised.value.rate_limit_event_count == 2
+    assert [item.delay_seconds for item in raised.value.retry_delays] == [13.5]
+    assert [item.source for item in raised.value.retry_delays] == [
+        "configured_fallback"
+    ]
+    assert raised.value.first_failure_at is not None
+    assert raised.value.final_failure_at is not None
+    assert raised.value.total_retry_delay_seconds == 13.5
 
 
 def test_voyage_adapter_records_provider_retries_on_eventual_success() -> None:
     calls = 0
+    delays: list[float] = []
 
     def handler(_: httpx.Request) -> httpx.Response:
         nonlocal calls
         calls += 1
         if calls == 1:
-            return httpx.Response(429, headers={"Retry-After": "0"})
+            return httpx.Response(429, headers={"Retry-After": "65"})
         return httpx.Response(
             200,
             json={
@@ -302,15 +334,163 @@ def test_voyage_adapter_records_provider_retries_on_eventual_success() -> None:
         api_url="https://api.voyage.test/v1/rerank",
         timeout_seconds=1,
         max_attempts=2,
-        initial_backoff_seconds=0,
-        max_backoff_seconds=0,
+        initial_backoff_seconds=15,
+        max_backoff_seconds=90,
+        max_provider_cooldown_seconds=90,
         client=httpx.Client(transport=httpx.MockTransport(handler)),
-        sleep=lambda _: None,
+        sleep=delays.append,
         jitter=lambda: 0,
     ).rerank(rerank_request(top_k=1))
 
     assert calls == 2
+    assert result.provider_attempt_count == 2
     assert result.provider_retry_count == 1
+    assert result.rate_limit_event_count == 1
+    assert delays == [65]
+    assert [item.source for item in result.retry_delays] == ["retry_after_numeric"]
+    assert result.first_provider_attempt_at is not None
+    assert result.final_provider_success_at is not None
+    assert result.provider_retry_elapsed_seconds == 65
+
+
+@pytest.mark.parametrize(
+    ("headers", "expected_delay", "expected_source"),
+    [
+        (
+            {"Retry-After": "Wed, 12 Aug 2026 12:01:05 GMT"},
+            65.0,
+            "retry_after_http_date",
+        ),
+        (
+            {"X-RateLimit-Reset-Requests": "70s"},
+            70.0,
+            "x_ratelimit_reset_requests",
+        ),
+    ],
+)
+def test_voyage_reranker_honours_supported_provider_timing(
+    headers: dict[str, str], expected_delay: float, expected_source: str
+) -> None:
+    calls = 0
+    delays: list[float] = []
+
+    def handler(_: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return httpx.Response(429, headers=headers)
+        return httpx.Response(
+            200,
+            json={
+                "model": "rerank-2.5",
+                "data": [{"index": 0, "relevance_score": 0.9}],
+                "usage": {"total_tokens": 7},
+            },
+        )
+
+    result = VoyageReranker(
+        api_key=SecretStr("secret"),
+        api_url="https://api.voyage.test/v1/rerank",
+        timeout_seconds=1,
+        max_attempts=2,
+        initial_backoff_seconds=15,
+        max_backoff_seconds=90,
+        max_provider_cooldown_seconds=90,
+        client=httpx.Client(transport=httpx.MockTransport(handler)),
+        sleep=delays.append,
+        now=lambda: datetime(2026, 8, 12, 12, 0, 0, tzinfo=UTC),
+    ).rerank(rerank_request(top_k=1))
+
+    assert delays == [expected_delay]
+    assert result.retry_delays[0].source == expected_source
+
+
+def test_reranker_provider_cooldown_beyond_budget_fails_closed_and_stays_safe() -> None:
+    calls = 0
+    delays: list[float] = []
+
+    def handler(_: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        return httpx.Response(
+            429,
+            headers={
+                "Retry-After": "91",
+                "X-Unsafe-Provider-Detail": "must-not-be-retained",
+            },
+        )
+
+    with pytest.raises(RerankerRateLimitError) as captured:
+        VoyageReranker(
+            api_key=SecretStr("secret"),
+            api_url="https://api.voyage.test/v1/rerank",
+            timeout_seconds=1,
+            max_attempts=3,
+            initial_backoff_seconds=15,
+            max_backoff_seconds=90,
+            max_provider_cooldown_seconds=90,
+            client=httpx.Client(transport=httpx.MockTransport(handler)),
+            sleep=delays.append,
+        ).rerank(rerank_request(top_k=1))
+
+    assert calls == 1
+    assert delays == []
+    assert captured.value.attempts == 1
+    assert captured.value.provider_retry_count == 0
+    assert captured.value.rate_limit_event_count == 1
+    assert captured.value.retry_after_seconds == 91
+    assert captured.value.provider_timing_source == "retry_after_numeric"
+    assert "must-not-be-retained" not in repr(vars(captured.value))
+
+
+def test_embedding_and_reranking_share_one_process_local_voyage_cooldown() -> None:
+    cooldown = ProviderCooldown(monotonic=lambda: 100.0)
+    delays: list[float] = []
+    embedding_request = EmbeddingRequest(
+        correlation_id=uuid4(),
+        workspace_id=uuid4(),
+        profile=V1_VOYAGE_PROFILE.model_copy(update={"dimensions": 3}),
+        purpose=EmbeddingPurpose.QUERY,
+        items=(EmbeddingInput(source_id=uuid4(), text="private query"),),
+    )
+    with pytest.raises(EmbeddingRateLimitError):
+        VoyageEmbedder(
+            api_key=SecretStr("secret"),
+            client=httpx.Client(
+                transport=httpx.MockTransport(
+                    lambda _: httpx.Response(429, headers={"Retry-After": "65"})
+                )
+            ),
+            max_attempts=1,
+            cooldown=cooldown,
+            sleep=delays.append,
+        ).embed(embedding_request)
+
+    result = VoyageReranker(
+        api_key=SecretStr("secret"),
+        api_url="https://api.voyage.test/v1/rerank",
+        timeout_seconds=1,
+        max_attempts=1,
+        initial_backoff_seconds=15,
+        max_backoff_seconds=90,
+        cooldown=cooldown,
+        client=httpx.Client(
+            transport=httpx.MockTransport(
+                lambda _: httpx.Response(
+                    200,
+                    json={
+                        "model": "rerank-2.5",
+                        "data": [{"index": 0, "relevance_score": 0.9}],
+                        "usage": {"total_tokens": 7},
+                    },
+                )
+            )
+        ),
+        sleep=delays.append,
+    ).rerank(rerank_request(top_k=1))
+
+    assert delays == [65]
+    assert result.retry_delays[0].source == "shared_cooldown"
 
 
 def test_voyage_adapter_reports_disabled_truncation_overflow_as_typed_failure() -> None:

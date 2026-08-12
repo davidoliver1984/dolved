@@ -29,6 +29,7 @@ from app.evaluation.models import (
     PlannerFieldDifference,
     PlanningStatus,
     QuestionVariant,
+    RetrievalFailureObservation,
     RetrievedCandidate,
     StageUsageObservation,
     VariantObservation,
@@ -313,6 +314,11 @@ def _observation(
     outcome_correct = str(result.get("outcome", "")).upper() == str(
         case["outcome_expectation"]["outcome"]
     )
+    retrieval_failure = (
+        RetrievalFailureObservation.model_validate(trace["failure"])
+        if isinstance(trace.get("failure"), dict)
+        else None
+    )
     hard_failures = tuple(
         name
         for name, correct in (
@@ -321,6 +327,10 @@ def _observation(
             ("outcome_mismatch", outcome_correct),
         )
         if not correct
+    ) + (
+        (f"retrieval_failure:{retrieval_failure.stage}:{retrieval_failure.category}",)
+        if retrieval_failure is not None
+        else ()
     )
     reranked = trace.get("reranked")
     tokens = (
@@ -359,8 +369,9 @@ def _observation(
         candidate_funnel=funnel,
         planning_status=PlanningStatus.SUCCEEDED,
         retrieval_executed=True,
-        contributes_retrieval_metrics=True,
+        contributes_retrieval_metrics=retrieval_failure is None,
         planner_evaluation=_planner_evaluation(planner_comparison),
+        retrieval_failure=retrieval_failure,
     )
 
 
@@ -466,15 +477,26 @@ def _candidate_records(
             )
         )
     sides = sorted({item.side for item in lineage} | {unit.side for unit in units})
+    search_observed = isinstance(trace.get("search"), dict)
+    reranker_observed = isinstance(trace.get("reranked"), dict)
+    threshold_observed = "threshold_qualified" in trace
+    final_observed = "final_evidence" in trace or (
+        dense_only and result.get("outcome") != "retrieval_failed"
+    )
     funnel = tuple(
         CandidateFunnel(
             side=side,
-            dense_candidate_count=sum(
-                item.side == side and item.dense_rank is not None for item in lineage
+            dense_candidate_count=(
+                sum(
+                    item.side == side and item.dense_rank is not None
+                    for item in lineage
+                )
+                if search_observed
+                else None
             ),
             sparse_candidate_count=(
                 None
-                if dense_only
+                if dense_only or not search_observed
                 else sum(
                     item.side == side and item.sparse_rank is not None
                     for item in lineage
@@ -482,7 +504,7 @@ def _candidate_records(
             ),
             unique_post_fusion_count=(
                 None
-                if dense_only
+                if dense_only or not search_observed
                 else sum(
                     item.side == side and item.fused_rank is not None
                     for item in lineage
@@ -490,7 +512,7 @@ def _candidate_records(
             ),
             candidates_sent_to_reranker=(
                 None
-                if dense_only
+                if dense_only or not reranker_observed
                 else sum(
                     item.side == side and item.reranker_rank is not None
                     for item in lineage
@@ -498,15 +520,19 @@ def _candidate_records(
             ),
             candidates_surviving_threshold=(
                 None
-                if dense_only
+                if dense_only or not threshold_observed
                 else sum(
                     item.side == side and item.passed_evidence_threshold is True
                     for item in lineage
                 )
             ),
-            final_evidence_count=sum(
-                item.side == side and item.included_in_final_evidence
-                for item in lineage
+            final_evidence_count=(
+                sum(
+                    item.side == side and item.included_in_final_evidence
+                    for item in lineage
+                )
+                if final_observed
+                else None
             ),
         )
         for side in sides
@@ -516,7 +542,7 @@ def _candidate_records(
 
 def _trace_usage(
     trace: dict[str, Any],
-    container_names: tuple[str, ...] = ("plan", "search", "reranked"),
+    container_names: tuple[str, ...] = ("plan", "search", "reranked", "failure"),
 ) -> tuple[StageUsageObservation, ...]:
     values: list[StageUsageObservation] = []
     for container_name in container_names:
@@ -653,7 +679,11 @@ def _config(raw: dict[str, Any], planner: dict[str, Any]) -> dict[str, Any]:
     return {
         "schema_version": "v2",
         "run_id": raw["run_id"],
-        "description": "First exact-commit ADR-0022 full-pipeline engineering baseline",
+        "description": (
+            "Post-reliability corrected full-pipeline engineering baseline"
+            if str(raw["run_id"]).startswith("EXP-0003-")
+            else "First exact-commit ADR-0022 full-pipeline engineering baseline"
+        ),
         "status": "EXPERIMENTAL",
         "decision": None,
         "repository": repository,
@@ -677,6 +707,7 @@ def _config(raw: dict[str, Any], planner: dict[str, Any]) -> dict[str, Any]:
         "provisioning_mapping_digest": mapping["provisioning_mapping_digest"],
         "provisioning_snapshot_digest": mapping["snapshot_digest"],
         "planner": planner,
+        "reliability": _object(raw.get("reliability"), "reliability lineage"),
         "pricing": _object(raw.get("pricing"), "pricing lineage"),
         "providers": {
             "dense": {
@@ -754,19 +785,23 @@ def _historical_comparison(
     baseline_path: Path,
     within_run: dict[str, Any],
 ) -> dict[str, Any]:
-    baseline_raw = _object(json.loads(baseline_path.read_text()), "EXP-0001 result")
+    baseline_raw = _object(json.loads(baseline_path.read_text()), "historical result")
     baseline_value = baseline_raw.get("hybrid", baseline_raw)
-    baseline = load_comparison_result(_object(baseline_value, "EXP-0001 hybrid result"))
+    baseline = load_comparison_result(
+        _object(baseline_value, "historical hybrid result")
+    )
     if (
         baseline.corpus_version != candidate.lineage.corpus_version
         or baseline.corpus_digest != candidate.lineage.corpus_digest
     ):
-        raise ValueError("EXP-0001 and EXP-0002 do not share benchmark lineage")
+        raise ValueError(
+            "historical baseline and candidate do not share benchmark lineage"
+        )
     comparison = _historical_comparison_values(baseline, candidate, envelope)
     comparison["comparison_note"] = (
-        "EXP-0001 versus EXP-0002 uses the same benchmark but changed ADR-0022 "
-        "planner semantics and successful-retrieval denominators; interpret deltas with "
-        "the classifier/resolution populations shown in result.json."
+        f"{baseline.experiment_id} versus {candidate.experiment_id} uses the same "
+        "benchmark lineage. Interpret quality deltas alongside planner, resolution, "
+        "retrieval-completion and provider-failure populations in result.json."
     )
     comparison["within_run_dense_comparison"] = within_run
     return comparison

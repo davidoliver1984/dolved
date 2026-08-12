@@ -19,6 +19,7 @@ TAIL ?= 100
 	evaluation-run \
 	evaluation-benchmark-sync \
 	evaluation-benchmark-compile \
+	evaluation-exp-0003 \
 	evaluation-live-hybrid \
 	evaluation-report evaluation-index \
 	shell-web shell-api shell-ai shell-db shell-aws
@@ -50,6 +51,7 @@ help:
 		'  make evaluation-run   Run the offline retrieval evaluation corpus' \
 		'  make evaluation-benchmark-sync  Synchronise authored Markdown paths into the benchmark catalogue' \
 		'  make evaluation-benchmark-compile  Validate and compile the engineering benchmark pilot' \
+		'  make evaluation-exp-0003  Run the post-reliability full V2 engineering baseline' \
 		'  make evaluation-live-hybrid  Run the opt-in live hybrid retrieval evaluation' \
 		'  make evaluation-report RUN=<id>  Regenerate one persisted evaluation report' \
 		'  make evaluation-index  Regenerate the persisted experiment index' \
@@ -197,6 +199,17 @@ evaluation-benchmark-compile:
 		ai python scripts/evaluation/compile_engineering_benchmark.py \
 			--benchmark-root tests/evaluation/benchmarks/dolved-care-engineering/$(EVALUATION_BENCHMARK_VERSION) \
 			--contract-root contracts/evaluation/v2
+
+evaluation-exp-0003:
+	$(COMPOSE) exec api php artisan evaluation:benchmark:run-exp-0003 \
+		--repository-commit="$$(git rev-parse HEAD)" \
+		--dirty="$$(test -z "$$(git status --porcelain)" && printf 0 || printf 1)"
+	$(COMPOSE) exec --env PYTHONPATH=/app ai \
+		python /workspace/scripts/evaluation/compile_application_benchmark_run.py \
+		--observations /evaluation-runs/EXP-0003-post-reliability-corrected-engineering-baseline/application-observations.json \
+		--output-directory /evaluation-runs/EXP-0003-post-reliability-corrected-engineering-baseline \
+		--historical-baseline /evaluation-runs/EXP-0002-adr0022-corrected-planning-baseline/result.json
+	$(MAKE) evaluation-report RUN=EXP-0003-post-reliability-corrected-engineering-baseline
 
 evaluation-run:
 	@mkdir -p /tmp/rag-platform-evaluation

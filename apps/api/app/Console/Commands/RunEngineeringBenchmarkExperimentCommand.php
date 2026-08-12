@@ -10,9 +10,9 @@ use Throwable;
 
 final class RunEngineeringBenchmarkExperimentCommand extends Command
 {
-    protected $signature = 'evaluation:benchmark:run-exp-0002 {--repository-commit=} {--dirty=0}';
+    protected $signature = 'evaluation:benchmark:run-exp-0003 {--repository-commit=} {--dirty=0}';
 
-    protected $description = 'Run EXP-0002 through the ADR-0022 production path against only the V2 engineering split';
+    protected $description = 'Run EXP-0003 through the production retrieval path against only the V2 engineering split';
 
     public function handle(RunEngineeringBenchmarkExperiment $run): int
     {
@@ -27,7 +27,7 @@ final class RunEngineeringBenchmarkExperimentCommand extends Command
             return self::FAILURE;
         }
         $this->components->info(sprintf(
-            'EXP-0002 captured %d engineering cases / %d variants at %s (%d resumed).',
+            'EXP-0003 captured %d engineering cases / %d variants at %s (%d resumed).',
             $result['case_count'],
             $result['variant_count'],
             $result['path'],

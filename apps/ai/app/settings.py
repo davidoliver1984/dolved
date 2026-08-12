@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -33,9 +33,10 @@ class Settings(BaseSettings):
     embedding_dimensions: int = Field(default=1024, gt=0)
     embedding_batch_size: int = Field(default=64, ge=1, le=1000)
     embedding_timeout_seconds: float = Field(default=10.0, gt=0)
-    embedding_max_attempts: int = Field(default=3, ge=1, le=10)
-    embedding_initial_backoff_seconds: float = Field(default=0.25, ge=0)
-    embedding_max_backoff_seconds: float = Field(default=2.0, ge=0)
+    embedding_max_attempts: int = Field(default=4, ge=1, le=10)
+    embedding_initial_backoff_seconds: float = Field(default=15.0, ge=0)
+    embedding_max_backoff_seconds: float = Field(default=120.0, ge=0)
+    embedding_max_provider_cooldown_seconds: float = Field(default=120.0, gt=0)
     embedding_estimated_cost_per_million_tokens_usd: float = Field(
         default=0.12,
         ge=0,
@@ -65,8 +66,9 @@ class Settings(BaseSettings):
     reranker_model: str = "rerank-2.5"
     reranker_timeout_seconds: float = Field(default=10.0, gt=0)
     reranker_max_attempts: int = Field(default=3, ge=1, le=10)
-    reranker_initial_backoff_seconds: float = Field(default=0.25, ge=0)
-    reranker_max_backoff_seconds: float = Field(default=2.0, ge=0)
+    reranker_initial_backoff_seconds: float = Field(default=15.0, ge=0)
+    reranker_max_backoff_seconds: float = Field(default=90.0, ge=0)
+    reranker_max_provider_cooldown_seconds: float = Field(default=90.0, gt=0)
     retrieval_planner_api_url: str = "https://api.openai.com/v1/chat/completions"
     retrieval_planner_api_key: SecretStr = SecretStr("")
     retrieval_planner_provider: str = "openai"
@@ -82,6 +84,24 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
+
+    @model_validator(mode="after")
+    def retry_backoff_fits_finite_provider_envelope(self) -> Settings:
+        if (
+            self.embedding_max_backoff_seconds
+            > self.embedding_max_provider_cooldown_seconds
+        ):
+            raise ValueError(
+                "embedding backoff exceeds the finite provider cooldown bound"
+            )
+        if (
+            self.reranker_max_backoff_seconds
+            > self.reranker_max_provider_cooldown_seconds
+        ):
+            raise ValueError(
+                "reranker backoff exceeds the finite provider cooldown bound"
+            )
+        return self
 
 
 @lru_cache

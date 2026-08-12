@@ -1,4 +1,6 @@
 import logging
+import time
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -22,7 +24,9 @@ from app.retrieval.corpus_rebuild import (
     CorpusVerificationRequest,
     CorpusVerificationResult,
 )
+from app.retrieval.failures import RetrievalExecutionError
 from app.retrieval.models import (
+    OperationUsage,
     PlanRequest,
     PlanResponse,
     SearchRequest,
@@ -194,13 +198,44 @@ async def search_retrieval(
         )
     try:
         return retriever.search(incoming)
+    except RetrievalExecutionError as exception:
+        failure = exception.observation.model_dump(mode="json")
+        logger.warning(
+            "Scoped retrieval failed.",
+            extra={
+                "failure_stage": failure["stage"],
+                "failure_category": failure["category"],
+                "failure_provider": failure["provider"],
+            },
+        )
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            {"code": "retrieval_execution_failed", "failure": failure},
+        ) from exception
     except Exception as exception:
         logger.warning(
             "Scoped retrieval failed.",
             extra={"error_type": type(exception).__name__},
         )
         raise HTTPException(
-            status.HTTP_503_SERVICE_UNAVAILABLE, "Retrieval failed."
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            {
+                "code": "retrieval_execution_failed",
+                "failure": {
+                    "stage": "transport_orchestration",
+                    "execution": "orchestration",
+                    "provider": None,
+                    "model": None,
+                    "category": "unknown",
+                    "http_status": None,
+                    "retry_count": None,
+                    "request_count": None,
+                    "latency_ms": 0,
+                    "usage": [],
+                    "downstream_request_attempted": False,
+                    "candidate_lineage_produced": False,
+                },
+            },
         ) from exception
 
 
@@ -211,6 +246,7 @@ async def rerank_retrieval(
 ) -> RerankResult:
     settings = get_settings()
     body = await authenticate(request, "retrieval.rerank", settings)
+    started = time.perf_counter()
     try:
         incoming = RerankRequest.model_validate_json(body)
     except ValueError as exception:
@@ -251,12 +287,105 @@ async def rerank_retrieval(
             )
             return result
     except RerankingError as exception:
+        category = {
+            "timeout": "timeout",
+            "rate_limited": "rate_limited",
+            "provider_unavailable": "connection_error",
+            "malformed_response": "invalid_provider_response",
+            "invalid_input": "contract_validation_error",
+            "input_too_large": "contract_validation_error",
+        }.get(exception.code, "provider_http_error")
+        attempts = max(1, exception.attempts)
+        provider_retries = max(0, exception.provider_retry_count)
+        retry_delays = tuple(exception.retry_delays)
+        usage = (
+            OperationUsage(
+                stage="reranking",
+                provider=incoming.profile.provider,
+                model=incoming.profile.model,
+                execution="provider_api",
+                request_count=attempts,
+                retry_count=provider_retries,
+                provider_attempt_count=attempts,
+                provider_retry_count=provider_retries,
+                rate_limit_event_count=exception.rate_limit_event_count,
+                retry_delays=retry_delays,
+                first_provider_attempt_at=(
+                    datetime.fromisoformat(exception.first_provider_attempt_at)
+                    if exception.first_provider_attempt_at is not None
+                    else None
+                ),
+                provider_retry_elapsed_ms=(exception.total_retry_delay_seconds * 1000),
+                input_tokens=exception.provider_input_tokens,
+                latency_ms=(time.perf_counter() - started) * 1000,
+                cost_basis="unavailable",
+                cost_usd=None,
+                pricing_snapshot=None,
+            ),
+        )
+        failure: dict[str, object] = {
+            "stage": "reranker",
+            "execution": "provider_api",
+            "provider": incoming.profile.provider,
+            "model": incoming.profile.model,
+            "category": category,
+            "http_status": getattr(exception, "provider_status", None),
+            "retry_count": provider_retries,
+            "provider_retry_count": provider_retries,
+            "outer_retry_count": None,
+            "rate_limit_event_count": exception.rate_limit_event_count,
+            "retry_delays": [item.model_dump(mode="json") for item in retry_delays],
+            "request_count": attempts,
+            "first_failure_at": exception.first_failure_at,
+            "final_failure_at": exception.final_failure_at,
+            "retry_delay_ms": exception.total_retry_delay_seconds * 1000,
+            "provider_retry_after_seconds": getattr(
+                exception, "retry_after_seconds", None
+            ),
+            "provider_timing_source": getattr(
+                exception, "provider_timing_source", None
+            ),
+            "latency_ms": (time.perf_counter() - started) * 1000,
+            "usage": [item.model_dump(mode="json") for item in usage],
+            "downstream_request_attempted": exception.code
+            not in {"configuration_error", "invalid_input", "input_too_large"},
+            "candidate_lineage_produced": True,
+        }
         logger.warning(
             "Reranking failed.",
-            extra={"error_type": type(exception).__name__},
+            extra={
+                "failure_stage": "reranker",
+                "failure_category": category,
+                "failure_provider": incoming.profile.provider,
+            },
         )
         raise HTTPException(
-            status.HTTP_503_SERVICE_UNAVAILABLE, "Reranking failed."
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            {"code": "retrieval_execution_failed", "failure": failure},
+        ) from exception
+    except Exception as exception:
+        logger.warning(
+            "Reranking failed.", extra={"error_type": type(exception).__name__}
+        )
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            {
+                "code": "retrieval_execution_failed",
+                "failure": {
+                    "stage": "reranker",
+                    "execution": "orchestration",
+                    "provider": incoming.profile.provider,
+                    "model": incoming.profile.model,
+                    "category": "unknown",
+                    "http_status": None,
+                    "retry_count": None,
+                    "request_count": None,
+                    "latency_ms": (time.perf_counter() - started) * 1000,
+                    "usage": [],
+                    "downstream_request_attempted": False,
+                    "candidate_lineage_produced": True,
+                },
+            },
         ) from exception
 
 

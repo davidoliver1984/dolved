@@ -7,6 +7,7 @@ namespace App\Actions\Retrieval;
 use App\Enums\EvidenceThresholdPolicyStatus;
 use App\Enums\RetrievalOutcome;
 use App\Exceptions\RetrievalException;
+use App\Exceptions\RetrievalExecutionException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
 use App\Models\EvidenceThresholdPolicy;
@@ -165,6 +166,7 @@ final readonly class RetrieveWorkspaceEvidence
         ?callable $observe = null,
         ?RetrievalPlan $planOverride = null,
     ): RetrievalResult {
+        $currentStage = 'transport_orchestration';
         try {
             $plan = $planOverride ?? $this->client->plan($authorised->workspace, $question, $evaluatedAt);
             $observe?->__invoke('plan', [
@@ -196,6 +198,7 @@ final readonly class RetrieveWorkspaceEvidence
             $policy = $denseOnly || $corpus->sparse_space_generation_id === null
                 ? null
                 : ($policyOverride ?? $this->policies->handle($corpus));
+            $currentStage = 'transport_orchestration';
             $search = $this->client->search(
                 $authorised->workspace,
                 $corpus,
@@ -234,6 +237,7 @@ final readonly class RetrieveWorkspaceEvidence
                 }
             }
 
+            $currentStage = 'final_eligibility';
             $freshEligible = $this->eligibility->handle($authorised, $plan, $evaluatedAt);
             $hydrated = $this->hydrateAndRecheck(
                 $candidates,
@@ -252,6 +256,7 @@ final readonly class RetrieveWorkspaceEvidence
                 return new RetrievalResult(RetrievalOutcome::EvidenceFound, $hydrated);
             }
 
+            $currentStage = 'reranker';
             $reranked = $this->client->rerank(
                 $authorised->workspace,
                 $plan->query,
@@ -271,6 +276,7 @@ final readonly class RetrieveWorkspaceEvidence
                     $rerankedCandidate['side'].':'.$rerankedCandidate['chunk_id']
                 )
             )->filter()->values()->all();
+            $currentStage = 'final_eligibility';
             $finalEligible = $this->eligibility->handle($authorised, $plan, $evaluatedAt);
             $final = $this->hydrateAndRecheck(
                 $rerankCandidates,
@@ -278,6 +284,7 @@ final readonly class RetrieveWorkspaceEvidence
                 $authorised,
                 $denseOnly,
             );
+            $currentStage = 'threshold';
             $qualified = collect($final)->map(function (array $candidate) use ($rerankedByChunk, $policy): ?array {
                 $rerankedCandidate = $rerankedByChunk->get(
                     $candidate['side'].':'.$candidate['chunk_id']
@@ -319,7 +326,23 @@ final readonly class RetrieveWorkspaceEvidence
 
             return new RetrievalResult(RetrievalOutcome::EvidenceFound, $accepted);
         } catch (RetrievalException $exception) {
-            $observe?->__invoke('failure', ['type' => $exception::class]);
+            $failure = $exception instanceof RetrievalExecutionException
+                ? $exception->observation->toArray()
+                : [
+                    'stage' => $currentStage,
+                    'execution' => 'orchestration',
+                    'provider' => null,
+                    'model' => null,
+                    'category' => 'unknown',
+                    'http_status' => null,
+                    'retry_count' => null,
+                    'request_count' => null,
+                    'latency_ms' => 0.0,
+                    'usage' => [],
+                    'downstream_request_attempted' => false,
+                    'candidate_lineage_produced' => isset($search) && $search->candidates !== [],
+                ];
+            $observe?->__invoke('failure', $failure);
 
             return new RetrievalResult(RetrievalOutcome::RetrievalFailed);
         }

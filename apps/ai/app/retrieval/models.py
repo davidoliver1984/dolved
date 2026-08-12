@@ -9,6 +9,7 @@ from pydantic import Field, StringConstraints, model_validator
 
 from app.embedding.models import EmbeddingProfile
 from app.extraction.models import ImmutableModel
+from app.provider_retry import ProviderRetryDelay
 from app.sparse.models import SparseEmbeddingProfile
 from app.vector_store.models import SparseVectorSpace, VectorSpace
 
@@ -118,6 +119,15 @@ class OperationUsage(ImmutableModel):
     execution: Literal["provider_api", "local", "infrastructure", "not_executed"]
     request_count: int = Field(ge=0)
     retry_count: int = Field(ge=0)
+    provider_attempt_count: int | None = Field(default=None, ge=1)
+    provider_retry_count: int | None = Field(default=None, ge=0)
+    outer_attempt_count: int | None = Field(default=None, ge=1)
+    outer_retry_count: int | None = Field(default=None, ge=0)
+    rate_limit_event_count: int | None = Field(default=None, ge=0)
+    retry_delays: tuple[ProviderRetryDelay, ...] = ()
+    first_provider_attempt_at: datetime | None = None
+    final_provider_success_at: datetime | None = None
+    provider_retry_elapsed_ms: float | None = Field(default=None, ge=0)
     input_tokens: int | None = Field(default=None, ge=0)
     cached_input_tokens: int | None = Field(default=None, ge=0)
     output_tokens: int | None = Field(default=None, ge=0)

@@ -7,6 +7,10 @@ from pydantic import ValidationError
 
 from app.embedding.fake import DeterministicFakeEmbedder
 from app.embedding.models import V1_VOYAGE_PROFILE
+from app.retrieval.failures import (
+    RetrievalExecutionError,
+    RetrievalFailureStage,
+)
 from app.retrieval.models import (
     HybridRetrievalConfiguration,
     RetrievalPlan,
@@ -20,6 +24,7 @@ from app.retrieval.models import (
 from app.retrieval.retriever import DenseRetriever, RetrievalStageSnapshot
 from app.sparse.fake import DeterministicSparseEncoder
 from app.sparse.models import SparseEmbeddingProfile
+from app.vector_store.errors import VectorStoreUnavailableError
 from app.vector_store.models import (
     SparseVectorSpace,
     VectorPublicationStatus,
@@ -67,6 +72,26 @@ class RecordingVectorStore:
                 publication_status=VectorPublicationStatus.PUBLISHED,
             ),
         )
+
+
+@pytest.mark.parametrize("stage", list(RetrievalFailureStage))
+def test_each_retrieval_stage_has_a_bounded_privacy_safe_failure(stage) -> None:
+    failure = DenseRetriever._failure(
+        VectorStoreUnavailableError("unsafe raw provider payload"),
+        stage=stage,
+        execution="infrastructure",
+        provider="qdrant",
+        model="rag-platform-vectors-v1",
+        started=0.0,
+        request_attempted=True,
+    )
+
+    assert isinstance(failure, RetrievalExecutionError)
+    assert failure.observation.stage is stage
+    assert failure.observation.category == "infrastructure_error"
+    assert failure.observation.request_count == 1
+    assert failure.observation.downstream_request_attempted is True
+    assert "unsafe" not in str(failure.observation.model_dump(mode="json"))
 
 
 def test_retrieval_plan_enforces_typed_temporal_shapes() -> None:

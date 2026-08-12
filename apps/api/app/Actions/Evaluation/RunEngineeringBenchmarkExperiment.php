@@ -20,7 +20,7 @@ use RuntimeException;
 
 final readonly class RunEngineeringBenchmarkExperiment
 {
-    public const RUN_ID = 'EXP-0002-adr0022-corrected-planning-baseline';
+    public const RUN_ID = 'EXP-0003-post-reliability-corrected-engineering-baseline';
 
     public function __construct(
         private EngineeringBenchmarkSource $source,
@@ -40,7 +40,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             throw new RuntimeException('The experiment requires the exact 40-character repository commit.');
         }
         if ($repositoryDirty) {
-            throw new RuntimeException('EXP-0002 requires a clean exact-commit worktree.');
+            throw new RuntimeException(self::RUN_ID.' requires a clean exact-commit worktree.');
         }
         $state = $this->states->read();
         if (
@@ -50,7 +50,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             || ($state['benchmark']['digest'] ?? null) !== EngineeringBenchmark::DIGEST
             || ($state['workspace']['slug'] ?? null) !== EngineeringBenchmark::WORKSPACE_SLUG
         ) {
-            throw new RuntimeException('EXP-0002 requires the trusted, fully verified V2 hybrid corpus.');
+            throw new RuntimeException(self::RUN_ID.' requires the trusted, fully verified V2 hybrid corpus.');
         }
         $workspace = Workspace::query()
             ->where('public_id', $state['workspace']['public_id'])
@@ -68,7 +68,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             ->get()
             ->unique(fn (DocumentChunk $chunk): string => $chunk->configuration_fingerprint);
         if ($chunkConfigurations->count() !== 1) {
-            throw new RuntimeException('EXP-0002 requires one consistent chunking configuration.');
+            throw new RuntimeException(self::RUN_ID.' requires one consistent chunking configuration.');
         }
         $chunkConfiguration = $chunkConfigurations->firstOrFail();
         $engineering = $this->source->engineeringCorpus();
@@ -80,7 +80,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             ->sortBy(fn (array $case): string => $case['case_id'])->values();
         $variantCount = $cases->sum(fn (array $case): int => count($case['variants'] ?? []));
         if ($cases->count() !== 42 || $variantCount !== 126) {
-            throw new RuntimeException('EXP-0002 is restricted to exactly 42 engineering cases and 126 variants.');
+            throw new RuntimeException(self::RUN_ID.' is restricted to exactly 42 engineering cases and 126 variants.');
         }
 
         $evaluatedAt = CarbonImmutable::parse($engineering['benchmark']['evaluation_clock']);
@@ -113,7 +113,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             'adapter_version' => (string) config('retrieval.planner.adapter_version'),
         ];
         if ($planner['provider'] === '' || $planner['model'] === '') {
-            throw new RuntimeException('EXP-0002 requires explicit planner provider and model lineage.');
+            throw new RuntimeException(self::RUN_ID.' requires explicit planner provider and model lineage.');
         }
         $plannerFingerprintInput = $planner;
         ksort($plannerFingerprintInput);
@@ -137,6 +137,38 @@ final readonly class RunEngineeringBenchmarkExperiment
             'policy' => $policyData,
             'chunking' => $chunking,
             'planner' => $planner,
+            'reliability' => [
+                'python_retry_owner' => true,
+                'embedding' => [
+                    'maximum_attempts' => (int) config('retrieval.timeout_budget.embedding_attempts'),
+                    'request_timeout_seconds' => (float) config('retrieval.timeout_budget.embedding_request_timeout_seconds'),
+                    'initial_backoff_seconds' => (float) config('retrieval.timeout_budget.embedding_initial_backoff_seconds'),
+                    'maximum_backoff_seconds' => (float) config('retrieval.timeout_budget.embedding_maximum_backoff_seconds'),
+                    'maximum_provider_cooldown_seconds' => (float) config('retrieval.timeout_budget.provider_cooldown_maximum_seconds'),
+                ],
+                'reranker' => [
+                    'maximum_attempts' => (int) config('retrieval.timeout_budget.reranker_attempts_per_side'),
+                    'request_timeout_seconds' => (float) config('retrieval.timeout_budget.reranker_request_timeout_seconds'),
+                    'initial_backoff_seconds' => (float) config('retrieval.timeout_budget.reranker_initial_backoff_seconds'),
+                    'maximum_backoff_seconds' => (float) config('retrieval.timeout_budget.reranker_maximum_backoff_seconds'),
+                    'maximum_provider_cooldown_seconds' => (float) config('retrieval.timeout_budget.reranker_provider_cooldown_maximum_seconds'),
+                ],
+                'shared_voyage_cooldown' => [
+                    'scope' => 'python_process',
+                    'participants' => ['dense_embedding', 'reranker'],
+                    'provider_timing_precedence' => [
+                        'retry_after',
+                        'rate_limit_reset',
+                        'configured_fallback',
+                    ],
+                ],
+                'laravel' => [
+                    'timeout_seconds' => (float) config('retrieval.timeout_seconds'),
+                    'minimum_timeout_seconds' => (float) config('retrieval.minimum_timeout_seconds'),
+                    'outer_maximum_attempts' => (int) config('retrieval.max_attempts'),
+                    'typed_provider_rate_limit_replay' => false,
+                ],
+            ],
             'pricing' => [
                 'embedding_cost_per_million_tokens_usd' => (float) config('retrieval.embedding.estimated_cost_per_million_tokens_usd'),
                 'embedding_pricing_snapshot' => (string) config('retrieval.embedding.pricing_snapshot'),
@@ -154,7 +186,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             )
         )->all();
         if (array_diff(array_keys($observations), $expectedKeys) !== []) {
-            throw new RuntimeException('Durable EXP-0002 progress contains an unexpected variant.');
+            throw new RuntimeException('Durable '.self::RUN_ID.' progress contains an unexpected variant.');
         }
         $resumedCount = count($observations);
         foreach ($cases as $case) {
@@ -196,7 +228,7 @@ final readonly class RunEngineeringBenchmarkExperiment
                 } catch (RetrievalPlannerException $exception) {
                     if ($exception->systemic) {
                         throw new RuntimeException(
-                            'EXP-0002 stopped because the planner reported a systemic failure: '.$exception->category,
+                            self::RUN_ID.' stopped because the planner reported a systemic failure: '.$exception->category,
                             0,
                             $exception,
                         );
@@ -230,7 +262,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             }
         }
         if (count($observations) !== EngineeringBenchmark::EXPECTED_ENGINEERING_VARIANTS) {
-            throw new RuntimeException('EXP-0002 did not durably finalise all engineering variants.');
+            throw new RuntimeException(self::RUN_ID.' did not durably finalise all engineering variants.');
         }
         $payload = [
             'schema_version' => 'v2',
@@ -252,7 +284,7 @@ final readonly class RunEngineeringBenchmarkExperiment
     private function assertLocalEnvironment(): void
     {
         if (! app()->environment(['local', 'testing'])) {
-            throw new RuntimeException('EXP-0002 is restricted to local/testing environments.');
+            throw new RuntimeException(self::RUN_ID.' is restricted to local/testing environments.');
         }
     }
 }

@@ -1,6 +1,7 @@
 import hashlib
 import json
 import math
+from datetime import datetime
 from enum import StrEnum
 from typing import Annotated
 from uuid import UUID
@@ -8,6 +9,7 @@ from uuid import UUID
 from pydantic import Field, StringConstraints, field_validator, model_validator
 
 from app.extraction.models import ImmutableModel
+from app.provider_retry import ProviderRetryDelay
 
 NonEmptyString = Annotated[str, StringConstraints(min_length=1)]
 
@@ -93,6 +95,12 @@ class EmbeddingResult(ImmutableModel):
     embeddings: tuple[EmbeddedVector, ...] = Field(min_length=1)
     provider_input_tokens: int | None = Field(default=None, ge=0)
     provider_retry_count: int = Field(default=0, ge=0)
+    provider_attempt_count: int = Field(default=1, ge=1)
+    rate_limit_event_count: int = Field(default=0, ge=0)
+    retry_delays: tuple[ProviderRetryDelay, ...] = ()
+    first_provider_attempt_at: datetime | None = None
+    final_provider_success_at: datetime | None = None
+    provider_retry_elapsed_seconds: float = Field(default=0, ge=0)
     estimated_cost_usd: float | None = Field(default=None, ge=0)
     pricing_snapshot: NonEmptyString | None = None
 

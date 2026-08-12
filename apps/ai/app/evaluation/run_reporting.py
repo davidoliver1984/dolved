@@ -555,6 +555,7 @@ def _case_markdown(result: dict[str, Any]) -> list[str]:
         metrics = item.get("metrics") or {}
         planning = item.get("planning_status", "SUCCEEDED")
         failure = item.get("planner_failure") or {}
+        retrieval_failure = item.get("retrieval_failure") or {}
         lines.extend(
             [
                 f"### `{item['case_id']}` / `{item['variant_id']}`",
@@ -564,6 +565,13 @@ def _case_markdown(result: dict[str, Any]) -> list[str]:
                 f"- Provider status: `{failure.get('provider_status', 'not recorded')}`",
                 f"- Planner attempts: `{failure.get('attempt_count', 'not recorded')}`",
                 f"- Retrieval executed: `{item.get('retrieval_executed', True)}`",
+                f"- Retrieval failure stage/category: `{retrieval_failure.get('stage', 'none')}` / `{retrieval_failure.get('category', 'none')}`",
+                f"- Retrieval failure service/model: `{retrieval_failure.get('provider', 'not recorded')}` / `{retrieval_failure.get('model', 'not recorded')}`",
+                f"- Retrieval failure HTTP/retries/requests: `{retrieval_failure.get('http_status', 'not recorded')}` / `{retrieval_failure.get('retry_count', 'not recorded')}` / `{retrieval_failure.get('request_count', 'not recorded')}`",
+                f"- Provider retries / outer-service retries: `{retrieval_failure.get('provider_retry_count', 'not recorded')}` / `{retrieval_failure.get('outer_retry_count', 'not recorded')}`",
+                f"- Failure window / retry wait: `{retrieval_failure.get('first_failure_at', 'not recorded')}` to `{retrieval_failure.get('final_failure_at', 'not recorded')}` / `{retrieval_failure.get('retry_delay_ms', 'not recorded')}` ms",
+                f"- Provider cooldown: `{retrieval_failure.get('provider_retry_after_seconds', 'not recorded')}` seconds via `{retrieval_failure.get('provider_timing_source', 'not recorded')}`",
+                f"- Candidate lineage produced before failure: `{retrieval_failure.get('candidate_lineage_produced', 'not applicable')}`",
                 f"- Contributes retrieval metrics: `{item.get('contributes_retrieval_metrics', True)}`",
                 f"- Planner correct: `{item['planner_correct']}`",
                 f"- Eligibility correct: `{item['eligibility_correct']}`",
@@ -902,6 +910,7 @@ def _case_table_html(result: dict[str, Any]) -> str:
         metrics = item.get("metrics") or {}
         planning = item.get("planning_status", "SUCCEEDED")
         planner_failure = item.get("planner_failure") or {}
+        retrieval_failure = item.get("retrieval_failure") or {}
         rows.append(
             f"<tr><td>{html.escape(item['case_id'])}</td><td>{html.escape(item['variant_id'])}</td>"
             f"<td>{html.escape(planning)}</td><td>{str(item.get('retrieval_executed', True)).lower()}</td>"
@@ -934,6 +943,7 @@ def _case_table_html(result: dict[str, Any]) -> str:
             f"<summary><strong>{html.escape(item['case_id'])}</strong> / {html.escape(item['variant_id'])} — {html.escape(item.get('expected_outcome') or 'outcome not recorded')}</summary>"
             f"<p><strong>Question:</strong> {html.escape(item.get('question') or 'not retained')} <span class=muted>({html.escape(item.get('text_capture_mode', 'DISABLED'))})</span></p>"
             f"<p><strong>Planning:</strong> {html.escape(planning)}; <strong>failure:</strong> {html.escape(str(planner_failure.get('category', 'none')))}; <strong>provider status:</strong> {html.escape(str(planner_failure.get('provider_status', 'not recorded')))}; <strong>attempts:</strong> {html.escape(str(planner_failure.get('attempt_count', 'not recorded')))}; <strong>retrieval executed:</strong> {str(item.get('retrieval_executed', True)).lower()}; <strong>contributes retrieval metrics:</strong> {str(item.get('contributes_retrieval_metrics', True)).lower()}.</p>"
+            f"<p><strong>Retrieval failure:</strong> stage={html.escape(str(retrieval_failure.get('stage', 'none')))}, category={html.escape(str(retrieval_failure.get('category', 'none')))}, service={html.escape(str(retrieval_failure.get('provider', 'not recorded')))}, model={html.escape(str(retrieval_failure.get('model', 'not recorded')))}, HTTP={html.escape(str(retrieval_failure.get('http_status', 'not recorded')))}, provider retries={html.escape(str(retrieval_failure.get('provider_retry_count', 'not recorded')))}, outer retries={html.escape(str(retrieval_failure.get('outer_retry_count', 'not recorded')))}, provider requests={html.escape(str(retrieval_failure.get('request_count', 'not recorded')))}, retry wait ms={html.escape(str(retrieval_failure.get('retry_delay_ms', 'not recorded')))}, provider cooldown={html.escape(str(retrieval_failure.get('provider_retry_after_seconds', 'not recorded')))} via {html.escape(str(retrieval_failure.get('provider_timing_source', 'not recorded')))}, failure window={html.escape(str(retrieval_failure.get('first_failure_at', 'not recorded')))} to {html.escape(str(retrieval_failure.get('final_failure_at', 'not recorded')))}, candidate lineage before failure={html.escape(str(retrieval_failure.get('candidate_lineage_produced', 'not applicable')))}.</p>"
             f"{_planner_evaluation_html(item)}"
             f"<h4>Expected evidence</h4>{expected_html}{side_sections}</details>"
         )

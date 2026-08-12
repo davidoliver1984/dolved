@@ -33,6 +33,7 @@ def create_embedder(settings: Settings) -> Embedder:
         max_attempts=settings.embedding_max_attempts,
         initial_backoff_seconds=settings.embedding_initial_backoff_seconds,
         max_backoff_seconds=settings.embedding_max_backoff_seconds,
+        max_provider_cooldown_seconds=settings.embedding_max_provider_cooldown_seconds,
         estimated_cost_per_million_tokens_usd=(
             settings.embedding_estimated_cost_per_million_tokens_usd
         ),

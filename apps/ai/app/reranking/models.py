@@ -1,10 +1,12 @@
 import math
+from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
 from pydantic import Field, StringConstraints, field_validator, model_validator
 
 from app.extraction.models import ImmutableModel
+from app.provider_retry import ProviderRetryDelay
 from app.retrieval.models import RetrievalSide
 
 NonEmptyString = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
@@ -74,7 +76,13 @@ class RerankResult(ImmutableModel):
     profile: RerankerProfile
     candidates: tuple[RerankedCandidate, ...] = Field(min_length=1)
     provider_input_tokens: int | None = Field(default=None, ge=0)
+    provider_attempt_count: int = Field(default=1, ge=1)
     provider_retry_count: int = Field(default=0, ge=0)
+    rate_limit_event_count: int = Field(default=0, ge=0)
+    retry_delays: tuple[ProviderRetryDelay, ...] = ()
+    first_provider_attempt_at: datetime | None = None
+    final_provider_success_at: datetime | None = None
+    provider_retry_elapsed_seconds: float = Field(default=0, ge=0)
 
     @model_validator(mode="after")
     def validate_result(self) -> RerankResult:

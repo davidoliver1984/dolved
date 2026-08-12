@@ -79,6 +79,7 @@ class RetrievalEvaluationHarness:
                     contributes_retrieval_metrics=observation.contributes_retrieval_metrics,
                     planner_failure=observation.planner_failure,
                     planner_evaluation=observation.planner_evaluation,
+                    retrieval_failure=observation.retrieval_failure,
                 )
             )
 

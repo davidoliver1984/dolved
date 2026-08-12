@@ -26,6 +26,7 @@ def create_reranker(settings: Settings) -> Reranker:
         max_attempts=settings.reranker_max_attempts,
         initial_backoff_seconds=settings.reranker_initial_backoff_seconds,
         max_backoff_seconds=settings.reranker_max_backoff_seconds,
+        max_provider_cooldown_seconds=(settings.reranker_max_provider_cooldown_seconds),
     )
 
 

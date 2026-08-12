@@ -28,7 +28,7 @@ final class EngineeringBenchmarkSourceTest extends TestCase
         $this->assertArrayNotHasKey('held_out_acceptance', $snapshot['split']);
     }
 
-    public function test_exp_0002_runner_loads_only_the_engineering_snapshot(): void
+    public function test_engineering_experiment_runner_loads_only_the_engineering_snapshot(): void
     {
         $runner = file_get_contents(app_path('Actions/Evaluation/RunEngineeringBenchmarkExperiment.php'));
 
@@ -36,5 +36,16 @@ final class EngineeringBenchmarkSourceTest extends TestCase
         $this->assertStringContainsString('$this->source->engineeringCorpus()', $runner);
         $this->assertStringNotContainsString('$this->source->compiledCorpus()', $runner);
         $this->assertStringNotContainsString('$this->source->load()', $runner);
+    }
+
+    public function test_exp_0003_runner_freezes_reliability_lineage(): void
+    {
+        $runner = file_get_contents(app_path('Actions/Evaluation/RunEngineeringBenchmarkExperiment.php'));
+
+        $this->assertIsString($runner);
+        $this->assertStringContainsString('EXP-0003-post-reliability-corrected-engineering-baseline', $runner);
+        $this->assertStringContainsString("'reliability' => [", $runner);
+        $this->assertStringContainsString("'python_retry_owner' => true", $runner);
+        $this->assertStringContainsString("'typed_provider_rate_limit_replay' => false", $runner);
     }
 }

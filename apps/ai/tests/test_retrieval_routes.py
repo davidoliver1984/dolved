@@ -8,7 +8,15 @@ from uuid import uuid4
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.provider_retry import ProviderRetryDelay
+from app.reranking.errors import RerankerRateLimitError
 from app.reranking.fake import DeterministicReranker
+from app.retrieval.failures import (
+    RetrievalExecutionError,
+    RetrievalFailureCategory,
+    RetrievalFailureObservation,
+    RetrievalFailureStage,
+)
 from app.retrieval.models import (
     RetrievalPlan,
     SearchLineage,
@@ -34,6 +42,42 @@ class EmptyRetriever:
                 embedding_profile_fingerprint=request.embedding_profile_fingerprint
             ),
         )
+
+
+class FailedRetriever:
+    def search(self, request):
+        raise RetrievalExecutionError(
+            RetrievalFailureObservation(
+                stage=RetrievalFailureStage.QDRANT_DENSE_SEARCH,
+                execution="infrastructure",
+                provider="qdrant",
+                model="rag-platform-vectors-v1",
+                category=RetrievalFailureCategory.INFRASTRUCTURE_ERROR,
+                http_status=503,
+                retry_count=1,
+                request_count=2,
+                latency_ms=123.5,
+                downstream_request_attempted=True,
+                candidate_lineage_produced=False,
+            )
+        )
+
+
+class FailedReranker:
+    def rerank(self, request):
+        error = RerankerRateLimitError(provider_status=429)
+        error.attempts = 3
+        error.provider_retry_count = 2
+        error.rate_limit_event_count = 3
+        error.retry_delays = (
+            ProviderRetryDelay(delay_seconds=15, source="configured_fallback"),
+            ProviderRetryDelay(delay_seconds=30, source="configured_fallback"),
+        )
+        error.first_failure_at = "2026-08-12T12:00:00+00:00"
+        error.first_provider_attempt_at = "2026-08-12T11:59:59+00:00"
+        error.final_failure_at = "2026-08-12T12:00:45+00:00"
+        error.total_retry_delay_seconds = 45
+        raise error
 
 
 def signed_headers(
@@ -160,6 +204,65 @@ def test_search_endpoint_is_purpose_isolated_and_returns_typed_empty_result() ->
     assert valid.json()["candidates"] == []
 
 
+def test_search_endpoint_returns_typed_failure_without_raw_exception_content() -> None:
+    workspace_id = str(uuid4())
+    request_id = str(uuid4())
+    path = "/api/internal/retrieval/search"
+    profile = {
+        "provider": "test",
+        "model": "deterministic",
+        "dimensions": 3,
+        "output_dtype": "float",
+        "document_input_type": "document",
+        "query_input_type": "query",
+        "normalisation": "unit_length",
+        "truncation": False,
+        "model_revision": None,
+        "adapter_version": "1",
+    }
+    from app.embedding.models import EmbeddingProfile
+
+    fingerprint = EmbeddingProfile.model_validate(profile).fingerprint()
+    payload = {
+        "contract_version": 1,
+        "request_id": request_id,
+        "workspace_id": workspace_id,
+        "query": "Policy",
+        "embedding_profile": profile,
+        "embedding_profile_fingerprint": fingerprint,
+        "vector_space": {
+            "collection_name": "test",
+            "embedding_space_generation_id": str(uuid4()),
+            "profile_fingerprint": fingerprint,
+            "vector_name": "dense",
+            "dimensions": 3,
+            "distance": "cosine",
+        },
+        "workspace_corpus_generation_id": str(uuid4()),
+        "candidate_k": 5,
+        "scopes": [{"side": "primary", "eligible_document_ids": [str(uuid4())]}],
+    }
+    body = json.dumps(payload, separators=(",", ":")).encode()
+    app.dependency_overrides[retriever_dependency] = FailedRetriever
+    try:
+        response = TestClient(app).post(
+            path,
+            content=body,
+            headers=signed_headers(
+                path, body, workspace_id, request_id, "retrieval.search"
+            ),
+        )
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 503
+    failure = response.json()["detail"]["failure"]
+    assert failure["stage"] == "qdrant_dense_search"
+    assert failure["category"] == "infrastructure_error"
+    assert failure["request_count"] == 2
+    assert "raw" not in response.text.lower()
+
+
 def test_rerank_endpoint_has_its_own_purpose_and_returns_provider_lineage() -> None:
     workspace_id = str(uuid4())
     request_id = str(uuid4())
@@ -222,3 +325,60 @@ def test_rerank_endpoint_has_its_own_purpose_and_returns_provider_lineage() -> N
     assert valid.json()["profile"]["provider"] == "deterministic-fake"
     assert valid.json()["candidates"][0]["side"] == "primary"
     assert valid.json()["candidates"][0]["rank"] == 1
+
+
+def test_rerank_endpoint_preserves_terminal_provider_retry_history() -> None:
+    workspace_id = str(uuid4())
+    request_id = str(uuid4())
+    path = "/api/internal/retrieval/rerank"
+    payload = {
+        "contract_version": 1,
+        "request_id": request_id,
+        "workspace_id": workspace_id,
+        "query": "Which policy applies?",
+        "profile": {
+            "provider": "voyage",
+            "model": "rerank-2.5",
+            "adapter_version": "1",
+            "truncation": False,
+        },
+        "candidates": [
+            {
+                "chunk_id": str(uuid4()),
+                "document_id": str(uuid4()),
+                "document_family_id": str(uuid4()),
+                "version_position": 1,
+                "side": "primary",
+                "text": "Canonical text supplied by Laravel.",
+                "fused_score": 0.5,
+                "fused_rank": 1,
+            }
+        ],
+        "top_k": 1,
+    }
+    body = json.dumps(payload, separators=(",", ":")).encode()
+    app.dependency_overrides[reranker_dependency] = FailedReranker
+    try:
+        response = TestClient(app).post(
+            path,
+            content=body,
+            headers=signed_headers(
+                path, body, workspace_id, request_id, "retrieval.rerank"
+            ),
+        )
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 503
+    failure = response.json()["detail"]["failure"]
+    assert failure["stage"] == "reranker"
+    assert failure["category"] == "rate_limited"
+    assert failure["request_count"] == 3
+    assert failure["provider_retry_count"] == 2
+    assert failure["rate_limit_event_count"] == 3
+    assert failure["retry_delays"] == [
+        {"delay_seconds": 15.0, "source": "configured_fallback"},
+        {"delay_seconds": 30.0, "source": "configured_fallback"},
+    ]
+    assert failure["retry_delay_ms"] == 45000
+    assert "Canonical text" not in response.text

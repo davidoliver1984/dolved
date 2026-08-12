@@ -4,9 +4,22 @@ class EmbeddingError(Exception):
     code = "embedding_error"
     retryable = False
 
-    def __init__(self, message: str, *, attempts: int = 1) -> None:
+    def __init__(
+        self,
+        message: str,
+        *,
+        attempts: int = 1,
+        provider_status: int | None = None,
+        first_failure_at: str | None = None,
+        final_failure_at: str | None = None,
+        total_retry_delay_seconds: float = 0.0,
+    ) -> None:
         super().__init__(message)
         self.attempts = attempts
+        self.provider_status = provider_status
+        self.first_failure_at = first_failure_at
+        self.final_failure_at = final_failure_at
+        self.total_retry_delay_seconds = total_retry_delay_seconds
 
 
 class InvalidEmbeddingInputError(EmbeddingError):
@@ -29,9 +42,19 @@ class EmbeddingRateLimitError(EmbeddingError):
     code = "rate_limited"
     retryable = True
 
-    def __init__(self, retry_after_seconds: float | None = None) -> None:
-        super().__init__("The embedding provider rate limit was exceeded.")
+    def __init__(
+        self,
+        retry_after_seconds: float | None = None,
+        *,
+        provider_timing_source: str | None = None,
+        provider_status: int | None = None,
+    ) -> None:
+        super().__init__(
+            "The embedding provider rate limit was exceeded.",
+            provider_status=provider_status,
+        )
         self.retry_after_seconds = retry_after_seconds
+        self.provider_timing_source = provider_timing_source
 
 
 class EmbeddingTimeoutError(EmbeddingError):

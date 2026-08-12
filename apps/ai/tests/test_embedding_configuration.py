@@ -53,3 +53,11 @@ def test_embedding_settings_reject_invalid_operational_limits(
 ) -> None:
     with pytest.raises(ValidationError):
         Settings.model_validate({field: value})
+
+
+def test_settings_reject_retry_backoff_outside_the_finite_timeout_envelope() -> None:
+    with pytest.raises(ValidationError, match="reranker backoff"):
+        Settings(
+            reranker_max_backoff_seconds=91,
+            reranker_max_provider_cooldown_seconds=90,
+        )

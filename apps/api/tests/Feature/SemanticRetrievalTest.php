@@ -11,6 +11,8 @@ use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
 use App\Enums\RetrievalTemporalReferenceKind;
 use App\Enums\WorkspaceRole;
+use App\Exceptions\RetrievalException;
+use App\Exceptions\RetrievalExecutionException;
 use App\Exceptions\RetrievalPlannerException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
@@ -30,6 +32,7 @@ use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Services\Retrieval\RetrievalClient;
 use App\Support\Retrieval\ClassifierLineage;
+use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\PlannerUsage;
 use App\Support\Retrieval\RetrievalPlan;
 use Carbon\CarbonImmutable;
@@ -37,6 +40,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Tests\TestCase;
 
@@ -510,6 +514,297 @@ class SemanticRetrievalTest extends TestCase
         Http::assertSentCount(1);
     }
 
+    public function test_laravel_does_not_replay_an_exhausted_provider_rate_limit_failure(): void
+    {
+        [$workspace, , $generation] = $this->retrievalWorkspace();
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        Http::fake(Http::response(['detail' => ['failure' => [
+            'stage' => 'dense_embedding',
+            'execution' => 'provider_api',
+            'provider' => 'voyage',
+            'model' => 'voyage-3.5',
+            'category' => 'rate_limited',
+            'http_status' => 429,
+            'retry_count' => 3,
+            'provider_retry_count' => 3,
+            'outer_retry_count' => 0,
+            'request_count' => 4,
+            'first_failure_at' => '2026-08-12T12:00:00+00:00',
+            'final_failure_at' => '2026-08-12T12:01:45+00:00',
+            'retry_delay_ms' => 105000,
+            'provider_retry_after_seconds' => null,
+            'provider_timing_source' => null,
+            'latency_ms' => 105250,
+            'usage' => [],
+            'downstream_request_attempted' => true,
+            'candidate_lineage_produced' => false,
+        ]]], 503));
+
+        try {
+            app(RetrievalClient::class)->search(
+                $workspace,
+                $generation,
+                new EligibleRetrievalScope(
+                    RetrievalOutcome::EvidenceFound,
+                    ['primary' => [$document->public_id]],
+                ),
+                'What is the current policy?',
+                40,
+                denseOnly: true,
+            );
+            $this->fail('Expected a typed retrieval failure.');
+        } catch (RetrievalExecutionException $exception) {
+            $this->assertSame(4, $exception->observation->requestCount);
+            $this->assertSame(3, $exception->observation->providerRetryCount);
+            $this->assertSame(0, $exception->observation->outerRetryCount);
+            $this->assertSame(105000.0, $exception->observation->retryDelayMs);
+        }
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_laravel_does_not_replay_an_exhausted_reranker_rate_limit_failure(): void
+    {
+        [$workspace, , , $policy] = $this->hybridRetrievalWorkspace();
+        Http::fake(Http::response(['detail' => ['failure' => [
+            'stage' => 'reranker',
+            'execution' => 'provider_api',
+            'provider' => 'voyage',
+            'model' => 'rerank-2.5',
+            'category' => 'rate_limited',
+            'http_status' => 429,
+            'retry_count' => 2,
+            'provider_retry_count' => 2,
+            'outer_retry_count' => null,
+            'rate_limit_event_count' => 3,
+            'retry_delays' => [
+                ['delay_seconds' => 15.0, 'source' => 'configured_fallback'],
+                ['delay_seconds' => 30.0, 'source' => 'configured_fallback'],
+            ],
+            'request_count' => 3,
+            'first_failure_at' => '2026-08-12T12:00:00+00:00',
+            'final_failure_at' => '2026-08-12T12:00:45+00:00',
+            'retry_delay_ms' => 45000,
+            'provider_retry_after_seconds' => null,
+            'provider_timing_source' => null,
+            'latency_ms' => 45250,
+            'usage' => [],
+            'downstream_request_attempted' => true,
+            'candidate_lineage_produced' => true,
+        ]]], 503));
+
+        try {
+            app(RetrievalClient::class)->rerank($workspace, 'Current policy?', [[
+                'chunk_id' => (string) Str::uuid(),
+                'document_id' => (string) Str::uuid(),
+                'document_family_id' => (string) Str::uuid(),
+                'version_position' => 1,
+                'side' => 'primary',
+                'chunk_text' => 'Canonical candidate text.',
+                'score' => 0.04,
+                'rank' => 1,
+            ]], $policy);
+            $this->fail('Expected a typed reranker failure.');
+        } catch (RetrievalExecutionException $exception) {
+            $this->assertSame('reranker', $exception->observation->stage);
+            $this->assertSame(2, $exception->observation->providerRetryCount);
+            $this->assertSame(0, $exception->observation->outerRetryCount);
+            $this->assertSame(3, $exception->observation->rateLimitEventCount);
+            $this->assertCount(2, $exception->observation->retryDelays);
+        }
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_laravel_preserves_provider_and_outer_attempt_history_when_infrastructure_retry_exhausts(): void
+    {
+        [$workspace, , $generation] = $this->retrievalWorkspace();
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        $attempt = 0;
+        Http::fake(function () use (&$attempt) {
+            $attempt++;
+
+            return Http::response(['detail' => ['failure' => [
+                'stage' => 'qdrant_dense_search',
+                'execution' => 'infrastructure',
+                'provider' => 'qdrant',
+                'model' => 'rag-platform-vectors-v1',
+                'category' => 'infrastructure_error',
+                'http_status' => 503,
+                'retry_count' => 1,
+                'provider_retry_count' => 1,
+                'outer_retry_count' => 0,
+                'request_count' => 2,
+                'first_failure_at' => "2026-08-12T12:00:0{$attempt}+00:00",
+                'final_failure_at' => "2026-08-12T12:00:0{$attempt}+00:00",
+                'retry_delay_ms' => 1000,
+                'provider_retry_after_seconds' => null,
+                'provider_timing_source' => null,
+                'latency_ms' => 125,
+                'usage' => [],
+                'downstream_request_attempted' => true,
+                'candidate_lineage_produced' => false,
+            ]]], 503);
+        });
+
+        try {
+            app(RetrievalClient::class)->search(
+                $workspace,
+                $generation,
+                new EligibleRetrievalScope(
+                    RetrievalOutcome::EvidenceFound,
+                    ['primary' => [$document->public_id]],
+                ),
+                'What is the current policy?',
+                40,
+                denseOnly: true,
+            );
+            $this->fail('Expected a typed retrieval failure.');
+        } catch (RetrievalExecutionException $exception) {
+            $this->assertSame(4, $exception->observation->requestCount);
+            $this->assertSame(2, $exception->observation->providerRetryCount);
+            $this->assertSame(1, $exception->observation->outerRetryCount);
+            $this->assertSame(3, $exception->observation->retryCount);
+            $this->assertSame(2000.0, $exception->observation->retryDelayMs);
+            $this->assertSame('2026-08-12T12:00:01+00:00', $exception->observation->firstFailureAt);
+            $this->assertSame('2026-08-12T12:00:02+00:00', $exception->observation->finalFailureAt);
+        }
+
+        Http::assertSentCount(2);
+    }
+
+    public function test_laravel_preserves_outer_history_when_infrastructure_retry_recovers(): void
+    {
+        [$workspace, , $generation] = $this->retrievalWorkspace();
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        $attempt = 0;
+        Http::fake(function (Request $request) use (&$attempt) {
+            $attempt++;
+            if ($attempt === 1) {
+                return Http::response(['detail' => ['failure' => [
+                    'stage' => 'qdrant_dense_search',
+                    'execution' => 'infrastructure',
+                    'provider' => 'qdrant',
+                    'model' => 'rag-platform-vectors-v1',
+                    'category' => 'infrastructure_error',
+                    'http_status' => 503,
+                    'retry_count' => 0,
+                    'provider_retry_count' => 0,
+                    'outer_retry_count' => 0,
+                    'request_count' => 1,
+                    'first_failure_at' => '2026-08-12T12:00:00+00:00',
+                    'final_failure_at' => '2026-08-12T12:00:00+00:00',
+                    'retry_delay_ms' => 0,
+                    'provider_retry_after_seconds' => null,
+                    'provider_timing_source' => null,
+                    'latency_ms' => 100,
+                    'usage' => [['stage' => 'qdrant_dense_search', 'request_count' => 1]],
+                    'downstream_request_attempted' => true,
+                    'candidate_lineage_produced' => false,
+                ]]], 503);
+            }
+
+            return Http::response([
+                'request_id' => $request->data()['request_id'],
+                'candidates' => [],
+                'lineage' => [],
+                'diagnostics' => [],
+                'usage' => [[
+                    'stage' => 'dense_embedding',
+                    'request_count' => 1,
+                    'provider_attempt_count' => 1,
+                    'provider_retry_count' => 0,
+                    'outer_attempt_count' => null,
+                    'outer_retry_count' => null,
+                ]],
+            ]);
+        });
+
+        $result = app(RetrievalClient::class)->search(
+            $workspace,
+            $generation,
+            new EligibleRetrievalScope(
+                RetrievalOutcome::EvidenceFound,
+                ['primary' => [$document->public_id]],
+            ),
+            'What is the current policy?',
+            40,
+            denseOnly: true,
+        );
+
+        $this->assertCount(2, $result->usage);
+        $this->assertSame(2, $result->usage[1]['outer_attempt_count']);
+        $this->assertSame(1, $result->usage[1]['outer_retry_count']);
+        Http::assertSentCount(2);
+    }
+
+    public function test_healthy_retrieval_records_one_outer_attempt_without_retry(): void
+    {
+        [$workspace, , $generation] = $this->retrievalWorkspace();
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        Http::fake(function (Request $request) {
+            return Http::response([
+                'request_id' => $request->data()['request_id'],
+                'candidates' => [],
+                'lineage' => [],
+                'diagnostics' => [],
+                'usage' => [[
+                    'stage' => 'dense_embedding',
+                    'request_count' => 1,
+                    'provider_attempt_count' => 1,
+                    'provider_retry_count' => 0,
+                ]],
+            ]);
+        });
+
+        $result = app(RetrievalClient::class)->search(
+            $workspace,
+            $generation,
+            new EligibleRetrievalScope(
+                RetrievalOutcome::EvidenceFound,
+                ['primary' => [$document->public_id]],
+            ),
+            'What is the current policy?',
+            40,
+            denseOnly: true,
+        );
+
+        $this->assertSame(1, $result->usage[0]['provider_attempt_count']);
+        $this->assertSame(0, $result->usage[0]['provider_retry_count']);
+        $this->assertSame(1, $result->usage[0]['outer_attempt_count']);
+        $this->assertSame(0, $result->usage[0]['outer_retry_count']);
+        Http::assertSentCount(1);
+    }
+
+    public function test_retrieval_timeout_must_contain_the_derived_inner_budget(): void
+    {
+        $workspace = Workspace::factory()->create();
+        config([
+            'retrieval.minimum_timeout_seconds' => 480,
+            'retrieval.timeout_seconds' => 479.999,
+        ]);
+
+        $this->expectException(RetrievalException::class);
+        $this->expectExceptionMessage('cannot contain the bounded inner retry budget');
+
+        app(RetrievalClient::class)->plan(
+            $workspace,
+            'Current?',
+            CarbonImmutable::parse('2026-08-07T12:00:00Z'),
+        );
+    }
+
+    public function test_default_timeout_contains_search_and_two_sided_reranker_budgets(): void
+    {
+        $this->assertSame(480.0, (float) config('retrieval.timeout_seconds'));
+        $this->assertSame(480.0, (float) config('retrieval.timeout_budget.search_minimum_timeout_seconds'));
+        $this->assertSame(460.0, (float) config('retrieval.timeout_budget.reranker_minimum_timeout_seconds'));
+        $this->assertGreaterThanOrEqual(
+            config('retrieval.timeout_budget.reranker_minimum_timeout_seconds'),
+            config('retrieval.timeout_seconds'),
+        );
+    }
+
     public function test_incomplete_comparison_and_empty_eligible_scope_are_controlled_outcomes(): void
     {
         [$workspace, $user, $generation] = $this->retrievalWorkspace();
@@ -578,6 +873,57 @@ class SemanticRetrievalTest extends TestCase
             "/api/workspaces/{$workspace->public_id}/retrieval",
             ['question' => 'Unavailable?'],
         )->assertJsonPath('data.outcome', 'retrieval_failed');
+    }
+
+    public function test_local_evaluation_preserves_typed_retrieval_failure_without_fabricating_zero_candidates(): void
+    {
+        [$workspace, $user, $generation, $policy] = $this->hybridRetrievalWorkspace();
+        $policy->update(['status' => EvidenceThresholdPolicyStatus::Calibrating, 'activated_at' => null]);
+        $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        Http::fake(function (Request $request) {
+            $body = $request->data();
+            if (str_ends_with($request->url(), '/plan')) {
+                return Http::response($this->planResponse($body));
+            }
+
+            return Http::response(['detail' => ['failure' => [
+                'stage' => 'qdrant_dense_search',
+                'execution' => 'infrastructure',
+                'provider' => 'qdrant',
+                'model' => 'rag-platform-vectors-v1',
+                'category' => 'infrastructure_error',
+                'http_status' => 503,
+                'retry_count' => 1,
+                'request_count' => 2,
+                'latency_ms' => 125.5,
+                'usage' => [[
+                    'stage' => 'dense_embedding', 'provider' => 'voyage',
+                    'model' => 'voyage-3.5', 'execution' => 'provider_api',
+                    'request_count' => 1, 'retry_count' => 0,
+                    'input_tokens' => 8, 'latency_ms' => 20,
+                    'cost_basis' => 'unavailable', 'cost_usd' => null,
+                    'pricing_snapshot' => null,
+                ]],
+                'downstream_request_attempted' => true,
+                'candidate_lineage_produced' => false,
+            ]]], 503);
+        });
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+
+        $pair = app(RetrieveWorkspaceEvidence::class)->handlePairForLocalEvaluation(
+            $scope,
+            'What is the current policy?',
+            40,
+            CarbonImmutable::parse('2026-08-01T12:00:00Z'),
+            $policy->fresh(),
+        );
+
+        $this->assertSame(RetrievalOutcome::RetrievalFailed, $pair['hybrid']['result']->outcome);
+        $this->assertSame('qdrant_dense_search', $pair['hybrid']['trace']['failure']['stage']);
+        $this->assertSame('infrastructure_error', $pair['hybrid']['trace']['failure']['category']);
+        $this->assertFalse($pair['hybrid']['trace']['failure']['candidate_lineage_produced']);
+        $this->assertArrayNotHasKey('search', $pair['hybrid']['trace']);
+        $this->assertSame(8, $pair['hybrid']['trace']['failure']['usage'][0]['input_tokens']);
     }
 
     public function test_hybrid_path_reranks_rechecks_and_applies_laravel_threshold(): void
@@ -809,7 +1155,13 @@ class SemanticRetrievalTest extends TestCase
                     'rank' => 1,
                 ]],
                 'provider_input_tokens' => 17,
+                'provider_attempt_count' => 1,
                 'provider_retry_count' => 0,
+                'rate_limit_event_count' => 0,
+                'retry_delays' => [],
+                'first_provider_attempt_at' => '2026-08-12T12:00:00Z',
+                'final_provider_success_at' => '2026-08-12T12:00:01Z',
+                'provider_retry_elapsed_seconds' => 0,
             ]);
         });
     }

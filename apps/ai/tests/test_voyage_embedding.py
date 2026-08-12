@@ -1,6 +1,7 @@
 import json
 import logging
 from collections.abc import Callable
+from datetime import UTC, datetime
 from typing import Any
 from uuid import uuid4
 
@@ -8,6 +9,7 @@ import httpx
 import pytest
 from pydantic import SecretStr
 
+from app.embedding.cooldown import ProviderCooldown
 from app.embedding.errors import (
     EmbeddingAuthenticationError,
     EmbeddingDimensionMismatchError,
@@ -66,6 +68,7 @@ def adapter(
         client=httpx.Client(transport=httpx.MockTransport(handler)),
         sleep=kwargs.pop("sleep", lambda _: None),
         jitter=kwargs.pop("jitter", lambda: 0.0),
+        cooldown=kwargs.pop("cooldown", ProviderCooldown()),
         **kwargs,
     )
 
@@ -95,6 +98,10 @@ def test_adapter_sends_only_provider_fields_and_maps_by_response_order() -> None
     )
     assert result.provider_input_tokens == 17
     assert result.provider_retry_count == 0
+    assert result.provider_attempt_count == 1
+    assert result.rate_limit_event_count == 0
+    assert result.retry_delays == ()
+    assert result.provider_retry_elapsed_seconds == 0
     assert result.estimated_cost_usd == 0.00000204
     assert result.pricing_snapshot == "voyage-pricing-2026-08-12"
 
@@ -168,10 +175,24 @@ def test_transient_provider_failures_use_bounded_retries(status: int) -> None:
             return httpx.Response(status, headers={"Retry-After": "0.1"})
         return httpx.Response(200, json=success_payload())
 
-    adapter(handler, max_attempts=3, sleep=delays.append).embed(embedding_request())
+    result = adapter(handler, max_attempts=3, sleep=delays.append).embed(
+        embedding_request()
+    )
 
     assert calls == 3
     assert len(delays) == 2
+    assert result.provider_attempt_count == 3
+    assert result.provider_retry_count == 2
+    assert result.rate_limit_event_count == (2 if status == 429 else 0)
+    assert tuple(item.delay_seconds for item in result.retry_delays) == tuple(delays)
+    assert tuple(item.source for item in result.retry_delays) == (
+        ("retry_after_numeric", "retry_after_numeric")
+        if status == 429
+        else ("configured_fallback", "configured_fallback")
+    )
+    assert result.first_provider_attempt_at is not None
+    assert result.final_provider_success_at is not None
+    assert result.provider_retry_elapsed_seconds == sum(delays)
 
 
 def test_rate_limit_honours_retry_after_without_capping_and_records_safe_headers() -> (
@@ -198,6 +219,7 @@ def test_rate_limit_honours_retry_after_without_capping_and_records_safe_headers
     adapter(
         handler,
         max_attempts=2,
+        initial_backoff_seconds=2,
         max_backoff_seconds=2,
         sleep=delays.append,
     ).embed(embedding_request())
@@ -205,7 +227,7 @@ def test_rate_limit_honours_retry_after_without_capping_and_records_safe_headers
     assert delays == [65.0]
 
 
-def test_rate_limit_error_exposes_only_allowlisted_provider_headers() -> None:
+def test_rate_limit_error_exposes_only_normalised_provider_timing() -> None:
     with pytest.raises(EmbeddingRateLimitError) as captured:
         adapter(
             lambda _: httpx.Response(
@@ -220,10 +242,119 @@ def test_rate_limit_error_exposes_only_allowlisted_provider_headers() -> None:
         ).embed(embedding_request())
 
     assert captured.value.retry_after_seconds == 120.0
-    assert captured.value.provider_headers == {
-        "retry-after": "120",
-        "x-ratelimit-remaining-tokens": "0",
-    }
+    assert captured.value.provider_timing_source == "retry_after_numeric"
+    assert "must-not-be-retained" not in vars(captured.value).values()
+
+
+def test_rate_limit_honours_http_date_retry_after() -> None:
+    delays: list[float] = []
+    calls = 0
+
+    def handler(_: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return httpx.Response(
+                429, headers={"Retry-After": "Wed, 12 Aug 2026 12:01:05 GMT"}
+            )
+        return httpx.Response(200, json=success_payload())
+
+    adapter(
+        handler,
+        max_attempts=2,
+        sleep=delays.append,
+        now=lambda: datetime(2026, 8, 12, 12, 0, 0, tzinfo=UTC),
+    ).embed(embedding_request())
+
+    assert delays == [65.0]
+
+
+def test_rate_limit_uses_safe_reset_header_when_retry_after_is_absent() -> None:
+    delays: list[float] = []
+    calls = 0
+
+    def handler(_: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return httpx.Response(429, headers={"X-RateLimit-Reset-Requests": "70s"})
+        return httpx.Response(200, json=success_payload())
+
+    adapter(handler, max_attempts=2, sleep=delays.append).embed(embedding_request())
+
+    assert delays == [70.0]
+
+
+def test_rate_limit_exhaustion_records_complete_provider_retry_history() -> None:
+    delays: list[float] = []
+
+    with pytest.raises(EmbeddingRateLimitError) as captured:
+        adapter(
+            lambda _: httpx.Response(429),
+            max_attempts=4,
+            initial_backoff_seconds=15,
+            max_backoff_seconds=120,
+            sleep=delays.append,
+            jitter=lambda: 0.5,
+        ).embed(embedding_request())
+
+    assert delays == [15.0, 30.0, 60.0]
+    assert captured.value.attempts == 4
+    assert captured.value.total_retry_delay_seconds == 105.0
+    assert captured.value.first_failure_at is not None
+    assert captured.value.final_failure_at is not None
+
+
+def test_provider_cooldown_beyond_finite_request_budget_fails_closed() -> None:
+    calls = 0
+    delays: list[float] = []
+
+    def handler(_: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        return httpx.Response(429, headers={"Retry-After": "121"})
+
+    with pytest.raises(EmbeddingRateLimitError) as captured:
+        adapter(
+            handler,
+            max_attempts=4,
+            max_provider_cooldown_seconds=120,
+            sleep=delays.append,
+        ).embed(embedding_request())
+
+    assert calls == 1
+    assert delays == []
+    assert captured.value.retry_after_seconds == 121
+    assert captured.value.attempts == 1
+
+
+def test_rate_limit_activates_shared_local_cooldown_without_delaying_healthy_path() -> (
+    None
+):
+    cooldown = ProviderCooldown(monotonic=lambda: 100.0)
+    delays: list[float] = []
+
+    adapter(
+        lambda _: httpx.Response(200, json=success_payload()),
+        cooldown=cooldown,
+        sleep=delays.append,
+    ).embed(embedding_request())
+    assert delays == []
+
+    with pytest.raises(EmbeddingRateLimitError):
+        adapter(
+            lambda _: httpx.Response(429, headers={"Retry-After": "65"}),
+            max_attempts=1,
+            cooldown=cooldown,
+            sleep=delays.append,
+        ).embed(embedding_request())
+
+    adapter(
+        lambda _: httpx.Response(200, json=success_payload()),
+        cooldown=cooldown,
+        sleep=delays.append,
+    ).embed(embedding_request())
+    assert delays == [65.0]
 
 
 def test_operational_backoff_follows_configured_progression_with_jitter() -> None:

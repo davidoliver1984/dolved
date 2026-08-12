@@ -70,6 +70,15 @@
         "execution": {"enum": ["PROVIDER_API", "LOCAL", "INFRASTRUCTURE", "NOT_EXECUTED"]},
         "request_count": {"type": "integer", "minimum": 0},
         "retry_count": {"type": ["integer", "null"], "minimum": 0},
+        "provider_attempt_count": {"type": ["integer", "null"], "minimum": 1},
+        "provider_retry_count": {"type": ["integer", "null"], "minimum": 0},
+        "outer_attempt_count": {"type": ["integer", "null"], "minimum": 1},
+        "outer_retry_count": {"type": ["integer", "null"], "minimum": 0},
+        "rate_limit_event_count": {"type": ["integer", "null"], "minimum": 0},
+        "retry_delays": {"type": "array", "items": {"$ref": "#/$defs/provider_retry_delay"}},
+        "first_provider_attempt_at": {"type": ["string", "null"], "format": "date-time"},
+        "final_provider_success_at": {"type": ["string", "null"], "format": "date-time"},
+        "provider_retry_elapsed_ms": {"type": ["number", "null"], "minimum": 0},
         "input_tokens": {"type": ["integer", "null"], "minimum": 0},
         "cached_input_tokens": {"type": ["integer", "null"], "minimum": 0},
         "output_tokens": {"type": ["integer", "null"], "minimum": 0},
@@ -77,6 +86,15 @@
         "cost_basis": {"enum": ["PROVIDER_REPORTED", "ESTIMATED", "UNAVAILABLE", "ZERO_COST_LOCAL"]},
         "cost_usd": {"type": ["number", "null"], "minimum": 0},
         "pricing_snapshot": {"anyOf": [{"$ref": "#/$defs/identifier"}, {"type": "null"}]}
+      }
+    },
+    "provider_retry_delay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["delay_seconds", "source"],
+      "properties": {
+        "delay_seconds": {"type": "number", "minimum": 0},
+        "source": {"enum": ["retry_after_numeric", "retry_after_http_date", "ratelimit_reset", "x_ratelimit_reset_requests", "x_ratelimit_reset_tokens", "configured_fallback", "shared_cooldown"]}
       }
     },
     "variant": {
@@ -104,7 +122,36 @@
         "retrieval_executed": {"type": "boolean"},
         "contributes_retrieval_metrics": {"type": "boolean"},
         "planner_failure": {"anyOf": [{"$ref": "#/$defs/planner_failure"}, {"type": "null"}]},
-        "planner_evaluation": {"anyOf": [{"$ref": "#/$defs/planner_evaluation"}, {"type": "null"}]}
+        "planner_evaluation": {"anyOf": [{"$ref": "#/$defs/planner_evaluation"}, {"type": "null"}]},
+        "retrieval_failure": {"anyOf": [{"$ref": "#/$defs/retrieval_failure"}, {"type": "null"}]}
+      }
+    },
+    "retrieval_failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "execution", "provider", "model", "category", "http_status", "retry_count", "provider_retry_count", "outer_retry_count", "request_count", "first_failure_at", "final_failure_at", "retry_delay_ms", "provider_retry_after_seconds", "provider_timing_source", "latency_ms", "usage", "downstream_request_attempted", "candidate_lineage_produced"],
+      "properties": {
+        "stage": {"enum": ["dense_embedding", "qdrant_dense_search", "sparse_encoding", "qdrant_sparse_search", "fusion", "reranker", "threshold", "final_eligibility", "transport_orchestration"]},
+        "execution": {"enum": ["provider_api", "local", "infrastructure", "orchestration"]},
+        "provider": {"type": ["string", "null"], "maxLength": 160},
+        "model": {"type": ["string", "null"], "maxLength": 240},
+        "category": {"enum": ["timeout", "rate_limited", "provider_http_error", "connection_error", "invalid_provider_response", "contract_validation_error", "local_execution_error", "infrastructure_error", "unknown"]},
+        "http_status": {"type": ["integer", "null"], "minimum": 100, "maximum": 599},
+        "retry_count": {"type": ["integer", "null"], "minimum": 0},
+        "provider_retry_count": {"type": ["integer", "null"], "minimum": 0},
+        "outer_retry_count": {"type": ["integer", "null"], "minimum": 0},
+        "rate_limit_event_count": {"type": ["integer", "null"], "minimum": 0},
+        "retry_delays": {"type": "array", "items": {"$ref": "#/$defs/provider_retry_delay"}},
+        "request_count": {"type": ["integer", "null"], "minimum": 0},
+        "first_failure_at": {"type": ["string", "null"], "format": "date-time"},
+        "final_failure_at": {"type": ["string", "null"], "format": "date-time"},
+        "retry_delay_ms": {"type": ["number", "null"], "minimum": 0},
+        "provider_retry_after_seconds": {"type": ["number", "null"], "minimum": 0},
+        "provider_timing_source": {"type": ["string", "null"], "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$", "maxLength": 160},
+        "latency_ms": {"type": "number", "minimum": 0},
+        "usage": {"type": "array", "items": {"$ref": "#/$defs/stage_usage"}},
+        "downstream_request_attempted": {"type": "boolean"},
+        "candidate_lineage_produced": {"type": "boolean"}
       }
     },
     "planner_evaluation": {

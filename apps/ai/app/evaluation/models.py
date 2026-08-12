@@ -90,6 +90,19 @@ class CostBasis(StrEnum):
     ZERO_COST_LOCAL = "ZERO_COST_LOCAL"
 
 
+class ProviderRetryDelayObservation(StrictModel):
+    delay_seconds: Annotated[float, Field(ge=0)]
+    source: Literal[
+        "retry_after_numeric",
+        "retry_after_http_date",
+        "ratelimit_reset",
+        "x_ratelimit_reset_requests",
+        "x_ratelimit_reset_tokens",
+        "configured_fallback",
+        "shared_cooldown",
+    ]
+
+
 class StageUsageObservation(StrictModel):
     stage: Identifier
     provider: ProviderModelIdentity | None = None
@@ -97,6 +110,15 @@ class StageUsageObservation(StrictModel):
     execution: Literal["PROVIDER_API", "LOCAL", "INFRASTRUCTURE", "NOT_EXECUTED"]
     request_count: Annotated[int, Field(ge=0)] = 0
     retry_count: Annotated[int, Field(ge=0)] | None = None
+    provider_attempt_count: Annotated[int, Field(ge=1)] | None = None
+    provider_retry_count: Annotated[int, Field(ge=0)] | None = None
+    outer_attempt_count: Annotated[int, Field(ge=1)] | None = None
+    outer_retry_count: Annotated[int, Field(ge=0)] | None = None
+    rate_limit_event_count: Annotated[int, Field(ge=0)] | None = None
+    retry_delays: tuple[ProviderRetryDelayObservation, ...] = ()
+    first_provider_attempt_at: datetime | None = None
+    final_provider_success_at: datetime | None = None
+    provider_retry_elapsed_ms: Annotated[float, Field(ge=0)] | None = None
     input_tokens: Annotated[int, Field(ge=0)] | None = None
     cached_input_tokens: Annotated[int, Field(ge=0)] | None = None
     output_tokens: Annotated[int, Field(ge=0)] | None = None
@@ -150,6 +172,50 @@ class PlannerFailureObservation(StrictModel):
     provider_status: Annotated[int, Field(ge=100, le=599)] | None = None
     attempt_count: Annotated[int, Field(ge=1)]
     occurred_at: datetime
+
+
+class RetrievalFailureObservation(StrictModel):
+    stage: Literal[
+        "dense_embedding",
+        "qdrant_dense_search",
+        "sparse_encoding",
+        "qdrant_sparse_search",
+        "fusion",
+        "reranker",
+        "threshold",
+        "final_eligibility",
+        "transport_orchestration",
+    ]
+    execution: Literal["provider_api", "local", "infrastructure", "orchestration"]
+    provider: ProviderModelIdentity | None = None
+    model: ProviderModelIdentity | None = None
+    category: Literal[
+        "timeout",
+        "rate_limited",
+        "provider_http_error",
+        "connection_error",
+        "invalid_provider_response",
+        "contract_validation_error",
+        "local_execution_error",
+        "infrastructure_error",
+        "unknown",
+    ]
+    http_status: Annotated[int, Field(ge=100, le=599)] | None = None
+    retry_count: Annotated[int, Field(ge=0)] | None = None
+    provider_retry_count: Annotated[int, Field(ge=0)] | None = None
+    outer_retry_count: Annotated[int, Field(ge=0)] | None = None
+    rate_limit_event_count: Annotated[int, Field(ge=0)] | None = None
+    retry_delays: tuple[ProviderRetryDelayObservation, ...] = ()
+    request_count: Annotated[int, Field(ge=0)] | None = None
+    first_failure_at: datetime | None = None
+    final_failure_at: datetime | None = None
+    retry_delay_ms: Annotated[float, Field(ge=0)] | None = None
+    provider_retry_after_seconds: Annotated[float, Field(ge=0)] | None = None
+    provider_timing_source: Identifier | None = None
+    latency_ms: Annotated[float, Field(ge=0)]
+    usage: tuple[StageUsageObservation, ...] = ()
+    downstream_request_attempted: bool
+    candidate_lineage_produced: bool
 
 
 class PlannerFieldDifference(StrictModel):
@@ -226,6 +292,7 @@ class VariantObservation(StrictModel):
     contributes_retrieval_metrics: bool = True
     planner_failure: PlannerFailureObservation | None = None
     planner_evaluation: PlannerEvaluationObservation | None = None
+    retrieval_failure: RetrievalFailureObservation | None = None
 
     @model_validator(mode="after")
     def protect_question_text(self) -> VariantObservation:
@@ -277,6 +344,10 @@ class VariantObservation(StrictModel):
             raise ValueError(
                 "successful planning observations require executed retrieval"
             )
+        if self.retrieval_failure is not None and self.contributes_retrieval_metrics:
+            raise ValueError(
+                "failed retrieval cannot contribute fabricated retrieval metrics"
+            )
         return self
 
 
@@ -309,6 +380,7 @@ class VariantResult(StrictModel):
     contributes_retrieval_metrics: bool = True
     planner_failure: PlannerFailureObservation | None = None
     planner_evaluation: PlannerEvaluationObservation | None = None
+    retrieval_failure: RetrievalFailureObservation | None = None
 
     @model_validator(mode="after")
     def protect_question_text(self) -> VariantResult:
