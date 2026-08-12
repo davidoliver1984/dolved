@@ -1,3 +1,4 @@
+from datetime import date
 from typing import cast
 from uuid import uuid4
 
@@ -12,9 +13,9 @@ from app.retrieval.models import (
     RetrievalSide,
     SearchRequest,
     SearchScope,
-    TemporalAnchor,
-    TemporalAnchorKind,
     TemporalMode,
+    TemporalReference,
+    TemporalReferenceKind,
 )
 from app.retrieval.retriever import DenseRetriever, RetrievalStageSnapshot
 from app.sparse.fake import DeterministicSparseEncoder
@@ -76,16 +77,80 @@ def test_retrieval_plan_enforces_typed_temporal_shapes() -> None:
     compare = RetrievalPlan(
         retrieval_queries=("What changed?",),
         temporal_mode=TemporalMode.COMPARE,
-        primary_anchor=TemporalAnchor(kind=TemporalAnchorKind.CURRENT),
-        comparison_anchor=TemporalAnchor(kind=TemporalAnchorKind.PREVIOUS),
+    )
+    historical = RetrievalPlan(
+        retrieval_queries=("What did version 1 say?",),
+        temporal_mode=TemporalMode.HISTORICAL_REFERENCE,
+        temporal_reference=TemporalReference(
+            kind=TemporalReferenceKind.HISTORICAL_REFERENCE,
+            value="version 1",
+        ),
+    )
+    period = RetrievalPlan(
+        retrieval_queries=("What applied in 2025?",),
+        temporal_mode=TemporalMode.VALID_AT_DATE,
+        temporal_reference=TemporalReference(
+            kind=TemporalReferenceKind.CALENDAR_PERIOD,
+            value="2025",
+        ),
+        location_references=("North West", "Harbour View"),
     )
     assert current.temporal_mode is TemporalMode.CURRENT
-    assert compare.comparison_anchor is not None
+    assert compare.temporal_reference is None
+    assert historical.temporal_reference is not None
+    assert period.location_references == ("North West", "Harbour View")
 
-    with pytest.raises(ValidationError, match="valid_at"):
+    exact = RetrievalPlan(
+        retrieval_queries=("What applied on 1 January?",),
+        temporal_mode=TemporalMode.VALID_AT_DATE,
+        explicit_date=date(2026, 1, 1),
+    )
+    assert exact.explicit_date == date(2026, 1, 1)
+
+    with pytest.raises(ValidationError, match="exactly one"):
         RetrievalPlan(
             retrieval_queries=("Old policy",),
             temporal_mode=TemporalMode.VALID_AT_DATE,
+        )
+
+
+@pytest.mark.parametrize(
+    "values",
+    [
+        {"temporal_mode": TemporalMode.CURRENT, "explicit_date": date(2026, 1, 1)},
+        {
+            "temporal_mode": TemporalMode.VALID_AT_DATE,
+            "explicit_date": date(2026, 1, 1),
+            "temporal_reference": TemporalReference(
+                kind=TemporalReferenceKind.CALENDAR_PERIOD, value="January 2026"
+            ),
+        },
+        {
+            "temporal_mode": TemporalMode.HISTORICAL_REFERENCE,
+            "temporal_reference": TemporalReference(
+                kind=TemporalReferenceKind.CALENDAR_PERIOD, value="2025"
+            ),
+        },
+        {
+            "temporal_mode": TemporalMode.CLARIFICATION_REQUIRED,
+            "clarification_reason": None,
+        },
+    ],
+)
+def test_retrieval_plan_rejects_every_inconsistent_selector_shape(
+    values: dict[str, object],
+) -> None:
+    with pytest.raises(ValidationError):
+        RetrievalPlan.model_validate({"retrieval_queries": ("Question",), **values})
+
+    with pytest.raises(ValidationError, match="calendar period"):
+        RetrievalPlan(
+            retrieval_queries=("Old policy",),
+            temporal_mode=TemporalMode.VALID_AT_DATE,
+            temporal_reference=TemporalReference(
+                kind=TemporalReferenceKind.HISTORICAL_REFERENCE,
+                value="old policy",
+            ),
         )
 
 
@@ -137,6 +202,13 @@ def test_dense_retriever_uses_query_profile_and_keeps_compare_sides_separate() -
         RetrievalSide.COMPARISON,
     ]
     assert embedder.requests[0].purpose.value == "query"
+    assert result.diagnostics == ()
+    assert [item.stage for item in result.usage] == [
+        "dense_embedding",
+        "qdrant_dense_search",
+    ]
+    assert result.usage[0].cost_basis == "unavailable"
+    assert result.usage[1].cost_usd is None
 
 
 def test_search_contract_rejects_profile_lineage_mismatch() -> None:
@@ -205,6 +277,7 @@ def test_hybrid_retriever_fuses_compare_sides_independently_and_reports_lineage(
             final_evidence_k=1,
             rrf_k=60,
         ),
+        capture_diagnostics=True,
         scopes=(
             SearchScope(side=RetrievalSide.PRIMARY, eligible_document_ids=(uuid4(),)),
             SearchScope(
@@ -249,3 +322,24 @@ def test_hybrid_retriever_fuses_compare_sides_independently_and_reports_lineage(
         snapshot.fused_candidates is not None and len(snapshot.fused_candidates) == 2
         for snapshot in snapshots
     )
+    assert [diagnostic.side for diagnostic in result.diagnostics] == [
+        RetrievalSide.PRIMARY,
+        RetrievalSide.COMPARISON,
+    ]
+    assert all(
+        len(diagnostic.dense_candidates) == 1 for diagnostic in result.diagnostics
+    )
+    assert all(
+        len(diagnostic.sparse_candidates) == 1 for diagnostic in result.diagnostics
+    )
+    assert all(
+        len(diagnostic.fused_candidates) == 2 for diagnostic in result.diagnostics
+    )
+    assert [item.stage for item in result.usage] == [
+        "dense_embedding",
+        "qdrant_dense_search",
+        "sparse_encoding",
+        "qdrant_sparse_search",
+    ]
+    assert result.usage[2].cost_basis == "zero_cost_local"
+    assert result.usage[2].cost_usd == 0

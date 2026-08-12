@@ -9,5 +9,6 @@ enum RetrievalTemporalMode: string
     case Current = 'current';
     case ValidAtDate = 'valid_at_date';
     case Compare = 'compare';
+    case HistoricalReference = 'historical_reference';
     case ClarificationRequired = 'clarification_required';
 }

@@ -1,3 +1,4 @@
+import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from uuid import NAMESPACE_URL, uuid5
@@ -9,11 +10,13 @@ from app.embedding.models import EmbeddingInput, EmbeddingPurpose, EmbeddingRequ
 from app.embedding.protocol import Embedder
 from app.retrieval.fusion import ReciprocalRankFusion
 from app.retrieval.models import (
+    OperationUsage,
     RetrievalCandidate,
     RetrievalSide,
     SearchLineage,
     SearchRequest,
     SearchResponse,
+    SearchStageDiagnostics,
 )
 from app.sparse.models import (
     SparseEncodingInput,
@@ -56,6 +59,7 @@ class DenseRetriever:
 
     def search(self, request: SearchRequest) -> SearchResponse:
         source_id = uuid5(NAMESPACE_URL, f"retrieval-query:{request.request_id}")
+        embedding_started = time.perf_counter()
         embedded = self._embedder.embed(
             EmbeddingRequest(
                 correlation_id=request.request_id,
@@ -65,13 +69,16 @@ class DenseRetriever:
                 items=(EmbeddingInput(source_id=source_id, text=request.query),),
             )
         )
+        embedding_latency_ms = (time.perf_counter() - embedding_started) * 1000
         if embedded.profile_fingerprint != request.embedding_profile_fingerprint:
             raise ValueError("query embedding profile is incompatible with the corpus")
         query_vector = embedded.embeddings[0].values
         sparse_query = None
+        sparse_latency_ms = 0.0
         if request.is_hybrid:
             if self._sparse_encoder is None or request.sparse_embedding_profile is None:
                 raise ValueError("hybrid retrieval requires a sparse encoder")
+            sparse_started = time.perf_counter()
             sparse_result = self._sparse_encoder.encode(
                 SparseEncodingRequest(
                     correlation_id=request.request_id,
@@ -83,10 +90,14 @@ class DenseRetriever:
                     ),
                 )
             )
+            sparse_latency_ms = (time.perf_counter() - sparse_started) * 1000
             if sparse_result.profile_fingerprint != request.sparse_profile_fingerprint:
                 raise ValueError("query sparse profile is incompatible with the corpus")
             sparse_query = sparse_result.encodings[0].vector
         candidates: list[RetrievalCandidate] = []
+        diagnostics: list[SearchStageDiagnostics] = []
+        dense_search_latency_ms = 0.0
+        sparse_search_latency_ms = 0.0
         for scope in request.scopes:
             vector_scope = VectorScope(
                 vector_space=request.vector_space,
@@ -108,6 +119,7 @@ class DenseRetriever:
                     }
                 ),
             ) as span:
+                search_started = time.perf_counter()
                 hits = self._vector_store.search(
                     VectorSearchRequest(
                         scope=vector_scope,
@@ -119,6 +131,7 @@ class DenseRetriever:
                         ),
                     )
                 )
+                dense_search_latency_ms += (time.perf_counter() - search_started) * 1000
                 span.set_attributes(
                     trace_attributes({"rag.retrieval.candidate_count": len(hits)})
                 )
@@ -128,6 +141,13 @@ class DenseRetriever:
             )
             if request.hybrid_configuration is None or sparse_query is None:
                 candidates.extend(dense_candidates)
+                if request.capture_diagnostics:
+                    diagnostics.append(
+                        SearchStageDiagnostics(
+                            side=scope.side,
+                            dense_candidates=dense_candidates,
+                        )
+                    )
                 self._observe(
                     RetrievalStageSnapshot(
                         side=scope.side,
@@ -151,6 +171,7 @@ class DenseRetriever:
                     }
                 ),
             ) as sparse_span:
+                sparse_search_started = time.perf_counter()
                 sparse_hits = self._vector_store.search_sparse(
                     SparseVectorSearchRequest(
                         scope=vector_scope,
@@ -158,6 +179,9 @@ class DenseRetriever:
                         limit=request.hybrid_configuration.sparse_candidate_k,
                     )
                 )
+                sparse_search_latency_ms += (
+                    time.perf_counter() - sparse_search_started
+                ) * 1000
                 sparse_span.set_attributes(
                     trace_attributes(
                         {"rag.retrieval.sparse_candidate_count": len(sparse_hits)}
@@ -191,6 +215,15 @@ class DenseRetriever:
                     )
                 )
             candidates.extend(fused)
+            if request.capture_diagnostics:
+                diagnostics.append(
+                    SearchStageDiagnostics(
+                        side=scope.side,
+                        dense_candidates=dense_candidates,
+                        sparse_candidates=sparse_candidates,
+                        fused_candidates=fused,
+                    )
+                )
             self._observe(
                 RetrievalStageSnapshot(
                     side=scope.side,
@@ -198,6 +231,71 @@ class DenseRetriever:
                     sparse_candidates=sparse_candidates,
                     fused_candidates=fused,
                 )
+            )
+        usage = [
+            OperationUsage(
+                stage="dense_embedding",
+                provider=request.embedding_profile.provider,
+                model=request.embedding_profile.model,
+                execution=(
+                    "local"
+                    if request.embedding_profile.provider == "deterministic"
+                    else "provider_api"
+                ),
+                request_count=1,
+                retry_count=embedded.provider_retry_count,
+                input_tokens=embedded.provider_input_tokens,
+                latency_ms=embedding_latency_ms,
+                cost_basis=(
+                    "zero_cost_local"
+                    if request.embedding_profile.provider == "deterministic"
+                    else "estimated"
+                    if embedded.estimated_cost_usd is not None
+                    else "unavailable"
+                ),
+                cost_usd=(
+                    0
+                    if request.embedding_profile.provider == "deterministic"
+                    else embedded.estimated_cost_usd
+                ),
+                pricing_snapshot=embedded.pricing_snapshot,
+            ),
+            OperationUsage(
+                stage="qdrant_dense_search",
+                provider="qdrant",
+                model=request.vector_space.collection_name,
+                execution="infrastructure",
+                request_count=len(request.scopes),
+                retry_count=0,
+                latency_ms=dense_search_latency_ms,
+                cost_basis="unavailable",
+            ),
+        ]
+        if request.is_hybrid and request.sparse_embedding_profile is not None:
+            usage.extend(
+                [
+                    OperationUsage(
+                        stage="sparse_encoding",
+                        provider=request.sparse_embedding_profile.provider,
+                        model=request.sparse_embedding_profile.model,
+                        execution="local",
+                        request_count=1,
+                        retry_count=0,
+                        latency_ms=sparse_latency_ms,
+                        cost_basis="zero_cost_local",
+                        cost_usd=0,
+                    ),
+                    OperationUsage(
+                        stage="qdrant_sparse_search",
+                        provider="qdrant",
+                        model=request.vector_space.collection_name,
+                        execution="infrastructure",
+                        request_count=len(request.scopes),
+                        retry_count=0,
+                        latency_ms=sparse_search_latency_ms,
+                        cost_basis="unavailable",
+                    ),
+                ]
             )
         return SearchResponse(
             request_id=request.request_id,
@@ -231,6 +329,8 @@ class DenseRetriever:
                     else None
                 ),
             ),
+            diagnostics=tuple(diagnostics),
+            usage=tuple(usage),
         )
 
     def _observe(self, snapshot: RetrievalStageSnapshot) -> None:

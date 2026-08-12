@@ -63,6 +63,7 @@ class VoyageReranker:
             )
         results: list[RerankedCandidate] = []
         total_tokens = 0
+        total_retries = 0
         for side in sorted(
             {candidate.side for candidate in request.candidates},
             key=lambda item: item.value,
@@ -83,11 +84,13 @@ class VoyageReranker:
             side_result = self._rerank_one(side_request)
             results.extend(side_result.candidates)
             total_tokens += side_result.provider_input_tokens or 0
+            total_retries += side_result.provider_retry_count
         return RerankResult(
             request_id=request.request_id,
             profile=request.profile,
             candidates=tuple(results),
             provider_input_tokens=total_tokens,
+            provider_retry_count=total_retries,
         )
 
     def _rerank_one(self, request: RerankRequest) -> RerankResult:
@@ -114,7 +117,9 @@ class VoyageReranker:
                 error = self._response_error(response)
                 if error is not None:
                     raise error
-                return self._parse_response(response, request)
+                return self._parse_response(response, request).model_copy(
+                    update={"provider_retry_count": attempt - 1}
+                )
             except httpx.TimeoutException:
                 last_error = RerankerTimeoutError("reranker provider timed out")
             except httpx.TransportError:

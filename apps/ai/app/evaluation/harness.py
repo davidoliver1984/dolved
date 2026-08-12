@@ -49,9 +49,12 @@ class RetrievalEvaluationHarness:
             if observation is None:
                 hard_failures.add(f"lost_case:{key[0]}:{key[1]}")
                 continue
-            metrics, side_metrics, covered = evaluate_metrics_by_side(
-                case.evidence_units, observation.candidates, candidate_k
-            )
+            if observation.contributes_retrieval_metrics:
+                metrics, side_metrics, covered = evaluate_metrics_by_side(
+                    case.evidence_units, observation.candidates, candidate_k
+                )
+            else:
+                metrics, side_metrics, covered = None, {}, ()
             hard_failures.update(observation.hard_failures)
             results.append(
                 VariantResult(
@@ -71,6 +74,11 @@ class RetrievalEvaluationHarness:
                     expected_outcome=observation.expected_outcome,
                     candidate_lineage=observation.candidate_lineage,
                     candidate_funnel=observation.candidate_funnel,
+                    planning_status=observation.planning_status,
+                    retrieval_executed=observation.retrieval_executed,
+                    contributes_retrieval_metrics=observation.contributes_retrieval_metrics,
+                    planner_failure=observation.planner_failure,
+                    planner_evaluation=observation.planner_evaluation,
                 )
             )
 
@@ -112,37 +120,99 @@ class RetrievalEvaluationHarness:
 
 
 def _aggregate(results: list[VariantResult]) -> AggregateResult:
+    retrieval_results = [item for item in results if item.metrics is not None]
+    planner_success_count = sum(item.planner_failure is None for item in results)
+    categories = _failure_categories(results)
     return AggregateResult(
-        metrics=_mean_metrics([item.metrics for item in results]),
+        metrics=_mean_metrics(
+            [item.metrics for item in retrieval_results if item.metrics]
+        ),
         planner_accuracy=fmean(item.planner_correct for item in results),
-        eligibility_accuracy=fmean(item.eligibility_correct for item in results),
-        outcome_accuracy=fmean(item.outcome_correct for item in results),
+        eligibility_accuracy=_optional_mean(
+            [
+                item.eligibility_correct
+                for item in results
+                if item.eligibility_correct is not None
+            ]
+        ),
+        outcome_accuracy=_optional_mean(
+            [
+                item.outcome_correct
+                for item in results
+                if item.outcome_correct is not None
+            ]
+        ),
         case_count=1,
+        variant_count=len(results),
+        retrieval_metric_variant_count=len(retrieval_results),
+        planner_success_count=planner_success_count,
+        planner_failure_count=len(results) - planner_success_count,
+        planner_reliability=planner_success_count / len(results),
+        planner_failure_categories=categories,
     )
 
 
 def _aggregate_aggregates(results: list[AggregateResult]) -> AggregateResult:
     if not results:
         return AggregateResult(
-            metrics=MetricValues(recall_at_k=0, precision_at_k=0, mrr=0, ndcg_at_k=0),
+            metrics=None,
             planner_accuracy=0,
-            eligibility_accuracy=0,
-            outcome_accuracy=0,
+            eligibility_accuracy=None,
+            outcome_accuracy=None,
             case_count=0,
         )
+    variant_count = sum(item.variant_count for item in results)
+    retrieval_count = sum(item.retrieval_metric_variant_count for item in results)
+    planner_success_count = sum(item.planner_success_count for item in results)
+    categories: dict[str, int] = defaultdict(int)
+    for item in results:
+        for category, count in item.planner_failure_categories.items():
+            categories[category] += count
     return AggregateResult(
-        metrics=_mean_metrics([item.metrics for item in results]),
+        metrics=_mean_metrics([item.metrics for item in results if item.metrics]),
         planner_accuracy=fmean(item.planner_accuracy for item in results),
-        eligibility_accuracy=fmean(item.eligibility_accuracy for item in results),
-        outcome_accuracy=fmean(item.outcome_accuracy for item in results),
+        eligibility_accuracy=_optional_mean(
+            [
+                item.eligibility_accuracy
+                for item in results
+                if item.eligibility_accuracy is not None
+            ]
+        ),
+        outcome_accuracy=_optional_mean(
+            [
+                item.outcome_accuracy
+                for item in results
+                if item.outcome_accuracy is not None
+            ]
+        ),
         case_count=len(results),
+        variant_count=variant_count,
+        retrieval_metric_variant_count=retrieval_count,
+        planner_success_count=planner_success_count,
+        planner_failure_count=variant_count - planner_success_count,
+        planner_reliability=planner_success_count / variant_count,
+        planner_failure_categories=dict(sorted(categories.items())),
     )
 
 
-def _mean_metrics(values: list[MetricValues]) -> MetricValues:
+def _mean_metrics(values: list[MetricValues]) -> MetricValues | None:
+    if not values:
+        return None
     return MetricValues(
         recall_at_k=fmean(item.recall_at_k for item in values),
         precision_at_k=fmean(item.precision_at_k for item in values),
         mrr=fmean(item.mrr for item in values),
         ndcg_at_k=fmean(item.ndcg_at_k for item in values),
     )
+
+
+def _optional_mean(values: list[bool | float]) -> float | None:
+    return fmean(values) if values else None
+
+
+def _failure_categories(results: list[VariantResult]) -> dict[str, int]:
+    categories: dict[str, int] = defaultdict(int)
+    for result in results:
+        if result.planner_failure is not None:
+            categories[result.planner_failure.category] += 1
+    return dict(sorted(categories.items()))

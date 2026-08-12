@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/experiment-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_id", "executed_at", "candidate_k", "lineage", "aggregate", "slices", "variants", "hard_failures", "model_assisted"],
+  "properties": {
+    "schema_version": {"const": "v2"},
+    "experiment_id": {"$ref": "#/$defs/identifier"},
+    "executed_at": {"type": "string", "format": "date-time"},
+    "candidate_k": {"type": "integer", "minimum": 1},
+    "lineage": {"$ref": "#/$defs/lineage"},
+    "aggregate": {"$ref": "#/$defs/aggregate"},
+    "slices": {"type": "object", "additionalProperties": {"$ref": "#/$defs/aggregate"}},
+    "variants": {"type": "array", "items": {"$ref": "#/$defs/variant"}},
+    "hard_failures": {"type": "array", "items": {"$ref": "#/$defs/identifier"}},
+    "model_assisted": {"type": "array", "items": {"$ref": "#/$defs/model_assisted"}}
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "metric_values": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recall_at_k", "precision_at_k", "mrr", "ndcg_at_k"],
+      "properties": {
+        "recall_at_k": {"type": "number", "minimum": 0, "maximum": 1},
+        "precision_at_k": {"type": "number", "minimum": 0, "maximum": 1},
+        "mrr": {"type": "number", "minimum": 0, "maximum": 1},
+        "ndcg_at_k": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "aggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metrics", "planner_accuracy", "eligibility_accuracy", "outcome_accuracy", "case_count"],
+      "properties": {
+        "metrics": {"anyOf": [{"$ref": "#/$defs/metric_values"}, {"type": "null"}]},
+        "planner_accuracy": {"type": "number", "minimum": 0, "maximum": 1},
+        "eligibility_accuracy": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "outcome_accuracy": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "case_count": {"type": "integer", "minimum": 0},
+        "variant_count": {"type": "integer", "minimum": 0},
+        "retrieval_metric_variant_count": {"type": "integer", "minimum": 0},
+        "planner_success_count": {"type": "integer", "minimum": 0},
+        "planner_failure_count": {"type": "integer", "minimum": 0},
+        "planner_reliability": {"type": "number", "minimum": 0, "maximum": 1},
+        "planner_failure_categories": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}}
+      }
+    },
+    "operational": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["latency_ms", "token_usage", "provider_cost", "request_count", "stage_usage"],
+      "properties": {
+        "latency_ms": {"type": "number", "minimum": 0},
+        "token_usage": {"type": "integer", "minimum": 0},
+        "provider_cost": {"type": ["number", "null"], "minimum": 0},
+        "request_count": {"type": "integer", "minimum": 0},
+        "stage_usage": {"type": "array", "items": {"$ref": "#/$defs/stage_usage"}}
+      }
+    },
+    "stage_usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "provider", "model", "execution", "request_count", "retry_count", "input_tokens", "cached_input_tokens", "output_tokens", "latency_ms", "cost_basis", "cost_usd", "pricing_snapshot"],
+      "properties": {
+        "stage": {"$ref": "#/$defs/identifier"},
+        "provider": {"anyOf": [{"$ref": "#/$defs/identifier"}, {"type": "null"}]},
+        "model": {"anyOf": [{"$ref": "#/$defs/identifier"}, {"type": "null"}]},
+        "execution": {"enum": ["PROVIDER_API", "LOCAL", "INFRASTRUCTURE", "NOT_EXECUTED"]},
+        "request_count": {"type": "integer", "minimum": 0},
+        "retry_count": {"type": ["integer", "null"], "minimum": 0},
+        "input_tokens": {"type": ["integer", "null"], "minimum": 0},
+        "cached_input_tokens": {"type": ["integer", "null"], "minimum": 0},
+        "output_tokens": {"type": ["integer", "null"], "minimum": 0},
+        "latency_ms": {"type": ["number", "null"], "minimum": 0},
+        "cost_basis": {"enum": ["PROVIDER_REPORTED", "ESTIMATED", "UNAVAILABLE", "ZERO_COST_LOCAL"]},
+        "cost_usd": {"type": ["number", "null"], "minimum": 0},
+        "pricing_snapshot": {"anyOf": [{"$ref": "#/$defs/identifier"}, {"type": "null"}]}
+      }
+    },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "variant_id", "metrics", "side_metrics", "covered_evidence_ids", "planner_correct", "eligibility_correct", "outcome_correct", "hard_failures", "operational"],
+      "properties": {
+        "case_id": {"$ref": "#/$defs/identifier"},
+        "variant_id": {"$ref": "#/$defs/identifier"},
+        "metrics": {"anyOf": [{"$ref": "#/$defs/metric_values"}, {"type": "null"}]},
+        "side_metrics": {"type": "object", "additionalProperties": {"$ref": "#/$defs/metric_values"}},
+        "covered_evidence_ids": {"type": "array", "items": {"$ref": "#/$defs/identifier"}},
+        "planner_correct": {"type": "boolean"},
+        "eligibility_correct": {"type": ["boolean", "null"]},
+        "outcome_correct": {"type": ["boolean", "null"]},
+        "hard_failures": {"type": "array", "items": {"$ref": "#/$defs/identifier"}},
+        "operational": {"$ref": "#/$defs/operational"},
+        "text_capture_mode": {"enum": ["DISABLED", "REDACTED", "BENCHMARK_TEXT"]},
+        "question": {"type": ["string", "null"]},
+        "expected_evidence": {"type": "array", "items": {"$ref": "#/$defs/expected_evidence"}},
+        "expected_outcome": {"type": ["string", "null"]},
+        "candidate_lineage": {"type": "array", "items": {"$ref": "#/$defs/candidate_lineage"}},
+        "candidate_funnel": {"type": "array", "items": {"$ref": "#/$defs/candidate_funnel"}},
+        "planning_status": {"enum": ["SUCCEEDED", "FAILED"]},
+        "retrieval_executed": {"type": "boolean"},
+        "contributes_retrieval_metrics": {"type": "boolean"},
+        "planner_failure": {"anyOf": [{"$ref": "#/$defs/planner_failure"}, {"type": "null"}]},
+        "planner_evaluation": {"anyOf": [{"$ref": "#/$defs/planner_evaluation"}, {"type": "null"}]}
+      }
+    },
+    "planner_evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected_contract", "actual_plan", "differences", "correct"],
+      "properties": {
+        "expected_contract": {"type": "object"},
+        "actual_plan": {"type": ["object", "null"]},
+        "differences": {"type": "array", "items": {"$ref": "#/$defs/planner_difference"}},
+        "correct": {"type": "boolean"}
+      }
+    },
+    "planner_difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "expected", "actual", "classification"],
+      "properties": {
+        "field": {"$ref": "#/$defs/identifier"},
+        "expected": {},
+        "actual": {},
+        "classification": {
+          "enum": [
+            "SEMANTIC_AFTER_NORMALISATION",
+            "POTENTIAL_ALIAS_OR_REPRESENTATION_MISMATCH"
+          ]
+        }
+      }
+    },
+    "planner_failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model", "category", "provider_status", "attempt_count", "occurred_at"],
+      "properties": {
+        "provider": {"$ref": "#/$defs/identifier"},
+        "model": {"$ref": "#/$defs/identifier"},
+        "category": {"$ref": "#/$defs/identifier"},
+        "provider_status": {"type": ["integer", "null"], "minimum": 100, "maximum": 599},
+        "attempt_count": {"type": "integer", "minimum": 1},
+        "occurred_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "expected_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_unit_id", "document_family_id", "document_version_id", "side", "source_path"],
+      "properties": {
+        "evidence_unit_id": {"$ref": "#/$defs/identifier"},
+        "document_family_id": {"$ref": "#/$defs/identifier"},
+        "document_version_id": {"$ref": "#/$defs/identifier"},
+        "side": {"enum": ["PRIMARY", "COMPARISON"]},
+        "source_path": {"type": ["string", "null"]}
+      }
+    },
+    "candidate_lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "chunk_id", "document_family_id", "document_version_id", "side", "dense_rank", "dense_score", "sparse_rank", "sparse_score", "fused_rank", "fused_score", "reranker_rank", "reranker_score", "passed_evidence_threshold", "included_in_final_evidence", "covered_evidence_unit_ids"],
+      "properties": {
+        "candidate_id": {"$ref": "#/$defs/identifier"},
+        "chunk_id": {"type": "string", "format": "uuid"},
+        "document_family_id": {"$ref": "#/$defs/identifier"},
+        "document_version_id": {"$ref": "#/$defs/identifier"},
+        "side": {"enum": ["PRIMARY", "COMPARISON"]},
+        "dense_rank": {"type": ["integer", "null"], "minimum": 1},
+        "dense_score": {"type": ["number", "null"]},
+        "sparse_rank": {"type": ["integer", "null"], "minimum": 1},
+        "sparse_score": {"type": ["number", "null"]},
+        "fused_rank": {"type": ["integer", "null"], "minimum": 1},
+        "fused_score": {"type": ["number", "null"]},
+        "reranker_rank": {"type": ["integer", "null"], "minimum": 1},
+        "reranker_score": {"type": ["number", "null"]},
+        "passed_evidence_threshold": {"type": ["boolean", "null"]},
+        "included_in_final_evidence": {"type": "boolean"},
+        "covered_evidence_unit_ids": {"type": "array", "items": {"$ref": "#/$defs/identifier"}}
+      }
+    },
+    "candidate_funnel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["side", "dense_candidate_count", "sparse_candidate_count", "unique_post_fusion_count", "candidates_sent_to_reranker", "candidates_surviving_threshold", "final_evidence_count"],
+      "properties": {
+        "side": {"enum": ["PRIMARY", "COMPARISON"]},
+        "dense_candidate_count": {"type": ["integer", "null"], "minimum": 0},
+        "sparse_candidate_count": {"type": ["integer", "null"], "minimum": 0},
+        "unique_post_fusion_count": {"type": ["integer", "null"], "minimum": 0},
+        "candidates_sent_to_reranker": {"type": ["integer", "null"], "minimum": 0},
+        "candidates_surviving_threshold": {"type": ["integer", "null"], "minimum": 0},
+        "final_evidence_count": {"type": ["integer", "null"], "minimum": 0}
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository_commit", "corpus_version", "corpus_digest", "policy_version", "policy_digest", "harness_version", "matching_algorithm", "planner", "embedding_profile_fingerprint", "chunking_configuration", "retrieval_configuration", "evaluator", "trial_count"],
+      "properties": {
+        "repository_commit": {"type": "string", "minLength": 1},
+        "corpus_version": {"type": "string", "minLength": 1},
+        "corpus_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "policy_version": {"type": "string", "minLength": 1},
+        "policy_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "harness_version": {"type": "string", "minLength": 1},
+        "matching_algorithm": {"type": "string", "minLength": 1},
+        "planner": {"type": "object"},
+        "embedding_profile_fingerprint": {"type": "string", "minLength": 1},
+        "chunking_configuration": {"type": "object"},
+        "retrieval_configuration": {"type": "object"},
+        "evaluator": {"type": ["object", "null"]},
+        "trial_count": {"type": "integer", "minimum": 1}
+      }
+    },
+    "model_assisted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "variant_id", "status", "scores", "evaluator_identity", "failure_code"],
+      "properties": {
+        "case_id": {"$ref": "#/$defs/identifier"},
+        "variant_id": {"$ref": "#/$defs/identifier"},
+        "status": {"enum": ["COMPLETED", "FAILED"]},
+        "scores": {"type": "object", "additionalProperties": {"type": "number"}},
+        "evaluator_identity": {"type": "object"},
+        "failure_code": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

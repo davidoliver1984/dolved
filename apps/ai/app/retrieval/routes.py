@@ -133,15 +133,35 @@ async def plan_retrieval(
             status.HTTP_401_UNAUTHORIZED, "Signed identity does not match body."
         )
     try:
-        plan = planner.plan(
+        result = planner.plan_with_observation(
             incoming.question,
             evaluated_at=incoming.evaluated_at.isoformat(),
         )
     except RetrievalPlanningError as exception:
+        logger.warning(
+            "Retrieval planning failed.",
+            extra={
+                "failure_category": exception.category,
+                "provider_status": exception.provider_status,
+                "systemic": exception.systemic,
+            },
+        )
         raise HTTPException(
-            status.HTTP_503_SERVICE_UNAVAILABLE, "Retrieval planning failed."
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            {
+                "code": "retrieval_planning_failed",
+                "category": exception.category,
+                "provider_status": exception.provider_status,
+                "attempt_count": 1,
+                "systemic": exception.systemic,
+            },
         ) from exception
-    return PlanResponse(request_id=incoming.request_id, plan=plan)
+    return PlanResponse(
+        request_id=incoming.request_id,
+        plan=result.plan,
+        classifier_lineage=result.lineage,
+        usage=result.usage,
+    )
 
 
 @router.post("/search", response_model=SearchResponse)
@@ -265,7 +285,8 @@ async def rebuild_corpus_batch(
         return rebuilder.rebuild_batch(incoming)
     except Exception as exception:
         logger.warning(
-            "Corpus rebuild batch failed.",
+            "Corpus rebuild batch failed: %s.",
+            type(exception).__name__,
             extra={"error_type": type(exception).__name__},
         )
         raise HTTPException(

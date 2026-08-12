@@ -86,7 +86,9 @@ def test_plan_endpoint_validates_signed_identity_and_rejects_replay() -> None:
         app.dependency_overrides.clear()
 
     assert response.status_code == 200
+    assert response.json()["contract_version"] == 2
     assert response.json()["plan"]["temporal_mode"] == "current"
+    assert response.json()["classifier_lineage"]["provider"] == "deterministic"
     assert replay.status_code == 401
 
 

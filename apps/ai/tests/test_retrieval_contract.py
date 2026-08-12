@@ -13,7 +13,17 @@ from app.retrieval.corpus_rebuild import (
     CorpusRebuildChunk,
     CorpusVerificationRequest,
 )
-from app.retrieval.models import PlanRequest, RetrievalSide, SearchRequest, SearchScope
+from app.retrieval.models import (
+    OperationUsage,
+    PlannerLineage,
+    PlanRequest,
+    PlanResponse,
+    RetrievalPlan,
+    RetrievalSide,
+    SearchRequest,
+    SearchScope,
+    TemporalMode,
+)
 from app.sparse.models import SparseEmbeddingProfile
 from app.vector_store.models import SparseVectorSpace, VectorSpace
 
@@ -54,6 +64,33 @@ def test_python_request_models_match_shared_rc1_schemas() -> None:
     )
 
     validate("plan-v1.schema.json", plan.model_dump(mode="json"))
+    response = PlanResponse(
+        request_id=plan.request_id,
+        plan=RetrievalPlan(
+            retrieval_queries=(plan.question,),
+            temporal_mode=TemporalMode.CURRENT,
+        ),
+        classifier_lineage=PlannerLineage(
+            provider="deterministic",
+            model="fixed",
+            contract_schema_version="plan-response-v2",
+            prompt_version="fixed-v1",
+            adapter_version="fixed-v1",
+            fingerprint="a" * 64,
+        ),
+        usage=OperationUsage(
+            stage="planner",
+            provider="deterministic",
+            model="fixed",
+            execution="local",
+            request_count=1,
+            retry_count=0,
+            latency_ms=0,
+            cost_basis="zero_cost_local",
+            cost_usd=0,
+        ),
+    )
+    validate("plan-response-v2.schema.json", response.model_dump(mode="json"))
     validate("search-v1.schema.json", search.model_dump(mode="json"))
 
     rerank = RerankRequest(

@@ -158,6 +158,7 @@ def test_voyage_adapter_disables_truncation_and_maps_provider_identity() -> None
         request.candidates[0].chunk_id,
     ]
     assert result.provider_input_tokens == 18
+    assert result.provider_retry_count == 0
 
 
 def test_voyage_adapter_reranks_compare_sides_independently() -> None:
@@ -223,6 +224,7 @@ def test_voyage_adapter_reranks_compare_sides_independently() -> None:
         (RetrievalSide.PRIMARY, shared_chunk_id, 1),
     ]
     assert result.provider_input_tokens == 10
+    assert result.provider_retry_count == 0
     assert sleeps == [25]
 
 
@@ -276,6 +278,39 @@ def test_voyage_adapter_retries_only_transient_failures() -> None:
 
     assert calls == 2
     assert raised.value.attempts == 2
+
+
+def test_voyage_adapter_records_provider_retries_on_eventual_success() -> None:
+    calls = 0
+
+    def handler(_: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return httpx.Response(429, headers={"Retry-After": "0"})
+        return httpx.Response(
+            200,
+            json={
+                "model": "rerank-2.5",
+                "data": [{"index": 0, "relevance_score": 0.9}],
+                "usage": {"total_tokens": 7},
+            },
+        )
+
+    result = VoyageReranker(
+        api_key=SecretStr("secret"),
+        api_url="https://api.voyage.test/v1/rerank",
+        timeout_seconds=1,
+        max_attempts=2,
+        initial_backoff_seconds=0,
+        max_backoff_seconds=0,
+        client=httpx.Client(transport=httpx.MockTransport(handler)),
+        sleep=lambda _: None,
+        jitter=lambda: 0,
+    ).rerank(rerank_request(top_k=1))
+
+    assert calls == 2
+    assert result.provider_retry_count == 1
 
 
 def test_voyage_adapter_reports_disabled_truncation_overflow_as_typed_failure() -> None:

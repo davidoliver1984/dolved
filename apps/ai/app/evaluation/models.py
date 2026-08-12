@@ -80,17 +80,90 @@ class RetrievedCandidate(StrictModel):
     side: Literal["PRIMARY", "COMPARISON"] = "PRIMARY"
 
 
+class CostBasis(StrEnum):
+    PROVIDER_REPORTED = "PROVIDER_REPORTED"
+    ESTIMATED = "ESTIMATED"
+    UNAVAILABLE = "UNAVAILABLE"
+    ZERO_COST_LOCAL = "ZERO_COST_LOCAL"
+
+
+class StageUsageObservation(StrictModel):
+    stage: Identifier
+    provider: Identifier | None = None
+    model: Identifier | None = None
+    execution: Literal["PROVIDER_API", "LOCAL", "INFRASTRUCTURE", "NOT_EXECUTED"]
+    request_count: Annotated[int, Field(ge=0)] = 0
+    retry_count: Annotated[int, Field(ge=0)] | None = None
+    input_tokens: Annotated[int, Field(ge=0)] | None = None
+    cached_input_tokens: Annotated[int, Field(ge=0)] | None = None
+    output_tokens: Annotated[int, Field(ge=0)] | None = None
+    latency_ms: Annotated[float, Field(ge=0)] | None = None
+    cost_basis: CostBasis
+    cost_usd: Annotated[float, Field(ge=0)] | None = None
+    pricing_snapshot: Identifier | None = None
+
+    @model_validator(mode="after")
+    def validate_cost_semantics(self) -> StageUsageObservation:
+        if self.cost_basis is CostBasis.UNAVAILABLE and self.cost_usd is not None:
+            raise ValueError("unavailable cost cannot carry a numeric value")
+        if self.cost_basis is CostBasis.ZERO_COST_LOCAL and (
+            self.execution not in {"LOCAL", "INFRASTRUCTURE"} or self.cost_usd != 0
+        ):
+            raise ValueError("zero-cost observations must be local and explicitly zero")
+        if self.cost_basis is CostBasis.ESTIMATED and (
+            self.cost_usd is None or self.pricing_snapshot is None
+        ):
+            raise ValueError("estimated cost requires a value and pricing snapshot")
+        if self.cost_basis is CostBasis.PROVIDER_REPORTED and self.cost_usd is None:
+            raise ValueError("provider-reported cost requires a value")
+        if self.execution == "NOT_EXECUTED" and self.request_count != 0:
+            raise ValueError("a non-executed stage cannot report requests")
+        return self
+
+
 class OperationalObservation(StrictModel):
     latency_ms: Annotated[float, Field(ge=0)] = 0
     token_usage: Annotated[int, Field(ge=0)] = 0
-    provider_cost: Annotated[float, Field(ge=0)] = 0
+    provider_cost: Annotated[float, Field(ge=0)] | None = None
     request_count: Annotated[int, Field(ge=0)] = 0
+    stage_usage: tuple[StageUsageObservation, ...] = ()
 
 
 class EvaluationTextCaptureMode(StrEnum):
     DISABLED = "DISABLED"
     REDACTED = "REDACTED"
     BENCHMARK_TEXT = "BENCHMARK_TEXT"
+
+
+class PlanningStatus(StrEnum):
+    SUCCEEDED = "SUCCEEDED"
+    FAILED = "FAILED"
+
+
+class PlannerFailureObservation(StrictModel):
+    provider: Identifier
+    model: Identifier
+    category: Identifier
+    provider_status: Annotated[int, Field(ge=100, le=599)] | None = None
+    attempt_count: Annotated[int, Field(ge=1)]
+    occurred_at: datetime
+
+
+class PlannerFieldDifference(StrictModel):
+    field: Identifier
+    expected: Any
+    actual: Any
+    classification: Literal[
+        "SEMANTIC_AFTER_NORMALISATION",
+        "POTENTIAL_ALIAS_OR_REPRESENTATION_MISMATCH",
+    ]
+
+
+class PlannerEvaluationObservation(StrictModel):
+    expected_contract: dict[str, Any]
+    actual_plan: dict[str, Any] | None
+    differences: tuple[PlannerFieldDifference, ...] = ()
+    correct: bool
 
 
 class ExpectedEvidenceIdentity(StrictModel):
@@ -135,8 +208,8 @@ class VariantObservation(StrictModel):
     variant_id: Identifier
     candidates: tuple[RetrievedCandidate, ...] = ()
     planner_correct: bool
-    eligibility_correct: bool
-    outcome_correct: bool
+    eligibility_correct: bool | None
+    outcome_correct: bool | None
     hard_failures: tuple[Identifier, ...] = ()
     operational: OperationalObservation = OperationalObservation()
     text_capture_mode: EvaluationTextCaptureMode = EvaluationTextCaptureMode.DISABLED
@@ -145,6 +218,11 @@ class VariantObservation(StrictModel):
     expected_outcome: str | None = None
     candidate_lineage: tuple[CandidateStageLineage, ...] = ()
     candidate_funnel: tuple[CandidateFunnel, ...] = ()
+    planning_status: PlanningStatus = PlanningStatus.SUCCEEDED
+    retrieval_executed: bool = True
+    contributes_retrieval_metrics: bool = True
+    planner_failure: PlannerFailureObservation | None = None
+    planner_evaluation: PlannerEvaluationObservation | None = None
 
     @model_validator(mode="after")
     def protect_question_text(self) -> VariantObservation:
@@ -165,6 +243,37 @@ class VariantObservation(StrictModel):
             raise ValueError(
                 "expected source paths require explicit benchmark text capture"
             )
+        if (
+            self.text_capture_mode is not EvaluationTextCaptureMode.BENCHMARK_TEXT
+            and self.planner_evaluation is not None
+        ):
+            raise ValueError(
+                "planner evaluation detail requires explicit benchmark text capture"
+            )
+        if (
+            self.planner_evaluation is not None
+            and self.planner_evaluation.correct is not self.planner_correct
+        ):
+            raise ValueError("planner evaluation detail must match planner correctness")
+        if self.planning_status is PlanningStatus.FAILED:
+            if (
+                self.planner_failure is None
+                or self.planner_correct
+                or self.eligibility_correct is not None
+                or self.outcome_correct is not None
+                or self.retrieval_executed
+                or self.contributes_retrieval_metrics
+                or self.candidates
+                or self.candidate_lineage
+                or self.candidate_funnel
+            ):
+                raise ValueError(
+                    "failed planning observations cannot fabricate retrieval evidence"
+                )
+        elif self.planner_failure is not None or not self.retrieval_executed:
+            raise ValueError(
+                "successful planning observations require executed retrieval"
+            )
         return self
 
 
@@ -178,12 +287,12 @@ class MetricValues(StrictModel):
 class VariantResult(StrictModel):
     case_id: Identifier
     variant_id: Identifier
-    metrics: MetricValues
+    metrics: MetricValues | None
     side_metrics: dict[str, MetricValues]
     covered_evidence_ids: tuple[Identifier, ...]
     planner_correct: bool
-    eligibility_correct: bool
-    outcome_correct: bool
+    eligibility_correct: bool | None
+    outcome_correct: bool | None
     hard_failures: tuple[Identifier, ...]
     operational: OperationalObservation
     text_capture_mode: EvaluationTextCaptureMode = EvaluationTextCaptureMode.DISABLED
@@ -192,6 +301,11 @@ class VariantResult(StrictModel):
     expected_outcome: str | None = None
     candidate_lineage: tuple[CandidateStageLineage, ...] = ()
     candidate_funnel: tuple[CandidateFunnel, ...] = ()
+    planning_status: PlanningStatus = PlanningStatus.SUCCEEDED
+    retrieval_executed: bool = True
+    contributes_retrieval_metrics: bool = True
+    planner_failure: PlannerFailureObservation | None = None
+    planner_evaluation: PlannerEvaluationObservation | None = None
 
     @model_validator(mode="after")
     def protect_question_text(self) -> VariantResult:
@@ -212,15 +326,35 @@ class VariantResult(StrictModel):
             raise ValueError(
                 "expected source paths require explicit benchmark text capture"
             )
+        if (
+            self.text_capture_mode is not EvaluationTextCaptureMode.BENCHMARK_TEXT
+            and self.planner_evaluation is not None
+        ):
+            raise ValueError(
+                "planner evaluation detail requires explicit benchmark text capture"
+            )
+        if (
+            self.planner_evaluation is not None
+            and self.planner_evaluation.correct is not self.planner_correct
+        ):
+            raise ValueError("planner evaluation detail must match planner correctness")
         return self
 
 
 class AggregateResult(StrictModel):
-    metrics: MetricValues
+    metrics: MetricValues | None
     planner_accuracy: Annotated[float, Field(ge=0, le=1)]
-    eligibility_accuracy: Annotated[float, Field(ge=0, le=1)]
-    outcome_accuracy: Annotated[float, Field(ge=0, le=1)]
+    eligibility_accuracy: Annotated[float, Field(ge=0, le=1)] | None
+    outcome_accuracy: Annotated[float, Field(ge=0, le=1)] | None
     case_count: Annotated[int, Field(ge=0)]
+    variant_count: Annotated[int, Field(ge=0)] = 0
+    retrieval_metric_variant_count: Annotated[int, Field(ge=0)] = 0
+    planner_success_count: Annotated[int, Field(ge=0)] = 0
+    planner_failure_count: Annotated[int, Field(ge=0)] = 0
+    planner_reliability: Annotated[float, Field(ge=0, le=1)] = 0
+    planner_failure_categories: dict[Identifier, Annotated[int, Field(ge=1)]] = Field(
+        default_factory=dict
+    )
 
 
 class ExperimentLineage(StrictModel):
@@ -268,7 +402,7 @@ class ModelAssistedEvaluationResult(StrictModel):
 
 
 class ExperimentResult(StrictModel):
-    schema_version: str = "v1"
+    schema_version: Literal["v2"] = "v2"
     experiment_id: Identifier
     executed_at: datetime
     candidate_k: Annotated[int, Field(ge=1)]

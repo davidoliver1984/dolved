@@ -36,6 +36,7 @@ def create_embedder(settings: Settings) -> Embedder:
         estimated_cost_per_million_tokens_usd=(
             settings.embedding_estimated_cost_per_million_tokens_usd
         ),
+        pricing_snapshot=settings.embedding_pricing_snapshot,
     )
 
 

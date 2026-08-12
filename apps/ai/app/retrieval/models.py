@@ -1,4 +1,6 @@
-from datetime import datetime
+from __future__ import annotations
+
+from datetime import date, datetime
 from enum import StrEnum
 from typing import Annotated, Literal
 from uuid import UUID
@@ -22,18 +24,17 @@ class TemporalMode(StrEnum):
     CURRENT = "current"
     VALID_AT_DATE = "valid_at_date"
     COMPARE = "compare"
+    HISTORICAL_REFERENCE = "historical_reference"
     CLARIFICATION_REQUIRED = "clarification_required"
 
 
-class TemporalAnchorKind(StrEnum):
-    CURRENT = "current"
-    AT_DATE = "at_date"
-    PREVIOUS = "previous"
+class TemporalReferenceKind(StrEnum):
+    CALENDAR_PERIOD = "calendar_period"
+    HISTORICAL_REFERENCE = "historical_reference"
 
 
 class ClarificationReason(StrEnum):
-    AMBIGUOUS_TEMPORAL_REFERENCE = "ambiguous_temporal_reference"
-    MISSING_COMPARISON_ANCHOR = "missing_comparison_anchor"
+    UNCLASSIFIABLE_TEMPORAL_INTENT = "unclassifiable_temporal_intent"
 
 
 class RetrievalSide(StrEnum):
@@ -41,48 +42,55 @@ class RetrievalSide(StrEnum):
     COMPARISON = "comparison"
 
 
-class TemporalAnchor(ImmutableModel):
-    kind: TemporalAnchorKind
-    at: datetime | None = None
-
-    @model_validator(mode="after")
-    def validate_date(self) -> TemporalAnchor:
-        if (self.kind is TemporalAnchorKind.AT_DATE) != (self.at is not None):
-            raise ValueError("at is required only for an at_date anchor")
-        return self
+class TemporalReference(ImmutableModel):
+    kind: TemporalReferenceKind
+    value: Reference
 
 
 class RetrievalPlan(ImmutableModel):
     retrieval_queries: tuple[Question, ...] = Field(min_length=1, max_length=1)
     temporal_mode: TemporalMode
-    valid_at: datetime | None = None
-    primary_anchor: TemporalAnchor | None = None
-    comparison_anchor: TemporalAnchor | None = None
-    applicability_reference: Reference | None = None
+    explicit_date: date | None = None
+    temporal_reference: TemporalReference | None = None
+    location_references: tuple[Reference, ...] = Field(default=(), max_length=8)
     clarification_reason: ClarificationReason | None = None
 
     @model_validator(mode="after")
     def validate_mode_fields(self) -> RetrievalPlan:
-        if self.temporal_mode is TemporalMode.VALID_AT_DATE:
-            if self.valid_at is None:
-                raise ValueError("valid_at_date requires valid_at")
-        elif self.valid_at is not None:
-            raise ValueError("valid_at is only valid for valid_at_date")
-
-        compare = self.temporal_mode is TemporalMode.COMPARE
-        has_two_anchors = (
-            self.primary_anchor is not None and self.comparison_anchor is not None
-        )
-        if compare != has_two_anchors:
-            raise ValueError("compare requires exactly two anchors")
-        if not compare and (
-            self.primary_anchor is not None or self.comparison_anchor is not None
+        mode = self.temporal_mode
+        if self.explicit_date is not None and self.temporal_reference is not None:
+            raise ValueError(
+                "explicit_date and temporal_reference are mutually exclusive"
+            )
+        if mode is TemporalMode.CURRENT and (
+            self.explicit_date is not None or self.temporal_reference is not None
         ):
-            raise ValueError("anchors are only valid for compare")
-
-        clarification = self.temporal_mode is TemporalMode.CLARIFICATION_REQUIRED
+            raise ValueError("current forbids temporal selectors")
+        if mode is TemporalMode.VALID_AT_DATE:
+            if (self.explicit_date is None) == (self.temporal_reference is None):
+                raise ValueError("valid_at_date requires exactly one temporal selector")
+            if (
+                self.temporal_reference is not None
+                and self.temporal_reference.kind
+                is not TemporalReferenceKind.CALENDAR_PERIOD
+            ):
+                raise ValueError("valid_at_date requires a calendar period reference")
+        if mode is TemporalMode.HISTORICAL_REFERENCE and (
+            self.explicit_date is not None
+            or self.temporal_reference is None
+            or self.temporal_reference.kind
+            is not TemporalReferenceKind.HISTORICAL_REFERENCE
+        ):
+            raise ValueError("historical_reference requires its typed reference")
+        if mode not in {
+            TemporalMode.VALID_AT_DATE,
+            TemporalMode.HISTORICAL_REFERENCE,
+            TemporalMode.COMPARE,
+        } and (self.explicit_date is not None or self.temporal_reference is not None):
+            raise ValueError("temporal selectors are not valid for this mode")
+        clarification = mode is TemporalMode.CLARIFICATION_REQUIRED
         if clarification != (self.clarification_reason is not None):
-            raise ValueError("clarification mode requires a controlled reason")
+            raise ValueError("clarification mode requires its controlled reason only")
         return self
 
 
@@ -94,10 +102,57 @@ class PlanRequest(ImmutableModel):
     evaluated_at: datetime
 
 
+class PlannerLineage(ImmutableModel):
+    provider: Reference
+    model: Reference
+    contract_schema_version: Reference
+    prompt_version: Reference
+    adapter_version: Reference
+    fingerprint: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
+class OperationUsage(ImmutableModel):
+    stage: Reference
+    provider: Reference
+    model: Reference
+    execution: Literal["provider_api", "local", "infrastructure", "not_executed"]
+    request_count: int = Field(ge=0)
+    retry_count: int = Field(ge=0)
+    input_tokens: int | None = Field(default=None, ge=0)
+    cached_input_tokens: int | None = Field(default=None, ge=0)
+    output_tokens: int | None = Field(default=None, ge=0)
+    latency_ms: float = Field(ge=0)
+    cost_basis: Literal[
+        "provider_reported", "estimated", "unavailable", "zero_cost_local"
+    ]
+    cost_usd: float | None = Field(default=None, ge=0)
+    pricing_snapshot: Reference | None = None
+
+    @model_validator(mode="after")
+    def validate_cost(self) -> OperationUsage:
+        if self.cost_basis == "unavailable" and self.cost_usd is not None:
+            raise ValueError("unavailable planner cost cannot be numeric")
+        if self.cost_basis == "zero_cost_local" and (
+            self.execution not in {"local", "infrastructure"} or self.cost_usd != 0
+        ):
+            raise ValueError(
+                "zero-cost usage requires local/infrastructure execution and explicit zero"
+            )
+        if self.cost_basis == "estimated" and (
+            self.cost_usd is None or self.pricing_snapshot is None
+        ):
+            raise ValueError("estimated planner cost requires pricing lineage")
+        if self.cost_basis == "provider_reported" and self.cost_usd is None:
+            raise ValueError("provider-reported planner cost requires a value")
+        return self
+
+
 class PlanResponse(ImmutableModel):
-    contract_version: Literal[1] = 1
+    contract_version: Literal[2] = 2
     request_id: UUID
     plan: RetrievalPlan
+    classifier_lineage: PlannerLineage
+    usage: OperationUsage
 
 
 class SearchScope(ImmutableModel):
@@ -125,6 +180,7 @@ class SearchRequest(ImmutableModel):
     sparse_profile_fingerprint: str | None = None
     sparse_vector_space: SparseVectorSpace | None = None
     hybrid_configuration: HybridRetrievalConfiguration | None = None
+    capture_diagnostics: bool = False
     scopes: tuple[SearchScope, ...] = Field(min_length=1, max_length=2)
 
     @model_validator(mode="after")
@@ -217,8 +273,17 @@ class SearchLineage(ImmutableModel):
     configuration_version: str | None = None
 
 
+class SearchStageDiagnostics(ImmutableModel):
+    side: RetrievalSide
+    dense_candidates: tuple[RetrievalCandidate, ...]
+    sparse_candidates: tuple[RetrievalCandidate, ...] = ()
+    fused_candidates: tuple[RetrievalCandidate, ...] = ()
+
+
 class SearchResponse(ImmutableModel):
     contract_version: Literal[1] = 1
     request_id: UUID
     candidates: tuple[RetrievalCandidate, ...]
     lineage: SearchLineage
+    diagnostics: tuple[SearchStageDiagnostics, ...] = ()
+    usage: tuple[OperationUsage, ...] = ()

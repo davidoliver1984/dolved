@@ -34,6 +34,7 @@
         "rrf_k": {"type": "integer", "minimum": 1}
       }
     },
+    "capture_diagnostics": {"type": "boolean", "default": false},
     "scopes": {
       "type": "array", "minItems": 1, "maxItems": 2,
       "items": {

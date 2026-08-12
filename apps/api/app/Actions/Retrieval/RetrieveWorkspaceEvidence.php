@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace App\Actions\Retrieval;
 
+use App\Enums\EvidenceThresholdPolicyStatus;
 use App\Enums\RetrievalOutcome;
 use App\Exceptions\RetrievalException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
+use App\Models\EvidenceThresholdPolicy;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Services\Retrieval\ResolveEvidenceThresholdPolicy;
 use App\Services\Retrieval\RetrievalClient;
 use App\Support\Documents\DocumentAuthorityTimeline;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
+use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\RetrievalResult;
 use Carbon\CarbonImmutable;
+use RuntimeException;
 
 final readonly class RetrieveWorkspaceEvidence
 {
@@ -30,10 +34,158 @@ final readonly class RetrieveWorkspaceEvidence
         string $question,
         int $candidateK,
     ): RetrievalResult {
-        $evaluatedAt = CarbonImmutable::now();
+        return $this->execute(
+            $authorised,
+            $question,
+            $candidateK,
+            CarbonImmutable::now(),
+        );
+    }
+
+    /**
+     * @return array{result: RetrievalResult, trace: array<string, mixed>}
+     */
+    public function handleForLocalEvaluation(
+        AuthorisedKnowledgeScope $authorised,
+        string $question,
+        int $candidateK,
+        CarbonImmutable $evaluatedAt,
+        ?EvidenceThresholdPolicy $calibratingPolicy,
+        bool $denseOnly,
+    ): array {
+        if (! app()->environment(['local', 'testing'])) {
+            throw new RuntimeException('Observed benchmark retrieval is restricted to local/testing environments.');
+        }
+        if (
+            ! $denseOnly
+            && $calibratingPolicy?->status !== EvidenceThresholdPolicyStatus::Calibrating
+        ) {
+            throw new RuntimeException('Observed hybrid retrieval requires an explicitly CALIBRATING policy.');
+        }
+        $trace = [];
+        $result = $this->execute(
+            $authorised,
+            $question,
+            $candidateK,
+            $evaluatedAt,
+            $calibratingPolicy,
+            $denseOnly,
+            function (string $stage, mixed $value) use (&$trace): void {
+                $trace[$stage] = $value;
+            },
+        );
+
+        return ['result' => $result, 'trace' => $trace];
+    }
+
+    /**
+     * Run the dense and hybrid benchmark arms from one provider-produced plan.
+     *
+     * @return array{dense: array{result: RetrievalResult, trace: array<string, mixed>}, hybrid: array{result: RetrievalResult, trace: array<string, mixed>}}
+     */
+    public function handlePairForLocalEvaluation(
+        AuthorisedKnowledgeScope $authorised,
+        string $question,
+        int $denseCandidateK,
+        CarbonImmutable $evaluatedAt,
+        EvidenceThresholdPolicy $calibratingPolicy,
+    ): array {
+        $this->assertLocalEvaluationPolicy($calibratingPolicy);
+        $plan = $this->client->plan($authorised->workspace, $question, $evaluatedAt);
+
+        return [
+            'dense' => $this->executeObserved(
+                $authorised,
+                $question,
+                $denseCandidateK,
+                $evaluatedAt,
+                null,
+                true,
+                $plan,
+            ),
+            'hybrid' => $this->executeObserved(
+                $authorised,
+                $question,
+                $denseCandidateK,
+                $evaluatedAt,
+                $calibratingPolicy,
+                false,
+                $plan,
+            ),
+        ];
+    }
+
+    private function assertLocalEvaluationPolicy(EvidenceThresholdPolicy $policy): void
+    {
+        if (! app()->environment(['local', 'testing'])) {
+            throw new RuntimeException('Observed benchmark retrieval is restricted to local/testing environments.');
+        }
+        if ($policy->status !== EvidenceThresholdPolicyStatus::Calibrating) {
+            throw new RuntimeException('Observed hybrid retrieval requires an explicitly CALIBRATING policy.');
+        }
+    }
+
+    /**
+     * @return array{result: RetrievalResult, trace: array<string, mixed>}
+     */
+    private function executeObserved(
+        AuthorisedKnowledgeScope $authorised,
+        string $question,
+        int $candidateK,
+        CarbonImmutable $evaluatedAt,
+        ?EvidenceThresholdPolicy $policy,
+        bool $denseOnly,
+        RetrievalPlan $plan,
+    ): array {
+        $trace = [];
+        $result = $this->execute(
+            $authorised,
+            $question,
+            $candidateK,
+            $evaluatedAt,
+            $policy,
+            $denseOnly,
+            function (string $stage, mixed $value) use (&$trace): void {
+                $trace[$stage] = $value;
+            },
+            $plan,
+        );
+
+        return ['result' => $result, 'trace' => $trace];
+    }
+
+    /** @param null|callable(string, mixed): void $observe */
+    private function execute(
+        AuthorisedKnowledgeScope $authorised,
+        string $question,
+        int $candidateK,
+        CarbonImmutable $evaluatedAt,
+        ?EvidenceThresholdPolicy $policyOverride = null,
+        bool $denseOnly = false,
+        ?callable $observe = null,
+        ?RetrievalPlan $planOverride = null,
+    ): RetrievalResult {
         try {
-            $plan = $this->client->plan($authorised->workspace, $question, $evaluatedAt);
+            $plan = $planOverride ?? $this->client->plan($authorised->workspace, $question, $evaluatedAt);
+            $observe?->__invoke('plan', [
+                'query' => $plan->query,
+                'temporal_mode' => $plan->temporalMode->value,
+                'explicit_date' => $plan->explicitDate?->toDateString(),
+                'temporal_reference' => $plan->temporalReference === null ? null : [
+                    'kind' => $plan->temporalReference['kind']->value,
+                    'value' => $plan->temporalReference['value'],
+                ],
+                'location_references' => $plan->locationReferences,
+                'clarification_reason' => $plan->clarificationReason?->value,
+                'classifier_lineage' => $plan->classifierLineage->toArray(),
+                'usage' => [$plan->classifierUsage->toArray()],
+            ]);
             $eligible = $this->eligibility->handle($authorised, $plan, $evaluatedAt);
+            $observe?->__invoke('eligibility', [
+                'outcome' => $eligible->outcome->value,
+                'document_public_ids_by_side' => $eligible->documentPublicIdsBySide,
+                'reason' => $eligible->reason,
+            ]);
             if (! $eligible->canSearch()) {
                 return new RetrievalResult($eligible->outcome, reason: $eligible->reason);
             }
@@ -41,9 +193,9 @@ final readonly class RetrieveWorkspaceEvidence
             if ($corpus === null) {
                 return new RetrievalResult(RetrievalOutcome::NoEligibleEvidence);
             }
-            $policy = $corpus->sparse_space_generation_id === null
+            $policy = $denseOnly || $corpus->sparse_space_generation_id === null
                 ? null
-                : $this->policies->handle($corpus);
+                : ($policyOverride ?? $this->policies->handle($corpus));
             $search = $this->client->search(
                 $authorised->workspace,
                 $corpus,
@@ -51,7 +203,23 @@ final readonly class RetrieveWorkspaceEvidence
                 $plan->query,
                 $candidateK,
                 $policy,
+                $denseOnly,
+                $observe !== null,
             );
+            $diagnostics = $observe === null
+                ? []
+                : $this->hydrateDiagnostics(
+                    $search->diagnostics,
+                    $eligible->documentPublicIdsBySide,
+                    $authorised,
+                    $denseOnly,
+                );
+            $observe?->__invoke('search', [
+                'candidates' => $search->candidates,
+                'lineage' => $search->lineage,
+                'diagnostics' => $diagnostics,
+                'usage' => $search->usage,
+            ]);
             $candidates = $search->candidates;
             if ($candidates === []) {
                 return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates);
@@ -73,7 +241,9 @@ final readonly class RetrieveWorkspaceEvidence
                     ? $freshEligible->documentPublicIdsBySide
                     : [],
                 $authorised,
+                $denseOnly,
             );
+            $observe?->__invoke('hydrated', $hydrated);
 
             if ($hydrated === []) {
                 return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates);
@@ -88,6 +258,7 @@ final readonly class RetrieveWorkspaceEvidence
                 $hydrated,
                 $policy,
             );
+            $observe?->__invoke('reranked', $reranked);
             $this->policies->assertRerankerLineage($policy, $reranked['profile']);
             $rerankedByChunk = collect($reranked['candidates'])->keyBy(
                 fn (array $candidate): string => $candidate['side'].':'.$candidate['chunk_id']
@@ -105,6 +276,7 @@ final readonly class RetrieveWorkspaceEvidence
                 $rerankCandidates,
                 $finalEligible->canSearch() ? $finalEligible->documentPublicIdsBySide : [],
                 $authorised,
+                $denseOnly,
             );
             $qualified = collect($final)->map(function (array $candidate) use ($rerankedByChunk, $policy): ?array {
                 $rerankedCandidate = $rerankedByChunk->get(
@@ -127,6 +299,7 @@ final readonly class RetrieveWorkspaceEvidence
                     'reranker_adapter_version' => $policy->reranker_adapter_version,
                 ];
             })->filter()->sortBy('rank')->values();
+            $observe?->__invoke('threshold_qualified', $qualified->all());
             if ($qualified->isEmpty()) {
                 return new RetrievalResult(RetrievalOutcome::InsufficientEvidence);
             }
@@ -142,9 +315,12 @@ final readonly class RetrieveWorkspaceEvidence
             $accepted = $qualified->groupBy('side')->flatMap(
                 fn ($sideCandidates) => $sideCandidates->take($policy->final_evidence_k)
             )->sortBy('rank')->values()->all();
+            $observe?->__invoke('final_evidence', $accepted);
 
             return new RetrievalResult(RetrievalOutcome::EvidenceFound, $accepted);
-        } catch (RetrievalException) {
+        } catch (RetrievalException $exception) {
+            $observe?->__invoke('failure', ['type' => $exception::class]);
+
             return new RetrievalResult(RetrievalOutcome::RetrievalFailed);
         }
     }
@@ -158,6 +334,7 @@ final readonly class RetrieveWorkspaceEvidence
         array $candidates,
         array $eligibleBySide,
         AuthorisedKnowledgeScope $authorised,
+        bool $denseOnly = false,
     ): array {
         $chunkIds = collect($candidates)
             ->pluck('chunk_id')
@@ -234,5 +411,37 @@ final readonly class RetrieveWorkspaceEvidence
             'sparse_score' => $candidate['sparse_score'] ?? null,
             'sparse_rank' => $candidate['sparse_rank'] ?? null,
         ];
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $diagnostics
+     * @param  array<string, list<string>>  $eligibleBySide
+     * @return list<array<string, mixed>>
+     */
+    private function hydrateDiagnostics(
+        array $diagnostics,
+        array $eligibleBySide,
+        AuthorisedKnowledgeScope $authorised,
+        bool $denseOnly,
+    ): array {
+        return collect($diagnostics)->map(function (mixed $diagnostic) use (
+            $eligibleBySide,
+            $authorised,
+            $denseOnly,
+        ): ?array {
+            if (! is_array($diagnostic) || ! is_string($diagnostic['side'] ?? null)) {
+                return null;
+            }
+
+            $result = ['side' => $diagnostic['side']];
+            foreach (['dense_candidates', 'sparse_candidates', 'fused_candidates'] as $stage) {
+                $candidates = $diagnostic[$stage] ?? null;
+                $result[$stage] = is_array($candidates)
+                    ? $this->hydrateAndRecheck($candidates, $eligibleBySide, $authorised, $denseOnly)
+                    : null;
+            }
+
+            return $result;
+        })->filter()->values()->all();
     }
 }

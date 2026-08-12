@@ -21,6 +21,7 @@ from app.evaluation.models import (
     ManualGateRecord,
     MetricValues,
     OperationalObservation,
+    PlannerEvaluationObservation,
     QualityGatePolicy,
     VariantResult,
 )
@@ -150,7 +151,9 @@ def test_result_and_governance_records_validate_against_shared_schemas() -> None
                 case_id="case.current",
                 variant_id="direct",
                 metrics=aggregate.metrics,
-                side_metrics={"PRIMARY": aggregate.metrics},
+                side_metrics={"PRIMARY": aggregate.metrics}
+                if aggregate.metrics
+                else {},
                 covered_evidence_ids=("evidence.current",),
                 planner_correct=True,
                 eligibility_correct=True,
@@ -200,7 +203,7 @@ def test_result_and_governance_records_validate_against_shared_schemas() -> None
         hard_failures=(),
     )
     records = (
-        (result, "experiment-result.schema.json"),
+        (result, "../v2/experiment-result.schema.json"),
         (
             BaselinePromotion(
                 experiment_id=result.experiment_id,
@@ -229,6 +232,27 @@ def test_result_and_governance_records_validate_against_shared_schemas() -> None
         value = json.loads(record.model_dump_json())
         schema = json.loads((CONTRACT_ROOT / schema_name).read_text())
         jsonschema.Draft202012Validator(schema).validate(value)
+
+
+def test_planner_contract_detail_is_forbidden_outside_benchmark_text_mode() -> None:
+    with pytest.raises(ValueError, match="benchmark text capture"):
+        VariantResult(
+            case_id="case.current",
+            variant_id="direct",
+            metrics=None,
+            side_metrics={},
+            covered_evidence_ids=(),
+            planner_correct=True,
+            eligibility_correct=True,
+            outcome_correct=True,
+            hard_failures=(),
+            operational=OperationalObservation(),
+            planner_evaluation=PlannerEvaluationObservation(
+                expected_contract={"temporal_mode": "CURRENT"},
+                actual_plan={"temporal_mode": "CURRENT"},
+                correct=True,
+            ),
+        )
 
 
 def test_canonical_digest_is_order_independent_and_detects_mutation() -> None:

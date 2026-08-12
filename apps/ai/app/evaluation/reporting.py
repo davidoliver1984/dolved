@@ -4,6 +4,10 @@ from app.evaluation.models import ExperimentResult
 
 
 def comparison_report(candidate: ExperimentResult, baseline: ExperimentResult) -> str:
+    candidate_metrics = candidate.aggregate.metrics
+    baseline_metrics = baseline.aggregate.metrics
+    if candidate_metrics is None or baseline_metrics is None:
+        raise ValueError("comparison requires retrieval metrics in both results")
     lines = [
         f"# Evaluation comparison: {candidate.experiment_id}",
         "",
@@ -17,8 +21,8 @@ def comparison_report(candidate: ExperimentResult, baseline: ExperimentResult) -
         "|---|---:|---:|---:|",
     ]
     for name in ("recall_at_k", "precision_at_k", "mrr", "ndcg_at_k"):
-        before = getattr(baseline.aggregate.metrics, name)
-        after = getattr(candidate.aggregate.metrics, name)
+        before = getattr(baseline_metrics, name)
+        after = getattr(candidate_metrics, name)
         lines.append(f"| {name} | {before:.4f} | {after:.4f} | {after - before:+.4f} |")
     lines.extend(["", "## Absolute failures", ""])
     lines.extend(
@@ -27,6 +31,11 @@ def comparison_report(candidate: ExperimentResult, baseline: ExperimentResult) -
     )
     lines.extend(["", "## Slice metrics", ""])
     for name, result in sorted(candidate.slices.items()):
+        if result.metrics is None:
+            lines.append(
+                f"- **{name}**: no retrieval metrics, cases={result.case_count}"
+            )
+            continue
         lines.append(
             f"- **{name}**: recall={result.metrics.recall_at_k:.4f}, "
             f"mrr={result.metrics.mrr:.4f}, cases={result.case_count}"

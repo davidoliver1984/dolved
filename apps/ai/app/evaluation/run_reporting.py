@@ -74,6 +74,8 @@ def write_comparison(run_dir: Path, baseline_path: Path) -> dict[str, Any]:
             raise ValueError(f"baseline and candidate disagree on {field}")
     candidate_metrics = artifacts.result["aggregate"]["metrics"]
     baseline_metrics = baseline["aggregate"]["metrics"]
+    if candidate_metrics is None or baseline_metrics is None:
+        raise ValueError("comparison requires retrieval metrics in both results")
     comparison = {
         "schema_version": "v1",
         "baseline_experiment_id": baseline["experiment_id"],
@@ -117,7 +119,7 @@ def update_experiment_index(runs_root: Path, index_path: Path) -> None:
         ):
             continue
         artifacts = load_run_artifacts(run_dir)
-        metrics = artifacts.result["aggregate"]["metrics"]
+        metrics = artifacts.result["aggregate"].get("metrics") or {}
         config = artifacts.config
         benchmark = config["benchmark"]
         marker = _baseline_marker(config)
@@ -129,10 +131,10 @@ def update_experiment_index(runs_root: Path, index_path: Path) -> None:
                     artifacts.result["executed_at"][:10],
                     _escape_markdown(config["description"]),
                     f"{benchmark['id']} {benchmark['version']}",
-                    _metric(metrics["recall_at_k"]),
-                    _metric(metrics["precision_at_k"]),
-                    _metric(metrics["mrr"]),
-                    _metric(metrics["ndcg_at_k"]),
+                    _metric(metrics.get("recall_at_k")),
+                    _metric(metrics.get("precision_at_k")),
+                    _metric(metrics.get("mrr")),
+                    _metric(metrics.get("ndcg_at_k")),
                     config["status"],
                     _escape_markdown(str(config.get("decision") or "—")),
                     marker,
@@ -183,17 +185,25 @@ def markdown_report(artifacts: RunArtifacts) -> str:
         "",
         *_configuration_markdown(config),
         "",
+        "## Classifier and Laravel resolution",
+        "",
+        *_classifier_resolution_markdown(artifacts),
+        "",
         "## Headline metrics",
         "",
         "| Metric | Value |",
         "|---|---:|",
         *[
-            f"| {METRIC_LABELS[name]} | {_metric(aggregate['metrics'][name])} |"
+            f"| {METRIC_LABELS[name]} | {_metric((aggregate.get('metrics') or {}).get(name))} |"
             for name in METRICS
         ],
         f"| Planner accuracy | {_metric(aggregate['planner_accuracy'])} |",
         f"| Eligibility accuracy | {_metric(aggregate['eligibility_accuracy'])} |",
         f"| Outcome accuracy | {_metric(aggregate['outcome_accuracy'])} |",
+        "",
+        "## Planner reliability",
+        "",
+        *_planner_markdown(aggregate),
         "",
         "## Baseline comparison",
         "",
@@ -265,7 +275,9 @@ def html_report(artifacts: RunArtifacts) -> str:
 <header><div><p class="eyebrow">Evaluation experiment</p><h1>{html.escape(config["run_id"])}</h1><p>{html.escape(config["description"])}</p></div><span class="status {config["status"].lower()}">{html.escape(config["status"])}</span></header>
 <section><h2>Run identity</h2>{_identity_html(artifacts)}</section>
 <section><h2>Tested configuration</h2>{_configuration_html(config)}</section>
+<section><h2>Classifier and Laravel resolution</h2>{_classifier_resolution_html(artifacts)}</section>
 <section><h2>Headline retrieval metrics</h2>{charts["headline"]}</section>
+<section class="planner"><h2>Planner reliability</h2>{_planner_html(result["aggregate"])}</section>
 <section><h2>Baseline comparison</h2>{charts["comparison"]}{_comparison_html(artifacts.comparison)}</section>
 <section><h2>Slice performance</h2>{charts["slices"]}{_slice_table_html(result)}</section>
 <section><h2>Candidate funnel</h2>{charts["funnel"]}{_funnel_note(artifacts)}</section>
@@ -395,6 +407,8 @@ def _slice_comparison(
             for metric in METRICS
         }
         for name in common
+        if candidate["slices"][name].get("metrics") is not None
+        and baseline["slices"][name].get("metrics") is not None
     }
 
 
@@ -436,14 +450,35 @@ def _comparison_markdown(comparison: dict[str, Any] | None) -> list[str]:
 def _slice_rows(result: dict[str, Any]) -> list[str]:
     rows = []
     for name, value in sorted(result.get("slices", {}).items()):
-        metrics = value["metrics"]
+        metrics = value.get("metrics") or {}
         rows.append(
-            f"| {name} | {value['case_count']} | {_metric(metrics['recall_at_k'])} | "
-            f"{_metric(metrics['precision_at_k'])} | {_metric(metrics['mrr'])} | "
-            f"{_metric(metrics['ndcg_at_k'])} | {_metric(value['planner_accuracy'])} | "
+            f"| {name} | {value['case_count']} | {_metric(metrics.get('recall_at_k'))} | "
+            f"{_metric(metrics.get('precision_at_k'))} | {_metric(metrics.get('mrr'))} | "
+            f"{_metric(metrics.get('ndcg_at_k'))} | {_metric(value['planner_accuracy'])} | "
             f"{_metric(value['eligibility_accuracy'])} | {_metric(value['outcome_accuracy'])} |"
         )
     return rows or ["| — | 0 | — | — | — | — | — | — | — |"]
+
+
+def _planner_markdown(aggregate: dict[str, Any]) -> list[str]:
+    categories = aggregate.get("planner_failure_categories", {})
+    category_text = (
+        ", ".join(f"`{name}`: {count}" for name, count in sorted(categories.items()))
+        or "None."
+    )
+    return [
+        "| Measure | Value |",
+        "|---|---:|",
+        f"| Total variants | {aggregate.get('variant_count', aggregate.get('case_count', 0))} |",
+        f"| Successful planner variants | {aggregate.get('planner_success_count', 0)} |",
+        f"| Planner failures | {aggregate.get('planner_failure_count', 0)} |",
+        f"| Planner reliability | {_metric(aggregate.get('planner_reliability'))} |",
+        f"| Retrieval metric population | {aggregate.get('retrieval_metric_variant_count', 0)} |",
+        "",
+        f"Failure categories: {category_text}",
+        "",
+        "Retrieval metrics are computed only over variants where planning succeeded and retrieval ran. Planner hard failures remain separate and cannot be offset by retrieval averages.",
+    ]
 
 
 def _operational_summary(artifacts: RunArtifacts) -> dict[str, Any]:
@@ -454,11 +489,14 @@ def _operational_summary(artifacts: RunArtifacts) -> dict[str, Any]:
         item.get("operational", {}) for item in artifacts.result["variants"]
     ]
     latencies = sorted(float(item.get("latency_ms", 0)) for item in observations)
+    costs = [item.get("provider_cost") for item in observations]
     return {
         "latency_ms": _latency(latencies),
         "token_usage": sum(int(item.get("token_usage", 0)) for item in observations),
-        "provider_cost": sum(
-            float(item.get("provider_cost", 0)) for item in observations
+        "provider_cost": (
+            sum(float(value) for value in costs if value is not None)
+            if all(value is not None for value in costs)
+            else None
         ),
         "request_count": sum(
             int(item.get("request_count", 0)) for item in observations
@@ -468,6 +506,19 @@ def _operational_summary(artifacts: RunArtifacts) -> dict[str, Any]:
 
 def _operational_markdown(artifacts: RunArtifacts) -> list[str]:
     return ["```json", canonical_json(_operational_summary(artifacts)).rstrip(), "```"]
+
+
+def _classifier_resolution_summary(artifacts: RunArtifacts) -> dict[str, Any]:
+    value = artifacts.raw_result.get("classifier_and_resolution")
+    return value if isinstance(value, dict) else {"availability": "not recorded"}
+
+
+def _classifier_resolution_markdown(artifacts: RunArtifacts) -> list[str]:
+    return [
+        "```json",
+        canonical_json(_classifier_resolution_summary(artifacts)).rstrip(),
+        "```",
+    ]
 
 
 def _strongest_changes(comparison: dict[str, Any] | None) -> list[str]:
@@ -501,11 +552,19 @@ def _case_markdown(result: dict[str, Any]) -> list[str]:
     for item in sorted(
         result["variants"], key=lambda value: (value["case_id"], value["variant_id"])
     ):
-        metrics = item["metrics"]
+        metrics = item.get("metrics") or {}
+        planning = item.get("planning_status", "SUCCEEDED")
+        failure = item.get("planner_failure") or {}
         lines.extend(
             [
                 f"### `{item['case_id']}` / `{item['variant_id']}`",
                 "",
+                f"- Planning status: `{planning}`",
+                f"- Planner failure: `{failure.get('category', 'none')}`",
+                f"- Provider status: `{failure.get('provider_status', 'not recorded')}`",
+                f"- Planner attempts: `{failure.get('attempt_count', 'not recorded')}`",
+                f"- Retrieval executed: `{item.get('retrieval_executed', True)}`",
+                f"- Contributes retrieval metrics: `{item.get('contributes_retrieval_metrics', True)}`",
                 f"- Planner correct: `{item['planner_correct']}`",
                 f"- Eligibility correct: `{item['eligibility_correct']}`",
                 f"- Outcome correct: `{item['outcome_correct']}`",
@@ -513,9 +572,10 @@ def _case_markdown(result: dict[str, Any]) -> list[str]:
                 f"- Text capture: `{item.get('text_capture_mode', 'DISABLED')}`",
                 f"- Question: {_escape_markdown(item.get('question') or 'not retained')}",
                 f"- Covered EvidenceUnits: `{', '.join(item['covered_evidence_ids']) or 'none'}`",
-                f"- Metrics: recall={_metric(metrics['recall_at_k'])}, precision={_metric(metrics['precision_at_k'])}, MRR={_metric(metrics['mrr'])}, nDCG={_metric(metrics['ndcg_at_k'])}",
+                f"- Metrics: recall={_metric(metrics.get('recall_at_k'))}, precision={_metric(metrics.get('precision_at_k'))}, MRR={_metric(metrics.get('mrr'))}, nDCG={_metric(metrics.get('ndcg_at_k'))}",
                 f"- Hard failures: `{', '.join(item['hard_failures']) or 'none'}`",
                 "",
+                *_planner_evaluation_markdown(item),
             ]
         )
         for side, side_metrics in sorted(item.get("side_metrics", {}).items()):
@@ -599,8 +659,24 @@ def _lineage_availability(artifacts: RunArtifacts) -> list[str]:
     return available
 
 
+def _planner_evaluation_markdown(item: dict[str, Any]) -> list[str]:
+    evaluation = item.get("planner_evaluation")
+    if not isinstance(evaluation, dict):
+        return []
+    return [
+        "Planner contract comparison:",
+        "",
+        "```json",
+        canonical_json(evaluation).rstrip(),
+        "```",
+        "",
+    ]
+
+
 def _headline_figure(result: dict[str, Any]) -> go.Figure:
-    metrics = result["aggregate"]["metrics"]
+    metrics = result["aggregate"].get("metrics") or {}
+    if not metrics:
+        return _empty_figure("No retrieval metrics available")
     figure = go.Figure(
         go.Bar(
             x=[METRIC_LABELS[name] for name in METRICS],
@@ -639,7 +715,11 @@ def _comparison_figure(comparison: dict[str, Any] | None) -> go.Figure:
 
 
 def _slice_figure(result: dict[str, Any]) -> go.Figure:
-    slices = sorted(result.get("slices", {}))
+    slices = sorted(
+        name
+        for name, value in result.get("slices", {}).items()
+        if value.get("metrics") is not None
+    )
     if not slices:
         return _empty_figure("No slice metrics available")
     figure = go.Figure(
@@ -766,7 +846,10 @@ def _comparison_html(comparison: dict[str, Any] | None) -> str:
 def _slice_table_html(result: dict[str, Any]) -> str:
     rows = "".join(
         f"<tr><td>{html.escape(name)}</td><td>{value['case_count']}</td>"
-        + "".join(f"<td>{_metric(value['metrics'][metric])}</td>" for metric in METRICS)
+        + "".join(
+            f"<td>{_metric((value.get('metrics') or {}).get(metric))}</td>"
+            for metric in METRICS
+        )
         + "</tr>"
         for name, value in sorted(result.get("slices", {}).items())
     )
@@ -775,6 +858,32 @@ def _slice_table_html(result: dict[str, Any]) -> str:
 
 def _operational_html(artifacts: RunArtifacts) -> str:
     return f"<pre>{html.escape(canonical_json(_operational_summary(artifacts)))}</pre>"
+
+
+def _classifier_resolution_html(artifacts: RunArtifacts) -> str:
+    return f"<pre>{html.escape(canonical_json(_classifier_resolution_summary(artifacts)))}</pre>"
+
+
+def _planner_html(aggregate: dict[str, Any]) -> str:
+    categories = aggregate.get("planner_failure_categories", {})
+    category_rows = (
+        "".join(
+            f"<tr><td><code>{html.escape(name)}</code></td><td>{count}</td></tr>"
+            for name, count in sorted(categories.items())
+        )
+        or "<tr><td>None</td><td>0</td></tr>"
+    )
+    return (
+        "<dl class=identity>"
+        f"<div><dt>Total variants</dt><dd>{aggregate.get('variant_count', aggregate.get('case_count', 0))}</dd></div>"
+        f"<div><dt>Successful planner variants</dt><dd>{aggregate.get('planner_success_count', 0)}</dd></div>"
+        f"<div><dt>Planner failures</dt><dd>{aggregate.get('planner_failure_count', 0)}</dd></div>"
+        f"<div><dt>Planner reliability</dt><dd>{_metric(aggregate.get('planner_reliability'))}</dd></div>"
+        f"<div><dt>Retrieval metric population</dt><dd>{aggregate.get('retrieval_metric_variant_count', 0)}</dd></div>"
+        "</dl><h3>Failure categories</h3>"
+        f"<table><thead><tr><th>Category</th><th>Count</th></tr></thead><tbody>{category_rows}</tbody></table>"
+        "<p class=muted>Retrieval metrics exclude variants where planning failed. Planner hard failures remain visible independently and cannot be offset by a strong retrieval average.</p>"
+    )
 
 
 def _gate_html(comparison: dict[str, Any] | None) -> str:
@@ -790,12 +899,15 @@ def _case_table_html(result: dict[str, Any]) -> str:
     for item in sorted(
         result["variants"], key=lambda value: (value["case_id"], value["variant_id"])
     ):
-        metrics = item["metrics"]
+        metrics = item.get("metrics") or {}
+        planning = item.get("planning_status", "SUCCEEDED")
+        planner_failure = item.get("planner_failure") or {}
         rows.append(
             f"<tr><td>{html.escape(item['case_id'])}</td><td>{html.escape(item['variant_id'])}</td>"
+            f"<td>{html.escape(planning)}</td><td>{str(item.get('retrieval_executed', True)).lower()}</td>"
             f"<td>{str(item['planner_correct']).lower()}</td><td>{str(item['eligibility_correct']).lower()}</td><td>{str(item['outcome_correct']).lower()}</td>"
             f"<td>{html.escape(', '.join(item['covered_evidence_ids']) or 'none')}</td>"
-            + "".join(f"<td>{_metric(metrics[name])}</td>" for name in METRICS)
+            + "".join(f"<td>{_metric(metrics.get(name))}</td>" for name in METRICS)
             + f"<td>{html.escape(', '.join(item['hard_failures']) or 'none')}</td></tr>"
         )
         expected_rows = "".join(
@@ -821,6 +933,8 @@ def _case_table_html(result: dict[str, Any]) -> str:
             "<details class=case-detail>"
             f"<summary><strong>{html.escape(item['case_id'])}</strong> / {html.escape(item['variant_id'])} — {html.escape(item.get('expected_outcome') or 'outcome not recorded')}</summary>"
             f"<p><strong>Question:</strong> {html.escape(item.get('question') or 'not retained')} <span class=muted>({html.escape(item.get('text_capture_mode', 'DISABLED'))})</span></p>"
+            f"<p><strong>Planning:</strong> {html.escape(planning)}; <strong>failure:</strong> {html.escape(str(planner_failure.get('category', 'none')))}; <strong>provider status:</strong> {html.escape(str(planner_failure.get('provider_status', 'not recorded')))}; <strong>attempts:</strong> {html.escape(str(planner_failure.get('attempt_count', 'not recorded')))}; <strong>retrieval executed:</strong> {str(item.get('retrieval_executed', True)).lower()}; <strong>contributes retrieval metrics:</strong> {str(item.get('contributes_retrieval_metrics', True)).lower()}.</p>"
+            f"{_planner_evaluation_html(item)}"
             f"<h4>Expected evidence</h4>{expected_html}{side_sections}</details>"
         )
     headings = "".join(
@@ -828,6 +942,8 @@ def _case_table_html(result: dict[str, Any]) -> str:
         for label in (
             "Case",
             "Variant",
+            "Planning status",
+            "Retrieval executed",
             "Planner",
             "Eligibility",
             "Outcome",
@@ -840,6 +956,16 @@ def _case_table_html(result: dict[str, Any]) -> str:
         f"<table class=sortable><thead><tr>{headings}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
         + "<h3>Evidence-path inspection</h3>"
         + "".join(details)
+    )
+
+
+def _planner_evaluation_html(item: dict[str, Any]) -> str:
+    evaluation = item.get("planner_evaluation")
+    if not isinstance(evaluation, dict):
+        return ""
+    return (
+        "<h4>Planner contract comparison</h4>"
+        f"<pre>{html.escape(canonical_json(evaluation))}</pre>"
     )
 
 
@@ -984,7 +1110,9 @@ def _percentile(values: list[float], percentile: float) -> float:
     return values[index]
 
 
-def _metric(value: float) -> str:
+def _metric(value: float | None) -> str:
+    if value is None:
+        return "n/a"
     return f"{value:.4f}"
 
 

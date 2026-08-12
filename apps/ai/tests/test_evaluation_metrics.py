@@ -182,6 +182,7 @@ def test_harness_aggregates_variants_within_cases_before_corpus() -> None:
         executed_at=datetime(2026, 8, 7, tzinfo=UTC),
     )
 
+    assert result.aggregate.metrics is not None
     assert result.aggregate.metrics.recall_at_k == pytest.approx(0.75)
     assert result.slices["CURRENT"].case_count == 2
 

@@ -14,6 +14,7 @@ from app.embedding.errors import (
     EmbeddingError,
     EmbeddingInputTooLargeError,
     EmbeddingProfileMismatchError,
+    EmbeddingRateLimitError,
     EmbeddingTimeoutError,
     InvalidEmbeddingInputError,
     MalformedEmbeddingResponseError,
@@ -93,6 +94,9 @@ def test_adapter_sends_only_provider_fields_and_maps_by_response_order() -> None
         item.source_id for item in request.items
     )
     assert result.provider_input_tokens == 17
+    assert result.provider_retry_count == 0
+    assert result.estimated_cost_usd == 0.00000204
+    assert result.pricing_snapshot == "voyage-pricing-2026-08-12"
 
 
 def test_query_purpose_uses_query_input_type() -> None:
@@ -168,6 +172,81 @@ def test_transient_provider_failures_use_bounded_retries(status: int) -> None:
 
     assert calls == 3
     assert len(delays) == 2
+
+
+def test_rate_limit_honours_retry_after_without_capping_and_records_safe_headers() -> (
+    None
+):
+    delays: list[float] = []
+    calls = 0
+
+    def handler(_: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return httpx.Response(
+                429,
+                headers={
+                    "Retry-After": "65",
+                    "X-RateLimit-Remaining-Requests": "0",
+                    "X-RateLimit-Reset-Requests": "60s",
+                    "X-Unsafe-Provider-Detail": "must-not-be-retained",
+                },
+            )
+        return httpx.Response(200, json=success_payload())
+
+    adapter(
+        handler,
+        max_attempts=2,
+        max_backoff_seconds=2,
+        sleep=delays.append,
+    ).embed(embedding_request())
+
+    assert delays == [65.0]
+
+
+def test_rate_limit_error_exposes_only_allowlisted_provider_headers() -> None:
+    with pytest.raises(EmbeddingRateLimitError) as captured:
+        adapter(
+            lambda _: httpx.Response(
+                429,
+                headers={
+                    "Retry-After": "120",
+                    "X-RateLimit-Remaining-Tokens": "0",
+                    "Authorization": "must-not-be-retained",
+                },
+            ),
+            max_attempts=1,
+        ).embed(embedding_request())
+
+    assert captured.value.retry_after_seconds == 120.0
+    assert captured.value.provider_headers == {
+        "retry-after": "120",
+        "x-ratelimit-remaining-tokens": "0",
+    }
+
+
+def test_operational_backoff_follows_configured_progression_with_jitter() -> None:
+    delays: list[float] = []
+    calls = 0
+
+    def handler(_: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        if calls < 5:
+            return httpx.Response(429)
+        return httpx.Response(200, json=success_payload())
+
+    adapter(
+        handler,
+        max_attempts=5,
+        initial_backoff_seconds=15,
+        max_backoff_seconds=120,
+        sleep=delays.append,
+        jitter=lambda: 0.5,
+    ).embed(embedding_request())
+
+    assert delays == [15.0, 30.0, 60.0, 120.0]
 
 
 def test_transport_timeout_is_retried_and_remains_typed() -> None:

@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Actions\Retrieval\RetrieveWorkspaceEvidence;
 use App\Enums\DocumentStatus;
+use App\Enums\EvidenceThresholdPolicyStatus;
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
+use App\Enums\RetrievalTemporalReferenceKind;
 use App\Enums\WorkspaceRole;
+use App\Exceptions\RetrievalPlannerException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
 use App\Models\EmbeddingProfile;
@@ -25,12 +29,15 @@ use App\Models\WorkspaceMembership;
 use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Services\Retrieval\RetrievalClient;
+use App\Support\Retrieval\ClassifierLineage;
+use App\Support\Retrieval\PlannerUsage;
 use App\Support\Retrieval\RetrievalPlan;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 use Tests\TestCase;
 
 class SemanticRetrievalTest extends TestCase
@@ -53,15 +60,14 @@ class SemanticRetrievalTest extends TestCase
         $resolver = app(EligibilityResolver::class);
 
         $current = $resolver->handle($scope, new RetrievalPlan(
-            'Question', RetrievalTemporalMode::Current, null, null, null, null, null,
+            'Question', RetrievalTemporalMode::Current, null, null, [], null, $this->lineage(), $this->plannerUsage(),
         ), CarbonImmutable::parse('2026-03-01'));
         $historical = $resolver->handle($scope, new RetrievalPlan(
             'Question', RetrievalTemporalMode::ValidAtDate,
-            CarbonImmutable::parse('2026-01-15'), null, null, null, null,
+            CarbonImmutable::parse('2026-01-15'), null, [], null, $this->lineage(), $this->plannerUsage(),
         ), CarbonImmutable::parse('2026-03-01'));
         $compare = $resolver->handle($scope, new RetrievalPlan(
-            'Question', RetrievalTemporalMode::Compare, null,
-            ['kind' => 'current'], ['kind' => 'previous'], null, null,
+            'Question', RetrievalTemporalMode::Compare, null, null, [], null, $this->lineage(), $this->plannerUsage(),
         ), CarbonImmutable::parse('2026-03-01'));
 
         $this->assertSame([$second->public_id], $current->documentPublicIdsBySide['primary']);
@@ -88,7 +94,7 @@ class SemanticRetrievalTest extends TestCase
         $document->applicabilitySnapshot->update(['sealed_at' => now()]);
         $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
         $plan = new RetrievalPlan(
-            'Question', RetrievalTemporalMode::Current, null, null, null, 'Blackpool', null,
+            'Question', RetrievalTemporalMode::Current, null, null, ['Blackpool'], null, $this->lineage(), $this->plannerUsage(),
         );
 
         $resolved = app(EligibilityResolver::class)->handle(
@@ -101,7 +107,216 @@ class SemanticRetrievalTest extends TestCase
             $scope, $plan, CarbonImmutable::parse('2026-03-01'),
         );
         $this->assertSame(RetrievalOutcome::ClarificationRequired, $ambiguous->outcome);
-        $this->assertSame('ambiguous_applicability_reference', $ambiguous->reason);
+        $this->assertSame('ambiguous_location_reference', $ambiguous->reason);
+    }
+
+    public function test_period_and_historical_references_resolve_against_attained_authority(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $first = $this->eligibleDocument($workspace, $generation, '2024-01-01', '2024-01-01');
+        $neverAuthoritative = Document::factory()->create([
+            'workspace_id' => $workspace->id,
+            'document_family_id' => $first->document_family_id,
+            'predecessor_document_id' => $first->id,
+            'effective_from' => CarbonImmutable::parse('2025-06-01'),
+        ]);
+        $second = Document::factory()->indexed()->approved()->create([
+            'workspace_id' => $workspace->id,
+            'document_family_id' => $first->document_family_id,
+            'predecessor_document_id' => $neverAuthoritative->id,
+            'effective_from' => CarbonImmutable::parse('2026-02-15'),
+            'approved_at' => CarbonImmutable::parse('2026-02-01'),
+        ]);
+        $this->assignChunk($second, $generation);
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+        $resolver = app(EligibilityResolver::class);
+        $evaluatedAt = CarbonImmutable::parse('2026-08-01');
+
+        $period = $resolver->handle($scope, new RetrievalPlan(
+            'Question',
+            RetrievalTemporalMode::ValidAtDate,
+            null,
+            ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => '2025'],
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+        ), $evaluatedAt);
+        $version = $resolver->handle($scope, new RetrievalPlan(
+            'Question',
+            RetrievalTemporalMode::HistoricalReference,
+            null,
+            ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => 'version 1'],
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+        ), $evaluatedAt);
+        $secondVersion = $resolver->handle($scope, new RetrievalPlan(
+            'Question',
+            RetrievalTemporalMode::HistoricalReference,
+            null,
+            ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => 'version 2'],
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+        ), $evaluatedAt);
+        $old = $resolver->handle($scope, new RetrievalPlan(
+            'Question',
+            RetrievalTemporalMode::HistoricalReference,
+            null,
+            ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => 'old policy'],
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+        ), $evaluatedAt);
+        $yearQualified = $resolver->handle($scope, new RetrievalPlan(
+            'Question',
+            RetrievalTemporalMode::HistoricalReference,
+            null,
+            ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => 'the 2025 policy'],
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+        ), $evaluatedAt);
+        $ambiguous = $resolver->handle($scope, new RetrievalPlan(
+            'Question',
+            RetrievalTemporalMode::ValidAtDate,
+            null,
+            ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => '2026'],
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+        ), $evaluatedAt);
+        $neverAttained = $resolver->handle($scope, new RetrievalPlan(
+            'Question',
+            RetrievalTemporalMode::HistoricalReference,
+            null,
+            ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => 'version 3'],
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+        ), $evaluatedAt);
+        $unsupported = $resolver->handle($scope, new RetrievalPlan(
+            'Question',
+            RetrievalTemporalMode::ValidAtDate,
+            null,
+            ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => 'last winter'],
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+        ), $evaluatedAt);
+        $historicallyAmbiguous = $resolver->handle($scope, new RetrievalPlan(
+            'Question',
+            RetrievalTemporalMode::HistoricalReference,
+            null,
+            ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => 'version 1 or version 2'],
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+        ), $evaluatedAt);
+        $compareExact = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Compare, CarbonImmutable::parse('2025-01-01'),
+            null, [], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+        $comparePeriod = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Compare, null,
+            ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => '2025'],
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+        $compareHistorical = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Compare, null,
+            ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => 'version 1'],
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+        $beforeWithdrawal = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::HistoricalReference, null,
+            ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => 'before it was withdrawn, version 2'],
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+
+        $this->assertSame([$first->public_id], $period->documentPublicIdsBySide['primary']);
+        $this->assertSame([$first->public_id], $version->documentPublicIdsBySide['primary']);
+        $this->assertSame([$second->public_id], $secondVersion->documentPublicIdsBySide['primary']);
+        $this->assertSame([$first->public_id], $old->documentPublicIdsBySide['primary']);
+        $this->assertSame([$first->public_id], $yearQualified->documentPublicIdsBySide['primary']);
+        $this->assertSame('ambiguous_authority_window_for_period', $ambiguous->reason);
+        $this->assertSame('historical_reference_unresolved', $neverAttained->reason);
+        $this->assertSame('unresolvable_temporal_period', $unsupported->reason);
+        $this->assertSame('ambiguous_historical_reference', $historicallyAmbiguous->reason);
+        $this->assertSame([$second->public_id], $beforeWithdrawal->documentPublicIdsBySide['primary']);
+        foreach ([$compareExact, $comparePeriod, $compareHistorical] as $comparison) {
+            $this->assertSame([$second->public_id], $comparison->documentPublicIdsBySide['primary']);
+            $this->assertSame([$first->public_id], $comparison->documentPublicIdsBySide['comparison']);
+        }
+    }
+
+    public function test_plural_location_references_select_descendant_and_fail_closed_for_unrelated_sites(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $region = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'North West']);
+        $site = OrganisationalLocation::factory()->for($workspace)->create([
+            'name' => 'Harbour View',
+            'parent_id' => $region->id,
+        ]);
+        $other = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Oak House']);
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-01');
+        DB::table('document_applicability_snapshots')->where('document_id', $document->id)
+            ->update(['sealed_at' => null, 'scope' => 'specific']);
+        $document->applicabilitySnapshot->locations()->attach($site->id, ['workspace_id' => $workspace->id]);
+        $document->applicabilitySnapshot->update(['sealed_at' => now()]);
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+        $resolver = app(EligibilityResolver::class);
+
+        $hierarchy = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['North West', 'the Harbour View'], null, $this->lineage(), $this->plannerUsage(),
+        ), CarbonImmutable::parse('2026-03-01'));
+        $unrelated = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['Harbour View', $other->name], null, $this->lineage(), $this->plannerUsage(),
+        ), CarbonImmutable::parse('2026-03-01'));
+        OrganisationalLocation::factory()->for($workspace)->create(['name' => 'The Harbour View']);
+        $exactArticle = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['The Harbour View'], null, $this->lineage(), $this->plannerUsage(),
+        ), CarbonImmutable::parse('2026-03-01'));
+        $generic = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['the home'], null, $this->lineage(), $this->plannerUsage(),
+        ), CarbonImmutable::parse('2026-03-01'));
+
+        $this->assertSame([$document->public_id], $hierarchy->documentPublicIdsBySide['primary']);
+        $this->assertSame('multiple_unrelated_location_references', $unrelated->reason);
+        $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $exactArticle->outcome);
+        $this->assertSame('unresolved_location_reference', $generic->reason);
+    }
+
+    public function test_response_v2_plan_validation_rejects_inconsistent_or_free_text_contract_values(): void
+    {
+        $base = [
+            'retrieval_queries' => ['Question'],
+            'temporal_mode' => 'current',
+            'explicit_date' => null,
+            'temporal_reference' => null,
+            'location_references' => [],
+            'clarification_reason' => null,
+        ];
+        $plan = RetrievalPlan::fromArray($base, 'Question', $this->lineagePayload(), $this->plannerUsagePayload());
+        $this->assertSame(RetrievalTemporalMode::Current, $plan->temporalMode);
+
+        $this->expectException(InvalidArgumentException::class);
+        RetrievalPlan::fromArray(array_merge($base, [
+            'temporal_mode' => 'clarification_required',
+            'clarification_reason' => 'free_text_reason',
+        ]), 'Question', $this->lineagePayload(), $this->plannerUsagePayload());
     }
 
     public function test_authenticated_endpoint_hydrates_candidates_and_rechecks_scope(): void
@@ -113,14 +328,7 @@ class SemanticRetrievalTest extends TestCase
             $body = $request->data();
             $requestId = $body['request_id'];
             if (str_ends_with($request->url(), '/plan')) {
-                return Http::response([
-                    'contract_version' => 1,
-                    'request_id' => $requestId,
-                    'plan' => [
-                        'retrieval_queries' => [$body['question']],
-                        'temporal_mode' => 'current',
-                    ],
-                ]);
+                return Http::response($this->planResponse($body));
             }
 
             return Http::response([
@@ -169,15 +377,10 @@ class SemanticRetrievalTest extends TestCase
         Http::fake(function (Request $request) {
             $body = $request->data();
 
-            return Http::response([
-                'contract_version' => 1,
-                'request_id' => $body['request_id'],
-                'plan' => [
-                    'retrieval_queries' => [$body['question']],
-                    'temporal_mode' => 'clarification_required',
-                    'clarification_reason' => 'ambiguous_temporal_reference',
-                ],
-            ]);
+            return Http::response($this->planResponse($body, [
+                'temporal_mode' => 'clarification_required',
+                'clarification_reason' => 'unclassifiable_temporal_intent',
+            ]));
         });
         $this->actingAs($user)->postJson(
             "/api/workspaces/{$workspace->public_id}/retrieval",
@@ -194,13 +397,7 @@ class SemanticRetrievalTest extends TestCase
         Http::fake(function (Request $request) use ($document, $chunk, $generation) {
             $body = $request->data();
             if (str_ends_with($request->url(), '/plan')) {
-                return Http::response([
-                    'request_id' => $body['request_id'],
-                    'plan' => [
-                        'retrieval_queries' => [$body['question']],
-                        'temporal_mode' => 'current',
-                    ],
-                ]);
+                return Http::response($this->planResponse($body));
             }
             DB::table('documents')->where('id', $document->id)->update([
                 'status' => 'failed',
@@ -243,13 +440,7 @@ class SemanticRetrievalTest extends TestCase
             }
             $body = $request->data();
 
-            return Http::response([
-                'request_id' => $body['request_id'],
-                'plan' => [
-                    'retrieval_queries' => [$body['question']],
-                    'temporal_mode' => 'current',
-                ],
-            ]);
+            return Http::response($this->planResponse($body));
         });
 
         $plan = app(RetrievalClient::class)->plan(
@@ -260,6 +451,63 @@ class SemanticRetrievalTest extends TestCase
 
         $this->assertSame(RetrievalTemporalMode::Current, $plan->temporalMode);
         $this->assertCount(2, array_unique($requestIds));
+    }
+
+    public function test_semantic_planner_failure_is_typed_and_is_not_retried_to_success(): void
+    {
+        $workspace = Workspace::factory()->create();
+        Http::fake(Http::response([
+            'detail' => [
+                'code' => 'retrieval_planning_failed',
+                'category' => 'invalid_typed_plan',
+                'provider_status' => 200,
+                'attempt_count' => 1,
+                'systemic' => false,
+            ],
+        ], 503));
+
+        try {
+            app(RetrievalClient::class)->plan(
+                $workspace,
+                'Current?',
+                CarbonImmutable::parse('2026-08-07T12:00:00Z'),
+            );
+            $this->fail('Expected a typed planner failure.');
+        } catch (RetrievalPlannerException $exception) {
+            $this->assertSame('invalid_typed_plan', $exception->category);
+            $this->assertSame(200, $exception->providerStatus);
+            $this->assertSame(1, $exception->attemptCount);
+            $this->assertFalse($exception->systemic);
+        }
+        Http::assertSentCount(1);
+    }
+
+    public function test_systemic_planner_failure_is_typed_and_aborts_without_retry(): void
+    {
+        $workspace = Workspace::factory()->create();
+        Http::fake(Http::response([
+            'detail' => [
+                'code' => 'retrieval_planning_failed',
+                'category' => 'provider_quota_exhausted',
+                'provider_status' => 429,
+                'attempt_count' => 1,
+                'systemic' => true,
+            ],
+        ], 503));
+
+        try {
+            app(RetrievalClient::class)->plan(
+                $workspace,
+                'Current?',
+                CarbonImmutable::parse('2026-08-07T12:00:00Z'),
+            );
+            $this->fail('Expected a systemic planner failure.');
+        } catch (RetrievalPlannerException $exception) {
+            $this->assertSame('provider_quota_exhausted', $exception->category);
+            $this->assertSame(429, $exception->providerStatus);
+            $this->assertTrue($exception->systemic);
+        }
+        Http::assertSentCount(1);
     }
 
     public function test_incomplete_comparison_and_empty_eligible_scope_are_controlled_outcomes(): void
@@ -273,10 +521,11 @@ class SemanticRetrievalTest extends TestCase
                 'Question',
                 RetrievalTemporalMode::Compare,
                 null,
-                ['kind' => 'current'],
-                ['kind' => 'previous'],
                 null,
+                [],
                 null,
+                $this->lineage(),
+                $this->plannerUsage(),
             ),
             CarbonImmutable::parse('2026-03-01'),
         );
@@ -287,13 +536,7 @@ class SemanticRetrievalTest extends TestCase
         Http::fake(function (Request $request) {
             $body = $request->data();
 
-            return Http::response([
-                'request_id' => $body['request_id'],
-                'plan' => [
-                    'retrieval_queries' => [$body['question']],
-                    'temporal_mode' => 'current',
-                ],
-            ]);
+            return Http::response($this->planResponse($body));
         });
         $this->actingAs($user)->postJson(
             "/api/workspaces/{$workspace->public_id}/retrieval",
@@ -309,13 +552,7 @@ class SemanticRetrievalTest extends TestCase
         Http::fake(function (Request $request) use ($generation) {
             $body = $request->data();
             if (str_ends_with($request->url(), '/plan')) {
-                return Http::response([
-                    'request_id' => $body['request_id'],
-                    'plan' => [
-                        'retrieval_queries' => [$body['question']],
-                        'temporal_mode' => 'current',
-                    ],
-                ]);
+                return Http::response($this->planResponse($body));
             }
 
             return Http::response([
@@ -397,6 +634,41 @@ class SemanticRetrievalTest extends TestCase
         Http::assertSentCount(2);
     }
 
+    public function test_local_evaluation_pair_shares_one_plan_and_keeps_calibrating_policy_off_public_resolution(): void
+    {
+        [$workspace, $user, $generation, $policy] = $this->hybridRetrievalWorkspace();
+        $policy->update([
+            'status' => EvidenceThresholdPolicyStatus::Calibrating,
+            'activated_at' => null,
+        ]);
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        $chunk = $document->chunks()->firstOrFail();
+        $this->fakeHybridRetrieval($generation, $policy->fresh(), $document, $chunk, 0.91);
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+
+        $pair = app(RetrieveWorkspaceEvidence::class)->handlePairForLocalEvaluation(
+            $scope,
+            'What is the current policy?',
+            40,
+            CarbonImmutable::parse('2026-08-01T12:00:00Z'),
+            $policy->fresh(),
+        );
+
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $pair['dense']['result']->outcome);
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $pair['hybrid']['result']->outcome);
+        $this->assertSame($chunk->public_id, $pair['hybrid']['trace']['search']['diagnostics'][0]['fused_candidates'][0]['chunk_id']);
+        Http::assertSentCount(4);
+        Http::assertSent(fn (Request $request): bool => str_ends_with($request->url(), '/plan'));
+        $this->assertSame(1, collect(Http::recorded())->filter(
+            fn (array $pair): bool => str_ends_with($pair[0]->url(), '/plan'),
+        )->count());
+
+        $this->actingAs($user)->postJson(
+            "/api/workspaces/{$workspace->public_id}/retrieval",
+            ['question' => 'What is the current policy?'],
+        )->assertJsonPath('data.outcome', 'retrieval_failed');
+    }
+
     /** @return array{Workspace, User, WorkspaceCorpusGeneration} */
     private function retrievalWorkspace(): array
     {
@@ -475,15 +747,30 @@ class SemanticRetrievalTest extends TestCase
         Http::fake(function (Request $request) use ($generation, $policy, $document, $chunk, $rerankerScore, $mismatchedLineage) {
             $body = $request->data();
             if (str_ends_with($request->url(), '/plan')) {
-                return Http::response([
-                    'request_id' => $body['request_id'],
-                    'plan' => [
-                        'retrieval_queries' => [$body['question']],
-                        'temporal_mode' => 'current',
-                    ],
-                ]);
+                return Http::response($this->planResponse($body));
             }
             if (str_ends_with($request->url(), '/search')) {
+                $hybrid = isset($body['hybrid_configuration']);
+                $candidate = [
+                    'chunk_id' => $chunk->public_id,
+                    'document_id' => $document->public_id,
+                    'workspace_corpus_generation_id' => $generation->public_id,
+                    'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
+                    'sparse_space_generation_id' => $generation->sparseSpaceGeneration->public_id,
+                    'score' => $hybrid ? 0.04 : 0.8,
+                    'rank' => 1,
+                    'retrieval_method' => $hybrid ? 'hybrid' : 'dense',
+                    'side' => 'primary',
+                ];
+                if ($hybrid) {
+                    $candidate += [
+                        'dense_score' => 0.8,
+                        'dense_rank' => 1,
+                        'sparse_score' => 8.0,
+                        'sparse_rank' => 1,
+                    ];
+                }
+
                 return Http::response([
                     'request_id' => $body['request_id'],
                     'lineage' => [
@@ -497,21 +784,13 @@ class SemanticRetrievalTest extends TestCase
                         'rrf_k' => $policy->rrf_k,
                         'configuration_version' => $policy->version,
                     ],
-                    'candidates' => [[
-                        'chunk_id' => $chunk->public_id,
-                        'document_id' => $document->public_id,
-                        'workspace_corpus_generation_id' => $generation->public_id,
-                        'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
-                        'sparse_space_generation_id' => $generation->sparseSpaceGeneration->public_id,
-                        'score' => 0.04,
-                        'rank' => 1,
-                        'retrieval_method' => 'hybrid',
+                    'candidates' => [$candidate],
+                    'diagnostics' => ($body['capture_diagnostics'] ?? false) ? [[
                         'side' => 'primary',
-                        'dense_score' => 0.8,
-                        'dense_rank' => 1,
-                        'sparse_score' => 8.0,
-                        'sparse_rank' => 1,
-                    ]],
+                        'dense_candidates' => [[...$candidate, 'score' => 0.8, 'rank' => 1, 'retrieval_method' => 'dense']],
+                        'sparse_candidates' => $hybrid ? [[...$candidate, 'score' => 8.0, 'rank' => 1, 'retrieval_method' => 'sparse']] : [],
+                        'fused_candidates' => $hybrid ? [$candidate] : [],
+                    ]] : [],
                 ]);
             }
 
@@ -529,6 +808,8 @@ class SemanticRetrievalTest extends TestCase
                     'score' => $rerankerScore,
                     'rank' => 1,
                 ]],
+                'provider_input_tokens' => 17,
+                'provider_retry_count' => 0,
             ]);
         });
     }
@@ -563,5 +844,78 @@ class SemanticRetrievalTest extends TestCase
         ]);
 
         return $chunk;
+    }
+
+    private function lineage(): ClassifierLineage
+    {
+        $value = $this->lineagePayload();
+
+        return ClassifierLineage::fromArray($value);
+    }
+
+    /**
+     * @param  array<string, mixed>  $body
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function planResponse(array $body, array $overrides = []): array
+    {
+        return [
+            'contract_version' => 2,
+            'request_id' => $body['request_id'],
+            'plan' => array_merge([
+                'retrieval_queries' => [$body['question']],
+                'temporal_mode' => 'current',
+                'explicit_date' => null,
+                'temporal_reference' => null,
+                'location_references' => [],
+                'clarification_reason' => null,
+            ], $overrides),
+            'classifier_lineage' => $this->lineagePayload(),
+            'usage' => $this->plannerUsagePayload(),
+        ];
+    }
+
+    /** @return array<string, string> */
+    private function lineagePayload(): array
+    {
+        $parts = [
+            'provider' => 'deterministic',
+            'model' => 'fixed-retrieval-planner',
+            'contract_schema_version' => 'plan-response-v2',
+            'prompt_version' => 'fixed-v1',
+            'adapter_version' => 'fixed-v1',
+        ];
+        $canonical = $parts;
+        ksort($canonical);
+
+        return $parts + [
+            'fingerprint' => hash('sha256', json_encode($canonical, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES)),
+        ];
+    }
+
+    private function plannerUsage(): PlannerUsage
+    {
+        return PlannerUsage::fromArray($this->plannerUsagePayload());
+    }
+
+    /** @return array<string, mixed> */
+    private function plannerUsagePayload(): array
+    {
+        return [
+            'stage' => 'planner',
+            'provider' => 'deterministic',
+            'model' => 'fixed-retrieval-planner',
+            'execution' => 'local',
+            'request_count' => 1,
+            'retry_count' => 0,
+            'input_tokens' => null,
+            'cached_input_tokens' => null,
+            'output_tokens' => null,
+            'latency_ms' => 0,
+            'cost_basis' => 'zero_cost_local',
+            'cost_usd' => 0,
+            'pricing_snapshot' => null,
+        ];
     }
 }

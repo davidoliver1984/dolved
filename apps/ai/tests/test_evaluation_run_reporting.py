@@ -60,7 +60,7 @@ def result(experiment_id: str, *, recall: float = 0.8) -> dict[str, Any]:
                 "metrics": metrics,
                 "side_metrics": {"PRIMARY": metrics},
                 "covered_evidence_ids": ["evidence.current"],
-                "planner_correct": True,
+                "planner_correct": False,
                 "eligibility_correct": True,
                 "outcome_correct": True,
                 "hard_failures": [],
@@ -147,6 +147,19 @@ def result(experiment_id: str, *, recall: float = 0.8) -> dict[str, Any]:
                         "final_evidence_count": 1,
                     },
                 ],
+                "planner_evaluation": {
+                    "expected_contract": {"temporal_mode": "CURRENT"},
+                    "actual_plan": {"temporal_mode": "CLARIFICATION_REQUIRED"},
+                    "differences": [
+                        {
+                            "field": "temporal_mode",
+                            "expected": "CURRENT",
+                            "actual": "CLARIFICATION_REQUIRED",
+                            "classification": "SEMANTIC_AFTER_NORMALISATION",
+                        }
+                    ],
+                    "correct": False,
+                },
             }
         ],
         "hard_failures": [],
@@ -247,6 +260,9 @@ def test_reports_are_deterministic_offline_and_preserve_human_notes(
     assert "PRIMARY" in html
     assert "COMPARISON" in html
     assert "Candidate-stage counts are not present" not in html
+    assert "Planner contract comparison" in html
+    assert "SEMANTIC_AFTER_NORMALISATION" in html
+    assert "Classifier and Laravel resolution" in html
 
 
 def test_comparison_is_persisted_and_reports_metric_deltas(tmp_path: Path) -> None:
@@ -260,6 +276,66 @@ def test_comparison_is_persisted_and_reports_metric_deltas(tmp_path: Path) -> No
     assert comparison["metrics"]["recall_at_k"]["delta"] == pytest.approx(0.2)
     assert json.loads((run_dir / "comparison.json").read_text()) == comparison
     assert "baseline-v1" in (run_dir / "report.md").read_text()
+
+
+def test_planner_failure_is_prominent_and_has_no_fabricated_retrieval_metrics(
+    tmp_path: Path,
+) -> None:
+    run_dir = tmp_path / "runs/EXP-0001-planner-failure"
+    failed = result("EXP-0001-planner-failure")
+    failed["aggregate"] = {
+        "metrics": None,
+        "planner_accuracy": 0.0,
+        "eligibility_accuracy": None,
+        "outcome_accuracy": None,
+        "case_count": 1,
+        "variant_count": 1,
+        "retrieval_metric_variant_count": 0,
+        "planner_success_count": 0,
+        "planner_failure_count": 1,
+        "planner_reliability": 0.0,
+        "planner_failure_categories": {"invalid_typed_plan": 1},
+    }
+    failed["slices"] = {"CURRENT": failed["aggregate"]}
+    variant = failed["variants"][0]
+    variant.update(
+        {
+            "metrics": None,
+            "side_metrics": {},
+            "covered_evidence_ids": [],
+            "planner_correct": False,
+            "eligibility_correct": None,
+            "outcome_correct": None,
+            "hard_failures": ["planner_failure:invalid_typed_plan:case.current:direct"],
+            "candidate_lineage": [],
+            "candidate_funnel": [],
+            "planning_status": "FAILED",
+            "retrieval_executed": False,
+            "contributes_retrieval_metrics": False,
+            "planner_failure": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "category": "invalid_typed_plan",
+                "provider_status": 200,
+                "attempt_count": 1,
+                "occurred_at": "2026-08-11T10:00:00Z",
+            },
+        }
+    )
+    failed["hard_failures"] = variant["hard_failures"]
+    write_json(run_dir / "config.json", config(run_dir.name))
+    write_json(run_dir / "result.json", failed)
+
+    generate_run_report(run_dir)
+
+    markdown = (run_dir / "report.md").read_text()
+    html = (run_dir / "report.html").read_text()
+    assert "Planner reliability" in markdown
+    assert "invalid_typed_plan" in markdown
+    assert "Retrieval executed: `False`" in markdown
+    assert "Metrics: recall=n/a" in markdown
+    assert "Planner reliability" in html
+    assert "contributes retrieval metrics:</strong> false" in html
 
 
 def test_experiment_index_retains_every_run(tmp_path: Path) -> None:

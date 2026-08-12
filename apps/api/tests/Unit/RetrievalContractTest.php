@@ -38,6 +38,41 @@ final class RetrievalContractTest extends TestCase
         ];
 
         $this->assertMatchesSchema('plan-v1.schema.json', $plan);
+        $this->assertMatchesSchema('plan-response-v2.schema.json', [
+            'contract_version' => 2,
+            'request_id' => $plan['request_id'],
+            'plan' => [
+                'retrieval_queries' => [$plan['question']],
+                'temporal_mode' => 'current',
+                'explicit_date' => null,
+                'temporal_reference' => null,
+                'location_references' => [],
+                'clarification_reason' => null,
+            ],
+            'classifier_lineage' => [
+                'provider' => 'deterministic',
+                'model' => 'fixed',
+                'contract_schema_version' => 'plan-response-v2',
+                'prompt_version' => 'fixed-v1',
+                'adapter_version' => 'fixed-v1',
+                'fingerprint' => str_repeat('a', 64),
+            ],
+            'usage' => [
+                'stage' => 'planner',
+                'provider' => 'deterministic',
+                'model' => 'fixed',
+                'execution' => 'local',
+                'request_count' => 1,
+                'retry_count' => 0,
+                'input_tokens' => null,
+                'cached_input_tokens' => null,
+                'output_tokens' => null,
+                'latency_ms' => 0,
+                'cost_basis' => 'zero_cost_local',
+                'cost_usd' => 0,
+                'pricing_snapshot' => null,
+            ],
+        ]);
         $this->assertMatchesSchema('search-v1.schema.json', $search);
         $rerank = [
             'contract_version' => 1,

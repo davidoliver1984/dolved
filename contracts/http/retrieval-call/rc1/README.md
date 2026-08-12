@@ -12,7 +12,7 @@ cache before processing the body.
 
 | Endpoint | Purpose | Schema |
 |---|---|---|
-| `POST /api/internal/retrieval/plan` | `retrieval.plan` | `plan-v1.schema.json` |
+| `POST /api/internal/retrieval/plan` | `retrieval.plan` | request: `plan-v1.schema.json`; response: `plan-response-v2.schema.json` |
 | `POST /api/internal/retrieval/search` | `retrieval.search` | `search-v1.schema.json` |
 | `POST /api/internal/retrieval/rerank` | `retrieval.rerank` | `rerank-v1.schema.json` |
 | `POST /api/internal/retrieval/corpus/rebuild-batch` | `retrieval.corpus.rebuild` | `corpus-rebuild-batch-v1.schema.json` |
@@ -45,6 +45,11 @@ resolved sides. Candidate and result identity is therefore the pair `(side,
 chunk_id)`: the provider is called separately for each side, ranks are contiguous
 within each side, and `top_k` is applied independently to each side. The sides are
 never merged into one reranking list.
+
+The planning request remains version 1. Its additive response version 2 carries
+ADR-0022's typed temporal selector, plural unresolved location references and a
+privacy-safe classifier-lineage fingerprint. Python classifies language only;
+Laravel resolves dates, authority, aliases, applicability and eligible scope.
 
 Corpus rebuild is an out-of-request rollout operation. Laravel supplies bounded
 canonical chunk batches; Python computes both vector axes behind the existing

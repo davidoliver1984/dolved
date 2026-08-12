@@ -3,6 +3,8 @@ import math
 import random
 import time
 from collections.abc import Callable
+from datetime import UTC, datetime
+from email.utils import parsedate_to_datetime
 from typing import Any
 
 import httpx
@@ -28,6 +30,21 @@ from app.telemetry import metric_attributes, trace_attributes
 
 logger = logging.getLogger("embedding.voyage")
 
+RATE_LIMIT_HEADER_ALLOWLIST = frozenset(
+    {
+        "retry-after",
+        "ratelimit-limit",
+        "ratelimit-remaining",
+        "ratelimit-reset",
+        "x-ratelimit-limit-requests",
+        "x-ratelimit-remaining-requests",
+        "x-ratelimit-reset-requests",
+        "x-ratelimit-limit-tokens",
+        "x-ratelimit-remaining-tokens",
+        "x-ratelimit-reset-tokens",
+    }
+)
+
 
 class VoyageEmbedder:
     def __init__(
@@ -40,6 +57,7 @@ class VoyageEmbedder:
         initial_backoff_seconds: float = 0.25,
         max_backoff_seconds: float = 2.0,
         estimated_cost_per_million_tokens_usd: float = 0.12,
+        pricing_snapshot: str = "voyage-pricing-2026-08-12",
         client: httpx.Client | None = None,
         sleep: Callable[[float], None] = time.sleep,
         jitter: Callable[[], float] = random.random,
@@ -61,6 +79,7 @@ class VoyageEmbedder:
         self._estimated_cost_per_million_tokens_usd = (
             estimated_cost_per_million_tokens_usd
         )
+        self._pricing_snapshot = pricing_snapshot
         self._client = client or httpx.Client(timeout=timeout_seconds)
         self._sleep = sleep
         self._jitter = jitter
@@ -112,7 +131,13 @@ class VoyageEmbedder:
                         "rag.processing.outcome": "succeeded",
                     }
                 )
-                return result
+                return result.model_copy(
+                    update={
+                        "provider_retry_count": retry_count,
+                        "estimated_cost_usd": self._estimated_cost(input_tokens),
+                        "pricing_snapshot": self._pricing_snapshot,
+                    }
+                )
             except EmbeddingError as exception:
                 attributes.update(
                     {
@@ -179,6 +204,22 @@ class VoyageEmbedder:
                 )
                 error = self._response_error(response)
                 if error is not None:
+                    if isinstance(error, EmbeddingRateLimitError):
+                        logger.warning(
+                            "Embedding provider rate limit response received.",
+                            extra={
+                                "embedding_provider": request.profile.provider,
+                                "embedding_model": request.profile.model,
+                                "embedding_request_timestamp": datetime.now(
+                                    UTC
+                                ).isoformat(),
+                                "embedding_item_count": len(request.items),
+                                "embedding_input_tokens": None,
+                                "embedding_http_status": response.status_code,
+                                "embedding_retry_after_seconds": error.retry_after_seconds,
+                                "embedding_rate_limit_headers": error.provider_headers,
+                            },
+                        )
                     raise error
                 result, input_tokens = self._parse_response(response, request)
                 return result, input_tokens, attempt - 1
@@ -216,12 +257,12 @@ class VoyageEmbedder:
             isinstance(error, EmbeddingRateLimitError)
             and error.retry_after_seconds is not None
         ):
-            return min(error.retry_after_seconds, self._max_backoff_seconds)
+            return error.retry_after_seconds
         exponential = min(
             self._initial_backoff_seconds * (2 ** (attempt - 1)),
             self._max_backoff_seconds,
         )
-        return exponential * (0.5 + (self._jitter() * 0.5))
+        return exponential * (0.9 + (self._jitter() * 0.2))
 
     @staticmethod
     def _response_error(response: httpx.Response) -> EmbeddingError | None:
@@ -233,12 +274,17 @@ class VoyageEmbedder:
                 "embedding provider rejected credentials"
             )
         if status == 429:
-            retry_after: float | None = None
-            try:
-                retry_after = max(0.0, float(response.headers["Retry-After"]))
-            except KeyError, ValueError:
-                pass
-            return EmbeddingRateLimitError(retry_after_seconds=retry_after)
+            headers = {
+                name.lower(): value
+                for name, value in response.headers.items()
+                if name.lower() in RATE_LIMIT_HEADER_ALLOWLIST
+            }
+            return EmbeddingRateLimitError(
+                retry_after_seconds=VoyageEmbedder._retry_after_seconds(
+                    headers.get("retry-after")
+                ),
+                provider_headers=headers,
+            )
         if status in {408, 500, 502, 503, 504}:
             return EmbeddingProviderUnavailableError(
                 "embedding provider was temporarily unavailable"
@@ -250,6 +296,21 @@ class VoyageEmbedder:
         return MalformedEmbeddingResponseError(
             "embedding provider returned an unexpected status"
         )
+
+    @staticmethod
+    def _retry_after_seconds(value: str | None) -> float | None:
+        if value is None:
+            return None
+        try:
+            return max(0.0, float(value))
+        except ValueError:
+            try:
+                retry_at = parsedate_to_datetime(value)
+            except TypeError, ValueError, OverflowError:
+                return None
+            if retry_at.tzinfo is None:
+                retry_at = retry_at.replace(tzinfo=UTC)
+            return max(0.0, (retry_at - datetime.now(UTC)).total_seconds())
 
     @staticmethod
     def _parse_response(

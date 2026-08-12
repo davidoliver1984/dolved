@@ -74,6 +74,7 @@ class RerankResult(ImmutableModel):
     profile: RerankerProfile
     candidates: tuple[RerankedCandidate, ...] = Field(min_length=1)
     provider_input_tokens: int | None = Field(default=None, ge=0)
+    provider_retry_count: int = Field(default=0, ge=0)
 
     @model_validator(mode="after")
     def validate_result(self) -> RerankResult:

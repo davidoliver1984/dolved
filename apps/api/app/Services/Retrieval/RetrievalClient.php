@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Retrieval;
 
 use App\Exceptions\RetrievalException;
+use App\Exceptions\RetrievalPlannerException;
 use App\Models\DocumentChunk;
 use App\Models\EmbeddingProfile;
 use App\Models\EmbeddingSpaceGeneration;
@@ -40,16 +41,21 @@ final readonly class RetrievalClient
             'evaluated_at' => $evaluatedAt->toIso8601String(),
         ]);
         $plan = $response->json('plan');
-        if (! is_array($plan)) {
+        $lineage = $response->json('classifier_lineage');
+        $usage = $response->json('usage');
+        if ($response->json('contract_version') !== 2 || ! is_array($plan) || ! is_array($lineage) || ! is_array($usage)) {
             throw new RetrievalException('The retrieval planner returned an invalid response.');
         }
 
         try {
-            return RetrievalPlan::fromArray($plan, $question);
+            return RetrievalPlan::fromArray($plan, $question, $lineage, $usage);
         } catch (InvalidArgumentException $exception) {
-            throw new RetrievalException(
+            throw new RetrievalPlannerException(
                 'The retrieval planner returned an invalid plan.',
-                0,
+                'invalid_application_plan',
+                null,
+                1,
+                false,
                 $exception,
             );
         }
@@ -62,6 +68,8 @@ final readonly class RetrievalClient
         string $query,
         int $candidateK,
         ?EvidenceThresholdPolicy $policy = null,
+        bool $denseOnly = false,
+        bool $captureDiagnostics = false,
     ): RetrievalSearchResult {
         $space = $corpus->embeddingSpaceGeneration;
         $profile = $space->embeddingProfile;
@@ -86,7 +94,7 @@ final readonly class RetrievalClient
             'candidate_k' => $candidateK,
             'scopes' => $scopes,
         ];
-        $sparse = $corpus->sparseSpaceGeneration;
+        $sparse = $denseOnly ? null : $corpus->sparseSpaceGeneration;
         if ($sparse !== null) {
             if ($policy === null) {
                 throw new RetrievalException('Hybrid retrieval requires an evidence-threshold policy.');
@@ -101,10 +109,15 @@ final readonly class RetrievalClient
             $payload['vector_space']['sparse'] = $payload['sparse_vector_space'];
             $payload['candidate_k'] = $policy->dense_candidate_k;
         }
+        if ($captureDiagnostics) {
+            $payload['capture_diagnostics'] = true;
+        }
         $response = $this->call('/api/internal/retrieval/search', 'retrieval.search', $workspace, $payload);
         $candidates = $response->json('candidates');
         $lineage = $response->json('lineage');
-        if (! is_array($candidates) || ! is_array($lineage)) {
+        $diagnostics = $response->json('diagnostics');
+        $usage = $response->json('usage');
+        if (! is_array($candidates) || ! is_array($lineage) || ($captureDiagnostics && ! is_array($diagnostics))) {
             throw new RetrievalException('The retriever returned an invalid response.');
         }
         $validated = [];
@@ -126,12 +139,17 @@ final readonly class RetrievalClient
             $validated[] = $candidate;
         }
 
-        return new RetrievalSearchResult($validated, $lineage);
+        return new RetrievalSearchResult(
+            $validated,
+            $lineage,
+            is_array($diagnostics) ? array_values($diagnostics) : [],
+            is_array($usage) ? array_values($usage) : [],
+        );
     }
 
     /**
      * @param  list<array<string, mixed>>  $candidates
-     * @return array{candidates: list<array<string, mixed>>, profile: array<string, mixed>}
+     * @return array{candidates: list<array<string, mixed>>, profile: array<string, mixed>, provider_input_tokens: int|null, provider_retry_count: int, usage: list<array<string, mixed>>}
      */
     public function rerank(
         Workspace $workspace,
@@ -154,6 +172,7 @@ final readonly class RetrievalClient
             'adapter_version' => $policy->reranker_adapter_version,
             'truncation' => false,
         ];
+        $started = hrtime(true);
         $response = $this->call('/api/internal/retrieval/rerank', 'retrieval.rerank', $workspace, [
             'contract_version' => 1,
             'workspace_id' => $workspace->public_id,
@@ -173,6 +192,8 @@ final readonly class RetrievalClient
         ]);
         $returned = $response->json('candidates');
         $returnedProfile = $response->json('profile');
+        $providerInputTokens = $response->json('provider_input_tokens');
+        $providerRetryCount = $response->json('provider_retry_count');
         if (! is_array($returned) || ! is_array($returnedProfile)) {
             throw new RetrievalException('The reranker returned an invalid response.');
         }
@@ -198,7 +219,34 @@ final readonly class RetrievalClient
             $nextRankBySide[$side] = $expectedRank;
         }
 
-        return ['candidates' => $returned, 'profile' => $returnedProfile];
+        if ($providerInputTokens !== null && (! is_int($providerInputTokens) || $providerInputTokens < 0)) {
+            throw new RetrievalException('The reranker returned invalid provider usage.');
+        }
+        if (! is_int($providerRetryCount) || $providerRetryCount < 0) {
+            throw new RetrievalException('The reranker returned invalid provider retry usage.');
+        }
+
+        return [
+            'candidates' => $returned,
+            'profile' => $returnedProfile,
+            'provider_input_tokens' => $providerInputTokens,
+            'provider_retry_count' => $providerRetryCount,
+            'usage' => [[
+                'stage' => 'reranking',
+                'provider' => $returnedProfile['provider'] ?? $policy->reranker_provider,
+                'model' => $returnedProfile['model'] ?? $policy->reranker_model,
+                'execution' => 'PROVIDER_API',
+                'request_count' => 1,
+                'retry_count' => $providerRetryCount,
+                'input_tokens' => $providerInputTokens,
+                'cached_input_tokens' => null,
+                'output_tokens' => null,
+                'latency_ms' => (hrtime(true) - $started) / 1_000_000,
+                'cost_basis' => 'UNAVAILABLE',
+                'cost_usd' => null,
+                'pricing_snapshot' => null,
+            ]],
+        ];
     }
 
     /**
@@ -317,16 +365,64 @@ final readonly class RetrievalClient
 
                     return $response;
                 }
+                if ($path === '/api/internal/retrieval/plan') {
+                    $failure = $this->plannerFailure($response, $attempt);
+                    $last = $failure;
+                    if ($failure->systemic || in_array($failure->category, [
+                        'invalid_typed_plan',
+                        'query_not_preserved',
+                        'provider_request_rejected',
+                    ], true)) {
+                        break;
+                    }
+                    if ($response->status() < 500 && $failure->category !== 'provider_rate_limited') {
+                        break;
+                    }
+
+                    continue;
+                }
                 $last = new RetrievalException('The retrieval service rejected the request.');
                 if ($response->status() < 500) {
                     break;
                 }
             } catch (ConnectionException $exception) {
-                $last = new RetrievalException('The retrieval service is unavailable.', 0, $exception);
+                $last = $path === '/api/internal/retrieval/plan'
+                    ? new RetrievalPlannerException(
+                        'The retrieval planner transport is unavailable.',
+                        'transport_error',
+                        null,
+                        $attempt,
+                        false,
+                        $exception,
+                    )
+                    : new RetrievalException('The retrieval service is unavailable.', 0, $exception);
             }
         }
 
         throw $last ?? new RetrievalException('The retrieval call failed.');
+    }
+
+    private function plannerFailure(Response $response, int $attempt): RetrievalPlannerException
+    {
+        $detail = $response->json('detail');
+        $category = is_array($detail) && is_string($detail['category'] ?? null)
+            ? $detail['category']
+            : 'planner_service_rejected';
+        $providerStatus = is_array($detail) && is_int($detail['provider_status'] ?? null)
+            ? $detail['provider_status']
+            : $response->status();
+        $systemic = is_array($detail) && ($detail['systemic'] ?? null) === true;
+        $providerAttempts = is_array($detail) && is_int($detail['attempt_count'] ?? null)
+            ? max(1, $detail['attempt_count'])
+            : 1;
+
+        return new RetrievalPlannerException(
+            'The retrieval planner failed.',
+            $category,
+            $providerStatus,
+            (($attempt - 1) * $providerAttempts) + $providerAttempts,
+            $systemic,
+        );
     }
 
     /** @return array<string, mixed> */
