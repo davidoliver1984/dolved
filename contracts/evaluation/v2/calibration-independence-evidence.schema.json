@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/calibration-independence-evidence.schema.json",
+  "title": "Calibration split independence evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["calibration_case_ids_digest", "calibration_semantic_cluster_ids_digest", "engineering_case_ids_digest", "engineering_semantic_cluster_ids_digest", "held_out_case_ids_digest", "held_out_semantic_cluster_ids_digest", "comparison_method", "comparison_method_version", "engineering_overlap_case_ids", "held_out_overlap_case_ids", "split_semantic_cluster_ids", "engineering_overlap_case_count", "held_out_overlap_case_count", "split_semantic_cluster_count", "score_driven_selection", "post_result_reassignment", "population_frozen_before_provider_execution"],
+  "properties": {
+    "calibration_case_ids_digest": {"$ref": "#/$defs/sha256"},
+    "calibration_semantic_cluster_ids_digest": {"$ref": "#/$defs/sha256"},
+    "engineering_case_ids_digest": {"$ref": "#/$defs/sha256"},
+    "engineering_semantic_cluster_ids_digest": {"$ref": "#/$defs/sha256"},
+    "held_out_case_ids_digest": {"$ref": "#/$defs/sha256"},
+    "held_out_semantic_cluster_ids_digest": {"$ref": "#/$defs/sha256"},
+    "comparison_method": {"const": "canonical-identity-set-intersection"},
+    "comparison_method_version": {"type": "string", "minLength": 1},
+    "engineering_overlap_case_ids": {"$ref": "#/$defs/identifier_list"},
+    "held_out_overlap_case_ids": {"$ref": "#/$defs/identifier_list"},
+    "split_semantic_cluster_ids": {"$ref": "#/$defs/identifier_list"},
+    "engineering_overlap_case_count": {"type": "integer", "minimum": 0},
+    "held_out_overlap_case_count": {"type": "integer", "minimum": 0},
+    "split_semantic_cluster_count": {"type": "integer", "minimum": 0},
+    "score_driven_selection": {"type": "boolean"},
+    "post_result_reassignment": {"type": "boolean"},
+    "population_frozen_before_provider_execution": {"type": "boolean"}
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "identifier_list": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

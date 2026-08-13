@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/calibration-population-manifest.schema.json",
+  "title": "Calibration population manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "population_id",
+    "population_digest",
+    "benchmark_id",
+    "benchmark_version",
+    "benchmark_digest",
+    "split_name",
+    "split_version",
+    "split_case_ids_digest",
+    "case_count",
+    "variant_count",
+    "case_ids_digest",
+    "slice_case_counts",
+    "domain_case_counts",
+    "expected_outcome_case_counts",
+    "benchmark_taxonomy",
+    "independence",
+    "authoring_review",
+    "pipeline_failure_counts",
+    "cases"
+  ],
+  "properties": {
+    "schema_version": {"const": "v1"},
+    "population_id": {"$ref": "#/$defs/identifier"},
+    "population_digest": {"$ref": "#/$defs/sha256"},
+    "benchmark_id": {"$ref": "#/$defs/identifier"},
+    "benchmark_version": {"type": "string", "minLength": 1},
+    "benchmark_digest": {"$ref": "#/$defs/sha256"},
+    "split_name": {"$ref": "#/$defs/identifier"},
+    "split_version": {"type": "string", "minLength": 1},
+    "split_case_ids_digest": {"$ref": "#/$defs/sha256"},
+    "case_count": {"type": "integer", "minimum": 1},
+    "variant_count": {"type": "integer", "minimum": 1},
+    "case_ids_digest": {"$ref": "#/$defs/sha256"},
+    "slice_case_counts": {"$ref": "#/$defs/count_map"},
+    "domain_case_counts": {"$ref": "#/$defs/count_map"},
+    "expected_outcome_case_counts": {"$ref": "#/$defs/count_map"},
+    "benchmark_taxonomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intrinsic_slices_schema_version", "declared_intrinsic_slices", "intrinsic_slices_digest", "evaluation_facets_schema_version", "declared_evaluation_facets", "evaluation_facets_digest"],
+      "properties": {
+        "intrinsic_slices_schema_version": {"type": "string", "minLength": 1},
+        "declared_intrinsic_slices": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "intrinsic_slices_digest": {"$ref": "#/$defs/sha256"},
+        "evaluation_facets_schema_version": {"type": "string", "minLength": 1},
+        "declared_evaluation_facets": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "evaluation_facets_digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "independence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["calibration_case_ids_digest", "calibration_semantic_cluster_ids_digest", "engineering_case_ids_digest", "engineering_semantic_cluster_ids_digest", "held_out_case_ids_digest", "held_out_semantic_cluster_ids_digest", "comparison_method", "comparison_method_version", "engineering_overlap_case_ids", "held_out_overlap_case_ids", "split_semantic_cluster_ids", "engineering_overlap_case_count", "held_out_overlap_case_count", "split_semantic_cluster_count", "score_driven_selection", "post_result_reassignment", "population_frozen_before_provider_execution"],
+      "properties": {
+        "calibration_case_ids_digest": {"$ref": "#/$defs/sha256"},
+        "calibration_semantic_cluster_ids_digest": {"$ref": "#/$defs/sha256"},
+        "engineering_case_ids_digest": {"$ref": "#/$defs/sha256"},
+        "engineering_semantic_cluster_ids_digest": {"$ref": "#/$defs/sha256"},
+        "held_out_case_ids_digest": {"$ref": "#/$defs/sha256"},
+        "held_out_semantic_cluster_ids_digest": {"$ref": "#/$defs/sha256"},
+        "comparison_method": {"const": "canonical-identity-set-intersection"},
+        "comparison_method_version": {"type": "string", "minLength": 1},
+        "engineering_overlap_case_ids": {"$ref": "#/$defs/identifier_list"},
+        "held_out_overlap_case_ids": {"$ref": "#/$defs/identifier_list"},
+        "split_semantic_cluster_ids": {"$ref": "#/$defs/identifier_list"},
+        "engineering_overlap_case_count": {"type": "integer", "minimum": 0},
+        "held_out_overlap_case_count": {"type": "integer", "minimum": 0},
+        "split_semantic_cluster_count": {"type": "integer", "minimum": 0},
+        "score_driven_selection": {"type": "boolean"},
+        "post_result_reassignment": {"type": "boolean"},
+        "population_frozen_before_provider_execution": {"type": "boolean"}
+      }
+    },
+    "authoring_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_artifact_id", "review_artifact_version", "review_artifact_digest", "reviewed_case_ids_digest", "semantic_quality_reviewed", "representative_coverage_reviewed", "author_rationale_reviewed", "governance_reviewed"],
+      "properties": {
+        "review_artifact_id": {"$ref": "#/$defs/identifier"},
+        "review_artifact_version": {"type": "string", "minLength": 1},
+        "review_artifact_digest": {"$ref": "#/$defs/sha256"},
+        "reviewed_case_ids_digest": {"$ref": "#/$defs/sha256"},
+        "semantic_quality_reviewed": {"type": "boolean"},
+        "representative_coverage_reviewed": {"type": "boolean"},
+        "author_rationale_reviewed": {"type": "boolean"},
+        "governance_reviewed": {"type": "boolean"}
+      }
+    },
+    "pipeline_failure_counts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "count"],
+        "properties": {
+          "kind": {"$ref": "#/$defs/failure_kind"},
+          "count": {"type": "integer", "minimum": 1}
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "cluster_id", "domain", "document_family_ids", "evaluation_facets", "variant_count", "slices", "expected_outcome", "expected_evidence_unit_count", "source_lineage_count", "source_lineage_digest"],
+        "properties": {
+          "case_id": {"$ref": "#/$defs/identifier"},
+          "cluster_id": {"$ref": "#/$defs/identifier"},
+          "domain": {"$ref": "#/$defs/identifier"},
+          "document_family_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+          "evaluation_facets": {"$ref": "#/$defs/identifier_list"},
+          "variant_count": {"type": "integer", "minimum": 1},
+          "slices": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+          "expected_outcome": {"$ref": "#/$defs/identifier"},
+          "expected_evidence_unit_count": {"type": "integer", "minimum": 0},
+          "source_lineage_count": {"type": "integer", "minimum": 0},
+          "source_lineage_digest": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "count_map": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "identifier_list": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+    "failure_kind": {"enum": ["lost_evaluation_case", "planner_failure_before_threshold", "retrieval_failure_before_threshold", "provider_failure_before_threshold", "incomplete_pre_threshold_lineage"]}
+  }
+}

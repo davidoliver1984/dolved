@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/calibration-threshold-execution-evidence.schema.json",
+  "title": "Calibration threshold execution evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["cases"],
+  "properties": {
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "complete_pre_threshold_lineage", "reranker_scores"],
+        "properties": {
+          "case_id": {"$ref": "#/$defs/identifier"},
+          "complete_pre_threshold_lineage": {"type": "boolean"},
+          "reranker_scores": {"type": "array", "items": {"type": "number"}}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"}
+  }
+}

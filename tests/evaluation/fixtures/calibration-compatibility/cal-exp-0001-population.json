@@ -1,0 +1,42 @@
+{
+  "benchmark": {
+    "id": "dolved-care-engineering",
+    "version": "v2",
+    "digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d"
+  },
+  "split": {
+    "name": "threshold_calibration",
+    "version": "1",
+    "case_ids_digest": "8793780ccc01cb47b05c76bbfd801008a551233e78163c79370a664b67d9c984"
+  },
+  "cases": [
+    {"case_id": "complaints.advocacy.south-west", "variants": [{}, {}, {}], "slices": ["CURRENT", "table-evidence", "regional-applicability", "location-alias"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "complaints.candour.apology", "variants": [{}, {}, {}], "slices": ["CURRENT", "negative-instruction", "multi-evidence"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "fire.drills.current-frequency", "variants": [{}, {}, {}], "slices": ["CURRENT", "near-version-duplicate", "near-numeric-values"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "fire.midlands.community-difference", "variants": [{}, {}, {}], "slices": ["CURRENT", "location-alias", "regional-applicability", "near-duplicate"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "fire.north-west.manchester-alias", "variants": [{}, {}, {}], "slices": ["CURRENT", "location-alias", "regional-applicability", "near-duplicate"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "fire.peep.scheduled-form", "variants": [{}, {}, {}], "slices": ["CURRENT", "scheduled-future", "forms", "PEEP-alias"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "gdpr.retention.visitor-register", "variants": [{}, {}, {}], "slices": ["CURRENT", "table-evidence", "near-numeric-values"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "gdpr.sar.current-verbal", "variants": [{}, {}, {}], "slices": ["CURRENT", "SAR-alias", "scheduled-version"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "gdpr.sar.scheduled-portal", "variants": [{}, {}, {}], "slices": ["VALID_AT_DATE", "scheduled-version", "future"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "hr.flexible-working.timescale", "variants": [{}, {}, {}], "slices": ["CURRENT", "near-time-values"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "hr.grievance.manager-involved", "variants": [{}, {}, {}], "slices": ["CURRENT", "procedural-routing"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "hr.recruitment.pending-dbs", "variants": [{}, {}, {}], "slices": ["CURRENT", "DBS-alias", "multi-evidence"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "hr.sickness.current-reporting", "variants": [{}, {}, {}], "slices": ["CURRENT", "near-version-duplicate", "multi-evidence"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "infection.hand-hygiene.compare", "variants": [{}, {}, {}], "slices": ["COMPARE", "multi-evidence", "near-version-duplicate"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "infection.hand-hygiene.current-spores", "variants": [{}, {}, {}], "slices": ["CURRENT", "near-version-duplicate", "multi-evidence"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "infection.ppe.body-fluid-splash", "variants": [{}, {}, {}], "slices": ["CURRENT", "PPE-alias", "tables", "multi-evidence"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "infection.respiratory-ppe.multi-document", "variants": [{}, {}, {}], "slices": ["CURRENT", "PPE-alias", "multi-document", "multi-evidence", "near-duplicate"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "infection.waste.sharps-colours", "variants": [{}, {}, {}], "slices": ["CURRENT", "tables", "near-duplicate-rows", "colour-terminology"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "payroll.calendar.august-2026", "variants": [{}, {}, {}], "slices": ["CURRENT", "table-evidence", "near-date-values"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "payroll.calendar.scheduled-2027", "variants": [{}, {}, {}], "slices": ["VALID_AT_DATE", "scheduled-version", "table-evidence"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "payroll.expenses.receipt-deadline", "variants": [{}, {}, {}], "slices": ["CURRENT", "near-time-values", "negative-instruction"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "safeguarding.dols.own-home", "variants": [{}, {}, {}], "slices": ["CURRENT", "DoLS-alias", "tables", "applicability-context"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "safeguarding.missing-person.immediate-police", "variants": [{}, {}, {}], "slices": ["CURRENT", "multi-evidence", "colloquial"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "safeguarding.whistleblowing.manager-involved", "variants": [{}, {}, {}], "slices": ["CURRENT", "colloquial", "multi-route"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "training.induction.current-ten-days", "variants": [{}, {}, {}], "slices": ["CURRENT", "scheduled-version", "multi-evidence"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "training.induction.scheduled-five-days", "variants": [{}, {}, {}], "slices": ["VALID_AT_DATE", "scheduled-version", "near-time-values"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "visitors.outbreak.current-essential", "variants": [{}, {}, {}], "slices": ["CURRENT", "near-version-duplicate", "conflicting-guidance"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}},
+    {"case_id": "visitors.outbreak.valid-at-date", "variants": [{}, {}, {}], "slices": ["VALID_AT_DATE", "historical", "conflicting-guidance"], "outcome_expectation": {"outcome": "EVIDENCE_FOUND"}}
+  ]
+}

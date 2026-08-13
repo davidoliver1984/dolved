@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/calibration-compatibility-requirements.schema.json",
+  "title": "Calibration compatibility policy requirements",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "compatibility_policy_id", "compatibility_policy_version", "threshold_policy_id", "threshold_policy_sha256", "population_spec_id", "population_spec_version", "population_spec_sha256", "pipeline_failures"],
+  "properties": {
+    "schema_version": {"const": "v1"},
+    "compatibility_policy_id": {"$ref": "#/$defs/identifier"},
+    "compatibility_policy_version": {"type": "string", "minLength": 1},
+    "threshold_policy_id": {"$ref": "#/$defs/identifier"},
+    "threshold_policy_sha256": {"$ref": "#/$defs/sha256"},
+    "population_spec_id": {"$ref": "#/$defs/identifier"},
+    "population_spec_version": {"type": "string", "minLength": 1},
+    "population_spec_sha256": {"$ref": "#/$defs/sha256"},
+    "pipeline_failures": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["invalidate_observed_pre_threshold_failures", "invalidating_failure_kinds"],
+      "properties": {
+        "invalidate_observed_pre_threshold_failures": {"type": "boolean"},
+        "invalidating_failure_kinds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/failure_kind"}}
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "failure_kind": {"enum": ["lost_evaluation_case", "planner_failure_before_threshold", "retrieval_failure_before_threshold", "provider_failure_before_threshold", "incomplete_pre_threshold_lineage"]}
+  }
+}

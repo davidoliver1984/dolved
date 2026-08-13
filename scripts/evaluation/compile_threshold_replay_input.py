@@ -13,6 +13,7 @@ from app.evaluation.application_benchmark import (
     _document_mapping,
     _side,
 )
+from app.evaluation.calibration_compatibility import classify_pre_threshold_failure
 from app.evaluation.models import EvidenceUnit
 from app.evaluation.threshold_replay import (
     PreThresholdCandidate,
@@ -85,7 +86,8 @@ def _variant(
         if not candidates:
             pre_retrieval_outcome = _outcome(str(result["outcome"]))
     else:
-        failures = ("lost_evaluation_case",)
+        failure = classify_pre_threshold_failure(observation)
+        failures = (failure,) if failure is not None else ()
 
     required_sides: tuple[Literal["PRIMARY", "COMPARISON"], ...] = (
         ("PRIMARY", "COMPARISON")

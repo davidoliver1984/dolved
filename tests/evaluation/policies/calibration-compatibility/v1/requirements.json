@@ -1,0 +1,20 @@
+{
+  "schema_version": "v1",
+  "compatibility_policy_id": "evidence-threshold-calibration-compatibility-v1",
+  "compatibility_policy_version": "1",
+  "threshold_policy_id": "evidence-threshold-calibration-v1",
+  "threshold_policy_sha256": "0500ef0868566b736b11a7818c538b1fa478e74811c6420cd487dd9f73ff8c7b",
+  "population_spec_id": "dolved-care-evidence-threshold-calibration-population",
+  "population_spec_version": "v1",
+  "population_spec_sha256": "7cd9d59c7464e6804de914635d023fa5d99d5a1edea8bffc212a3c4e9fdfc406",
+  "pipeline_failures": {
+    "invalidate_observed_pre_threshold_failures": true,
+    "invalidating_failure_kinds": [
+      "lost_evaluation_case",
+      "planner_failure_before_threshold",
+      "retrieval_failure_before_threshold",
+      "provider_failure_before_threshold",
+      "incomplete_pre_threshold_lineage"
+    ]
+  }
+}

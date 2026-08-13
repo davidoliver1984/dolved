@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/calibration-compatibility-result.schema.json",
+  "title": "Calibration population compatibility result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "compatibility_policy_id", "compatibility_policy_version", "compatibility_policy_sha256", "threshold_policy_id", "threshold_policy_sha256", "population_spec_id", "population_spec_version", "population_spec_sha256", "population_id", "population_digest", "benchmark_id", "benchmark_version", "benchmark_digest", "split_name", "split_version", "compatible", "slice_results", "controlled_rejection", "threshold_execution", "domain_results", "independence", "pipeline_failures", "failure_reasons", "result_digest"],
+  "properties": {
+    "schema_version": {"const": "v1"},
+    "compatibility_policy_id": {"$ref": "#/$defs/identifier"},
+    "compatibility_policy_version": {"type": "string", "minLength": 1},
+    "compatibility_policy_sha256": {"$ref": "#/$defs/sha256"},
+    "threshold_policy_id": {"$ref": "#/$defs/identifier"},
+    "threshold_policy_sha256": {"$ref": "#/$defs/sha256"},
+    "population_spec_id": {"$ref": "#/$defs/identifier"},
+    "population_spec_version": {"type": "string", "minLength": 1},
+    "population_spec_sha256": {"$ref": "#/$defs/sha256"},
+    "population_id": {"$ref": "#/$defs/identifier"},
+    "population_digest": {"$ref": "#/$defs/sha256"},
+    "benchmark_id": {"$ref": "#/$defs/identifier"},
+    "benchmark_version": {"type": "string", "minLength": 1},
+    "benchmark_digest": {"$ref": "#/$defs/sha256"},
+    "split_name": {"$ref": "#/$defs/identifier"},
+    "split_version": {"type": "string", "minLength": 1},
+    "compatible": {"type": "boolean"},
+    "slice_results": {"type": "array", "items": {"$ref": "#/$defs/slice_result"}},
+    "controlled_rejection": {"$ref": "#/$defs/controlled_result"},
+    "threshold_execution": {"$ref": "#/$defs/threshold_execution_result"},
+    "domain_results": {"type": "array", "items": {"$ref": "#/$defs/domain_result"}},
+    "independence": {"$ref": "#/$defs/simple_result"},
+    "pipeline_failures": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observed_counts", "invalidate_observed_pre_threshold_failures", "compatible", "failure_reasons"],
+      "properties": {
+        "observed_counts": {"type": "object", "propertyNames": {"$ref": "#/$defs/failure_kind"}, "additionalProperties": {"type": "integer", "minimum": 1}},
+        "invalidate_observed_pre_threshold_failures": {"type": "boolean"},
+        "compatible": {"type": "boolean"},
+        "failure_reasons": {"$ref": "#/$defs/reasons"}
+      }
+    },
+    "failure_reasons": {"$ref": "#/$defs/reasons"},
+    "result_digest": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "count_map": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "reasons": {"type": "array", "items": {"type": "string"}},
+    "failure_kind": {"enum": ["lost_evaluation_case", "planner_failure_before_threshold", "retrieval_failure_before_threshold", "provider_failure_before_threshold", "incomplete_pre_threshold_lineage"]},
+    "slice_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requirement_id", "group_id", "matching_labels", "minimum_case_count", "available_case_count", "preferred_case_count", "observed_domain_count", "observed_document_family_count", "required_benchmark_facets", "observed_required_benchmark_facets", "compatible", "failure_reasons"],
+      "properties": {
+        "requirement_id": {"$ref": "#/$defs/identifier"},
+        "group_id": {"$ref": "#/$defs/identifier"},
+        "matching_labels": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "minimum_case_count": {"type": "integer", "minimum": 0},
+        "available_case_count": {"type": "integer", "minimum": 0},
+        "preferred_case_count": {"type": "integer", "minimum": 1},
+        "observed_domain_count": {"type": "integer", "minimum": 0},
+        "observed_document_family_count": {"type": "integer", "minimum": 0},
+        "required_benchmark_facets": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "observed_required_benchmark_facets": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "compatible": {"type": "boolean"},
+        "failure_reasons": {"$ref": "#/$defs/reasons"}
+      }
+    },
+    "controlled_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["threshold_sensitive_outcomes", "acceptance_only_outcomes", "available_outcome_counts", "minimum_threshold_sensitive_case_count", "available_threshold_sensitive_case_count", "primary_empty_compare_case_count", "comparison_empty_compare_case_count", "metric_available", "compatible", "failure_reasons"],
+      "properties": {
+        "threshold_sensitive_outcomes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "acceptance_only_outcomes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "available_outcome_counts": {"$ref": "#/$defs/count_map"},
+        "minimum_threshold_sensitive_case_count": {"type": "integer", "minimum": 1},
+        "available_threshold_sensitive_case_count": {"type": "integer", "minimum": 0},
+        "primary_empty_compare_case_count": {"type": "integer", "minimum": 0},
+        "comparison_empty_compare_case_count": {"type": "integer", "minimum": 0},
+        "metric_available": {"type": "boolean"},
+        "compatible": {"type": "boolean"},
+        "failure_reasons": {"$ref": "#/$defs/reasons"}
+      }
+    },
+    "threshold_execution_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaluated", "compatible", "complete_lineage_case_count", "reranked_candidate_count", "distinct_reranker_score_count", "group_threshold_evaluable_case_counts", "failure_reasons"],
+      "properties": {
+        "evaluated": {"type": "boolean"},
+        "compatible": {"type": ["boolean", "null"]},
+        "complete_lineage_case_count": {"type": "integer", "minimum": 0},
+        "reranked_candidate_count": {"type": "integer", "minimum": 0},
+        "distinct_reranker_score_count": {"type": "integer", "minimum": 0},
+        "group_threshold_evaluable_case_counts": {"$ref": "#/$defs/count_map"},
+        "failure_reasons": {"$ref": "#/$defs/reasons"}
+      }
+    },
+    "domain_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requirement_id", "domains", "available_case_count", "minimum_total_case_count", "per_domain_available_case_count", "per_domain_minimum_case_count", "compatible", "failure_reasons"],
+      "properties": {
+        "requirement_id": {"$ref": "#/$defs/identifier"},
+        "domains": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+        "available_case_count": {"type": "integer", "minimum": 0},
+        "minimum_total_case_count": {"type": "integer", "minimum": 1},
+        "per_domain_available_case_count": {"$ref": "#/$defs/count_map"},
+        "per_domain_minimum_case_count": {"$ref": "#/$defs/count_map"},
+        "compatible": {"type": "boolean"},
+        "failure_reasons": {"$ref": "#/$defs/reasons"}
+      }
+    },
+    "simple_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["compatible", "failure_reasons"],
+      "properties": {"compatible": {"type": "boolean"}, "failure_reasons": {"$ref": "#/$defs/reasons"}}
+    }
+  }
+}

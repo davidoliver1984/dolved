@@ -1,0 +1,202 @@
+{
+  "schema_version": "v1",
+  "population_spec_id": "dolved-care-evidence-threshold-calibration-population",
+  "population_spec_version": "v1",
+  "purpose": "evidence-threshold-selection",
+  "benchmark_family": "dolved-care-engineering",
+  "taxonomy_baseline_version": "v2",
+  "taxonomy_baseline_digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
+  "split_taxonomy_baseline_version": "1",
+  "minimum_case_count": 40,
+  "preferred_case_count_minimum": 44,
+  "preferred_case_count_maximum": 48,
+  "minimum_domain_count": 8,
+  "maximum_single_domain_share": 0.25,
+  "semantic_groups": [
+    {
+      "group_id": "current-v1",
+      "version": "v1",
+      "labels": ["CURRENT"],
+      "rationale": "Represents the normal ADR-0017 authority mode without allowing current-state cases to dominate calibration.",
+      "protected_failure_mode": "Threshold rejects trustworthy current evidence or accepts weak current evidence.",
+      "minimum_case_count": 8,
+      "preferred_case_count": 12,
+      "minimum_threshold_evaluable_case_count": 6,
+      "diversity": {"minimum_domain_count": 4, "minimum_document_family_count": 4, "required_benchmark_facets": []}
+    },
+    {
+      "group_id": "compare-v1",
+      "version": "v1",
+      "labels": ["COMPARE"],
+      "rationale": "Exercises independently evaluated PRIMARY and COMPARISON evidence.",
+      "protected_failure_mode": "One comparison side is lost or weak evidence on one side is accepted.",
+      "minimum_case_count": 4,
+      "preferred_case_count": 6,
+      "minimum_threshold_evaluable_case_count": 4,
+      "diversity": {"minimum_domain_count": 3, "minimum_document_family_count": 4, "required_benchmark_facets": ["changed-instruction", "changed-structured-value"]}
+    },
+    {
+      "group_id": "valid-at-date-v1",
+      "version": "v1",
+      "labels": ["VALID_AT_DATE"],
+      "rationale": "Protects date-scoped evidence across authority transitions.",
+      "protected_failure_mode": "A threshold masks loss of historically authoritative evidence.",
+      "minimum_case_count": 4,
+      "preferred_case_count": 6,
+      "minimum_threshold_evaluable_case_count": 3,
+      "diversity": {"minimum_domain_count": 3, "minimum_document_family_count": 4, "required_benchmark_facets": ["before-authority-transition", "after-authority-transition"]}
+    },
+    {
+      "group_id": "historical-v1",
+      "version": "v1",
+      "labels": ["historical"],
+      "rationale": "Exercises ADR-0022 historical-reference resolution independently from date-scoped retrieval.",
+      "protected_failure_mode": "The intended prior authority is rejected or an unintended historical version is accepted.",
+      "minimum_case_count": 4,
+      "preferred_case_count": 6,
+      "minimum_threshold_evaluable_case_count": 3,
+      "diversity": {"minimum_domain_count": 3, "minimum_document_family_count": 4, "required_benchmark_facets": ["historical-previous", "historical-ordinal", "historical-explicit"]}
+    },
+    {
+      "group_id": "temporal-authority-v1",
+      "version": "v1",
+      "labels": ["temporal-authority", "VALID_AT_DATE", "historical", "withdrawn", "predecessor-resurrection", "never-authoritative", "scheduled-future"],
+      "rationale": "Aggregates the temporal authority traps that must not regress while selecting a threshold.",
+      "protected_failure_mode": "Scheduled, withdrawn, never-authoritative or resurrected evidence is accepted incorrectly.",
+      "minimum_case_count": 8,
+      "preferred_case_count": 12,
+      "minimum_threshold_evaluable_case_count": 6,
+      "diversity": {"minimum_domain_count": 4, "minimum_document_family_count": 6, "required_benchmark_facets": ["scheduled", "withdrawn", "never-authoritative", "no-predecessor-resurrection"]}
+    },
+    {
+      "group_id": "applicability-v1",
+      "version": "v1",
+      "labels": ["applicability", "regional-applicability", "applicability-context", "region-specific", "site-specific"],
+      "rationale": "Protects the server-side applicability boundary across universal, regional and site scopes.",
+      "protected_failure_mode": "Inapplicable evidence is accepted or applicable evidence is removed by threshold selection.",
+      "minimum_case_count": 6,
+      "preferred_case_count": 8,
+      "minimum_threshold_evaluable_case_count": 4,
+      "diversity": {"minimum_domain_count": 3, "minimum_document_family_count": 4, "required_benchmark_facets": ["universal", "regional", "site-specific", "applicability-excluded"]}
+    },
+    {
+      "group_id": "location-alias-v1",
+      "version": "v1",
+      "labels": ["location-alias"],
+      "rationale": "Ensures resolved organisational aliases continue to produce the correct applicability scope.",
+      "protected_failure_mode": "A valid alias loses evidence or resolves into an inapplicable scope.",
+      "minimum_case_count": 4,
+      "preferred_case_count": 6,
+      "minimum_threshold_evaluable_case_count": 3,
+      "diversity": {"minimum_domain_count": 3, "minimum_document_family_count": 3, "required_benchmark_facets": ["alias-formal", "alias-colloquial"]}
+    },
+    {
+      "group_id": "multi-evidence-v1",
+      "version": "v1",
+      "labels": ["multi-evidence"],
+      "rationale": "Measures completeness over distinct EvidenceUnits rather than repeated chunk credit.",
+      "protected_failure_mode": "Thresholding preserves a partial answer while discarding a required EvidenceUnit.",
+      "minimum_case_count": 6,
+      "preferred_case_count": 8,
+      "minimum_threshold_evaluable_case_count": 5,
+      "diversity": {"minimum_domain_count": 3, "minimum_document_family_count": 4, "required_benchmark_facets": ["two-evidence-units", "three-plus-evidence-units"]}
+    },
+    {
+      "group_id": "multi-document-v1",
+      "version": "v1",
+      "labels": ["multi-document"],
+      "rationale": "Requires complete evidence that no single document can supply.",
+      "protected_failure_mode": "Thresholding removes one document and leaves a plausible but incomplete evidence set.",
+      "minimum_case_count": 4,
+      "preferred_case_count": 6,
+      "minimum_threshold_evaluable_case_count": 4,
+      "diversity": {"minimum_domain_count": 3, "minimum_document_family_count": 6, "required_benchmark_facets": ["cross-document-completeness"]}
+    },
+    {
+      "group_id": "adversarial-v1",
+      "version": "v1",
+      "labels": ["adversarial"],
+      "rationale": "Prevents aggregate recall gains from masking acceptance of retrieval-manipulating content.",
+      "protected_failure_mode": "Keyword-stuffed, conflicting or deceptively similar evidence clears the threshold.",
+      "minimum_case_count": 4,
+      "preferred_case_count": 6,
+      "minimum_threshold_evaluable_case_count": 4,
+      "diversity": {"minimum_domain_count": 3, "minimum_document_family_count": 4, "required_benchmark_facets": ["keyword-stuffing", "near-duplicate-wrong", "conflicting-guidance", "negative-instruction"]}
+    },
+    {
+      "group_id": "zero-evidence-v1",
+      "version": "v1",
+      "labels": ["zero-evidence"],
+      "rationale": "Ensures threshold selection cannot trade away truthful abstention for aggregate recall.",
+      "protected_failure_mode": "The system produces evidence where the benchmark requires a controlled non-evidence outcome.",
+      "minimum_case_count": 8,
+      "preferred_case_count": 10,
+      "minimum_threshold_evaluable_case_count": 8,
+      "diversity": {"minimum_domain_count": 3, "minimum_document_family_count": 4, "required_benchmark_facets": ["no-trustworthy-candidate", "compare-primary-empty", "compare-comparison-empty"]}
+    }
+  ],
+  "controlled_rejection": {
+    "threshold_sensitive_outcomes": [
+      {"outcome": "INSUFFICIENT_EVIDENCE", "minimum_case_count": 4, "preferred_case_count": 4, "rationale": "Covers reranked candidates that do not meet the evidence threshold."},
+      {"outcome": "COMPARISON_SCOPE_INCOMPLETE", "minimum_case_count": 4, "preferred_case_count": 4, "rationale": "Covers threshold loss on either independently evaluated comparison side."}
+    ],
+    "acceptance_only_outcomes": ["NO_ELIGIBLE_EVIDENCE", "CLARIFICATION_REQUIRED", "TEMPORAL_SCOPE_UNRESOLVED", "NO_RETRIEVAL_CANDIDATES"],
+    "minimum_threshold_sensitive_case_count": 8,
+    "require_primary_empty_compare_case": true,
+    "require_comparison_empty_compare_case": true
+  },
+  "execution_requirements": {
+    "require_complete_pre_threshold_lineage": true,
+    "minimum_distinct_reranker_scores": 2,
+    "minimum_total_reranked_candidates": 8
+  },
+  "domain_requirements": [
+    {"requirement_id": "high-risk-care", "domains": ["medication", "safeguarding", "infection-control"], "minimum_total_case_count": 6, "per_domain_minimum_case_count": {"medication": 2, "safeguarding": 2, "infection-control": 2}, "rationale": "Every high-risk care domain must independently contribute threshold evidence."},
+    {"requirement_id": "safety", "domains": ["fire-safety", "health-safety"], "minimum_total_case_count": 4, "per_domain_minimum_case_count": {}, "rationale": "Physical safety procedures require meaningful combined representation."},
+    {"requirement_id": "regulatory-responsibility", "domains": ["gdpr", "complaints"], "minimum_total_case_count": 4, "per_domain_minimum_case_count": {}, "rationale": "Privacy and complaint-handling duties must not disappear behind operational averages."},
+    {"requirement_id": "workforce-operations", "domains": ["hr", "payroll", "training", "visitors"], "minimum_total_case_count": 6, "per_domain_minimum_case_count": {}, "rationale": "Routine workforce and operational knowledge must remain represented without dominating the population."}
+  ],
+  "independence": {
+    "forbid_engineering_overlap": true,
+    "forbid_held_out_overlap": true,
+    "forbid_score_driven_selection": true,
+    "forbid_post_result_reassignment": true,
+    "require_semantic_clusters_together": true,
+    "require_population_frozen_before_provider_execution": true
+  },
+  "case_authoring_requirements": {
+    "machine_enforced": [
+      "case-identity",
+      "semantic-cluster",
+      "domain",
+      "source-lineage",
+      "expected-evidence-or-controlled-outcome",
+      "split-independence-review"
+    ],
+    "human_reviewed": [
+      "semantic-quality",
+      "representative-coverage",
+      "author-rationale",
+      "governance-review"
+    ],
+    "specialised_human_review": {
+      "temporal": ["temporal-authority-metadata"],
+      "applicability": ["applicability-scope-metadata"],
+      "adversarial": ["adversarial-mechanism"],
+      "threshold-sensitive": ["threshold-sensitive-justification", "reranker-evaluable-design"]
+    },
+    "require_versioned_human_review_artifact": true
+  },
+  "exclusion_rules": [
+    "Exclude cases or semantic clusters assigned to engineering/tuning.",
+    "Exclude cases or semantic clusters assigned to sealed held-out acceptance.",
+    "Exclude cases selected because observed provider or reranker scores favour a threshold.",
+    "Exclude evidence-seeking cases without reviewed source-anchored EvidenceUnits.",
+    "Exclude controlled-rejection cases without an exact expected outcome.",
+    "Exclude cases depending on an unimplemented product capability.",
+    "Exclude cases with unresolved governance or applicability facts.",
+    "Exclude ground truth coupled to chunk, extracted-element or vector identities.",
+    "Exclude changed cases unless the immutable benchmark version advances."
+  ],
+  "benchmark_relationship": "new-immutable-benchmark-release-required"
+}

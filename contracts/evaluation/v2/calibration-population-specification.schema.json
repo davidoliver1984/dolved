@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/calibration-population-specification.schema.json",
+  "title": "Calibration population specification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "population_spec_id", "population_spec_version", "purpose", "benchmark_family", "taxonomy_baseline_version", "taxonomy_baseline_digest", "split_taxonomy_baseline_version", "minimum_case_count", "preferred_case_count_minimum", "preferred_case_count_maximum", "minimum_domain_count", "maximum_single_domain_share", "semantic_groups", "controlled_rejection", "execution_requirements", "domain_requirements", "independence", "case_authoring_requirements", "exclusion_rules", "benchmark_relationship"],
+  "properties": {
+    "schema_version": {"const": "v1"},
+    "population_spec_id": {"$ref": "#/$defs/identifier"},
+    "population_spec_version": {"const": "v1"},
+    "purpose": {"const": "evidence-threshold-selection"},
+    "benchmark_family": {"$ref": "#/$defs/identifier"},
+    "taxonomy_baseline_version": {"type": "string", "minLength": 1},
+    "taxonomy_baseline_digest": {"$ref": "#/$defs/sha256"},
+    "split_taxonomy_baseline_version": {"type": "string", "minLength": 1},
+    "minimum_case_count": {"type": "integer", "minimum": 1},
+    "preferred_case_count_minimum": {"type": "integer", "minimum": 1},
+    "preferred_case_count_maximum": {"type": "integer", "minimum": 1},
+    "minimum_domain_count": {"type": "integer", "minimum": 1},
+    "maximum_single_domain_share": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+    "semantic_groups": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/semantic_group"}},
+    "controlled_rejection": {"$ref": "#/$defs/controlled_rejection"},
+    "execution_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["require_complete_pre_threshold_lineage", "minimum_distinct_reranker_scores", "minimum_total_reranked_candidates"],
+      "properties": {
+        "require_complete_pre_threshold_lineage": {"type": "boolean"},
+        "minimum_distinct_reranker_scores": {"type": "integer", "minimum": 2},
+        "minimum_total_reranked_candidates": {"type": "integer", "minimum": 1}
+      }
+    },
+    "domain_requirements": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/domain_requirement"}},
+    "independence": {"$ref": "#/$defs/independence"},
+    "case_authoring_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["machine_enforced", "human_reviewed", "specialised_human_review", "require_versioned_human_review_artifact"],
+      "properties": {
+        "machine_enforced": {"$ref": "#/$defs/identifier_array"},
+        "human_reviewed": {"$ref": "#/$defs/identifier_array"},
+        "specialised_human_review": {"type": "object", "additionalProperties": {"$ref": "#/$defs/identifier_array"}},
+        "require_versioned_human_review_artifact": {"type": "boolean"}
+      }
+    },
+    "exclusion_rules": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "benchmark_relationship": {"const": "new-immutable-benchmark-release-required"}
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "identifier_array": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+    "semantic_group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["group_id", "version", "labels", "rationale", "protected_failure_mode", "minimum_case_count", "preferred_case_count", "minimum_threshold_evaluable_case_count", "diversity"],
+      "properties": {
+        "group_id": {"$ref": "#/$defs/identifier"},
+        "version": {"type": "string", "minLength": 1},
+        "labels": {"$ref": "#/$defs/identifier_array"},
+        "rationale": {"type": "string", "minLength": 1},
+        "protected_failure_mode": {"type": "string", "minLength": 1},
+        "minimum_case_count": {"type": "integer", "minimum": 1},
+        "preferred_case_count": {"type": "integer", "minimum": 1},
+        "minimum_threshold_evaluable_case_count": {"type": "integer", "minimum": 1},
+        "diversity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minimum_domain_count", "minimum_document_family_count", "required_benchmark_facets"],
+          "properties": {
+            "minimum_domain_count": {"type": "integer", "minimum": 1},
+            "minimum_document_family_count": {"type": "integer", "minimum": 1},
+            "required_benchmark_facets": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}}
+          }
+        }
+      }
+    },
+    "controlled_rejection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["threshold_sensitive_outcomes", "acceptance_only_outcomes", "minimum_threshold_sensitive_case_count", "require_primary_empty_compare_case", "require_comparison_empty_compare_case"],
+      "properties": {
+        "threshold_sensitive_outcomes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["outcome", "minimum_case_count", "preferred_case_count", "rationale"],
+            "properties": {
+              "outcome": {"$ref": "#/$defs/identifier"},
+              "minimum_case_count": {"type": "integer", "minimum": 1},
+              "preferred_case_count": {"type": "integer", "minimum": 1},
+              "rationale": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "acceptance_only_outcomes": {"$ref": "#/$defs/identifier_array"},
+        "minimum_threshold_sensitive_case_count": {"type": "integer", "minimum": 1},
+        "require_primary_empty_compare_case": {"type": "boolean"},
+        "require_comparison_empty_compare_case": {"type": "boolean"}
+      }
+    },
+    "domain_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requirement_id", "domains", "minimum_total_case_count", "per_domain_minimum_case_count", "rationale"],
+      "properties": {
+        "requirement_id": {"$ref": "#/$defs/identifier"},
+        "domains": {"$ref": "#/$defs/identifier_array"},
+        "minimum_total_case_count": {"type": "integer", "minimum": 1},
+        "per_domain_minimum_case_count": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    },
+    "independence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["forbid_engineering_overlap", "forbid_held_out_overlap", "forbid_score_driven_selection", "forbid_post_result_reassignment", "require_semantic_clusters_together", "require_population_frozen_before_provider_execution"],
+      "properties": {
+        "forbid_engineering_overlap": {"type": "boolean"},
+        "forbid_held_out_overlap": {"type": "boolean"},
+        "forbid_score_driven_selection": {"type": "boolean"},
+        "forbid_post_result_reassignment": {"type": "boolean"},
+        "require_semantic_clusters_together": {"type": "boolean"},
+        "require_population_frozen_before_provider_execution": {"type": "boolean"}
+      }
+    }
+  }
+}
