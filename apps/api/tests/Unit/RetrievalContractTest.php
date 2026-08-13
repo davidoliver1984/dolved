@@ -38,7 +38,7 @@ final class RetrievalContractTest extends TestCase
         ];
 
         $this->assertMatchesSchema('plan-v1.schema.json', $plan);
-        $this->assertMatchesSchema('plan-response-v2.schema.json', [
+        $planResponse = [
             'contract_version' => 2,
             'request_id' => $plan['request_id'],
             'plan' => [
@@ -72,7 +72,25 @@ final class RetrievalContractTest extends TestCase
                 'cost_usd' => 0,
                 'pricing_snapshot' => null,
             ],
-        ]);
+        ];
+        $this->assertMatchesSchema('plan-response-v2.schema.json', $planResponse);
+        $this->assertMatchesSchema('plan-response-v2.schema.json', array_replace_recursive(
+            $planResponse,
+            ['usage' => [
+                'provider_attempt_count' => 2,
+                'provider_retry_count' => 1,
+                'outer_attempt_count' => 1,
+                'outer_retry_count' => 0,
+                'rate_limit_event_count' => 1,
+                'retry_delays' => [[
+                    'delay_seconds' => 15,
+                    'source' => 'configured_fallback',
+                ]],
+                'first_provider_attempt_at' => '2026-08-12T12:00:00+00:00',
+                'final_provider_success_at' => '2026-08-12T12:00:15+00:00',
+                'provider_retry_elapsed_ms' => 15000,
+            ]],
+        ));
         $this->assertMatchesSchema('search-v1.schema.json', $search);
         $rerank = [
             'contract_version' => 1,

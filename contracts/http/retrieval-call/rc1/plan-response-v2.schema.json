@@ -73,6 +73,15 @@
         "execution": { "enum": ["provider_api", "local"] },
         "request_count": { "type": "integer", "minimum": 0 },
         "retry_count": { "type": "integer", "minimum": 0 },
+        "provider_attempt_count": { "type": ["integer", "null"], "minimum": 1 },
+        "provider_retry_count": { "type": ["integer", "null"], "minimum": 0 },
+        "outer_attempt_count": { "type": ["integer", "null"], "minimum": 1 },
+        "outer_retry_count": { "type": ["integer", "null"], "minimum": 0 },
+        "rate_limit_event_count": { "type": ["integer", "null"], "minimum": 0 },
+        "retry_delays": { "type": "array", "items": { "$ref": "#/$defs/provider_retry_delay" } },
+        "first_provider_attempt_at": { "type": ["string", "null"], "format": "date-time" },
+        "final_provider_success_at": { "type": ["string", "null"], "format": "date-time" },
+        "provider_retry_elapsed_ms": { "type": ["number", "null"], "minimum": 0 },
         "input_tokens": { "type": ["integer", "null"], "minimum": 0 },
         "cached_input_tokens": { "type": ["integer", "null"], "minimum": 0 },
         "output_tokens": { "type": ["integer", "null"], "minimum": 0 },
@@ -109,6 +118,25 @@
           "then": { "properties": { "cost_usd": { "type": "number", "minimum": 0 } } }
         }
       ]
+    },
+    "provider_retry_delay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["delay_seconds", "source"],
+      "properties": {
+        "delay_seconds": { "type": "number", "minimum": 0 },
+        "source": {
+          "enum": [
+            "retry_after_numeric",
+            "retry_after_http_date",
+            "ratelimit_reset",
+            "x_ratelimit_reset_requests",
+            "x_ratelimit_reset_tokens",
+            "configured_fallback",
+            "shared_cooldown"
+          ]
+        }
+      }
     }
   }
 }

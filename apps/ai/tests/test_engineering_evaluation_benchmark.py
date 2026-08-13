@@ -69,7 +69,9 @@ def test_v2_benchmark_artifacts_validate_against_shared_contracts() -> None:
             ).validate(value)
 
 
-def test_v2_corrects_the_unapproved_draft_without_mutating_exclusion_semantics() -> None:
+def test_v2_corrects_the_unapproved_draft_without_mutating_exclusion_semantics() -> (
+    None
+):
     catalog = load_json(BENCHMARK_ROOT / "document-catalog.json")
     version = next(
         version
@@ -86,8 +88,7 @@ def test_v2_corrects_the_unapproved_draft_without_mutating_exclusion_semantics()
         exclusion
         for case in corpus["cases"]
         for exclusion in case["eligibility_expectation"]["excluded_versions"]
-        if exclusion["document_version_id"]
-        == "doc.visitors.search-optimised-draft.v1"
+        if exclusion["document_version_id"] == "doc.visitors.search-optimised-draft.v1"
     ]
     assert exclusions
     assert {item["reason"] for item in exclusions} == {"NEVER_ATTAINED_AUTHORITY"}
