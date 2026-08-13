@@ -730,11 +730,7 @@ def _config(raw: dict[str, Any], planner: dict[str, Any]) -> dict[str, Any]:
     return {
         "schema_version": "v2",
         "run_id": raw["run_id"],
-        "description": (
-            "Post-reliability corrected full-pipeline engineering baseline"
-            if str(raw["run_id"]).startswith("EXP-0003-")
-            else "First exact-commit ADR-0022 full-pipeline engineering baseline"
-        ),
+        "description": _experiment_description(str(raw["run_id"])),
         "status": "EXPERIMENTAL",
         "decision": None,
         "repository": repository,
@@ -791,6 +787,17 @@ def _config(raw: dict[str, Any], planner: dict[str, Any]) -> dict[str, Any]:
         "candidate_pipeline": _retrieval_configuration(policy),
         "threshold_status": "CALIBRATING_EXPERIMENTAL_UNPROMOTED",
     }
+
+
+def _experiment_description(run_id: str) -> str:
+    if run_id.startswith("EXP-0003-"):
+        return "Post-reliability corrected full-pipeline engineering baseline"
+    if run_id.startswith("EXP-0004-"):
+        return (
+            "Controlled engineering RRF experiment: rrf_k=60 control versus "
+            "rrf_k=5 treatment with all other retrieval variables frozen"
+        )
+    return "Exact-commit ADR-0022 full-pipeline engineering experiment"
 
 
 def _comparison(

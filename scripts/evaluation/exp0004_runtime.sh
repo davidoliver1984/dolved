@@ -10,9 +10,11 @@ readonly definition="${repository_root}/tests/evaluation/experiment-definitions/
 readonly expected_record_sha="$(jq -er '.provisioning.record_sha256' "${definition}")"
 readonly environment_file="${EXP0004_ENV_FILE:-${repository_root}/.env}"
 readonly provisioning_record="${EXP0004_PROVISIONING_RECORD:-/private/tmp/rag-platform-exp0004/provisioning.json}"
+readonly runs_root="${EXP0004_RUNS_ROOT:-${repository_root}/docs/evaluation/runs}"
+readonly index_file="${EXP0004_INDEX_FILE:-${repository_root}/docs/evaluation/EXPERIMENTS.md}"
 
 usage() {
-    printf 'Usage: %s prepare <verified-provisioning-source> | start | verify | run\n' "$0" >&2
+    printf 'Usage: %s prepare <verified-provisioning-source> | start | verify | close | run\n' "$0" >&2
     exit 2
 }
 
@@ -44,7 +46,10 @@ assert_runtime_inputs() {
 }
 
 compose() {
-    EXP0004_PROVISIONING_RECORD="${provisioning_record}" docker compose \
+    EXP0004_PROVISIONING_RECORD="${provisioning_record}" \
+    EXP0004_RUNS_ROOT="${runs_root}" \
+    EXP0004_INDEX_FILE="${index_file}" \
+    docker compose \
         --project-name "${project_name}" \
         --env-file "${environment_file}" \
         --file "${repository_root}/compose.yaml" \
@@ -85,12 +90,16 @@ verify() {
     assert_mount rag-platform-api-1 /app "${repository_root}/apps/api"
     assert_mount rag-platform-api-1 /contracts "${repository_root}/contracts"
     assert_mount rag-platform-api-1 /evaluation/engineering-snapshots "${repository_root}/tests/evaluation/engineering-snapshots"
-    assert_mount rag-platform-api-1 /evaluation-runs "${repository_root}/docs/evaluation/runs"
+    assert_mount rag-platform-api-1 /evaluation/planner-expectations/v2/engineering-expectations.json "${repository_root}/tests/evaluation/planner-expectations/v2/engineering-expectations.json"
+    assert_mount rag-platform-api-1 /evaluation-runs "${runs_root}"
+    assert_mount rag-platform-api-1 /evaluation-index/EXPERIMENTS.md "${index_file}"
     assert_mount rag-platform-api-1 /app/storage/app/private/evaluation/dolved-care-engineering/v2/provisioning.json "${provisioning_record}"
     assert_mount rag-platform-ai-1 /app "${repository_root}/apps/ai"
     assert_mount rag-platform-ai-1 /contracts "${repository_root}/contracts"
     assert_mount rag-platform-ai-1 /evaluation/engineering-snapshots "${repository_root}/tests/evaluation/engineering-snapshots"
-    assert_mount rag-platform-ai-1 /evaluation-runs "${repository_root}/docs/evaluation/runs"
+    assert_mount rag-platform-ai-1 /evaluation/planner-expectations/v2/engineering-expectations.json "${repository_root}/tests/evaluation/planner-expectations/v2/engineering-expectations.json"
+    assert_mount rag-platform-ai-1 /evaluation-runs "${runs_root}"
+    assert_mount rag-platform-ai-1 /evaluation-index/EXPERIMENTS.md "${index_file}"
     assert_mount rag-platform-ai-1 /workspace/scripts "${repository_root}/scripts"
     if [[ -n "$(mount_source rag-platform-api-1 /evaluation)$(mount_source rag-platform-ai-1 /evaluation)" ]]; then
         printf 'A broad /evaluation mount would expose protected splits.\n' >&2
@@ -113,13 +122,32 @@ run() {
     local head
     head="$(git -C "${repository_root}" rev-parse HEAD)"
     compose exec -T api php artisan evaluation:benchmark:run-exp-0004 --repository-commit="${head}"
-    compose exec -T --env PYTHONPATH=/app ai \
+    close
+}
+
+close() {
+    [[ -f "${runs_root}/${run_id}/application-observations.json" ]] || {
+        printf 'Missing preserved EXP-0004 observations under %s\n' "${runs_root}" >&2
+        exit 1
+    }
+    [[ -f "${runs_root}/EXP-0003-post-reliability-corrected-engineering-baseline/result.json" ]] || {
+        printf 'Missing immutable EXP-0003 comparison result under %s\n' "${runs_root}" >&2
+        exit 1
+    }
+    [[ -f "${index_file}" ]] || { printf 'Missing experiment index: %s\n' "${index_file}" >&2; exit 1; }
+    compose run --rm --no-deps -T --env PYTHONPATH=/app ai \
         python /workspace/scripts/evaluation/compile_application_benchmark_run.py \
         --observations "/evaluation-runs/${run_id}/application-observations.json" \
         --output-directory "/evaluation-runs/${run_id}" \
         --historical-baseline /evaluation-runs/EXP-0003-post-reliability-corrected-engineering-baseline/result.json
-    compose exec -T --env PYTHONPATH=/app ai \
-        python -m app.evaluation.run_reporting report \
+    compose run --rm --no-deps -T --env PYTHONPATH=/app ai \
+        python /workspace/scripts/evaluation/report.py generate \
+        --run-dir "/evaluation-runs/${run_id}" \
+        --runs-root /evaluation-runs \
+        --index /evaluation-index/EXPERIMENTS.md \
+        --baseline-result /evaluation-runs/EXP-0003-post-reliability-corrected-engineering-baseline/result.json
+    compose run --rm --no-deps -T --env PYTHONPATH=/app ai \
+        python /workspace/scripts/evaluation/write_run_checksums.py \
         --run-directory "/evaluation-runs/${run_id}"
 }
 
@@ -127,6 +155,7 @@ case "${1:-}" in
     prepare) prepare "${2:-}" ;;
     start) start ;;
     verify) verify ;;
+    close) close ;;
     run) run ;;
     *) usage ;;
 esac

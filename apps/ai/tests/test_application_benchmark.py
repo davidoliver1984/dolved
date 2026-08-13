@@ -8,10 +8,20 @@ import pytest
 
 from app.evaluation.application_benchmark import (
     _candidate_records,
+    _experiment_description,
     compile_application_benchmark_run,
 )
 from app.evaluation.historical_result import load_comparison_result
 from app.evaluation.models import EvidenceUnit
+
+
+def test_exp_0004_description_records_the_controlled_rrf_variable_truthfully() -> None:
+    assert _experiment_description(
+        "EXP-0004-rrf-k-5-controlled-engineering-experiment"
+    ) == (
+        "Controlled engineering RRF experiment: rrf_k=60 control versus rrf_k=5 "
+        "treatment with all other retrieval variables frozen"
+    )
 
 
 def test_failed_search_does_not_fabricate_zero_candidate_funnel_counts() -> None:

@@ -4,7 +4,9 @@ services:
       - ./apps/api:/app
       - ./contracts:/contracts:ro
       - ./tests/evaluation/engineering-snapshots:/evaluation/engineering-snapshots:ro
-      - ./docs/evaluation/runs:/evaluation-runs
+      - ./tests/evaluation/planner-expectations/v2/engineering-expectations.json:/evaluation/planner-expectations/v2/engineering-expectations.json:ro
+      - ${EXP0004_RUNS_ROOT:-./docs/evaluation/runs}:/evaluation-runs
+      - ${EXP0004_INDEX_FILE:-./docs/evaluation/EXPERIMENTS.md}:/evaluation-index/EXPERIMENTS.md
       - ${EXP0004_PROVISIONING_RECORD:?Set EXP0004_PROVISIONING_RECORD to the verified isolated copy}:/app/storage/app/private/evaluation/dolved-care-engineering/v2/provisioning.json:ro
       - api_vendor:/app/vendor
 
@@ -13,7 +15,9 @@ services:
       - ./apps/ai:/app
       - ./contracts:/contracts:ro
       - ./tests/evaluation/engineering-snapshots:/evaluation/engineering-snapshots:ro
-      - ./docs/evaluation/runs:/evaluation-runs
+      - ./tests/evaluation/planner-expectations/v2/engineering-expectations.json:/evaluation/planner-expectations/v2/engineering-expectations.json:ro
+      - ${EXP0004_RUNS_ROOT:-./docs/evaluation/runs}:/evaluation-runs
+      - ${EXP0004_INDEX_FILE:-./docs/evaluation/EXPERIMENTS.md}:/evaluation-index/EXPERIMENTS.md
       - ./scripts:/workspace/scripts:ro
       - ai_venv:/app/.venv
       - fastembed_cache:/opt/fastembed-cache
