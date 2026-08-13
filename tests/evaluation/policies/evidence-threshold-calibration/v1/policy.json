@@ -1,0 +1,36 @@
+{
+  "schema_version": "v1",
+  "policy_id": "evidence-threshold-calibration-v1",
+  "policy_version": "1",
+  "control_threshold": 0.337890625,
+  "absolute_failures": [
+    "cross_workspace_evidence",
+    "unauthorised_evidence",
+    "temporally_ineligible_evidence",
+    "applicability_ineligible_evidence",
+    "lost_evaluation_case",
+    "metric_non_reproducibility"
+  ],
+  "load_bearing_slices": [
+    "CURRENT",
+    "COMPARE",
+    "VALID_AT_DATE",
+    "historical",
+    "temporal-authority",
+    "applicability",
+    "location-alias",
+    "multi-evidence",
+    "multi-document",
+    "adversarial",
+    "zero-evidence"
+  ],
+  "controlled_rejection_outcomes": [
+    "NO_ELIGIBLE_EVIDENCE",
+    "INSUFFICIENT_EVIDENCE",
+    "COMPARISON_SCOPE_INCOMPLETE",
+    "CLARIFICATION_REQUIRED",
+    "NO_RETRIEVAL_CANDIDATES",
+    "TEMPORAL_SCOPE_UNRESOLVED"
+  ],
+  "selection_rule": "case-first-evidence-recall-constrained-v1"
+}

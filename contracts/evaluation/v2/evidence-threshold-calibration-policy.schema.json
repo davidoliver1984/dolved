@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v2/evidence-threshold-calibration-policy.schema.json",
+  "title": "Evidence threshold calibration decision policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "policy_id",
+    "policy_version",
+    "control_threshold",
+    "absolute_failures",
+    "load_bearing_slices",
+    "controlled_rejection_outcomes",
+    "selection_rule"
+  ],
+  "properties": {
+    "schema_version": {"const": "v1"},
+    "policy_id": {"const": "evidence-threshold-calibration-v1"},
+    "policy_version": {"const": "1"},
+    "control_threshold": {"const": 0.337890625},
+    "absolute_failures": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "load_bearing_slices": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "controlled_rejection_outcomes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "selection_rule": {"const": "case-first-evidence-recall-constrained-v1"}
+  }
+}
