@@ -117,6 +117,49 @@ final readonly class EngineeringBenchmarkSource
     }
 
     /** @return array<string, mixed> */
+    public function calibrationCorpus(): array
+    {
+        $snapshot = $this->absoluteJson(EngineeringBenchmark::CALIBRATION_SNAPSHOT);
+        $recordedDigest = $snapshot['snapshot_digest'] ?? null;
+        unset($snapshot['snapshot_digest']);
+        $caseIds = $snapshot['split']['case_ids'] ?? null;
+        $cases = $snapshot['cases'] ?? null;
+        if (
+            ! is_string($recordedDigest)
+            || ! hash_equals($recordedDigest, $this->canonical->digest($snapshot))
+            || ($snapshot['schema_version'] ?? null) !== 'v1'
+            || ($snapshot['benchmark']['id'] ?? null) !== EngineeringBenchmark::ID
+            || ($snapshot['benchmark']['version'] ?? null) !== EngineeringBenchmark::VERSION
+            || ($snapshot['benchmark']['digest'] ?? null) !== EngineeringBenchmark::DIGEST
+            || ($snapshot['split']['name'] ?? null) !== ThresholdCalibrationDefinition::SPLIT
+            || ! is_array($caseIds)
+            || count($caseIds) !== ThresholdCalibrationDefinition::EXPECTED_CASES
+            || ($snapshot['split']['case_ids_digest'] ?? null) !== $this->canonical->digest($caseIds)
+            || ! is_array($cases)
+            || count($cases) !== ThresholdCalibrationDefinition::EXPECTED_CASES
+            || ($snapshot['case_count'] ?? null) !== ThresholdCalibrationDefinition::EXPECTED_CASES
+            || ($snapshot['variant_count'] ?? null) !== ThresholdCalibrationDefinition::EXPECTED_VARIANTS
+        ) {
+            throw new RuntimeException('The calibration-only benchmark snapshot is invalid.');
+        }
+        $actualIds = collect($cases)->map(
+            fn (mixed $case): mixed => is_array($case) ? ($case['case_id'] ?? null) : null,
+        )->all();
+        $variantCount = collect($cases)->sum(
+            fn (mixed $case): int => is_array($case) && is_array($case['variants'] ?? null)
+                ? count($case['variants'])
+                : 0,
+        );
+        if ($actualIds !== $caseIds || count(array_unique($actualIds)) !== count($actualIds)
+            || $variantCount !== ThresholdCalibrationDefinition::EXPECTED_VARIANTS) {
+            throw new RuntimeException('The calibration-only benchmark cases are inconsistent.');
+        }
+        $snapshot['snapshot_digest'] = $recordedDigest;
+
+        return $snapshot;
+    }
+
+    /** @return array<string, mixed> */
     private function json(string $relativePath): array
     {
         return $this->absoluteJson(EngineeringBenchmark::ROOT.'/'.$relativePath);

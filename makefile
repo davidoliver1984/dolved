@@ -21,6 +21,7 @@ TAIL ?= 100
 	evaluation-benchmark-compile \
 	evaluation-exp-0003 \
 	evaluation-exp-0004-runtime evaluation-exp-0004 \
+	evaluation-calibration-runtime evaluation-calibration-run evaluation-calibration-replay \
 	evaluation-live-hybrid \
 	evaluation-report evaluation-index \
 	shell-web shell-api shell-ai shell-db shell-aws
@@ -55,6 +56,9 @@ help:
 		'  make evaluation-exp-0003  Run the post-reliability full V2 engineering baseline' \
 		'  make evaluation-exp-0004-runtime  Start and verify the isolated EXP-0004 runtime' \
 		'  make evaluation-exp-0004  Run the immutable RRF k=5 engineering experiment' \
+		'  make evaluation-calibration-runtime  Start and verify the isolated threshold-calibration runtime' \
+		'  make evaluation-calibration-run  Run one immutable calibration provider pass' \
+		'  make evaluation-calibration-replay  Replay thresholds without provider calls' \
 		'  make evaluation-live-hybrid  Run the opt-in live hybrid retrieval evaluation' \
 		'  make evaluation-report RUN=<id>  Regenerate one persisted evaluation report' \
 		'  make evaluation-index  Regenerate the persisted experiment index' \
@@ -219,6 +223,15 @@ evaluation-exp-0004-runtime:
 
 evaluation-exp-0004:
 	./scripts/evaluation/exp0004_runtime.sh run
+
+evaluation-calibration-runtime:
+	./scripts/evaluation/calibration_runtime.sh start
+
+evaluation-calibration-run:
+	./scripts/evaluation/calibration_runtime.sh run
+
+evaluation-calibration-replay:
+	./scripts/evaluation/calibration_runtime.sh replay
 
 evaluation-run:
 	@mkdir -p /tmp/rag-platform-evaluation

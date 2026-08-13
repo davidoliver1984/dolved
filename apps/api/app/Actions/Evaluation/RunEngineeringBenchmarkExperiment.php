@@ -16,6 +16,7 @@ use App\Support\Evaluation\EngineeringBenchmarkExperimentProgress;
 use App\Support\Evaluation\EngineeringBenchmarkSource;
 use App\Support\Evaluation\EngineeringBenchmarkState;
 use App\Support\Evaluation\Exp0004Definition;
+use App\Support\Evaluation\ThresholdCalibrationDefinition;
 use Carbon\CarbonImmutable;
 use RuntimeException;
 
@@ -36,13 +37,24 @@ final readonly class RunEngineeringBenchmarkExperiment
     /** @return array<string, mixed> */
     public function handle(string $repositoryCommit, bool $repositoryDirty): array
     {
-        return $this->run($repositoryCommit, $repositoryDirty, self::RUN_ID, false);
+        return $this->run($repositoryCommit, $repositoryDirty, self::RUN_ID);
     }
 
     /** @return array<string, mixed> */
     public function handleExp0004(string $repositoryCommit): array
     {
-        return $this->run($repositoryCommit, false, Exp0004Definition::RUN_ID, true);
+        return $this->run($repositoryCommit, false, Exp0004Definition::RUN_ID, 'exp0004');
+    }
+
+    /** @return array<string, mixed> */
+    public function handleThresholdCalibration(string $repositoryCommit): array
+    {
+        return $this->run(
+            $repositoryCommit,
+            false,
+            ThresholdCalibrationDefinition::RUN_ID,
+            'calibration',
+        );
     }
 
     /** @return array<string, mixed> */
@@ -50,7 +62,7 @@ final readonly class RunEngineeringBenchmarkExperiment
         string $repositoryCommit,
         bool $repositoryDirty,
         string $runId,
-        bool $exp0004,
+        string $mode = 'exp0003',
     ): array {
         $this->assertLocalEnvironment($runId);
         if (preg_match('/^[0-9a-f]{40}$/', $repositoryCommit) !== 1) {
@@ -78,7 +90,7 @@ final readonly class RunEngineeringBenchmarkExperiment
         if ($scope->activeCorpusGeneration === null) {
             throw new RuntimeException('The benchmark workspace has no active corpus generation.');
         }
-        if ($exp0004) {
+        if ($mode !== 'exp0003') {
             $policy = $this->policies->handleExp0003Control($scope->activeCorpusGeneration);
             $policy = Exp0004Definition::treatmentPolicy($policy, $this->canonical);
         } else {
@@ -93,19 +105,27 @@ final readonly class RunEngineeringBenchmarkExperiment
             throw new RuntimeException($runId.' requires one consistent chunking configuration.');
         }
         $chunkConfiguration = $chunkConfigurations->firstOrFail();
-        $engineering = $this->source->engineeringCorpus();
-        $engineeringIds = $engineering['split']['case_ids'] ?? null;
-        if (! is_array($engineeringIds) || count($engineeringIds) !== EngineeringBenchmark::EXPECTED_ENGINEERING_CASES) {
-            throw new RuntimeException('The immutable engineering split does not contain exactly 42 cases.');
+        $corpus = $mode === 'calibration'
+            ? $this->source->calibrationCorpus()
+            : $this->source->engineeringCorpus();
+        $expectedCases = $mode === 'calibration'
+            ? ThresholdCalibrationDefinition::EXPECTED_CASES
+            : EngineeringBenchmark::EXPECTED_ENGINEERING_CASES;
+        $expectedVariants = $mode === 'calibration'
+            ? ThresholdCalibrationDefinition::EXPECTED_VARIANTS
+            : EngineeringBenchmark::EXPECTED_ENGINEERING_VARIANTS;
+        $caseIds = $corpus['split']['case_ids'] ?? null;
+        if (! is_array($caseIds) || count($caseIds) !== $expectedCases) {
+            throw new RuntimeException("The immutable {$corpus['split']['name']} split has an unexpected case count.");
         }
-        $cases = collect($engineering['cases'] ?? [])
+        $cases = collect($corpus['cases'] ?? [])
             ->sortBy(fn (array $case): string => $case['case_id'])->values();
         $variantCount = $cases->sum(fn (array $case): int => count($case['variants'] ?? []));
-        if ($cases->count() !== 42 || $variantCount !== 126) {
-            throw new RuntimeException($runId.' is restricted to exactly 42 engineering cases and 126 variants.');
+        if ($cases->count() !== $expectedCases || $variantCount !== $expectedVariants) {
+            throw new RuntimeException($runId.' received an unexpected case or variant count.');
         }
 
-        $evaluatedAt = CarbonImmutable::parse($engineering['benchmark']['evaluation_clock']);
+        $evaluatedAt = CarbonImmutable::parse($corpus['benchmark']['evaluation_clock']);
         $mapping = [
             'schema_version' => 'v1',
             'benchmark' => $state['benchmark'],
@@ -143,18 +163,30 @@ final readonly class RunEngineeringBenchmarkExperiment
             'sha256',
             json_encode($plannerFingerprintInput, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES),
         );
+        $benchmarkLineage = [
+            'id' => EngineeringBenchmark::ID,
+            'version' => EngineeringBenchmark::VERSION,
+            'digest' => $state['benchmark']['digest'],
+            'evaluation_clock' => $evaluatedAt->toIso8601String(),
+            'split_version' => $corpus['split']['version'],
+        ];
+        if ($mode === 'calibration') {
+            $benchmarkLineage += [
+                'split_name' => $corpus['split']['name'],
+                'calibration_snapshot_digest' => $corpus['snapshot_digest'],
+                'calibration_case_ids_digest' => $corpus['split']['case_ids_digest'],
+                'calibration_case_ids' => $caseIds,
+            ];
+        } else {
+            $benchmarkLineage += [
+                'engineering_snapshot_digest' => $corpus['snapshot_digest'],
+                'engineering_case_ids_digest' => $corpus['split']['case_ids_digest'],
+                'engineering_case_ids' => $caseIds,
+            ];
+        }
         $lineage = [
             'repository' => ['commit' => $repositoryCommit, 'dirty' => $repositoryDirty],
-            'benchmark' => [
-                'id' => EngineeringBenchmark::ID,
-                'version' => EngineeringBenchmark::VERSION,
-                'digest' => $state['benchmark']['digest'],
-                'evaluation_clock' => $evaluatedAt->toIso8601String(),
-                'split_version' => $engineering['split']['version'],
-                'engineering_snapshot_digest' => $engineering['snapshot_digest'],
-                'engineering_case_ids_digest' => $engineering['split']['case_ids_digest'],
-                'engineering_case_ids' => $engineeringIds,
-            ],
+            'benchmark' => $benchmarkLineage,
             'mapping' => $mapping,
             'policy' => $policyData,
             'chunking' => $chunking,
@@ -199,8 +231,10 @@ final readonly class RunEngineeringBenchmarkExperiment
                 'generation' => 'not_executed',
             ],
         ];
-        if ($exp0004) {
+        if ($mode === 'exp0004') {
             $lineage['experiment'] = Exp0004Definition::lineage();
+        } elseif ($mode === 'calibration') {
+            $lineage['experiment'] = ThresholdCalibrationDefinition::lineage();
         }
         $manifest = $this->progress->initialise($runId, $lineage);
         $lineageDigest = (string) $manifest['lineage_digest'];
@@ -294,8 +328,8 @@ final readonly class RunEngineeringBenchmarkExperiment
                 gc_collect_cycles();
             }
         }
-        if (count($completed) !== EngineeringBenchmark::EXPECTED_ENGINEERING_VARIANTS) {
-            throw new RuntimeException($runId.' did not durably finalise all engineering variants.');
+        if (count($completed) !== $expectedVariants) {
+            throw new RuntimeException($runId.' did not durably finalise every expected variant.');
         }
         $header = [
             'schema_version' => 'v2',

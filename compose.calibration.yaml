@@ -1,0 +1,23 @@
+services:
+  api:
+    volumes: !override
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - ${CALIBRATION_SNAPSHOT:?Prepare the isolated calibration snapshot}:/evaluation/calibration/corpus.json:ro
+      - ${CALIBRATION_EXPECTATIONS:?Prepare the isolated calibration expectations}:/evaluation/calibration/expectations.json:ro
+      - ./tests/evaluation/policies/evidence-threshold-calibration/v1/policy.json:/evaluation/calibration/policy.json:ro
+      - ${CALIBRATION_RUNS_ROOT:-./docs/evaluation/runs}:/evaluation-runs
+      - ${CALIBRATION_PROVISIONING_RECORD:?Prepare the isolated provisioning record}:/app/storage/app/private/evaluation/dolved-care-engineering/v2/provisioning.json:ro
+      - api_vendor:/app/vendor
+
+  ai:
+    volumes: !override
+      - ./apps/ai:/app
+      - ./contracts:/contracts:ro
+      - ${CALIBRATION_SNAPSHOT:?Prepare the isolated calibration snapshot}:/evaluation/calibration/corpus.json:ro
+      - ${CALIBRATION_EXPECTATIONS:?Prepare the isolated calibration expectations}:/evaluation/calibration/expectations.json:ro
+      - ./tests/evaluation/policies/evidence-threshold-calibration/v1/policy.json:/evaluation/calibration/policy.json:ro
+      - ${CALIBRATION_RUNS_ROOT:-./docs/evaluation/runs}:/evaluation-runs
+      - ./scripts:/workspace/scripts:ro
+      - ai_venv:/app/.venv
+      - fastembed_cache:/opt/fastembed-cache

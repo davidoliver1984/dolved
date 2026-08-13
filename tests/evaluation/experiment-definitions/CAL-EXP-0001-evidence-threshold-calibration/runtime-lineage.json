@@ -1,0 +1,109 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "CAL-EXP-0001-evidence-threshold-calibration",
+  "benchmark": {
+    "id": "dolved-care-engineering",
+    "version": "v2",
+    "digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
+    "evaluation_clock": "2026-08-01T12:00:00Z"
+  },
+  "split": {
+    "name": "threshold_calibration",
+    "case_count": 28,
+    "variant_count": 84,
+    "preparation": "derived-after-explicit-approval-from-immutable-benchmark-v2"
+  },
+  "calibration_policy": {
+    "id": "evidence-threshold-calibration-v1",
+    "version": "1",
+    "sha256": "0500ef0868566b736b11a7818c538b1fa478e74811c6420cd487dd9f73ff8c7b"
+  },
+  "planner": {
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "contract_schema_version": "plan-response-v2",
+    "prompt_version": "adr-0022-v1",
+    "adapter_version": "structured-chat-v2",
+    "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c"
+  },
+  "providers": {
+    "dense": {
+      "provider": "voyage",
+      "model": "voyage-4-large",
+      "adapter_version": "1",
+      "dimensions": 1024,
+      "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c"
+    },
+    "sparse": {
+      "provider": "fastembed",
+      "model": "prithivida/Splade_PP_en_v1",
+      "model_revision": "efcd182bc7eb351e81a9445752d4388c2bab500b",
+      "adapter_version": "1",
+      "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d"
+    },
+    "fusion": {
+      "strategy": "rrf",
+      "version": "1",
+      "modality_weights": {"dense": 1, "sparse": 1},
+      "rrf_k": 5
+    },
+    "reranker": {
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "adapter_version": "1"
+    }
+  },
+  "candidate_pipeline": {
+    "dense_candidate_k": 40,
+    "sparse_candidate_k": 40,
+    "fusion_candidate_k": 15,
+    "reranker_candidate_k": 15,
+    "factual_control_threshold": 0.337890625,
+    "final_evidence_k": 5
+  },
+  "reliability": {
+    "python_retry_owner": true,
+    "embedding": {
+      "maximum_attempts": 4,
+      "request_timeout_seconds": 10,
+      "initial_backoff_seconds": 15,
+      "maximum_backoff_seconds": 120,
+      "maximum_provider_cooldown_seconds": 120
+    },
+    "reranker": {
+      "maximum_attempts": 3,
+      "request_timeout_seconds": 10,
+      "initial_backoff_seconds": 15,
+      "maximum_backoff_seconds": 90,
+      "maximum_provider_cooldown_seconds": 90
+    },
+    "shared_voyage_cooldown": {
+      "scope": "python_process",
+      "participants": ["dense_embedding", "reranker"],
+      "provider_timing_precedence": ["retry_after", "rate_limit_reset", "configured_fallback"]
+    },
+    "laravel": {
+      "timeout_seconds": 480,
+      "minimum_timeout_seconds": 480,
+      "outer_maximum_attempts": 2,
+      "typed_provider_rate_limit_replay": false
+    }
+  },
+  "provisioning": {
+    "record_sha256": "8691c5aa5a40b1aeba527287226c3d41515c576eff6ff4b216d1e068bc3f370d",
+    "mapping_digest": "1c206bcf8ddf3021502fa5ebb46ee696bf1faf159d1cbfc82d514d08913ac338",
+    "snapshot_digest": "6c115d1b7b98d59e8e6e4bebf6485e06c88dd2c4908802af821ad65e6ebc99df"
+  },
+  "active_generation": {
+    "public_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb",
+    "point_manifest_digest": "7cb89453fbf90e6e45d24454ec3d4e4f801774404ee90caae4b959a76f664ab0",
+    "expected_point_count": 99
+  },
+  "execution": {
+    "provider_passes": 1,
+    "persist_complete_pre_threshold_reranker_lineage": true,
+    "factual_threshold": 0.337890625,
+    "offline_replay_boundaries": "every-distinct-score-plus-exact-control-plus-above-maximum",
+    "selection_rule": "case-first-evidence-recall-constrained-v1"
+  }
+}
