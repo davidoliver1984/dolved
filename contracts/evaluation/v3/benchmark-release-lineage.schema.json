@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v3/benchmark-release-lineage.schema.json",
+  "title": "Benchmark V2 to V3 release lineage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "lineage_id", "lineage_version", "parent_release", "target_release", "taxonomy", "migration_tool", "v2_unchanged", "case_changes", "document_changes"],
+  "properties": {
+    "schema_version": {"const": "v3"},
+    "lineage_id": {"$ref": "#/$defs/identifier"},
+    "lineage_version": {"type": "string", "minLength": 1},
+    "parent_release": {"$ref": "#/$defs/release_reference"},
+    "target_release": {"$ref": "#/$defs/target_reference"},
+    "taxonomy": {"$ref": "benchmark-taxonomy.schema.json#/$defs/taxonomy_reference"},
+    "migration_tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool_id", "tool_version"],
+      "properties": {
+        "tool_id": {"$ref": "#/$defs/identifier"},
+        "tool_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "v2_unchanged": {"const": true},
+    "case_changes": {"$ref": "#/$defs/change_set"},
+    "document_changes": {"$ref": "#/$defs/change_set"}
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "release_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["benchmark_id", "corpus_version", "benchmark_digest"],
+      "properties": {
+        "benchmark_id": {"const": "dolved-care-engineering"},
+        "corpus_version": {"const": "2"},
+        "benchmark_digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "target_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["benchmark_id", "corpus_version"],
+      "properties": {
+        "benchmark_id": {"const": "dolved-care-engineering"},
+        "corpus_version": {"const": "3"}
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "target_id", "classification", "reason"],
+      "properties": {
+        "source_id": {"anyOf": [{"$ref": "#/$defs/identifier"}, {"type": "null"}]},
+        "target_id": {"anyOf": [{"$ref": "#/$defs/identifier"}, {"type": "null"}]},
+        "classification": {"enum": ["RETAINED_UNCHANGED", "METADATA_ENRICHED", "REVISED", "RETIRED", "NEW"]},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "change_set": {"type": "array", "items": {"$ref": "#/$defs/change"}}
+  }
+}

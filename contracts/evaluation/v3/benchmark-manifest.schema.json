@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v3/benchmark-manifest.schema.json",
+  "title": "Benchmark V3 manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "benchmark_id", "corpus_version", "status", "evaluation_clock", "canonical_source_format", "parent_release", "taxonomy", "paths", "authored_counts"],
+  "properties": {
+    "schema_version": {"const": "v3"},
+    "benchmark_id": {"const": "dolved-care-engineering"},
+    "corpus_version": {"const": "3"},
+    "status": {"enum": ["FOUNDATION", "AUTHORING", "COMPLETE", "BASELINED"]},
+    "evaluation_clock": {"type": "string", "format": "date-time"},
+    "canonical_source_format": {"const": "text/markdown"},
+    "parent_release": {"$ref": "#/$defs/release_reference"},
+    "taxonomy": {"$ref": "benchmark-taxonomy.schema.json#/$defs/taxonomy_reference"},
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["taxonomy", "organisation", "document_catalog", "catalogue_review", "release_lineage", "source_checksums"],
+      "properties": {
+        "taxonomy": {"$ref": "#/$defs/path"},
+        "organisation": {"$ref": "#/$defs/path"},
+        "document_catalog": {"$ref": "#/$defs/path"},
+        "catalogue_review": {"$ref": "#/$defs/path"},
+        "release_lineage": {"$ref": "#/$defs/path"},
+        "source_checksums": {"$ref": "#/$defs/path"},
+        "case_sources": {"$ref": "#/$defs/path"},
+        "split": {"$ref": "#/$defs/path"},
+        "authoring_review": {"$ref": "#/$defs/path"},
+        "compiled_corpus": {"$ref": "#/$defs/path"},
+        "authority_windows": {"$ref": "#/$defs/path"},
+        "split_identities": {"$ref": "#/$defs/path"},
+        "checksums": {"$ref": "#/$defs/path"}
+      }
+    },
+    "authored_counts": {"$ref": "#/$defs/counts"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "FOUNDATION"}}},
+      "then": {
+        "properties": {
+          "authored_counts": {"properties": {"semantic_cases": {"const": 0}}},
+          "paths": {
+            "not": {
+              "anyOf": [
+                {"required": ["case_sources"]},
+                {"required": ["split"]},
+                {"required": ["authoring_review"]},
+                {"required": ["compiled_corpus"]},
+                {"required": ["authority_windows"]},
+                {"required": ["split_identities"]},
+                {"required": ["checksums"]}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "AUTHORING"}}},
+      "then": {
+        "properties": {
+          "authored_counts": {"properties": {"semantic_cases": {"minimum": 1}}},
+          "paths": {"required": ["case_sources"]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"enum": ["COMPLETE", "BASELINED"]}}},
+      "then": {
+        "properties": {
+          "authored_counts": {"properties": {"semantic_cases": {"minimum": 1}}},
+          "paths": {"required": ["case_sources", "split", "authoring_review", "compiled_corpus", "authority_windows", "split_identities", "checksums"]}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "path": {"type": "string", "minLength": 1},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "release_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["benchmark_id", "corpus_version", "benchmark_digest"],
+      "properties": {
+        "benchmark_id": {"const": "dolved-care-engineering"},
+        "corpus_version": {"const": "2"},
+        "benchmark_digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_families", "document_versions", "semantic_cases"],
+      "properties": {
+        "document_families": {"type": "integer", "minimum": 0},
+        "document_versions": {"type": "integer", "minimum": 0},
+        "semantic_cases": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

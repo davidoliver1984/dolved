@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v3/corpus.schema.json",
+  "title": "Benchmark V3 layered evaluation corpus",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "benchmark_id", "corpus_version", "title", "evaluation_clock", "matching_algorithm", "taxonomy", "cases"],
+  "properties": {
+    "schema_version": {"const": "v3"},
+    "benchmark_id": {"const": "dolved-care-engineering"},
+    "corpus_version": {"const": "3"},
+    "title": {"type": "string", "minLength": 1},
+    "evaluation_clock": {"type": "string", "format": "date-time"},
+    "matching_algorithm": {"const": "normalised-token-coverage-v1"},
+    "taxonomy": {"$ref": "benchmark-taxonomy.schema.json#/$defs/taxonomy_reference"},
+    "cases": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/case"}}
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "identifiers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/identifier"}},
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["variant_id", "question", "evaluation_facets"],
+      "properties": {
+        "variant_id": {"$ref": "#/$defs/identifier"},
+        "question": {"type": "string", "minLength": 1, "maxLength": 4000},
+        "evaluation_facets": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "benchmark-taxonomy.schema.json#/$defs/evaluation_facet_id"}
+        }
+      }
+    },
+    "applicability_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input", "resolved_location_id", "requires_clarification"],
+      "properties": {
+        "input": {"type": ["string", "null"]},
+        "resolved_location_id": {"anyOf": [{"$ref": "#/$defs/identifier"}, {"type": "null"}]},
+        "requires_clarification": {"type": "boolean"}
+      }
+    },
+    "planner_expectation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["temporal_mode", "valid_at", "primary_anchor", "comparison_anchor", "applicability_reference", "expected_outcome"],
+      "properties": {
+        "temporal_mode": {"enum": ["CURRENT", "VALID_AT_DATE", "COMPARE"]},
+        "valid_at": {"type": ["string", "null"], "format": "date-time"},
+        "primary_anchor": {"type": ["string", "null"]},
+        "comparison_anchor": {"type": ["string", "null"]},
+        "applicability_reference": {"$ref": "#/$defs/applicability_reference"},
+        "expected_outcome": {"enum": ["PLAN_READY", "CLARIFICATION_REQUIRED"]}
+      }
+    },
+    "applicability_match": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "governing_location_id", "requested_location_id"],
+      "properties": {
+        "kind": {"enum": ["UNIVERSAL", "DIRECT", "ANCESTOR"]},
+        "governing_location_id": {"anyOf": [{"$ref": "#/$defs/identifier"}, {"type": "null"}]},
+        "requested_location_id": {"anyOf": [{"$ref": "#/$defs/identifier"}, {"type": "null"}]}
+      }
+    },
+    "eligible_version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_family_id", "document_version_id", "side", "applicability"],
+      "properties": {
+        "document_family_id": {"$ref": "#/$defs/identifier"},
+        "document_version_id": {"$ref": "#/$defs/identifier"},
+        "side": {"enum": ["PRIMARY", "COMPARISON"]},
+        "applicability": {"$ref": "#/$defs/applicability_match"}
+      }
+    },
+    "excluded_version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_family_id", "document_version_id", "reason"],
+      "properties": {
+        "document_family_id": {"$ref": "#/$defs/identifier"},
+        "document_version_id": {"$ref": "#/$defs/identifier"},
+        "reason": {"enum": ["HISTORICAL_FOR_CURRENT", "SCHEDULED_FUTURE", "WITHDRAWN", "NEVER_ATTAINED_AUTHORITY", "APPLICABILITY_MISMATCH", "IRRELEVANT_NEGATIVE"]}
+      }
+    },
+    "eligibility_expectation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible_versions", "excluded_versions", "expected_outcome"],
+      "properties": {
+        "eligible_versions": {"type": "array", "items": {"$ref": "#/$defs/eligible_version"}},
+        "excluded_versions": {"type": "array", "items": {"$ref": "#/$defs/excluded_version"}},
+        "expected_outcome": {"enum": ["ELIGIBLE_SCOPE_READY", "NO_ELIGIBLE_EVIDENCE", "COMPARISON_SCOPE_INCOMPLETE", "TEMPORAL_SCOPE_UNRESOLVED", "NOT_APPLICABLE"]}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "document_family_id", "document_version_id", "side", "source_path", "canonical_excerpts", "relevance_grade", "minimum_token_coverage"],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/identifier"},
+        "document_family_id": {"$ref": "#/$defs/identifier"},
+        "document_version_id": {"$ref": "#/$defs/identifier"},
+        "side": {"enum": ["PRIMARY", "COMPARISON"]},
+        "source_path": {"type": "string", "minLength": 1},
+        "canonical_excerpts": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "relevance_grade": {"type": "integer", "minimum": 1, "maximum": 2},
+        "minimum_token_coverage": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "locator": {"type": ["string", "null"]},
+        "notes": {"type": ["string", "null"]}
+      }
+    },
+    "threshold_observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "reranker_evaluable", "required_sides", "justification"],
+      "properties": {
+        "classification": {"enum": ["POSITIVE_EVIDENCE", "THRESHOLD_SENSITIVE", "ACCEPTANCE_ONLY"]},
+        "reranker_evaluable": {"type": "boolean"},
+        "required_sides": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["PRIMARY", "COMPARISON"]}},
+        "justification": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {"if": {"properties": {"classification": {"const": "THRESHOLD_SENSITIVE"}}}, "then": {"properties": {"reranker_evaluable": {"const": true}}}},
+        {"if": {"properties": {"classification": {"const": "ACCEPTANCE_ONLY"}}}, "then": {"properties": {"reranker_evaluable": {"const": false}}}}
+      ]
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "cluster_id", "leakage_group_ids", "domain", "variants", "slices", "evaluation_facets", "planner_expectation", "eligibility_expectation", "retrieval_expectation", "outcome_expectation", "threshold_observability"],
+      "properties": {
+        "case_id": {"$ref": "#/$defs/identifier"},
+        "cluster_id": {"$ref": "#/$defs/identifier"},
+        "leakage_group_ids": {"$ref": "#/$defs/identifiers"},
+        "domain": {"$ref": "benchmark-taxonomy.schema.json#/$defs/domain_id"},
+        "variants": {"type": "array", "minItems": 3, "maxItems": 5, "items": {"$ref": "#/$defs/variant"}},
+        "slices": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "benchmark-taxonomy.schema.json#/$defs/intrinsic_slice_id"}},
+        "evaluation_facets": {"type": "array", "uniqueItems": true, "items": {"$ref": "benchmark-taxonomy.schema.json#/$defs/evaluation_facet_id"}},
+        "planner_expectation": {"$ref": "#/$defs/planner_expectation"},
+        "eligibility_expectation": {"$ref": "#/$defs/eligibility_expectation"},
+        "retrieval_expectation": {"type": "object", "additionalProperties": false, "required": ["evidence_units"], "properties": {"evidence_units": {"type": "array", "items": {"$ref": "#/$defs/evidence"}}}},
+        "outcome_expectation": {"type": "object", "additionalProperties": false, "required": ["outcome"], "properties": {"outcome": {"enum": ["EVIDENCE_FOUND", "INSUFFICIENT_EVIDENCE", "CLARIFICATION_REQUIRED", "NO_ELIGIBLE_EVIDENCE", "NO_RETRIEVAL_CANDIDATES", "COMPARISON_SCOPE_INCOMPLETE", "TEMPORAL_SCOPE_UNRESOLVED"]}}},
+        "threshold_observability": {"$ref": "#/$defs/threshold_observability"}
+      }
+    }
+  }
+}

@@ -1,0 +1,3670 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "catalog_version": "1",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "families": [
+    {
+      "family_id": "family.hr.annual-leave",
+      "domain": "hr",
+      "title": "Annual Leave Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "changed-structured-value",
+        "near-duplicate",
+        "scheduled",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.hr.annual-leave"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.annual-leave.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/annual-leave-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2022-11-01T09:00:00Z",
+          "approved_at": "2022-12-15T10:00:00Z",
+          "effective_from": "2023-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "f38ec75b265ee85af5a37974503c70ddb60ab346e1558c4c9be5236b372fa8f5",
+          "evaluation_facets": [
+            "changed-structured-value",
+            "near-duplicate",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.annual-leave"
+          ]
+        },
+        {
+          "version_id": "doc.hr.annual-leave.v2",
+          "version_number": "2.0",
+          "source_path": "documents/hr/annual-leave-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-11-04T09:00:00Z",
+          "approved_at": "2024-12-16T10:00:00Z",
+          "effective_from": "2025-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.hr.annual-leave.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "e45f0f5dd7b602d7a88202bbb43e142c44a57814e846e8ab7f228025bfd6114a",
+          "evaluation_facets": [
+            "changed-structured-value",
+            "near-duplicate",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.annual-leave"
+          ]
+        },
+        {
+          "version_id": "doc.hr.annual-leave.v3",
+          "version_number": "3.0",
+          "source_path": "documents/hr/annual-leave-v3-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-15T10:00:00Z",
+          "effective_from": "2026-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.hr.annual-leave.v2",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "9c2f771f15476fa0b442708331ab7e40b65931b969829086c807b2850d5577fd",
+          "evaluation_facets": [
+            "changed-structured-value",
+            "near-duplicate",
+            "scheduled",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.annual-leave"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.sickness-absence",
+      "domain": "hr",
+      "title": "Sickness Absence Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.hr.sickness-absence"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.sickness-absence.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/sickness-absence-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-02-01T09:00:00Z",
+          "approved_at": "2023-02-20T10:00:00Z",
+          "effective_from": "2023-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "8c7ccf1f6fc96bcc1014c779fcb112a007c2b240a47ce027d165a7266163e864",
+          "evaluation_facets": [
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.sickness-absence"
+          ]
+        },
+        {
+          "version_id": "doc.hr.sickness-absence.v2",
+          "version_number": "2.0",
+          "source_path": "documents/hr/sickness-absence-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-10T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.hr.sickness-absence.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "51dc20f7807f09d6923a2ac8e42794ea075d783b70c096ffb50c7d6f6467f685",
+          "evaluation_facets": [
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.sickness-absence"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.disciplinary",
+      "domain": "hr",
+      "title": "Disciplinary Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "long-form",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.hr.disciplinary.complements.hr.grievance",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.hr.grievance",
+          "target_version_id": null,
+          "notes": "Employee queries often confuse the two processes."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.hr.disciplinary"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.disciplinary.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/disciplinary-policy.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-01-08T09:00:00Z",
+          "approved_at": "2024-02-12T10:00:00Z",
+          "effective_from": "2024-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "ea881fdefe99e98bbbb97e66cfb1f3b7e1560ccaeeb78e174e2388bb9af146cb",
+          "evaluation_facets": [
+            "long-form",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.disciplinary"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.grievance",
+      "domain": "hr",
+      "title": "Grievance Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "long-form",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.hr.grievance.complements.hr.disciplinary",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.hr.disciplinary",
+          "target_version_id": null,
+          "notes": "Distinct employee-led process with similar hearing terminology."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.hr.grievance"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.grievance.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/grievance-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-01-08T09:00:00Z",
+          "approved_at": "2024-02-12T10:00:00Z",
+          "effective_from": "2024-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "1ab34bdb587bcd48ae7a8e564e1ad401a5964421462d49aa801d841cee10b051",
+          "evaluation_facets": [
+            "long-form",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.grievance"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.recruitment",
+      "domain": "hr",
+      "title": "Safer Recruitment Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "long-form",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.hr.recruitment.complements.safeguarding.allegations-staff",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.safeguarding.allegations-staff",
+          "target_version_id": null,
+          "notes": "Employment checks and safeguarding suitability overlap."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.hr.recruitment"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.recruitment.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/safer-recruitment-policy.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-10T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "2b05162ce6c811ee40543723745b55e524bc7c9c29a72cbb6c008351975b824d",
+          "evaluation_facets": [
+            "long-form",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.recruitment"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.flexible-working",
+      "domain": "hr",
+      "title": "Flexible Working Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "form-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.hr.flexible-working"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.flexible-working.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/flexible-working-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-03-01T09:00:00Z",
+          "approved_at": "2024-04-08T10:00:00Z",
+          "effective_from": "2024-04-15T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "01812c96f2049c8a82e53c5aab3057de42c4eb5898b005a7c91091df3dd40611",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.flexible-working"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.lone-worker-welfare",
+      "domain": "hr",
+      "title": "Lone Worker Welfare Check Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "applicability-excluded",
+        "near-duplicate",
+        "regional"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.hr.lone-worker-welfare.near_duplicate.health-safety.lone-working",
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.health-safety.lone-working",
+          "target_version_id": null,
+          "notes": "Welfare escalation procedure is distinct from the risk-control policy."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.hr.lone-worker-welfare",
+        "leakage.related.health-safety.lone-working"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.lone-worker-welfare.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/midlands-lone-worker-welfare.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-21T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.region.midlands"
+            ]
+          },
+          "source_sha256": "8953f8fe0d511dd93957ff9f60a19862bae278a77af05637ccef5b50409797e1",
+          "evaluation_facets": [
+            "applicability-excluded",
+            "near-duplicate",
+            "regional"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.lone-worker-welfare",
+            "leakage.related.health-safety.lone-working"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.new-starter-form",
+      "domain": "hr",
+      "title": "New Starter Information Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.hr.new-starter-form"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.new-starter-form.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/new-starter-information-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-05-12T10:00:00Z",
+          "effective_from": "2025-05-19T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "8ba2d0b51fc877cfe809b9794aad72586cd3505d391c63fea4ba29a0dab85f09",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.new-starter-form"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.hr.family-leave",
+      "domain": "hr",
+      "title": "Family Leave Reference Table",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.hr.family-leave"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.hr.family-leave.v1",
+          "version_number": "1.0",
+          "source_path": "documents/hr/family-leave-reference.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "c2f9c4b71d49013866d0050f5a9ff8fb699d5086013274ad509313c94f8036ed",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.hr.family-leave"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.administration",
+      "domain": "medication",
+      "title": "Safe Administration of Medicines Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "changed-instruction",
+        "near-duplicate",
+        "scheduled",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.medication.administration.complements.medication.storage",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.storage",
+          "target_version_id": null,
+          "notes": "Storage checks are required before administration."
+        },
+        {
+          "relationship_id": "rel.medication.administration.complements.training.medication-competency",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.training.medication-competency",
+          "target_version_id": null,
+          "notes": "Reciprocal V3 catalogue record for the corresponding complements relationship."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.administration"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.administration.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/safe-administration-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-10-02T09:00:00Z",
+          "approved_at": "2023-11-15T10:00:00Z",
+          "effective_from": "2024-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "eb941e3a04dceabc1c694c3b84bcbad5a2f383748177c87343a9202c5c8ed696",
+          "evaluation_facets": [
+            "changed-instruction",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.administration"
+          ]
+        },
+        {
+          "version_id": "doc.medication.administration.v2",
+          "version_number": "2.0",
+          "source_path": "documents/medication/safe-administration-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-04-15T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.medication.administration.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "997cd45a57cdabde57b4a800fcbd855752f9aebb57849c8f1d84c75475b9a696",
+          "evaluation_facets": [
+            "changed-instruction",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.administration"
+          ]
+        },
+        {
+          "version_id": "doc.medication.administration.v3",
+          "version_number": "3.0",
+          "source_path": "documents/medication/safe-administration-v3.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-05-04T09:00:00Z",
+          "approved_at": "2026-07-01T10:00:00Z",
+          "effective_from": "2026-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.medication.administration.v2",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "3940ec1d3a35404458951111a9a1d3c449a29e75f6b9d59e88b6c01b30f68b46",
+          "evaluation_facets": [
+            "changed-instruction",
+            "near-duplicate",
+            "scheduled",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.administration"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.storage",
+      "domain": "medication",
+      "title": "Medicines Storage and Temperature Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.medication.storage.complements.medication.administration",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.administration",
+          "target_version_id": null,
+          "notes": "Reciprocal V3 catalogue record for the corresponding complements relationship."
+        },
+        {
+          "relationship_id": "rel.medication.storage.complements.medication.fridge-reference",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.fridge-reference",
+          "target_version_id": null,
+          "notes": "The procedure explains escalation; the table gives monitoring limits."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.storage"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.storage.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/storage-temperature-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-10T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "52e87ef6decfbcc35d347942d54087837cdf64e5b3d746a03f8b42af680eb436",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.storage"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.prn",
+      "domain": "medication",
+      "title": "PRN Medicines Protocol",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.medication.prn"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.prn.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/prn-protocol.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-03T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "97bd45c6664615212ea9b17cce08404d4630617f638c43ce00c9ca4361bbf98d",
+          "evaluation_facets": [
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.prn"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.controlled-drugs",
+      "domain": "medication",
+      "title": "Controlled Drugs Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "long-form",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.medication.controlled-drugs"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.controlled-drugs.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/controlled-drugs-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-05-01T09:00:00Z",
+          "approved_at": "2023-05-22T10:00:00Z",
+          "effective_from": "2023-06-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "d5787e6cd6a4d352a73dd57046f2a5d2e0f18f27af469cd2e279e4e87229f83b",
+          "evaluation_facets": [
+            "long-form",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.controlled-drugs"
+          ]
+        },
+        {
+          "version_id": "doc.medication.controlled-drugs.v2",
+          "version_number": "2.0",
+          "source_path": "documents/medication/controlled-drugs-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-06-16T10:00:00Z",
+          "effective_from": "2025-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.medication.controlled-drugs.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "2dad915e9dfe6775c424b684abd53a3477e0aba31ab1c1baca06e91ad9644b31",
+          "evaluation_facets": [
+            "long-form",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.controlled-drugs"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.errors",
+      "domain": "medication",
+      "title": "Medication Error Reporting Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.medication.errors"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.errors.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/medication-error-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "2b8c66fe8861e482300eec8e1401806bba4a7c96e743aa38d4d5ca6b05afe3ae",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.errors"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.covert",
+      "domain": "medication",
+      "title": "Covert Administration of Medicines Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "long-form",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.medication.covert.complements.safeguarding.mental-capacity",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.safeguarding.mental-capacity",
+          "target_version_id": null,
+          "notes": "Covert administration requires capacity and best-interest evidence."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.covert"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.covert.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/covert-administration-policy.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-06-02T09:00:00Z",
+          "approved_at": "2025-07-14T10:00:00Z",
+          "effective_from": "2025-08-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "f7823fca89244a7d0526d7e7cc30346099f07e545bc08c9e33a982ea67e4a13b",
+          "evaluation_facets": [
+            "long-form",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.covert"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.fridge-reference",
+      "domain": "medication",
+      "title": "Medication Fridge Monitoring Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.medication.fridge-reference.complements.medication.storage",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.storage",
+          "target_version_id": null,
+          "notes": "Reference limits support the storage escalation procedure."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.fridge-reference"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.fridge-reference.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/fridge-monitoring-reference.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-10T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "a0bac45631e864fc283b189f5a41577493cbf20f64f9127401587d92cbadabd3",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.fridge-reference"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.medication.self-administration",
+      "domain": "medication",
+      "title": "Self-Administration Risk Assessment",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.medication.self-administration"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.medication.self-administration.v1",
+          "version_number": "1.0",
+          "source_path": "documents/medication/self-administration-risk-assessment.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-08-18T10:00:00Z",
+          "effective_from": "2025-09-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "d462a76b01ab635ec25c284b1cb95dfa9962562215d1e66a711591a9c936f0bf",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.medication.self-administration"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.adult-reporting",
+      "domain": "safeguarding",
+      "title": "Adult Safeguarding Reporting Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "long-form",
+        "universal",
+        "withdrawn"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.adult-reporting"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.adult-reporting.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/adult-reporting-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-05-01T09:00:00Z",
+          "approved_at": "2024-06-10T10:00:00Z",
+          "effective_from": "2024-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "41c5934872a2a9f9575879937d005730a7c87623ae9027cf96fa8b99735fccf2",
+          "evaluation_facets": [
+            "long-form",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.safeguarding.adult-reporting"
+          ]
+        },
+        {
+          "version_id": "doc.safeguarding.adult-reporting.v2",
+          "version_number": "2.0",
+          "source_path": "documents/safeguarding/adult-reporting-v2-withdrawn.md",
+          "governance_state": "WITHDRAWN",
+          "created_at": "2026-03-02T09:00:00Z",
+          "approved_at": "2026-05-15T10:00:00Z",
+          "effective_from": "2026-09-01T00:00:00Z",
+          "withdrawn_at": "2026-07-10T10:00:00Z",
+          "supersedes_version_id": "doc.safeguarding.adult-reporting.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "3b286913e7669ba7c64412dd1ac915b1f7374f0a4a798ccd12064f1dc17bb048",
+          "evaluation_facets": [
+            "long-form",
+            "universal",
+            "withdrawn"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.safeguarding.adult-reporting"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.whistleblowing",
+      "domain": "safeguarding",
+      "title": "Whistleblowing Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "conflicting-guidance",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.whistleblowing"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.whistleblowing.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/whistleblowing-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-03T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "e6c1abf6d807887d17808ca4b3f41228e2608430e4608449204de536d5794c09",
+          "evaluation_facets": [
+            "conflicting-guidance",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.safeguarding.whistleblowing"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.mental-capacity",
+      "domain": "safeguarding",
+      "title": "Mental Capacity and Best Interests Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "long-form",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.safeguarding.mental-capacity.complements.medication.covert",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.covert",
+          "target_version_id": null,
+          "notes": "Capacity decisions may inform medicines decisions."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.mental-capacity"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.mental-capacity.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/mental-capacity-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "82c8bac80fe161c7ffdfaceded4e231c0e30ed594bab9e53a48b018d5cecff5f",
+          "evaluation_facets": [
+            "long-form",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.safeguarding.mental-capacity"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.dols",
+      "domain": "safeguarding",
+      "title": "DoLS Application Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.dols"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.dols.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/dols-reference.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "dbecb1a1e5511334ce0173f3faea98fe21ac3f7f0d1714e03864944d2cad2812",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.safeguarding.dols"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.missing-person",
+      "domain": "safeguarding",
+      "title": "Missing Person Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "long-form",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.missing-person"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.missing-person.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/missing-person-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-06-02T10:00:00Z",
+          "effective_from": "2025-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "0e670843ea866c4898dda28c6f321288185b463d1af546ea45db6f2ca123ab7f",
+          "evaluation_facets": [
+            "long-form",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.safeguarding.missing-person"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.allegations-staff",
+      "domain": "safeguarding",
+      "title": "Allegations Against Staff Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.safeguarding.allegations-staff.complements.hr.recruitment",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.hr.recruitment",
+          "target_version_id": null,
+          "notes": "Safeguarding suitability findings can affect employment checks."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.allegations-staff"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.allegations-staff.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/allegations-staff-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-08-01T09:00:00Z",
+          "approved_at": "2023-09-11T10:00:00Z",
+          "effective_from": "2023-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "966ee4d265c08ab2edcb2cfb3d4a2843bc43c4ebbad52cbc9f2d9e46aacadf56",
+          "evaluation_facets": [
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.safeguarding.allegations-staff"
+          ]
+        },
+        {
+          "version_id": "doc.safeguarding.allegations-staff.v2",
+          "version_number": "2.0",
+          "source_path": "documents/safeguarding/allegations-staff-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.safeguarding.allegations-staff.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "74e8fb3800295c728de50f5c68ff967e996f3bbf95aebf4e3f7c50de4d00358f",
+          "evaluation_facets": [
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.safeguarding.allegations-staff"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.safeguarding.body-map",
+      "domain": "safeguarding",
+      "title": "Injury Body Map Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.body-map"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.safeguarding.body-map.v1",
+          "version_number": "1.0",
+          "source_path": "documents/safeguarding/body-map-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "fd4bebf3cc6a1c2f0e74738ef7e6cc7f1fd73ddb99abfe64d90cd88a1b635dd0",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.safeguarding.body-map"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.south-west-evacuation",
+      "domain": "fire-safety",
+      "title": "South West Emergency Evacuation Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "applicability-excluded",
+        "conflicting-guidance",
+        "near-duplicate",
+        "regional"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.fire.south-west-evacuation.conflicts_with.fire.harbour-view-evacuation",
+          "type": "CONFLICTS_WITH",
+          "target_family_id": "family.fire.harbour-view-evacuation",
+          "target_version_id": null,
+          "notes": "Harbour View has a site-specific assembly point while both documents remain eligible there."
+        },
+        {
+          "relationship_id": "rel.fire.south-west-evacuation.near_duplicate.fire.midlands-evacuation",
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.fire.midlands-evacuation",
+          "target_version_id": null,
+          "notes": "Reciprocal V3 catalogue record for the corresponding near duplicate relationship."
+        },
+        {
+          "relationship_id": "rel.fire.south-west-evacuation.near_duplicate.fire.north-west-evacuation",
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.fire.north-west-evacuation",
+          "target_version_id": null,
+          "notes": "Reciprocal V3 catalogue record for the corresponding near duplicate relationship."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.fire.south-west-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.fire.south-west-evacuation.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/south-west-evacuation.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-10T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.region.south-west"
+            ]
+          },
+          "source_sha256": "9fb4e06e5ef378c10aa935ac026b944461544b72f24b50db3a15e344e03bdd13",
+          "evaluation_facets": [
+            "applicability-excluded",
+            "conflicting-guidance",
+            "near-duplicate",
+            "regional"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.fire.south-west-evacuation",
+            "leakage.related.fire.harbour-view-evacuation"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.harbour-view-evacuation",
+      "domain": "fire-safety",
+      "title": "Harbour View Fire Evacuation Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "applicability-excluded",
+        "conflicting-guidance",
+        "near-duplicate",
+        "site-specific"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.fire.harbour-view-evacuation.conflicts_with.fire.south-west-evacuation",
+          "type": "CONFLICTS_WITH",
+          "target_family_id": "family.fire.south-west-evacuation",
+          "target_version_id": null,
+          "notes": "The site-specific assembly point differs from the regional fallback."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.fire.harbour-view-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.fire.harbour-view-evacuation.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/harbour-view-evacuation.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.harbour-view"
+            ]
+          },
+          "source_sha256": "c6fd853ec681f0edb8f578bc2aa28f4243a1c923d6fe1cf680b448bcd16c8bda",
+          "evaluation_facets": [
+            "applicability-excluded",
+            "conflicting-guidance",
+            "near-duplicate",
+            "site-specific"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.fire.harbour-view-evacuation",
+            "leakage.related.fire.harbour-view-evacuation"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.north-west-evacuation",
+      "domain": "fire-safety",
+      "title": "North West Emergency Evacuation Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "applicability-excluded",
+        "near-duplicate",
+        "regional"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.fire.north-west-evacuation.near_duplicate.fire.south-west-evacuation",
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.fire.south-west-evacuation",
+          "target_version_id": null,
+          "notes": "Shared template with different assembly arrangements."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.fire.north-west-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.fire.north-west-evacuation.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/north-west-evacuation.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-10T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.region.north-west"
+            ]
+          },
+          "source_sha256": "7cb7da4c5f03593c0b17f50e37d8a5b6558e41e8b9fdc0a8f550b7995594908b",
+          "evaluation_facets": [
+            "applicability-excluded",
+            "near-duplicate",
+            "regional"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.fire.north-west-evacuation",
+            "leakage.related.fire.harbour-view-evacuation"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.midlands-evacuation",
+      "domain": "fire-safety",
+      "title": "Midlands Emergency Evacuation Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "applicability-excluded",
+        "near-duplicate",
+        "regional"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.fire.midlands-evacuation.near_duplicate.fire.south-west-evacuation",
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.fire.south-west-evacuation",
+          "target_version_id": null,
+          "notes": "Shared template with different escalation contacts."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.fire.midlands-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.fire.midlands-evacuation.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/midlands-evacuation.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-10T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.region.midlands"
+            ]
+          },
+          "source_sha256": "8efe73c9a44881368622914e712ab72957a6bfa57080124f0aa954c7177dfad4",
+          "evaluation_facets": [
+            "applicability-excluded",
+            "near-duplicate",
+            "regional"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.fire.midlands-evacuation",
+            "leakage.related.fire.harbour-view-evacuation"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.drills",
+      "domain": "fire-safety",
+      "title": "Fire Drill and Debrief Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.fire.drills"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.fire.drills.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/fire-drills-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-02-01T09:00:00Z",
+          "approved_at": "2023-03-13T10:00:00Z",
+          "effective_from": "2023-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "b68d4a2856b4661d75cac0c8423e8ffd6c7d52a9491a9b9ef787e01a9e11ad3f",
+          "evaluation_facets": [
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.fire.drills"
+          ]
+        },
+        {
+          "version_id": "doc.fire.drills.v2",
+          "version_number": "2.0",
+          "source_path": "documents/fire-safety/fire-drills-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.fire.drills.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "f5efae5749b9d5caf476bbac23efd724508692a10a4e35c5d80ed670f7150a4a",
+          "evaluation_facets": [
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.fire.drills"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.fire.peep",
+      "domain": "fire-safety",
+      "title": "Personal Emergency Evacuation Plan",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "scheduled",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.fire.peep"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.fire.peep.v1",
+          "version_number": "1.0",
+          "source_path": "documents/fire-safety/peep-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-02-01T09:00:00Z",
+          "approved_at": "2024-03-11T10:00:00Z",
+          "effective_from": "2024-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "7dcea90d80bab85405cefd679af4495063188356722840da7c339ee182dd8850",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.fire.peep"
+          ]
+        },
+        {
+          "version_id": "doc.fire.peep.v2",
+          "version_number": "2.0",
+          "source_path": "documents/fire-safety/peep-v2-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-20T10:00:00Z",
+          "effective_from": "2026-11-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.fire.peep.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "e6ebd698be2bccc4e27eea9c6feff271070fcd152bc9e464f81265ad70e2b5c3",
+          "evaluation_facets": [
+            "form-evidence",
+            "scheduled",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.fire.peep"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.accident-reporting",
+      "domain": "health-safety",
+      "title": "Accident and Incident Reporting Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.accident-reporting"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.accident-reporting.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/accident-reporting-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-05-01T09:00:00Z",
+          "approved_at": "2023-06-12T10:00:00Z",
+          "effective_from": "2023-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "b93211f822ffdf842d8630eeb8bc1b4c87ceb034f99619a33c56c4b952e579f9",
+          "evaluation_facets": [
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.health-safety.accident-reporting"
+          ]
+        },
+        {
+          "version_id": "doc.health-safety.accident-reporting.v2",
+          "version_number": "2.0",
+          "source_path": "documents/health-safety/accident-reporting-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-06-16T10:00:00Z",
+          "effective_from": "2025-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.health-safety.accident-reporting.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "b15f28bc72f6ad57c96373880899e3017ac6239996d35cf0c6ffc6a58ed7bce6",
+          "evaluation_facets": [
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.health-safety.accident-reporting"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.coshh",
+      "domain": "health-safety",
+      "title": "COSHH Assessment Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "form-evidence",
+        "long-form",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.coshh"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.coshh.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/coshh-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "711afe04cbab9fa4c317b17d89f27547332c72c6bf288ad8202d89b635c84a82",
+          "evaluation_facets": [
+            "form-evidence",
+            "long-form",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.health-safety.coshh"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.moving-handling",
+      "domain": "health-safety",
+      "title": "Moving and Handling Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "changed-instruction",
+        "long-form",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.moving-handling"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.moving-handling.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/moving-handling-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-08-01T09:00:00Z",
+          "approved_at": "2023-09-11T10:00:00Z",
+          "effective_from": "2023-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "ef6c53d1866776ba9b00f8b47efcd1cdfd9fc36e1c6688a3addeae848ec750ff",
+          "evaluation_facets": [
+            "changed-instruction",
+            "long-form",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.health-safety.moving-handling"
+          ]
+        },
+        {
+          "version_id": "doc.health-safety.moving-handling.v2",
+          "version_number": "2.0",
+          "source_path": "documents/health-safety/moving-handling-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.health-safety.moving-handling.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "b02927ff66913948b52720fe33b30935ddb22972762b811cfb39ba5a94386cbf",
+          "evaluation_facets": [
+            "changed-instruction",
+            "long-form",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.health-safety.moving-handling"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.lone-working",
+      "domain": "health-safety",
+      "title": "Lone Working Risk Control Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.health-safety.lone-working.near_duplicate.hr.lone-worker-welfare",
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.hr.lone-worker-welfare",
+          "target_version_id": null,
+          "notes": "Risk controls differ from the missed welfare-check escalation."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.lone-working",
+        "leakage.related.health-safety.lone-working"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.lone-working.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/lone-working-policy.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-21T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "a5f23b4951e14faf4fcd6de5b0e5d95c1a5a68241502dd518b4ae857a42c75d3",
+          "evaluation_facets": [
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.health-safety.lone-working",
+            "leakage.related.health-safety.lone-working"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.risk-assessment",
+      "domain": "health-safety",
+      "title": "Workplace Risk Assessment Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.risk-assessment"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.risk-assessment.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/workplace-risk-assessment-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "f6abe7c6d3cdab3c0aaa1b652cec916f2c75a2551458e1087c08102dd81705bb",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.health-safety.risk-assessment"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.equipment-checks",
+      "domain": "health-safety",
+      "title": "Safety Equipment Inspection Schedule",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.equipment-checks"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.equipment-checks.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/equipment-inspection-schedule.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "cb700bc5a827da64b527b5f3bca78a51b95da7f99d962afeb3b28a16133b23d2",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.health-safety.equipment-checks"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.health-safety.slips-trips",
+      "domain": "health-safety",
+      "title": "Slips, Trips and Falls Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.slips-trips"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.health-safety.slips-trips.v1",
+          "version_number": "1.0",
+          "source_path": "documents/health-safety/slips-trips-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-05-19T10:00:00Z",
+          "effective_from": "2025-06-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "ffcf7a3177ec7546a064ceee0dec144e7adb82d900a1a4513380da43c216f74f",
+          "evaluation_facets": [
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.health-safety.slips-trips"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.outbreak-management",
+      "domain": "infection-control",
+      "title": "Respiratory Outbreak Management Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "long-form",
+        "universal",
+        "withdrawn"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.infection.outbreak-management.complements.visitors.outbreak-restrictions",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.visitors.outbreak-restrictions",
+          "target_version_id": null,
+          "notes": "Reciprocal V3 catalogue record for the corresponding complements relationship."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.infection.outbreak-management"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.infection.outbreak-management.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/outbreak-management-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-08-01T09:00:00Z",
+          "approved_at": "2024-09-16T10:00:00Z",
+          "effective_from": "2024-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "5514341b895f892fa0af797eb14571266ea6ec8c1de53ca509aeb2e06eaa904c",
+          "evaluation_facets": [
+            "long-form",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.infection.outbreak-management"
+          ]
+        },
+        {
+          "version_id": "doc.infection.outbreak-management.v2",
+          "version_number": "2.0",
+          "source_path": "documents/infection-control/outbreak-management-v2-withdrawn.md",
+          "governance_state": "WITHDRAWN",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": "2026-06-01T12:00:00Z",
+          "supersedes_version_id": "doc.infection.outbreak-management.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "cc265374341f019510bffaef17f288fc76be5a06c8bf3d29dcacf64e9fa71214",
+          "evaluation_facets": [
+            "long-form",
+            "universal",
+            "withdrawn"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.infection.outbreak-management"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.ppe",
+      "domain": "infection-control",
+      "title": "PPE Selection Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "near-duplicate",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.infection.ppe.near_duplicate.infection.respiratory-ppe",
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.infection.respiratory-ppe",
+          "target_version_id": null,
+          "notes": "Reciprocal V3 catalogue record for the corresponding near duplicate relationship."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.infection.ppe",
+        "leakage.related.infection.ppe"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.infection.ppe.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/ppe-reference.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "a7f4e9022d343c4d748ac3bf753870420e88041a7eabcefa3891014231680a61",
+          "evaluation_facets": [
+            "near-duplicate",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.infection.ppe",
+            "leakage.related.infection.ppe"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.hand-hygiene",
+      "domain": "infection-control",
+      "title": "Hand Hygiene Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "changed-instruction",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.infection.hand-hygiene"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.infection.hand-hygiene.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/hand-hygiene-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-02-01T09:00:00Z",
+          "approved_at": "2023-03-13T10:00:00Z",
+          "effective_from": "2023-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "37618e099da6704d233c97ccf267b27ebf601e31624d87258aa1a2394c57c155",
+          "evaluation_facets": [
+            "changed-instruction",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.infection.hand-hygiene"
+          ]
+        },
+        {
+          "version_id": "doc.infection.hand-hygiene.v2",
+          "version_number": "2.0",
+          "source_path": "documents/infection-control/hand-hygiene-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.infection.hand-hygiene.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "d1c503fe4740d547e6cca6433c0bb45d74c0015e877953537367f098c651f599",
+          "evaluation_facets": [
+            "changed-instruction",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.infection.hand-hygiene"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.clinical-waste",
+      "domain": "infection-control",
+      "title": "Clinical Waste Segregation Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.infection.clinical-waste"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.infection.clinical-waste.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/clinical-waste-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "d31b1c9d3a96635e4f6ec8249bf935d4d91db7a400f131742e8ba2782b969de9",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.infection.clinical-waste"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.laundry",
+      "domain": "infection-control",
+      "title": "Infected Linen and Laundry Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.infection.laundry"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.infection.laundry.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/laundry-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-05-12T10:00:00Z",
+          "effective_from": "2025-06-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "4e561f6ff4946854e3bd3d107e794aec92ecd817ae645d2e9cbfdd48d5c97853",
+          "evaluation_facets": [
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.infection.laundry"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.respiratory-ppe",
+      "domain": "infection-control",
+      "title": "Respiratory Infection PPE Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "conflicting-guidance",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.infection.respiratory-ppe.near_duplicate.infection.ppe",
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.infection.ppe",
+          "target_version_id": null,
+          "notes": "Procedure prose overlaps with the PPE selection table."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.infection.respiratory-ppe",
+        "leakage.related.infection.ppe"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.infection.respiratory-ppe.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/respiratory-ppe-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "d7afa21216322ee9ba0cff8fd5fb5723616513579016b1c9ff58e09e3186bb63",
+          "evaluation_facets": [
+            "conflicting-guidance",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.infection.respiratory-ppe",
+            "leakage.related.infection.ppe"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.infection.isolation",
+      "domain": "infection-control",
+      "title": "Resident Isolation Risk Assessment",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.infection.isolation"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.infection.isolation.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/isolation-risk-assessment.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-09-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "4a9864a51a5cbb53f8cac087fcfdeffe2d8bc91628c3d3fd6ff39b23b79f8faf",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.infection.isolation"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.visitors.general",
+      "domain": "visitors",
+      "title": "Visitors and Contractors Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "conflicting-guidance",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.visitors.general.conflicts_with.visitors.search-optimised-draft",
+          "type": "CONFLICTS_WITH",
+          "target_family_id": "family.visitors.search-optimised-draft",
+          "target_version_id": null,
+          "notes": "The ineligible draft contains false visitor rules and keyword stuffing."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.visitors.general",
+        "leakage.related.visitors.general"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.visitors.general.v1",
+          "version_number": "1.0",
+          "source_path": "documents/visitors/visitors-contractors.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-10T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "70d61dedbfb1ab74f308ab11944f0a8ba02e7c20dd0624444318ce7bfba93dfd",
+          "evaluation_facets": [
+            "conflicting-guidance",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.visitors.general",
+            "leakage.related.visitors.general"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.visitors.search-optimised-draft",
+      "domain": "visitors",
+      "title": "Visitor Access Search Notes",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "conflicting-guidance",
+        "keyword-stuffing",
+        "near-duplicate-wrong",
+        "negative-instruction",
+        "never-authoritative",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.visitors.search-optimised-draft.conflicts_with.visitors.general",
+          "type": "CONFLICTS_WITH",
+          "target_family_id": "family.visitors.general",
+          "target_version_id": null,
+          "notes": "Deliberately misleading and ineligible retrieval negative."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.visitors.search-optimised-draft",
+        "leakage.related.visitors.general"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.visitors.search-optimised-draft.v1",
+          "version_number": "0.1",
+          "source_path": "documents/visitors/search-optimised-unapproved-draft.md",
+          "governance_state": "DRAFT",
+          "created_at": "2026-05-01T09:00:00Z",
+          "approved_at": null,
+          "effective_from": "2026-06-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "441bf10e4a5c872792ece92e3f679fb814ac7e851ef627dc1d4776186425ee41",
+          "evaluation_facets": [
+            "conflicting-guidance",
+            "keyword-stuffing",
+            "near-duplicate-wrong",
+            "negative-instruction",
+            "never-authoritative",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.visitors.search-optimised-draft",
+            "leakage.related.visitors.general"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.visitors.outbreak-restrictions",
+      "domain": "visitors",
+      "title": "Outbreak Visiting Restrictions Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "conflicting-guidance",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.visitors.outbreak-restrictions.complements.infection.outbreak-management",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.infection.outbreak-management",
+          "target_version_id": null,
+          "notes": "Visiting restrictions depend on outbreak management decisions."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.visitors.outbreak-restrictions"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.visitors.outbreak-restrictions.v1",
+          "version_number": "1.0",
+          "source_path": "documents/visitors/outbreak-restrictions-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-08-01T09:00:00Z",
+          "approved_at": "2023-09-11T10:00:00Z",
+          "effective_from": "2023-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "83227741c4e313e79d89a4160da6726d6a60444f4f09b0e04979fec0c40e66dc",
+          "evaluation_facets": [
+            "conflicting-guidance",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.visitors.outbreak-restrictions"
+          ]
+        },
+        {
+          "version_id": "doc.visitors.outbreak-restrictions.v2",
+          "version_number": "2.0",
+          "source_path": "documents/visitors/outbreak-restrictions-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-08-01T09:00:00Z",
+          "approved_at": "2025-09-15T10:00:00Z",
+          "effective_from": "2025-10-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.visitors.outbreak-restrictions.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "1bc3c57186d854d20f9788d415dd6d0e58fadd6f90e13d5b4ccb6a2eae6248e2",
+          "evaluation_facets": [
+            "conflicting-guidance",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.visitors.outbreak-restrictions"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.visitors.contractor-sign-in",
+      "domain": "visitors",
+      "title": "Contractor Sign-In and Permit Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.visitors.contractor-sign-in"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.visitors.contractor-sign-in.v1",
+          "version_number": "1.0",
+          "source_path": "documents/visitors/contractor-sign-in-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "0bea6a68fb19e5fecc5a0bd2dec55f9741e0fdfba06299cbcefeb11f10a22e64",
+          "evaluation_facets": [
+            "form-evidence",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.visitors.contractor-sign-in"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.gdpr.data-protection",
+      "domain": "gdpr",
+      "title": "Data Protection Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "changed-instruction",
+        "long-form",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.gdpr.data-protection"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.gdpr.data-protection.v1",
+          "version_number": "1.0",
+          "source_path": "documents/gdpr/data-protection-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-11-01T09:00:00Z",
+          "approved_at": "2023-12-11T10:00:00Z",
+          "effective_from": "2024-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "3ded992a7bb0bda8d153fd47843766355ca257ea1932ad3dac5302d5fccff7fc",
+          "evaluation_facets": [
+            "changed-instruction",
+            "long-form",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.gdpr.data-protection"
+          ]
+        },
+        {
+          "version_id": "doc.gdpr.data-protection.v2",
+          "version_number": "2.0",
+          "source_path": "documents/gdpr/data-protection-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.gdpr.data-protection.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "c6fee6d32a596d2ab9ad9e85d506d5b35c4237e828f3c99af071f1acdde378d6",
+          "evaluation_facets": [
+            "changed-instruction",
+            "long-form",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.gdpr.data-protection"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.gdpr.subject-access",
+      "domain": "gdpr",
+      "title": "Subject Access Request Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "scheduled",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.gdpr.subject-access"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.gdpr.subject-access.v1",
+          "version_number": "1.0",
+          "source_path": "documents/gdpr/subject-access-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-02-01T09:00:00Z",
+          "approved_at": "2024-03-11T10:00:00Z",
+          "effective_from": "2024-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "5b8f3232a82ef5927d1c34fc57960597d21909cf74c6f0c0162a38adc2052ef5",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.gdpr.subject-access"
+          ]
+        },
+        {
+          "version_id": "doc.gdpr.subject-access.v2",
+          "version_number": "2.0",
+          "source_path": "documents/gdpr/subject-access-v2-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-20T10:00:00Z",
+          "effective_from": "2026-12-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.gdpr.subject-access.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "14d62dd16227c2eb564ec2cf812878e609c27d596f573f22d37f2b644e14e7a1",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "scheduled",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.gdpr.subject-access"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.gdpr.breach",
+      "domain": "gdpr",
+      "title": "Personal Data Breach Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "long-form",
+        "numeric-boundary",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.gdpr.breach"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.gdpr.breach.v1",
+          "version_number": "1.0",
+          "source_path": "documents/gdpr/personal-data-breach.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "2405edb574a452cad38b6a1413f989907cbbed98171f7f7d634bd1ffea39a488",
+          "evaluation_facets": [
+            "long-form",
+            "numeric-boundary",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.gdpr.breach"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.gdpr.retention",
+      "domain": "gdpr",
+      "title": "Records Retention Schedule",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.gdpr.retention"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.gdpr.retention.v1",
+          "version_number": "1.0",
+          "source_path": "documents/gdpr/records-retention-schedule.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "081d06e52db3b27b953858d10f339d0208776ca02f1f92ae5992e1777a41dfb3",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.gdpr.retention"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.gdpr.cctv",
+      "domain": "gdpr",
+      "title": "CCTV Access Request Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.gdpr.cctv"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.gdpr.cctv.v1",
+          "version_number": "1.0",
+          "source_path": "documents/gdpr/cctv-access-request-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-05-19T10:00:00Z",
+          "effective_from": "2025-06-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "1d4b11dd1dde063ea3721dd4e7c1f16d31ca73ddd7f72daa3a884e5bb0fefa92",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.gdpr.cctv"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.complaints.handling",
+      "domain": "complaints",
+      "title": "Complaints Handling Policy",
+      "document_type": "POLICY",
+      "planned_phenomena": [
+        "long-form",
+        "near-duplicate",
+        "numeric-boundary",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.complaints.handling.complements.complaints.duty-candour",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.complaints.duty-candour",
+          "target_version_id": null,
+          "notes": "Reciprocal V3 catalogue record for the corresponding complements relationship."
+        },
+        {
+          "relationship_id": "rel.complaints.handling.near_duplicate.complaints.feedback",
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.complaints.feedback",
+          "target_version_id": null,
+          "notes": "Reciprocal V3 catalogue record for the corresponding near duplicate relationship."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.complaints.handling",
+        "leakage.related.complaints.feedback"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.complaints.handling.v1",
+          "version_number": "1.0",
+          "source_path": "documents/complaints/handling-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-05-01T09:00:00Z",
+          "approved_at": "2023-06-12T10:00:00Z",
+          "effective_from": "2023-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "03cce40d44fc007bffdb93f558349c0293a6c58a8956dfc08589ead38a4a869c",
+          "evaluation_facets": [
+            "long-form",
+            "near-duplicate",
+            "numeric-boundary",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.complaints.handling",
+            "leakage.related.complaints.feedback"
+          ]
+        },
+        {
+          "version_id": "doc.complaints.handling.v2",
+          "version_number": "2.0",
+          "source_path": "documents/complaints/handling-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-05-01T09:00:00Z",
+          "approved_at": "2025-06-16T10:00:00Z",
+          "effective_from": "2025-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.complaints.handling.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "2c1ff87df715203920ba962d461306c98a2219569fd3d56ae7830aa8e9f24572",
+          "evaluation_facets": [
+            "long-form",
+            "near-duplicate",
+            "numeric-boundary",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.complaints.handling",
+            "leakage.related.complaints.feedback"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.complaints.duty-candour",
+      "domain": "complaints",
+      "title": "Duty of Candour Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "long-form",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.complaints.duty-candour.complements.complaints.handling",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.complaints.handling",
+          "target_version_id": null,
+          "notes": "A complaint may also trigger duty of candour."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.complaints.duty-candour"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.complaints.duty-candour.v1",
+          "version_number": "1.0",
+          "source_path": "documents/complaints/duty-of-candour.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "1caad3698bff6f4de86f07ea82c8173c09a1c794cc104781d04f99c132ef3ad8",
+          "evaluation_facets": [
+            "long-form",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.complaints.duty-candour"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.complaints.feedback",
+      "domain": "complaints",
+      "title": "Compliments and Feedback Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "form-evidence",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.complaints.feedback.near_duplicate.complaints.handling",
+          "type": "NEAR_DUPLICATE",
+          "target_family_id": "family.complaints.handling",
+          "target_version_id": null,
+          "notes": "Uses similar contact channels but is not the formal complaint process."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.complaints.feedback",
+        "leakage.related.complaints.feedback"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.complaints.feedback.v1",
+          "version_number": "1.0",
+          "source_path": "documents/complaints/feedback-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "dabe22ea37e8c2a18a02f13648f7f8834b087df33f0a3d3b2c6dd577be24b3b3",
+          "evaluation_facets": [
+            "form-evidence",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.complaints.feedback",
+            "leakage.related.complaints.feedback"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.complaints.advocacy",
+      "domain": "complaints",
+      "title": "Independent Advocacy Contact Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.complaints.advocacy"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.complaints.advocacy.v1",
+          "version_number": "1.0",
+          "source_path": "documents/complaints/advocacy-contacts.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "64a8b2ffc093cb70d839152b2cc7bf63db94f47c25274a31f49b6d48fe4e17a5",
+          "evaluation_facets": [
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.complaints.advocacy"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.complaints.form",
+      "domain": "complaints",
+      "title": "Complaint Record Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.complaints.form"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.complaints.form.v1",
+          "version_number": "1.0",
+          "source_path": "documents/complaints/complaint-record-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-06-02T09:00:00Z",
+          "approved_at": "2025-06-16T10:00:00Z",
+          "effective_from": "2025-07-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "fb322ac36b3719418d345210094f5a685f608bfdae290f79066b316e0a5b778c",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.complaints.form"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.payroll.calendar",
+      "domain": "payroll",
+      "title": "Payroll Cut-Off Calendar",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "scheduled",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.payroll.calendar"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.payroll.calendar.v1",
+          "version_number": "2026",
+          "source_path": "documents/payroll/calendar-2026.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-01T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "8c890abd3864d458bf83e56fa589154d962f037b6787ec9f84110fa5cb6dc1a4",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.payroll.calendar"
+          ]
+        },
+        {
+          "version_id": "doc.payroll.calendar.v2",
+          "version_number": "2027",
+          "source_path": "documents/payroll/calendar-2027-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-20T10:00:00Z",
+          "effective_from": "2027-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.payroll.calendar.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "f016b3444abfbdf2a2190796d76c62527b53447d9f5b6169b892e7c7da72617b",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "scheduled",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.payroll.calendar"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.payroll.overtime",
+      "domain": "payroll",
+      "title": "Overtime and Additional Hours Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.payroll.overtime"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.payroll.overtime.v1",
+          "version_number": "1.0",
+          "source_path": "documents/payroll/overtime-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-01-06T09:00:00Z",
+          "approved_at": "2025-02-17T10:00:00Z",
+          "effective_from": "2025-03-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "6ed7e400c01eb8ad1d5da42cc18d411bbb104132e0c65cd54cbec67a14d01225",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.payroll.overtime"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.payroll.expenses",
+      "domain": "payroll",
+      "title": "Employee Expenses Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.payroll.expenses"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.payroll.expenses.v1",
+          "version_number": "1.0",
+          "source_path": "documents/payroll/expenses-procedure.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "0356b9e5a94ead0e9c2488374a488ef0a7ced63880767d64546901e5d2aae336",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.payroll.expenses"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.payroll.pension",
+      "domain": "payroll",
+      "title": "Workplace Pension Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.payroll.pension"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.payroll.pension.v1",
+          "version_number": "1.0",
+          "source_path": "documents/payroll/pension-reference.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "020f6b7d4066c5f1a4bf31ef4c94f7d764f589255cf655feef605331d6504a7d",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.payroll.pension"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.payroll.mileage",
+      "domain": "payroll",
+      "title": "Mileage Claim Form",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "numeric-boundary",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.payroll.mileage"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.payroll.mileage.v1",
+          "version_number": "1.0",
+          "source_path": "documents/payroll/mileage-claim-form.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-04-01T09:00:00Z",
+          "approved_at": "2025-04-14T10:00:00Z",
+          "effective_from": "2025-05-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "5984fdafbd24fc8338a9d147be2e6877dc54f6c0fb1a6113d5bf1bddf9ca5078",
+          "evaluation_facets": [
+            "form-evidence",
+            "numeric-boundary",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.payroll.mileage"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.training.matrix",
+      "domain": "training",
+      "title": "Mandatory Training Matrix",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.training.matrix"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.training.matrix.v1",
+          "version_number": "1.0",
+          "source_path": "documents/training/mandatory-training-matrix.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "73347a8f4bf1a77a306c7b10280c84994ebe5ca02e4ca5d6337dd0d3b05c0182",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.training.matrix"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.training.induction",
+      "domain": "training",
+      "title": "New Starter Induction Programme",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "scheduled",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.training.induction"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.training.induction.v1",
+          "version_number": "1.0",
+          "source_path": "documents/training/induction-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2024-11-04T09:00:00Z",
+          "approved_at": "2024-12-16T10:00:00Z",
+          "effective_from": "2025-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "cd58efd579590469f1de74a137d2c1764c78c04da117b815be0bfdc9d4c62be3",
+          "evaluation_facets": [
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.training.induction"
+          ]
+        },
+        {
+          "version_id": "doc.training.induction.v2",
+          "version_number": "2.0",
+          "source_path": "documents/training/induction-v2-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-20T10:00:00Z",
+          "effective_from": "2026-11-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.training.induction.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "af59632b7d84cab39d8f195f970d7c3dfcb4f74f8972ba934ea9cf4855fc6814",
+          "evaluation_facets": [
+            "scheduled",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.training.induction"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.training.medication-competency",
+      "domain": "training",
+      "title": "Medication Competency Assessment",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "near-duplicate",
+        "universal"
+      ],
+      "relationships": [
+        {
+          "relationship_id": "rel.training.medication-competency.complements.medication.administration",
+          "type": "COMPLEMENTS",
+          "target_family_id": "family.medication.administration",
+          "target_version_id": null,
+          "notes": "Competency evidence supports permission to administer medicines."
+        }
+      ],
+      "leakage_group_ids": [
+        "leakage.family.training.medication-competency"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.training.medication-competency.v1",
+          "version_number": "1.0",
+          "source_path": "documents/training/medication-competency-v1.md",
+          "governance_state": "APPROVED",
+          "created_at": "2023-11-01T09:00:00Z",
+          "approved_at": "2023-12-11T10:00:00Z",
+          "effective_from": "2024-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "e87f7ac73bead2eef8e789b5e9a7f03c1ad4cd2b87340d0219de2e6be16da156",
+          "evaluation_facets": [
+            "form-evidence",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.training.medication-competency"
+          ]
+        },
+        {
+          "version_id": "doc.training.medication-competency.v2",
+          "version_number": "2.0",
+          "source_path": "documents/training/medication-competency-v2.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.training.medication-competency.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "43ea065674563c32849f255e5c54378b9641fcbd8d78cde2a0b9f846246dacae",
+          "evaluation_facets": [
+            "form-evidence",
+            "near-duplicate",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.training.medication-competency"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.training.safeguarding",
+      "domain": "training",
+      "title": "Safeguarding Training Levels Reference",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.training.safeguarding"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.training.safeguarding.v1",
+          "version_number": "1.0",
+          "source_path": "documents/training/safeguarding-levels.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-02-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "9e862db5889d858fd0f101402114651c780ecf3ea55d9d31ee24082ff32a56da",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.training.safeguarding"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.training.fire",
+      "domain": "training",
+      "title": "Fire Safety Training Record",
+      "document_type": "FORM",
+      "planned_phenomena": [
+        "form-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.training.fire"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.training.fire.v1",
+          "version_number": "1.0",
+          "source_path": "documents/training/fire-training-record.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-03-03T09:00:00Z",
+          "approved_at": "2025-03-17T10:00:00Z",
+          "effective_from": "2025-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "8be17b73041276818f9077e37f4c17c7ce7305e3102bf64e229d818a375593fd",
+          "evaluation_facets": [
+            "form-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.training.fire"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.reference.abbreviations",
+      "domain": "reference",
+      "title": "Care and Compliance Abbreviations",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.reference.abbreviations"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.reference.abbreviations.v1",
+          "version_number": "1.0",
+          "source_path": "documents/reference/care-abbreviations.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "1c9becfbc579532ea5cc2863c4d38ab2d4ed6acc5ebfa38d8bb774737ed402b9",
+          "evaluation_facets": [
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.reference.abbreviations"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.reference.contacts",
+      "domain": "reference",
+      "title": "Operational Escalation Contacts",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "table-evidence",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.reference.contacts"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.reference.contacts.v1",
+          "version_number": "1.0",
+          "source_path": "documents/reference/operational-contacts.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "46d005dc5aa0f136fb041e0fff9f915d9934a60e6a87384a616b39a92045dde4",
+          "evaluation_facets": [
+            "table-evidence",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.reference.contacts"
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "family.reference.emergency-numbers",
+      "domain": "reference",
+      "title": "Emergency and On-Call Numbers",
+      "document_type": "REFERENCE_TABLE",
+      "planned_phenomena": [
+        "numeric-boundary",
+        "scheduled",
+        "universal"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.reference.emergency-numbers"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.reference.emergency-numbers.v1",
+          "version_number": "2026",
+          "source_path": "documents/reference/emergency-numbers-2026.md",
+          "governance_state": "APPROVED",
+          "created_at": "2025-11-03T09:00:00Z",
+          "approved_at": "2025-12-15T10:00:00Z",
+          "effective_from": "2026-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "c0cb89ea57d055a29bd0e7f9d6c27585e4ba82cce08f1304ddb4f063c0fe20db",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.reference.emergency-numbers"
+          ]
+        },
+        {
+          "version_id": "doc.reference.emergency-numbers.v2",
+          "version_number": "2027",
+          "source_path": "documents/reference/emergency-numbers-2027-scheduled.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-06-01T09:00:00Z",
+          "approved_at": "2026-07-20T10:00:00Z",
+          "effective_from": "2027-01-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": "doc.reference.emergency-numbers.v1",
+          "applicability": {
+            "kind": "UNIVERSAL",
+            "location_ids": []
+          },
+          "source_sha256": "1d7e0ab8b25e68980ac5a94f1fe748dbdd8a52ad7781d41cc5b4b2302ad2db8b",
+          "evaluation_facets": [
+            "numeric-boundary",
+            "scheduled",
+            "universal"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.reference.emergency-numbers"
+          ]
+        }
+      ]
+    }
+  ]
+}

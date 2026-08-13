@@ -56,3 +56,18 @@ make evaluation-report RUN=EXP-0001-short-description
 The generated `docs/evaluation/EXPERIMENTS.md` index retains every run directory.
 Report generation never accepts or promotes an experiment and never changes the
 retrieval configuration or policy.
+
+## Versioned benchmark compilation
+
+Benchmark compilation is version-aware. V2 and V3 use separate compiler
+implementations selected by `EVALUATION_CONTRACT_VERSION`; V2 remains the
+default. The V3 implementation validates exact taxonomy bindings, source and
+split identity digests, semantic/leakage boundaries and complete V2-to-V3
+lineage. It does not create cases or decide split membership.
+
+The repository-owned V3 release currently remains at `FOUNDATION`. It retains
+the V2 organisation and 93 canonical Markdown sources byte-for-byte, while its
+71-family catalogue adds V3 source digests, document-scoped taxonomy facets,
+relationship identities and leakage lineage. Its catalogue review and source
+checksums are present; semantic cases, splits and final compiled artefacts are
+intentionally absent until later lifecycle stages.

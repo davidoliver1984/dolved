@@ -1,0 +1,585 @@
+{
+  "schema_version": "v3",
+  "lineage_id": "lineage.dolved-care-engineering.v2-to-v3-foundation",
+  "lineage_version": "1",
+  "parent_release": {
+    "benchmark_id": "dolved-care-engineering",
+    "corpus_version": "2",
+    "benchmark_digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d"
+  },
+  "target_release": {
+    "benchmark_id": "dolved-care-engineering",
+    "corpus_version": "3"
+  },
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "migration_tool": {
+    "tool_id": "benchmark-v3-lineage",
+    "tool_version": "1"
+  },
+  "v2_unchanged": true,
+  "case_changes": [],
+  "document_changes": [
+    {
+      "source_id": "doc.complaints.advocacy.v1",
+      "target_id": "doc.complaints.advocacy.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.complaints.duty-candour.v1",
+      "target_id": "doc.complaints.duty-candour.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.complaints.feedback.v1",
+      "target_id": "doc.complaints.feedback.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.complaints.form.v1",
+      "target_id": "doc.complaints.form.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.complaints.handling.v1",
+      "target_id": "doc.complaints.handling.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.complaints.handling.v2",
+      "target_id": "doc.complaints.handling.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.fire.drills.v1",
+      "target_id": "doc.fire.drills.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.fire.drills.v2",
+      "target_id": "doc.fire.drills.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.fire.harbour-view-evacuation.v1",
+      "target_id": "doc.fire.harbour-view-evacuation.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.fire.midlands-evacuation.v1",
+      "target_id": "doc.fire.midlands-evacuation.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.fire.north-west-evacuation.v1",
+      "target_id": "doc.fire.north-west-evacuation.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.fire.peep.v1",
+      "target_id": "doc.fire.peep.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.fire.peep.v2",
+      "target_id": "doc.fire.peep.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.fire.south-west-evacuation.v1",
+      "target_id": "doc.fire.south-west-evacuation.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.gdpr.breach.v1",
+      "target_id": "doc.gdpr.breach.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.gdpr.cctv.v1",
+      "target_id": "doc.gdpr.cctv.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.gdpr.data-protection.v1",
+      "target_id": "doc.gdpr.data-protection.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.gdpr.data-protection.v2",
+      "target_id": "doc.gdpr.data-protection.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.gdpr.retention.v1",
+      "target_id": "doc.gdpr.retention.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.gdpr.subject-access.v1",
+      "target_id": "doc.gdpr.subject-access.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.gdpr.subject-access.v2",
+      "target_id": "doc.gdpr.subject-access.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.health-safety.accident-reporting.v1",
+      "target_id": "doc.health-safety.accident-reporting.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.health-safety.accident-reporting.v2",
+      "target_id": "doc.health-safety.accident-reporting.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.health-safety.coshh.v1",
+      "target_id": "doc.health-safety.coshh.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.health-safety.equipment-checks.v1",
+      "target_id": "doc.health-safety.equipment-checks.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.health-safety.lone-working.v1",
+      "target_id": "doc.health-safety.lone-working.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.health-safety.moving-handling.v1",
+      "target_id": "doc.health-safety.moving-handling.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.health-safety.moving-handling.v2",
+      "target_id": "doc.health-safety.moving-handling.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.health-safety.risk-assessment.v1",
+      "target_id": "doc.health-safety.risk-assessment.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.health-safety.slips-trips.v1",
+      "target_id": "doc.health-safety.slips-trips.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.annual-leave.v1",
+      "target_id": "doc.hr.annual-leave.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.annual-leave.v2",
+      "target_id": "doc.hr.annual-leave.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.annual-leave.v3",
+      "target_id": "doc.hr.annual-leave.v3",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.disciplinary.v1",
+      "target_id": "doc.hr.disciplinary.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.family-leave.v1",
+      "target_id": "doc.hr.family-leave.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.flexible-working.v1",
+      "target_id": "doc.hr.flexible-working.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.grievance.v1",
+      "target_id": "doc.hr.grievance.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.lone-worker-welfare.v1",
+      "target_id": "doc.hr.lone-worker-welfare.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.new-starter-form.v1",
+      "target_id": "doc.hr.new-starter-form.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.recruitment.v1",
+      "target_id": "doc.hr.recruitment.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.sickness-absence.v1",
+      "target_id": "doc.hr.sickness-absence.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.hr.sickness-absence.v2",
+      "target_id": "doc.hr.sickness-absence.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.infection.clinical-waste.v1",
+      "target_id": "doc.infection.clinical-waste.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.infection.hand-hygiene.v1",
+      "target_id": "doc.infection.hand-hygiene.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.infection.hand-hygiene.v2",
+      "target_id": "doc.infection.hand-hygiene.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.infection.isolation.v1",
+      "target_id": "doc.infection.isolation.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.infection.laundry.v1",
+      "target_id": "doc.infection.laundry.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.infection.outbreak-management.v1",
+      "target_id": "doc.infection.outbreak-management.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.infection.outbreak-management.v2",
+      "target_id": "doc.infection.outbreak-management.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.infection.ppe.v1",
+      "target_id": "doc.infection.ppe.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.infection.respiratory-ppe.v1",
+      "target_id": "doc.infection.respiratory-ppe.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.administration.v1",
+      "target_id": "doc.medication.administration.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.administration.v2",
+      "target_id": "doc.medication.administration.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.administration.v3",
+      "target_id": "doc.medication.administration.v3",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.controlled-drugs.v1",
+      "target_id": "doc.medication.controlled-drugs.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.controlled-drugs.v2",
+      "target_id": "doc.medication.controlled-drugs.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.covert.v1",
+      "target_id": "doc.medication.covert.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.errors.v1",
+      "target_id": "doc.medication.errors.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.fridge-reference.v1",
+      "target_id": "doc.medication.fridge-reference.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.prn.v1",
+      "target_id": "doc.medication.prn.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.self-administration.v1",
+      "target_id": "doc.medication.self-administration.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.medication.storage.v1",
+      "target_id": "doc.medication.storage.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.payroll.calendar.v1",
+      "target_id": "doc.payroll.calendar.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.payroll.calendar.v2",
+      "target_id": "doc.payroll.calendar.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.payroll.expenses.v1",
+      "target_id": "doc.payroll.expenses.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.payroll.mileage.v1",
+      "target_id": "doc.payroll.mileage.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.payroll.overtime.v1",
+      "target_id": "doc.payroll.overtime.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.payroll.pension.v1",
+      "target_id": "doc.payroll.pension.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.reference.abbreviations.v1",
+      "target_id": "doc.reference.abbreviations.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.reference.contacts.v1",
+      "target_id": "doc.reference.contacts.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.reference.emergency-numbers.v1",
+      "target_id": "doc.reference.emergency-numbers.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.reference.emergency-numbers.v2",
+      "target_id": "doc.reference.emergency-numbers.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.safeguarding.adult-reporting.v1",
+      "target_id": "doc.safeguarding.adult-reporting.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.safeguarding.adult-reporting.v2",
+      "target_id": "doc.safeguarding.adult-reporting.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.safeguarding.allegations-staff.v1",
+      "target_id": "doc.safeguarding.allegations-staff.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.safeguarding.allegations-staff.v2",
+      "target_id": "doc.safeguarding.allegations-staff.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.safeguarding.body-map.v1",
+      "target_id": "doc.safeguarding.body-map.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.safeguarding.dols.v1",
+      "target_id": "doc.safeguarding.dols.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.safeguarding.mental-capacity.v1",
+      "target_id": "doc.safeguarding.mental-capacity.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.safeguarding.missing-person.v1",
+      "target_id": "doc.safeguarding.missing-person.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.safeguarding.whistleblowing.v1",
+      "target_id": "doc.safeguarding.whistleblowing.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.training.fire.v1",
+      "target_id": "doc.training.fire.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.training.induction.v1",
+      "target_id": "doc.training.induction.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.training.induction.v2",
+      "target_id": "doc.training.induction.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.training.matrix.v1",
+      "target_id": "doc.training.matrix.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.training.medication-competency.v1",
+      "target_id": "doc.training.medication-competency.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.training.medication-competency.v2",
+      "target_id": "doc.training.medication-competency.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.training.safeguarding.v1",
+      "target_id": "doc.training.safeguarding.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.visitors.contractor-sign-in.v1",
+      "target_id": "doc.visitors.contractor-sign-in.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.visitors.general.v1",
+      "target_id": "doc.visitors.general.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.visitors.outbreak-restrictions.v1",
+      "target_id": "doc.visitors.outbreak-restrictions.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.visitors.outbreak-restrictions.v2",
+      "target_id": "doc.visitors.outbreak-restrictions.v2",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    },
+    {
+      "source_id": "doc.visitors.search-optimised-draft.v1",
+      "target_id": "doc.visitors.search-optimised-draft.v1",
+      "classification": "METADATA_ENRICHED",
+      "reason": "Canonical Markdown is retained byte-for-byte; V3 adds its source digest, scoped facets, leakage lineage and relationship metadata."
+    }
+  ]
+}

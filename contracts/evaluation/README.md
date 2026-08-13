@@ -35,3 +35,12 @@ The V2 experiment-result schema also adds stage-level usage and cost observation
 It distinguishes provider-reported or snapshot-estimated cost from unavailable
 pricing and genuine local zero-cost execution; unavailable values are never
 silently represented as zero.
+
+Version `v3` defines the schema and taxonomy foundation for the staged immutable
+Benchmark V3 release. Its taxonomy owns exact domain, intrinsic-slice and
+evaluation-facet identifiers and their permitted case, variant or document
+scope. Calibration population specifications may require those identifiers but
+must not create a private vocabulary. V3 does not mutate or supersede V2 run
+artefacts; each benchmark release remains bound to its original contract. The
+current case-free `FOUNDATION` release binds the retained V2 source catalogue
+and dedicated catalogue review before case authoring begins.

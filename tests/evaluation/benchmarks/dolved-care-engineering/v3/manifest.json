@@ -1,0 +1,31 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "status": "FOUNDATION",
+  "evaluation_clock": "2026-08-01T12:00:00Z",
+  "canonical_source_format": "text/markdown",
+  "parent_release": {
+    "benchmark_id": "dolved-care-engineering",
+    "corpus_version": "2",
+    "benchmark_digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d"
+  },
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "paths": {
+    "taxonomy": "taxonomy/v1.json",
+    "organisation": "organisation.json",
+    "document_catalog": "document-catalog.json",
+    "catalogue_review": "reviews/catalogue-review-v1.json",
+    "release_lineage": "lineage/v2-to-v3.json",
+    "source_checksums": "compiled/source-checksums.json"
+  },
+  "authored_counts": {
+    "document_families": 71,
+    "document_versions": 93,
+    "semantic_cases": 0
+  }
+}

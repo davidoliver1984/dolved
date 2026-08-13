@@ -189,6 +189,7 @@ telemetry-outage:
 
 EVALUATION_CORPUS_VERSION ?= v2
 EVALUATION_BENCHMARK_VERSION ?= v2
+EVALUATION_CONTRACT_VERSION ?= v2
 
 evaluation-benchmark-sync:
 	$(COMPOSE) run --rm --no-deps \
@@ -205,7 +206,8 @@ evaluation-benchmark-compile:
 		--workdir /workspace \
 		ai python scripts/evaluation/compile_engineering_benchmark.py \
 			--benchmark-root tests/evaluation/benchmarks/dolved-care-engineering/$(EVALUATION_BENCHMARK_VERSION) \
-			--contract-root contracts/evaluation/v2
+			--contract-root contracts/evaluation/$(EVALUATION_CONTRACT_VERSION) \
+			--contract-version $(EVALUATION_CONTRACT_VERSION)
 
 evaluation-exp-0003:
 	$(COMPOSE) exec api php artisan evaluation:benchmark:run-exp-0003 \

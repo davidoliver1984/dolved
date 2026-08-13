@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v3/benchmark-catalogue-review.schema.json",
+  "title": "Benchmark V3 catalogue review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "review_id", "review_version", "benchmark_id", "corpus_version", "taxonomy", "parent_benchmark_digest", "organisation_sha256", "document_catalog_sha256", "source_digests", "document_family_ids_digest", "document_version_ids_digest", "reviewed_at", "machine_validation", "human_review"],
+  "properties": {
+    "schema_version": {"const": "v3"},
+    "review_id": {"$ref": "#/$defs/identifier"},
+    "review_version": {"type": "string", "minLength": 1},
+    "benchmark_id": {"const": "dolved-care-engineering"},
+    "corpus_version": {"const": "3"},
+    "taxonomy": {"$ref": "benchmark-taxonomy.schema.json#/$defs/taxonomy_reference"},
+    "parent_benchmark_digest": {"$ref": "#/$defs/sha256"},
+    "organisation_sha256": {"$ref": "#/$defs/sha256"},
+    "document_catalog_sha256": {"$ref": "#/$defs/sha256"},
+    "source_digests": {"type": "object", "propertyNames": {"type": "string", "minLength": 1}, "additionalProperties": {"$ref": "#/$defs/sha256"}},
+    "document_family_ids_digest": {"$ref": "#/$defs/sha256"},
+    "document_version_ids_digest": {"$ref": "#/$defs/sha256"},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "machine_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["validator_id", "validator_version", "passed"],
+      "properties": {
+        "validator_id": {"const": "benchmark-v3-compiler"},
+        "validator_version": {"const": "1"},
+        "passed": {"const": true}
+      }
+    },
+    "human_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_identities_reviewed", "source_lineage_reviewed", "governance_reviewed", "applicability_reviewed", "relationships_reviewed", "approved"],
+      "properties": {
+        "document_identities_reviewed": {"type": "boolean"},
+        "source_lineage_reviewed": {"type": "boolean"},
+        "governance_reviewed": {"type": "boolean"},
+        "applicability_reviewed": {"type": "boolean"},
+        "relationships_reviewed": {"type": "boolean"},
+        "approved": {"type": "boolean"}
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

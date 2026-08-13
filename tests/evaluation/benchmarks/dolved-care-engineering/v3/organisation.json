@@ -1,0 +1,49 @@
+{
+  "schema_version": "v2",
+  "benchmark_id": "dolved-care-engineering",
+  "organisation": {
+    "organisation_id": "org.alderbridge-care-group",
+    "name": "Alderbridge Care Group",
+    "description": "A deliberately fictional medium-sized UK provider of residential and community care employing approximately 900 people.",
+    "fictional": true
+  },
+  "evaluation_clock": "2026-08-01T12:00:00Z",
+  "locations": [
+    {"location_id": "location.region.north-west", "name": "North West Region", "kind": "REGION", "parent_location_id": null},
+    {"location_id": "location.riverside-house", "name": "Riverside House", "kind": "CARE_HOME", "parent_location_id": "location.region.north-west"},
+    {"location_id": "location.moorland-view", "name": "Moorland View", "kind": "CARE_HOME", "parent_location_id": "location.region.north-west"},
+    {"location_id": "location.region.midlands", "name": "Midlands Region", "kind": "REGION", "parent_location_id": null},
+    {"location_id": "location.oakfield-lodge", "name": "Oakfield Lodge", "kind": "CARE_HOME", "parent_location_id": "location.region.midlands"},
+    {"location_id": "location.willow-bank", "name": "Willow Bank Community Service", "kind": "COMMUNITY_SERVICE", "parent_location_id": "location.region.midlands"},
+    {"location_id": "location.region.south-west", "name": "South West Region", "kind": "REGION", "parent_location_id": null},
+    {"location_id": "location.harbour-view", "name": "Harbour View", "kind": "CARE_HOME", "parent_location_id": "location.region.south-west"},
+    {"location_id": "location.meadow-court", "name": "Meadow Court", "kind": "CARE_HOME", "parent_location_id": "location.region.south-west"},
+    {"location_id": "location.central-support-office", "name": "Central Support Office", "kind": "OFFICE", "parent_location_id": null}
+  ],
+  "aliases": [
+    {"alias": "HQ", "location_ids": ["location.central-support-office"]},
+    {"alias": "head office", "location_ids": ["location.central-support-office"]},
+    {"alias": "Manchester home", "location_ids": ["location.riverside-house"]},
+    {"alias": "Preston home", "location_ids": ["location.moorland-view"]},
+    {"alias": "Birmingham home", "location_ids": ["location.oakfield-lodge"]},
+    {"alias": "Coventry community team", "location_ids": ["location.willow-bank"]},
+    {"alias": "Bristol home", "location_ids": ["location.harbour-view"]},
+    {"alias": "Bristol", "location_ids": ["location.harbour-view"]},
+    {"alias": "Exeter home", "location_ids": ["location.meadow-court"]},
+    {"alias": "the home", "location_ids": ["location.riverside-house", "location.moorland-view", "location.oakfield-lodge", "location.harbour-view", "location.meadow-court"]}
+  ],
+  "terminology": [
+    {"term": "MAR", "meaning": "Medication Administration Record", "aliases": ["medication chart", "drug chart"]},
+    {"term": "PRN", "meaning": "Medication prescribed to be given when required", "aliases": ["when required medicine", "as needed medicine"]},
+    {"term": "MCA", "meaning": "Mental Capacity Act", "aliases": ["capacity assessment"]},
+    {"term": "DoLS", "meaning": "Deprivation of Liberty Safeguards", "aliases": ["liberty safeguards"]},
+    {"term": "PPE", "meaning": "Personal protective equipment", "aliases": ["protective equipment"]},
+    {"term": "COSHH", "meaning": "Control of Substances Hazardous to Health", "aliases": ["hazardous substances"]},
+    {"term": "RIDDOR", "meaning": "Reporting of Injuries, Diseases and Dangerous Occurrences Regulations", "aliases": ["reportable incident"]},
+    {"term": "DBS", "meaning": "Disclosure and Barring Service", "aliases": ["criminal record check"]},
+    {"term": "SAR", "meaning": "Subject access request", "aliases": ["data access request"]},
+    {"term": "IPC", "meaning": "Infection prevention and control", "aliases": ["infection control"]},
+    {"term": "registered manager", "meaning": "The person registered to manage a regulated care service", "aliases": ["home manager", "service manager"]},
+    {"term": "person supported", "meaning": "A person receiving care or support from Alderbridge", "aliases": ["resident", "service user", "client"]}
+  ]
+}
