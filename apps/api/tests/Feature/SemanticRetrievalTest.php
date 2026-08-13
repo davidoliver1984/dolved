@@ -147,6 +147,16 @@ class SemanticRetrievalTest extends TestCase
             $this->lineage(),
             $this->plannerUsage(),
         ), $evaluatedAt);
+        $month = $resolver->handle($scope, new RetrievalPlan(
+            'Question',
+            RetrievalTemporalMode::ValidAtDate,
+            null,
+            ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => 'January 2025'],
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+        ), $evaluatedAt);
         $version = $resolver->handle($scope, new RetrievalPlan(
             'Question',
             RetrievalTemporalMode::HistoricalReference,
@@ -248,6 +258,7 @@ class SemanticRetrievalTest extends TestCase
         ), $evaluatedAt);
 
         $this->assertSame([$first->public_id], $period->documentPublicIdsBySide['primary']);
+        $this->assertSame([$first->public_id], $month->documentPublicIdsBySide['primary']);
         $this->assertSame([$first->public_id], $version->documentPublicIdsBySide['primary']);
         $this->assertSame([$second->public_id], $secondVersion->documentPublicIdsBySide['primary']);
         $this->assertSame([$first->public_id], $old->documentPublicIdsBySide['primary']);
@@ -261,6 +272,146 @@ class SemanticRetrievalTest extends TestCase
             $this->assertSame([$second->public_id], $comparison->documentPublicIdsBySide['primary']);
             $this->assertSame([$first->public_id], $comparison->documentPublicIdsBySide['comparison']);
         }
+    }
+
+    public function test_period_ambiguity_is_scoped_to_each_family_across_top_level_and_compare_resolution(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $valid = $this->eligibleDocument($workspace, $generation, '2023-01-01', '2023-01-01');
+        [$firstAmbiguousRoot, $firstAmbiguousSuccessor] = $this->transitioningFamily(
+            $workspace,
+            $generation,
+            '2024-04-01',
+        );
+        [$secondAmbiguousRoot, $secondAmbiguousSuccessor] = $this->transitioningFamily(
+            $workspace,
+            $generation,
+            '2024-09-01',
+        );
+        $foreignWorkspace = Workspace::factory()->create();
+        $foreign = Document::factory()->indexed()->approved()->create([
+            'workspace_id' => $foreignWorkspace->id,
+            'effective_from' => CarbonImmutable::parse('2023-01-01'),
+            'approved_at' => CarbonImmutable::parse('2023-01-01'),
+        ]);
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+        $resolver = app(EligibilityResolver::class);
+        $periodReference = [
+            'kind' => RetrievalTemporalReferenceKind::CalendarPeriod,
+            'value' => '2024',
+        ];
+
+        $period = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::ValidAtDate, null, $periodReference,
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), CarbonImmutable::parse('2026-08-01'));
+        $comparison = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Compare, null, $periodReference,
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), CarbonImmutable::parse('2026-08-01'));
+
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $period->outcome);
+        $this->assertSame([$valid->public_id], $period->documentPublicIdsBySide['primary']);
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $comparison->outcome);
+        $this->assertSame([$valid->public_id], $comparison->documentPublicIdsBySide['comparison']);
+        $this->assertEqualsCanonicalizing([
+            $valid->public_id,
+            $firstAmbiguousSuccessor->public_id,
+            $secondAmbiguousSuccessor->public_id,
+        ], $comparison->documentPublicIdsBySide['primary']);
+        foreach ([
+            $firstAmbiguousRoot,
+            $firstAmbiguousSuccessor,
+            $secondAmbiguousRoot,
+            $secondAmbiguousSuccessor,
+            $foreign,
+        ] as $ineligible) {
+            $this->assertNotContains($ineligible->public_id, $period->documentPublicIdsBySide['primary']);
+            $this->assertNotContains($ineligible->public_id, $comparison->documentPublicIdsBySide['comparison']);
+        }
+    }
+
+    public function test_all_ambiguous_period_families_preserve_the_controlled_clarification_outcome(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $this->transitioningFamily($workspace, $generation, '2024-04-01');
+        $this->transitioningFamily($workspace, $generation, '2024-09-01');
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+
+        $result = app(EligibilityResolver::class)->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::ValidAtDate, null,
+            ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => '2024'],
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), CarbonImmutable::parse('2026-08-01'));
+
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+        $this->assertSame('ambiguous_authority_window_for_period', $result->reason);
+        $this->assertSame([], $result->documentPublicIdsBySide);
+    }
+
+    public function test_historical_ambiguity_is_scoped_to_each_family_without_resurrecting_withdrawn_versions(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $valid = Document::factory()->indexed()->withdrawn()->create([
+            'workspace_id' => $workspace->id,
+            'effective_from' => CarbonImmutable::parse('2023-01-01'),
+            'approved_at' => CarbonImmutable::parse('2023-01-01'),
+            'withdrawn_at' => CarbonImmutable::parse('2024-01-01'),
+        ]);
+        $this->assignChunk($valid, $generation);
+        $ambiguousRoot = Document::factory()->indexed()->withdrawn()->create([
+            'workspace_id' => $workspace->id,
+            'effective_from' => CarbonImmutable::parse('2022-01-01'),
+            'approved_at' => CarbonImmutable::parse('2022-01-01'),
+            'withdrawn_at' => CarbonImmutable::parse('2023-01-01'),
+        ]);
+        $this->assignChunk($ambiguousRoot, $generation);
+        $ambiguousSuccessor = Document::factory()->indexed()->withdrawn()->create([
+            'workspace_id' => $workspace->id,
+            'document_family_id' => $ambiguousRoot->document_family_id,
+            'predecessor_document_id' => $ambiguousRoot->id,
+            'effective_from' => CarbonImmutable::parse('2024-01-01'),
+            'approved_at' => CarbonImmutable::parse('2024-01-01'),
+            'withdrawn_at' => CarbonImmutable::parse('2025-01-01'),
+        ]);
+        $this->assignChunk($ambiguousSuccessor, $generation);
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+        $resolver = app(EligibilityResolver::class);
+        $evaluatedAt = CarbonImmutable::parse('2026-08-01');
+
+        $historical = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::HistoricalReference, null,
+            ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => 'before withdrawal'],
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+        $current = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $historical->outcome);
+        $this->assertSame([$valid->public_id], $historical->documentPublicIdsBySide['primary']);
+        $this->assertNotContains($ambiguousRoot->public_id, $historical->documentPublicIdsBySide['primary']);
+        $this->assertNotContains($ambiguousSuccessor->public_id, $historical->documentPublicIdsBySide['primary']);
+        $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $current->outcome);
+        $this->assertSame([], $current->documentPublicIdsBySide);
+    }
+
+    public function test_empty_period_resolution_remains_no_eligible_evidence(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $future = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-01');
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+
+        $result = app(EligibilityResolver::class)->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::ValidAtDate, null,
+            ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => '2024'],
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), CarbonImmutable::parse('2026-08-01'));
+
+        $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $result->outcome);
+        $this->assertSame([], $result->documentPublicIdsBySide);
+        $this->assertNotContains($future->public_id, $result->documentPublicIdsBySide['primary'] ?? []);
     }
 
     public function test_plural_location_references_select_descendant_and_fail_closed_for_unrelated_sites(): void
@@ -1271,6 +1422,25 @@ class SemanticRetrievalTest extends TestCase
         $this->assignChunk($document, $generation);
 
         return $document->fresh(['family', 'applicabilitySnapshot.locations']);
+    }
+
+    /** @return array{Document, Document} */
+    private function transitioningFamily(
+        Workspace $workspace,
+        WorkspaceCorpusGeneration $generation,
+        string $transitionAt,
+    ): array {
+        $root = $this->eligibleDocument($workspace, $generation, '2023-01-01', '2023-01-01');
+        $successor = Document::factory()->indexed()->approved()->create([
+            'workspace_id' => $workspace->id,
+            'document_family_id' => $root->document_family_id,
+            'predecessor_document_id' => $root->id,
+            'effective_from' => CarbonImmutable::parse($transitionAt),
+            'approved_at' => CarbonImmutable::parse($transitionAt),
+        ]);
+        $this->assignChunk($successor, $generation);
+
+        return [$root, $successor];
     }
 
     private function assignChunk(Document $document, WorkspaceCorpusGeneration $generation): DocumentChunk

@@ -164,27 +164,27 @@ final readonly class EligibilityResolver
     private function resolveEach(Collection $families, callable $resolver): Collection|EligibilityClarificationReason
     {
         $documents = collect();
-        $unresolved = null;
+        $nonContributingReason = null;
         foreach ($families as $family) {
             $resolution = $resolver($family);
             if ($resolution->reason !== null) {
-                if (in_array($resolution->reason, [
-                    EligibilityClarificationReason::UnresolvableTemporalPeriod,
-                    EligibilityClarificationReason::HistoricalReferenceUnresolved,
+                if ($nonContributingReason === null || in_array($resolution->reason, [
+                    EligibilityClarificationReason::AmbiguousAuthorityWindowForPeriod,
+                    EligibilityClarificationReason::AmbiguousHistoricalReference,
                 ], true)) {
-                    $unresolved = $resolution->reason;
-
-                    continue;
+                    $nonContributingReason = $resolution->reason;
                 }
 
-                return $resolution->reason;
+                continue;
             }
             if ($resolution->document !== null) {
                 $documents->push($resolution->document);
             }
         }
 
-        return $documents->isEmpty() && $unresolved !== null ? $unresolved : $documents;
+        return $documents->isEmpty() && $nonContributingReason !== null
+            ? $nonContributingReason
+            : $documents;
     }
 
     /**
