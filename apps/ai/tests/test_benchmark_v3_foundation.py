@@ -17,31 +17,52 @@ def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text())
 
 
-def test_repository_v3_foundation_is_case_free_and_compiles(tmp_path: Path) -> None:
+def test_repository_v3_first_domain_authoring_batch_compiles(tmp_path: Path) -> None:
     manifest = load_json(V3_ROOT / "manifest.json")
-    assert manifest["status"] == "FOUNDATION"
+    assert manifest["status"] == "AUTHORING"
     assert manifest["authored_counts"] == {
         "document_families": 71,
         "document_versions": 93,
-        "semantic_cases": 0,
+        "semantic_cases": 45,
     }
-    assert not (V3_ROOT / "cases").exists()
+    case_sources = [
+        load_json(path) for path in sorted((V3_ROOT / "cases").glob("*.json"))
+    ]
+    cases = [case for source in case_sources for case in source["cases"]]
+    reviews = list((V3_ROOT / "reviews/cases").glob("*.json"))
+    assert {source["domain"] for source in case_sources} == {
+        "complaints",
+        "fire-safety",
+        "gdpr",
+        "health-safety",
+        "hr",
+        "infection-control",
+        "medication",
+        "payroll",
+        "safeguarding",
+        "training",
+        "visitors",
+    }
+    assert len(cases) == 45
+    assert len(reviews) == 45
+    assert all(case["authoring_status"] == "REVIEWED" for case in cases)
     assert not (V3_ROOT / "splits").exists()
     assert not (V3_ROOT / "compiled/corpus.json").exists()
     assert not (V3_ROOT / "compiled/authority-windows.json").exists()
     assert not (V3_ROOT / "compiled/split-identities.json").exists()
     assert not (V3_ROOT / "compiled/checksums.json").exists()
 
-    temporary_foundation = tmp_path / "v3"
-    shutil.copytree(V3_ROOT, temporary_foundation)
-    before = (temporary_foundation / "compiled/source-checksums.json").read_bytes()
+    temporary_authoring = tmp_path / "v3"
+    shutil.copytree(V3_ROOT, temporary_authoring)
+    before = (temporary_authoring / "compiled/source-checksums.json").read_bytes()
     compile_benchmark(
-        temporary_foundation,
+        temporary_authoring,
         CONTRACT_ROOT,
         parent_benchmark_root=V2_ROOT,
     )
-    after = (temporary_foundation / "compiled/source-checksums.json").read_bytes()
+    after = (temporary_authoring / "compiled/source-checksums.json").read_bytes()
     assert after == before
+    assert not (temporary_authoring / "compiled/corpus.json").exists()
 
 
 def test_v3_retains_v2_organisation_and_sources_byte_for_byte() -> None:
@@ -92,7 +113,8 @@ def test_v3_catalogue_review_and_lineage_bind_every_source() -> None:
     assert source_checksums["source_digests"] == expected_sources
     assert review["document_family_ids_digest"] == content_digest(sorted(families))
     assert review["document_version_ids_digest"] == content_digest(sorted(versions))
-    assert len(lineage["case_changes"]) == 0
+    assert len(lineage["case_changes"]) == 45
+    assert {change["classification"] for change in lineage["case_changes"]} == {"NEW"}
     assert len(lineage["document_changes"]) == 93
     assert {change["classification"] for change in lineage["document_changes"]} == {
         "METADATA_ENRICHED"

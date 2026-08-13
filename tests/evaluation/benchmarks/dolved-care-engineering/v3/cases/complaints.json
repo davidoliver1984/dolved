@@ -1,0 +1,521 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-calibration-complaints",
+  "authoring_batch_version": "1",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "domain": "complaints",
+  "cases": [
+    {
+      "case_id": "v3.complaints.current.handling-deadlines",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.complaints.current.handling-deadlines",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.complaints.handling"
+      ],
+      "domain": "complaints",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "What are the current acknowledgement and written-outcome timescales for a complaint?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How quickly do we acknowledge and answer a complaint now?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "State both live complaint-handling deadlines.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "adversarial",
+        "temporal-authority",
+        "multi-evidence"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "conflicting-guidance",
+        "near-duplicate-wrong",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.complaints.handling",
+          "document_version_id": "doc.complaints.handling.v1",
+          "source_path": "documents/complaints/handling-v1.md",
+          "source_sha256": "03cce40d44fc007bffdb93f558349c0293a6c58a8956dfc08589ead38a4a869c",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        },
+        {
+          "document_family_id": "family.complaints.handling",
+          "document_version_id": "doc.complaints.handling.v2",
+          "source_path": "documents/complaints/handling-v2.md",
+          "source_sha256": "2c1ff87df715203920ba962d461306c98a2219569fd3d56ae7830aa8e9f24572",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.complaints.current.handling-deadlines.primary.191",
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/complaints/handling-v2.md",
+            "canonical_excerpts": [
+              "Staff acknowledge a complaint within two working days. The investigating manager agrees a response plan with the complainant and aims to issue the written outcome within fifteen working days."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current timescales",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.complaints.compare.handling-timescales",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.complaints.compare.handling-timescales",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.complaints.handling"
+      ],
+      "domain": "complaints",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Compare current complaint timescales with version 1.",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How did the old complaint deadlines change?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Compare today's acknowledgement and outcome deadlines with the first version.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "COMPARE",
+        "temporal-authority",
+        "multi-evidence"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-explicit",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.complaints.handling",
+          "document_version_id": "doc.complaints.handling.v1",
+          "source_path": "documents/complaints/handling-v1.md",
+          "source_sha256": "03cce40d44fc007bffdb93f558349c0293a6c58a8956dfc08589ead38a4a869c",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.complaints.handling",
+          "document_version_id": "doc.complaints.handling.v2",
+          "source_path": "documents/complaints/handling-v2.md",
+          "source_sha256": "2c1ff87df715203920ba962d461306c98a2219569fd3d56ae7830aa8e9f24572",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v1",
+            "side": "COMPARISON",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.complaints.compare.handling-timescales.primary.191",
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/complaints/handling-v2.md",
+            "canonical_excerpts": [
+              "Staff acknowledge a complaint within two working days. The investigating manager agrees a response plan with the complainant and aims to issue the written outcome within fifteen working days."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current timescales",
+            "notes": "Source-anchored calibration evidence."
+          },
+          {
+            "evidence_id": "evidence.v3.complaints.compare.handling-timescales.comparison.179",
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v1",
+            "side": "COMPARISON",
+            "source_path": "documents/complaints/handling-v1.md",
+            "canonical_excerpts": [
+              "Staff acknowledge a complaint within three working days. The investigating manager aims to issue the written outcome within twenty working days and explains any unavoidable delay."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 timescales",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY",
+          "COMPARISON"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.complaints.historical.handling-v1",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.complaints.historical.handling-v1",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.complaints.handling"
+      ],
+      "domain": "complaints",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "What acknowledgement deadline did complaint policy version 1 require?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How quickly did the previous complaint policy acknowledge concerns?",
+          "evaluation_facets": [
+            "colloquial"
+          ],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "previous version"
+            }
+          }
+        },
+        {
+          "variant_id": "precision",
+          "question": "Under the first complaint version, when was acknowledgement due?",
+          "evaluation_facets": [],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "first version"
+            }
+          }
+        }
+      ],
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-explicit",
+        "historical-previous"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.complaints.handling",
+          "document_version_id": "doc.complaints.handling.v1",
+          "source_path": "documents/complaints/handling-v1.md",
+          "source_sha256": "03cce40d44fc007bffdb93f558349c0293a6c58a8956dfc08589ead38a4a869c",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.complaints.handling",
+          "document_version_id": "doc.complaints.handling.v2",
+          "source_path": "documents/complaints/handling-v2.md",
+          "source_sha256": "2c1ff87df715203920ba962d461306c98a2219569fd3d56ae7830aa8e9f24572",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "HISTORICAL_REFERENCE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "reason": "OUTSIDE_REQUESTED_TEMPORAL_SCOPE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.complaints.historical.handling-v1.primary.56",
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/complaints/handling-v1.md",
+            "canonical_excerpts": [
+              "Staff acknowledge a complaint within three working days."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 acknowledgement",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.complaints.compare.response-plan-incomplete",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.complaints.compare.response-plan-incomplete",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.complaints.handling"
+      ],
+      "domain": "complaints",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Compare the current requirement to agree a response plan with version 1.",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "Did both old and current complaint policies require an agreed response plan?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Compare response-plan duties now and in version 1.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "COMPARE",
+        "zero-evidence",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "compare-comparison-empty",
+        "changed-instruction",
+        "no-trustworthy-candidate"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.complaints.handling",
+          "document_version_id": "doc.complaints.handling.v1",
+          "source_path": "documents/complaints/handling-v1.md",
+          "source_sha256": "03cce40d44fc007bffdb93f558349c0293a6c58a8956dfc08589ead38a4a869c",
+          "purpose": "CONTROLLED_REJECTION"
+        },
+        {
+          "document_family_id": "family.complaints.handling",
+          "document_version_id": "doc.complaints.handling.v2",
+          "source_path": "documents/complaints/handling-v2.md",
+          "source_sha256": "2c1ff87df715203920ba962d461306c98a2219569fd3d56ae7830aa8e9f24572",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v1",
+            "side": "COMPARISON",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.complaints.compare.response-plan-incomplete.primary.136",
+            "document_family_id": "family.complaints.handling",
+            "document_version_id": "doc.complaints.handling.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/complaints/handling-v2.md",
+            "canonical_excerpts": [
+              "The investigating manager agrees a response plan with the complainant and aims to issue the written outcome within fifteen working days."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current response plan",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "COMPARISON_SCOPE_INCOMPLETE",
+        "controlled_rejection_rationale": "The current policy has response-plan evidence, but version 1 has no corresponding comparison-side requirement."
+      },
+      "threshold_observability": {
+        "classification": "THRESHOLD_SENSITIVE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY",
+          "COMPARISON"
+        ],
+        "justification": "The current policy has response-plan evidence, but version 1 has no corresponding comparison-side requirement."
+      }
+    }
+  ]
+}

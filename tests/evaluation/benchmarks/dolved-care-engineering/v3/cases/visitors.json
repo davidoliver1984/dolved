@@ -1,0 +1,475 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-calibration-visitors",
+  "authoring_batch_version": "1",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "domain": "visitors",
+  "cases": [
+    {
+      "case_id": "v3.visitors.current.sign-in",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.visitors.current.sign-in",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.visitors.general",
+        "leakage.family.visitors.search-optimised-draft"
+      ],
+      "domain": "visitors",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "What must visitors do when they arrive and leave?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "What do visitors need to do at reception and when going home?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "State the authorised visitor sign-in, badge and sign-out duties.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "adversarial",
+        "never-authoritative",
+        "temporal-authority",
+        "multi-evidence"
+      ],
+      "evaluation_facets": [
+        "keyword-stuffing",
+        "negative-instruction",
+        "never-authoritative",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.visitors.general",
+          "document_version_id": "doc.visitors.general.v1",
+          "source_path": "documents/visitors/visitors-contractors.md",
+          "source_sha256": "70d61dedbfb1ab74f308ab11944f0a8ba02e7c20dd0624444318ce7bfba93dfd",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.visitors.search-optimised-draft",
+          "document_version_id": "doc.visitors.search-optimised-draft.v1",
+          "source_path": "documents/visitors/search-optimised-unapproved-draft.md",
+          "source_sha256": "441bf10e4a5c872792ece92e3f679fb814ac7e851ef627dc1d4776186425ee41",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.visitors.general",
+            "document_version_id": "doc.visitors.general.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.visitors.search-optimised-draft",
+            "document_version_id": "doc.visitors.search-optimised-draft.v1",
+            "reason": "NEVER_ATTAINED_AUTHORITY"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.visitors.current.sign-in.primary.73",
+            "document_family_id": "family.visitors.general",
+            "document_version_id": "doc.visitors.general.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/visitors/visitors-contractors.md",
+            "canonical_excerpts": [
+              "All visitors must sign in at reception and wear the issued visitor badge."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Arrival",
+            "notes": "Source-anchored calibration evidence."
+          },
+          {
+            "evidence_id": "evidence.v3.visitors.current.sign-in.primary.78",
+            "document_family_id": "family.visitors.general",
+            "document_version_id": "doc.visitors.general.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/visitors/visitors-contractors.md",
+            "canonical_excerpts": [
+              "Visitors sign out, return their badge and notify reception if their host is no"
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Departure",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.visitors.compare.outbreak-restrictions",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.visitors.compare.outbreak-restrictions",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.visitors.outbreak-restrictions"
+      ],
+      "domain": "visitors",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Compare current outbreak visiting rules with version 1.",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How did visiting during an outbreak change from the old rule?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Compare today's outbreak visitors procedure with the first version.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "COMPARE",
+        "temporal-authority",
+        "multi-evidence"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "conflicting-guidance",
+        "historical-explicit",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.visitors.outbreak-restrictions",
+          "document_version_id": "doc.visitors.outbreak-restrictions.v1",
+          "source_path": "documents/visitors/outbreak-restrictions-v1.md",
+          "source_sha256": "83227741c4e313e79d89a4160da6726d6a60444f4f09b0e04979fec0c40e66dc",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.visitors.outbreak-restrictions",
+          "document_version_id": "doc.visitors.outbreak-restrictions.v2",
+          "source_path": "documents/visitors/outbreak-restrictions-v2.md",
+          "source_sha256": "1bc3c57186d854d20f9788d415dd6d0e58fadd6f90e13d5b4ccb6a2eae6248e2",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.visitors.outbreak-restrictions",
+            "document_version_id": "doc.visitors.outbreak-restrictions.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.visitors.outbreak-restrictions",
+            "document_version_id": "doc.visitors.outbreak-restrictions.v1",
+            "side": "COMPARISON",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.visitors.compare.outbreak-restrictions.primary.184",
+            "document_family_id": "family.visitors.outbreak-restrictions",
+            "document_version_id": "doc.visitors.outbreak-restrictions.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/visitors/outbreak-restrictions-v2.md",
+            "canonical_excerpts": [
+              "During a declared outbreak, each resident may continue to receive one nominated essential visitor unless an individual risk assessment identifies a specific reason to pause that visit."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current visiting",
+            "notes": "Source-anchored calibration evidence."
+          },
+          {
+            "evidence_id": "evidence.v3.visitors.compare.outbreak-restrictions.comparison.80",
+            "document_family_id": "family.visitors.outbreak-restrictions",
+            "document_version_id": "doc.visitors.outbreak-restrictions.v1",
+            "side": "COMPARISON",
+            "source_path": "documents/visitors/outbreak-restrictions-v1.md",
+            "canonical_excerpts": [
+              "During a declared outbreak, routine indoor visiting is paused for all residents."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 visiting",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY",
+          "COMPARISON"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.visitors.insufficient.badge-return-minutes",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.visitors.insufficient.badge-return-minutes",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.visitors.general"
+      ],
+      "domain": "visitors",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Exactly how many minutes after departure may a visitor keep their badge?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "What's the fixed grace period for returning a visitor badge?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Give the mandatory badge-return duration in minutes.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "zero-evidence"
+      ],
+      "evaluation_facets": [
+        "no-trustworthy-candidate",
+        "numeric-boundary",
+        "universal"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.visitors.general",
+          "document_version_id": "doc.visitors.general.v1",
+          "source_path": "documents/visitors/visitors-contractors.md",
+          "source_sha256": "70d61dedbfb1ab74f308ab11944f0a8ba02e7c20dd0624444318ce7bfba93dfd",
+          "purpose": "CONTROLLED_REJECTION"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.visitors.general",
+            "document_version_id": "doc.visitors.general.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": []
+      },
+      "outcome_expectation": {
+        "outcome": "INSUFFICIENT_EVIDENCE",
+        "controlled_rejection_rationale": "The procedure requires badge return on departure but states no grace period in minutes."
+      },
+      "threshold_observability": {
+        "classification": "THRESHOLD_SENSITIVE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "The procedure requires badge return on departure but states no grace period in minutes."
+      }
+    },
+    {
+      "case_id": "v3.visitors.current.bristol-contractor",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.visitors.current.bristol-contractor",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.visitors.general"
+      ],
+      "domain": "visitors",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "At Bristol home, what extra identity and supervision steps apply to a contractor?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "What does a contractor need at our Bristol home?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "State the contractor-specific arrival controls for Harbour View.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "location-alias"
+      ],
+      "evaluation_facets": [
+        "alias-colloquial",
+        "universal"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.visitors.general",
+          "document_version_id": "doc.visitors.general.v1",
+          "source_path": "documents/visitors/visitors-contractors.md",
+          "source_sha256": "70d61dedbfb1ab74f308ab11944f0a8ba02e7c20dd0624444318ce7bfba93dfd",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [
+          "Bristol home"
+        ],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.visitors.general",
+            "document_version_id": "doc.visitors.general.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": "location.harbour-view"
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.visitors.current.bristol-contractor.primary.81",
+            "document_family_id": "family.visitors.general",
+            "document_version_id": "doc.visitors.general.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/visitors/visitors-contractors.md",
+            "canonical_excerpts": [
+              "A contractor must additionally show photographic identification and be met by the"
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Arrival and identity",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    }
+  ]
+}

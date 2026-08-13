@@ -65,17 +65,24 @@ default. The V3 implementation validates exact taxonomy bindings, source and
 split identity digests, semantic/leakage boundaries and complete V2-to-V3
 lineage. It does not create cases or decide split membership.
 
-The repository-owned V3 release currently remains at `FOUNDATION`. It retains
+The repository-owned V3 release is currently in `AUTHORING`. It retains
 the V2 organisation and 93 canonical Markdown sources byte-for-byte, while its
 71-family catalogue adds V3 source digests, document-scoped taxonomy facets,
-relationship identities and leakage lineage. Its catalogue review and source
-checksums are present; semantic cases, splits and final compiled artefacts are
-intentionally absent until later lifecycle stages.
+relationship identities and leakage lineage. Its catalogue review, source
+checksums and 45 reviewed cases across 11 domains are present; benchmark-level
+split assignments and final compiled artefacts remain intentionally absent
+until later lifecycle stages.
 
 V3 case authoring uses domain-bound case-source envelopes and individual,
 digest-bound case review records. The compiler validates taxonomy scope,
 identity uniqueness, catalogue/source lineage, EvidenceUnit anchors, temporal
 and applicability expectations, controlled outcomes and review evidence using
-provider-free checks. These contracts prepare the `AUTHORING` lifecycle only;
-the repository V3 release remains case-free at `FOUNDATION` until a separately
-reviewed authoring batch is approved.
+provider-free checks. Shared planner expectations may have bounded per-variant
+wording overrides. Human review confirms question/EvidenceUnit scope equality,
+atomic obligations and genuinely load-bearing multi-document evidence.
+
+The frozen Benchmark V3 calibration population is compiled provider-free with
+`scripts/evaluation/compile_v3_calibration_population.py`. Its 44 cases are a
+purpose-specific population projection, not a benchmark-level split release.
+Composition compatibility is evaluated before any provider call; execution
+compatibility remains a separate post-run gate.

@@ -1,0 +1,138 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-first-domain-safeguarding",
+  "authoring_batch_version": "1",
+  "taxonomy": {"taxonomy_id": "dolved-care-engineering-taxonomy", "taxonomy_version": "1", "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"},
+  "domain": "safeguarding",
+  "cases": [
+    {
+      "case_id": "v3.safeguarding.current.staff-allegation",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.safeguarding.staff-allegations",
+      "cluster_rationale": "Current and comparison questions about changed staff-allegation escalation must remain together.",
+      "leakage_group_ids": ["leakage.family.safeguarding.allegations-staff"],
+      "domain": "safeguarding",
+      "variants": [
+        {"variant_id": "direct", "question": "At the Birmingham home, when must HR currently be informed about an allegation against a staff member?", "evaluation_facets": ["abbreviation", "alias-colloquial"]},
+        {"variant_id": "colloquial", "question": "At the Birmingham home, how quickly do we tell HR now if someone reports a member of staff?", "evaluation_facets": ["abbreviation", "alias-colloquial", "colloquial"]},
+        {"variant_id": "location-alias", "question": "At the Birmingham home, when must HR be told about an allegation against staff?", "evaluation_facets": ["alias-colloquial", "abbreviation"]}
+      ],
+      "slices": ["CURRENT", "applicability", "location-alias", "temporal-authority"],
+      "evaluation_facets": ["alias-colloquial", "changed-instruction", "near-duplicate", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v1", "source_path": "documents/safeguarding/allegations-staff-v1.md", "source_sha256": "966ee4d265c08ab2edcb2cfb3d4a2843bc43c4ebbad52cbc9f2d9e46aacadf56", "purpose": "ELIGIBILITY_CONTEXT"},
+        {"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v2", "source_path": "documents/safeguarding/allegations-staff-v2.md", "source_sha256": "74e8fb3800295c728de50f5c68ff967e996f3bbf95aebf4e3f7c50de4d00358f", "purpose": "EXPECTED_EVIDENCE"}
+      ],
+      "planner_expectation": {"temporal_mode": "CURRENT", "explicit_date": null, "temporal_reference": null, "location_references": ["Birmingham home"], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [{"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": "location.oakfield-lodge"}}],
+        "excluded_versions": [{"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v1", "reason": "HISTORICAL_FOR_CURRENT"}],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [{"evidence_id": "evidence.v3.safeguarding.current.staff-allegation", "document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v2", "side": "PRIMARY", "source_path": "documents/safeguarding/allegations-staff-v2.md", "canonical_excerpts": ["HR must be informed immediately rather than within one working day."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Procedure body", "notes": "Current changed escalation timing."}]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "Current authority and a location alias lead to universally applicable source-anchored evidence."}
+    },
+    {
+      "case_id": "v3.safeguarding.compare.staff-allegation-timing",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.safeguarding.staff-allegations",
+      "cluster_rationale": "Current and comparison questions about changed staff-allegation escalation must remain together.",
+      "leakage_group_ids": ["leakage.family.safeguarding.allegations-staff"],
+      "domain": "safeguarding",
+      "variants": [
+        {"variant_id": "direct", "question": "Compare the current staff-allegations procedure with the previous version for when HR is informed.", "evaluation_facets": ["historical-previous", "abbreviation"]},
+        {"variant_id": "versioned", "question": "How did the HR notification timing change from version 1 to the current procedure?", "evaluation_facets": ["historical-explicit", "abbreviation"], "planner_expectation_override": {"temporal_reference": {"kind": "historical_reference", "value": "version 1"}}},
+        {"variant_id": "colloquial", "question": "Did the deadline for telling HR about a staff allegation change from the old procedure?", "evaluation_facets": ["colloquial", "historical-previous", "abbreviation"], "planner_expectation_override": {"temporal_reference": {"kind": "historical_reference", "value": "old procedure"}}}
+      ],
+      "slices": ["COMPARE", "multi-evidence", "temporal-authority"],
+      "evaluation_facets": ["changed-instruction", "historical-previous", "near-duplicate", "two-evidence-units", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v1", "source_path": "documents/safeguarding/allegations-staff-v1.md", "source_sha256": "966ee4d265c08ab2edcb2cfb3d4a2843bc43c4ebbad52cbc9f2d9e46aacadf56", "purpose": "EXPECTED_EVIDENCE"},
+        {"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v2", "source_path": "documents/safeguarding/allegations-staff-v2.md", "source_sha256": "74e8fb3800295c728de50f5c68ff967e996f3bbf95aebf4e3f7c50de4d00358f", "purpose": "EXPECTED_EVIDENCE"}
+      ],
+      "planner_expectation": {"temporal_mode": "COMPARE", "explicit_date": null, "temporal_reference": null, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}},
+          {"document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v1", "side": "COMPARISON", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [
+        {"evidence_id": "evidence.v3.safeguarding.compare.staff-allegation.current", "document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v2", "side": "PRIMARY", "source_path": "documents/safeguarding/allegations-staff-v2.md", "canonical_excerpts": ["HR must be informed immediately rather than within one working day."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Procedure body", "notes": "Current primary-side timing."},
+        {"evidence_id": "evidence.v3.safeguarding.compare.staff-allegation.previous", "document_family_id": "family.safeguarding.allegations-staff", "document_version_id": "doc.safeguarding.allegations-staff.v1", "side": "COMPARISON", "source_path": "documents/safeguarding/allegations-staff-v1.md", "canonical_excerpts": ["The manager informs HR within one working day"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Procedure body", "notes": "Atomic previous comparison-side timing."}
+      ]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY", "COMPARISON"], "justification": "Both independently hydrated sides are required for a truthful comparison."}
+    },
+    {
+      "case_id": "v3.safeguarding.valid-at-date.adult-reporting",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.safeguarding.adult-reporting-authority",
+      "cluster_rationale": "Historical authority and the never-authoritative proposed successor must remain in one leakage group.",
+      "leakage_group_ids": ["leakage.family.safeguarding.adult-reporting"],
+      "domain": "safeguarding",
+      "variants": [
+        {"variant_id": "exact-date", "question": "On 1 June 2026, when did staff have to report a safeguarding concern?", "evaluation_facets": []},
+        {"variant_id": "historical-wording", "question": "What reporting deadline applied on 1 June 2026 for an adult safeguarding concern?", "evaluation_facets": []},
+        {"variant_id": "colloquial", "question": "Back on 1 June 2026, how quickly did I need to tell someone and write up a safeguarding concern?", "evaluation_facets": ["colloquial"]}
+      ],
+      "slices": ["VALID_AT_DATE", "never-authoritative", "temporal-authority"],
+      "evaluation_facets": ["before-authority-transition", "never-authoritative", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.safeguarding.adult-reporting", "document_version_id": "doc.safeguarding.adult-reporting.v1", "source_path": "documents/safeguarding/adult-reporting-v1.md", "source_sha256": "41c5934872a2a9f9575879937d005730a7c87623ae9027cf96fa8b99735fccf2", "purpose": "EXPECTED_EVIDENCE"},
+        {"document_family_id": "family.safeguarding.adult-reporting", "document_version_id": "doc.safeguarding.adult-reporting.v2", "source_path": "documents/safeguarding/adult-reporting-v2-withdrawn.md", "source_sha256": "3b286913e7669ba7c64412dd1ac915b1f7374f0a4a798ccd12064f1dc17bb048", "purpose": "ELIGIBILITY_CONTEXT"}
+      ],
+      "planner_expectation": {"temporal_mode": "VALID_AT_DATE", "explicit_date": "2026-06-01", "temporal_reference": null, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [{"document_family_id": "family.safeguarding.adult-reporting", "document_version_id": "doc.safeguarding.adult-reporting.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}],
+        "excluded_versions": [{"document_family_id": "family.safeguarding.adult-reporting", "document_version_id": "doc.safeguarding.adult-reporting.v2", "reason": "NEVER_ATTAINED_AUTHORITY"}],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [{"evidence_id": "evidence.v3.safeguarding.valid-at-date.adult-reporting", "document_family_id": "family.safeguarding.adult-reporting", "document_version_id": "doc.safeguarding.adult-reporting.v1", "side": "PRIMARY", "source_path": "documents/safeguarding/adult-reporting-v1.md", "canonical_excerpts": ["Every safeguarding concern must be reported to the shift leader or registered manager immediately and recorded before the staff member finishes the shift."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Reporting", "notes": "Authoritative reporting timing at the requested date."}]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "The exact-date authority is source anchored while a plausible successor is correctly excluded as never authoritative."}
+    },
+    {
+      "case_id": "v3.safeguarding.current.covert-medication-capacity",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.safeguarding.covert-medication-capacity",
+      "cluster_rationale": "Capacity and covert-medication controls are complementary cross-domain evidence for one safeguarding decision.",
+      "leakage_group_ids": ["leakage.family.medication.covert", "leakage.family.safeguarding.mental-capacity"],
+      "domain": "safeguarding",
+      "variants": [
+        {"variant_id": "direct", "question": "What approvals and assessments are required for covert medicine, and what factors must the best-interests record consider?", "evaluation_facets": []},
+        {"variant_id": "colloquial", "question": "Before hiding medicine in food, what has to be agreed and what must the best-interests record take into account?", "evaluation_facets": ["colloquial"]},
+        {"variant_id": "multi-source", "question": "Use the covert medicines policy and capacity procedure to list the required approvals and best-interests considerations.", "evaluation_facets": []}
+      ],
+      "slices": ["CURRENT", "multi-document", "multi-evidence"],
+      "evaluation_facets": ["cross-document-completeness", "long-form", "three-plus-evidence-units", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.medication.covert", "document_version_id": "doc.medication.covert.v1", "source_path": "documents/medication/covert-administration-policy.md", "source_sha256": "f7823fca89244a7d0526d7e7cc30346099f07e545bc08c9e33a982ea67e4a13b", "purpose": "EXPECTED_EVIDENCE"},
+        {"document_family_id": "family.safeguarding.mental-capacity", "document_version_id": "doc.safeguarding.mental-capacity.v1", "source_path": "documents/safeguarding/mental-capacity-procedure.md", "source_sha256": "82c8bac80fe161c7ffdfaceded4e231c0e30ed594bab9e53a48b018d5cecff5f", "purpose": "EXPECTED_EVIDENCE"}
+      ],
+      "planner_expectation": {"temporal_mode": "CURRENT", "explicit_date": null, "temporal_reference": null, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {"document_family_id": "family.medication.covert", "document_version_id": "doc.medication.covert.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}},
+          {"document_family_id": "family.safeguarding.mental-capacity", "document_version_id": "doc.safeguarding.mental-capacity.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [
+        {"evidence_id": "evidence.v3.safeguarding.covert-medication.capacity-assessment", "document_family_id": "family.medication.covert", "document_version_id": "doc.medication.covert.v1", "side": "PRIMARY", "source_path": "documents/medication/covert-administration-policy.md", "canonical_excerpts": ["a decision-specific assessment that the person lacks capacity"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Policy body", "notes": "Atomic capacity-assessment prerequisite."},
+        {"evidence_id": "evidence.v3.safeguarding.covert-medication.best-interests-process", "document_family_id": "family.medication.covert", "document_version_id": "doc.medication.covert.v1", "side": "PRIMARY", "source_path": "documents/medication/covert-administration-policy.md", "canonical_excerpts": ["a recorded best-interests process"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Policy body", "notes": "Atomic recorded-process prerequisite."},
+        {"evidence_id": "evidence.v3.safeguarding.covert-medication.prescriber", "document_family_id": "family.medication.covert", "document_version_id": "doc.medication.covert.v1", "side": "PRIMARY", "source_path": "documents/medication/covert-administration-policy.md", "canonical_excerpts": ["prescriber agreement"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Policy body", "notes": "Atomic prescriber-approval prerequisite."},
+        {"evidence_id": "evidence.v3.safeguarding.covert-medication.pharmacy", "document_family_id": "family.medication.covert", "document_version_id": "doc.medication.covert.v1", "side": "PRIMARY", "source_path": "documents/medication/covert-administration-policy.md", "canonical_excerpts": ["pharmacy advice confirming the proposed method will not alter the medicine unsafely"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Policy body", "notes": "Atomic pharmacy-safety prerequisite."},
+        {"evidence_id": "evidence.v3.safeguarding.covert-medication.best-interests-factors", "document_family_id": "family.safeguarding.mental-capacity", "document_version_id": "doc.safeguarding.mental-capacity.v1", "side": "PRIMARY", "source_path": "documents/safeguarding/mental-capacity-procedure.md", "canonical_excerpts": ["the best-interests record must consider their wishes, feelings, beliefs, relevant alternatives and the views of appropriate others"], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Procedure body", "notes": "Distinct best-interests content not supplied by the covert-medicines policy."}
+      ]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "No single document supplies the complete capacity and medicine-specific control set."}
+    }
+  ]
+}

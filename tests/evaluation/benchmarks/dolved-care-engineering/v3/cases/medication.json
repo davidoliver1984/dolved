@@ -1,0 +1,136 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-first-domain-medication",
+  "authoring_batch_version": "1",
+  "taxonomy": {"taxonomy_id": "dolved-care-engineering-taxonomy", "taxonomy_version": "1", "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"},
+  "domain": "medication",
+  "cases": [
+    {
+      "case_id": "v3.medication.current.omitted-dose",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.medication.administration-omissions",
+      "cluster_rationale": "Current, historical and scheduled omission instructions must remain together in any future split.",
+      "leakage_group_ids": ["leakage.family.medication.administration"],
+      "domain": "medication",
+      "variants": [
+        {"variant_id": "direct", "question": "What must staff record on the MAR now when a medicine is not given?", "evaluation_facets": ["abbreviation"]},
+        {"variant_id": "colloquial", "question": "What do I put on the MAR if a resident doesn't get their meds?", "evaluation_facets": ["abbreviation", "colloquial"]},
+        {"variant_id": "scheduled-trap", "question": "Under the policy current today, what must be recorded on the MAR when a dose is omitted?", "evaluation_facets": ["abbreviation"]}
+      ],
+      "slices": ["CURRENT", "scheduled-future", "temporal-authority"],
+      "evaluation_facets": ["changed-instruction", "near-duplicate", "scheduled", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "source_path": "documents/medication/safe-administration-v1.md", "source_sha256": "eb941e3a04dceabc1c694c3b84bcbad5a2f383748177c87343a9202c5c8ed696", "purpose": "ELIGIBILITY_CONTEXT"},
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "source_path": "documents/medication/safe-administration-v2.md", "source_sha256": "997cd45a57cdabde57b4a800fcbd855752f9aebb57849c8f1d84c75475b9a696", "purpose": "EXPECTED_EVIDENCE"},
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v3", "source_path": "documents/medication/safe-administration-v3.md", "source_sha256": "3940ec1d3a35404458951111a9a1d3c449a29e75f6b9d59e88b6c01b30f68b46", "purpose": "ELIGIBILITY_CONTEXT"}
+      ],
+      "planner_expectation": {"temporal_mode": "CURRENT", "explicit_date": null, "temporal_reference": null, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [{"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}],
+        "excluded_versions": [
+          {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "reason": "HISTORICAL_FOR_CURRENT"},
+          {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v3", "reason": "SCHEDULED_FUTURE"}
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [{"evidence_id": "evidence.v3.medication.current.omitted-dose", "document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "side": "PRIMARY", "source_path": "documents/medication/safe-administration-v2.md", "canonical_excerpts": ["If the medicine is not given, the correct exception code and a contemporaneous note are required."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Recording administration", "notes": "Current general omission-recording rule."}]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "The current authoritative policy contains a source-anchored answer and near versions exercise threshold discrimination."}
+    },
+    {
+      "case_id": "v3.medication.valid-at-date.omitted-dose-2024",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.medication.administration-omissions",
+      "cluster_rationale": "Current, historical and scheduled omission instructions must remain together in any future split.",
+      "leakage_group_ids": ["leakage.family.medication.administration"],
+      "domain": "medication",
+      "variants": [
+        {"variant_id": "exact-date", "question": "On 15 June 2024, what did staff have to record when a medicine was not given?", "evaluation_facets": []},
+        {"variant_id": "historical-wording", "question": "What was the omission recording rule on 15 June 2024?", "evaluation_facets": []},
+        {"variant_id": "colloquial", "question": "Back on 15 June 2024, what went on the MAR if meds weren't given?", "evaluation_facets": ["colloquial", "abbreviation"]}
+      ],
+      "slices": ["VALID_AT_DATE", "temporal-authority"],
+      "evaluation_facets": ["before-authority-transition", "changed-instruction", "near-duplicate", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "source_path": "documents/medication/safe-administration-v1.md", "source_sha256": "eb941e3a04dceabc1c694c3b84bcbad5a2f383748177c87343a9202c5c8ed696", "purpose": "EXPECTED_EVIDENCE"},
+        {"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "source_path": "documents/medication/safe-administration-v2.md", "source_sha256": "997cd45a57cdabde57b4a800fcbd855752f9aebb57849c8f1d84c75475b9a696", "purpose": "ELIGIBILITY_CONTEXT"}
+      ],
+      "planner_expectation": {"temporal_mode": "VALID_AT_DATE", "explicit_date": "2024-06-15", "temporal_reference": null, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [{"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}],
+        "excluded_versions": [{"document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v2", "reason": "NOT_YET_ATTAINED_AUTHORITY"}],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [{"evidence_id": "evidence.v3.medication.valid-at-date.omitted-dose-2024", "document_family_id": "family.medication.administration", "document_version_id": "doc.medication.administration.v1", "side": "PRIMARY", "source_path": "documents/medication/safe-administration-v1.md", "canonical_excerpts": ["Where a dose is not\ngiven, staff must enter the correct MAR exception code and add a concise note."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Administration record", "notes": "Rule authoritative on the specified date."}]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "Exact-date authority resolution yields a source-anchored historical answer."}
+    },
+    {
+      "case_id": "v3.medication.current.fridge-excursion",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.medication.fridge-excursion",
+      "cluster_rationale": "The numeric boundary and release-from-quarantine rule form one multi-document semantic problem.",
+      "leakage_group_ids": ["leakage.family.medication.storage", "leakage.family.medication.fridge-reference"],
+      "domain": "medication",
+      "variants": [
+        {"variant_id": "direct", "question": "At the Manchester home, what should staff do if the medicines fridge reads 8.1°C, and when can the stock return to use?", "evaluation_facets": ["alias-colloquial"]},
+        {"variant_id": "location-alias", "question": "At the Manchester home, the meds fridge says 8.1°C. What do we do, and what must happen before the stock returns to use?", "evaluation_facets": ["alias-colloquial", "colloquial", "abbreviation"]},
+        {"variant_id": "table-wording", "question": "Use the fridge limits and full procedure to explain the response to an 8.1°C reading at the Manchester home.", "evaluation_facets": ["alias-colloquial"]}
+      ],
+      "slices": ["CURRENT", "applicability", "location-alias", "multi-document", "multi-evidence"],
+      "evaluation_facets": ["cross-document-completeness", "numeric-boundary", "table-evidence", "two-evidence-units", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.medication.storage", "document_version_id": "doc.medication.storage.v1", "source_path": "documents/medication/storage-temperature-procedure.md", "source_sha256": "52e87ef6decfbcc35d347942d54087837cdf64e5b3d746a03f8b42af680eb436", "purpose": "EXPECTED_EVIDENCE"},
+        {"document_family_id": "family.medication.fridge-reference", "document_version_id": "doc.medication.fridge-reference.v1", "source_path": "documents/medication/fridge-monitoring-reference.md", "source_sha256": "a0bac45631e864fc283b189f5a41577493cbf20f64f9127401587d92cbadabd3", "purpose": "EXPECTED_EVIDENCE"}
+      ],
+      "planner_expectation": {"temporal_mode": "CURRENT", "explicit_date": null, "temporal_reference": null, "location_references": ["Manchester home"], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {"document_family_id": "family.medication.storage", "document_version_id": "doc.medication.storage.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": "location.riverside-house"}},
+          {"document_family_id": "family.medication.fridge-reference", "document_version_id": "doc.medication.fridge-reference.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": "location.riverside-house"}}
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [
+        {"evidence_id": "evidence.v3.medication.fridge-excursion.boundary", "document_family_id": "family.medication.fridge-reference", "document_version_id": "doc.medication.fridge-reference.v1", "side": "PRIMARY", "source_path": "documents/medication/fridge-monitoring-reference.md", "canonical_excerpts": ["| 8.1°C or above | Too warm | Quarantine stock and seek pharmacy advice |"], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Reference table", "notes": "Exact upper-bound response."},
+        {"evidence_id": "evidence.v3.medication.fridge-excursion.release", "document_family_id": "family.medication.storage", "document_version_id": "doc.medication.storage.v1", "side": "PRIMARY", "source_path": "documents/medication/storage-temperature-procedure.md", "canonical_excerpts": ["No quarantined medicine may be returned\nto use until that advice is recorded."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Out-of-range response", "notes": "Release from quarantine requires recorded pharmacy advice."}
+      ]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "Complete evidence requires two independently reviewable source anchors across complementary documents."}
+    },
+    {
+      "case_id": "v3.medication.insufficient.fridge-quarantine-duration",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.medication.fridge-excursion",
+      "cluster_rationale": "The numeric boundary and unsupported fixed-duration question must remain together to prevent answer leakage.",
+      "leakage_group_ids": ["leakage.family.medication.storage", "leakage.family.medication.fridge-reference"],
+      "domain": "medication",
+      "variants": [
+        {"variant_id": "direct", "question": "Exactly how many hours must out-of-range refrigerated medicines remain quarantined?", "evaluation_facets": []},
+        {"variant_id": "colloquial", "question": "How long do we leave the meds in quarantine after the fridge goes warm?", "evaluation_facets": ["colloquial", "abbreviation"]},
+        {"variant_id": "numeric-demand", "question": "Give the mandatory fixed quarantine duration in hours for an 8.1°C fridge reading.", "evaluation_facets": []}
+      ],
+      "slices": ["CURRENT", "zero-evidence"],
+      "evaluation_facets": ["no-trustworthy-candidate", "numeric-boundary", "table-evidence", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.medication.storage", "document_version_id": "doc.medication.storage.v1", "source_path": "documents/medication/storage-temperature-procedure.md", "source_sha256": "52e87ef6decfbcc35d347942d54087837cdf64e5b3d746a03f8b42af680eb436", "purpose": "CONTROLLED_REJECTION"},
+        {"document_family_id": "family.medication.fridge-reference", "document_version_id": "doc.medication.fridge-reference.v1", "source_path": "documents/medication/fridge-monitoring-reference.md", "source_sha256": "a0bac45631e864fc283b189f5a41577493cbf20f64f9127401587d92cbadabd3", "purpose": "CONTROLLED_REJECTION"}
+      ],
+      "planner_expectation": {"temporal_mode": "CURRENT", "explicit_date": null, "temporal_reference": null, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {"document_family_id": "family.medication.storage", "document_version_id": "doc.medication.storage.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}},
+          {"document_family_id": "family.medication.fridge-reference", "document_version_id": "doc.medication.fridge-reference.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": []},
+      "outcome_expectation": {"outcome": "INSUFFICIENT_EVIDENCE", "controlled_rejection_rationale": "The sources make release conditional on recorded medicine-specific pharmacy advice and specify no universal fixed duration in hours."},
+      "threshold_observability": {"classification": "THRESHOLD_SENSITIVE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "Relevant candidates can reach reranking, but none is annotated as sufficient evidence for the requested fixed duration."}
+    }
+  ]
+}

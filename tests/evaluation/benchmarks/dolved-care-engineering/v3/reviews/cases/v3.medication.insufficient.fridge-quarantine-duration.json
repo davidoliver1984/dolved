@@ -1,0 +1,34 @@
+{
+  "schema_version": "v3",
+  "review_id": "review.v3.medication.insufficient.fridge-quarantine-duration",
+  "review_version": "3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "case_id": "v3.medication.insufficient.fridge-quarantine-duration",
+  "case_sha256": "809fc867743ef3ec0bd91ced3acdfdc6d1e43537cb6e5a56aecdf5afc341e6a8",
+  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_lineage_digest": "8afcffc20cc12f56eb62965c4c784bb0d6efab972ae41d781c43490de4ebdab1",
+  "evidence_unit_ids_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "reviewed_at": "2026-08-13T22:45:00Z",
+  "machine_validation": {
+    "validator_id": "benchmark-v3-compiler",
+    "validator_version": "1",
+    "passed": true
+  },
+  "human_review": {
+    "source_truth": "REVIEWED",
+    "evidence_units": "REVIEWED",
+    "expected_outcome": "REVIEWED",
+    "temporal_facts": "REVIEWED",
+    "applicability_facts": "REVIEWED",
+    "controlled_rejection_rationale": "REVIEWED",
+    "approved": true
+  },
+  "reviewer_identity": "codex",
+  "review_note": "Calibration authoring review confirmed source truth, question-to-evidence scope, temporal and applicability facts, and controlled-outcome rationale."
+}

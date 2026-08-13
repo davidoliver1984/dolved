@@ -216,6 +216,23 @@ def test_controlled_outcome_requires_author_rationale() -> None:
         validator_for_schema("corpus.schema.json").validate(corpus)
 
 
+def test_variant_planner_override_is_typed_and_bounded() -> None:
+    corpus = valid_corpus()
+    variant = corpus["cases"][0]["variants"][0]
+    variant["planner_expectation_override"] = {
+        "temporal_reference": {
+            "kind": "historical_reference",
+            "value": "version 1",
+        }
+    }
+    validator = validator_for_schema("corpus.schema.json")
+    validator.validate(corpus)
+
+    variant["planner_expectation_override"]["invented_field"] = "not allowed"
+    with pytest.raises(jsonschema.ValidationError):
+        validator.validate(corpus)
+
+
 def test_v3_taxonomy_owns_every_calibration_population_label_and_facet() -> None:
     taxonomy = load_json(V3_ROOT / "taxonomy.v1.json")
     specification = load_json(CALIBRATION_POPULATION_SPEC)

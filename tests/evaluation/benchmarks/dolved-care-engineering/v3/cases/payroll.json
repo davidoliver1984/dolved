@@ -1,0 +1,441 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-calibration-payroll",
+  "authoring_batch_version": "1",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "domain": "payroll",
+  "cases": [
+    {
+      "case_id": "v3.payroll.current.expenses",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.payroll.current.expenses",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.payroll.expenses"
+      ],
+      "domain": "payroll",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "What receipt and submission deadline apply to an employee expense claim?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "What proof do I need for expenses and how soon must I claim?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "State the current receipt rule and claim deadline.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "multi-evidence"
+      ],
+      "evaluation_facets": [
+        "numeric-boundary",
+        "table-evidence",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.payroll.expenses",
+          "document_version_id": "doc.payroll.expenses.v1",
+          "source_path": "documents/payroll/expenses-procedure.md",
+          "source_sha256": "0356b9e5a94ead0e9c2488374a488ef0a7ced63880767d64546901e5d2aae336",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.payroll.expenses",
+            "document_version_id": "doc.payroll.expenses.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.payroll.current.expenses.primary.109",
+            "document_family_id": "family.payroll.expenses",
+            "document_version_id": "doc.payroll.expenses.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/payroll/expenses-procedure.md",
+            "canonical_excerpts": [
+              "Expense claims require an itemised receipt and must be submitted within thirty calendar days of the purchase."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Claim requirements",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.payroll.valid-at-date.calendar-2027",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.payroll.valid-at-date.calendar-2027",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.payroll.calendar"
+      ],
+      "domain": "payroll",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "On 1 August 2027, what is the August payroll cut-off and pay date?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "When is the August 2027 payroll deadline and payday?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Give the cut-off and payment date applying on 1 August 2027.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "VALID_AT_DATE",
+        "scheduled-future",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "after-authority-transition",
+        "scheduled",
+        "table-evidence"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.payroll.calendar",
+          "document_version_id": "doc.payroll.calendar.v1",
+          "source_path": "documents/payroll/calendar-2026.md",
+          "source_sha256": "8c890abd3864d458bf83e56fa589154d962f037b6787ec9f84110fa5cb6dc1a4",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        },
+        {
+          "document_family_id": "family.payroll.calendar",
+          "document_version_id": "doc.payroll.calendar.v2",
+          "source_path": "documents/payroll/calendar-2027-scheduled.md",
+          "source_sha256": "f016b3444abfbdf2a2190796d76c62527b53447d9f5b6169b892e7c7da72617b",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "VALID_AT_DATE",
+        "explicit_date": "2027-08-01",
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.payroll.calendar",
+            "document_version_id": "doc.payroll.calendar.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.payroll.calendar",
+            "document_version_id": "doc.payroll.calendar.v1",
+            "reason": "OUTSIDE_REQUESTED_TEMPORAL_SCOPE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.payroll.valid-at-date.calendar-2027.primary.57",
+            "document_family_id": "family.payroll.calendar",
+            "document_version_id": "doc.payroll.calendar.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/payroll/calendar-2027-scheduled.md",
+            "canonical_excerpts": [
+              "| August 2027 | 9 August 2027 at 12:00 | 27 August 2027 |"
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "2027 calendar",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.payroll.insufficient.receipt-attempts",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.payroll.insufficient.receipt-attempts",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.payroll.expenses"
+      ],
+      "domain": "payroll",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Exactly how many attempts to obtain a replacement receipt are mandatory before using a declaration?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How many times must I chase a replacement receipt before declaring it missing?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Give the universal required count of replacement-evidence attempts.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "zero-evidence"
+      ],
+      "evaluation_facets": [
+        "no-trustworthy-candidate",
+        "numeric-boundary",
+        "universal"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.payroll.expenses",
+          "document_version_id": "doc.payroll.expenses.v1",
+          "source_path": "documents/payroll/expenses-procedure.md",
+          "source_sha256": "0356b9e5a94ead0e9c2488374a488ef0a7ced63880767d64546901e5d2aae336",
+          "purpose": "CONTROLLED_REJECTION"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.payroll.expenses",
+            "document_version_id": "doc.payroll.expenses.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": []
+      },
+      "outcome_expectation": {
+        "outcome": "INSUFFICIENT_EVIDENCE",
+        "controlled_rejection_rationale": "The procedure allows a declaration only where replacement evidence cannot reasonably be obtained but defines no mandatory attempt count."
+      },
+      "threshold_observability": {
+        "classification": "THRESHOLD_SENSITIVE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "The procedure allows a declaration only where replacement evidence cannot reasonably be obtained but defines no mandatory attempt count."
+      }
+    },
+    {
+      "case_id": "v3.payroll.compare.january-2027-incomplete",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.payroll.compare.january-2027-incomplete",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.payroll.calendar"
+      ],
+      "domain": "payroll",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Compare the January 2027 payroll cut-off in the current and scheduled calendars.",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "Do both today's calendar and the 2027 calendar give a January 2027 cut-off?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Compare January 2027 cut-off evidence between the current calendar and version 2.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "COMPARE",
+        "scheduled-future",
+        "zero-evidence",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "compare-primary-empty",
+        "changed-structured-value",
+        "scheduled"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.payroll.calendar",
+          "document_version_id": "doc.payroll.calendar.v1",
+          "source_path": "documents/payroll/calendar-2026.md",
+          "source_sha256": "8c890abd3864d458bf83e56fa589154d962f037b6787ec9f84110fa5cb6dc1a4",
+          "purpose": "CONTROLLED_REJECTION"
+        },
+        {
+          "document_family_id": "family.payroll.calendar",
+          "document_version_id": "doc.payroll.calendar.v2",
+          "source_path": "documents/payroll/calendar-2027-scheduled.md",
+          "source_sha256": "f016b3444abfbdf2a2190796d76c62527b53447d9f5b6169b892e7c7da72617b",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 2"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.payroll.calendar",
+            "document_version_id": "doc.payroll.calendar.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.payroll.calendar",
+            "document_version_id": "doc.payroll.calendar.v2",
+            "side": "COMPARISON",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.payroll.compare.january-2027-incomplete.comparison.60",
+            "document_family_id": "family.payroll.calendar",
+            "document_version_id": "doc.payroll.calendar.v2",
+            "side": "COMPARISON",
+            "source_path": "documents/payroll/calendar-2027-scheduled.md",
+            "canonical_excerpts": [
+              "| January 2027 | 8 January 2027 at 12:00 | 28 January 2027 |"
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Scheduled 2027 calendar",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "COMPARISON_SCOPE_INCOMPLETE",
+        "controlled_rejection_rationale": "The scheduled calendar contains January 2027 evidence, while the current 2026 calendar has no primary-side January 2027 row."
+      },
+      "threshold_observability": {
+        "classification": "THRESHOLD_SENSITIVE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY",
+          "COMPARISON"
+        ],
+        "justification": "The scheduled calendar contains January 2027 evidence, while the current 2026 calendar has no primary-side January 2027 row."
+      }
+    }
+  ]
+}

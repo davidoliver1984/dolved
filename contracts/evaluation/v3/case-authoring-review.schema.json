@@ -4,7 +4,7 @@
   "title": "Benchmark V3 individual case authoring review",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "review_id", "review_version", "benchmark_id", "corpus_version", "taxonomy", "case_id", "case_sha256", "source_catalog_digest", "source_lineage_digest", "evidence_unit_ids_digest", "reviewed_at", "machine_validation", "human_review"],
+  "required": ["schema_version", "review_id", "review_version", "benchmark_id", "corpus_version", "taxonomy", "case_id", "case_sha256", "source_catalog_digest", "source_lineage_digest", "evidence_unit_ids_digest", "reviewer_identity", "reviewed_at", "review_note", "machine_validation", "human_review"],
   "properties": {
     "schema_version": {"const": "v3"},
     "review_id": {"$ref": "#/$defs/identifier"},
@@ -17,7 +17,9 @@
     "source_catalog_digest": {"$ref": "#/$defs/sha256"},
     "source_lineage_digest": {"$ref": "#/$defs/sha256"},
     "evidence_unit_ids_digest": {"$ref": "#/$defs/sha256"},
+    "reviewer_identity": {"$ref": "#/$defs/identifier"},
     "reviewed_at": {"type": "string", "format": "date-time"},
+    "review_note": {"type": "string", "minLength": 1, "maxLength": 1000},
     "machine_validation": {
       "type": "object",
       "additionalProperties": false,

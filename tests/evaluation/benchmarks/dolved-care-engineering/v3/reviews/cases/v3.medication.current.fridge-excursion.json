@@ -1,0 +1,34 @@
+{
+  "schema_version": "v3",
+  "review_id": "review.v3.medication.current.fridge-excursion",
+  "review_version": "3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "case_id": "v3.medication.current.fridge-excursion",
+  "case_sha256": "352cb8322c7d1636fa52a54dcd9bb11e10108255606458ca665ddd64bd0db78a",
+  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_lineage_digest": "2f7f7b3a9d90bee474b88edefcb6336458be094284bd687322c6d139ad49406c",
+  "evidence_unit_ids_digest": "2ca80dacd095b48f3aed0f5e8d26871bf902d17ec41931fe6ce2db95cce0a308",
+  "reviewed_at": "2026-08-13T22:45:00Z",
+  "machine_validation": {
+    "validator_id": "benchmark-v3-compiler",
+    "validator_version": "1",
+    "passed": true
+  },
+  "human_review": {
+    "source_truth": "REVIEWED",
+    "evidence_units": "REVIEWED",
+    "expected_outcome": "REVIEWED",
+    "temporal_facts": "REVIEWED",
+    "applicability_facts": "REVIEWED",
+    "controlled_rejection_rationale": "NOT_APPLICABLE",
+    "approved": true
+  },
+  "reviewer_identity": "codex",
+  "review_note": "Calibration authoring review confirmed source truth, question-to-evidence scope, temporal and applicability facts, and controlled-outcome rationale."
+}

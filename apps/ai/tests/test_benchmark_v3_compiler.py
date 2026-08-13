@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-
 from app.evaluation.benchmark.common import (
     canonical_bytes,
     content_digest,
@@ -13,6 +12,7 @@ from app.evaluation.benchmark.v3 import (
     compile_benchmark,
     source_catalog_digest,
     validate_split,
+    validate_variant_planner_expectation,
 )
 
 CONTRACT_ROOT = Path("/contracts/evaluation/v3")
@@ -247,7 +247,9 @@ def prepare_release(temporary_root: Path) -> tuple[Path, Path, str]:
                     ]
                 )
             ),
+            "reviewer_identity": "reviewer.synthetic",
             "reviewed_at": "2026-08-13T00:00:00Z",
+            "review_note": "Synthetic provider-free case review fixture.",
             "machine_validation": {
                 "validator_id": "benchmark-v3-compiler",
                 "validator_version": "1",
@@ -730,6 +732,51 @@ def test_v3_rejects_invalid_expected_outcome(tmp_path: Path) -> None:
 
     with pytest.raises(Exception, match="SUCCESS"):
         compile_after_mutation(tmp_path, "cases/medication.json", change_outcome)
+
+
+def test_variant_planner_override_preserves_historical_reference_wording() -> None:
+    shared: dict[str, Any] = {
+        "temporal_mode": "COMPARE",
+        "explicit_date": None,
+        "temporal_reference": None,
+        "location_references": [],
+        "clarification_reason": None,
+        "expected_outcome": "PLAN_READY",
+    }
+    variant = {
+        "variant_id": "versioned",
+        "planner_expectation_override": {
+            "temporal_reference": {
+                "kind": "historical_reference",
+                "value": "version 1",
+            }
+        },
+    }
+
+    validate_variant_planner_expectation(shared, variant, "case.compare")
+
+
+def test_variant_planner_override_cannot_violate_shared_adr0022_mode() -> None:
+    shared: dict[str, Any] = {
+        "temporal_mode": "CURRENT",
+        "explicit_date": None,
+        "temporal_reference": None,
+        "location_references": [],
+        "clarification_reason": None,
+        "expected_outcome": "PLAN_READY",
+    }
+    variant = {
+        "variant_id": "invalid",
+        "planner_expectation_override": {
+            "temporal_reference": {
+                "kind": "historical_reference",
+                "value": "version 1",
+            }
+        },
+    }
+
+    with pytest.raises(ValueError, match="violates ADR-0022"):
+        validate_variant_planner_expectation(shared, variant, "case.current")
 
 
 def test_v3_rejects_missing_review_for_reviewed_case(tmp_path: Path) -> None:

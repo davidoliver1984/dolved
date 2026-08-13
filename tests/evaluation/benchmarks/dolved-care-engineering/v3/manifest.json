@@ -2,7 +2,7 @@
   "schema_version": "v3",
   "benchmark_id": "dolved-care-engineering",
   "corpus_version": "3",
-  "status": "FOUNDATION",
+  "status": "AUTHORING",
   "evaluation_clock": "2026-08-01T12:00:00Z",
   "canonical_source_format": "text/markdown",
   "parent_release": {
@@ -21,11 +21,13 @@
     "document_catalog": "document-catalog.json",
     "catalogue_review": "reviews/catalogue-review-v1.json",
     "release_lineage": "lineage/v2-to-v3.json",
-    "source_checksums": "compiled/source-checksums.json"
+    "source_checksums": "compiled/source-checksums.json",
+    "case_sources": "cases",
+    "case_reviews": "reviews/cases"
   },
   "authored_counts": {
     "document_families": 71,
     "document_versions": 93,
-    "semantic_cases": 0
+    "semantic_cases": 45
   }
 }

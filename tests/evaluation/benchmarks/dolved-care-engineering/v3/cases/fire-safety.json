@@ -1,0 +1,686 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-calibration-fire-safety",
+  "authoring_batch_version": "1",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "domain": "fire-safety",
+  "cases": [
+    {
+      "case_id": "v3.fire.current.harbour-view-evacuation",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.fire.current.harbour-view-evacuation",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.fire.harbour-view-evacuation",
+        "leakage.family.fire.north-west-evacuation",
+        "leakage.family.fire.south-west-evacuation"
+      ],
+      "domain": "fire-safety",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "At Bristol home, where do we assemble and what must staff do when fire is discovered?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "Where do we go at Bristol if there's a fire, and what do staff do first?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Give Harbour View's assembly point and the South West alarm response.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "location-alias",
+        "site-specific",
+        "regional-applicability",
+        "multi-document",
+        "multi-evidence",
+        "adversarial"
+      ],
+      "evaluation_facets": [
+        "alias-colloquial",
+        "applicability-excluded",
+        "cross-document-completeness",
+        "near-duplicate-wrong",
+        "regional",
+        "site-specific",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.fire.harbour-view-evacuation",
+          "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+          "source_path": "documents/fire-safety/harbour-view-evacuation.md",
+          "source_sha256": "c6fd853ec681f0edb8f578bc2aa28f4243a1c923d6fe1cf680b448bcd16c8bda",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.fire.south-west-evacuation",
+          "document_version_id": "doc.fire.south-west-evacuation.v1",
+          "source_path": "documents/fire-safety/south-west-evacuation.md",
+          "source_sha256": "9fb4e06e5ef378c10aa935ac026b944461544b72f24b50db3a15e344e03bdd13",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.fire.north-west-evacuation",
+          "document_version_id": "doc.fire.north-west-evacuation.v1",
+          "source_path": "documents/fire-safety/north-west-evacuation.md",
+          "source_sha256": "7cb7da4c5f03593c0b17f50e37d8a5b6558e41e8b9fdc0a8f550b7995594908b",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [
+          "Bristol home"
+        ],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.fire.harbour-view-evacuation",
+            "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "DIRECT",
+              "governing_location_id": "location.harbour-view",
+              "requested_location_id": "location.harbour-view"
+            }
+          },
+          {
+            "document_family_id": "family.fire.south-west-evacuation",
+            "document_version_id": "doc.fire.south-west-evacuation.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "ANCESTOR",
+              "governing_location_id": "location.region.south-west",
+              "requested_location_id": "location.harbour-view"
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.fire.north-west-evacuation",
+            "document_version_id": "doc.fire.north-west-evacuation.v1",
+            "reason": "APPLICABILITY_MISMATCH"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.fire.current.harbour-view-evacuation.primary.123",
+            "document_family_id": "family.fire.harbour-view-evacuation",
+            "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/fire-safety/harbour-view-evacuation.md",
+            "canonical_excerpts": [
+              "At Harbour View, staff and visitors assemble in the east garden beyond the laundry gate, not in the front visitor car park."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Harbour View assembly point",
+            "notes": "Source-anchored calibration evidence."
+          },
+          {
+            "evidence_id": "evidence.v3.fire.current.harbour-view-evacuation.primary.81",
+            "document_family_id": "family.fire.south-west-evacuation",
+            "document_version_id": "doc.fire.south-west-evacuation.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/fire-safety/south-west-evacuation.md",
+            "canonical_excerpts": [
+              "On discovering fire or smoke, activate the nearest call point, call 999 and begin"
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Alarm response",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.fire.current.north-west-assembly",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.fire.current.north-west-assembly",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.fire.midlands-evacuation",
+        "leakage.family.fire.north-west-evacuation"
+      ],
+      "domain": "fire-safety",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Where is the assembly point for the Manchester home?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "Where do people meet after the alarm at our Manchester home?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "State the North West fallback assembly point for Riverside House.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "location-alias",
+        "regional-applicability",
+        "region-specific"
+      ],
+      "evaluation_facets": [
+        "alias-formal",
+        "applicability-excluded",
+        "near-duplicate-wrong",
+        "regional"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.fire.midlands-evacuation",
+          "document_version_id": "doc.fire.midlands-evacuation.v1",
+          "source_path": "documents/fire-safety/midlands-evacuation.md",
+          "source_sha256": "8efe73c9a44881368622914e712ab72957a6bfa57080124f0aa954c7177dfad4",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        },
+        {
+          "document_family_id": "family.fire.north-west-evacuation",
+          "document_version_id": "doc.fire.north-west-evacuation.v1",
+          "source_path": "documents/fire-safety/north-west-evacuation.md",
+          "source_sha256": "7cb7da4c5f03593c0b17f50e37d8a5b6558e41e8b9fdc0a8f550b7995594908b",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [
+          "Manchester home"
+        ],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.fire.north-west-evacuation",
+            "document_version_id": "doc.fire.north-west-evacuation.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "ANCESTOR",
+              "governing_location_id": "location.region.north-west",
+              "requested_location_id": "location.riverside-house"
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.fire.midlands-evacuation",
+            "document_version_id": "doc.fire.midlands-evacuation.v1",
+            "reason": "APPLICABILITY_MISMATCH"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.fire.current.north-west-assembly.primary.95",
+            "document_family_id": "family.fire.north-west-evacuation",
+            "document_version_id": "doc.fire.north-west-evacuation.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/fire-safety/north-west-evacuation.md",
+            "canonical_excerpts": [
+              "Unless a site plan states otherwise, the regional assembly point is the rear service-yard gate."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "North West evacuation",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.fire.compare.drill-frequency",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.fire.compare.drill-frequency",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.fire.drills"
+      ],
+      "domain": "fire-safety",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Compare current fire-drill frequency with version 1.",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How did the fire drill timetable change from the old version?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Compare fire-drill frequency now with the first version.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "COMPARE",
+        "temporal-authority",
+        "multi-evidence"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-explicit",
+        "near-duplicate",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.fire.drills",
+          "document_version_id": "doc.fire.drills.v1",
+          "source_path": "documents/fire-safety/fire-drills-v1.md",
+          "source_sha256": "b68d4a2856b4661d75cac0c8423e8ffd6c7d52a9491a9b9ef787e01a9e11ad3f",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.fire.drills",
+          "document_version_id": "doc.fire.drills.v2",
+          "source_path": "documents/fire-safety/fire-drills-v2.md",
+          "source_sha256": "f5efae5749b9d5caf476bbac23efd724508692a10a4e35c5d80ed670f7150a4a",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.fire.drills",
+            "document_version_id": "doc.fire.drills.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.fire.drills",
+            "document_version_id": "doc.fire.drills.v1",
+            "side": "COMPARISON",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.fire.compare.drill-frequency.primary.137",
+            "document_family_id": "family.fire.drills",
+            "document_version_id": "doc.fire.drills.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/fire-safety/fire-drills-v2.md",
+            "canonical_excerpts": [
+              "Each residential service completes a fire drill at least quarterly; community and office services complete one at least every six months."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current frequency",
+            "notes": "Source-anchored calibration evidence."
+          },
+          {
+            "evidence_id": "evidence.v3.fire.compare.drill-frequency.comparison.62",
+            "document_family_id": "family.fire.drills",
+            "document_version_id": "doc.fire.drills.v1",
+            "side": "COMPARISON",
+            "source_path": "documents/fire-safety/fire-drills-v1.md",
+            "canonical_excerpts": [
+              "Each service completes a fire drill at least every six months."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 frequency",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY",
+          "COMPARISON"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.fire.historical.drills-v1",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.fire.historical.drills-v1",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.fire.drills"
+      ],
+      "domain": "fire-safety",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "What fire-drill frequency did version 1 require?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "What did the previous drill procedure say about frequency?",
+          "evaluation_facets": [
+            "colloquial"
+          ],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "previous version"
+            }
+          }
+        },
+        {
+          "variant_id": "precision",
+          "question": "Under the first version, how often did services run a fire drill?",
+          "evaluation_facets": [],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "first version"
+            }
+          }
+        }
+      ],
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "historical-explicit",
+        "historical-ordinal",
+        "historical-previous",
+        "near-duplicate"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.fire.drills",
+          "document_version_id": "doc.fire.drills.v1",
+          "source_path": "documents/fire-safety/fire-drills-v1.md",
+          "source_sha256": "b68d4a2856b4661d75cac0c8423e8ffd6c7d52a9491a9b9ef787e01a9e11ad3f",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.fire.drills",
+          "document_version_id": "doc.fire.drills.v2",
+          "source_path": "documents/fire-safety/fire-drills-v2.md",
+          "source_sha256": "f5efae5749b9d5caf476bbac23efd724508692a10a4e35c5d80ed670f7150a4a",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "HISTORICAL_REFERENCE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.fire.drills",
+            "document_version_id": "doc.fire.drills.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.fire.drills",
+            "document_version_id": "doc.fire.drills.v2",
+            "reason": "OUTSIDE_REQUESTED_TEMPORAL_SCOPE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.fire.historical.drills-v1.primary.62",
+            "document_family_id": "family.fire.drills",
+            "document_version_id": "doc.fire.drills.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/fire-safety/fire-drills-v1.md",
+            "canonical_excerpts": [
+              "Each service completes a fire drill at least every six months."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 frequency",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.fire.compare.route-record-incomplete",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.fire.compare.route-record-incomplete",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.fire.drills"
+      ],
+      "domain": "fire-safety",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Compare what current and version 1 fire-drill records say about the route or compartment tested.",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "Did both the old and current drill forms record the route tested?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Compare the route-testing record requirement with version 1.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "COMPARE",
+        "zero-evidence",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "compare-comparison-empty",
+        "changed-instruction",
+        "no-trustworthy-candidate"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.fire.drills",
+          "document_version_id": "doc.fire.drills.v1",
+          "source_path": "documents/fire-safety/fire-drills-v1.md",
+          "source_sha256": "b68d4a2856b4661d75cac0c8423e8ffd6c7d52a9491a9b9ef787e01a9e11ad3f",
+          "purpose": "CONTROLLED_REJECTION"
+        },
+        {
+          "document_family_id": "family.fire.drills",
+          "document_version_id": "doc.fire.drills.v2",
+          "source_path": "documents/fire-safety/fire-drills-v2.md",
+          "source_sha256": "f5efae5749b9d5caf476bbac23efd724508692a10a4e35c5d80ed670f7150a4a",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.fire.drills",
+            "document_version_id": "doc.fire.drills.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.fire.drills",
+            "document_version_id": "doc.fire.drills.v1",
+            "side": "COMPARISON",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.fire.compare.route-record-incomplete.primary.144",
+            "document_family_id": "family.fire.drills",
+            "document_version_id": "doc.fire.drills.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/fire-safety/fire-drills-v2.md",
+            "canonical_excerpts": [
+              "The drill record includes alarm time, compartment or route tested, evacuation duration, staffing level, people requiring assistance and actions."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current drill record",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "COMPARISON_SCOPE_INCOMPLETE",
+        "controlled_rejection_rationale": "Current evidence states the route requirement, but version 1 contains no comparison-side route or compartment requirement."
+      },
+      "threshold_observability": {
+        "classification": "THRESHOLD_SENSITIVE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY",
+          "COMPARISON"
+        ],
+        "justification": "Current evidence states the route requirement, but version 1 contains no comparison-side route or compartment requirement."
+      }
+    }
+  ]
+}

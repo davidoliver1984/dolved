@@ -1,0 +1,520 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-calibration-training",
+  "authoring_batch_version": "1",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "domain": "training",
+  "cases": [
+    {
+      "case_id": "v3.training.current.medication-competency",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.training.current.medication-competency",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.training.medication-competency"
+      ],
+      "domain": "training",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "How many observed medication rounds does the current competency assessment require?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How many meds rounds need watching for competency now?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "State the live observed-round requirement.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "near-duplicate",
+        "table-evidence"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.training.medication-competency",
+          "document_version_id": "doc.training.medication-competency.v1",
+          "source_path": "documents/training/medication-competency-v1.md",
+          "source_sha256": "e87f7ac73bead2eef8e789b5e9a7f03c1ad4cd2b87340d0219de2e6be16da156",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        },
+        {
+          "document_family_id": "family.training.medication-competency",
+          "document_version_id": "doc.training.medication-competency.v2",
+          "source_path": "documents/training/medication-competency-v2.md",
+          "source_sha256": "43ea065674563c32849f255e5c54378b9641fcbd8d78cde2a0b9f846246dacae",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.training.current.medication-competency.primary.125",
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/training/medication-competency-v2.md",
+            "canonical_excerpts": [
+              "| Administration | Four directly observed medication rounds, including one controlled-drug round where the role requires it |"
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Competency table",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.training.compare.medication-competency",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.training.compare.medication-competency",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.training.medication-competency"
+      ],
+      "domain": "training",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Compare current observed medication-round requirements with version 1.",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How did the meds competency rounds change from the old version?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Compare the current assessment with the first version.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "COMPARE",
+        "temporal-authority",
+        "multi-evidence"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-explicit",
+        "table-evidence",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.training.medication-competency",
+          "document_version_id": "doc.training.medication-competency.v1",
+          "source_path": "documents/training/medication-competency-v1.md",
+          "source_sha256": "e87f7ac73bead2eef8e789b5e9a7f03c1ad4cd2b87340d0219de2e6be16da156",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.training.medication-competency",
+          "document_version_id": "doc.training.medication-competency.v2",
+          "source_path": "documents/training/medication-competency-v2.md",
+          "source_sha256": "43ea065674563c32849f255e5c54378b9641fcbd8d78cde2a0b9f846246dacae",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v1",
+            "side": "COMPARISON",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.training.compare.medication-competency.primary.125",
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/training/medication-competency-v2.md",
+            "canonical_excerpts": [
+              "| Administration | Four directly observed medication rounds, including one controlled-drug round where the role requires it |"
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current assessment",
+            "notes": "Source-anchored calibration evidence."
+          },
+          {
+            "evidence_id": "evidence.v3.training.compare.medication-competency.comparison.62",
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v1",
+            "side": "COMPARISON",
+            "source_path": "documents/training/medication-competency-v1.md",
+            "canonical_excerpts": [
+              "| Administration | Three directly observed medication rounds |"
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 assessment",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY",
+          "COMPARISON"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.training.historical.medication-competency-first",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.training.historical.medication-competency-first",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.training.medication-competency"
+      ],
+      "domain": "training",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "What did the first medication competency assessment require for observed rounds?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How many rounds did the previous competency need?",
+          "evaluation_facets": [
+            "colloquial"
+          ],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "previous version"
+            }
+          }
+        },
+        {
+          "variant_id": "precision",
+          "question": "Under version 1, how many directly observed rounds were required?",
+          "evaluation_facets": [],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "first version"
+            }
+          }
+        }
+      ],
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-ordinal",
+        "table-evidence"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.training.medication-competency",
+          "document_version_id": "doc.training.medication-competency.v1",
+          "source_path": "documents/training/medication-competency-v1.md",
+          "source_sha256": "e87f7ac73bead2eef8e789b5e9a7f03c1ad4cd2b87340d0219de2e6be16da156",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.training.medication-competency",
+          "document_version_id": "doc.training.medication-competency.v2",
+          "source_path": "documents/training/medication-competency-v2.md",
+          "source_sha256": "43ea065674563c32849f255e5c54378b9641fcbd8d78cde2a0b9f846246dacae",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "HISTORICAL_REFERENCE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v2",
+            "reason": "OUTSIDE_REQUESTED_TEMPORAL_SCOPE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.training.historical.medication-competency-first.primary.62",
+            "document_family_id": "family.training.medication-competency",
+            "document_version_id": "doc.training.medication-competency.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/training/medication-competency-v1.md",
+            "canonical_excerpts": [
+              "| Administration | Three directly observed medication rounds |"
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 assessment",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.training.compare.induction-information-governance-incomplete",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.training.compare.induction-information-governance-incomplete",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.training.induction"
+      ],
+      "domain": "training",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Compare the current induction information-governance requirement with scheduled version 2.",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "Do both today's and the next induction cover information governance?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Compare information-governance induction content now and in version 2.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "COMPARE",
+        "scheduled-future",
+        "zero-evidence",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "compare-primary-empty",
+        "changed-instruction",
+        "scheduled"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.training.induction",
+          "document_version_id": "doc.training.induction.v1",
+          "source_path": "documents/training/induction-v1.md",
+          "source_sha256": "cd58efd579590469f1de74a137d2c1764c78c04da117b815be0bfdc9d4c62be3",
+          "purpose": "CONTROLLED_REJECTION"
+        },
+        {
+          "document_family_id": "family.training.induction",
+          "document_version_id": "doc.training.induction.v2",
+          "source_path": "documents/training/induction-v2-scheduled.md",
+          "source_sha256": "af59632b7d84cab39d8f195f970d7c3dfcb4f74f8972ba934ea9cf4855fc6814",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 2"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.training.induction",
+            "document_version_id": "doc.training.induction.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.training.induction",
+            "document_version_id": "doc.training.induction.v2",
+            "side": "COMPARISON",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.training.compare.induction-information-governance-incomplete.comparison.212",
+            "document_family_id": "family.training.induction",
+            "document_version_id": "doc.training.induction.v2",
+            "side": "COMPARISON",
+            "source_path": "documents/training/induction-v2-scheduled.md",
+            "canonical_excerpts": [
+              "Before working without direct supervision they will complete local fire orientation, safeguarding awareness, infection-control essentials, information governance and role-specific moving-and-handling instruction."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Scheduled induction content",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "COMPARISON_SCOPE_INCOMPLETE",
+        "controlled_rejection_rationale": "Scheduled version 2 contains information-governance evidence, but the current primary version does not."
+      },
+      "threshold_observability": {
+        "classification": "THRESHOLD_SENSITIVE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY",
+          "COMPARISON"
+        ],
+        "justification": "Scheduled version 2 contains information-governance evidence, but the current primary version does not."
+      }
+    }
+  ]
+}

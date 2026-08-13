@@ -1,0 +1,132 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-first-domain-infection-control",
+  "authoring_batch_version": "1",
+  "taxonomy": {"taxonomy_id": "dolved-care-engineering-taxonomy", "taxonomy_version": "1", "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"},
+  "domain": "infection-control",
+  "cases": [
+    {
+      "case_id": "v3.infection.historical.hand-hygiene-v1",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.infection.hand-hygiene-versioning",
+      "cluster_rationale": "Historical and current hand-hygiene wording are near duplicates and must not cross future splits.",
+      "leakage_group_ids": ["leakage.family.infection.hand-hygiene"],
+      "domain": "infection-control",
+      "variants": [
+        {"variant_id": "explicit", "question": "What did version 1 of the Hand Hygiene Procedure say about alcohol hand rub?", "evaluation_facets": ["historical-explicit"]},
+        {"variant_id": "ordinal", "question": "In version 1, when could staff use alcohol rub under the hand hygiene procedure?", "evaluation_facets": ["historical-explicit"]},
+        {"variant_id": "colloquial", "question": "What did version 1 of the hand-cleaning procedure say about gel?", "evaluation_facets": ["colloquial", "historical-explicit"]}
+      ],
+      "slices": ["historical", "temporal-authority"],
+      "evaluation_facets": ["changed-instruction", "historical-explicit", "near-duplicate", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v1", "source_path": "documents/infection-control/hand-hygiene-v1.md", "source_sha256": "37618e099da6704d233c97ccf267b27ebf601e31624d87258aa1a2394c57c155", "purpose": "EXPECTED_EVIDENCE"},
+        {"document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v2", "source_path": "documents/infection-control/hand-hygiene-v2.md", "source_sha256": "d1c503fe4740d547e6cca6433c0bb45d74c0015e877953537367f098c651f599", "purpose": "ELIGIBILITY_CONTEXT"}
+      ],
+      "planner_expectation": {"temporal_mode": "HISTORICAL_REFERENCE", "explicit_date": null, "temporal_reference": {"kind": "historical_reference", "value": "version 1"}, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [{"document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}],
+        "excluded_versions": [{"document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v2", "reason": "OUTSIDE_REQUESTED_TEMPORAL_SCOPE"}],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [{"evidence_id": "evidence.v3.infection.historical.hand-hygiene-v1", "document_family_id": "family.infection.hand-hygiene", "document_version_id": "doc.infection.hand-hygiene.v1", "side": "PRIMARY", "source_path": "documents/infection-control/hand-hygiene-v1.md", "canonical_excerpts": ["Alcohol hand rub may be used for routine decontamination when hands are visibly clean."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Procedure body", "notes": "Explicitly requested historical wording."}]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "The historical reference deterministically selects a source-anchored prior version."}
+    },
+    {
+      "case_id": "v3.infection.current.respiratory-ppe",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.infection.respiratory-ppe-completeness",
+      "cluster_rationale": "The generic task table and respiratory context are complementary and jointly required.",
+      "leakage_group_ids": ["leakage.family.infection.ppe", "leakage.family.infection.respiratory-ppe", "leakage.related.infection.ppe"],
+      "domain": "infection-control",
+      "variants": [
+        {"variant_id": "direct", "question": "What general rule determines PPE selection, and what additional respirator fit requirement applies to a respiratory aerosol-generating procedure?", "evaluation_facets": []},
+        {"variant_id": "abbreviation", "question": "For a respiratory AGP, what drives PPE selection generally and what fit requirement applies to the respirator?", "evaluation_facets": ["abbreviation"]},
+        {"variant_id": "colloquial", "question": "How do we choose the kit, and what special fit rule applies to the respirator for an aerosol procedure?", "evaluation_facets": ["colloquial"]}
+      ],
+      "slices": ["CURRENT", "multi-document", "multi-evidence"],
+      "evaluation_facets": ["cross-document-completeness", "near-duplicate", "two-evidence-units", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.infection.ppe", "document_version_id": "doc.infection.ppe.v1", "source_path": "documents/infection-control/ppe-reference.md", "source_sha256": "a7f4e9022d343c4d748ac3bf753870420e88041a7eabcefa3891014231680a61", "purpose": "EXPECTED_EVIDENCE"},
+        {"document_family_id": "family.infection.respiratory-ppe", "document_version_id": "doc.infection.respiratory-ppe.v1", "source_path": "documents/infection-control/respiratory-ppe-procedure.md", "source_sha256": "d7afa21216322ee9ba0cff8fd5fb5723616513579016b1c9ff58e09e3186bb63", "purpose": "EXPECTED_EVIDENCE"}
+      ],
+      "planner_expectation": {"temporal_mode": "CURRENT", "explicit_date": null, "temporal_reference": null, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {"document_family_id": "family.infection.ppe", "document_version_id": "doc.infection.ppe.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}},
+          {"document_family_id": "family.infection.respiratory-ppe", "document_version_id": "doc.infection.respiratory-ppe.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [
+        {"evidence_id": "evidence.v3.infection.respiratory-ppe.selection-rule", "document_family_id": "family.infection.ppe", "document_version_id": "doc.infection.ppe.v1", "side": "PRIMARY", "source_path": "documents/infection-control/ppe-reference.md", "canonical_excerpts": ["PPE is selected for the task and exposure risk, not solely for a diagnosis."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Selection rule", "notes": "General selection principle that the respiratory procedure does not independently state."},
+        {"evidence_id": "evidence.v3.infection.respiratory-ppe.fit-requirement", "document_family_id": "family.infection.respiratory-ppe", "document_version_id": "doc.infection.respiratory-ppe.v1", "side": "PRIMARY", "source_path": "documents/infection-control/respiratory-ppe-procedure.md", "canonical_excerpts": ["An aerosol-generating procedure requires a fit-tested respirator, long-sleeved gown, gloves and eye protection."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Procedure body", "notes": "Respiratory-specific fit requirement absent from the general selection reference."}
+      ]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "Two complementary documents must survive the candidate and threshold path."}
+    },
+    {
+      "case_id": "v3.infection.current.outbreak-no-authority",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.infection.outbreak-authority-gap",
+      "cluster_rationale": "Current and comparison questions share the same attained-successor withdrawal and no-resurrection invariant.",
+      "leakage_group_ids": ["leakage.family.infection.outbreak-management"],
+      "domain": "infection-control",
+      "variants": [
+        {"variant_id": "direct", "question": "What is the current respiratory outbreak management procedure?", "evaluation_facets": []},
+        {"variant_id": "colloquial", "question": "What's the live outbreak procedure now?", "evaluation_facets": ["colloquial"]},
+        {"variant_id": "predecessor-trap", "question": "After version 2 was withdrawn, did version 1 become current again?", "evaluation_facets": []}
+      ],
+      "slices": ["CURRENT", "predecessor-resurrection", "temporal-authority", "withdrawn", "zero-evidence"],
+      "evaluation_facets": ["after-authority-transition", "no-predecessor-resurrection", "universal", "withdrawn"],
+      "source_lineage": [
+        {"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v1", "source_path": "documents/infection-control/outbreak-management-v1.md", "source_sha256": "5514341b895f892fa0af797eb14571266ea6ec8c1de53ca509aeb2e06eaa904c", "purpose": "ELIGIBILITY_CONTEXT"},
+        {"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v2", "source_path": "documents/infection-control/outbreak-management-v2-withdrawn.md", "source_sha256": "cc265374341f019510bffaef17f288fc76be5a06c8bf3d29dcacf64e9fa71214", "purpose": "ELIGIBILITY_CONTEXT"}
+      ],
+      "planner_expectation": {"temporal_mode": "CURRENT", "explicit_date": null, "temporal_reference": null, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [],
+        "excluded_versions": [
+          {"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v1", "reason": "HISTORICAL_FOR_CURRENT"},
+          {"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v2", "reason": "WITHDRAWN"}
+        ],
+        "expected_outcome": "NO_ELIGIBLE_EVIDENCE"
+      },
+      "retrieval_expectation": {"evidence_units": []},
+      "outcome_expectation": {"outcome": "NO_ELIGIBLE_EVIDENCE", "controlled_rejection_rationale": "Version 2 attained authority and was later withdrawn; ADR-0017 forbids version 1 from becoming authoritative again."},
+      "threshold_observability": {"classification": "ACCEPTANCE_ONLY", "reranker_evaluable": false, "required_sides": ["PRIMARY"], "justification": "Eligibility must short-circuit before reranking because the family has no current authoritative version."}
+    },
+    {
+      "case_id": "v3.infection.compare.outbreak-current-v2",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.infection.outbreak-authority-gap",
+      "cluster_rationale": "Current and comparison questions share the same attained-successor withdrawal and no-resurrection invariant.",
+      "leakage_group_ids": ["leakage.family.infection.outbreak-management"],
+      "domain": "infection-control",
+      "variants": [
+        {"variant_id": "explicit", "question": "Compare the current respiratory outbreak procedure with version 2.", "evaluation_facets": ["historical-explicit"]},
+        {"variant_id": "withdrawal-wording", "question": "How does today's outbreak procedure compare with the procedure withdrawn in June 2026?", "evaluation_facets": [], "planner_expectation_override": {"temporal_reference": {"kind": "historical_reference", "value": "procedure withdrawn in June 2026"}}},
+        {"variant_id": "colloquial", "question": "What's changed between the current outbreak rules and v2?", "evaluation_facets": ["colloquial", "abbreviation"], "planner_expectation_override": {"temporal_reference": {"kind": "historical_reference", "value": "v2"}}}
+      ],
+      "slices": ["COMPARE", "predecessor-resurrection", "temporal-authority", "withdrawn", "zero-evidence"],
+      "evaluation_facets": ["compare-primary-empty", "historical-explicit", "no-predecessor-resurrection", "universal", "withdrawn"],
+      "source_lineage": [
+        {"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v1", "source_path": "documents/infection-control/outbreak-management-v1.md", "source_sha256": "5514341b895f892fa0af797eb14571266ea6ec8c1de53ca509aeb2e06eaa904c", "purpose": "ELIGIBILITY_CONTEXT"},
+        {"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v2", "source_path": "documents/infection-control/outbreak-management-v2-withdrawn.md", "source_sha256": "cc265374341f019510bffaef17f288fc76be5a06c8bf3d29dcacf64e9fa71214", "purpose": "ELIGIBILITY_CONTEXT"}
+      ],
+      "planner_expectation": {"temporal_mode": "COMPARE", "explicit_date": null, "temporal_reference": {"kind": "historical_reference", "value": "version 2"}, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [{"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v2", "side": "COMPARISON", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}],
+        "excluded_versions": [{"document_family_id": "family.infection.outbreak-management", "document_version_id": "doc.infection.outbreak-management.v1", "reason": "HISTORICAL_FOR_CURRENT"}],
+        "expected_outcome": "COMPARISON_SCOPE_INCOMPLETE"
+      },
+      "retrieval_expectation": {"evidence_units": []},
+      "outcome_expectation": {"outcome": "COMPARISON_SCOPE_INCOMPLETE", "controlled_rejection_rationale": "The named historical comparison version can resolve, but no current PRIMARY authority exists after withdrawal, so a complete two-sided comparison is impossible."},
+      "threshold_observability": {"classification": "ACCEPTANCE_ONLY", "reranker_evaluable": false, "required_sides": ["PRIMARY", "COMPARISON"], "justification": "The missing primary scope is established deterministically before evidence thresholding."}
+    }
+  ]
+}

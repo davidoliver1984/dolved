@@ -37,7 +37,8 @@
       "properties": {
         "variant_id": {"$ref": "#/$defs/identifier"},
         "question": {"type": "string", "minLength": 1, "maxLength": 4000},
-        "evaluation_facets": {"type": "array", "uniqueItems": true, "items": {"$ref": "benchmark-taxonomy.schema.json#/$defs/evaluation_facet_id"}}
+        "evaluation_facets": {"type": "array", "uniqueItems": true, "items": {"$ref": "benchmark-taxonomy.schema.json#/$defs/evaluation_facet_id"}},
+        "planner_expectation_override": {"$ref": "#/$defs/planner_expectation_override"}
       }
     },
     "source_reference": {
@@ -69,7 +70,7 @@
         "temporal_mode": {"enum": ["CURRENT", "COMPARE", "VALID_AT_DATE", "HISTORICAL_REFERENCE", "CLARIFICATION_REQUIRED"]},
         "explicit_date": {"type": ["string", "null"], "format": "date"},
         "temporal_reference": {"anyOf": [{"$ref": "#/$defs/temporal_reference"}, {"type": "null"}]},
-        "location_references": {"type": "array", "maxItems": 8, "items": {"type": "string", "minLength": 1, "maxLength": 255}},
+        "location_references": {"type": "array", "maxItems": 8, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 255}},
         "clarification_reason": {"enum": ["UNCLASSIFIABLE_TEMPORAL_INTENT", null]},
         "expected_outcome": {"enum": ["PLAN_READY", "CLARIFICATION_REQUIRED"]}
       },
@@ -83,6 +84,15 @@
         {"if": {"properties": {"temporal_mode": {"const": "COMPARE"}}}, "then": {"properties": {"clarification_reason": {"type": "null"}}, "not": {"properties": {"explicit_date": {"type": "string"}, "temporal_reference": {"$ref": "#/$defs/temporal_reference"}}, "required": ["explicit_date", "temporal_reference"]}}},
         {"if": {"properties": {"temporal_mode": {"const": "CLARIFICATION_REQUIRED"}}}, "then": {"properties": {"explicit_date": {"type": "null"}, "temporal_reference": {"type": "null"}, "clarification_reason": {"const": "UNCLASSIFIABLE_TEMPORAL_INTENT"}, "expected_outcome": {"const": "CLARIFICATION_REQUIRED"}}}}
       ]
+    },
+    "planner_expectation_override": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "temporal_reference": {"anyOf": [{"$ref": "#/$defs/temporal_reference"}, {"type": "null"}]},
+        "location_references": {"type": "array", "maxItems": 8, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 255}}
+      }
     },
     "applicability_match": {
       "type": "object",
@@ -112,7 +122,7 @@
       "properties": {
         "document_family_id": {"$ref": "#/$defs/identifier"},
         "document_version_id": {"$ref": "#/$defs/identifier"},
-        "reason": {"enum": ["HISTORICAL_FOR_CURRENT", "SCHEDULED_FUTURE", "WITHDRAWN", "NEVER_ATTAINED_AUTHORITY", "APPLICABILITY_MISMATCH", "IRRELEVANT_NEGATIVE"]}
+        "reason": {"enum": ["HISTORICAL_FOR_CURRENT", "SCHEDULED_FUTURE", "WITHDRAWN", "NEVER_ATTAINED_AUTHORITY", "OUTSIDE_REQUESTED_TEMPORAL_SCOPE", "NOT_YET_ATTAINED_AUTHORITY", "APPLICABILITY_MISMATCH", "IRRELEVANT_NEGATIVE"]}
       }
     },
     "eligibility_expectation": {

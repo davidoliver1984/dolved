@@ -1,0 +1,34 @@
+{
+  "schema_version": "v3",
+  "review_id": "review.v3.health.valid-at-date.accident-reporting-2024",
+  "review_version": "3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "case_id": "v3.health.valid-at-date.accident-reporting-2024",
+  "case_sha256": "3f62b2a235fe43792592b5bd6c8ee57225609ae023623689d8d8dc5274726c62",
+  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_lineage_digest": "38164b90af67ff6fbe30c75cfbd0f2169f600cb272561e06971e178ca2abfa00",
+  "evidence_unit_ids_digest": "79cd1028586f6a91dd9ed642c536232a4dddd15fb0bd81457b85c0ce50783826",
+  "reviewed_at": "2026-08-13T22:45:00Z",
+  "machine_validation": {
+    "validator_id": "benchmark-v3-compiler",
+    "validator_version": "1",
+    "passed": true
+  },
+  "human_review": {
+    "source_truth": "REVIEWED",
+    "evidence_units": "REVIEWED",
+    "expected_outcome": "REVIEWED",
+    "temporal_facts": "REVIEWED",
+    "applicability_facts": "REVIEWED",
+    "controlled_rejection_rationale": "NOT_APPLICABLE",
+    "approved": true
+  },
+  "reviewer_identity": "codex",
+  "review_note": "Calibration authoring review confirmed source truth, question-to-evidence scope, temporal and applicability facts, and controlled-outcome rationale."
+}

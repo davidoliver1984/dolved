@@ -1,0 +1,494 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-calibration-hr",
+  "authoring_batch_version": "1",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "domain": "hr",
+  "cases": [
+    {
+      "case_id": "v3.hr.current.sickness-reporting",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.hr.current.sickness-reporting",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.hr.sickness-absence"
+      ],
+      "domain": "hr",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Under the current sickness procedure, who must I call and how long before my shift?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "Who do I ring if I'm ill, and how early?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "State the live personal-call recipient and notice period.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "adversarial",
+        "temporal-authority",
+        "multi-evidence"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "near-duplicate-wrong",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.hr.sickness-absence",
+          "document_version_id": "doc.hr.sickness-absence.v1",
+          "source_path": "documents/hr/sickness-absence-v1.md",
+          "source_sha256": "8c7ccf1f6fc96bcc1014c779fcb112a007c2b240a47ce027d165a7266163e864",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        },
+        {
+          "document_family_id": "family.hr.sickness-absence",
+          "document_version_id": "doc.hr.sickness-absence.v2",
+          "source_path": "documents/hr/sickness-absence-v2.md",
+          "source_sha256": "51dc20f7807f09d6923a2ac8e42794ea075d783b70c096ffb50c7d6f6467f685",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.hr.sickness-absence",
+            "document_version_id": "doc.hr.sickness-absence.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.hr.sickness-absence",
+            "document_version_id": "doc.hr.sickness-absence.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.hr.current.sickness-reporting.primary.96",
+            "document_family_id": "family.hr.sickness-absence",
+            "document_version_id": "doc.hr.sickness-absence.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/hr/sickness-absence-v2.md",
+            "canonical_excerpts": [
+              "Employees must telephone the duty manager personally at least two hours before the shift begins."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current reporting",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.hr.historical.annual-leave-first",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.hr.historical.annual-leave-first",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.hr.annual-leave"
+      ],
+      "domain": "hr",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "What annual-leave entitlement did version 1 give full-time employees?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How much leave did the previous policy give?",
+          "evaluation_facets": [
+            "colloquial"
+          ],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "previous version"
+            }
+          }
+        },
+        {
+          "variant_id": "precision",
+          "question": "Under the first version, what was the full-time allowance?",
+          "evaluation_facets": [],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "first version"
+            }
+          }
+        }
+      ],
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-explicit",
+        "historical-ordinal",
+        "historical-previous"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.hr.annual-leave",
+          "document_version_id": "doc.hr.annual-leave.v1",
+          "source_path": "documents/hr/annual-leave-v1.md",
+          "source_sha256": "f38ec75b265ee85af5a37974503c70ddb60ab346e1558c4c9be5236b372fa8f5",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.hr.annual-leave",
+          "document_version_id": "doc.hr.annual-leave.v2",
+          "source_path": "documents/hr/annual-leave-v2.md",
+          "source_sha256": "e45f0f5dd7b602d7a88202bbb43e142c44a57814e846e8ab7f228025bfd6114a",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "HISTORICAL_REFERENCE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v2",
+            "reason": "OUTSIDE_REQUESTED_TEMPORAL_SCOPE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.hr.historical.annual-leave-first.primary.83",
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/hr/annual-leave-v1.md",
+            "canonical_excerpts": [
+              "Full-time employees receive 28 days of paid annual leave including public holidays."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 entitlement",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.hr.valid-at-date.annual-leave-2024",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.hr.valid-at-date.annual-leave-2024",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.hr.annual-leave"
+      ],
+      "domain": "hr",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "On 1 June 2024, how many annual-leave days did a full-time employee receive?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "What was the leave allowance in June 2024?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Which full-time entitlement applied on 1 June 2024?",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "VALID_AT_DATE",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "before-authority-transition",
+        "changed-structured-value",
+        "table-evidence"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.hr.annual-leave",
+          "document_version_id": "doc.hr.annual-leave.v1",
+          "source_path": "documents/hr/annual-leave-v1.md",
+          "source_sha256": "f38ec75b265ee85af5a37974503c70ddb60ab346e1558c4c9be5236b372fa8f5",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.hr.annual-leave",
+          "document_version_id": "doc.hr.annual-leave.v2",
+          "source_path": "documents/hr/annual-leave-v2.md",
+          "source_sha256": "e45f0f5dd7b602d7a88202bbb43e142c44a57814e846e8ab7f228025bfd6114a",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        },
+        {
+          "document_family_id": "family.hr.annual-leave",
+          "document_version_id": "doc.hr.annual-leave.v3",
+          "source_path": "documents/hr/annual-leave-v3-scheduled.md",
+          "source_sha256": "9c2f771f15476fa0b442708331ab7e40b65931b969829086c807b2850d5577fd",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "VALID_AT_DATE",
+        "explicit_date": "2024-06-01",
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v2",
+            "reason": "NOT_YET_ATTAINED_AUTHORITY"
+          },
+          {
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v3",
+            "reason": "NOT_YET_ATTAINED_AUTHORITY"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.hr.valid-at-date.annual-leave-2024.primary.83",
+            "document_family_id": "family.hr.annual-leave",
+            "document_version_id": "doc.hr.annual-leave.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/hr/annual-leave-v1.md",
+            "canonical_excerpts": [
+              "Full-time employees receive 28 days of paid annual leave including public holidays."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 entitlement",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.hr.current.midlands-lone-worker",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.hr.current.midlands-lone-worker",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.hr.lone-worker-welfare"
+      ],
+      "domain": "hr",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "For the Coventry community team, what happens after an end-of-visit check-in is missed?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "What do we do when the Coventry team don't check out after a visit?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Give the Midlands escalation timing for a missed end-of-visit check-in.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "location-alias",
+        "regional-applicability",
+        "region-specific"
+      ],
+      "evaluation_facets": [
+        "alias-formal",
+        "applicability-excluded",
+        "numeric-boundary",
+        "regional"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.hr.lone-worker-welfare",
+          "document_version_id": "doc.hr.lone-worker-welfare.v1",
+          "source_path": "documents/hr/midlands-lone-worker-welfare.md",
+          "source_sha256": "8953f8fe0d511dd93957ff9f60a19862bae278a77af05637ccef5b50409797e1",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [
+          "Coventry community team"
+        ],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.hr.lone-worker-welfare",
+            "document_version_id": "doc.hr.lone-worker-welfare.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "ANCESTOR",
+              "governing_location_id": "location.region.midlands",
+              "requested_location_id": "location.willow-bank"
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.hr.current.midlands-lone-worker.primary.260",
+            "document_family_id": "family.hr.lone-worker-welfare",
+            "document_version_id": "doc.hr.lone-worker-welfare.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/hr/midlands-lone-worker-welfare.md",
+            "canonical_excerpts": [
+              "If an end-of-visit check-in is fifteen minutes overdue, the coordinator calls the worker. If there is no response after a further ten minutes, the coordinator follows the emergency escalation contact and considers police assistance according to the known risk."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Missed check-in",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    }
+  ]
+}

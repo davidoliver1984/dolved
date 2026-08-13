@@ -21,7 +21,278 @@
     "tool_version": "1"
   },
   "v2_unchanged": true,
-  "case_changes": [],
+  "case_changes": [
+    {
+      "source_id": null,
+      "target_id": "v3.complaints.compare.handling-timescales",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical complaints source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.complaints.compare.response-plan-incomplete",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical complaints source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.complaints.current.handling-deadlines",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical complaints source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.complaints.historical.handling-v1",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical complaints source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.fire.compare.drill-frequency",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical fire-safety source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.fire.compare.route-record-incomplete",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical fire-safety source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.fire.current.harbour-view-evacuation",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical fire-safety source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.fire.current.north-west-assembly",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical fire-safety source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.fire.historical.drills-v1",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical fire-safety source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.gdpr.current.incident-reporting",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical gdpr source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.gdpr.historical.data-protection-v1",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical gdpr source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.gdpr.insufficient.misdirected-email-deletion",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical gdpr source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.gdpr.valid-at-date.sar-2027",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical gdpr source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.health.compare.moving-handling-staffing",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical health-safety source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.health.current.accident-reporting",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical health-safety source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.health.insufficient.lone-working-police-time",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical health-safety source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.health.valid-at-date.accident-reporting-2024",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical health-safety source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.hr.current.midlands-lone-worker",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical hr source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.hr.current.sickness-reporting",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical hr source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.hr.historical.annual-leave-first",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical hr source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.hr.valid-at-date.annual-leave-2024",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical hr source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.infection.compare.outbreak-current-v2",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical infection-control source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.infection.current.outbreak-no-authority",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical infection-control source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.infection.current.respiratory-ppe",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical infection-control source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.infection.historical.hand-hygiene-v1",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical infection-control source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.medication.current.fridge-excursion",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical medication source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.medication.current.omitted-dose",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical medication source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.medication.insufficient.fridge-quarantine-duration",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical medication source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.medication.valid-at-date.omitted-dose-2024",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical medication source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.payroll.compare.january-2027-incomplete",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical payroll source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.payroll.current.expenses",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical payroll source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.payroll.insufficient.receipt-attempts",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical payroll source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.payroll.valid-at-date.calendar-2027",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical payroll source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.safeguarding.compare.staff-allegation-timing",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical safeguarding source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.safeguarding.current.covert-medication-capacity",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical safeguarding and medication sources and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.safeguarding.current.staff-allegation",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical safeguarding source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.safeguarding.valid-at-date.adult-reporting",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical safeguarding source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.training.compare.induction-information-governance-incomplete",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical training source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.training.compare.medication-competency",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical training source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.training.current.medication-competency",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical training source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.training.historical.medication-competency-first",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical training source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.visitors.compare.outbreak-restrictions",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical visitors source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.visitors.current.bristol-contractor",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical visitors source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.visitors.current.sign-in",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical visitors source and catalogue lineage."
+    },
+    {
+      "source_id": null,
+      "target_id": "v3.visitors.insufficient.badge-return-minutes",
+      "classification": "NEW",
+      "reason": "Independently authored from the V3 canonical visitors source and catalogue lineage."
+    }
+  ],
   "document_changes": [
     {
       "source_id": "doc.complaints.advocacy.v1",

@@ -1,0 +1,13 @@
+{
+  "review_artifact_id": "review.dolved-care-engineering.v3.calibration-v1",
+  "review_artifact_version": "1",
+  "reviewed_case_ids_digest": "1808477d771b24f45b726dd4b05ce8defa5b1edc624b8907155ccac7ab7e4801",
+  "semantic_quality_reviewed": true,
+  "representative_coverage_reviewed": true,
+  "author_rationale_reviewed": true,
+  "governance_reviewed": true,
+  "reviewer_identity": "codex",
+  "reviewed_at": "2026-08-13T22:45:00Z",
+  "review_note": "All 44 calibration cases were source-anchored and reviewed before provider execution; the acceptance-only incomplete comparison was excluded because it cannot reach threshold evaluation.",
+  "review_artifact_digest": "bb2ce88acf19a4bcbb7ce00ab8154c73d48536afcb6d1f9affce660d30152c93"
+}

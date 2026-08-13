@@ -1,0 +1,467 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-calibration-health-safety",
+  "authoring_batch_version": "1",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "domain": "health-safety",
+  "cases": [
+    {
+      "case_id": "v3.health.current.accident-reporting",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.health.current.accident-reporting",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.accident-reporting"
+      ],
+      "domain": "health-safety",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "What is the current deadline for notifying the health and safety lead when RIDDOR may apply?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How quickly do I tell H&S about something that might be RIDDOR?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Under the live procedure, when must the health and safety lead be notified?",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "adversarial",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "near-duplicate-wrong",
+        "numeric-boundary"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.health-safety.accident-reporting",
+          "document_version_id": "doc.health-safety.accident-reporting.v1",
+          "source_path": "documents/health-safety/accident-reporting-v1.md",
+          "source_sha256": "b93211f822ffdf842d8630eeb8bc1b4c87ceb034f99619a33c56c4b952e579f9",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        },
+        {
+          "document_family_id": "family.health-safety.accident-reporting",
+          "document_version_id": "doc.health-safety.accident-reporting.v2",
+          "source_path": "documents/health-safety/accident-reporting-v2.md",
+          "source_sha256": "b15f28bc72f6ad57c96373880899e3017ac6239996d35cf0c6ffc6a58ed7bce6",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.health.current.accident-reporting.primary.160",
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/health-safety/accident-reporting-v2.md",
+            "canonical_excerpts": [
+              "The manager must notify the health and safety lead within one working day where RIDDOR may apply; the health and safety lead owns the formal reporting decision."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current escalation",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.health.valid-at-date.accident-reporting-2024",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.health.valid-at-date.accident-reporting-2024",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.accident-reporting"
+      ],
+      "domain": "health-safety",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "On 1 December 2024, when did a manager contact the health and safety lead about possible RIDDOR reporting?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "What was the H&S lead deadline in December 2024?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Which notification timescale applied on 1 December 2024?",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "VALID_AT_DATE",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "before-authority-transition",
+        "changed-structured-value",
+        "numeric-boundary"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.health-safety.accident-reporting",
+          "document_version_id": "doc.health-safety.accident-reporting.v1",
+          "source_path": "documents/health-safety/accident-reporting-v1.md",
+          "source_sha256": "b93211f822ffdf842d8630eeb8bc1b4c87ceb034f99619a33c56c4b952e579f9",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.health-safety.accident-reporting",
+          "document_version_id": "doc.health-safety.accident-reporting.v2",
+          "source_path": "documents/health-safety/accident-reporting-v2.md",
+          "source_sha256": "b15f28bc72f6ad57c96373880899e3017ac6239996d35cf0c6ffc6a58ed7bce6",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "VALID_AT_DATE",
+        "explicit_date": "2024-12-01",
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v2",
+            "reason": "NOT_YET_ATTAINED_AUTHORITY"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.health.valid-at-date.accident-reporting-2024.primary.133",
+            "document_family_id": "family.health-safety.accident-reporting",
+            "document_version_id": "doc.health-safety.accident-reporting.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/health-safety/accident-reporting-v1.md",
+            "canonical_excerpts": [
+              "The manager reviews whether the event may be reportable under RIDDOR and contacts the health and safety lead within two working days."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 escalation",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.health.compare.moving-handling-staffing",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.health.compare.moving-handling-staffing",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.moving-handling"
+      ],
+      "domain": "health-safety",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Compare the current hoist staffing rule with version 1.",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How did the rule about one or two staff for a hoist change?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Compare today's hoist-transfer staffing rule with the first version.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "historical-explicit",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.health-safety.moving-handling",
+          "document_version_id": "doc.health-safety.moving-handling.v1",
+          "source_path": "documents/health-safety/moving-handling-v1.md",
+          "source_sha256": "ef6c53d1866776ba9b00f8b47efcd1cdfd9fc36e1c6688a3addeae848ec750ff",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.health-safety.moving-handling",
+          "document_version_id": "doc.health-safety.moving-handling.v2",
+          "source_path": "documents/health-safety/moving-handling-v2.md",
+          "source_sha256": "b02927ff66913948b52720fe33b30935ddb22972762b811cfb39ba5a94386cbf",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v1",
+            "side": "COMPARISON",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.health.compare.moving-handling-staffing.primary.124",
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/health-safety/moving-handling-v2.md",
+            "canonical_excerpts": [
+              "The assessment, rather than a universal rule, determines whether one or two trained staff are required for a hoist transfer."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current staffing",
+            "notes": "Source-anchored calibration evidence."
+          },
+          {
+            "evidence_id": "evidence.v3.health.compare.moving-handling-staffing.comparison.58",
+            "document_family_id": "family.health-safety.moving-handling",
+            "document_version_id": "doc.health-safety.moving-handling.v1",
+            "side": "COMPARISON",
+            "source_path": "documents/health-safety/moving-handling-v1.md",
+            "canonical_excerpts": [
+              "Two staff are required for every full-body hoist transfer."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 staffing",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY",
+          "COMPARISON"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.health.insufficient.lone-working-police-time",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.health.insufficient.lone-working-police-time",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.lone-working"
+      ],
+      "domain": "health-safety",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Exactly how many minutes after any missed welfare check must police be called?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "What's the fixed police-call timer for every missed lone-worker check?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Give the universal mandatory number of minutes before police contact.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "zero-evidence"
+      ],
+      "evaluation_facets": [
+        "no-trustworthy-candidate",
+        "numeric-boundary",
+        "universal"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.health-safety.lone-working",
+          "document_version_id": "doc.health-safety.lone-working.v1",
+          "source_path": "documents/health-safety/lone-working-policy.md",
+          "source_sha256": "a5f23b4951e14faf4fcd6de5b0e5d95c1a5a68241502dd518b4ae857a42c75d3",
+          "purpose": "CONTROLLED_REJECTION"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.health-safety.lone-working",
+            "document_version_id": "doc.health-safety.lone-working.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": []
+      },
+      "outcome_expectation": {
+        "outcome": "INSUFFICIENT_EVIDENCE",
+        "controlled_rejection_rationale": "The policy requires risk-specific controls and refers escalation to a separate procedure; it states no universal police-call duration."
+      },
+      "threshold_observability": {
+        "classification": "THRESHOLD_SENSITIVE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "The policy requires risk-specific controls and refers escalation to a separate procedure; it states no universal police-call duration."
+      }
+    }
+  ]
+}

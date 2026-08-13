@@ -33,6 +33,12 @@ cluster identity and rationale, leakage groups, variants, intrinsic slices,
 facets, source lineage, layered expectations, EvidenceUnits and threshold
 observability classification.
 
+Planner expectations are shared at case level when every variant has the same
+ADR-0022 meaning. A variant may override only preserved temporal-reference or
+location-reference wording when its phrasing genuinely differs; the effective
+expectation must still satisfy the shared temporal mode. Overrides must not be
+used to hide variants that ask materially different questions.
+
 Source lineage is explicit and digest-bound to a catalogue version. Evidence
 must name a source from that lineage and remain inside the expected eligible
 scope. Controlled outcomes require a written rejection rationale; an
@@ -51,6 +57,15 @@ Human review is deliberately separate from schema validation:
 The compiler permits unreviewed `DRAFT` and `READY_FOR_REVIEW` cases only during
 `AUTHORING`. Every `REVIEWED` case must have exactly one matching review;
 `COMPLETE` and `BASELINED` require every case to be reviewed.
+
+Human review must confirm that question intent and EvidenceUnit scope are
+equal. Independent obligations receive atomic EvidenceUnits when partial
+coverage would be materially misleading. A `multi-document` case requires
+distinct EvidenceUnits from multiple sources, each source must contribute
+necessary information, and no one document may independently answer the whole
+case. These semantic judgements remain human-owned; schema validation alone
+does not prove them. Individual reviews identify the reviewer, review time and
+a concise non-sensitive rationale.
 
 ## Ownership
 

@@ -250,6 +250,58 @@ def validate_catalog(
     return families, versions, authority
 
 
+def validate_variant_planner_expectation(
+    shared: dict[str, Any], variant: dict[str, Any], case_id: str
+) -> None:
+    override = variant.get("planner_expectation_override")
+    if override is None:
+        return
+    effective = {**shared, **override}
+    if effective == shared:
+        raise ValueError(
+            f"redundant planner expectation override: {case_id}/{variant['variant_id']}"
+        )
+
+    mode = effective["temporal_mode"]
+    explicit_date = effective["explicit_date"]
+    reference = effective["temporal_reference"]
+    clarification = effective["clarification_reason"]
+    valid = False
+    if mode == "CURRENT":
+        valid = explicit_date is None and reference is None and clarification is None
+    elif mode == "VALID_AT_DATE":
+        valid = clarification is None and (
+            (explicit_date is not None and reference is None)
+            or (
+                explicit_date is None
+                and reference is not None
+                and reference["kind"] == "calendar_period"
+            )
+        )
+    elif mode == "HISTORICAL_REFERENCE":
+        valid = (
+            explicit_date is None
+            and reference is not None
+            and reference["kind"] == "historical_reference"
+            and clarification is None
+        )
+    elif mode == "COMPARE":
+        valid = not (explicit_date is not None and reference is not None) and (
+            clarification is None
+        )
+    elif mode == "CLARIFICATION_REQUIRED":
+        valid = (
+            explicit_date is None
+            and reference is None
+            and clarification == "UNCLASSIFIABLE_TEMPORAL_INTENT"
+        )
+    if not valid:
+        raise ValueError(
+            "variant planner expectation override violates ADR-0022: "
+            f"{case_id}/{variant['variant_id']}"
+        )
+
+
 def validate_cases(
     cases: list[dict[str, Any]],
     benchmark_root: Path,
@@ -276,6 +328,9 @@ def validate_cases(
                 facets,
                 "VARIANT",
                 f"{case['case_id']}/{variant['variant_id']}",
+            )
+            validate_variant_planner_expectation(
+                case["planner_expectation"], variant, case["case_id"]
             )
         eligible = case["eligibility_expectation"]["eligible_versions"]
         source_lineage = {
@@ -331,8 +386,7 @@ def validate_cases(
             if (
                 planner["temporal_mode"] in {"CURRENT", "VALID_AT_DATE"}
                 and planner["temporal_reference"] is None
-                and authoritative_version_at(authority[family_id], moment)
-                != version_id
+                and authoritative_version_at(authority[family_id], moment) != version_id
             ):
                 raise ValueError(
                     f"case expects temporally ineligible version: {version_id}"
@@ -711,7 +765,13 @@ def compile_benchmark(
     ):
         raise ValueError("manifest document counts do not match benchmark sources")
 
-    load_case_identities = status != "FOUNDATION"
+    # AUTHORING may introduce independently authored NEW cases without consulting
+    # any protected V2 case population. Parent case identities are loaded only
+    # when a lineage entry actually claims a V2 source, or when closure requires
+    # complete release-to-release case lineage.
+    load_case_identities = status in {"COMPLETE", "BASELINED"} or any(
+        change["source_id"] is not None for change in lineage["case_changes"]
+    )
     parent_cases, parent_versions = validate_parent_release(
         parent_benchmark_root or benchmark_root.parent / "v2",
         required_parent_digest,

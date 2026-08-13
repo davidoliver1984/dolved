@@ -1,0 +1,478 @@
+{
+  "schema_version": "v3",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "authoring_batch_id": "v3-calibration-gdpr",
+  "authoring_batch_version": "1",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "domain": "gdpr",
+  "cases": [
+    {
+      "case_id": "v3.gdpr.current.incident-reporting",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.gdpr.current.incident-reporting",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.gdpr.data-protection"
+      ],
+      "domain": "gdpr",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Under the current data-protection policy, when and where must suspected unauthorised disclosure be reported?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "Where do I report a data leak and how quickly?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "State the live privacy-incident channel and deadline.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "temporal-authority",
+        "multi-evidence"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "near-duplicate",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.gdpr.data-protection",
+          "document_version_id": "doc.gdpr.data-protection.v1",
+          "source_path": "documents/gdpr/data-protection-v1.md",
+          "source_sha256": "3ded992a7bb0bda8d153fd47843766355ca257ea1932ad3dac5302d5fccff7fc",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        },
+        {
+          "document_family_id": "family.gdpr.data-protection",
+          "document_version_id": "doc.gdpr.data-protection.v2",
+          "source_path": "documents/gdpr/data-protection-v2.md",
+          "source_sha256": "c6fee6d32a596d2ab9ad9e85d506d5b35c4237e828f3c99af071f1acdde378d6",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v1",
+            "reason": "HISTORICAL_FOR_CURRENT"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.gdpr.current.incident-reporting.primary.167",
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/gdpr/data-protection-v2.md",
+            "canonical_excerpts": [
+              "Suspected loss, misdirection or unauthorised disclosure must be reported through the privacy incident channel immediately and no later than four hours after discovery."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Current incident reporting",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.gdpr.valid-at-date.sar-2027",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.gdpr.valid-at-date.sar-2027",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.gdpr.subject-access"
+      ],
+      "domain": "gdpr",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "On 15 January 2027, how may a subject access request be submitted and logged?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How do SARs work in January 2027?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Which request channels and logging deadline apply on 15 January 2027?",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "VALID_AT_DATE",
+        "scheduled-future",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "after-authority-transition",
+        "scheduled",
+        "universal"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.gdpr.subject-access",
+          "document_version_id": "doc.gdpr.subject-access.v1",
+          "source_path": "documents/gdpr/subject-access-v1.md",
+          "source_sha256": "5b8f3232a82ef5927d1c34fc57960597d21909cf74c6f0c0162a38adc2052ef5",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        },
+        {
+          "document_family_id": "family.gdpr.subject-access",
+          "document_version_id": "doc.gdpr.subject-access.v2",
+          "source_path": "documents/gdpr/subject-access-v2-scheduled.md",
+          "source_sha256": "14d62dd16227c2eb564ec2cf812878e609c27d596f573f22d37f2b644e14e7a1",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "VALID_AT_DATE",
+        "explicit_date": "2027-01-15",
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.gdpr.subject-access",
+            "document_version_id": "doc.gdpr.subject-access.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.gdpr.subject-access",
+            "document_version_id": "doc.gdpr.subject-access.v1",
+            "reason": "OUTSIDE_REQUESTED_TEMPORAL_SCOPE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.gdpr.valid-at-date.sar-2027.primary.163",
+            "document_family_id": "family.gdpr.subject-access",
+            "document_version_id": "doc.gdpr.subject-access.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/gdpr/subject-access-v2-scheduled.md",
+            "canonical_excerpts": [
+              "A subject access request may be written, verbal or submitted through the privacy portal. Frontline staff will log the request in the portal within one working day."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Scheduled request channels",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.gdpr.historical.data-protection-v1",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.gdpr.historical.data-protection-v1",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.gdpr.data-protection"
+      ],
+      "domain": "gdpr",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "What reporting deadline did data-protection policy version 1 set for disclosure to the wrong person?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How quickly did the previous privacy policy say to report a wrong disclosure?",
+          "evaluation_facets": [
+            "colloquial"
+          ],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "previous version"
+            }
+          }
+        },
+        {
+          "variant_id": "precision",
+          "question": "Under the first data-protection version, what was the deadline?",
+          "evaluation_facets": [],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "first version"
+            }
+          }
+        }
+      ],
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "historical-explicit",
+        "historical-previous"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.gdpr.data-protection",
+          "document_version_id": "doc.gdpr.data-protection.v1",
+          "source_path": "documents/gdpr/data-protection-v1.md",
+          "source_sha256": "3ded992a7bb0bda8d153fd47843766355ca257ea1932ad3dac5302d5fccff7fc",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.gdpr.data-protection",
+          "document_version_id": "doc.gdpr.data-protection.v2",
+          "source_path": "documents/gdpr/data-protection-v2.md",
+          "source_sha256": "c6fee6d32a596d2ab9ad9e85d506d5b35c4237e828f3c99af071f1acdde378d6",
+          "purpose": "ELIGIBILITY_CONTEXT"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "HISTORICAL_REFERENCE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [
+          {
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v2",
+            "reason": "OUTSIDE_REQUESTED_TEMPORAL_SCOPE"
+          }
+        ],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.gdpr.historical.data-protection-v1.primary.114",
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/gdpr/data-protection-v1.md",
+            "canonical_excerpts": [
+              "Suspected disclosure to the wrong person must be reported to the Data Protection Officer within twenty-four hours."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 reporting",
+            "notes": "Source-anchored calibration evidence."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Eligible source-anchored evidence must survive reranking and thresholding."
+      }
+    },
+    {
+      "case_id": "v3.gdpr.insufficient.misdirected-email-deletion",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.gdpr.insufficient.misdirected-email-deletion",
+      "cluster_rationale": "All wording variants express one semantic calibration question and must remain together.",
+      "leakage_group_ids": [
+        "leakage.family.gdpr.breach",
+        "leakage.family.gdpr.data-protection"
+      ],
+      "domain": "gdpr",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Exactly how many minutes after a misdirected email must every unintended recipient delete it?",
+          "evaluation_facets": []
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "What's the fixed deletion timer for someone sent an email by mistake?",
+          "evaluation_facets": [
+            "colloquial"
+          ]
+        },
+        {
+          "variant_id": "precision",
+          "question": "Give the universal mandatory deletion time in minutes.",
+          "evaluation_facets": []
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "zero-evidence"
+      ],
+      "evaluation_facets": [
+        "no-trustworthy-candidate",
+        "numeric-boundary",
+        "universal"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.gdpr.breach",
+          "document_version_id": "doc.gdpr.breach.v1",
+          "source_path": "documents/gdpr/personal-data-breach.md",
+          "source_sha256": "2405edb574a452cad38b6a1413f989907cbbed98171f7f7d634bd1ffea39a488",
+          "purpose": "CONTROLLED_REJECTION"
+        },
+        {
+          "document_family_id": "family.gdpr.data-protection",
+          "document_version_id": "doc.gdpr.data-protection.v2",
+          "source_path": "documents/gdpr/data-protection-v2.md",
+          "source_sha256": "c6fee6d32a596d2ab9ad9e85d506d5b35c4237e828f3c99af071f1acdde378d6",
+          "purpose": "CONTROLLED_REJECTION"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.gdpr.breach",
+            "document_version_id": "doc.gdpr.breach.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.gdpr.data-protection",
+            "document_version_id": "doc.gdpr.data-protection.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": []
+      },
+      "outcome_expectation": {
+        "outcome": "INSUFFICIENT_EVIDENCE",
+        "controlled_rejection_rationale": "The sources require coordinated containment but specify no universal recipient-deletion duration."
+      },
+      "threshold_observability": {
+        "classification": "THRESHOLD_SENSITIVE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "The sources require coordinated containment but specify no universal recipient-deletion duration."
+      }
+    }
+  ]
+}
