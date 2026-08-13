@@ -10,6 +10,7 @@ use App\Models\WorkspaceCorpusGeneration;
 use App\Support\Evaluation\BenchmarkCanonicalJson;
 use App\Support\Evaluation\EngineeringBenchmark;
 use App\Support\Evaluation\EngineeringBenchmarkState;
+use App\Support\Evaluation\EngineeringRetrievalConfiguration;
 use Illuminate\Support\Str;
 use RuntimeException;
 
@@ -22,6 +23,23 @@ final readonly class ResolveEngineeringBenchmarkPolicy
 
     public function handle(WorkspaceCorpusGeneration $corpus): EvidenceThresholdPolicy
     {
+        return $this->resolve(
+            $corpus,
+            EngineeringRetrievalConfiguration::VERSION,
+            EngineeringRetrievalConfiguration::RRF_K,
+        );
+    }
+
+    public function handleExp0003Control(WorkspaceCorpusGeneration $corpus): EvidenceThresholdPolicy
+    {
+        return $this->resolve($corpus, 'exp-0001-dolved-care-v2-observational', 60);
+    }
+
+    private function resolve(
+        WorkspaceCorpusGeneration $corpus,
+        string $version,
+        int $rrfK,
+    ): EvidenceThresholdPolicy {
         if (! app()->environment(['local', 'testing'])) {
             throw new RuntimeException('Engineering benchmark policy resolution is restricted to local/testing environments.');
         }
@@ -40,7 +58,7 @@ final readonly class ResolveEngineeringBenchmarkPolicy
             throw new RuntimeException('The active corpus does not match the trusted benchmark provisioning record.');
         }
         $identity = [
-            'version' => 'exp-0001-dolved-care-v2-observational',
+            'version' => $version,
             'reranker_provider' => 'voyage',
             'reranker_model' => 'rerank-2.5',
             'reranker_adapter_version' => '1',
@@ -48,12 +66,12 @@ final readonly class ResolveEngineeringBenchmarkPolicy
             'sparse_profile_fingerprint' => $corpus->sparseSpaceGeneration->sparseEmbeddingProfile->fingerprint,
             'fusion_strategy' => 'rrf',
             'fusion_version' => '1',
-            'rrf_k' => 60,
+            'rrf_k' => $rrfK,
             'dense_candidate_k' => 40,
             'sparse_candidate_k' => 40,
             'fusion_candidate_k' => 15,
             'reranker_candidate_k' => 15,
-            'evidence_threshold' => 0.337890625,
+            'evidence_threshold' => EngineeringRetrievalConfiguration::EVIDENCE_THRESHOLD,
             'final_evidence_k' => 5,
             'calibration_corpus_version' => EngineeringBenchmark::VERSION.'-foundation-experimental',
             'calibration_corpus_digest' => $state['benchmark']['digest'],
@@ -65,7 +83,7 @@ final readonly class ResolveEngineeringBenchmarkPolicy
                 $existing->status !== EvidenceThresholdPolicyStatus::Calibrating
                 || ! hash_equals($fingerprint, $existing->fingerprint)
             ) {
-                throw new RuntimeException('The existing EXP-0001 policy is not the expected immutable CALIBRATING policy.');
+                throw new RuntimeException('The existing engineering policy is not the expected immutable CALIBRATING policy.');
             }
 
             return $existing;

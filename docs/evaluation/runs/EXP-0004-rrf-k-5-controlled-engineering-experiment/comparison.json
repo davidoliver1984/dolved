@@ -1,0 +1,594 @@
+{
+  "baseline_experiment_id": "EXP-0003-post-reliability-corrected-engineering-baseline",
+  "baseline_repository_commit": "0adf1619d1a46f79a0b39b210152dcbae066bdcb",
+  "baseline_result_digest": "804c8abf2e844ddfc2c8420ed01f851ffefc9794d6d2c08848bf42ade7c489de",
+  "candidate_result_digest": "6542be19ec6bfd4e1850170c3eb669def5b5380a2f05e800064cdfc0c0e3226a",
+  "comparison_note": "EXP-0003-post-reliability-corrected-engineering-baseline versus EXP-0004-rrf-k-5-controlled-engineering-experiment uses the same benchmark lineage. Interpret quality deltas alongside planner, resolution, retrieval-completion and provider-failure populations in result.json.",
+  "gate": null,
+  "metrics": {
+    "mrr": {
+      "baseline": 0.8181216931216932,
+      "candidate": 0.8181216931216932,
+      "delta": 0.0
+    },
+    "ndcg_at_k": {
+      "baseline": 0.8575634882388902,
+      "candidate": 0.8599966120197055,
+      "delta": 0.002433123780815283
+    },
+    "precision_at_k": {
+      "baseline": 0.1785714285714286,
+      "candidate": 0.18015873015873018,
+      "delta": 0.0015873015873015817
+    },
+    "recall_at_k": {
+      "baseline": 0.8849206349206349,
+      "candidate": 0.888888888888889,
+      "delta": 0.003968253968254065
+    }
+  },
+  "schema_version": "v1",
+  "slices": {
+    "COMPARE": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "COSHH-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "CURRENT": {
+      "mrr": -0.022222222222222254,
+      "ndcg_at_k": -0.018815848929080725,
+      "precision_at_k": -0.0022222222222222088,
+      "recall_at_k": -0.016666666666666607
+    },
+    "ICO-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": -2.7755575615628914e-17,
+      "recall_at_k": 0.0
+    },
+    "MCA-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "RIDDOR-alias": {
+      "mrr": 0.16666666666666663,
+      "ndcg_at_k": 0.16666666666666674,
+      "precision_at_k": 0.033333333333333354,
+      "recall_at_k": 0.16666666666666674
+    },
+    "VALID_AT_DATE": {
+      "mrr": 0.13333333333333341,
+      "ndcg_at_k": 0.13333333333333341,
+      "precision_at_k": 0.0266666666666667,
+      "recall_at_k": 0.1333333333333333
+    },
+    "abbreviation": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "adversarial": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "ambiguous-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "applicability": {
+      "mrr": 0.08333333333333337,
+      "ndcg_at_k": 0.08333333333333326,
+      "precision_at_k": 0.01666666666666669,
+      "recall_at_k": 0.08333333333333326
+    },
+    "clarification": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "colloquial": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "conflicting-guidance": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "descendant-site": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "forms": {
+      "mrr": -0.08333333333333337,
+      "ndcg_at_k": -0.08333333333333337,
+      "precision_at_k": -0.01666666666666669,
+      "recall_at_k": -0.08333333333333337
+    },
+    "historical": {
+      "mrr": 0.13333333333333341,
+      "ndcg_at_k": 0.13333333333333341,
+      "precision_at_k": 0.0266666666666667,
+      "recall_at_k": 0.1333333333333333
+    },
+    "keyword-stuffing": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "location-alias": {
+      "mrr": 0.11111111111111105,
+      "ndcg_at_k": 0.1111111111111111,
+      "precision_at_k": 0.022222222222222227,
+      "recall_at_k": 0.11111111111111116
+    },
+    "long-form": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "multi-document": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0340637329314144,
+      "precision_at_k": 0.022222222222222227,
+      "recall_at_k": 0.05555555555555547
+    },
+    "multi-evidence": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.006386949924640173,
+      "precision_at_k": 0.004166666666666652,
+      "recall_at_k": 0.01041666666666674
+    },
+    "near-duplicate": {
+      "mrr": 0.16666666666666663,
+      "ndcg_at_k": 0.16666666666666652,
+      "precision_at_k": 0.033333333333333326,
+      "recall_at_k": 0.16666666666666663
+    },
+    "near-numeric-values": {
+      "mrr": -0.1333333333333333,
+      "ndcg_at_k": -0.1333333333333333,
+      "precision_at_k": -0.026666666666666672,
+      "recall_at_k": -0.1333333333333333
+    },
+    "near-time-values": {
+      "mrr": 0.04761904761904767,
+      "ndcg_at_k": 0.04761904761904767,
+      "precision_at_k": 0.009523809523809518,
+      "recall_at_k": 0.04761904761904767
+    },
+    "near-version-duplicate": {
+      "mrr": 0.023809523809523725,
+      "ndcg_at_k": 0.023809523809523725,
+      "precision_at_k": 0.004761904761904745,
+      "recall_at_k": 0.023809523809523836
+    },
+    "negative-exclusion": {
+      "mrr": 0.16666666666666674,
+      "ndcg_at_k": 0.16666666666666669,
+      "precision_at_k": 0.033333333333333354,
+      "recall_at_k": 0.16666666666666663
+    },
+    "negative-instruction": {
+      "mrr": -0.11111111111111116,
+      "ndcg_at_k": -0.11111111111111116,
+      "precision_at_k": -0.022222222222222227,
+      "recall_at_k": -0.11111111111111116
+    },
+    "never-authoritative": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "numeric-boundary": {
+      "mrr": -1.0,
+      "ndcg_at_k": -1.0,
+      "precision_at_k": -0.20000000000000004,
+      "recall_at_k": -1.0
+    },
+    "numeric-range": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.10219119879424307,
+      "precision_at_k": 0.06666666666666667,
+      "recall_at_k": 0.16666666666666666
+    },
+    "predecessor-resurrection": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "prose": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "region-specific": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "regional-applicability": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "role-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "scheduled-future": {
+      "mrr": 0.33333333333333337,
+      "ndcg_at_k": 0.33333333333333337,
+      "precision_at_k": 0.06666666666666667,
+      "recall_at_k": 0.3333333333333333
+    },
+    "site-specific": {
+      "mrr": 0.3333333333333333,
+      "ndcg_at_k": 0.33333333333333326,
+      "precision_at_k": 0.06666666666666671,
+      "recall_at_k": 0.33333333333333337
+    },
+    "table-evidence": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "tables": {
+      "mrr": -0.44444444444444453,
+      "ndcg_at_k": -0.44444444444444453,
+      "precision_at_k": -0.08888888888888892,
+      "recall_at_k": -0.44444444444444453
+    },
+    "temporal-authority": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "withdrawn": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "withdrawn-before-authority": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "zero-evidence": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    }
+  },
+  "within_run_dense_comparison": {
+    "baseline_experiment_id": "EXP-0004-rrf-k-5-controlled-engineering-experiment-dense-control",
+    "baseline_repository_commit": "e2644753d1bb1730d970edb0640c355622f14d80",
+    "baseline_result_digest": "fc10e4bd6b98c5c23207da997180e519abf7465a42e52178799be10810514586",
+    "candidate_result_digest": "6542be19ec6bfd4e1850170c3eb669def5b5380a2f05e800064cdfc0c0e3226a",
+    "comparison_note": "Equal-K comparison: dense and hybrid are both evaluated at final K=5.",
+    "gate": null,
+    "metrics": {
+      "mrr": {
+        "baseline": 0.7806878306878308,
+        "candidate": 0.8181216931216932,
+        "delta": 0.037433862433862486
+      },
+      "ndcg_at_k": {
+        "baseline": 0.8361883330640403,
+        "candidate": 0.8599966120197055,
+        "delta": 0.023808278955665174
+      },
+      "precision_at_k": {
+        "baseline": 0.18174603174603177,
+        "candidate": 0.18015873015873018,
+        "delta": -0.0015873015873015817
+      },
+      "recall_at_k": {
+        "baseline": 0.8968253968253967,
+        "candidate": 0.888888888888889,
+        "delta": -0.007936507936507797
+      }
+    },
+    "schema_version": "v1",
+    "slices": {
+      "COMPARE": {
+        "mrr": 0.1253968253968255,
+        "ndcg_at_k": 0.09382656819290891,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "COSHH-alias": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "CURRENT": {
+        "mrr": 0.03055555555555567,
+        "ndcg_at_k": 0.016994280181808152,
+        "precision_at_k": -0.0022222222222222088,
+        "recall_at_k": -0.011111111111111072
+      },
+      "ICO-alias": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "MCA-alias": {
+        "mrr": 0.07407407407407407,
+        "ndcg_at_k": 0.03878656335476316,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "RIDDOR-alias": {
+        "mrr": -0.11111111111111116,
+        "ndcg_at_k": -0.08333333333333326,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "VALID_AT_DATE": {
+        "mrr": -0.0444444444444444,
+        "ndcg_at_k": -0.033333333333333326,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "abbreviation": {
+        "mrr": 0.05555555555555558,
+        "ndcg_at_k": 0.04166666666666663,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "adversarial": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "ambiguous-alias": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "applicability": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "clarification": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "colloquial": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "conflicting-guidance": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "descendant-site": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "forms": {
+        "mrr": 0.02083333333333337,
+        "ndcg_at_k": 0.015377926934522557,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "historical": {
+        "mrr": -0.0444444444444444,
+        "ndcg_at_k": -0.033333333333333326,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "keyword-stuffing": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "location-alias": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "long-form": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "multi-document": {
+        "mrr": 0.12962962962962954,
+        "ndcg_at_k": 0.06393038396930939,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "multi-evidence": {
+        "mrr": 0.08437499999999998,
+        "ndcg_at_k": 0.056880552312273736,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "near-duplicate": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "near-numeric-values": {
+        "mrr": 0.01666666666666672,
+        "ndcg_at_k": 0.012302341547618112,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "near-time-values": {
+        "mrr": 0.03492063492063491,
+        "ndcg_at_k": 0.026687245786838454,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "near-version-duplicate": {
+        "mrr": 0.08492063492063484,
+        "ndcg_at_k": 0.0579371660260245,
+        "precision_at_k": -0.004761904761904773,
+        "recall_at_k": -0.023809523809523725
+      },
+      "negative-exclusion": {
+        "mrr": 0.06944444444444453,
+        "ndcg_at_k": 0.011553906987767815,
+        "precision_at_k": -0.033333333333333326,
+        "recall_at_k": -0.16666666666666674
+      },
+      "negative-instruction": {
+        "mrr": -0.05555555555555547,
+        "ndcg_at_k": -0.04100780515872693,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "never-authoritative": {
+        "mrr": 0.04166666666666674,
+        "ndcg_at_k": 0.030755853869045113,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "numeric-boundary": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "numeric-range": {
+        "mrr": 0.16666666666666666,
+        "ndcg_at_k": 0.07543146184363891,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "predecessor-resurrection": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "prose": {
+        "mrr": 0.25,
+        "ndcg_at_k": 0.18651170773809045,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "region-specific": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "regional-applicability": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "role-alias": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "scheduled-future": {
+        "mrr": 0.13888888888888895,
+        "ndcg_at_k": 0.02310781397553563,
+        "precision_at_k": -0.06666666666666671,
+        "recall_at_k": -0.33333333333333337
+      },
+      "site-specific": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "table-evidence": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "tables": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "temporal-authority": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "withdrawn": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "withdrawn-before-authority": {
+        "mrr": 0.08333333333333337,
+        "ndcg_at_k": 0.06151170773809034,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "zero-evidence": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      }
+    }
+  }
+}

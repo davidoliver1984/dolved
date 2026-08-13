@@ -1,0 +1,223 @@
+{
+    "case_id": "pilot.applicability.bristol-conflict",
+    "lineage_digest": "a85e7ba9cafbb02b9cdccb0fbe7aca29368a5b70f6bdc21320bb3d96cb53446f",
+    "observation": {
+        "case": {
+            "case_id": "pilot.applicability.bristol-conflict",
+            "cluster_id": "cluster.south-west-fire-applicability",
+            "eligibility_expectation": {
+                "eligible_versions": [
+                    {
+                        "applicability": {
+                            "governing_location_id": "location.region.south-west",
+                            "kind": "ANCESTOR",
+                            "requested_location_id": "location.harbour-view"
+                        },
+                        "document_family_id": "family.fire.south-west-evacuation",
+                        "document_version_id": "doc.fire.south-west-evacuation.v1",
+                        "side": "PRIMARY"
+                    },
+                    {
+                        "applicability": {
+                            "governing_location_id": "location.harbour-view",
+                            "kind": "DIRECT",
+                            "requested_location_id": "location.harbour-view"
+                        },
+                        "document_family_id": "family.fire.harbour-view-evacuation",
+                        "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+                        "side": "PRIMARY"
+                    }
+                ],
+                "excluded_versions": [],
+                "expected_outcome": "ELIGIBLE_SCOPE_READY"
+            },
+            "outcome_expectation": {
+                "outcome": "EVIDENCE_FOUND"
+            },
+            "planner_expectation": {
+                "applicability_reference": {
+                    "input": "Bristol home",
+                    "requires_clarification": false,
+                    "resolved_location_id": "location.harbour-view"
+                },
+                "comparison_anchor": null,
+                "expected_outcome": "PLAN_READY",
+                "primary_anchor": null,
+                "temporal_mode": "CURRENT",
+                "valid_at": null
+            },
+            "retrieval_expectation": {
+                "evidence_units": [
+                    {
+                        "canonical_excerpts": [
+                            "Unless an approved site procedure names a different location, South West staff and visitors assemble at the signed front visitor car park."
+                        ],
+                        "document_family_id": "family.fire.south-west-evacuation",
+                        "document_version_id": "doc.fire.south-west-evacuation.v1",
+                        "evidence_id": "fire.south-west.fallback-condition",
+                        "locator": "Regional fallback assembly arrangement",
+                        "minimum_token_coverage": 0.9,
+                        "notes": null,
+                        "relevance_grade": 2,
+                        "side": "PRIMARY",
+                        "source_path": "documents/fire-safety/south-west-evacuation.md"
+                    },
+                    {
+                        "canonical_excerpts": [
+                            "At Harbour View, staff and visitors assemble in the east garden beyond the laundry gate, not in the front visitor car park."
+                        ],
+                        "document_family_id": "family.fire.harbour-view-evacuation",
+                        "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+                        "evidence_id": "fire.harbour-view.local-override",
+                        "locator": "Harbour View assembly point",
+                        "minimum_token_coverage": 0.9,
+                        "notes": "Both documents are eligible; the benchmark does not invent a new precedence model.",
+                        "relevance_grade": 2,
+                        "side": "PRIMARY",
+                        "source_path": "documents/fire-safety/harbour-view-evacuation.md"
+                    }
+                ]
+            },
+            "slices": [
+                "CURRENT",
+                "applicability",
+                "conflicting-guidance",
+                "multi-document",
+                "multi-evidence",
+                "near-duplicate"
+            ],
+            "variants": [
+                {
+                    "question": "What regional and local fire instructions apply at Harbour View?",
+                    "variant_id": "direct"
+                },
+                {
+                    "question": "Why do the South West and Bristol procedures name different assembly points?",
+                    "variant_id": "conflict"
+                },
+                {
+                    "question": "Show me both applicable evacuation instructions for the Bristol home.",
+                    "variant_id": "multi-document"
+                }
+            ]
+        },
+        "dense": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "unresolved_location_reference"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "unresolved_location_reference",
+                    "resolved_location_public_id": null
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [
+                        "South West",
+                        "Bristol"
+                    ],
+                    "query": "Why do the South West and Bristol procedures name different assembly points?",
+                    "temporal_mode": "current",
+                    "temporal_reference": null,
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 610,
+                            "latency_ms": 8169.596337000257,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 604,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "hybrid": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "unresolved_location_reference"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "unresolved_location_reference",
+                    "resolved_location_public_id": null
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [
+                        "South West",
+                        "Bristol"
+                    ],
+                    "query": "Why do the South West and Bristol procedures name different assembly points?",
+                    "temporal_mode": "current",
+                    "temporal_reference": null,
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 610,
+                            "latency_ms": 8169.596337000257,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 604,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "latency_ms": 8183.407087,
+        "observed_at": "2026-08-13T11:02:53+00:00",
+        "planning": {
+            "attempt_count": 1,
+            "model": "gpt-5-mini",
+            "provider": "openai",
+            "status": "succeeded"
+        },
+        "retrieval_executed": true,
+        "variant": {
+            "question": "Why do the South West and Bristol procedures name different assembly points?",
+            "variant_id": "conflict"
+        }
+    },
+    "record_digest": "49b406f207ac415771c90eadb39f6b7ebb81257685c411d124e6af682aec48c1",
+    "schema_version": "v1",
+    "variant_id": "conflict"
+}

@@ -1,0 +1,98 @@
+{
+    "case_id": "gdpr.breach.ico-owner",
+    "lineage_digest": "a85e7ba9cafbb02b9cdccb0fbe7aca29368a5b70f6bdc21320bb3d96cb53446f",
+    "observation": {
+        "case": {
+            "case_id": "gdpr.breach.ico-owner",
+            "cluster_id": "cluster.gdpr-breach",
+            "eligibility_expectation": {
+                "eligible_versions": [
+                    {
+                        "applicability": {
+                            "governing_location_id": null,
+                            "kind": "UNIVERSAL",
+                            "requested_location_id": null
+                        },
+                        "document_family_id": "family.gdpr.breach",
+                        "document_version_id": "doc.gdpr.breach.v1",
+                        "side": "PRIMARY"
+                    }
+                ],
+                "excluded_versions": [],
+                "expected_outcome": "ELIGIBLE_SCOPE_READY"
+            },
+            "outcome_expectation": {
+                "outcome": "EVIDENCE_FOUND"
+            },
+            "planner_expectation": {
+                "applicability_reference": {
+                    "input": null,
+                    "requires_clarification": false,
+                    "resolved_location_id": null
+                },
+                "comparison_anchor": null,
+                "expected_outcome": "PLAN_READY",
+                "primary_anchor": null,
+                "temporal_mode": "CURRENT",
+                "valid_at": null
+            },
+            "retrieval_expectation": {
+                "evidence_units": [
+                    {
+                        "canonical_excerpts": [
+                            "Only the Data Protection Officer decides whether the Information Commissioner's Office must be notified within seventy-two hours."
+                        ],
+                        "document_family_id": "family.gdpr.breach",
+                        "document_version_id": "doc.gdpr.breach.v1",
+                        "evidence_id": "gdpr.breach.dpo-decision",
+                        "locator": null,
+                        "minimum_token_coverage": 1,
+                        "notes": null,
+                        "relevance_grade": 2,
+                        "side": "PRIMARY",
+                        "source_path": "documents/gdpr/personal-data-breach.md"
+                    }
+                ]
+            },
+            "slices": [
+                "CURRENT",
+                "ICO-alias",
+                "negative-instruction"
+            ],
+            "variants": [
+                {
+                    "question": "Who decides whether a data breach is reported to the ICO?",
+                    "variant_id": "direct"
+                },
+                {
+                    "question": "Should frontline staff contact the ICO within 72 hours?",
+                    "variant_id": "timing"
+                },
+                {
+                    "question": "Do I tell the regulator myself after a privacy incident?",
+                    "variant_id": "colloquial"
+                }
+            ]
+        },
+        "dense": null,
+        "hybrid": null,
+        "latency_ms": 6960.450003,
+        "observed_at": "2026-08-13T10:54:50+00:00",
+        "planning": {
+            "attempt_count": 1,
+            "failure_category": "invalid_typed_plan",
+            "model": "gpt-5-mini",
+            "provider": "openai",
+            "provider_status": 200,
+            "status": "failed"
+        },
+        "retrieval_executed": false,
+        "variant": {
+            "question": "Should frontline staff contact the ICO within 72 hours?",
+            "variant_id": "timing"
+        }
+    },
+    "record_digest": "f39c3270f633473b50601ef48d4fd0179cee5d6cde1d450256f16e199c2361ba",
+    "schema_version": "v1",
+    "variant_id": "timing"
+}

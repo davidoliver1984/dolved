@@ -1,0 +1,170 @@
+{
+    "case_id": "pilot.applicability.ambiguous-home",
+    "lineage_digest": "a85e7ba9cafbb02b9cdccb0fbe7aca29368a5b70f6bdc21320bb3d96cb53446f",
+    "observation": {
+        "case": {
+            "case_id": "pilot.applicability.ambiguous-home",
+            "cluster_id": "cluster.south-west-fire-applicability",
+            "eligibility_expectation": {
+                "eligible_versions": [],
+                "excluded_versions": [],
+                "expected_outcome": "NO_ELIGIBLE_EVIDENCE"
+            },
+            "outcome_expectation": {
+                "outcome": "CLARIFICATION_REQUIRED"
+            },
+            "planner_expectation": {
+                "applicability_reference": {
+                    "input": "the home",
+                    "requires_clarification": true,
+                    "resolved_location_id": null
+                },
+                "comparison_anchor": null,
+                "expected_outcome": "CLARIFICATION_REQUIRED",
+                "primary_anchor": null,
+                "temporal_mode": "CURRENT",
+                "valid_at": null
+            },
+            "retrieval_expectation": {
+                "evidence_units": []
+            },
+            "slices": [
+                "CURRENT",
+                "applicability",
+                "clarification",
+                "ambiguous-alias",
+                "zero-evidence"
+            ],
+            "variants": [
+                {
+                    "question": "Where is the fire assembly point at the home?",
+                    "variant_id": "ambiguous"
+                },
+                {
+                    "question": "Which evacuation plan applies there?",
+                    "variant_id": "pronoun"
+                },
+                {
+                    "question": "What should visitors do when the alarm sounds at our care home?",
+                    "variant_id": "underspecified"
+                }
+            ]
+        },
+        "dense": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "ambiguous_location_reference"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "ambiguous_location_reference",
+                    "resolved_location_public_id": null
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [
+                        "the home"
+                    ],
+                    "query": "Where is the fire assembly point at the home?",
+                    "temporal_mode": "current",
+                    "temporal_reference": null,
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 607,
+                            "latency_ms": 5447.215961001348,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 403,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "hybrid": {
+            "result": {
+                "candidates": [],
+                "outcome": "clarification_required",
+                "reason": "ambiguous_location_reference"
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": [],
+                    "outcome": "clarification_required",
+                    "reason": "ambiguous_location_reference",
+                    "resolved_location_public_id": null
+                },
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [
+                        "the home"
+                    ],
+                    "query": "Where is the fire assembly point at the home?",
+                    "temporal_mode": "current",
+                    "temporal_reference": null,
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 607,
+                            "latency_ms": 5447.215961001348,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 403,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                }
+            }
+        },
+        "latency_ms": 5479.829961,
+        "observed_at": "2026-08-13T11:02:24+00:00",
+        "planning": {
+            "attempt_count": 1,
+            "model": "gpt-5-mini",
+            "provider": "openai",
+            "status": "succeeded"
+        },
+        "retrieval_executed": true,
+        "variant": {
+            "question": "Where is the fire assembly point at the home?",
+            "variant_id": "ambiguous"
+        }
+    },
+    "record_digest": "0c8d04791df05b246a9d8ddcb86ca5cf6ac35ebafa23aecca4f25c9683573a6a",
+    "schema_version": "v1",
+    "variant_id": "ambiguous"
+}

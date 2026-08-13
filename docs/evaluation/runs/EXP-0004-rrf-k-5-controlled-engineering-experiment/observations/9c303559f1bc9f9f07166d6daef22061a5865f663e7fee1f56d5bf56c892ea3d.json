@@ -1,0 +1,1191 @@
+{
+    "case_id": "medication.controlled-drugs.valid-at-date",
+    "lineage_digest": "a85e7ba9cafbb02b9cdccb0fbe7aca29368a5b70f6bdc21320bb3d96cb53446f",
+    "observation": {
+        "case": {
+            "case_id": "medication.controlled-drugs.valid-at-date",
+            "cluster_id": "cluster.controlled-drugs-lineage",
+            "eligibility_expectation": {
+                "eligible_versions": [
+                    {
+                        "applicability": {
+                            "governing_location_id": null,
+                            "kind": "UNIVERSAL",
+                            "requested_location_id": null
+                        },
+                        "document_family_id": "family.medication.controlled-drugs",
+                        "document_version_id": "doc.medication.controlled-drugs.v1",
+                        "side": "PRIMARY"
+                    }
+                ],
+                "excluded_versions": [
+                    {
+                        "document_family_id": "family.medication.controlled-drugs",
+                        "document_version_id": "doc.medication.controlled-drugs.v2",
+                        "reason": "SCHEDULED_FUTURE"
+                    }
+                ],
+                "expected_outcome": "ELIGIBLE_SCOPE_READY"
+            },
+            "outcome_expectation": {
+                "outcome": "EVIDENCE_FOUND"
+            },
+            "planner_expectation": {
+                "applicability_reference": {
+                    "input": null,
+                    "requires_clarification": false,
+                    "resolved_location_id": null
+                },
+                "comparison_anchor": null,
+                "expected_outcome": "PLAN_READY",
+                "primary_anchor": "2024-01-15T12:00:00Z",
+                "temporal_mode": "VALID_AT_DATE",
+                "valid_at": "2024-01-15T12:00:00Z"
+            },
+            "retrieval_expectation": {
+                "evidence_units": [
+                    {
+                        "canonical_excerpts": [
+                            "A discrepancy is reported to the registered manager before the end of the shift and the stock is secured while the check is repeated."
+                        ],
+                        "document_family_id": "family.medication.controlled-drugs",
+                        "document_version_id": "doc.medication.controlled-drugs.v1",
+                        "evidence_id": "medication.cd.v1.shift-end",
+                        "locator": null,
+                        "minimum_token_coverage": 0.9,
+                        "notes": null,
+                        "relevance_grade": 2,
+                        "side": "PRIMARY",
+                        "source_path": "documents/medication/controlled-drugs-v1.md"
+                    }
+                ]
+            },
+            "slices": [
+                "VALID_AT_DATE",
+                "historical",
+                "near-version-duplicate"
+            ],
+            "variants": [
+                {
+                    "question": "In January 2024, when did a controlled-drug discrepancy have to be reported?",
+                    "variant_id": "dated"
+                },
+                {
+                    "question": "What was the old CD stock discrepancy deadline?",
+                    "variant_id": "historical"
+                },
+                {
+                    "question": "Did the 2023 procedure allow reporting by the end of the shift?",
+                    "variant_id": "contrast"
+                }
+            ]
+        },
+        "dense": {
+            "result": {
+                "candidates": [
+                    {
+                        "chunk_id": "72a23d19-05d6-5fe0-8918-f0442b392f2d",
+                        "chunk_text": "# Annual Leave Policy\n\nDocument family: `family.hr.annual-leave`\nVersion: 1.0\nEffective: 1 January 2023\nSynthetic engineering benchmark material\n\nFull-time employees receive 28 days of paid annual leave including public holidays. Requests for five or more consecutive working days must be submitted at least four weeks in advance.\n\nManagers should respond within ten working days. No more than five unused days may be carried into the next leave year with written approval.",
+                        "dense_rank": null,
+                        "dense_score": null,
+                        "document_family_id": "9b9863db-8b4e-4119-bb53-c7411cb38df0",
+                        "document_id": "5214fba6-2461-4c01-9623-94255b92bb0f",
+                        "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                        "provenance": [
+                            {
+                                "chunk_end_character": 21,
+                                "chunk_start_character": 0,
+                                "element_end_character": 21,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c0a96344-8140-529d-8502-9650e9184110",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "53cac3cb-3734-44c3-9738-274f24bf38f3"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 21,
+                                        "end_line": 1,
+                                        "kind": "text",
+                                        "start_character": 0,
+                                        "start_line": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 144,
+                                "chunk_start_character": 23,
+                                "element_end_character": 121,
+                                "element_start_character": 0,
+                                "normalised_element_id": "a7f38683-3645-5b6c-b094-d439c18828d4",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "e6ef3479-2d15-437b-b76e-6b0d11ae618f"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 144,
+                                        "end_line": 6,
+                                        "kind": "text",
+                                        "start_character": 23,
+                                        "start_line": 3
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 330,
+                                "chunk_start_character": 146,
+                                "element_end_character": 184,
+                                "element_start_character": 0,
+                                "normalised_element_id": "32e11530-7e58-50f2-a9ed-fd79eb61e56b",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "3002ca7c-e84b-4851-9163-480cf9469f50"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 330,
+                                        "end_line": 8,
+                                        "kind": "text",
+                                        "start_character": 146,
+                                        "start_line": 8
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 473,
+                                "chunk_start_character": 332,
+                                "element_end_character": 141,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c66fb6b1-f18a-5d34-bbb7-4a3033b1a02d",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "a5436ede-d7d7-4e8c-a7bf-56aa4e09f19c"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 473,
+                                        "end_line": 10,
+                                        "kind": "text",
+                                        "start_character": 332,
+                                        "start_line": 10
+                                    }
+                                ]
+                            }
+                        ],
+                        "rank": 1,
+                        "retrieval_method": "dense",
+                        "score": 0.17990136,
+                        "side": "primary",
+                        "source_filename": "annual-leave-v1.md",
+                        "sparse_rank": null,
+                        "sparse_score": null,
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                        "version_position": 1,
+                        "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                    }
+                ],
+                "outcome": "evidence_found",
+                "reason": null
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": {
+                        "primary": [
+                            "5214fba6-2461-4c01-9623-94255b92bb0f"
+                        ]
+                    },
+                    "outcome": "evidence_found",
+                    "reason": null,
+                    "resolved_location_public_id": null
+                },
+                "hydrated": [
+                    {
+                        "chunk_id": "72a23d19-05d6-5fe0-8918-f0442b392f2d",
+                        "chunk_text": "# Annual Leave Policy\n\nDocument family: `family.hr.annual-leave`\nVersion: 1.0\nEffective: 1 January 2023\nSynthetic engineering benchmark material\n\nFull-time employees receive 28 days of paid annual leave including public holidays. Requests for five or more consecutive working days must be submitted at least four weeks in advance.\n\nManagers should respond within ten working days. No more than five unused days may be carried into the next leave year with written approval.",
+                        "dense_rank": null,
+                        "dense_score": null,
+                        "document_family_id": "9b9863db-8b4e-4119-bb53-c7411cb38df0",
+                        "document_id": "5214fba6-2461-4c01-9623-94255b92bb0f",
+                        "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                        "provenance": [
+                            {
+                                "chunk_end_character": 21,
+                                "chunk_start_character": 0,
+                                "element_end_character": 21,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c0a96344-8140-529d-8502-9650e9184110",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "53cac3cb-3734-44c3-9738-274f24bf38f3"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 21,
+                                        "end_line": 1,
+                                        "kind": "text",
+                                        "start_character": 0,
+                                        "start_line": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 144,
+                                "chunk_start_character": 23,
+                                "element_end_character": 121,
+                                "element_start_character": 0,
+                                "normalised_element_id": "a7f38683-3645-5b6c-b094-d439c18828d4",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "e6ef3479-2d15-437b-b76e-6b0d11ae618f"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 144,
+                                        "end_line": 6,
+                                        "kind": "text",
+                                        "start_character": 23,
+                                        "start_line": 3
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 330,
+                                "chunk_start_character": 146,
+                                "element_end_character": 184,
+                                "element_start_character": 0,
+                                "normalised_element_id": "32e11530-7e58-50f2-a9ed-fd79eb61e56b",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "3002ca7c-e84b-4851-9163-480cf9469f50"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 330,
+                                        "end_line": 8,
+                                        "kind": "text",
+                                        "start_character": 146,
+                                        "start_line": 8
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 473,
+                                "chunk_start_character": 332,
+                                "element_end_character": 141,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c66fb6b1-f18a-5d34-bbb7-4a3033b1a02d",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "a5436ede-d7d7-4e8c-a7bf-56aa4e09f19c"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 473,
+                                        "end_line": 10,
+                                        "kind": "text",
+                                        "start_character": 332,
+                                        "start_line": 10
+                                    }
+                                ]
+                            }
+                        ],
+                        "rank": 1,
+                        "retrieval_method": "dense",
+                        "score": 0.17990136,
+                        "side": "primary",
+                        "source_filename": "annual-leave-v1.md",
+                        "sparse_rank": null,
+                        "sparse_score": null,
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                        "version_position": 1,
+                        "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                    }
+                ],
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [],
+                    "query": "Did the 2023 procedure allow reporting by the end of the shift?",
+                    "temporal_mode": "historical_reference",
+                    "temporal_reference": {
+                        "kind": "historical_reference",
+                        "value": "the 2023 procedure"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 612,
+                            "latency_ms": 4882.230461007566,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 360,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                },
+                "search": {
+                    "candidates": [
+                        {
+                            "chunk_id": "72a23d19-05d6-5fe0-8918-f0442b392f2d",
+                            "dense_rank": null,
+                            "dense_score": null,
+                            "document_id": "5214fba6-2461-4c01-9623-94255b92bb0f",
+                            "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                            "rank": 1,
+                            "retrieval_method": "dense",
+                            "score": 0.17990136,
+                            "side": "primary",
+                            "sparse_rank": null,
+                            "sparse_score": null,
+                            "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                            "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                        }
+                    ],
+                    "diagnostics": [
+                        {
+                            "dense_candidates": [
+                                {
+                                    "chunk_id": "72a23d19-05d6-5fe0-8918-f0442b392f2d",
+                                    "chunk_text": "# Annual Leave Policy\n\nDocument family: `family.hr.annual-leave`\nVersion: 1.0\nEffective: 1 January 2023\nSynthetic engineering benchmark material\n\nFull-time employees receive 28 days of paid annual leave including public holidays. Requests for five or more consecutive working days must be submitted at least four weeks in advance.\n\nManagers should respond within ten working days. No more than five unused days may be carried into the next leave year with written approval.",
+                                    "dense_rank": null,
+                                    "dense_score": null,
+                                    "document_family_id": "9b9863db-8b4e-4119-bb53-c7411cb38df0",
+                                    "document_id": "5214fba6-2461-4c01-9623-94255b92bb0f",
+                                    "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                                    "provenance": [
+                                        {
+                                            "chunk_end_character": 21,
+                                            "chunk_start_character": 0,
+                                            "element_end_character": 21,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c0a96344-8140-529d-8502-9650e9184110",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "53cac3cb-3734-44c3-9738-274f24bf38f3"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 21,
+                                                    "end_line": 1,
+                                                    "kind": "text",
+                                                    "start_character": 0,
+                                                    "start_line": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 144,
+                                            "chunk_start_character": 23,
+                                            "element_end_character": 121,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "a7f38683-3645-5b6c-b094-d439c18828d4",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "e6ef3479-2d15-437b-b76e-6b0d11ae618f"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 144,
+                                                    "end_line": 6,
+                                                    "kind": "text",
+                                                    "start_character": 23,
+                                                    "start_line": 3
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 330,
+                                            "chunk_start_character": 146,
+                                            "element_end_character": 184,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "32e11530-7e58-50f2-a9ed-fd79eb61e56b",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "3002ca7c-e84b-4851-9163-480cf9469f50"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 330,
+                                                    "end_line": 8,
+                                                    "kind": "text",
+                                                    "start_character": 146,
+                                                    "start_line": 8
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 473,
+                                            "chunk_start_character": 332,
+                                            "element_end_character": 141,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c66fb6b1-f18a-5d34-bbb7-4a3033b1a02d",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "a5436ede-d7d7-4e8c-a7bf-56aa4e09f19c"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 473,
+                                                    "end_line": 10,
+                                                    "kind": "text",
+                                                    "start_character": 332,
+                                                    "start_line": 10
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "rank": 1,
+                                    "retrieval_method": "dense",
+                                    "score": 0.17990136,
+                                    "side": "primary",
+                                    "source_filename": "annual-leave-v1.md",
+                                    "sparse_rank": null,
+                                    "sparse_score": null,
+                                    "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                                    "version_position": 1,
+                                    "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                                }
+                            ],
+                            "fused_candidates": [],
+                            "side": "primary",
+                            "sparse_candidates": []
+                        }
+                    ],
+                    "lineage": {
+                        "configuration_version": null,
+                        "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                        "fusion_strategy": null,
+                        "fusion_version": null,
+                        "rrf_k": null,
+                        "sparse_profile_fingerprint": null,
+                        "sparse_space_generation_id": null
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "estimated",
+                            "cost_usd": 1.92e-6,
+                            "execution": "provider_api",
+                            "final_provider_success_at": "2026-08-13T11:00:35.849749Z",
+                            "first_provider_attempt_at": "2026-08-13T11:00:35.574570Z",
+                            "input_tokens": 16,
+                            "latency_ms": 278.85058301035315,
+                            "model": "voyage-4-large",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": "voyage-pricing-2026-08-12",
+                            "provider": "voyage",
+                            "provider_attempt_count": 1,
+                            "provider_retry_count": 0,
+                            "provider_retry_elapsed_ms": 0,
+                            "rate_limit_event_count": 0,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "dense_embedding"
+                        },
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "unavailable",
+                            "cost_usd": null,
+                            "execution": "infrastructure",
+                            "final_provider_success_at": null,
+                            "first_provider_attempt_at": null,
+                            "input_tokens": null,
+                            "latency_ms": 11.307791995932348,
+                            "model": "rag-platform-vectors-v1",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": null,
+                            "provider": "qdrant",
+                            "provider_attempt_count": null,
+                            "provider_retry_count": null,
+                            "provider_retry_elapsed_ms": null,
+                            "rate_limit_event_count": null,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "qdrant_dense_search"
+                        }
+                    ]
+                }
+            }
+        },
+        "hybrid": {
+            "result": {
+                "candidates": [],
+                "outcome": "insufficient_evidence",
+                "reason": null
+            },
+            "trace": {
+                "eligibility": {
+                    "document_public_ids_by_side": {
+                        "primary": [
+                            "5214fba6-2461-4c01-9623-94255b92bb0f"
+                        ]
+                    },
+                    "outcome": "evidence_found",
+                    "reason": null,
+                    "resolved_location_public_id": null
+                },
+                "hydrated": [
+                    {
+                        "chunk_id": "72a23d19-05d6-5fe0-8918-f0442b392f2d",
+                        "chunk_text": "# Annual Leave Policy\n\nDocument family: `family.hr.annual-leave`\nVersion: 1.0\nEffective: 1 January 2023\nSynthetic engineering benchmark material\n\nFull-time employees receive 28 days of paid annual leave including public holidays. Requests for five or more consecutive working days must be submitted at least four weeks in advance.\n\nManagers should respond within ten working days. No more than five unused days may be carried into the next leave year with written approval.",
+                        "dense_rank": 1,
+                        "dense_score": 0.17990136,
+                        "document_family_id": "9b9863db-8b4e-4119-bb53-c7411cb38df0",
+                        "document_id": "5214fba6-2461-4c01-9623-94255b92bb0f",
+                        "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                        "provenance": [
+                            {
+                                "chunk_end_character": 21,
+                                "chunk_start_character": 0,
+                                "element_end_character": 21,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c0a96344-8140-529d-8502-9650e9184110",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "53cac3cb-3734-44c3-9738-274f24bf38f3"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 21,
+                                        "end_line": 1,
+                                        "kind": "text",
+                                        "start_character": 0,
+                                        "start_line": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 144,
+                                "chunk_start_character": 23,
+                                "element_end_character": 121,
+                                "element_start_character": 0,
+                                "normalised_element_id": "a7f38683-3645-5b6c-b094-d439c18828d4",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "e6ef3479-2d15-437b-b76e-6b0d11ae618f"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 144,
+                                        "end_line": 6,
+                                        "kind": "text",
+                                        "start_character": 23,
+                                        "start_line": 3
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 330,
+                                "chunk_start_character": 146,
+                                "element_end_character": 184,
+                                "element_start_character": 0,
+                                "normalised_element_id": "32e11530-7e58-50f2-a9ed-fd79eb61e56b",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "3002ca7c-e84b-4851-9163-480cf9469f50"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 330,
+                                        "end_line": 8,
+                                        "kind": "text",
+                                        "start_character": 146,
+                                        "start_line": 8
+                                    }
+                                ]
+                            },
+                            {
+                                "chunk_end_character": 473,
+                                "chunk_start_character": 332,
+                                "element_end_character": 141,
+                                "element_start_character": 0,
+                                "normalised_element_id": "c66fb6b1-f18a-5d34-bbb7-4a3033b1a02d",
+                                "role": "primary",
+                                "source_element_ids": [
+                                    "a5436ede-d7d7-4e8c-a7bf-56aa4e09f19c"
+                                ],
+                                "source_locations": [
+                                    {
+                                        "end_character": 473,
+                                        "end_line": 10,
+                                        "kind": "text",
+                                        "start_character": 332,
+                                        "start_line": 10
+                                    }
+                                ]
+                            }
+                        ],
+                        "rank": 1,
+                        "retrieval_method": "hybrid",
+                        "score": 0.3333333333333333,
+                        "side": "primary",
+                        "source_filename": "annual-leave-v1.md",
+                        "sparse_rank": 1,
+                        "sparse_score": 3.7630131,
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                        "version_position": 1,
+                        "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                    }
+                ],
+                "plan": {
+                    "clarification_reason": null,
+                    "classifier_lineage": {
+                        "adapter_version": "structured-chat-v2",
+                        "contract_schema_version": "plan-response-v2",
+                        "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+                        "model": "gpt-5-mini",
+                        "prompt_version": "adr-0022-v1",
+                        "provider": "openai"
+                    },
+                    "explicit_date": null,
+                    "location_references": [],
+                    "query": "Did the 2023 procedure allow reporting by the end of the shift?",
+                    "temporal_mode": "historical_reference",
+                    "temporal_reference": {
+                        "kind": "historical_reference",
+                        "value": "the 2023 procedure"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": 0,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "input_tokens": 612,
+                            "latency_ms": 4882.230461007566,
+                            "model": "gpt-5-mini",
+                            "output_tokens": 360,
+                            "pricing_snapshot": null,
+                            "provider": "openai",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "stage": "planner"
+                        }
+                    ]
+                },
+                "reranked": {
+                    "candidates": [
+                        {
+                            "chunk_id": "72a23d19-05d6-5fe0-8918-f0442b392f2d",
+                            "rank": 1,
+                            "score": 0.263671875,
+                            "side": "primary"
+                        }
+                    ],
+                    "profile": {
+                        "adapter_version": "1",
+                        "model": "rerank-2.5",
+                        "provider": "voyage",
+                        "truncation": false
+                    },
+                    "provider_input_tokens": 114,
+                    "provider_retry_count": 0,
+                    "usage": [
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "execution": "PROVIDER_API",
+                            "final_provider_success_at": "2026-08-13T11:00:37.764799Z",
+                            "first_provider_attempt_at": "2026-08-13T11:00:37.522490Z",
+                            "input_tokens": 114,
+                            "latency_ms": 258.559625,
+                            "model": "rerank-2.5",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": null,
+                            "provider": "voyage",
+                            "provider_attempt_count": 1,
+                            "provider_retry_count": 0,
+                            "provider_retry_elapsed_ms": 0,
+                            "rate_limit_event_count": 0,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "reranking"
+                        }
+                    ]
+                },
+                "search": {
+                    "candidates": [
+                        {
+                            "chunk_id": "72a23d19-05d6-5fe0-8918-f0442b392f2d",
+                            "dense_rank": 1,
+                            "dense_score": 0.17990136,
+                            "document_id": "5214fba6-2461-4c01-9623-94255b92bb0f",
+                            "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                            "rank": 1,
+                            "retrieval_method": "hybrid",
+                            "score": 0.3333333333333333,
+                            "side": "primary",
+                            "sparse_rank": 1,
+                            "sparse_score": 3.7630131,
+                            "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                            "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                        }
+                    ],
+                    "diagnostics": [
+                        {
+                            "dense_candidates": [
+                                {
+                                    "chunk_id": "72a23d19-05d6-5fe0-8918-f0442b392f2d",
+                                    "chunk_text": "# Annual Leave Policy\n\nDocument family: `family.hr.annual-leave`\nVersion: 1.0\nEffective: 1 January 2023\nSynthetic engineering benchmark material\n\nFull-time employees receive 28 days of paid annual leave including public holidays. Requests for five or more consecutive working days must be submitted at least four weeks in advance.\n\nManagers should respond within ten working days. No more than five unused days may be carried into the next leave year with written approval.",
+                                    "dense_rank": null,
+                                    "dense_score": null,
+                                    "document_family_id": "9b9863db-8b4e-4119-bb53-c7411cb38df0",
+                                    "document_id": "5214fba6-2461-4c01-9623-94255b92bb0f",
+                                    "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                                    "provenance": [
+                                        {
+                                            "chunk_end_character": 21,
+                                            "chunk_start_character": 0,
+                                            "element_end_character": 21,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c0a96344-8140-529d-8502-9650e9184110",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "53cac3cb-3734-44c3-9738-274f24bf38f3"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 21,
+                                                    "end_line": 1,
+                                                    "kind": "text",
+                                                    "start_character": 0,
+                                                    "start_line": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 144,
+                                            "chunk_start_character": 23,
+                                            "element_end_character": 121,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "a7f38683-3645-5b6c-b094-d439c18828d4",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "e6ef3479-2d15-437b-b76e-6b0d11ae618f"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 144,
+                                                    "end_line": 6,
+                                                    "kind": "text",
+                                                    "start_character": 23,
+                                                    "start_line": 3
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 330,
+                                            "chunk_start_character": 146,
+                                            "element_end_character": 184,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "32e11530-7e58-50f2-a9ed-fd79eb61e56b",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "3002ca7c-e84b-4851-9163-480cf9469f50"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 330,
+                                                    "end_line": 8,
+                                                    "kind": "text",
+                                                    "start_character": 146,
+                                                    "start_line": 8
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 473,
+                                            "chunk_start_character": 332,
+                                            "element_end_character": 141,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c66fb6b1-f18a-5d34-bbb7-4a3033b1a02d",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "a5436ede-d7d7-4e8c-a7bf-56aa4e09f19c"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 473,
+                                                    "end_line": 10,
+                                                    "kind": "text",
+                                                    "start_character": 332,
+                                                    "start_line": 10
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "rank": 1,
+                                    "retrieval_method": "dense",
+                                    "score": 0.17990136,
+                                    "side": "primary",
+                                    "source_filename": "annual-leave-v1.md",
+                                    "sparse_rank": null,
+                                    "sparse_score": null,
+                                    "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                                    "version_position": 1,
+                                    "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                                }
+                            ],
+                            "fused_candidates": [
+                                {
+                                    "chunk_id": "72a23d19-05d6-5fe0-8918-f0442b392f2d",
+                                    "chunk_text": "# Annual Leave Policy\n\nDocument family: `family.hr.annual-leave`\nVersion: 1.0\nEffective: 1 January 2023\nSynthetic engineering benchmark material\n\nFull-time employees receive 28 days of paid annual leave including public holidays. Requests for five or more consecutive working days must be submitted at least four weeks in advance.\n\nManagers should respond within ten working days. No more than five unused days may be carried into the next leave year with written approval.",
+                                    "dense_rank": 1,
+                                    "dense_score": 0.17990136,
+                                    "document_family_id": "9b9863db-8b4e-4119-bb53-c7411cb38df0",
+                                    "document_id": "5214fba6-2461-4c01-9623-94255b92bb0f",
+                                    "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                                    "provenance": [
+                                        {
+                                            "chunk_end_character": 21,
+                                            "chunk_start_character": 0,
+                                            "element_end_character": 21,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c0a96344-8140-529d-8502-9650e9184110",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "53cac3cb-3734-44c3-9738-274f24bf38f3"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 21,
+                                                    "end_line": 1,
+                                                    "kind": "text",
+                                                    "start_character": 0,
+                                                    "start_line": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 144,
+                                            "chunk_start_character": 23,
+                                            "element_end_character": 121,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "a7f38683-3645-5b6c-b094-d439c18828d4",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "e6ef3479-2d15-437b-b76e-6b0d11ae618f"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 144,
+                                                    "end_line": 6,
+                                                    "kind": "text",
+                                                    "start_character": 23,
+                                                    "start_line": 3
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 330,
+                                            "chunk_start_character": 146,
+                                            "element_end_character": 184,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "32e11530-7e58-50f2-a9ed-fd79eb61e56b",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "3002ca7c-e84b-4851-9163-480cf9469f50"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 330,
+                                                    "end_line": 8,
+                                                    "kind": "text",
+                                                    "start_character": 146,
+                                                    "start_line": 8
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 473,
+                                            "chunk_start_character": 332,
+                                            "element_end_character": 141,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c66fb6b1-f18a-5d34-bbb7-4a3033b1a02d",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "a5436ede-d7d7-4e8c-a7bf-56aa4e09f19c"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 473,
+                                                    "end_line": 10,
+                                                    "kind": "text",
+                                                    "start_character": 332,
+                                                    "start_line": 10
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "rank": 1,
+                                    "retrieval_method": "hybrid",
+                                    "score": 0.3333333333333333,
+                                    "side": "primary",
+                                    "source_filename": "annual-leave-v1.md",
+                                    "sparse_rank": 1,
+                                    "sparse_score": 3.7630131,
+                                    "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                                    "version_position": 1,
+                                    "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                                }
+                            ],
+                            "side": "primary",
+                            "sparse_candidates": [
+                                {
+                                    "chunk_id": "72a23d19-05d6-5fe0-8918-f0442b392f2d",
+                                    "chunk_text": "# Annual Leave Policy\n\nDocument family: `family.hr.annual-leave`\nVersion: 1.0\nEffective: 1 January 2023\nSynthetic engineering benchmark material\n\nFull-time employees receive 28 days of paid annual leave including public holidays. Requests for five or more consecutive working days must be submitted at least four weeks in advance.\n\nManagers should respond within ten working days. No more than five unused days may be carried into the next leave year with written approval.",
+                                    "dense_rank": null,
+                                    "dense_score": null,
+                                    "document_family_id": "9b9863db-8b4e-4119-bb53-c7411cb38df0",
+                                    "document_id": "5214fba6-2461-4c01-9623-94255b92bb0f",
+                                    "embedding_space_generation_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                                    "provenance": [
+                                        {
+                                            "chunk_end_character": 21,
+                                            "chunk_start_character": 0,
+                                            "element_end_character": 21,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c0a96344-8140-529d-8502-9650e9184110",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "53cac3cb-3734-44c3-9738-274f24bf38f3"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 21,
+                                                    "end_line": 1,
+                                                    "kind": "text",
+                                                    "start_character": 0,
+                                                    "start_line": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 144,
+                                            "chunk_start_character": 23,
+                                            "element_end_character": 121,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "a7f38683-3645-5b6c-b094-d439c18828d4",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "e6ef3479-2d15-437b-b76e-6b0d11ae618f"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 144,
+                                                    "end_line": 6,
+                                                    "kind": "text",
+                                                    "start_character": 23,
+                                                    "start_line": 3
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 330,
+                                            "chunk_start_character": 146,
+                                            "element_end_character": 184,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "32e11530-7e58-50f2-a9ed-fd79eb61e56b",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "3002ca7c-e84b-4851-9163-480cf9469f50"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 330,
+                                                    "end_line": 8,
+                                                    "kind": "text",
+                                                    "start_character": 146,
+                                                    "start_line": 8
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "chunk_end_character": 473,
+                                            "chunk_start_character": 332,
+                                            "element_end_character": 141,
+                                            "element_start_character": 0,
+                                            "normalised_element_id": "c66fb6b1-f18a-5d34-bbb7-4a3033b1a02d",
+                                            "role": "primary",
+                                            "source_element_ids": [
+                                                "a5436ede-d7d7-4e8c-a7bf-56aa4e09f19c"
+                                            ],
+                                            "source_locations": [
+                                                {
+                                                    "end_character": 473,
+                                                    "end_line": 10,
+                                                    "kind": "text",
+                                                    "start_character": 332,
+                                                    "start_line": 10
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "rank": 1,
+                                    "retrieval_method": "sparse",
+                                    "score": 3.7630131,
+                                    "side": "primary",
+                                    "source_filename": "annual-leave-v1.md",
+                                    "sparse_rank": null,
+                                    "sparse_score": null,
+                                    "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                                    "version_position": 1,
+                                    "workspace_corpus_generation_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb"
+                                }
+                            ]
+                        }
+                    ],
+                    "lineage": {
+                        "configuration_version": "exp-0004-rrf-k-5-controlled-engineering",
+                        "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                        "fusion_strategy": "rrf",
+                        "fusion_version": "1",
+                        "rrf_k": 5,
+                        "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+                        "sparse_space_generation_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2"
+                    },
+                    "usage": [
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "estimated",
+                            "cost_usd": 1.92e-6,
+                            "execution": "provider_api",
+                            "final_provider_success_at": "2026-08-13T11:00:36.370954Z",
+                            "first_provider_attempt_at": "2026-08-13T11:00:36.094591Z",
+                            "input_tokens": 16,
+                            "latency_ms": 280.07725000497885,
+                            "model": "voyage-4-large",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": "voyage-pricing-2026-08-12",
+                            "provider": "voyage",
+                            "provider_attempt_count": 1,
+                            "provider_retry_count": 0,
+                            "provider_retry_elapsed_ms": 0,
+                            "rate_limit_event_count": 0,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "dense_embedding"
+                        },
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "unavailable",
+                            "cost_usd": null,
+                            "execution": "infrastructure",
+                            "final_provider_success_at": null,
+                            "first_provider_attempt_at": null,
+                            "input_tokens": null,
+                            "latency_ms": 24.034374990151264,
+                            "model": "rag-platform-vectors-v1",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": null,
+                            "provider": "qdrant",
+                            "provider_attempt_count": null,
+                            "provider_retry_count": null,
+                            "provider_retry_elapsed_ms": null,
+                            "rate_limit_event_count": null,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "qdrant_dense_search"
+                        },
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "zero_cost_local",
+                            "cost_usd": 0,
+                            "execution": "local",
+                            "final_provider_success_at": null,
+                            "first_provider_attempt_at": null,
+                            "input_tokens": null,
+                            "latency_ms": 943.8389589922735,
+                            "model": "prithivida/Splade_PP_en_v1",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": null,
+                            "provider": "fastembed",
+                            "provider_attempt_count": null,
+                            "provider_retry_count": null,
+                            "provider_retry_elapsed_ms": null,
+                            "rate_limit_event_count": null,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "sparse_encoding"
+                        },
+                        {
+                            "cached_input_tokens": null,
+                            "cost_basis": "unavailable",
+                            "cost_usd": null,
+                            "execution": "infrastructure",
+                            "final_provider_success_at": null,
+                            "first_provider_attempt_at": null,
+                            "input_tokens": null,
+                            "latency_ms": 43.183500005397946,
+                            "model": "rag-platform-vectors-v1",
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "output_tokens": null,
+                            "pricing_snapshot": null,
+                            "provider": "qdrant",
+                            "provider_attempt_count": null,
+                            "provider_retry_count": null,
+                            "provider_retry_elapsed_ms": null,
+                            "rate_limit_event_count": null,
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "retry_delays": [],
+                            "stage": "qdrant_sparse_search"
+                        }
+                    ]
+                },
+                "threshold_qualified": []
+            }
+        },
+        "latency_ms": 7359.059129,
+        "observed_at": "2026-08-13T11:00:37+00:00",
+        "planning": {
+            "attempt_count": 1,
+            "model": "gpt-5-mini",
+            "provider": "openai",
+            "status": "succeeded"
+        },
+        "retrieval_executed": true,
+        "variant": {
+            "question": "Did the 2023 procedure allow reporting by the end of the shift?",
+            "variant_id": "contrast"
+        }
+    },
+    "record_digest": "6113624a5fcacfd41bfdacf6202f70a488ca0f1ba325af8d086a6a2f61a586c6",
+    "schema_version": "v1",
+    "variant_id": "contrast"
+}

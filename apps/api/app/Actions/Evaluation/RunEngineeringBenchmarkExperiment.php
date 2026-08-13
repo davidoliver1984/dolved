@@ -78,9 +78,11 @@ final readonly class RunEngineeringBenchmarkExperiment
         if ($scope->activeCorpusGeneration === null) {
             throw new RuntimeException('The benchmark workspace has no active corpus generation.');
         }
-        $policy = $this->policies->handle($scope->activeCorpusGeneration);
         if ($exp0004) {
+            $policy = $this->policies->handleExp0003Control($scope->activeCorpusGeneration);
             $policy = Exp0004Definition::treatmentPolicy($policy, $this->canonical);
+        } else {
+            $policy = $this->policies->handle($scope->activeCorpusGeneration);
         }
         $chunkConfigurations = DocumentChunk::query()
             ->where('workspace_id', $workspace->id)
