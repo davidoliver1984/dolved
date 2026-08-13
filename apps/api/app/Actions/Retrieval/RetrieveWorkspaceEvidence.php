@@ -187,6 +187,7 @@ final readonly class RetrieveWorkspaceEvidence
                 'outcome' => $eligible->outcome->value,
                 'document_public_ids_by_side' => $eligible->documentPublicIdsBySide,
                 'reason' => $eligible->reason,
+                'resolved_location_public_id' => $eligible->resolvedLocationPublicId,
             ]);
             if (! $eligible->canSearch()) {
                 return new RetrievalResult($eligible->outcome, reason: $eligible->reason);

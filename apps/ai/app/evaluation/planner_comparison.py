@@ -27,9 +27,14 @@ class PlannerComparison:
 
 
 def compare_planner_contract(
-    expected: dict[str, Any], actual: Any, question: str
+    expected: dict[str, Any],
+    actual: Any,
+    question: str,
+    *,
+    expected_location_identity: str | None = None,
+    actual_location_identity: str | None = None,
 ) -> PlannerComparison:
-    """Compare the application-owned ADR-0022 fields without alias resolution."""
+    """Compare ADR-0022 fields, accepting only proven location-identity equivalence."""
     expected_contract = _expected_contract(expected, question)
     if not isinstance(actual, dict):
         return PlannerComparison(
@@ -45,6 +50,11 @@ def compare_planner_contract(
             ),
         )
     actual_contract = _actual_contract(actual)
+    equivalent_location_representation = (
+        expected_location_identity is not None
+        and actual_location_identity is not None
+        and expected_location_identity == actual_location_identity
+    )
     differences = tuple(
         {
             "field": field,
@@ -56,6 +66,7 @@ def compare_planner_contract(
         }
         for field in PLANNER_FIELDS
         if expected_contract[field] != actual_contract[field]
+        and not (field == "location_references" and equivalent_location_representation)
     )
     return PlannerComparison(expected_contract, actual_contract, differences)
 

@@ -15,6 +15,7 @@ final readonly class EligibleRetrievalScope
         public RetrievalOutcome $outcome,
         public array $documentPublicIdsBySide = [],
         public ?string $reason = null,
+        public ?string $resolvedLocationPublicId = null,
     ) {}
 
     public function canSearch(): bool

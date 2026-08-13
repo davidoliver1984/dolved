@@ -85,6 +85,46 @@ def test_non_null_location_text_difference_is_flagged_for_alias_review() -> None
     )
 
 
+def test_equivalent_resolved_location_identity_accepts_alias_representation() -> None:
+    comparison = compare_planner_contract(
+        expected(location_references=["the Bristol home"]),
+        {
+            "query": "What applies at the Bristol home?",
+            "temporal_mode": "current",
+            "explicit_date": None,
+            "temporal_reference": None,
+            "location_references": ["Bristol home"],
+            "clarification_reason": None,
+        },
+        "What applies at the Bristol home?",
+        expected_location_identity="location-public-id-harbour-view",
+        actual_location_identity="location-public-id-harbour-view",
+    )
+
+    assert comparison.correct is True
+    assert comparison.differences == ()
+
+
+def test_different_resolved_location_identities_remain_mismatches() -> None:
+    comparison = compare_planner_contract(
+        expected(location_references=["Bristol home"]),
+        {
+            "query": "What applies at the Exeter home?",
+            "temporal_mode": "current",
+            "explicit_date": None,
+            "temporal_reference": None,
+            "location_references": ["Exeter home"],
+            "clarification_reason": None,
+        },
+        "What applies at the Exeter home?",
+        expected_location_identity="location-public-id-harbour-view",
+        actual_location_identity="location-public-id-meadow-court",
+    )
+
+    assert comparison.correct is False
+    assert comparison.differences[0]["field"] == "location_references"
+
+
 def test_unversioned_expectation_is_rejected() -> None:
     try:
         compare_planner_contract({}, {}, "Question")

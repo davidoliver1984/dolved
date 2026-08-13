@@ -65,18 +65,22 @@ final readonly class EligibilityResolver
                 return new EligibleRetrievalScope(
                     RetrievalOutcome::ClarificationRequired,
                     reason: $comparison->value,
+                    resolvedLocationPublicId: $location?->public_id,
                 );
             }
             $primary = $this->eligible($primary, $authorised, $location);
             $comparison = $this->eligible($comparison, $authorised, $location);
             if ($primary->isEmpty() || $comparison->isEmpty()) {
-                return new EligibleRetrievalScope(RetrievalOutcome::ComparisonScopeIncomplete);
+                return new EligibleRetrievalScope(
+                    RetrievalOutcome::ComparisonScopeIncomplete,
+                    resolvedLocationPublicId: $location?->public_id,
+                );
             }
 
             return new EligibleRetrievalScope(RetrievalOutcome::EvidenceFound, [
                 'primary' => $primary->pluck('public_id')->all(),
                 'comparison' => $comparison->pluck('public_id')->all(),
-            ]);
+            ], resolvedLocationPublicId: $location?->public_id);
         }
 
         $resolved = match ($plan->temporalMode) {
@@ -98,16 +102,20 @@ final readonly class EligibilityResolver
             return new EligibleRetrievalScope(
                 RetrievalOutcome::ClarificationRequired,
                 reason: $resolved->value,
+                resolvedLocationPublicId: $location?->public_id,
             );
         }
         $eligible = $this->eligible($resolved, $authorised, $location);
         if ($eligible->isEmpty()) {
-            return new EligibleRetrievalScope(RetrievalOutcome::NoEligibleEvidence);
+            return new EligibleRetrievalScope(
+                RetrievalOutcome::NoEligibleEvidence,
+                resolvedLocationPublicId: $location?->public_id,
+            );
         }
 
         return new EligibleRetrievalScope(RetrievalOutcome::EvidenceFound, [
             'primary' => $eligible->pluck('public_id')->all(),
-        ]);
+        ], resolvedLocationPublicId: $location?->public_id);
     }
 
     /**

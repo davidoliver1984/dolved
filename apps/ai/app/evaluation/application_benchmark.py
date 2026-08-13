@@ -69,12 +69,25 @@ def compile_application_benchmark_run(
     corpus = _corpus(raw, tuple(case_data.values()))
     planner_expectations = _planner_expectations()
     document_mapping = _document_mapping(raw)
+    location_mapping = _location_mapping(raw)
     dense_observations = tuple(
-        _observation(item, "dense", document_mapping, planner_expectations)
+        _observation(
+            item,
+            "dense",
+            document_mapping,
+            location_mapping,
+            planner_expectations,
+        )
         for item in observations
     )
     hybrid_observations = tuple(
-        _observation(item, "hybrid", document_mapping, planner_expectations)
+        _observation(
+            item,
+            "hybrid",
+            document_mapping,
+            location_mapping,
+            planner_expectations,
+        )
         for item in observations
     )
     policy = _object(raw.get("policy"), "policy")
@@ -128,7 +141,10 @@ def compile_application_benchmark_run(
             "usage_note": "Unavailable provider pricing remains null and is never converted to zero.",
         },
         "classifier_and_resolution": _classifier_and_resolution(
-            observations, planner_expectations, document_mapping
+            observations,
+            planner_expectations,
+            document_mapping,
+            location_mapping,
         ),
     }
     config = _config(raw, planner)
@@ -203,6 +219,7 @@ def _observation(
     raw: dict[str, Any],
     arm: str,
     documents: dict[str, tuple[str, str]],
+    locations: dict[str, str],
     planner_expectations: dict[tuple[str, str], dict[str, Any]],
 ) -> VariantObservation:
     case = _object(raw.get("case"), "case")
@@ -306,6 +323,8 @@ def _observation(
         planner_expectations[planner_key],
         trace.get("plan"),
         str(variant["question"]),
+        expected_location_identity=_expected_location_identity(case, locations),
+        actual_location_identity=_actual_location_identity(trace),
     )
     planner_correct = planner_comparison.correct
     eligibility_correct = _eligibility_correct(
@@ -651,6 +670,38 @@ def _document_mapping(raw: dict[str, Any]) -> dict[str, tuple[str, str]]:
     return result
 
 
+def _location_mapping(raw: dict[str, Any]) -> dict[str, str]:
+    mapping = _object(raw.get("mapping"), "mapping")
+    values = mapping.get("locations")
+    if values is None:
+        return {}
+    return {
+        str(location_id): str(public_id)
+        for location_id, public_id in _object(values, "locations").items()
+    }
+
+
+def _expected_location_identity(
+    case: dict[str, Any], locations: dict[str, str]
+) -> str | None:
+    planner = case.get("planner_expectation")
+    if not isinstance(planner, dict):
+        return None
+    applicability = planner.get("applicability_reference")
+    if not isinstance(applicability, dict):
+        return None
+    location_id = applicability.get("resolved_location_id")
+    return locations.get(str(location_id)) if location_id is not None else None
+
+
+def _actual_location_identity(trace: dict[str, Any]) -> str | None:
+    eligibility = trace.get("eligibility")
+    if not isinstance(eligibility, dict):
+        return None
+    value = eligibility.get("resolved_location_public_id")
+    return str(value) if value is not None else None
+
+
 def _retrieval_configuration(policy: dict[str, Any]) -> dict[str, Any]:
     return {
         key: policy[key]
@@ -951,6 +1002,7 @@ def _classifier_and_resolution(
     raw_observations: list[Any],
     planner_expectations: dict[tuple[str, str], dict[str, Any]],
     documents: dict[str, tuple[str, str]],
+    locations: dict[str, str],
 ) -> dict[str, Any]:
     total = len(raw_observations)
     planned = 0
@@ -988,7 +1040,11 @@ def _classifier_and_resolution(
         trace = _object(hybrid.get("trace"), "hybrid trace")
         actual = _object(trace.get("plan"), "validated plan")
         comparison = compare_planner_contract(
-            expected, actual, str(variant["question"])
+            expected,
+            actual,
+            str(variant["question"]),
+            expected_location_identity=_expected_location_identity(case, locations),
+            actual_location_identity=_actual_location_identity(trace),
         )
         planner_correct += comparison.correct
         actual_mode = str(actual.get("temporal_mode", "")).upper()
@@ -1013,7 +1069,15 @@ def _classifier_and_resolution(
         actual_refs = set(actual.get("location_references") or [])
         expected_locations += len(expected_refs)
         predicted_locations += len(actual_refs)
-        matched_locations += len(expected_refs & actual_refs)
+        exact_location_matches = len(expected_refs & actual_refs)
+        expected_location_identity = _expected_location_identity(case, locations)
+        actual_location_identity = _actual_location_identity(trace)
+        matched_locations += (
+            max(exact_location_matches, min(len(expected_refs), len(actual_refs)))
+            if expected_location_identity is not None
+            and expected_location_identity == actual_location_identity
+            else exact_location_matches
+        )
         eligibility = _eligibility_correct(
             _object(case.get("eligibility_expectation"), "eligibility expectation"),
             trace.get("eligibility"),

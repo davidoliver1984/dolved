@@ -199,6 +199,22 @@ def test_application_benchmark_compiler_enforces_engineering_split_and_writes_bo
         },
         "observations": observations,
     }
+    resolved_location_public_id = str(uuid4())
+    raw["mapping"]["locations"] = {
+        "location.harbour-view": resolved_location_public_id,
+    }
+    cases[0]["planner_expectation"]["applicability_reference"] = {
+        "input": "the Bristol home",
+        "requires_clarification": False,
+        "resolved_location_id": "location.harbour-view",
+    }
+    for arm_name in ("dense", "hybrid"):
+        raw["observations"][0][arm_name]["trace"]["plan"]["location_references"] = [
+            "Bristol home"
+        ]
+        raw["observations"][0][arm_name]["trace"]["eligibility"][
+            "resolved_location_public_id"
+        ] = resolved_location_public_id
     raw["observations"][2].update(
         {
             "planning": {
@@ -235,7 +251,13 @@ def test_application_benchmark_compiler_enforces_engineering_split_and_writes_bo
                             "temporal_mode": "current",
                             "explicit_date": None,
                             "temporal_reference": None,
-                            "location_references": [],
+                            "location_references": (
+                                ["the Bristol home"]
+                                if case["case_id"] == cases[0]["case_id"]
+                                and variant["variant_id"]
+                                == cases[0]["variants"][0]["variant_id"]
+                                else []
+                            ),
                             "clarification_reason": None,
                         },
                     }
@@ -292,6 +314,13 @@ def test_application_benchmark_compiler_enforces_engineering_split_and_writes_bo
         ]
         == 125 / 126
     )
+    assert result["classifier_and_resolution"]["classifier"]["location_extraction"] == {
+        "matched": 1,
+        "expected": 1,
+        "predicted": 1,
+        "precision": 1.0,
+        "recall": 1.0,
+    }
     assert result["classifier_and_resolution"]["classifier"]["false_compare"] == 0
     assert result["operational"]["experiment"]["generation"]["execution"] == (
         "NOT_EXECUTED"

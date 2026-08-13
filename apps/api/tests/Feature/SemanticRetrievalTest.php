@@ -105,6 +105,7 @@ class SemanticRetrievalTest extends TestCase
             $scope, $plan, CarbonImmutable::parse('2026-03-01'),
         );
         $this->assertSame([$document->public_id], $resolved->documentPublicIdsBySide['primary']);
+        $this->assertSame($site->public_id, $resolved->resolvedLocationPublicId);
 
         OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Blackpool']);
         $ambiguous = app(EligibilityResolver::class)->handle(
@@ -298,9 +299,98 @@ class SemanticRetrievalTest extends TestCase
         ), CarbonImmutable::parse('2026-03-01'));
 
         $this->assertSame([$document->public_id], $hierarchy->documentPublicIdsBySide['primary']);
+        $this->assertSame($site->public_id, $hierarchy->resolvedLocationPublicId);
         $this->assertSame('multiple_unrelated_location_references', $unrelated->reason);
         $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $exactArticle->outcome);
         $this->assertSame('unresolved_location_reference', $generic->reason);
+    }
+
+    public function test_registered_benchmark_style_aliases_normalise_and_reduce_to_the_descendant(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $midlands = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Midlands Region']);
+        $coventry = OrganisationalLocation::factory()->for($workspace)->create([
+            'name' => 'Willow Bank Community Service',
+            'parent_id' => $midlands->id,
+        ]);
+        $southWest = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'South West Region']);
+        $bristol = OrganisationalLocation::factory()->for($workspace)->create([
+            'name' => 'Harbour View',
+            'parent_id' => $southWest->id,
+        ]);
+        $meadowCourt = OrganisationalLocation::factory()->for($workspace)->create([
+            'name' => 'Meadow Court',
+            'parent_id' => $southWest->id,
+        ]);
+        foreach ([
+            [$midlands, 'Midlands'],
+            [$coventry, 'Coventry'],
+            [$bristol, ' Bristol home '],
+            [$meadowCourt, 'Exeter home'],
+        ] as [$location, $alias]) {
+            $model = new OrganisationalLocationAlias(['alias' => $alias]);
+            $model->workspace()->associate($workspace);
+            $model->organisationalLocation()->associate($location);
+            $model->save();
+        }
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        DB::table('document_applicability_snapshots')->where('document_id', $document->id)
+            ->update(['sealed_at' => null, 'scope' => 'specific']);
+        $document->applicabilitySnapshot->locations()->attach($southWest->id, ['workspace_id' => $workspace->id]);
+        $document->applicabilitySnapshot->update(['sealed_at' => now()]);
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+        $resolver = app(EligibilityResolver::class);
+        $evaluatedAt = CarbonImmutable::parse('2026-03-01');
+
+        $coventryResult = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['Midlands', 'Coventry'], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+        $bristolResult = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['South West Region', 'the BRISTOL HOME'], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+        $meadowResult = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['South West Region', 'Meadow Court'], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+
+        $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $coventryResult->outcome);
+        $this->assertSame($coventry->public_id, $coventryResult->resolvedLocationPublicId);
+        $this->assertSame([$document->public_id], $bristolResult->documentPublicIdsBySide['primary']);
+        $this->assertSame($bristol->public_id, $bristolResult->resolvedLocationPublicId);
+        $this->assertSame([$document->public_id], $meadowResult->documentPublicIdsBySide['primary']);
+        $this->assertSame($meadowCourt->public_id, $meadowResult->resolvedLocationPublicId);
+    }
+
+    public function test_location_resolution_is_workspace_scoped_and_unresolved_input_never_broadens_scope(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $otherWorkspace = Workspace::factory()->create();
+        $foreignLocation = OrganisationalLocation::factory()->for($otherWorkspace)->create(['name' => 'Secret Site']);
+        $foreignAlias = new OrganisationalLocationAlias(['alias' => 'Coventry']);
+        $foreignAlias->workspace()->associate($otherWorkspace);
+        $foreignAlias->organisationalLocation()->associate($foreignLocation);
+        $foreignAlias->save();
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+        $resolver = app(EligibilityResolver::class);
+        $evaluatedAt = CarbonImmutable::parse('2026-03-01');
+
+        $unresolved = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['Coventry'], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+        $unscoped = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $unresolved->outcome);
+        $this->assertSame('unresolved_location_reference', $unresolved->reason);
+        $this->assertNull($unresolved->resolvedLocationPublicId);
+        $this->assertSame([$document->public_id], $unscoped->documentPublicIdsBySide['primary']);
+        $this->assertNull($unscoped->resolvedLocationPublicId);
     }
 
     public function test_response_v2_plan_validation_rejects_inconsistent_or_free_text_contract_values(): void
