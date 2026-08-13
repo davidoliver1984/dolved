@@ -1,0 +1,30 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "EXP-0004-rrf-k-5-controlled-engineering-experiment",
+  "benchmark": {
+    "id": "dolved-care-engineering",
+    "version": "v2",
+    "digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d"
+  },
+  "engineering_snapshot": {
+    "digest": "8f67bb00ad22fe8f74ecdc834f66f22a00bf97bffe409d6857ce44fc0a0a5de5",
+    "case_ids_digest": "fca770615b5fbf20e81b494454969d54dbab2bfa66abf728455e95832b57465f",
+    "case_count": 42,
+    "variant_count": 126
+  },
+  "provisioning": {
+    "record_sha256": "8691c5aa5a40b1aeba527287226c3d41515c576eff6ff4b216d1e068bc3f370d",
+    "mapping_digest": "1c206bcf8ddf3021502fa5ebb46ee696bf1faf159d1cbfc82d514d08913ac338",
+    "snapshot_digest": "6c115d1b7b98d59e8e6e4bebf6485e06c88dd2c4908802af821ad65e6ebc99df"
+  },
+  "active_generation": {
+    "public_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb",
+    "point_manifest_digest": "7cb89453fbf90e6e45d24454ec3d4e4f801774404ee90caae4b959a76f664ab0",
+    "expected_point_count": 99
+  },
+  "retrieval_variable": {
+    "name": "rrf_k",
+    "control": 60,
+    "treatment": 5
+  }
+}

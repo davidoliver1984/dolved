@@ -15,6 +15,7 @@ use App\Support\Evaluation\EngineeringBenchmark;
 use App\Support\Evaluation\EngineeringBenchmarkExperimentProgress;
 use App\Support\Evaluation\EngineeringBenchmarkSource;
 use App\Support\Evaluation\EngineeringBenchmarkState;
+use App\Support\Evaluation\Exp0004Definition;
 use Carbon\CarbonImmutable;
 use RuntimeException;
 
@@ -35,12 +36,28 @@ final readonly class RunEngineeringBenchmarkExperiment
     /** @return array<string, mixed> */
     public function handle(string $repositoryCommit, bool $repositoryDirty): array
     {
-        $this->assertLocalEnvironment();
+        return $this->run($repositoryCommit, $repositoryDirty, self::RUN_ID, false);
+    }
+
+    /** @return array<string, mixed> */
+    public function handleExp0004(string $repositoryCommit): array
+    {
+        return $this->run($repositoryCommit, false, Exp0004Definition::RUN_ID, true);
+    }
+
+    /** @return array<string, mixed> */
+    private function run(
+        string $repositoryCommit,
+        bool $repositoryDirty,
+        string $runId,
+        bool $exp0004,
+    ): array {
+        $this->assertLocalEnvironment($runId);
         if (preg_match('/^[0-9a-f]{40}$/', $repositoryCommit) !== 1) {
             throw new RuntimeException('The experiment requires the exact 40-character repository commit.');
         }
         if ($repositoryDirty) {
-            throw new RuntimeException(self::RUN_ID.' requires a clean exact-commit worktree.');
+            throw new RuntimeException($runId.' requires a clean exact-commit worktree.');
         }
         $state = $this->states->read();
         if (
@@ -50,7 +67,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             || ($state['benchmark']['digest'] ?? null) !== EngineeringBenchmark::DIGEST
             || ($state['workspace']['slug'] ?? null) !== EngineeringBenchmark::WORKSPACE_SLUG
         ) {
-            throw new RuntimeException(self::RUN_ID.' requires the trusted, fully verified V2 hybrid corpus.');
+            throw new RuntimeException($runId.' requires the trusted, fully verified V2 hybrid corpus.');
         }
         $workspace = Workspace::query()
             ->where('public_id', $state['workspace']['public_id'])
@@ -62,13 +79,16 @@ final readonly class RunEngineeringBenchmarkExperiment
             throw new RuntimeException('The benchmark workspace has no active corpus generation.');
         }
         $policy = $this->policies->handle($scope->activeCorpusGeneration);
+        if ($exp0004) {
+            $policy = Exp0004Definition::treatmentPolicy($policy, $this->canonical);
+        }
         $chunkConfigurations = DocumentChunk::query()
             ->where('workspace_id', $workspace->id)
             ->select(['strategy_name', 'strategy_version', 'configuration', 'configuration_fingerprint'])
             ->get()
             ->unique(fn (DocumentChunk $chunk): string => $chunk->configuration_fingerprint);
         if ($chunkConfigurations->count() !== 1) {
-            throw new RuntimeException(self::RUN_ID.' requires one consistent chunking configuration.');
+            throw new RuntimeException($runId.' requires one consistent chunking configuration.');
         }
         $chunkConfiguration = $chunkConfigurations->firstOrFail();
         $engineering = $this->source->engineeringCorpus();
@@ -80,7 +100,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             ->sortBy(fn (array $case): string => $case['case_id'])->values();
         $variantCount = $cases->sum(fn (array $case): int => count($case['variants'] ?? []));
         if ($cases->count() !== 42 || $variantCount !== 126) {
-            throw new RuntimeException(self::RUN_ID.' is restricted to exactly 42 engineering cases and 126 variants.');
+            throw new RuntimeException($runId.' is restricted to exactly 42 engineering cases and 126 variants.');
         }
 
         $evaluatedAt = CarbonImmutable::parse($engineering['benchmark']['evaluation_clock']);
@@ -113,7 +133,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             'adapter_version' => (string) config('retrieval.planner.adapter_version'),
         ];
         if ($planner['provider'] === '' || $planner['model'] === '') {
-            throw new RuntimeException(self::RUN_ID.' requires explicit planner provider and model lineage.');
+            throw new RuntimeException($runId.' requires explicit planner provider and model lineage.');
         }
         $plannerFingerprintInput = $planner;
         ksort($plannerFingerprintInput);
@@ -177,9 +197,12 @@ final readonly class RunEngineeringBenchmarkExperiment
                 'generation' => 'not_executed',
             ],
         ];
-        $manifest = $this->progress->initialise(self::RUN_ID, $lineage);
+        if ($exp0004) {
+            $lineage['experiment'] = Exp0004Definition::lineage();
+        }
+        $manifest = $this->progress->initialise($runId, $lineage);
         $lineageDigest = (string) $manifest['lineage_digest'];
-        $completed = $this->progress->completedIdentities(self::RUN_ID, $lineageDigest);
+        $completed = $this->progress->completedIdentities($runId, $lineageDigest);
         $expectedIdentities = $cases->flatMap(
             fn (array $case) => collect($case['variants'])->map(
                 fn (array $variant): array => [
@@ -192,7 +215,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             fn (array $identity): string => $identity['case_id'].'::'.$identity['variant_id']
         )->all();
         if (array_diff(array_keys($completed), $expectedKeys) !== []) {
-            throw new RuntimeException('Durable '.self::RUN_ID.' progress contains an unexpected variant.');
+            throw new RuntimeException("Durable {$runId} progress contains an unexpected variant.");
         }
         $resumedCount = count($completed);
         foreach ($cases as $case) {
@@ -234,7 +257,7 @@ final readonly class RunEngineeringBenchmarkExperiment
                 } catch (RetrievalPlannerException $exception) {
                     if ($exception->systemic) {
                         throw new RuntimeException(
-                            self::RUN_ID.' stopped because the planner reported a systemic failure: '.$exception->category,
+                            $runId.' stopped because the planner reported a systemic failure: '.$exception->category,
                             0,
                             $exception,
                         );
@@ -258,7 +281,7 @@ final readonly class RunEngineeringBenchmarkExperiment
                     ];
                 }
                 $this->progress->writeObservation(
-                    self::RUN_ID,
+                    $runId,
                     $lineageDigest,
                     $case['case_id'],
                     $variant['variant_id'],
@@ -270,16 +293,16 @@ final readonly class RunEngineeringBenchmarkExperiment
             }
         }
         if (count($completed) !== EngineeringBenchmark::EXPECTED_ENGINEERING_VARIANTS) {
-            throw new RuntimeException(self::RUN_ID.' did not durably finalise all engineering variants.');
+            throw new RuntimeException($runId.' did not durably finalise all engineering variants.');
         }
         $header = [
             'schema_version' => 'v2',
-            'run_id' => self::RUN_ID,
+            'run_id' => $runId,
             'executed_at' => $manifest['started_at'],
             ...$lineage,
         ];
         $path = $this->progress->finaliseFromCheckpoints(
-            self::RUN_ID,
+            $runId,
             $lineageDigest,
             $header,
             $expectedIdentities,
@@ -293,10 +316,10 @@ final readonly class RunEngineeringBenchmarkExperiment
         ];
     }
 
-    private function assertLocalEnvironment(): void
+    private function assertLocalEnvironment(string $runId): void
     {
         if (! app()->environment(['local', 'testing'])) {
-            throw new RuntimeException(self::RUN_ID.' is restricted to local/testing environments.');
+            throw new RuntimeException($runId.' is restricted to local/testing environments.');
         }
     }
 }

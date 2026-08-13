@@ -20,6 +20,7 @@ TAIL ?= 100
 	evaluation-benchmark-sync \
 	evaluation-benchmark-compile \
 	evaluation-exp-0003 \
+	evaluation-exp-0004-runtime evaluation-exp-0004 \
 	evaluation-live-hybrid \
 	evaluation-report evaluation-index \
 	shell-web shell-api shell-ai shell-db shell-aws
@@ -52,6 +53,8 @@ help:
 		'  make evaluation-benchmark-sync  Synchronise authored Markdown paths into the benchmark catalogue' \
 		'  make evaluation-benchmark-compile  Validate and compile the engineering benchmark pilot' \
 		'  make evaluation-exp-0003  Run the post-reliability full V2 engineering baseline' \
+		'  make evaluation-exp-0004-runtime  Start and verify the isolated EXP-0004 runtime' \
+		'  make evaluation-exp-0004  Run the immutable RRF k=5 engineering experiment' \
 		'  make evaluation-live-hybrid  Run the opt-in live hybrid retrieval evaluation' \
 		'  make evaluation-report RUN=<id>  Regenerate one persisted evaluation report' \
 		'  make evaluation-index  Regenerate the persisted experiment index' \
@@ -210,6 +213,12 @@ evaluation-exp-0003:
 		--output-directory /evaluation-runs/EXP-0003-post-reliability-corrected-engineering-baseline \
 		--historical-baseline /evaluation-runs/EXP-0002-adr0022-corrected-planning-baseline/result.json
 	$(MAKE) evaluation-report RUN=EXP-0003-post-reliability-corrected-engineering-baseline
+
+evaluation-exp-0004-runtime:
+	./scripts/evaluation/exp0004_runtime.sh start
+
+evaluation-exp-0004:
+	./scripts/evaluation/exp0004_runtime.sh run
 
 evaluation-run:
 	@mkdir -p /tmp/rag-platform-evaluation
