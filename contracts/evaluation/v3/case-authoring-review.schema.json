@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v3/case-authoring-review.schema.json",
+  "title": "Benchmark V3 individual case authoring review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "review_id", "review_version", "benchmark_id", "corpus_version", "taxonomy", "case_id", "case_sha256", "source_catalog_digest", "source_lineage_digest", "evidence_unit_ids_digest", "reviewed_at", "machine_validation", "human_review"],
+  "properties": {
+    "schema_version": {"const": "v3"},
+    "review_id": {"$ref": "#/$defs/identifier"},
+    "review_version": {"type": "string", "minLength": 1},
+    "benchmark_id": {"const": "dolved-care-engineering"},
+    "corpus_version": {"const": "3"},
+    "taxonomy": {"$ref": "benchmark-taxonomy.schema.json#/$defs/taxonomy_reference"},
+    "case_id": {"$ref": "#/$defs/identifier"},
+    "case_sha256": {"$ref": "#/$defs/sha256"},
+    "source_catalog_digest": {"$ref": "#/$defs/sha256"},
+    "source_lineage_digest": {"$ref": "#/$defs/sha256"},
+    "evidence_unit_ids_digest": {"$ref": "#/$defs/sha256"},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "machine_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["validator_id", "validator_version", "passed"],
+      "properties": {
+        "validator_id": {"const": "benchmark-v3-compiler"},
+        "validator_version": {"const": "1"},
+        "passed": {"const": true}
+      }
+    },
+    "human_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_truth", "evidence_units", "expected_outcome", "temporal_facts", "applicability_facts", "controlled_rejection_rationale", "approved"],
+      "properties": {
+        "source_truth": {"const": "REVIEWED"},
+        "evidence_units": {"const": "REVIEWED"},
+        "expected_outcome": {"const": "REVIEWED"},
+        "temporal_facts": {"enum": ["REVIEWED", "NOT_APPLICABLE"]},
+        "applicability_facts": {"enum": ["REVIEWED", "NOT_APPLICABLE"]},
+        "controlled_rejection_rationale": {"enum": ["REVIEWED", "NOT_APPLICABLE"]},
+        "approved": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

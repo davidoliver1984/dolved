@@ -71,3 +71,11 @@ the V2 organisation and 93 canonical Markdown sources byte-for-byte, while its
 relationship identities and leakage lineage. Its catalogue review and source
 checksums are present; semantic cases, splits and final compiled artefacts are
 intentionally absent until later lifecycle stages.
+
+V3 case authoring uses domain-bound case-source envelopes and individual,
+digest-bound case review records. The compiler validates taxonomy scope,
+identity uniqueness, catalogue/source lineage, EvidenceUnit anchors, temporal
+and applicability expectations, controlled outcomes and review evidence using
+provider-free checks. These contracts prepare the `AUTHORING` lifecycle only;
+the repository V3 release remains case-free at `FOUNDATION` until a separately
+reviewed authoring batch is approved.

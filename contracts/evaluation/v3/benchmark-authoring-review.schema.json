@@ -4,7 +4,7 @@
   "title": "Benchmark V3 authoring review",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "review_id", "review_version", "benchmark_id", "corpus_version", "taxonomy", "reviewed_case_ids_digest", "reviewed_source_catalog_digest", "reviewed_at", "machine_validation", "human_review"],
+  "required": ["schema_version", "review_id", "review_version", "benchmark_id", "corpus_version", "taxonomy", "reviewed_case_ids_digest", "reviewed_source_catalog_digest", "reviewed_case_reviews_digest", "reviewed_at", "machine_validation", "human_review"],
   "properties": {
     "schema_version": {"const": "v3"},
     "review_id": {"$ref": "#/$defs/identifier"},
@@ -14,6 +14,7 @@
     "taxonomy": {"$ref": "benchmark-taxonomy.schema.json#/$defs/taxonomy_reference"},
     "reviewed_case_ids_digest": {"$ref": "#/$defs/sha256"},
     "reviewed_source_catalog_digest": {"$ref": "#/$defs/sha256"},
+    "reviewed_case_reviews_digest": {"$ref": "#/$defs/sha256"},
     "reviewed_at": {"type": "string", "format": "date-time"},
     "machine_validation": {
       "type": "object",

@@ -263,8 +263,12 @@ def validate_cases(
     case_ids = [case["case_id"] for case in cases]
     if len(case_ids) != len(set(case_ids)):
         raise ValueError("case_id values must be unique")
+    all_evidence_ids: set[str] = set()
     clock = parse_time(evaluation_clock)
     for case in cases:
+        variant_ids = [variant["variant_id"] for variant in case["variants"]]
+        if len(variant_ids) != len(set(variant_ids)):
+            raise ValueError(f"duplicate variant_id in {case['case_id']}")
         assert_facets(case["evaluation_facets"], facets, "CASE", case["case_id"])
         for variant in case["variants"]:
             assert_facets(
@@ -274,14 +278,37 @@ def validate_cases(
                 f"{case['case_id']}/{variant['variant_id']}",
             )
         eligible = case["eligibility_expectation"]["eligible_versions"]
+        source_lineage = {
+            (
+                item["document_family_id"],
+                item["document_version_id"],
+                item["source_path"],
+            ): item
+            for item in case["source_lineage"]
+        }
+        if len(source_lineage) != len(case["source_lineage"]):
+            raise ValueError(f"duplicate source lineage in {case['case_id']}")
+        for key, source_reference in source_lineage.items():
+            family_id, version_id, source_path = key
+            if (
+                version_id not in versions
+                or versions[version_id]["family_id"] != family_id
+                or versions[version_id]["source_path"] != source_path
+                or versions[version_id]["source_sha256"]
+                != source_reference["source_sha256"]
+            ):
+                raise ValueError(
+                    f"invalid source lineage reference in {case['case_id']}: {version_id}"
+                )
         eligible_keys = {
             (item["document_family_id"], item["document_version_id"], item["side"])
             for item in eligible
         }
         planner = case["planner_expectation"]
         moment = (
-            parse_time(planner["valid_at"])
+            parse_time(f"{planner['explicit_date']}T00:00:00Z")
             if planner["temporal_mode"] == "VALID_AT_DATE"
+            and planner["explicit_date"] is not None
             else clock
         )
         for expected in eligible:
@@ -293,11 +320,19 @@ def validate_cases(
                 raise ValueError(
                     f"eligible version belongs to another family: {version_id}"
                 )
+            lineage_key = (family_id, version_id, versions[version_id]["source_path"])
+            if lineage_key not in source_lineage:
+                raise ValueError(
+                    f"eligible version is absent from source lineage: {version_id}"
+                )
             validate_applicability(
                 expected["applicability"], versions[version_id], locations
             )
-            if planner["temporal_mode"] in {"CURRENT", "VALID_AT_DATE"} and (
-                authoritative_version_at(authority[family_id], moment) != version_id
+            if (
+                planner["temporal_mode"] in {"CURRENT", "VALID_AT_DATE"}
+                and planner["temporal_reference"] is None
+                and authoritative_version_at(authority[family_id], moment)
+                != version_id
             ):
                 raise ValueError(
                     f"case expects temporally ineligible version: {version_id}"
@@ -317,12 +352,26 @@ def validate_cases(
                 or versions[version_id]["family_id"] != excluded["document_family_id"]
             ):
                 raise ValueError(f"invalid excluded version: {version_id}")
+            lineage_key = (
+                excluded["document_family_id"],
+                version_id,
+                versions[version_id]["source_path"],
+            )
+            if lineage_key not in source_lineage:
+                raise ValueError(
+                    f"excluded version is absent from source lineage: {version_id}"
+                )
         evidence_ids: set[str] = set()
         for evidence in case["retrieval_expectation"]["evidence_units"]:
             evidence_id = evidence["evidence_id"]
             if evidence_id in evidence_ids:
                 raise ValueError(f"duplicate evidence_id: {evidence_id}")
+            if evidence_id in all_evidence_ids:
+                raise ValueError(
+                    f"EvidenceUnit identity is not globally unique: {evidence_id}"
+                )
             evidence_ids.add(evidence_id)
+            all_evidence_ids.add(evidence_id)
             version_id = evidence["document_version_id"]
             if version_id not in versions:
                 raise ValueError(f"unknown evidence version: {version_id}")
@@ -341,9 +390,92 @@ def validate_cases(
                 )
             if version["source_path"] != evidence["source_path"]:
                 raise ValueError(f"evidence source/catalogue mismatch: {evidence_id}")
+            if (
+                evidence["document_family_id"],
+                version_id,
+                evidence["source_path"],
+            ) not in source_lineage:
+                raise ValueError(
+                    f"evidence is absent from source lineage: {evidence_id}"
+                )
+            lineage_reference = source_lineage[
+                (
+                    evidence["document_family_id"],
+                    version_id,
+                    evidence["source_path"],
+                )
+            ]
+            if lineage_reference["purpose"] != "EXPECTED_EVIDENCE":
+                raise ValueError(
+                    "EvidenceUnit source must be declared as expected evidence: "
+                    f"{evidence_id}"
+                )
             source = (benchmark_root / evidence["source_path"]).read_text()
             if any(excerpt not in source for excerpt in evidence["canonical_excerpts"]):
                 raise ValueError(f"canonical excerpt missing for {evidence_id}")
+
+        expected_outcome = case["outcome_expectation"]["outcome"]
+        planner_outcome = planner["expected_outcome"]
+        if (
+            planner_outcome == "CLARIFICATION_REQUIRED"
+            and expected_outcome != planner_outcome
+        ):
+            raise ValueError("planner clarification must remain the case outcome")
+        if expected_outcome == "EVIDENCE_FOUND" and not evidence_ids:
+            raise ValueError("EVIDENCE_FOUND requires at least one EvidenceUnit")
+
+
+def validate_case_reviews(
+    cases: list[dict[str, Any]],
+    reviews: list[dict[str, Any]],
+    expected_taxonomy: dict[str, str],
+    catalog_digest: str,
+) -> str:
+    by_case: dict[str, dict[str, Any]] = {}
+    review_ids: set[str] = set()
+    for review in reviews:
+        case_id = review["case_id"]
+        if case_id in by_case:
+            raise ValueError(f"duplicate case authoring review: {case_id}")
+        by_case[case_id] = review
+        if review["review_id"] in review_ids:
+            raise ValueError(f"duplicate case review identity: {review['review_id']}")
+        review_ids.add(review["review_id"])
+        assert_taxonomy_binding(review, expected_taxonomy, "case authoring review")
+    reviewed_cases = {
+        case["case_id"]: case
+        for case in cases
+        if case["authoring_status"] == "REVIEWED"
+    }
+    if set(by_case) != set(reviewed_cases):
+        raise ValueError("case review identities do not match REVIEWED cases")
+    for case_id, case in reviewed_cases.items():
+        review = by_case[case_id]
+        if review["case_sha256"] != digest_bytes(canonical_bytes(case)):
+            raise ValueError(f"case review does not bind authored case: {case_id}")
+        if review["source_catalog_digest"] != catalog_digest:
+            raise ValueError(f"case review does not bind source catalogue: {case_id}")
+        if review["source_lineage_digest"] != content_digest(case["source_lineage"]):
+            raise ValueError(f"case review does not bind source lineage: {case_id}")
+        evidence_ids = sorted(
+            evidence["evidence_id"]
+            for evidence in case["retrieval_expectation"]["evidence_units"]
+        )
+        if review["evidence_unit_ids_digest"] != content_digest(evidence_ids):
+            raise ValueError(f"case review does not bind EvidenceUnits: {case_id}")
+        rejection_review = review["human_review"]["controlled_rejection_rationale"]
+        controlled = case["outcome_expectation"]["outcome"] != "EVIDENCE_FOUND"
+        expected_review = "REVIEWED" if controlled else "NOT_APPLICABLE"
+        if rejection_review != expected_review:
+            raise ValueError(
+                f"controlled rejection review status is inconsistent: {case_id}"
+            )
+    return content_digest(
+        sorted(
+            (review["case_id"], digest_bytes(canonical_bytes(review)))
+            for review in reviews
+        )
+    )
 
 
 def validate_split(
@@ -614,7 +746,21 @@ def compile_benchmark(
         return
 
     case_paths = sorted((benchmark_root / paths["case_sources"]).glob("*.json"))
-    cases = [case for case_path in case_paths for case in load_json(case_path)]
+    case_sources = [load_json(case_path) for case_path in case_paths]
+    batch_ids = [case_source["authoring_batch_id"] for case_source in case_sources]
+    if len(batch_ids) != len(set(batch_ids)):
+        raise ValueError("case authoring batch identities must be unique")
+    for case_source in case_sources:
+        validate_schema(
+            case_source, contract_root / "case-source.schema.json", registry=registry
+        )
+        assert_no_generated_identifiers(case_source)
+        assert_taxonomy_binding(case_source, expected_taxonomy, "case source")
+        if any(
+            case["domain"] != case_source["domain"] for case in case_source["cases"]
+        ):
+            raise ValueError("case source domain does not match its authored cases")
+    cases = [case for case_source in case_sources for case in case_source["cases"]]
     cases.sort(key=lambda case: case["case_id"])
     corpus = {
         "schema_version": "v3",
@@ -641,7 +787,29 @@ def compile_benchmark(
     if manifest["authored_counts"]["semantic_cases"] != len(cases):
         raise ValueError("manifest authored counts do not match benchmark sources")
 
+    review_paths = (
+        sorted((benchmark_root / paths["case_reviews"]).glob("*.json"))
+        if "case_reviews" in paths
+        else []
+    )
+    case_reviews = [load_json(review_path) for review_path in review_paths]
+    for case_review in case_reviews:
+        validate_schema(
+            case_review,
+            contract_root / "case-authoring-review.schema.json",
+            registry=registry,
+        )
+        assert_no_generated_identifiers(case_review)
+    catalog_digest = source_catalog_digest(benchmark_root, catalog_path)
+    case_reviews_digest = validate_case_reviews(
+        cases, case_reviews, expected_taxonomy, catalog_digest
+    )
+
     require_complete = status in {"COMPLETE", "BASELINED"}
+    if require_complete and any(
+        case["authoring_status"] != "REVIEWED" for case in cases
+    ):
+        raise ValueError("complete releases require every case to be REVIEWED")
     validate_lineage(
         lineage,
         parent_cases,
@@ -682,6 +850,8 @@ def compile_benchmark(
         benchmark_root, catalog_path
     ):
         raise ValueError("authoring review is not bound to catalogue and sources")
+    if review["reviewed_case_reviews_digest"] != case_reviews_digest:
+        raise ValueError("authoring review is not bound to individual case reviews")
 
     compiled_dir = benchmark_root / "compiled"
     compiled_dir.mkdir(parents=True, exist_ok=True)
@@ -727,6 +897,7 @@ def compile_benchmark(
         review_path,
         lineage_path,
         *case_paths,
+        *review_paths,
         *sorted((benchmark_root / "documents").rglob("*.md")),
         corpus_path,
         authority_path,

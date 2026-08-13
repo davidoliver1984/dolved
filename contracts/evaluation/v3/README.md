@@ -24,12 +24,45 @@ The catalogue review is separate from case authoring review. It binds the
 taxonomy, organisation, catalogue, every canonical source digest, the parent
 V2 digest and reviewed document identities before any case needs to exist.
 
+## Case authoring boundary
+
+`case-source.schema.json` is the repository authoring envelope. It binds one
+domain batch to the exact taxonomy and contains authored cases conforming to
+`benchmark-case.schema.json`. A case records its authoring status, semantic
+cluster identity and rationale, leakage groups, variants, intrinsic slices,
+facets, source lineage, layered expectations, EvidenceUnits and threshold
+observability classification.
+
+Source lineage is explicit and digest-bound to a catalogue version. Evidence
+must name a source from that lineage and remain inside the expected eligible
+scope. Controlled outcomes require a written rejection rationale; an
+`EVIDENCE_FOUND` case cannot carry one.
+
+Human review is deliberately separate from schema validation:
+
+- `case-authoring-review.schema.json` binds an individual `REVIEWED` case to
+  its canonical case digest, catalogue digest, source-lineage digest and
+  EvidenceUnit identities. It records review of source truth, EvidenceUnits,
+  outcome, temporal facts, applicability facts and controlled rejection.
+- `benchmark-authoring-review.schema.json` is the final release-wide review. It
+  binds the complete set of individual case reviews and is not required while
+  draft cases remain in `AUTHORING`.
+
+The compiler permits unreviewed `DRAFT` and `READY_FOR_REVIEW` cases only during
+`AUTHORING`. Every `REVIEWED` case must have exactly one matching review;
+`COMPLETE` and `BASELINED` require every case to be reviewed.
+
 ## Ownership
 
 - `benchmark-taxonomy.schema.json` owns the permitted domain, intrinsic-slice
   and evaluation-facet identifiers.
 - `benchmark-catalogue-review.schema.json` owns the machine and human evidence
   required to approve a case-free catalogue foundation.
+- `benchmark-case.schema.json` owns the semantic case, EvidenceUnit and layered
+  expectation authoring structure.
+- `case-source.schema.json` owns domain-batch and taxonomy binding.
+- `case-authoring-review.schema.json` owns review evidence for one immutable
+  authored case.
 - `taxonomy.v1.json` owns their human-readable definitions, categories,
   permitted scopes and lifecycle status.
 - benchmark cases will own their intrinsic labels, facets, EvidenceUnits and

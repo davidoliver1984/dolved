@@ -26,6 +26,7 @@
         "release_lineage": {"$ref": "#/$defs/path"},
         "source_checksums": {"$ref": "#/$defs/path"},
         "case_sources": {"$ref": "#/$defs/path"},
+        "case_reviews": {"$ref": "#/$defs/path"},
         "split": {"$ref": "#/$defs/path"},
         "authoring_review": {"$ref": "#/$defs/path"},
         "compiled_corpus": {"$ref": "#/$defs/path"},
@@ -46,6 +47,7 @@
             "not": {
               "anyOf": [
                 {"required": ["case_sources"]},
+                {"required": ["case_reviews"]},
                 {"required": ["split"]},
                 {"required": ["authoring_review"]},
                 {"required": ["compiled_corpus"]},
@@ -72,7 +74,7 @@
       "then": {
         "properties": {
           "authored_counts": {"properties": {"semantic_cases": {"minimum": 1}}},
-          "paths": {"required": ["case_sources", "split", "authoring_review", "compiled_corpus", "authority_windows", "split_identities", "checksums"]}
+          "paths": {"required": ["case_sources", "case_reviews", "split", "authoring_review", "compiled_corpus", "authority_windows", "split_identities", "checksums"]}
         }
       }
     }

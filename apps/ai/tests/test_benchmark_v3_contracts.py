@@ -11,8 +11,11 @@ from referencing import Registry, Resource
 CONTRACT_ROOT = Path("/contracts/evaluation")
 V3_ROOT = CONTRACT_ROOT / "v3"
 V3_SCHEMA_NAMES = (
+    "benchmark-case.schema.json",
     "benchmark-manifest.schema.json",
     "benchmark-taxonomy.schema.json",
+    "case-authoring-review.schema.json",
+    "case-source.schema.json",
     "benchmark-catalogue-review.schema.json",
     "corpus.schema.json",
     "document-catalog.schema.json",
@@ -85,7 +88,9 @@ def valid_corpus() -> dict[str, Any]:
         "cases": [
             {
                 "case_id": "case.example",
+                "authoring_status": "DRAFT",
                 "cluster_id": "cluster.example",
+                "cluster_rationale": "Groups equivalent semantic intent.",
                 "leakage_group_ids": ["leakage.example"],
                 "domain": "medication",
                 "variants": [
@@ -98,16 +103,21 @@ def valid_corpus() -> dict[str, Any]:
                 ],
                 "slices": ["CURRENT"],
                 "evaluation_facets": ["universal"],
+                "source_lineage": [
+                    {
+                        "document_family_id": "family.example",
+                        "document_version_id": "document.example.v1",
+                        "source_path": "documents/example.md",
+                        "source_sha256": "0" * 64,
+                        "purpose": "EXPECTED_EVIDENCE",
+                    }
+                ],
                 "planner_expectation": {
                     "temporal_mode": "CURRENT",
-                    "valid_at": None,
-                    "primary_anchor": None,
-                    "comparison_anchor": None,
-                    "applicability_reference": {
-                        "input": None,
-                        "resolved_location_id": None,
-                        "requires_clarification": False,
-                    },
+                    "explicit_date": None,
+                    "temporal_reference": None,
+                    "location_references": [],
+                    "clarification_reason": None,
                     "expected_outcome": "PLAN_READY",
                 },
                 "eligibility_expectation": {
@@ -129,7 +139,10 @@ def valid_corpus() -> dict[str, Any]:
                         }
                     ]
                 },
-                "outcome_expectation": {"outcome": "EVIDENCE_FOUND"},
+                "outcome_expectation": {
+                    "outcome": "EVIDENCE_FOUND",
+                    "controlled_rejection_rationale": None,
+                },
                 "threshold_observability": {
                     "classification": "POSITIVE_EVIDENCE",
                     "reranker_evaluable": True,
@@ -189,6 +202,18 @@ def test_unknown_intrinsic_slice_is_rejected() -> None:
     corpus["cases"][0]["slices"] = ["CURRENT-ish"]
     with pytest.raises(jsonschema.ValidationError):
         validator.validate(corpus)
+
+
+def test_controlled_outcome_requires_author_rationale() -> None:
+    corpus = valid_corpus()
+    authored_case = corpus["cases"][0]
+    authored_case["outcome_expectation"] = {
+        "outcome": "INSUFFICIENT_EVIDENCE",
+        "controlled_rejection_rationale": None,
+    }
+
+    with pytest.raises(jsonschema.ValidationError):
+        validator_for_schema("corpus.schema.json").validate(corpus)
 
 
 def test_v3_taxonomy_owns_every_calibration_population_label_and_facet() -> None:

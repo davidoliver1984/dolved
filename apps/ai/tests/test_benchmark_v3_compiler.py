@@ -4,8 +4,16 @@ from typing import Any
 
 import pytest
 
-from app.evaluation.benchmark.common import content_digest, digest_bytes
-from app.evaluation.benchmark.v3 import compile_benchmark, source_catalog_digest
+from app.evaluation.benchmark.common import (
+    canonical_bytes,
+    content_digest,
+    digest_bytes,
+)
+from app.evaluation.benchmark.v3 import (
+    compile_benchmark,
+    source_catalog_digest,
+    validate_split,
+)
 
 CONTRACT_ROOT = Path("/contracts/evaluation/v3")
 TAXONOMY_SOURCE = CONTRACT_ROOT / "taxonomy.v1.json"
@@ -28,7 +36,9 @@ def taxonomy_reference(taxonomy_path: Path) -> dict[str, str]:
 def case(case_id: str, split_suffix: str) -> dict[str, Any]:
     return {
         "case_id": case_id,
+        "authoring_status": "REVIEWED",
         "cluster_id": f"cluster.{split_suffix}",
+        "cluster_rationale": "Synthetic semantic cluster fixture.",
         "leakage_group_ids": [f"leakage.{split_suffix}"],
         "domain": "medication",
         "variants": [
@@ -43,16 +53,23 @@ def case(case_id: str, split_suffix: str) -> dict[str, Any]:
         ],
         "slices": ["CURRENT"],
         "evaluation_facets": ["universal"],
+        "source_lineage": [
+            {
+                "document_family_id": "family.example",
+                "document_version_id": "document.example.v1",
+                "source_path": "documents/example.md",
+                "source_sha256": digest_bytes(
+                    b"# Example\n\nExpected source evidence.\n"
+                ),
+                "purpose": "EXPECTED_EVIDENCE",
+            }
+        ],
         "planner_expectation": {
             "temporal_mode": "CURRENT",
-            "valid_at": None,
-            "primary_anchor": None,
-            "comparison_anchor": None,
-            "applicability_reference": {
-                "input": None,
-                "resolved_location_id": None,
-                "requires_clarification": False,
-            },
+            "explicit_date": None,
+            "temporal_reference": None,
+            "location_references": [],
+            "clarification_reason": None,
             "expected_outcome": "PLAN_READY",
         },
         "eligibility_expectation": {
@@ -87,7 +104,10 @@ def case(case_id: str, split_suffix: str) -> dict[str, Any]:
                 }
             ]
         },
-        "outcome_expectation": {"outcome": "EVIDENCE_FOUND"},
+        "outcome_expectation": {
+            "outcome": "EVIDENCE_FOUND",
+            "controlled_rejection_rationale": None,
+        },
         "threshold_observability": {
             "classification": "POSITIVE_EVIDENCE",
             "reranker_evaluable": True,
@@ -136,7 +156,6 @@ def prepare_release(temporary_root: Path) -> tuple[Path, Path, str]:
         case("case.calibration", "calibration"),
         case("case.held-out", "held-out"),
     ]
-    write_json(benchmark_root / "cases/medication.json", cases)
     organisation = {
         "schema_version": "v2",
         "benchmark_id": "dolved-care-engineering",
@@ -195,6 +214,60 @@ def prepare_release(temporary_root: Path) -> tuple[Path, Path, str]:
     }
     catalog_path = benchmark_root / "document-catalog.json"
     write_json(catalog_path, catalog)
+    case_source = {
+        "schema_version": "v3",
+        "benchmark_id": "dolved-care-engineering",
+        "corpus_version": "3",
+        "authoring_batch_id": "authoring-batch.synthetic",
+        "authoring_batch_version": "1",
+        "taxonomy": taxonomy,
+        "domain": "medication",
+        "cases": cases,
+    }
+    write_json(benchmark_root / "cases/medication.json", case_source)
+    catalog_digest = source_catalog_digest(benchmark_root, catalog_path)
+    case_reviews = []
+    for authored_case in cases:
+        case_review = {
+            "schema_version": "v3",
+            "review_id": f"case-review.{authored_case['case_id']}",
+            "review_version": "1",
+            "benchmark_id": "dolved-care-engineering",
+            "corpus_version": "3",
+            "taxonomy": taxonomy,
+            "case_id": authored_case["case_id"],
+            "case_sha256": digest_bytes(canonical_bytes(authored_case)),
+            "source_catalog_digest": catalog_digest,
+            "source_lineage_digest": content_digest(authored_case["source_lineage"]),
+            "evidence_unit_ids_digest": content_digest(
+                sorted(
+                    evidence["evidence_id"]
+                    for evidence in authored_case["retrieval_expectation"][
+                        "evidence_units"
+                    ]
+                )
+            ),
+            "reviewed_at": "2026-08-13T00:00:00Z",
+            "machine_validation": {
+                "validator_id": "benchmark-v3-compiler",
+                "validator_version": "1",
+                "passed": True,
+            },
+            "human_review": {
+                "source_truth": "REVIEWED",
+                "evidence_units": "REVIEWED",
+                "expected_outcome": "REVIEWED",
+                "temporal_facts": "REVIEWED",
+                "applicability_facts": "REVIEWED",
+                "controlled_rejection_rationale": "NOT_APPLICABLE",
+                "approved": True,
+            },
+        }
+        case_reviews.append(case_review)
+        write_json(
+            benchmark_root / f"reviews/cases/{authored_case['case_id']}.json",
+            case_review,
+        )
     catalogue_review = {
         "schema_version": "v3",
         "review_id": "catalogue-review.synthetic",
@@ -263,6 +336,12 @@ def prepare_release(temporary_root: Path) -> tuple[Path, Path, str]:
         "reviewed_case_ids_digest": content_digest(split_case_ids),
         "reviewed_source_catalog_digest": source_catalog_digest(
             benchmark_root, catalog_path
+        ),
+        "reviewed_case_reviews_digest": content_digest(
+            sorted(
+                (review["case_id"], digest_bytes(canonical_bytes(review)))
+                for review in case_reviews
+            )
         ),
         "reviewed_at": "2026-08-13T00:00:00Z",
         "machine_validation": {
@@ -346,6 +425,7 @@ def prepare_release(temporary_root: Path) -> tuple[Path, Path, str]:
             "document_catalog": "document-catalog.json",
             "catalogue_review": "reviews/catalogue-review-v1.json",
             "case_sources": "cases",
+            "case_reviews": "reviews/cases",
             "split": "splits/v1.json",
             "authoring_review": "reviews/authoring-review-v1.json",
             "release_lineage": "lineage/v2-to-v3.json",
@@ -492,6 +572,36 @@ def test_authoring_release_allows_incomplete_split_assignment(tmp_path: Path) ->
     assert not (benchmark_root / "compiled/corpus.json").exists()
 
 
+def test_authoring_draft_cases_do_not_require_review_evidence(tmp_path: Path) -> None:
+    benchmark_root, parent_root, parent_digest = prepare_release(tmp_path)
+    manifest_path = benchmark_root / "manifest.json"
+    manifest = load_json(manifest_path)
+    manifest["status"] = "AUTHORING"
+    for path_name in (
+        "case_reviews",
+        "split",
+        "authoring_review",
+        "compiled_corpus",
+        "authority_windows",
+        "split_identities",
+        "checksums",
+    ):
+        del manifest["paths"][path_name]
+    write_json(manifest_path, manifest)
+    case_source_path = benchmark_root / "cases/medication.json"
+    case_source = load_json(case_source_path)
+    for authored_case in case_source["cases"]:
+        authored_case["authoring_status"] = "DRAFT"
+    write_json(case_source_path, case_source)
+
+    compile_benchmark(
+        benchmark_root,
+        CONTRACT_ROOT,
+        parent_benchmark_root=parent_root,
+        required_parent_digest=parent_digest,
+    )
+
+
 def test_foundation_rejects_premature_split_artifact(tmp_path: Path) -> None:
     benchmark_root, parent_root, parent_digest = prepare_foundation(tmp_path)
     manifest_path = benchmark_root / "manifest.json"
@@ -597,8 +707,51 @@ def test_v3_rejects_unknown_facets(tmp_path: Path) -> None:
         compile_after_mutation(
             tmp_path,
             "cases/medication.json",
-            lambda cases: cases[0].update(
+            lambda case_source: case_source["cases"][0].update(
                 {"evaluation_facets": ["population-private-facet"]}
+            ),
+        )
+
+
+def test_v3_rejects_invalid_evidence_unit_reference(tmp_path: Path) -> None:
+    def change_evidence_version(case_source: dict[str, Any]) -> None:
+        evidence = case_source["cases"][0]["retrieval_expectation"]["evidence_units"][0]
+        evidence["document_version_id"] = "document.unknown.v1"
+
+    with pytest.raises(ValueError, match="unknown evidence version"):
+        compile_after_mutation(
+            tmp_path, "cases/medication.json", change_evidence_version
+        )
+
+
+def test_v3_rejects_invalid_expected_outcome(tmp_path: Path) -> None:
+    def change_outcome(case_source: dict[str, Any]) -> None:
+        case_source["cases"][0]["outcome_expectation"]["outcome"] = "SUCCESS"
+
+    with pytest.raises(Exception, match="SUCCESS"):
+        compile_after_mutation(tmp_path, "cases/medication.json", change_outcome)
+
+
+def test_v3_rejects_missing_review_for_reviewed_case(tmp_path: Path) -> None:
+    benchmark_root, parent_root, parent_digest = prepare_release(tmp_path)
+    (benchmark_root / "reviews/cases/case.engineering.json").unlink()
+
+    with pytest.raises(ValueError, match="case review identities"):
+        compile_benchmark(
+            benchmark_root,
+            CONTRACT_ROOT,
+            parent_benchmark_root=parent_root,
+            required_parent_digest=parent_digest,
+        )
+
+
+def test_v3_rejects_stale_case_review_evidence(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="does not bind authored case"):
+        compile_after_mutation(
+            tmp_path,
+            "cases/medication.json",
+            lambda case_source: case_source["cases"][0].update(
+                {"cluster_rationale": "Changed after human review."}
             ),
         )
 
@@ -646,11 +799,12 @@ def test_v3_rejects_unknown_lineage_tool_version(tmp_path: Path) -> None:
 
 
 def test_v3_rejects_leakage_groups_crossing_splits(tmp_path: Path) -> None:
-    def share_leakage_group(cases: list[dict[str, Any]]) -> None:
-        cases[1]["leakage_group_ids"] = cases[0]["leakage_group_ids"]
-
+    benchmark_root, _parent_root, _parent_digest = prepare_release(tmp_path)
+    cases = load_json(benchmark_root / "cases/medication.json")["cases"]
+    cases[1]["leakage_group_ids"] = cases[0]["leakage_group_ids"]
+    split = load_json(benchmark_root / "splits/v1.json")
     with pytest.raises(ValueError, match="leakage groups cross split boundaries"):
-        compile_after_mutation(tmp_path, "cases/medication.json", share_leakage_group)
+        validate_split(split, cases)
 
 
 def test_v3_rejects_split_identity_mismatch(tmp_path: Path) -> None:

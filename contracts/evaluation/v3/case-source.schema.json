@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maketime.ai/contracts/evaluation/v3/case-source.schema.json",
+  "title": "Benchmark V3 case authoring source",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "benchmark_id", "corpus_version", "authoring_batch_id", "authoring_batch_version", "taxonomy", "domain", "cases"],
+  "properties": {
+    "schema_version": {"const": "v3"},
+    "benchmark_id": {"const": "dolved-care-engineering"},
+    "corpus_version": {"const": "3"},
+    "authoring_batch_id": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[a-zA-Z0-9._:-]+$"},
+    "authoring_batch_version": {"type": "string", "minLength": 1},
+    "taxonomy": {"$ref": "benchmark-taxonomy.schema.json#/$defs/taxonomy_reference"},
+    "domain": {"$ref": "benchmark-taxonomy.schema.json#/$defs/domain_id"},
+    "cases": {"type": "array", "minItems": 1, "items": {"$ref": "benchmark-case.schema.json"}}
+  }
+}
