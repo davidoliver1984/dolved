@@ -1,0 +1,1104 @@
+{
+  "cohort": {
+    "definition": "Engineering EXP-0003 variants with correct eligibility, retrieval executed, expected evidence, and persisted Dense and Sparse lists",
+    "expected_evidence_unit_count": 138,
+    "side_counts": {
+      "COMPARISON": 20,
+      "PRIMARY": 118
+    },
+    "variant_count": 109
+  },
+  "conclusion": {
+    "best_retained_count": 137,
+    "best_stable_region": [
+      1,
+      5
+    ],
+    "control_retained_count": 134,
+    "proposed_rrf_k": 5,
+    "statement": "Engineering-only offline evidence; no production change is authorised without a controlled end-to-end experiment.",
+    "supports_future_controlled_change_experiment": true
+  },
+  "configuration": {
+    "control_rrf_k": 60,
+    "dense_candidate_k": 40,
+    "equal_modality_weighting": true,
+    "fusion_algorithm": "reciprocal-rank-fusion",
+    "fusion_candidate_limit": 15,
+    "fusion_version": "1",
+    "reranker_executed": false,
+    "sparse_candidate_k": 40,
+    "tested_rrf_k": [
+      1,
+      5,
+      10,
+      20,
+      30,
+      40,
+      50,
+      60,
+      80,
+      100
+    ]
+  },
+  "dual_modality": {
+    "both_moderate": {
+      "count": 2,
+      "retained_by_k": {
+        "1": 1,
+        "10": 1,
+        "100": 1,
+        "20": 1,
+        "30": 1,
+        "40": 1,
+        "5": 1,
+        "50": 1,
+        "60": 1,
+        "80": 1
+      }
+    },
+    "both_top_5": {
+      "count": 125,
+      "retained_by_k": {
+        "1": 125,
+        "10": 125,
+        "100": 125,
+        "20": 125,
+        "30": 125,
+        "40": 125,
+        "5": 125,
+        "50": 125,
+        "60": 125,
+        "80": 125
+      }
+    },
+    "dense_only": {
+      "count": 3,
+      "retained_by_k": {
+        "1": 3,
+        "10": 2,
+        "100": 0,
+        "20": 0,
+        "30": 0,
+        "40": 0,
+        "5": 3,
+        "50": 0,
+        "60": 0,
+        "80": 0
+      }
+    },
+    "one_top_5_other_lower": {
+      "count": 8,
+      "retained_by_k": {
+        "1": 8,
+        "10": 8,
+        "100": 8,
+        "20": 8,
+        "30": 8,
+        "40": 8,
+        "5": 8,
+        "50": 8,
+        "60": 8,
+        "80": 8
+      }
+    }
+  },
+  "experiment_id": "RRF-EXP-0001-exp0003-engineering-sensitivity",
+  "generated_at": "2026-08-13T09:38:24.294134+00:00",
+  "known_fusion_losses": [
+    {
+      "case_id": "pilot.current.scheduled-medication-version",
+      "dense_rank": 3,
+      "evidence_unit_id": "medication.v2.omission-current-rule",
+      "identity": "pilot.current.scheduled-medication-version::direct::PRIMARY::medication.v2.omission-current-rule",
+      "ranks": [
+        {
+          "displaced_from_k60_top15": [
+            "0318f8f9-9107-50ab-9afd-a65ee1687c77",
+            "47a813db-42a0-5b2b-9631-4c30ef6d0306",
+            "e396df5b-f0b7-5731-9ead-d56f0449b653"
+          ],
+          "entered_vs_k60_top15": [
+            "3cc16b3c-7d04-53a9-a273-eddea88a3ccb",
+            "4f41fcb6-f79c-5930-8671-7bd4a1a3d992",
+            "82da54df-1b15-546d-81c8-b9cdb538cac5"
+          ],
+          "rank": 9,
+          "retained": true,
+          "rrf_k": 1,
+          "score": 0.25
+        },
+        {
+          "displaced_from_k60_top15": [
+            "0318f8f9-9107-50ab-9afd-a65ee1687c77",
+            "47a813db-42a0-5b2b-9631-4c30ef6d0306"
+          ],
+          "entered_vs_k60_top15": [
+            "4f41fcb6-f79c-5930-8671-7bd4a1a3d992",
+            "82da54df-1b15-546d-81c8-b9cdb538cac5"
+          ],
+          "rank": 10,
+          "retained": true,
+          "rrf_k": 5,
+          "score": 0.125
+        },
+        {
+          "displaced_from_k60_top15": [
+            "0318f8f9-9107-50ab-9afd-a65ee1687c77",
+            "47a813db-42a0-5b2b-9631-4c30ef6d0306"
+          ],
+          "entered_vs_k60_top15": [
+            "4f41fcb6-f79c-5930-8671-7bd4a1a3d992",
+            "82da54df-1b15-546d-81c8-b9cdb538cac5"
+          ],
+          "rank": 13,
+          "retained": true,
+          "rrf_k": 10,
+          "score": 0.07692307692307693
+        },
+        {
+          "displaced_from_k60_top15": [
+            "0318f8f9-9107-50ab-9afd-a65ee1687c77"
+          ],
+          "entered_vs_k60_top15": [
+            "40b1f7a9-ed83-5ea7-8848-8cffdbe7b8bc"
+          ],
+          "rank": 21,
+          "retained": false,
+          "rrf_k": 20,
+          "score": 0.043478260869565216
+        },
+        {
+          "displaced_from_k60_top15": [
+            "0318f8f9-9107-50ab-9afd-a65ee1687c77"
+          ],
+          "entered_vs_k60_top15": [
+            "40b1f7a9-ed83-5ea7-8848-8cffdbe7b8bc"
+          ],
+          "rank": 25,
+          "retained": false,
+          "rrf_k": 30,
+          "score": 0.030303030303030304
+        },
+        {
+          "displaced_from_k60_top15": [
+            "0318f8f9-9107-50ab-9afd-a65ee1687c77"
+          ],
+          "entered_vs_k60_top15": [
+            "40b1f7a9-ed83-5ea7-8848-8cffdbe7b8bc"
+          ],
+          "rank": 26,
+          "retained": false,
+          "rrf_k": 40,
+          "score": 0.023255813953488372
+        },
+        {
+          "displaced_from_k60_top15": [
+            "0318f8f9-9107-50ab-9afd-a65ee1687c77"
+          ],
+          "entered_vs_k60_top15": [
+            "40b1f7a9-ed83-5ea7-8848-8cffdbe7b8bc"
+          ],
+          "rank": 26,
+          "retained": false,
+          "rrf_k": 50,
+          "score": 0.018867924528301886
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 26,
+          "retained": false,
+          "rrf_k": 60,
+          "score": 0.015873015873015872
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 26,
+          "retained": false,
+          "rrf_k": 80,
+          "score": 0.012048192771084338
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 26,
+          "retained": false,
+          "rrf_k": 100,
+          "score": 0.009708737864077669
+        }
+      ],
+      "side": "PRIMARY",
+      "sparse_rank": null,
+      "variant_id": "direct"
+    },
+    {
+      "case_id": "pilot.current.scheduled-medication-version",
+      "dense_rank": 4,
+      "evidence_unit_id": "medication.v2.omission-current-rule",
+      "identity": "pilot.current.scheduled-medication-version::scheduled::PRIMARY::medication.v2.omission-current-rule",
+      "ranks": [
+        {
+          "displaced_from_k60_top15": [
+            "256e756b-7110-5070-9432-97bb1923a202",
+            "5a0ad7a9-b4c1-5072-a3b8-d527805bad81",
+            "6ba08511-5e10-530d-9a62-17ffed9e9bc4"
+          ],
+          "entered_vs_k60_top15": [
+            "08447fe4-42e8-50a1-9357-66e117e25340",
+            "4f41fcb6-f79c-5930-8671-7bd4a1a3d992",
+            "b2a4f30f-b0ad-596c-9dc3-8ef11aae81ef"
+          ],
+          "rank": 9,
+          "retained": true,
+          "rrf_k": 1,
+          "score": 0.2
+        },
+        {
+          "displaced_from_k60_top15": [
+            "256e756b-7110-5070-9432-97bb1923a202",
+            "6ba08511-5e10-530d-9a62-17ffed9e9bc4"
+          ],
+          "entered_vs_k60_top15": [
+            "08447fe4-42e8-50a1-9357-66e117e25340",
+            "4f41fcb6-f79c-5930-8671-7bd4a1a3d992"
+          ],
+          "rank": 10,
+          "retained": true,
+          "rrf_k": 5,
+          "score": 0.1111111111111111
+        },
+        {
+          "displaced_from_k60_top15": [
+            "6ba08511-5e10-530d-9a62-17ffed9e9bc4"
+          ],
+          "entered_vs_k60_top15": [
+            "08447fe4-42e8-50a1-9357-66e117e25340"
+          ],
+          "rank": 18,
+          "retained": false,
+          "rrf_k": 10,
+          "score": 0.07142857142857142
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 25,
+          "retained": false,
+          "rrf_k": 20,
+          "score": 0.041666666666666664
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 29,
+          "retained": false,
+          "rrf_k": 30,
+          "score": 0.029411764705882353
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 29,
+          "retained": false,
+          "rrf_k": 40,
+          "score": 0.022727272727272728
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 29,
+          "retained": false,
+          "rrf_k": 50,
+          "score": 0.018518518518518517
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 29,
+          "retained": false,
+          "rrf_k": 60,
+          "score": 0.015625
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 29,
+          "retained": false,
+          "rrf_k": 80,
+          "score": 0.011904761904761904
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 29,
+          "retained": false,
+          "rrf_k": 100,
+          "score": 0.009615384615384616
+        }
+      ],
+      "side": "PRIMARY",
+      "sparse_rank": null,
+      "variant_id": "scheduled"
+    },
+    {
+      "case_id": "pilot.multi-document.medication-storage",
+      "dense_rank": 3,
+      "evidence_unit_id": "medication.administration.fridge-gate",
+      "identity": "pilot.multi-document.medication-storage::numeric::PRIMARY::medication.administration.fridge-gate",
+      "ranks": [
+        {
+          "displaced_from_k60_top15": [
+            "1f7baac6-5792-5b2a-9399-26ad4c21d6e4",
+            "46aef083-cd2b-5c1f-8608-2fe802b98c6d",
+            "635ff5e9-ecb1-559b-8683-4b7a96ea7bd9",
+            "82da54df-1b15-546d-81c8-b9cdb538cac5"
+          ],
+          "entered_vs_k60_top15": [
+            "10c0d44a-0caf-50df-a02a-2ff58404be9d",
+            "b2a4f30f-b0ad-596c-9dc3-8ef11aae81ef",
+            "ba609fb5-4a26-55ca-9bdc-c1d6a7e87d01",
+            "ff66a4d2-2f74-5eb9-a45d-32c39e102800"
+          ],
+          "rank": 3,
+          "retained": true,
+          "rrf_k": 1,
+          "score": 0.25
+        },
+        {
+          "displaced_from_k60_top15": [
+            "1f7baac6-5792-5b2a-9399-26ad4c21d6e4",
+            "46aef083-cd2b-5c1f-8608-2fe802b98c6d",
+            "635ff5e9-ecb1-559b-8683-4b7a96ea7bd9",
+            "82da54df-1b15-546d-81c8-b9cdb538cac5"
+          ],
+          "entered_vs_k60_top15": [
+            "10c0d44a-0caf-50df-a02a-2ff58404be9d",
+            "b2a4f30f-b0ad-596c-9dc3-8ef11aae81ef",
+            "ba609fb5-4a26-55ca-9bdc-c1d6a7e87d01",
+            "ff66a4d2-2f74-5eb9-a45d-32c39e102800"
+          ],
+          "rank": 8,
+          "retained": true,
+          "rrf_k": 5,
+          "score": 0.125
+        },
+        {
+          "displaced_from_k60_top15": [
+            "1f7baac6-5792-5b2a-9399-26ad4c21d6e4",
+            "635ff5e9-ecb1-559b-8683-4b7a96ea7bd9"
+          ],
+          "entered_vs_k60_top15": [
+            "b2a4f30f-b0ad-596c-9dc3-8ef11aae81ef",
+            "ff66a4d2-2f74-5eb9-a45d-32c39e102800"
+          ],
+          "rank": 13,
+          "retained": true,
+          "rrf_k": 10,
+          "score": 0.07692307692307693
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 23,
+          "retained": false,
+          "rrf_k": 20,
+          "score": 0.043478260869565216
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 25,
+          "retained": false,
+          "rrf_k": 30,
+          "score": 0.030303030303030304
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 25,
+          "retained": false,
+          "rrf_k": 40,
+          "score": 0.023255813953488372
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 25,
+          "retained": false,
+          "rrf_k": 50,
+          "score": 0.018867924528301886
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 25,
+          "retained": false,
+          "rrf_k": 60,
+          "score": 0.015873015873015872
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 25,
+          "retained": false,
+          "rrf_k": 80,
+          "score": 0.012048192771084338
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 25,
+          "retained": false,
+          "rrf_k": 100,
+          "score": 0.009708737864077669
+        }
+      ],
+      "side": "PRIMARY",
+      "sparse_rank": null,
+      "variant_id": "numeric"
+    },
+    {
+      "case_id": "safeguarding.covert-medication.multi-document",
+      "dense_rank": 33,
+      "evidence_unit_id": "covert-medication.capacity-controls",
+      "identity": "safeguarding.covert-medication.multi-document::multi::PRIMARY::covert-medication.capacity-controls",
+      "ranks": [
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 32,
+          "retained": false,
+          "rrf_k": 1,
+          "score": 0.05643879173290938
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 31,
+          "retained": false,
+          "rrf_k": 5,
+          "score": 0.050706033376123234
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 30,
+          "retained": false,
+          "rrf_k": 10,
+          "score": 0.04499494438827098
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 30,
+          "retained": false,
+          "rrf_k": 20,
+          "score": 0.036725067385444746
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 30,
+          "retained": false,
+          "rrf_k": 30,
+          "score": 0.031024531024531024
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 30,
+          "retained": false,
+          "rrf_k": 40,
+          "score": 0.026856524873828405
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 30,
+          "retained": false,
+          "rrf_k": 50,
+          "score": 0.023676099747828524
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 30,
+          "retained": false,
+          "rrf_k": 60,
+          "score": 0.02116935483870968
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 30,
+          "retained": false,
+          "rrf_k": 80,
+          "score": 0.017470247177296307
+        },
+        {
+          "displaced_from_k60_top15": [],
+          "entered_vs_k60_top15": [],
+          "rank": 30,
+          "retained": false,
+          "rrf_k": 100,
+          "score": 0.01487173816895179
+        }
+      ],
+      "side": "PRIMARY",
+      "sparse_rank": 36,
+      "variant_id": "multi"
+    }
+  ],
+  "rank_distributions": [
+    {
+      "median_rank": 1.0,
+      "outside_top_15": 1,
+      "p90_rank": 3,
+      "ranks_16_20": 0,
+      "ranks_21_30": 0,
+      "ranks_over_30": 1,
+      "rrf_k": 1
+    },
+    {
+      "median_rank": 1.0,
+      "outside_top_15": 1,
+      "p90_rank": 3,
+      "ranks_16_20": 0,
+      "ranks_21_30": 0,
+      "ranks_over_30": 1,
+      "rrf_k": 5
+    },
+    {
+      "median_rank": 1.0,
+      "outside_top_15": 4,
+      "p90_rank": 4,
+      "ranks_16_20": 0,
+      "ranks_21_30": 4,
+      "ranks_over_30": 0,
+      "rrf_k": 60
+    }
+  ],
+  "repository_commit": "7641554538190a2efd8cb5222cb1a3023b615053",
+  "schema_version": "rrf-sensitivity-experiment-v1",
+  "sensitivity": [
+    {
+      "expected_evidence_unit_count": 138,
+      "lost_count": 1,
+      "metrics": {
+        "mrr": 0.8821582379721915,
+        "ndcg_at_15": 0.8962049547799179,
+        "precision_at_15": 0.07080103359173126,
+        "recall_at_15": 0.9927536231884058
+      },
+      "net_retained_vs_k60": 3,
+      "recovered_count": 3,
+      "recovered_vs_k60": [
+        "pilot.current.scheduled-medication-version::direct::PRIMARY::medication.v2.omission-current-rule",
+        "pilot.current.scheduled-medication-version::scheduled::PRIMARY::medication.v2.omission-current-rule",
+        "pilot.multi-document.medication-storage::numeric::PRIMARY::medication.administration.fridge-gate"
+      ],
+      "regressed_count": 0,
+      "regressed_vs_k60": [],
+      "retained_count": 137,
+      "rrf_k": 1,
+      "top_expected_evidence_rate": {
+        "top_1": 0.7753623188405797,
+        "top_10": 0.9855072463768116,
+        "top_15": 0.9927536231884058,
+        "top_3": 0.9347826086956522,
+        "top_5": 0.9565217391304348
+      }
+    },
+    {
+      "expected_evidence_unit_count": 138,
+      "lost_count": 1,
+      "metrics": {
+        "mrr": 0.875655223329642,
+        "ndcg_at_15": 0.8901000918512403,
+        "precision_at_15": 0.07080103359173126,
+        "recall_at_15": 0.9927536231884058
+      },
+      "net_retained_vs_k60": 3,
+      "recovered_count": 3,
+      "recovered_vs_k60": [
+        "pilot.current.scheduled-medication-version::direct::PRIMARY::medication.v2.omission-current-rule",
+        "pilot.current.scheduled-medication-version::scheduled::PRIMARY::medication.v2.omission-current-rule",
+        "pilot.multi-document.medication-storage::numeric::PRIMARY::medication.administration.fridge-gate"
+      ],
+      "regressed_count": 0,
+      "regressed_vs_k60": [],
+      "retained_count": 137,
+      "rrf_k": 5,
+      "top_expected_evidence_rate": {
+        "top_1": 0.7681159420289855,
+        "top_10": 0.9855072463768116,
+        "top_15": 0.9927536231884058,
+        "top_3": 0.9130434782608695,
+        "top_5": 0.9420289855072463
+      }
+    },
+    {
+      "expected_evidence_unit_count": 138,
+      "lost_count": 2,
+      "metrics": {
+        "mrr": 0.8744981117074141,
+        "ndcg_at_15": 0.8872123525412422,
+        "precision_at_15": 0.0702842377260982,
+        "recall_at_15": 0.9855072463768116
+      },
+      "net_retained_vs_k60": 2,
+      "recovered_count": 2,
+      "recovered_vs_k60": [
+        "pilot.current.scheduled-medication-version::direct::PRIMARY::medication.v2.omission-current-rule",
+        "pilot.multi-document.medication-storage::numeric::PRIMARY::medication.administration.fridge-gate"
+      ],
+      "regressed_count": 0,
+      "regressed_vs_k60": [],
+      "retained_count": 136,
+      "rrf_k": 10,
+      "top_expected_evidence_rate": {
+        "top_1": 0.7681159420289855,
+        "top_10": 0.9637681159420289,
+        "top_15": 0.9855072463768116,
+        "top_3": 0.9057971014492754,
+        "top_5": 0.9492753623188406
+      }
+    },
+    {
+      "expected_evidence_unit_count": 138,
+      "lost_count": 4,
+      "metrics": {
+        "mrr": 0.873514211886305,
+        "ndcg_at_15": 0.8835794353455488,
+        "precision_at_15": 0.06925064599483204,
+        "recall_at_15": 0.9710144927536232
+      },
+      "net_retained_vs_k60": 0,
+      "recovered_count": 0,
+      "recovered_vs_k60": [],
+      "regressed_count": 0,
+      "regressed_vs_k60": [],
+      "retained_count": 134,
+      "rrf_k": 20,
+      "top_expected_evidence_rate": {
+        "top_1": 0.7681159420289855,
+        "top_10": 0.9710144927536232,
+        "top_15": 0.9710144927536232,
+        "top_3": 0.9057971014492754,
+        "top_5": 0.9492753623188406
+      }
+    },
+    {
+      "expected_evidence_unit_count": 138,
+      "lost_count": 4,
+      "metrics": {
+        "mrr": 0.873514211886305,
+        "ndcg_at_15": 0.8835794353455488,
+        "precision_at_15": 0.06925064599483204,
+        "recall_at_15": 0.9710144927536232
+      },
+      "net_retained_vs_k60": 0,
+      "recovered_count": 0,
+      "recovered_vs_k60": [],
+      "regressed_count": 0,
+      "regressed_vs_k60": [],
+      "retained_count": 134,
+      "rrf_k": 30,
+      "top_expected_evidence_rate": {
+        "top_1": 0.7681159420289855,
+        "top_10": 0.9710144927536232,
+        "top_15": 0.9710144927536232,
+        "top_3": 0.9057971014492754,
+        "top_5": 0.9492753623188406
+      }
+    },
+    {
+      "expected_evidence_unit_count": 138,
+      "lost_count": 4,
+      "metrics": {
+        "mrr": 0.8722222222222222,
+        "ndcg_at_15": 0.8825644760155377,
+        "precision_at_15": 0.06925064599483204,
+        "recall_at_15": 0.9710144927536232
+      },
+      "net_retained_vs_k60": 0,
+      "recovered_count": 0,
+      "recovered_vs_k60": [],
+      "regressed_count": 0,
+      "regressed_vs_k60": [],
+      "retained_count": 134,
+      "rrf_k": 40,
+      "top_expected_evidence_rate": {
+        "top_1": 0.7681159420289855,
+        "top_10": 0.9710144927536232,
+        "top_15": 0.9710144927536232,
+        "top_3": 0.9057971014492754,
+        "top_5": 0.9492753623188406
+      }
+    },
+    {
+      "expected_evidence_unit_count": 138,
+      "lost_count": 4,
+      "metrics": {
+        "mrr": 0.8722222222222222,
+        "ndcg_at_15": 0.8825163659169615,
+        "precision_at_15": 0.06925064599483204,
+        "recall_at_15": 0.9710144927536232
+      },
+      "net_retained_vs_k60": 0,
+      "recovered_count": 0,
+      "recovered_vs_k60": [],
+      "regressed_count": 0,
+      "regressed_vs_k60": [],
+      "retained_count": 134,
+      "rrf_k": 50,
+      "top_expected_evidence_rate": {
+        "top_1": 0.7681159420289855,
+        "top_10": 0.9637681159420289,
+        "top_15": 0.9710144927536232,
+        "top_3": 0.9057971014492754,
+        "top_5": 0.9492753623188406
+      }
+    },
+    {
+      "expected_evidence_unit_count": 138,
+      "lost_count": 4,
+      "metrics": {
+        "mrr": 0.8715762273901809,
+        "ndcg_at_15": 0.8819789748942745,
+        "precision_at_15": 0.06925064599483204,
+        "recall_at_15": 0.9710144927536232
+      },
+      "net_retained_vs_k60": 0,
+      "recovered_count": 0,
+      "recovered_vs_k60": [],
+      "regressed_count": 0,
+      "regressed_vs_k60": [],
+      "retained_count": 134,
+      "rrf_k": 60,
+      "top_expected_evidence_rate": {
+        "top_1": 0.7681159420289855,
+        "top_10": 0.9637681159420289,
+        "top_15": 0.9710144927536232,
+        "top_3": 0.8985507246376812,
+        "top_5": 0.9492753623188406
+      }
+    },
+    {
+      "expected_evidence_unit_count": 138,
+      "lost_count": 4,
+      "metrics": {
+        "mrr": 0.8715762273901809,
+        "ndcg_at_15": 0.8819789748942745,
+        "precision_at_15": 0.06925064599483204,
+        "recall_at_15": 0.9710144927536232
+      },
+      "net_retained_vs_k60": 0,
+      "recovered_count": 0,
+      "recovered_vs_k60": [],
+      "regressed_count": 0,
+      "regressed_vs_k60": [],
+      "retained_count": 134,
+      "rrf_k": 80,
+      "top_expected_evidence_rate": {
+        "top_1": 0.7681159420289855,
+        "top_10": 0.9637681159420289,
+        "top_15": 0.9710144927536232,
+        "top_3": 0.8985507246376812,
+        "top_5": 0.9492753623188406
+      }
+    },
+    {
+      "expected_evidence_unit_count": 138,
+      "lost_count": 4,
+      "metrics": {
+        "mrr": 0.8715762273901809,
+        "ndcg_at_15": 0.8819789748942745,
+        "precision_at_15": 0.06925064599483204,
+        "recall_at_15": 0.9710144927536232
+      },
+      "net_retained_vs_k60": 0,
+      "recovered_count": 0,
+      "recovered_vs_k60": [],
+      "regressed_count": 0,
+      "regressed_vs_k60": [],
+      "retained_count": 134,
+      "rrf_k": 100,
+      "top_expected_evidence_rate": {
+        "top_1": 0.7681159420289855,
+        "top_10": 0.9637681159420289,
+        "top_15": 0.9710144927536232,
+        "top_3": 0.8985507246376812,
+        "top_5": 0.9492753623188406
+      }
+    }
+  ],
+  "slices": {
+    "COMPARE": {
+      "expected_evidence_unit_count": 41,
+      "recall_at_15_by_k": {
+        "1": 1.0,
+        "10": 1.0,
+        "100": 1.0,
+        "20": 1.0,
+        "30": 1.0,
+        "40": 1.0,
+        "5": 1.0,
+        "50": 1.0,
+        "60": 1.0,
+        "80": 1.0
+      },
+      "variant_count": 21
+    },
+    "CURRENT": {
+      "expected_evidence_unit_count": 85,
+      "recall_at_15_by_k": {
+        "1": 0.9882352941176471,
+        "10": 0.9764705882352941,
+        "100": 0.9529411764705882,
+        "20": 0.9529411764705882,
+        "30": 0.9529411764705882,
+        "40": 0.9529411764705882,
+        "5": 0.9882352941176471,
+        "50": 0.9529411764705882,
+        "60": 0.9529411764705882,
+        "80": 0.9529411764705882
+      },
+      "variant_count": 76
+    },
+    "HISTORICAL_REFERENCE": {
+      "expected_evidence_unit_count": 5,
+      "recall_at_15_by_k": {
+        "1": 1.0,
+        "10": 1.0,
+        "100": 1.0,
+        "20": 1.0,
+        "30": 1.0,
+        "40": 1.0,
+        "5": 1.0,
+        "50": 1.0,
+        "60": 1.0,
+        "80": 1.0
+      },
+      "variant_count": 5
+    },
+    "VALID_AT_DATE": {
+      "expected_evidence_unit_count": 7,
+      "recall_at_15_by_k": {
+        "1": 1.0,
+        "10": 1.0,
+        "100": 1.0,
+        "20": 1.0,
+        "30": 1.0,
+        "40": 1.0,
+        "5": 1.0,
+        "50": 1.0,
+        "60": 1.0,
+        "80": 1.0
+      },
+      "variant_count": 7
+    },
+    "adversarial": {
+      "expected_evidence_unit_count": 6,
+      "recall_at_15_by_k": {
+        "1": 1.0,
+        "10": 1.0,
+        "100": 1.0,
+        "20": 1.0,
+        "30": 1.0,
+        "40": 1.0,
+        "5": 1.0,
+        "50": 1.0,
+        "60": 1.0,
+        "80": 1.0
+      },
+      "variant_count": 3
+    },
+    "multi-document": {
+      "expected_evidence_unit_count": 12,
+      "recall_at_15_by_k": {
+        "1": 0.9166666666666666,
+        "10": 0.9166666666666666,
+        "100": 0.8333333333333334,
+        "20": 0.8333333333333334,
+        "30": 0.8333333333333334,
+        "40": 0.8333333333333334,
+        "5": 0.9166666666666666,
+        "50": 0.8333333333333334,
+        "60": 0.8333333333333334,
+        "80": 0.8333333333333334
+      },
+      "variant_count": 6
+    },
+    "multi-evidence": {
+      "expected_evidence_unit_count": 70,
+      "recall_at_15_by_k": {
+        "1": 0.9857142857142858,
+        "10": 0.9857142857142858,
+        "100": 0.9714285714285714,
+        "20": 0.9714285714285714,
+        "30": 0.9714285714285714,
+        "40": 0.9714285714285714,
+        "5": 0.9857142857142858,
+        "50": 0.9714285714285714,
+        "60": 0.9714285714285714,
+        "80": 0.9714285714285714
+      },
+      "variant_count": 44
+    },
+    "tables": {
+      "expected_evidence_unit_count": 18,
+      "recall_at_15_by_k": {
+        "1": 1.0,
+        "10": 1.0,
+        "100": 1.0,
+        "20": 1.0,
+        "30": 1.0,
+        "40": 1.0,
+        "5": 1.0,
+        "50": 1.0,
+        "60": 1.0,
+        "80": 1.0
+      },
+      "variant_count": 18
+    },
+    "temporal-authority": {
+      "expected_evidence_unit_count": 3,
+      "recall_at_15_by_k": {
+        "1": 1.0,
+        "10": 1.0,
+        "100": 1.0,
+        "20": 1.0,
+        "30": 1.0,
+        "40": 1.0,
+        "5": 1.0,
+        "50": 1.0,
+        "60": 1.0,
+        "80": 1.0
+      },
+      "variant_count": 3
+    }
+  },
+  "source": {
+    "benchmark": {
+      "digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
+      "engineering_case_ids": [
+        "complaints.handling.compare",
+        "complaints.handling.current-deadlines",
+        "gdpr.breach.ico-owner",
+        "gdpr.data-protection.compare",
+        "gdpr.data-protection.current-reporting",
+        "health-safety.accident.current-riddor-timing",
+        "health-safety.accident.valid-at-date",
+        "health-safety.coshh.review-trigger",
+        "health-safety.moving-handling.compare",
+        "health-safety.moving-handling.current-staffing",
+        "hr.annual-leave.compare",
+        "hr.annual-leave.current-notice",
+        "hr.annual-leave.valid-at-date",
+        "hr.disciplinary.suspension-neutral",
+        "hr.lone-worker.coventry-overdue",
+        "infection.outbreak.valid-before-withdrawal",
+        "medication.controlled-drugs.current-discrepancy",
+        "medication.controlled-drugs.valid-at-date",
+        "medication.covert.capacity-requirements",
+        "medication.error-form.immediate-safety",
+        "medication.fridge.boundary-table",
+        "medication.prn.minimum-interval",
+        "pilot.adversarial.visitor-negative",
+        "pilot.applicability.ambiguous-home",
+        "pilot.applicability.bristol-conflict",
+        "pilot.applicability.regional-exeter",
+        "pilot.compare.medication-administration",
+        "pilot.current.medication-administration",
+        "pilot.current.scheduled-medication-version",
+        "pilot.current.withdrawn-before-authority",
+        "pilot.current.withdrawn-no-resurrection",
+        "pilot.location-alias.bristol",
+        "pilot.multi-document.medication-storage",
+        "pilot.table.training-refresh",
+        "pilot.valid-at-date.medication-administration",
+        "safeguarding.allegations.compare-process",
+        "safeguarding.allegations.current-hr-timing",
+        "safeguarding.body-map.observable-facts",
+        "safeguarding.capacity.unwise-decision",
+        "safeguarding.covert-medication.multi-document",
+        "training.medication.compare",
+        "training.medication.current-rounds"
+      ],
+      "engineering_case_ids_digest": "fca770615b5fbf20e81b494454969d54dbab2bfa66abf728455e95832b57465f",
+      "engineering_snapshot_digest": "8f67bb00ad22fe8f74ecdc834f66f22a00bf97bffe409d6857ce44fc0a0a5de5",
+      "evaluation_clock": "2026-08-01T12:00:00+00:00",
+      "id": "dolved-care-engineering",
+      "split_version": "1",
+      "version": "v2"
+    },
+    "observations_path": "/workspace/docs/evaluation/runs/EXP-0003-post-reliability-corrected-engineering-baseline/application-observations.json",
+    "observations_sha256": "e1a2f72fc86d3baa47ec9efbce632209f09d1b35fa4586a4c1dc5f741c5878bd",
+    "result_path": "/workspace/docs/evaluation/runs/EXP-0003-post-reliability-corrected-engineering-baseline/result.json",
+    "result_sha256": "7fb672abc2a7c104861d96e74c28d6705321e5eae77d57fc399cfbc9390140af",
+    "run_id": "EXP-0003-post-reliability-corrected-engineering-baseline",
+    "snapshot_digest": "6c115d1b7b98d59e8e6e4bebf6485e06c88dd2c4908802af821ad65e6ebc99df"
+  },
+  "strong_dense_only": {
+    "bands": [
+      {
+        "band": "dense_1_5_sparse_absent",
+        "count": 3,
+        "identities": [
+          "pilot.current.scheduled-medication-version::direct::PRIMARY::medication.v2.omission-current-rule",
+          "pilot.current.scheduled-medication-version::scheduled::PRIMARY::medication.v2.omission-current-rule",
+          "pilot.multi-document.medication-storage::numeric::PRIMARY::medication.administration.fridge-gate"
+        ],
+        "retained_by_k": {
+          "1": 3,
+          "10": 2,
+          "100": 0,
+          "20": 0,
+          "30": 0,
+          "40": 0,
+          "5": 3,
+          "50": 0,
+          "60": 0,
+          "80": 0
+        }
+      },
+      {
+        "band": "dense_6_10_sparse_absent",
+        "count": 0,
+        "identities": [],
+        "retained_by_k": {
+          "1": 0,
+          "10": 0,
+          "100": 0,
+          "20": 0,
+          "30": 0,
+          "40": 0,
+          "5": 0,
+          "50": 0,
+          "60": 0,
+          "80": 0
+        }
+      },
+      {
+        "band": "dense_11_20_sparse_absent",
+        "count": 0,
+        "identities": [],
+        "retained_by_k": {
+          "1": 0,
+          "10": 0,
+          "100": 0,
+          "20": 0,
+          "30": 0,
+          "40": 0,
+          "5": 0,
+          "50": 0,
+          "60": 0,
+          "80": 0
+        }
+      }
+    ]
+  }
+}
