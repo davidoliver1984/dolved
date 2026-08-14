@@ -23,6 +23,7 @@ TAIL ?= 100
 	evaluation-exp-0004-runtime evaluation-exp-0004 \
 	evaluation-calibration-runtime evaluation-calibration-run evaluation-calibration-replay \
 	evaluation-cal-exp-0002-runtime evaluation-cal-exp-0002-run evaluation-cal-exp-0002-replay \
+	evaluation-cal-exp-0003-runtime evaluation-cal-exp-0003-run evaluation-cal-exp-0003-replay \
 	evaluation-live-hybrid \
 	evaluation-report evaluation-index \
 	shell-web shell-api shell-ai shell-db shell-aws
@@ -62,6 +63,9 @@ help:
 		'  make evaluation-cal-exp-0002-runtime  Start and verify isolated CAL-EXP-0002 runtime' \
 		'  make evaluation-cal-exp-0002-run  Run the single CAL-EXP-0002 provider pass' \
 		'  make evaluation-cal-exp-0002-replay  Validate and replay CAL-EXP-0002 provider-free' \
+		'  make evaluation-cal-exp-0003-runtime  Start and verify isolated CAL-EXP-0003 runtime' \
+		'  make evaluation-cal-exp-0003-run  Run the single CAL-EXP-0003 provider pass' \
+		'  make evaluation-cal-exp-0003-replay  Validate and replay CAL-EXP-0003 provider-free' \
 		'  make evaluation-calibration-replay  Replay thresholds without provider calls' \
 		'  make evaluation-live-hybrid  Run the opt-in live hybrid retrieval evaluation' \
 		'  make evaluation-report RUN=<id>  Regenerate one persisted evaluation report' \
@@ -247,6 +251,15 @@ evaluation-cal-exp-0002-run:
 
 evaluation-cal-exp-0002-replay:
 	./scripts/evaluation/cal_exp_0002_runtime.sh replay
+
+evaluation-cal-exp-0003-runtime:
+	./scripts/evaluation/cal_exp_0003_runtime.sh start
+
+evaluation-cal-exp-0003-run:
+	./scripts/evaluation/cal_exp_0003_runtime.sh run
+
+evaluation-cal-exp-0003-replay:
+	./scripts/evaluation/cal_exp_0003_runtime.sh replay
 
 evaluation-run:
 	@mkdir -p /tmp/rag-platform-evaluation

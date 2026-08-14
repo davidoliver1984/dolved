@@ -12,6 +12,7 @@ use App\Models\Workspace;
 use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
 use App\Support\Evaluation\BenchmarkCanonicalJson;
 use App\Support\Evaluation\CalExp0002Definition;
+use App\Support\Evaluation\CalExp0003Definition;
 use App\Support\Evaluation\EngineeringBenchmark;
 use App\Support\Evaluation\EngineeringBenchmarkExperimentProgress;
 use App\Support\Evaluation\EngineeringBenchmarkSource;
@@ -70,6 +71,17 @@ final readonly class RunEngineeringBenchmarkExperiment
     }
 
     /** @return array<string, mixed> */
+    public function handleCalExp0003(string $repositoryCommit): array
+    {
+        return $this->run(
+            $repositoryCommit,
+            false,
+            CalExp0003Definition::RUN_ID,
+            'cal_exp_0003',
+        );
+    }
+
+    /** @return array<string, mixed> */
     private function run(
         string $repositoryCommit,
         bool $repositoryDirty,
@@ -120,16 +132,19 @@ final readonly class RunEngineeringBenchmarkExperiment
         $corpus = match ($mode) {
             'calibration' => $this->source->calibrationCorpus(),
             'cal_exp_0002' => $this->source->calExp0002Corpus(),
+            'cal_exp_0003' => $this->source->calExp0003Corpus(),
             default => $this->source->engineeringCorpus(),
         };
         $expectedCases = match ($mode) {
             'calibration' => ThresholdCalibrationDefinition::EXPECTED_CASES,
             'cal_exp_0002' => CalExp0002Definition::EXPECTED_CASES,
+            'cal_exp_0003' => CalExp0003Definition::EXPECTED_CASES,
             default => EngineeringBenchmark::EXPECTED_ENGINEERING_CASES,
         };
         $expectedVariants = match ($mode) {
             'calibration' => ThresholdCalibrationDefinition::EXPECTED_VARIANTS,
             'cal_exp_0002' => CalExp0002Definition::EXPECTED_VARIANTS,
+            'cal_exp_0003' => CalExp0003Definition::EXPECTED_VARIANTS,
             default => EngineeringBenchmark::EXPECTED_ENGINEERING_VARIANTS,
         };
         $caseIds = $corpus['split']['case_ids'] ?? null;
@@ -144,9 +159,11 @@ final readonly class RunEngineeringBenchmarkExperiment
         }
 
         $evaluatedAt = CarbonImmutable::parse(
-            $mode === 'cal_exp_0002'
-                ? CalExp0002Definition::EVALUATION_CLOCK
-                : $corpus['benchmark']['evaluation_clock'],
+            match ($mode) {
+                'cal_exp_0002' => CalExp0002Definition::EVALUATION_CLOCK,
+                'cal_exp_0003' => CalExp0003Definition::EVALUATION_CLOCK,
+                default => $corpus['benchmark']['evaluation_clock'],
+            },
         );
         $mapping = [
             'schema_version' => 'v1',
@@ -185,18 +202,26 @@ final readonly class RunEngineeringBenchmarkExperiment
             'sha256',
             json_encode($plannerFingerprintInput, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES),
         );
+        if ($mode === 'cal_exp_0003' && $planner !== CalExp0003Definition::planner()) {
+            throw new RuntimeException($runId.' requires the approved structured-chat-v3 planner lineage.');
+        }
+        $calibrationDefinition = match ($mode) {
+            'cal_exp_0002' => CalExp0002Definition::class,
+            'cal_exp_0003' => CalExp0003Definition::class,
+            default => null,
+        };
         $benchmarkLineage = [
             'id' => EngineeringBenchmark::ID,
-            'version' => $mode === 'cal_exp_0002'
-                ? CalExp0002Definition::BENCHMARK_VERSION
+            'version' => $calibrationDefinition !== null
+                ? $calibrationDefinition::BENCHMARK_VERSION
                 : EngineeringBenchmark::VERSION,
-            'digest' => $mode === 'cal_exp_0002'
-                ? CalExp0002Definition::BENCHMARK_DIGEST
+            'digest' => $calibrationDefinition !== null
+                ? $calibrationDefinition::BENCHMARK_DIGEST
                 : $state['benchmark']['digest'],
             'evaluation_clock' => $evaluatedAt->toIso8601String(),
             'split_version' => $corpus['split']['version'],
         ];
-        if (in_array($mode, ['calibration', 'cal_exp_0002'], true)) {
+        if (in_array($mode, ['calibration', 'cal_exp_0002', 'cal_exp_0003'], true)) {
             $benchmarkLineage += [
                 'split_name' => $corpus['split']['name'],
                 'calibration_snapshot_digest' => $corpus['snapshot_digest'],
@@ -263,6 +288,8 @@ final readonly class RunEngineeringBenchmarkExperiment
             $lineage['experiment'] = ThresholdCalibrationDefinition::lineage();
         } elseif ($mode === 'cal_exp_0002') {
             $lineage['experiment'] = CalExp0002Definition::lineage();
+        } elseif ($mode === 'cal_exp_0003') {
+            $lineage['experiment'] = CalExp0003Definition::lineage();
         }
         $manifest = $this->progress->initialise($runId, $lineage);
         $lineageDigest = (string) $manifest['lineage_digest'];

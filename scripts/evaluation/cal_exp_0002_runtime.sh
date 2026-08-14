@@ -2,12 +2,13 @@
 
 set -euo pipefail
 
-readonly run_id='CAL-EXP-0002-v3-evidence-threshold-calibration'
+readonly run_id="${CALIBRATION_RUN_ID:-CAL-EXP-0002-v3-evidence-threshold-calibration}"
 readonly project_name='rag-platform'
 readonly repository_root="$(git rev-parse --show-toplevel)"
-readonly definition="${repository_root}/tests/evaluation/experiment-definitions/${run_id}/runtime-lineage.json"
+readonly definition="${CALIBRATION_DEFINITION:-${repository_root}/tests/evaluation/experiment-definitions/${run_id}/runtime-lineage.json}"
 readonly population_root="${repository_root}/tests/evaluation/calibration-populations/dolved-care-engineering/v3/v1"
-readonly compose_override="${repository_root}/compose.cal-exp-0002.yaml"
+readonly compose_override="${CALIBRATION_COMPOSE_OVERRIDE:-${repository_root}/compose.cal-exp-0002.yaml}"
+readonly artisan_command="${CALIBRATION_ARTISAN_COMMAND:-evaluation:benchmark:run-cal-exp-0002}"
 readonly environment_file="${CALIBRATION_ENV_FILE:-${repository_root}/.env}"
 readonly isolated_root="${CALIBRATION_ISOLATED_ROOT:-/private/tmp/rag-platform-cal-exp-0002}"
 readonly calibration_snapshot="${isolated_root}/corpus.json"
@@ -46,7 +47,7 @@ assert_clean_lineage() {
 assert_hash() {
     local path=$1 expression=$2 label=$3
     [[ "$(sha256 "${path}")" == "$(jq -er "${expression}" "${definition}")" ]] || {
-        printf '%s differs from the immutable CAL-EXP-0002 definition.\n' "${label}" >&2
+        printf '%s differs from the immutable %s definition.\n' "${label}" "${run_id}" >&2
         exit 1
     }
 }
@@ -98,7 +99,7 @@ assert_inputs() {
     [[ "$(jq -er '.cases | length' "${calibration_snapshot}")" == '44' ]]
     [[ "$(jq -er '[.cases[].variants[]] | length' "${calibration_snapshot}")" == '132' ]]
     if grep -Eq 'engineering_tuning|held_out_acceptance' "${calibration_snapshot}"; then
-        printf 'The isolated CAL-EXP-0002 corpus exposes a non-calibration split.\n' >&2
+        printf 'The isolated %s corpus exposes a non-calibration split.\n' "${run_id}" >&2
         exit 1
     fi
 }
@@ -165,7 +166,7 @@ run() {
     mkdir -p "${run_root}"
     install -m 0444 "${definition}" "${run_root}/run-definition.json"
     install -m 0444 "${input_lineage}" "${run_root}/input-lineage.json"
-    compose exec -T api php artisan evaluation:benchmark:run-cal-exp-0002 \
+    compose exec -T api php artisan "${artisan_command}" \
         --repository-commit="$(git -C "${repository_root}" rev-parse HEAD)"
 }
 

@@ -162,12 +162,33 @@ final readonly class EngineeringBenchmarkSource
     /** @return array<string, mixed> */
     public function calExp0002Corpus(): array
     {
+        return $this->versionedCalibrationPopulation(
+            CalExp0002Definition::class,
+            'CAL-EXP-0002',
+        );
+    }
+
+    /** @return array<string, mixed> */
+    public function calExp0003Corpus(): array
+    {
+        return $this->versionedCalibrationPopulation(
+            CalExp0003Definition::class,
+            'CAL-EXP-0003',
+        );
+    }
+
+    /**
+     * @param  class-string<CalExp0002Definition|CalExp0003Definition>  $definition
+     * @return array<string, mixed>
+     */
+    private function versionedCalibrationPopulation(string $definition, string $label): array
+    {
         $snapshot = $this->absoluteJson(EngineeringBenchmark::CALIBRATION_SNAPSHOT);
         $manifest = $this->absoluteJson(EngineeringBenchmark::CAL_EXP_0002_POPULATION_MANIFEST);
         $compatibility = $this->absoluteJson(EngineeringBenchmark::CAL_EXP_0002_COMPATIBILITY_RESULT);
         $cases = $snapshot['cases'] ?? null;
         if (! is_array($cases)) {
-            throw new RuntimeException('The CAL-EXP-0002 population cases are unavailable.');
+            throw new RuntimeException("The {$label} population cases are unavailable.");
         }
         $caseIds = collect($cases)->map(
             fn (mixed $case): mixed => is_array($case) ? ($case['case_id'] ?? null) : null,
@@ -180,24 +201,24 @@ final readonly class EngineeringBenchmarkSource
         if (
             ($snapshot['schema_version'] ?? null) !== 'v3'
             || ($snapshot['benchmark']['id'] ?? null) !== EngineeringBenchmark::ID
-            || ($snapshot['benchmark']['version'] ?? null) !== CalExp0002Definition::BENCHMARK_VERSION
-            || ($snapshot['benchmark']['digest'] ?? null) !== CalExp0002Definition::BENCHMARK_DIGEST
-            || ($snapshot['split']['name'] ?? null) !== CalExp0002Definition::SPLIT
-            || ($snapshot['split']['version'] ?? null) !== CalExp0002Definition::SPLIT_VERSION
-            || ($snapshot['split']['case_ids_digest'] ?? null) !== CalExp0002Definition::CASE_IDS_DIGEST
-            || count($cases) !== CalExp0002Definition::EXPECTED_CASES
-            || $variantCount !== CalExp0002Definition::EXPECTED_VARIANTS
+            || ($snapshot['benchmark']['version'] ?? null) !== $definition::BENCHMARK_VERSION
+            || ($snapshot['benchmark']['digest'] ?? null) !== $definition::BENCHMARK_DIGEST
+            || ($snapshot['split']['name'] ?? null) !== $definition::SPLIT
+            || ($snapshot['split']['version'] ?? null) !== $definition::SPLIT_VERSION
+            || ($snapshot['split']['case_ids_digest'] ?? null) !== $definition::CASE_IDS_DIGEST
+            || count($cases) !== $definition::EXPECTED_CASES
+            || $variantCount !== $definition::EXPECTED_VARIANTS
             || count(array_unique($caseIds)) !== count($caseIds)
-            || $this->canonical->digest($caseIds) !== CalExp0002Definition::CASE_IDS_DIGEST
-            || ($manifest['population_digest'] ?? null) !== CalExp0002Definition::POPULATION_DIGEST
-            || ($manifest['case_ids_digest'] ?? null) !== CalExp0002Definition::CASE_IDS_DIGEST
-            || ($manifest['case_count'] ?? null) !== CalExp0002Definition::EXPECTED_CASES
-            || ($manifest['variant_count'] ?? null) !== CalExp0002Definition::EXPECTED_VARIANTS
+            || $this->canonical->digest($caseIds) !== $definition::CASE_IDS_DIGEST
+            || ($manifest['population_digest'] ?? null) !== $definition::POPULATION_DIGEST
+            || ($manifest['case_ids_digest'] ?? null) !== $definition::CASE_IDS_DIGEST
+            || ($manifest['case_count'] ?? null) !== $definition::EXPECTED_CASES
+            || ($manifest['variant_count'] ?? null) !== $definition::EXPECTED_VARIANTS
             || ($compatibility['compatible'] ?? null) !== true
-            || ($compatibility['result_digest'] ?? null) !== CalExp0002Definition::COMPATIBILITY_RESULT_DIGEST
-            || ($compatibility['compatibility_policy_sha256'] ?? null) !== CalExp0002Definition::COMPATIBILITY_POLICY_DIGEST
+            || ($compatibility['result_digest'] ?? null) !== $definition::COMPATIBILITY_RESULT_DIGEST
+            || ($compatibility['compatibility_policy_sha256'] ?? null) !== $definition::COMPATIBILITY_POLICY_DIGEST
         ) {
-            throw new RuntimeException('The isolated CAL-EXP-0002 population or compatibility lineage is invalid.');
+            throw new RuntimeException("The isolated {$label} population or compatibility lineage is invalid.");
         }
         $snapshot['split']['case_ids'] = $caseIds;
         $snapshot['case_count'] = count($cases);
