@@ -67,9 +67,11 @@ prepare() {
     install -m 0444 "${population_root}/composition-compatibility.json" "${compatibility_result}"
     install -m 0444 "${population_root}/authoring-review.json" "${authoring_review}"
     install -m 0444 "${provisioning}" "${provisioning_record}"
-    jq '.independence' "${population_manifest}" >"${independence_evidence}"
-    jq '.benchmark_taxonomy' "${population_manifest}" >"${taxonomy_evidence}"
-    chmod 0444 "${independence_evidence}" "${taxonomy_evidence}"
+    jq '.independence' "${population_manifest}" >"${independence_evidence}.tmp"
+    jq '.benchmark_taxonomy' "${population_manifest}" >"${taxonomy_evidence}.tmp"
+    chmod 0444 "${independence_evidence}.tmp" "${taxonomy_evidence}.tmp"
+    mv -f "${independence_evidence}.tmp" "${independence_evidence}"
+    mv -f "${taxonomy_evidence}.tmp" "${taxonomy_evidence}"
     jq -n \
         --arg repository_commit "$(git -C "${repository_root}" rev-parse HEAD)" \
         --arg corpus_sha256 "$(sha256 "${calibration_snapshot}")" \
@@ -77,8 +79,9 @@ prepare() {
         --arg compatibility_result_sha256 "$(sha256 "${compatibility_result}")" \
         --arg provisioning_sha256 "$(sha256 "${provisioning_record}")" \
         '{schema_version:"v1", repository_commit:$repository_commit, corpus_sha256:$corpus_sha256, population_manifest_sha256:$population_manifest_sha256, compatibility_result_sha256:$compatibility_result_sha256, provisioning_sha256:$provisioning_sha256}' \
-        >"${input_lineage}"
-    chmod 0444 "${input_lineage}"
+        >"${input_lineage}.tmp"
+    chmod 0444 "${input_lineage}.tmp"
+    mv -f "${input_lineage}.tmp" "${input_lineage}"
 }
 
 assert_inputs() {
