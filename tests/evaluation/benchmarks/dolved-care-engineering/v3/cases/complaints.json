@@ -424,13 +424,10 @@
       ],
       "slices": [
         "COMPARE",
-        "zero-evidence",
         "temporal-authority"
       ],
       "evaluation_facets": [
-        "compare-comparison-empty",
-        "changed-instruction",
-        "no-trustworthy-candidate"
+        "changed-instruction"
       ],
       "source_lineage": [
         {
@@ -438,7 +435,7 @@
           "document_version_id": "doc.complaints.handling.v1",
           "source_path": "documents/complaints/handling-v1.md",
           "source_sha256": "03cce40d44fc007bffdb93f558349c0293a6c58a8956dfc08589ead38a4a869c",
-          "purpose": "CONTROLLED_REJECTION"
+          "purpose": "ELIGIBILITY_CONTEXT"
         },
         {
           "document_family_id": "family.complaints.handling",
@@ -504,17 +501,16 @@
         ]
       },
       "outcome_expectation": {
-        "outcome": "COMPARISON_SCOPE_INCOMPLETE",
-        "controlled_rejection_rationale": "The current policy has response-plan evidence, but version 1 has no corresponding comparison-side requirement."
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
       },
       "threshold_observability": {
-        "classification": "THRESHOLD_SENSITIVE",
+        "classification": "POSITIVE_EVIDENCE",
         "reranker_evaluable": true,
         "required_sides": [
-          "PRIMARY",
-          "COMPARISON"
+          "PRIMARY"
         ],
-        "justification": "The current policy has response-plan evidence, but version 1 has no corresponding comparison-side requirement."
+        "justification": "The retrieval benchmark credits the source-backed current-side requirement. Absence of the same fact from one family on the comparison side does not empty ADR-0018's workspace-wide side."
       }
     }
   ]

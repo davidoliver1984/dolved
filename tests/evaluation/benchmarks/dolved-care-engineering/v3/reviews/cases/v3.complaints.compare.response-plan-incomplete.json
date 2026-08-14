@@ -1,7 +1,7 @@
 {
   "schema_version": "v3",
   "review_id": "review.v3.complaints.compare.response-plan-incomplete",
-  "review_version": "3",
+  "review_version": "4",
   "benchmark_id": "dolved-care-engineering",
   "corpus_version": "3",
   "taxonomy": {
@@ -10,11 +10,11 @@
     "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
   },
   "case_id": "v3.complaints.compare.response-plan-incomplete",
-  "case_sha256": "896d1a8ad0a03b701952e59140cb3abdb59ffb4bb0fc55d5c25150a651a255a2",
+  "case_sha256": "9f89d09d6e9cd5103c0b3d466209e91f397394ce1d80237cf17bbe8b4c218c0b",
   "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
-  "source_lineage_digest": "919e12d444419d54b57467e1e15ff381b6e13a51bd3c2ef294b8a4c722fa22ef",
+  "source_lineage_digest": "aaebfa342816c1b5293534d651658ce787c0e12926ecb2e0551f1dbff3c905b9",
   "evidence_unit_ids_digest": "f2b3415179d9fd4d7267b7d88c540bfb7a29f21038e60e61e1fcd94d06b0f162",
-  "reviewed_at": "2026-08-13T22:45:00Z",
+  "reviewed_at": "2026-08-14T12:00:00Z",
   "machine_validation": {
     "validator_id": "benchmark-v3-compiler",
     "validator_version": "1",
@@ -26,9 +26,9 @@
     "expected_outcome": "REVIEWED",
     "temporal_facts": "REVIEWED",
     "applicability_facts": "REVIEWED",
-    "controlled_rejection_rationale": "REVIEWED",
+    "controlled_rejection_rationale": "NOT_APPLICABLE",
     "approved": true
   },
   "reviewer_identity": "codex",
-  "review_note": "Calibration authoring review confirmed source truth, question-to-evidence scope, temporal and applicability facts, and controlled-outcome rationale."
+  "review_note": "Post-CAL-EXP-0003 review corrected family-specific fact absence: ADR-0018 keeps each comparison side workspace-wide, so this case credits its source-backed primary evidence and does not assert comparison-side emptiness."
 }

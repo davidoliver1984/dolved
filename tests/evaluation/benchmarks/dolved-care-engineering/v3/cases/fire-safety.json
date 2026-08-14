@@ -589,13 +589,10 @@
       ],
       "slices": [
         "COMPARE",
-        "zero-evidence",
         "temporal-authority"
       ],
       "evaluation_facets": [
-        "compare-comparison-empty",
-        "changed-instruction",
-        "no-trustworthy-candidate"
+        "changed-instruction"
       ],
       "source_lineage": [
         {
@@ -603,7 +600,7 @@
           "document_version_id": "doc.fire.drills.v1",
           "source_path": "documents/fire-safety/fire-drills-v1.md",
           "source_sha256": "b68d4a2856b4661d75cac0c8423e8ffd6c7d52a9491a9b9ef787e01a9e11ad3f",
-          "purpose": "CONTROLLED_REJECTION"
+          "purpose": "ELIGIBILITY_CONTEXT"
         },
         {
           "document_family_id": "family.fire.drills",
@@ -669,17 +666,16 @@
         ]
       },
       "outcome_expectation": {
-        "outcome": "COMPARISON_SCOPE_INCOMPLETE",
-        "controlled_rejection_rationale": "Current evidence states the route requirement, but version 1 contains no comparison-side route or compartment requirement."
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
       },
       "threshold_observability": {
-        "classification": "THRESHOLD_SENSITIVE",
+        "classification": "POSITIVE_EVIDENCE",
         "reranker_evaluable": true,
         "required_sides": [
-          "PRIMARY",
-          "COMPARISON"
+          "PRIMARY"
         ],
-        "justification": "Current evidence states the route requirement, but version 1 contains no comparison-side route or compartment requirement."
+        "justification": "The retrieval benchmark credits the source-backed current-side requirement. Absence of the same fact from one family on the comparison side does not empty ADR-0018's workspace-wide side."
       }
     }
   ]

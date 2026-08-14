@@ -44,8 +44,10 @@ def test_repository_v3_first_domain_authoring_batch_compiles(tmp_path: Path) -> 
         "visitors",
     }
     assert len(cases) == 45
-    assert len(reviews) == 45
-    assert all(case["authoring_status"] == "REVIEWED" for case in cases)
+    assert len(reviews) == 44
+    statuses = {case["case_id"]: case["authoring_status"] for case in cases}
+    assert sum(status == "REVIEWED" for status in statuses.values()) == 44
+    assert statuses["v3.infection.current.outbreak-no-authority"] == "DRAFT"
     assert not (V3_ROOT / "splits").exists()
     assert not (V3_ROOT / "compiled/corpus.json").exists()
     assert not (V3_ROOT / "compiled/authority-windows.json").exists()
@@ -63,6 +65,39 @@ def test_repository_v3_first_domain_authoring_batch_compiles(tmp_path: Path) -> 
     after = (temporary_authoring / "compiled/source-checksums.json").read_bytes()
     assert after == before
     assert not (temporary_authoring / "compiled/corpus.json").exists()
+
+
+def test_v3_post_calibration_reconciliation_respects_workspace_wide_scope() -> None:
+    cases = {
+        case["case_id"]: case
+        for path in sorted((V3_ROOT / "cases").glob("*.json"))
+        for case in load_json(path)["cases"]
+    }
+    expected_sides = {
+        "v3.complaints.compare.response-plan-incomplete": ["PRIMARY"],
+        "v3.fire.compare.route-record-incomplete": ["PRIMARY"],
+        "v3.payroll.compare.january-2027-incomplete": ["COMPARISON"],
+        "v3.training.compare.induction-information-governance-incomplete": [
+            "COMPARISON"
+        ],
+    }
+
+    for case_id, required_sides in expected_sides.items():
+        case = cases[case_id]
+        assert case["outcome_expectation"] == {
+            "outcome": "EVIDENCE_FOUND",
+            "controlled_rejection_rationale": None,
+        }
+        assert case["threshold_observability"]["classification"] == (
+            "POSITIVE_EVIDENCE"
+        )
+        assert case["threshold_observability"]["required_sides"] == required_sides
+        assert "zero-evidence" not in case["slices"]
+
+    assert (
+        cases["v3.infection.current.outbreak-no-authority"]["authoring_status"]
+        == "DRAFT"
+    )
 
 
 def test_v3_retains_v2_organisation_and_sources_byte_for_byte() -> None:

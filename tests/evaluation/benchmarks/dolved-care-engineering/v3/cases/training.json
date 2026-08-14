@@ -423,11 +423,9 @@
       "slices": [
         "COMPARE",
         "scheduled-future",
-        "zero-evidence",
         "temporal-authority"
       ],
       "evaluation_facets": [
-        "compare-primary-empty",
         "changed-instruction",
         "scheduled"
       ],
@@ -437,7 +435,7 @@
           "document_version_id": "doc.training.induction.v1",
           "source_path": "documents/training/induction-v1.md",
           "source_sha256": "cd58efd579590469f1de74a137d2c1764c78c04da117b815be0bfdc9d4c62be3",
-          "purpose": "CONTROLLED_REJECTION"
+          "purpose": "ELIGIBILITY_CONTEXT"
         },
         {
           "document_family_id": "family.training.induction",
@@ -503,17 +501,16 @@
         ]
       },
       "outcome_expectation": {
-        "outcome": "COMPARISON_SCOPE_INCOMPLETE",
-        "controlled_rejection_rationale": "Scheduled version 2 contains information-governance evidence, but the current primary version does not."
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
       },
       "threshold_observability": {
-        "classification": "THRESHOLD_SENSITIVE",
+        "classification": "POSITIVE_EVIDENCE",
         "reranker_evaluable": true,
         "required_sides": [
-          "PRIMARY",
           "COMPARISON"
         ],
-        "justification": "Scheduled version 2 contains information-governance evidence, but the current primary version does not."
+        "justification": "The retrieval benchmark credits the source-backed scheduled-side requirement. Absence of the same fact from one family on the primary side does not empty ADR-0018's workspace-wide side."
       }
     }
   ]

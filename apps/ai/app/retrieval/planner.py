@@ -202,7 +202,7 @@ class StructuredChatRetrievalPlanner:
         timeout_seconds: float,
         client: httpx.Client | None = None,
         contract_schema_version: str = "plan-response-v2",
-        prompt_version: str = "adr-0022-v1",
+        prompt_version: str = "adr-0022-v2",
         adapter_version: str = "structured-chat-v3",
     ) -> None:
         if not api_key.get_secret_value().strip():
@@ -422,14 +422,17 @@ exact calendar day. Otherwise use temporal_reference kind calendar_period and pr
 Never manufacture a day or time.
 HISTORICAL_REFERENCE: one non-current state named linguistically (old, previous, version 1,
 the 2023 procedure, before withdrawal) without requesting comparison. Use temporal_reference
-kind historical_reference and preserve wording.
+kind historical_reference and preserve wording. A question asking whether an earlier version
+became current again after a later version was withdrawn asks about current authority and is
+CURRENT, unless it explicitly asks to compare the content of the versions.
 CLARIFICATION_REQUIRED: only when linguistic temporal intent genuinely cannot be classified;
 use reason unclassifiable_temporal_intent.
 
-location_references contains only physical locations, sites, homes, offices, named regions,
-or geographic areas explicitly present. Preserve wording, return multiple references
-separately, and never resolve aliases. Roles, people, objects, documents, organisations, and
-actions are not locations.
+location_references contains only organisational or geographic places: physical sites, homes,
+offices, named regions, or geographic areas explicitly present. Preserve wording, return
+multiple references separately, and never resolve aliases. Roles, people, equipment, storage
+areas or containers (including a fridge), objects, documents, organisations, and actions are
+not location references.
 
 The authoritative evaluation instant is """
         + evaluated_at

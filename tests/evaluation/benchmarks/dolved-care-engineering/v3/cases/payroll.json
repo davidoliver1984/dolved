@@ -344,11 +344,9 @@
       "slices": [
         "COMPARE",
         "scheduled-future",
-        "zero-evidence",
         "temporal-authority"
       ],
       "evaluation_facets": [
-        "compare-primary-empty",
         "changed-structured-value",
         "scheduled"
       ],
@@ -358,7 +356,7 @@
           "document_version_id": "doc.payroll.calendar.v1",
           "source_path": "documents/payroll/calendar-2026.md",
           "source_sha256": "8c890abd3864d458bf83e56fa589154d962f037b6787ec9f84110fa5cb6dc1a4",
-          "purpose": "CONTROLLED_REJECTION"
+          "purpose": "ELIGIBILITY_CONTEXT"
         },
         {
           "document_family_id": "family.payroll.calendar",
@@ -424,17 +422,16 @@
         ]
       },
       "outcome_expectation": {
-        "outcome": "COMPARISON_SCOPE_INCOMPLETE",
-        "controlled_rejection_rationale": "The scheduled calendar contains January 2027 evidence, while the current 2026 calendar has no primary-side January 2027 row."
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
       },
       "threshold_observability": {
-        "classification": "THRESHOLD_SENSITIVE",
+        "classification": "POSITIVE_EVIDENCE",
         "reranker_evaluable": true,
         "required_sides": [
-          "PRIMARY",
           "COMPARISON"
         ],
-        "justification": "The scheduled calendar contains January 2027 evidence, while the current 2026 calendar has no primary-side January 2027 row."
+        "justification": "The retrieval benchmark credits the source-backed scheduled-side row. Absence of that row from one family on the primary side does not empty ADR-0018's workspace-wide side."
       }
     }
   ]

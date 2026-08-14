@@ -71,9 +71,9 @@
     },
     {
       "case_id": "v3.infection.current.outbreak-no-authority",
-      "authoring_status": "REVIEWED",
+      "authoring_status": "DRAFT",
       "cluster_id": "cluster.v3.infection.outbreak-authority-gap",
-      "cluster_rationale": "Current and comparison questions share the same attained-successor withdrawal and no-resurrection invariant.",
+      "cluster_rationale": "Draft retained for redesign: family-specific authority absence cannot be asserted as a workspace-wide retrieval outcome under ADR-0018.",
       "leakage_group_ids": ["leakage.family.infection.outbreak-management"],
       "domain": "infection-control",
       "variants": [

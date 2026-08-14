@@ -28,7 +28,7 @@ def main() -> None:
         "provider": provider,
         "model": model,
         "contract_schema_version": "plan-response-v2",
-        "prompt_version": "adr-0022-v1",
+        "prompt_version": "adr-0022-v2",
         "adapter_version": "structured-chat-v3",
     }
     planner["fingerprint"] = hashlib.sha256(

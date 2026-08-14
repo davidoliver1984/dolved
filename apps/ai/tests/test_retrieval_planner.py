@@ -254,6 +254,7 @@ def test_planner_lineage_is_stable_and_excludes_credentials() -> None:
 
     assert lineage.provider == "test-provider"
     assert lineage.contract_schema_version == "plan-response-v2"
+    assert lineage.prompt_version == "adr-0022-v2"
     assert lineage.adapter_version == "structured-chat-v3"
     assert len(lineage.fingerprint) == 64
     assert "test-key" not in lineage.model_dump_json()
@@ -265,7 +266,7 @@ def test_planner_lineage_is_stable_and_excludes_credentials() -> None:
         ("provider_name", "another-provider"),
         ("model", "another-model"),
         ("contract_schema_version", "plan-response-v3"),
-        ("prompt_version", "adr-0022-v2"),
+        ("prompt_version", "adr-0022-v3"),
         ("adapter_version", "structured-chat-v4"),
     ],
 )
@@ -358,6 +359,26 @@ def test_prompt_keeps_ordinary_contrast_current_and_forbids_manufactured_dates()
     assert "not COMPARE" in prompt
     assert "Never manufacture a day" in prompt
     assert "second model" not in prompt.lower()
+
+
+def test_prompt_keeps_equipment_out_of_location_references() -> None:
+    from app.retrieval.planner import _planner_prompt
+
+    prompt = _planner_prompt("2026-08-14T12:00:00Z")
+
+    assert "equipment, storage" in prompt
+    assert "including a fridge" in prompt
+    assert "not location references" in prompt
+
+
+def test_prompt_treats_predecessor_resurrection_question_as_current() -> None:
+    from app.retrieval.planner import _planner_prompt
+
+    prompt = _planner_prompt("2026-08-14T12:00:00Z")
+
+    assert "became current again" in prompt
+    assert "asks about current authority" in prompt
+    assert "explicitly asks to compare the content" in prompt
 
 
 def test_planner_classifies_response_shape_failure_without_retaining_payload() -> None:
