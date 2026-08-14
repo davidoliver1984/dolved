@@ -1,0 +1,9 @@
+{
+  "schema_version": "v1",
+  "repository_commit": "e3a356d5872f43611572c33c0d8f2ee09e5e8002",
+  "corpus_sha256": "2c3b54689c6504652d39c31b47c98f5ff720dce1a930cffa68823c3f7ac722e5",
+  "population_manifest_sha256": "4a22db627a5cffecd5d403feba0078160d2783d84fbf004d777e13e7ef137625",
+  "compatibility_result_sha256": "3cf0bcb3fa6fdc58499cc90993bfbdcf36946e016bafa3b33b731374f0a12c48",
+  "authoring_review_evidence_sha256": "89f160ee786f5bd1b920015a2a08d1c833d1fe302c6383d58279aa8702cc55b1",
+  "provisioning_sha256": "8691c5aa5a40b1aeba527287226c3d41515c576eff6ff4b216d1e068bc3f370d"
+}

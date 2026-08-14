@@ -171,3 +171,27 @@ calibration cases, select the threshold without consulting held-out cases, then
 run the untouched held-out acceptance once. Only an accepted result may be
 persisted and activated. `tasks.json` therefore remains on R16-S08 with
 `completed_through` unchanged at R16-S07. No commit or tag was created.
+
+## 2026-08-14 calibration closure
+
+CAL-EXP-0003 executed once from commit
+`e3a356d5872f43611572c33c0d8f2ee09e5e8002` against the compatible V3
+calibration population: 44 cases, 132 variants, 132 valid typed planner
+results, 132 retrieval executions and no planner, retrieval, provider or
+systemic failure. The authoritative observations hash is
+`a48e1dca7df0aeee10345bedae3aab007f6925c12fdaef5ec17b3e26c54b14e0`.
+
+Post-provider compatibility passed. Provider-free replay evaluated 256
+boundaries and found no policy-eligible alternative that strictly improved
+case-first expected-EvidenceUnit recall without a protected regression. The
+predeclared policy therefore retained `0.337890625`. The value is frozen for
+this exact calibration lineage only; it is not held-out accepted, production
+promoted or universal.
+
+The retained metrics were recall `0.798246`, benchmark precision `0.198246`,
+MRR `0.791667`, nDCG `0.774316` and controlled-rejection correctness
+`0.166667`. A provider-free diagnosis traced that final metric to two planner
+semantic errors, ten benchmark expectations that conflict with ADR-0018's
+workspace-wide relevance boundary, and thirteen cases where topically relevant
+evidence did not establish the demanded fact. No application correction,
+threshold change, provider call or held-out access occurred during closure.

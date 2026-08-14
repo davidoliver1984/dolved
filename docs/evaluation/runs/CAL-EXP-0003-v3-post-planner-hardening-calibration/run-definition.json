@@ -1,0 +1,100 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "CAL-EXP-0003-v3-post-planner-hardening-calibration",
+  "predecessor": {
+    "experiment_id": "CAL-EXP-0002-v3-evidence-threshold-calibration",
+    "disposition": "immutable_failed_closed",
+    "reason": "planner_failure_before_threshold"
+  },
+  "approved_lineage": {
+    "calibration_governance_commit": "872b9d990594413eea32d9b9587978854b34d225",
+    "benchmark_v3_catalogue_commit": "08f58bd5822588d5ecd8d1a4bbb1bbf086c917dc1",
+    "v3_authoring_commit": "1f7dbd4822588d5ecd8d1a4bbb1bbf086c917dc1",
+    "calibration_population_commit": "365064e5094f05f7f1890a6f743a26748dfdfd0c",
+    "planner_hardening_commit": "3c35e42d4883d868e7f9de621aaf66e597cd156a"
+  },
+  "benchmark": {
+    "id": "dolved-care-engineering",
+    "version": "3",
+    "digest": "8a90b0e6da531223ab6f113f237c2bde3149690662a5a4f1f3cbd5f921c0acd7",
+    "evaluation_clock": "2026-08-01T12:00:00Z"
+  },
+  "population": {
+    "id": "dolved-care-engineering-threshold_calibration-2",
+    "digest": "bafc720dbf03aba9e3fdee597ba0b9f2bfaa38db5adc8502b88bf68d07c57345",
+    "case_ids_digest": "1808477d771b24f45b726dd4b05ce8defa5b1edc624b8907155ccac7ab7e4801",
+    "case_count": 44,
+    "variant_count": 132,
+    "corpus_sha256": "2c3b54689c6504652d39c31b47c98f5ff720dce1a930cffa68823c3f7ac722e5",
+    "manifest_sha256": "4a22db627a5cffecd5d403feba0078160d2783d84fbf004d777e13e7ef137625",
+    "authoring_review_sha256": "bc712672b76d634fe03841b2091773f8f7f31111241bd07df5e29839a2ef1395"
+  },
+  "compatibility": {
+    "compatible": true,
+    "result_digest": "b86c329955bafee702b02a8fc695e35ab22306cb88c1c1979215ae6c95725670",
+    "result_sha256": "3cf0bcb3fa6fdc58499cc90993bfbdcf36946e016bafa3b33b731374f0a12c48",
+    "requirements_sha256": "342521355b236b4d64d7803a82f44f5fdc06325c3183a972a7cc05034136445d",
+    "population_specification_sha256": "7cd9d59c7464e6804de914635d023fa5d99d5a1edea8bffc212a3c4e9fdfc406",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "calibration_policy": {
+    "id": "evidence-threshold-calibration-v1",
+    "version": "1",
+    "sha256": "0500ef0868566b736b11a7818c538b1fa478e74811c6420cd487dd9f73ff8c7b"
+  },
+  "planner": {
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "contract_schema_version": "plan-response-v2",
+    "prompt_version": "adr-0022-v1",
+    "adapter_version": "structured-chat-v3",
+    "fingerprint": "114789559d7032cefb4e93d1134ce3a4e2234a0db9c26048940cbb1d095758bd"
+  },
+  "providers": {
+    "dense": {
+      "provider": "voyage",
+      "model": "voyage-4-large",
+      "dimensions": 1024,
+      "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c"
+    },
+    "sparse": {
+      "provider": "fastembed",
+      "model": "prithivida/Splade_PP_en_v1",
+      "model_revision": "efcd182bc7eb351e81a9445752d4388c2bab500b",
+      "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d"
+    },
+    "fusion": {
+      "strategy": "rrf",
+      "modality_weights": {"dense": 1, "sparse": 1},
+      "rrf_k": 5
+    },
+    "reranker": {"provider": "voyage", "model": "rerank-2.5"}
+  },
+  "candidate_pipeline": {
+    "dense_candidate_k": 40,
+    "sparse_candidate_k": 40,
+    "fusion_candidate_k": 15,
+    "reranker_candidate_k": 15,
+    "factual_control_threshold": 0.337890625,
+    "final_evidence_k": 5
+  },
+  "provisioning": {
+    "substrate_benchmark_version": "v2",
+    "record_sha256": "8691c5aa5a40b1aeba527287226c3d41515c576eff6ff4b216d1e068bc3f370d",
+    "mapping_digest": "1c206bcf8ddf3021502fa5ebb46ee696bf1faf159d1cbfc82d514d08913ac338",
+    "snapshot_digest": "6c115d1b7b98d59e8e6e4bebf6485e06c88dd2c4908802af821ad65e6ebc99df"
+  },
+  "active_generation": {
+    "public_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb",
+    "point_manifest_digest": "7cb89453fbf90e6e45d24454ec3d4e4f801774404ee90caae4b959a76f664ab0",
+    "expected_point_count": 99
+  },
+  "execution": {
+    "provider_passes": 1,
+    "selective_semantic_retry": false,
+    "persist_complete_pre_threshold_reranker_lineage": true,
+    "factual_threshold": 0.337890625,
+    "offline_replay_boundaries": "every-distinct-score-plus-exact-control-plus-above-maximum",
+    "selection_rule": "case-first-evidence-recall-constrained-v1"
+  }
+}

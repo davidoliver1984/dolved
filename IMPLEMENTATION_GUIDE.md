@@ -12094,14 +12094,14 @@ invented as a hard-coded number.
 
 ### Status
 
-Implemented and evaluated for review on 2026-08-08. All code, contract,
-migration and repository verification work is complete. A preliminary live
-Voyage calibration and a complete live dense-versus-hybrid evaluation were run
-from the uncommitted working tree. The hybrid path improved recall, MRR and
-nDCG without a hard failure, but the calibrated threshold was not sufficiently
-selective on the actual retrieved candidate distribution. Stage closure remains
-pending human review and deliberate recalibration; no fake, uncommitted or
-insufficiently selective threshold has been activated as production policy.
+Implemented, engineering-evaluated and calibration-complete for review. After
+the preliminary uncommitted runs, the repository established an immutable V3
+calibration population and executed CAL-EXP-0003 once from exact commit
+`e3a356d5872f43611572c33c0d8f2ee09e5e8002`. Post-provider compatibility
+passed and the predeclared policy retained `0.337890625` for that exact lineage.
+The threshold is calibrated but is not held-out accepted or production
+promoted. R16-S08 remains open pending separate sealed held-out acceptance and
+any deliberate activation decision.
 
 ### Implementation
 
@@ -12267,15 +12267,16 @@ docs/adr/0021-define-hybrid-retrieval-and-reranking-architecture.md
 
 ### Remaining closure item
 
-Review the preliminary live result and retain `0.337890625` only as the current
-experimental value for its exact source-anchored calibration lineage. Before
-activation, commit the implementation, regenerate actual-pipeline calibration
-observations from that exact immutable commit using only the calibration cases,
-select the policy without consulting held-out cases, and then assess it once on
-the untouched held-out split. Persist/activate a policy only if that result is
-accepted and bind it to the exact provider, model, adapter, dense/sparse
-profiles, RRF, candidate configuration and corpus digest. Until then the hybrid
-path deliberately fails closed because there is no authoritative active policy.
+CAL-EXP-0003 retained `0.337890625` after an exact-commit provider pass and
+provider-free replay over the compatible V3 calibration population. Its
+controlled-rejection diagnosis found two planner semantic errors, ten benchmark
+expectations inconsistent with ADR-0018's workspace-wide relevance boundary,
+and thirteen relevance-versus-answer-sufficiency failures; it did not identify
+a scalar-threshold implementation defect. Before activation, assess the frozen
+lineage once on the still-sealed held-out population. Persist or activate a
+policy only if that result is accepted and keep the binding to the exact
+provider, model, adapter, dense/sparse profiles, RRF, candidate configuration
+and corpus digest.
 
 ### Commit boundary
 

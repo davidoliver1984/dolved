@@ -40,7 +40,7 @@
   "progress": {
     "current_phase": "R16",
     "current_session": "R16-S08",
-    "next_action": "Review the first complete R16-S08 live dense-versus-hybrid result. Do not promote threshold 0.337890625: commit the reviewed implementation, regenerate actual-pipeline calibration observations from that exact commit using only calibration cases, then assess once on the untouched held-out split before any policy activation.",
+    "next_action": "Review the CAL-EXP-0003 controlled-rejection diagnosis and decide bounded planner/benchmark/sufficiency follow-up. Threshold 0.337890625 is calibrated and frozen only for the exact CAL-EXP-0003 lineage; do not production-promote it or close R16-S08 before separate sealed held-out acceptance.",
     "completed_through": "R16-S07",
     "completed_phase_count": 16,
     "total_phase_count": 24
@@ -3218,8 +3218,9 @@
       "Repository verification: Python 253 passed/3 skipped; Laravel 188 passed/786 assertions; frontend 26 passed; lint, format, types, production build and clean PostgreSQL migrations passed",
       "Preliminary Voyage rerank-2.5 calibration proposed threshold 0.337890625 with calibration and held-out precision/recall/F1 of 1.0; generated from uncommitted revision 4444db5-dirty and not activated",
       "Complete live dense-versus-hybrid evaluation used 40/40/15/15/0.337890625/5 with RRF 60: hybrid recall 1.0, precision 0.1130434783, MRR 0.5014492754, nDCG 0.9516022960 and no hard failures versus dense K=3 recall 0.9565217391, precision 0.1739130435, MRR 0.5 and nDCG 0.9404752067",
-      "Threshold 0.337890625 remained recall-safe but accepted five candidates for every held-out evidence case; it remains experimental and was not activated",
-      "Closure pending review, implementation commit, actual-pipeline calibration from the exact commit, untouched held-out acceptance and deliberate lineage-bound policy activation"
+      "Threshold 0.337890625 remained recall-safe but accepted five candidates for every preliminary held-out evidence case; that historical uncommitted result was not activated",
+      "CAL-EXP-0003 exact-commit calibration completed with 44 cases, 132 variants, zero execution failures and compatible provider-free replay across 256 boundaries; the policy retained 0.337890625 with recall 0.798246, benchmark precision 0.198246, MRR 0.791667 and nDCG 0.774316",
+      "Threshold 0.337890625 is frozen only for the exact CAL-EXP-0003 lineage; sealed held-out acceptance and deliberate production activation remain pending"
           ]
         }
       ],

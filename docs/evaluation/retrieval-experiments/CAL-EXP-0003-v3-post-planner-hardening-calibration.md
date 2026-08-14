@@ -33,3 +33,24 @@ CAL-EXP-0003 provider observations exist.
 
 Provider execution and provider-free threshold replay require separate explicit
 approval after this run definition is reviewed and committed.
+
+## Closure
+
+The single provider pass completed on 2026-08-14 with all 44 cases and 132
+variants accounted for, 132 valid typed planner results, 132 retrieval
+executions and no planner, retrieval, provider or systemic failure. The
+authoritative observation SHA-256 is
+`a48e1dca7df0aeee10345bedae3aab007f6925c12fdaef5ec17b3e26c54b14e0`.
+
+Post-provider compatibility passed. Provider-free replay evaluated 256
+boundaries and found zero policy-eligible alternatives that strictly improved
+case-first expected-EvidenceUnit recall without a protected regression. The
+predeclared policy retained `0.337890625` for this exact lineage. The value is
+calibrated but not held-out accepted, production promoted, or universal.
+
+The retained metrics are case-first EvidenceUnit recall `0.798246`, benchmark
+precision `0.198246`, MRR `0.791667`, nDCG `0.774316` and controlled-rejection
+correctness `0.166667`. Accepted candidates without annotated EvidenceUnit
+coverage remain uncredited/unannotated rather than authoritative negative
+judgements. See the immutable run directory for the decision, compatibility,
+replay and controlled-rejection diagnosis.

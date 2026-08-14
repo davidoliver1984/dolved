@@ -1,0 +1,1200 @@
+{
+  "schema_version": "v1",
+  "population_id": "dolved-care-engineering-threshold_calibration-2",
+  "population_digest": "bafc720dbf03aba9e3fdee597ba0b9f2bfaa38db5adc8502b88bf68d07c57345",
+  "benchmark_id": "dolved-care-engineering",
+  "benchmark_version": "3",
+  "benchmark_digest": "8a90b0e6da531223ab6f113f237c2bde3149690662a5a4f1f3cbd5f921c0acd7",
+  "split_name": "threshold_calibration",
+  "split_version": "2",
+  "split_case_ids_digest": "1808477d771b24f45b726dd4b05ce8defa5b1edc624b8907155ccac7ab7e4801",
+  "case_count": 44,
+  "variant_count": 132,
+  "case_ids_digest": "1808477d771b24f45b726dd4b05ce8defa5b1edc624b8907155ccac7ab7e4801",
+  "slice_case_counts": {
+    "COMPARE": 10,
+    "CURRENT": 22,
+    "VALID_AT_DATE": 6,
+    "adversarial": 5,
+    "applicability": 6,
+    "historical": 6,
+    "location-alias": 6,
+    "multi-document": 4,
+    "multi-evidence": 15,
+    "never-authoritative": 2,
+    "predecessor-resurrection": 1,
+    "region-specific": 2,
+    "regional-applicability": 3,
+    "scheduled-future": 5,
+    "site-specific": 1,
+    "temporal-authority": 31,
+    "withdrawn": 1,
+    "zero-evidence": 10
+  },
+  "domain_case_counts": {
+    "complaints": 4,
+    "fire-safety": 5,
+    "gdpr": 4,
+    "health-safety": 4,
+    "hr": 4,
+    "infection-control": 3,
+    "medication": 4,
+    "payroll": 4,
+    "safeguarding": 4,
+    "training": 4,
+    "visitors": 4
+  },
+  "expected_outcome_case_counts": {
+    "COMPARISON_SCOPE_INCOMPLETE": 4,
+    "EVIDENCE_FOUND": 34,
+    "INSUFFICIENT_EVIDENCE": 5,
+    "NO_ELIGIBLE_EVIDENCE": 1
+  },
+  "benchmark_taxonomy": {
+    "intrinsic_slices_schema_version": "v3-taxonomy-1",
+    "declared_intrinsic_slices": [
+      "COMPARE",
+      "CURRENT",
+      "VALID_AT_DATE",
+      "adversarial",
+      "applicability",
+      "applicability-context",
+      "historical",
+      "location-alias",
+      "multi-document",
+      "multi-evidence",
+      "never-authoritative",
+      "predecessor-resurrection",
+      "region-specific",
+      "regional-applicability",
+      "scheduled-future",
+      "site-specific",
+      "temporal-authority",
+      "withdrawn",
+      "zero-evidence"
+    ],
+    "intrinsic_slices_digest": "7cef962db94df8f9bc13c228c254dc0e1491f65aa4eaa70963ad8643fbde816e",
+    "evaluation_facets_schema_version": "v3-taxonomy-1",
+    "declared_evaluation_facets": [
+      "abbreviation",
+      "after-authority-transition",
+      "alias-colloquial",
+      "alias-formal",
+      "ambiguous-location",
+      "applicability-excluded",
+      "before-authority-transition",
+      "changed-instruction",
+      "changed-structured-value",
+      "clarification-required",
+      "colloquial",
+      "compare-comparison-empty",
+      "compare-primary-empty",
+      "conflicting-guidance",
+      "cross-document-completeness",
+      "form-evidence",
+      "historical-explicit",
+      "historical-ordinal",
+      "historical-previous",
+      "keyword-stuffing",
+      "long-form",
+      "near-duplicate",
+      "near-duplicate-wrong",
+      "negative-instruction",
+      "never-authoritative",
+      "no-predecessor-resurrection",
+      "no-trustworthy-candidate",
+      "numeric-boundary",
+      "regional",
+      "scheduled",
+      "site-specific",
+      "table-evidence",
+      "three-plus-evidence-units",
+      "two-evidence-units",
+      "universal",
+      "unresolved-location",
+      "withdrawn"
+    ],
+    "evaluation_facets_digest": "d93fe1743a5b845eeb4364fedff03c9c9607a1105ba3bc9092440820310acc76"
+  },
+  "independence": {
+    "calibration_case_ids_digest": "1808477d771b24f45b726dd4b05ce8defa5b1edc624b8907155ccac7ab7e4801",
+    "calibration_semantic_cluster_ids_digest": "d4ab378d0e82029c02ababadf7aef4ef34abe95c040eb1c556a3643716a0ba40",
+    "engineering_case_ids_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "engineering_semantic_cluster_ids_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "held_out_case_ids_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "held_out_semantic_cluster_ids_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "comparison_method": "canonical-identity-set-intersection",
+    "comparison_method_version": "1",
+    "engineering_overlap_case_ids": [],
+    "held_out_overlap_case_ids": [],
+    "split_semantic_cluster_ids": [],
+    "engineering_overlap_case_count": 0,
+    "held_out_overlap_case_count": 0,
+    "split_semantic_cluster_count": 0,
+    "score_driven_selection": false,
+    "post_result_reassignment": false,
+    "population_frozen_before_provider_execution": true
+  },
+  "authoring_review": {
+    "review_artifact_id": "review.dolved-care-engineering.v3.calibration-v1",
+    "review_artifact_version": "1",
+    "review_artifact_digest": "bb2ce88acf19a4bcbb7ce00ab8154c73d48536afcb6d1f9affce660d30152c93",
+    "reviewed_case_ids_digest": "1808477d771b24f45b726dd4b05ce8defa5b1edc624b8907155ccac7ab7e4801",
+    "semantic_quality_reviewed": true,
+    "representative_coverage_reviewed": true,
+    "author_rationale_reviewed": true,
+    "governance_reviewed": true
+  },
+  "pipeline_failure_counts": [],
+  "cases": [
+    {
+      "case_id": "v3.complaints.compare.handling-timescales",
+      "cluster_id": "cluster.v3.complaints.compare.handling-timescales",
+      "domain": "complaints",
+      "document_family_ids": [
+        "family.complaints.handling"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-explicit",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 2,
+      "source_lineage_count": 2,
+      "source_lineage_digest": "91a99c4e2f2f0454ae2d8bf8eef48e66d57851af616fc31ecbba8aba164c5a88"
+    },
+    {
+      "case_id": "v3.complaints.compare.response-plan-incomplete",
+      "cluster_id": "cluster.v3.complaints.compare.response-plan-incomplete",
+      "domain": "complaints",
+      "document_family_ids": [
+        "family.complaints.handling"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "compare-comparison-empty",
+        "no-trustworthy-candidate"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "COMPARE",
+        "temporal-authority",
+        "zero-evidence"
+      ],
+      "expected_outcome": "COMPARISON_SCOPE_INCOMPLETE",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "c394aa9ff4953fab48a50619177bdc755eca334bf9ff76670270f885589e60af"
+    },
+    {
+      "case_id": "v3.complaints.current.handling-deadlines",
+      "cluster_id": "cluster.v3.complaints.current.handling-deadlines",
+      "domain": "complaints",
+      "document_family_ids": [
+        "family.complaints.handling"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "conflicting-guidance",
+        "near-duplicate-wrong",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "adversarial",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "c394aa9ff4953fab48a50619177bdc755eca334bf9ff76670270f885589e60af"
+    },
+    {
+      "case_id": "v3.complaints.historical.handling-v1",
+      "cluster_id": "cluster.v3.complaints.historical.handling-v1",
+      "domain": "complaints",
+      "document_family_ids": [
+        "family.complaints.handling"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-explicit",
+        "historical-previous"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "cae69505cb5c0f38d311476dcfec2ab4887e5367ef335d1f35ad4823456642ae"
+    },
+    {
+      "case_id": "v3.fire.compare.drill-frequency",
+      "cluster_id": "cluster.v3.fire.compare.drill-frequency",
+      "domain": "fire-safety",
+      "document_family_ids": [
+        "family.fire.drills"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-explicit",
+        "near-duplicate",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 2,
+      "source_lineage_count": 2,
+      "source_lineage_digest": "0e0f57d1990a52708e6bc52d9e0d24bbabcb533847ccc9542539b6989f8e488f"
+    },
+    {
+      "case_id": "v3.fire.compare.route-record-incomplete",
+      "cluster_id": "cluster.v3.fire.compare.route-record-incomplete",
+      "domain": "fire-safety",
+      "document_family_ids": [
+        "family.fire.drills"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "compare-comparison-empty",
+        "no-trustworthy-candidate"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "COMPARE",
+        "temporal-authority",
+        "zero-evidence"
+      ],
+      "expected_outcome": "COMPARISON_SCOPE_INCOMPLETE",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "cb82f8efa08298abd8adffd3e1d9e786457145e2ed8e68483194afcb970b2219"
+    },
+    {
+      "case_id": "v3.fire.current.harbour-view-evacuation",
+      "cluster_id": "cluster.v3.fire.current.harbour-view-evacuation",
+      "domain": "fire-safety",
+      "document_family_ids": [
+        "family.fire.harbour-view-evacuation",
+        "family.fire.north-west-evacuation",
+        "family.fire.south-west-evacuation"
+      ],
+      "evaluation_facets": [
+        "alias-colloquial",
+        "applicability-excluded",
+        "cross-document-completeness",
+        "near-duplicate-wrong",
+        "regional",
+        "site-specific",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "adversarial",
+        "applicability",
+        "location-alias",
+        "multi-document",
+        "multi-evidence",
+        "regional-applicability",
+        "site-specific"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 2,
+      "source_lineage_count": 2,
+      "source_lineage_digest": "7d1ec26e2bbab61149366c892f78c1bd3b7964a17b282788e41b08d35751ca34"
+    },
+    {
+      "case_id": "v3.fire.current.north-west-assembly",
+      "cluster_id": "cluster.v3.fire.current.north-west-assembly",
+      "domain": "fire-safety",
+      "document_family_ids": [
+        "family.fire.midlands-evacuation",
+        "family.fire.north-west-evacuation"
+      ],
+      "evaluation_facets": [
+        "alias-formal",
+        "applicability-excluded",
+        "near-duplicate-wrong",
+        "regional"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "location-alias",
+        "region-specific",
+        "regional-applicability"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "36c3481bfe181f3a87008297f602853ffac96c41ceee31714cb0ec23d9a4538f"
+    },
+    {
+      "case_id": "v3.fire.historical.drills-v1",
+      "cluster_id": "cluster.v3.fire.historical.drills-v1",
+      "domain": "fire-safety",
+      "document_family_ids": [
+        "family.fire.drills"
+      ],
+      "evaluation_facets": [
+        "historical-explicit",
+        "historical-ordinal",
+        "historical-previous",
+        "near-duplicate"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "b5859a178004416363fba7d31cdd8449d74504807f9697d6149b132e0e8c7e7f"
+    },
+    {
+      "case_id": "v3.gdpr.current.incident-reporting",
+      "cluster_id": "cluster.v3.gdpr.current.incident-reporting",
+      "domain": "gdpr",
+      "document_family_ids": [
+        "family.gdpr.data-protection"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "near-duplicate",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "dcd6c5a2f743adf7ca47e3bd6823940b6bbdf4eb43a8eab59852b4a97d357d14"
+    },
+    {
+      "case_id": "v3.gdpr.historical.data-protection-v1",
+      "cluster_id": "cluster.v3.gdpr.historical.data-protection-v1",
+      "domain": "gdpr",
+      "document_family_ids": [
+        "family.gdpr.data-protection"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "historical-explicit",
+        "historical-previous"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "1a07dff61bc067c04de8ebd7edf62977cdcea16250b9e656ccf3e667b5b58b84"
+    },
+    {
+      "case_id": "v3.gdpr.insufficient.misdirected-email-deletion",
+      "cluster_id": "cluster.v3.gdpr.insufficient.misdirected-email-deletion",
+      "domain": "gdpr",
+      "document_family_ids": [
+        "family.gdpr.breach",
+        "family.gdpr.data-protection"
+      ],
+      "evaluation_facets": [
+        "no-trustworthy-candidate",
+        "numeric-boundary",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "zero-evidence"
+      ],
+      "expected_outcome": "INSUFFICIENT_EVIDENCE",
+      "expected_evidence_unit_count": 0,
+      "source_lineage_count": 0,
+      "source_lineage_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "case_id": "v3.gdpr.valid-at-date.sar-2027",
+      "cluster_id": "cluster.v3.gdpr.valid-at-date.sar-2027",
+      "domain": "gdpr",
+      "document_family_ids": [
+        "family.gdpr.subject-access"
+      ],
+      "evaluation_facets": [
+        "after-authority-transition",
+        "scheduled",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "VALID_AT_DATE",
+        "scheduled-future",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "cb5db5ee68ef1b3f9b4b71511633484b8870322e50d8117c8ed286373bc36568"
+    },
+    {
+      "case_id": "v3.health.compare.moving-handling-staffing",
+      "cluster_id": "cluster.v3.health.compare.moving-handling-staffing",
+      "domain": "health-safety",
+      "document_family_ids": [
+        "family.health-safety.moving-handling"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "historical-explicit",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 2,
+      "source_lineage_count": 2,
+      "source_lineage_digest": "9d955e6ebcd8be5f93f58c33a6fec119b4e8066a4dc24ed54a4f4fe7a1e1ea65"
+    },
+    {
+      "case_id": "v3.health.current.accident-reporting",
+      "cluster_id": "cluster.v3.health.current.accident-reporting",
+      "domain": "health-safety",
+      "document_family_ids": [
+        "family.health-safety.accident-reporting"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "near-duplicate-wrong",
+        "numeric-boundary"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "adversarial",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "3c2df64c56a66447c58b9d1400d93d4ea6decacfe5275f099334de7f844f2154"
+    },
+    {
+      "case_id": "v3.health.insufficient.lone-working-police-time",
+      "cluster_id": "cluster.v3.health.insufficient.lone-working-police-time",
+      "domain": "health-safety",
+      "document_family_ids": [
+        "family.health-safety.lone-working"
+      ],
+      "evaluation_facets": [
+        "no-trustworthy-candidate",
+        "numeric-boundary",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "zero-evidence"
+      ],
+      "expected_outcome": "INSUFFICIENT_EVIDENCE",
+      "expected_evidence_unit_count": 0,
+      "source_lineage_count": 0,
+      "source_lineage_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "case_id": "v3.health.valid-at-date.accident-reporting-2024",
+      "cluster_id": "cluster.v3.health.valid-at-date.accident-reporting-2024",
+      "domain": "health-safety",
+      "document_family_ids": [
+        "family.health-safety.accident-reporting"
+      ],
+      "evaluation_facets": [
+        "before-authority-transition",
+        "changed-structured-value",
+        "numeric-boundary"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "VALID_AT_DATE",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "403dcb344957a6972bc501c35980b61c12e75a4f502fbed407ac3cce8df4d147"
+    },
+    {
+      "case_id": "v3.hr.current.midlands-lone-worker",
+      "cluster_id": "cluster.v3.hr.current.midlands-lone-worker",
+      "domain": "hr",
+      "document_family_ids": [
+        "family.hr.lone-worker-welfare"
+      ],
+      "evaluation_facets": [
+        "alias-formal",
+        "applicability-excluded",
+        "numeric-boundary",
+        "regional"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "location-alias",
+        "region-specific",
+        "regional-applicability"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "010f748c3534e56d3d3c71b10703d728449edd666dda75312df4bd4857a860bd"
+    },
+    {
+      "case_id": "v3.hr.current.sickness-reporting",
+      "cluster_id": "cluster.v3.hr.current.sickness-reporting",
+      "domain": "hr",
+      "document_family_ids": [
+        "family.hr.sickness-absence"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "near-duplicate-wrong",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "adversarial",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "f2b9e07a1d2c352752c0d1f6388ed54dfa93fdf605a655aa6bdd34ec58020d8c"
+    },
+    {
+      "case_id": "v3.hr.historical.annual-leave-first",
+      "cluster_id": "cluster.v3.hr.historical.annual-leave-first",
+      "domain": "hr",
+      "document_family_ids": [
+        "family.hr.annual-leave"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-explicit",
+        "historical-ordinal",
+        "historical-previous"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "9542dda04189ddc1f9fce7f475bd61e8b9702a5998c9c7c46c9f655df320eb72"
+    },
+    {
+      "case_id": "v3.hr.valid-at-date.annual-leave-2024",
+      "cluster_id": "cluster.v3.hr.valid-at-date.annual-leave-2024",
+      "domain": "hr",
+      "document_family_ids": [
+        "family.hr.annual-leave"
+      ],
+      "evaluation_facets": [
+        "before-authority-transition",
+        "changed-structured-value",
+        "table-evidence"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "VALID_AT_DATE",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "9542dda04189ddc1f9fce7f475bd61e8b9702a5998c9c7c46c9f655df320eb72"
+    },
+    {
+      "case_id": "v3.infection.current.outbreak-no-authority",
+      "cluster_id": "cluster.v3.infection.outbreak-authority-gap",
+      "domain": "infection-control",
+      "document_family_ids": [
+        "family.infection.outbreak-management"
+      ],
+      "evaluation_facets": [
+        "after-authority-transition",
+        "no-predecessor-resurrection",
+        "universal",
+        "withdrawn"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "predecessor-resurrection",
+        "temporal-authority",
+        "withdrawn",
+        "zero-evidence"
+      ],
+      "expected_outcome": "NO_ELIGIBLE_EVIDENCE",
+      "expected_evidence_unit_count": 0,
+      "source_lineage_count": 0,
+      "source_lineage_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "case_id": "v3.infection.current.respiratory-ppe",
+      "cluster_id": "cluster.v3.infection.respiratory-ppe-completeness",
+      "domain": "infection-control",
+      "document_family_ids": [
+        "family.infection.ppe",
+        "family.infection.respiratory-ppe"
+      ],
+      "evaluation_facets": [
+        "cross-document-completeness",
+        "near-duplicate",
+        "two-evidence-units",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "multi-document",
+        "multi-evidence"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 2,
+      "source_lineage_count": 2,
+      "source_lineage_digest": "cf7af7e2f8ca27a4f6815b3ae0860364c46d39e4fa00fc59cfb43a76fdac6623"
+    },
+    {
+      "case_id": "v3.infection.historical.hand-hygiene-v1",
+      "cluster_id": "cluster.v3.infection.hand-hygiene-versioning",
+      "domain": "infection-control",
+      "document_family_ids": [
+        "family.infection.hand-hygiene"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "historical-explicit",
+        "near-duplicate",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "3fba2323e67400845e2f3b48fb67c59b4bde6f002ea40d3cfcc219c4607f3db2"
+    },
+    {
+      "case_id": "v3.medication.current.fridge-excursion",
+      "cluster_id": "cluster.v3.medication.fridge-excursion",
+      "domain": "medication",
+      "document_family_ids": [
+        "family.medication.fridge-reference",
+        "family.medication.storage"
+      ],
+      "evaluation_facets": [
+        "cross-document-completeness",
+        "numeric-boundary",
+        "table-evidence",
+        "two-evidence-units",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "location-alias",
+        "multi-document",
+        "multi-evidence"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 2,
+      "source_lineage_count": 2,
+      "source_lineage_digest": "2e81200fbf6c2c2ca62bcb9ba0453f2b7238a1f28f90d460c8067e6e754bd86d"
+    },
+    {
+      "case_id": "v3.medication.current.omitted-dose",
+      "cluster_id": "cluster.v3.medication.administration-omissions",
+      "domain": "medication",
+      "document_family_ids": [
+        "family.medication.administration"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "near-duplicate",
+        "scheduled",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "scheduled-future",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "1b4b23c7d76159787cb8e29e3f3936c2906cd017c7f61eab3f4aa924fa44d418"
+    },
+    {
+      "case_id": "v3.medication.insufficient.fridge-quarantine-duration",
+      "cluster_id": "cluster.v3.medication.fridge-excursion",
+      "domain": "medication",
+      "document_family_ids": [
+        "family.medication.fridge-reference",
+        "family.medication.storage"
+      ],
+      "evaluation_facets": [
+        "no-trustworthy-candidate",
+        "numeric-boundary",
+        "table-evidence",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "zero-evidence"
+      ],
+      "expected_outcome": "INSUFFICIENT_EVIDENCE",
+      "expected_evidence_unit_count": 0,
+      "source_lineage_count": 0,
+      "source_lineage_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "case_id": "v3.medication.valid-at-date.omitted-dose-2024",
+      "cluster_id": "cluster.v3.medication.administration-omissions",
+      "domain": "medication",
+      "document_family_ids": [
+        "family.medication.administration"
+      ],
+      "evaluation_facets": [
+        "before-authority-transition",
+        "changed-instruction",
+        "near-duplicate",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "VALID_AT_DATE",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "9b279504c77178d48fa453e97d37ee30a71b62379f87bbfea43a1a0a00a9a00a"
+    },
+    {
+      "case_id": "v3.payroll.compare.january-2027-incomplete",
+      "cluster_id": "cluster.v3.payroll.compare.january-2027-incomplete",
+      "domain": "payroll",
+      "document_family_ids": [
+        "family.payroll.calendar"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "compare-primary-empty",
+        "scheduled"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "COMPARE",
+        "scheduled-future",
+        "temporal-authority",
+        "zero-evidence"
+      ],
+      "expected_outcome": "COMPARISON_SCOPE_INCOMPLETE",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "1111ddc7c8bb1d1e7111eebdc0071a3bbbe059b436d44dfe4f813e917b6d4efe"
+    },
+    {
+      "case_id": "v3.payroll.current.expenses",
+      "cluster_id": "cluster.v3.payroll.current.expenses",
+      "domain": "payroll",
+      "document_family_ids": [
+        "family.payroll.expenses"
+      ],
+      "evaluation_facets": [
+        "numeric-boundary",
+        "table-evidence",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "multi-evidence"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "42965d371c3747589e703b95914eb41b74c10aaec450db7ed701420a0ef9d635"
+    },
+    {
+      "case_id": "v3.payroll.insufficient.receipt-attempts",
+      "cluster_id": "cluster.v3.payroll.insufficient.receipt-attempts",
+      "domain": "payroll",
+      "document_family_ids": [
+        "family.payroll.expenses"
+      ],
+      "evaluation_facets": [
+        "no-trustworthy-candidate",
+        "numeric-boundary",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "zero-evidence"
+      ],
+      "expected_outcome": "INSUFFICIENT_EVIDENCE",
+      "expected_evidence_unit_count": 0,
+      "source_lineage_count": 0,
+      "source_lineage_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "case_id": "v3.payroll.valid-at-date.calendar-2027",
+      "cluster_id": "cluster.v3.payroll.valid-at-date.calendar-2027",
+      "domain": "payroll",
+      "document_family_ids": [
+        "family.payroll.calendar"
+      ],
+      "evaluation_facets": [
+        "after-authority-transition",
+        "scheduled",
+        "table-evidence"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "VALID_AT_DATE",
+        "scheduled-future",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "1111ddc7c8bb1d1e7111eebdc0071a3bbbe059b436d44dfe4f813e917b6d4efe"
+    },
+    {
+      "case_id": "v3.safeguarding.compare.staff-allegation-timing",
+      "cluster_id": "cluster.v3.safeguarding.staff-allegations",
+      "domain": "safeguarding",
+      "document_family_ids": [
+        "family.safeguarding.allegations-staff"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "historical-previous",
+        "near-duplicate",
+        "two-evidence-units",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 2,
+      "source_lineage_count": 2,
+      "source_lineage_digest": "b703bab87a50e45ae0b737f1a970f4a0b76aa4c0f44586a95de7239475925ac6"
+    },
+    {
+      "case_id": "v3.safeguarding.current.covert-medication-capacity",
+      "cluster_id": "cluster.v3.safeguarding.covert-medication-capacity",
+      "domain": "safeguarding",
+      "document_family_ids": [
+        "family.medication.covert",
+        "family.safeguarding.mental-capacity"
+      ],
+      "evaluation_facets": [
+        "cross-document-completeness",
+        "long-form",
+        "three-plus-evidence-units",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "multi-document",
+        "multi-evidence"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 5,
+      "source_lineage_count": 2,
+      "source_lineage_digest": "9f90ee4317a13449f16de921b278f34a675a3f308e6341eb4b97476711518f95"
+    },
+    {
+      "case_id": "v3.safeguarding.current.staff-allegation",
+      "cluster_id": "cluster.v3.safeguarding.staff-allegations",
+      "domain": "safeguarding",
+      "document_family_ids": [
+        "family.safeguarding.allegations-staff"
+      ],
+      "evaluation_facets": [
+        "alias-colloquial",
+        "changed-instruction",
+        "near-duplicate",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "location-alias",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "41cf2a194cd904e4f1164459b1a89a1a564b9ffa24b5d60dd3cd0cd22c4c84ec"
+    },
+    {
+      "case_id": "v3.safeguarding.valid-at-date.adult-reporting",
+      "cluster_id": "cluster.v3.safeguarding.adult-reporting-authority",
+      "domain": "safeguarding",
+      "document_family_ids": [
+        "family.safeguarding.adult-reporting"
+      ],
+      "evaluation_facets": [
+        "before-authority-transition",
+        "never-authoritative",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "VALID_AT_DATE",
+        "never-authoritative",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "da352f5d32e185048d7b09a4db6e0898f91a0ecd045c155c356e35fe1be0104d"
+    },
+    {
+      "case_id": "v3.training.compare.induction-information-governance-incomplete",
+      "cluster_id": "cluster.v3.training.compare.induction-information-governance-incomplete",
+      "domain": "training",
+      "document_family_ids": [
+        "family.training.induction"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "compare-primary-empty",
+        "scheduled"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "COMPARE",
+        "scheduled-future",
+        "temporal-authority",
+        "zero-evidence"
+      ],
+      "expected_outcome": "COMPARISON_SCOPE_INCOMPLETE",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "9d7226ef435a4dd0dacc50ea86e2f9733566c289e380e88972e7917d24b15795"
+    },
+    {
+      "case_id": "v3.training.compare.medication-competency",
+      "cluster_id": "cluster.v3.training.compare.medication-competency",
+      "domain": "training",
+      "document_family_ids": [
+        "family.training.medication-competency"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-explicit",
+        "table-evidence",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 2,
+      "source_lineage_count": 2,
+      "source_lineage_digest": "c2dffd374ea0a47f36f9514eda54eebec5761e95a4ffd4dd0d81f3ae1919247e"
+    },
+    {
+      "case_id": "v3.training.current.medication-competency",
+      "cluster_id": "cluster.v3.training.current.medication-competency",
+      "domain": "training",
+      "document_family_ids": [
+        "family.training.medication-competency"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "near-duplicate",
+        "table-evidence"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "3a0d09281a6c78e550ff1ec9549ef3d85b170211c398d229bb2fd5f224dfc8a8"
+    },
+    {
+      "case_id": "v3.training.historical.medication-competency-first",
+      "cluster_id": "cluster.v3.training.historical.medication-competency-first",
+      "domain": "training",
+      "document_family_ids": [
+        "family.training.medication-competency"
+      ],
+      "evaluation_facets": [
+        "changed-structured-value",
+        "historical-ordinal",
+        "table-evidence"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "historical",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "3b867ebae10027c5a3161125db4c450b8720605d954b39d9de1a06b22cc26ca4"
+    },
+    {
+      "case_id": "v3.visitors.compare.outbreak-restrictions",
+      "cluster_id": "cluster.v3.visitors.compare.outbreak-restrictions",
+      "domain": "visitors",
+      "document_family_ids": [
+        "family.visitors.outbreak-restrictions"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "conflicting-guidance",
+        "historical-explicit",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 2,
+      "source_lineage_count": 2,
+      "source_lineage_digest": "3a55342ed15f61ec1b7435f10677f47fb747619ff4b9531193e2755c61a2eaca"
+    },
+    {
+      "case_id": "v3.visitors.current.bristol-contractor",
+      "cluster_id": "cluster.v3.visitors.current.bristol-contractor",
+      "domain": "visitors",
+      "document_family_ids": [
+        "family.visitors.general"
+      ],
+      "evaluation_facets": [
+        "alias-colloquial",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "location-alias"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 1,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "38fe5453455c043f405aafb46784008a857aac6ed77248ec8cd242663b93ea49"
+    },
+    {
+      "case_id": "v3.visitors.current.sign-in",
+      "cluster_id": "cluster.v3.visitors.current.sign-in",
+      "domain": "visitors",
+      "document_family_ids": [
+        "family.visitors.general",
+        "family.visitors.search-optimised-draft"
+      ],
+      "evaluation_facets": [
+        "keyword-stuffing",
+        "negative-instruction",
+        "never-authoritative",
+        "two-evidence-units"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "adversarial",
+        "multi-evidence",
+        "never-authoritative",
+        "temporal-authority"
+      ],
+      "expected_outcome": "EVIDENCE_FOUND",
+      "expected_evidence_unit_count": 2,
+      "source_lineage_count": 1,
+      "source_lineage_digest": "38fe5453455c043f405aafb46784008a857aac6ed77248ec8cd242663b93ea49"
+    },
+    {
+      "case_id": "v3.visitors.insufficient.badge-return-minutes",
+      "cluster_id": "cluster.v3.visitors.insufficient.badge-return-minutes",
+      "domain": "visitors",
+      "document_family_ids": [
+        "family.visitors.general"
+      ],
+      "evaluation_facets": [
+        "no-trustworthy-candidate",
+        "numeric-boundary",
+        "universal"
+      ],
+      "variant_count": 3,
+      "slices": [
+        "CURRENT",
+        "zero-evidence"
+      ],
+      "expected_outcome": "INSUFFICIENT_EVIDENCE",
+      "expected_evidence_unit_count": 0,
+      "source_lineage_count": 0,
+      "source_lineage_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ]
+}

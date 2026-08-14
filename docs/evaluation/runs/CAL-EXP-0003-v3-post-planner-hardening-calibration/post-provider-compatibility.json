@@ -1,0 +1,416 @@
+{
+  "schema_version": "v1",
+  "compatibility_policy_id": "evidence-threshold-calibration-compatibility-v1",
+  "compatibility_policy_version": "1",
+  "compatibility_policy_sha256": "342521355b236b4d64d7803a82f44f5fdc06325c3183a972a7cc05034136445d",
+  "threshold_policy_id": "evidence-threshold-calibration-v1",
+  "threshold_policy_sha256": "0500ef0868566b736b11a7818c538b1fa478e74811c6420cd487dd9f73ff8c7b",
+  "population_spec_id": "dolved-care-evidence-threshold-calibration-population",
+  "population_spec_version": "v1",
+  "population_spec_sha256": "7cd9d59c7464e6804de914635d023fa5d99d5a1edea8bffc212a3c4e9fdfc406",
+  "population_id": "dolved-care-engineering-threshold_calibration-2",
+  "population_digest": "bafc720dbf03aba9e3fdee597ba0b9f2bfaa38db5adc8502b88bf68d07c57345",
+  "benchmark_id": "dolved-care-engineering",
+  "benchmark_version": "3",
+  "benchmark_digest": "8a90b0e6da531223ab6f113f237c2bde3149690662a5a4f1f3cbd5f921c0acd7",
+  "split_name": "threshold_calibration",
+  "split_version": "2",
+  "compatible": true,
+  "slice_results": [
+    {
+      "requirement_id": "current-v1",
+      "group_id": "current-v1",
+      "matching_labels": [
+        "CURRENT"
+      ],
+      "minimum_case_count": 8,
+      "available_case_count": 22,
+      "preferred_case_count": 12,
+      "observed_domain_count": 11,
+      "observed_document_family_count": 24,
+      "required_benchmark_facets": [],
+      "observed_required_benchmark_facets": [],
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "compare-v1",
+      "group_id": "compare-v1",
+      "matching_labels": [
+        "COMPARE"
+      ],
+      "minimum_case_count": 4,
+      "available_case_count": 10,
+      "preferred_case_count": 6,
+      "observed_domain_count": 7,
+      "observed_document_family_count": 8,
+      "required_benchmark_facets": [
+        "changed-instruction",
+        "changed-structured-value"
+      ],
+      "observed_required_benchmark_facets": [
+        "changed-instruction",
+        "changed-structured-value"
+      ],
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "valid-at-date-v1",
+      "group_id": "valid-at-date-v1",
+      "matching_labels": [
+        "VALID_AT_DATE"
+      ],
+      "minimum_case_count": 4,
+      "available_case_count": 6,
+      "preferred_case_count": 6,
+      "observed_domain_count": 6,
+      "observed_document_family_count": 6,
+      "required_benchmark_facets": [
+        "before-authority-transition",
+        "after-authority-transition"
+      ],
+      "observed_required_benchmark_facets": [
+        "after-authority-transition",
+        "before-authority-transition"
+      ],
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "historical-v1",
+      "group_id": "historical-v1",
+      "matching_labels": [
+        "historical"
+      ],
+      "minimum_case_count": 4,
+      "available_case_count": 6,
+      "preferred_case_count": 6,
+      "observed_domain_count": 6,
+      "observed_document_family_count": 6,
+      "required_benchmark_facets": [
+        "historical-previous",
+        "historical-ordinal",
+        "historical-explicit"
+      ],
+      "observed_required_benchmark_facets": [
+        "historical-explicit",
+        "historical-ordinal",
+        "historical-previous"
+      ],
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "temporal-authority-v1",
+      "group_id": "temporal-authority-v1",
+      "matching_labels": [
+        "VALID_AT_DATE",
+        "historical",
+        "never-authoritative",
+        "predecessor-resurrection",
+        "scheduled-future",
+        "temporal-authority",
+        "withdrawn"
+      ],
+      "minimum_case_count": 8,
+      "available_case_count": 31,
+      "preferred_case_count": 12,
+      "observed_domain_count": 11,
+      "observed_document_family_count": 19,
+      "required_benchmark_facets": [
+        "scheduled",
+        "withdrawn",
+        "never-authoritative",
+        "no-predecessor-resurrection"
+      ],
+      "observed_required_benchmark_facets": [
+        "never-authoritative",
+        "no-predecessor-resurrection",
+        "scheduled",
+        "withdrawn"
+      ],
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "applicability-v1",
+      "group_id": "applicability-v1",
+      "matching_labels": [
+        "applicability",
+        "region-specific",
+        "regional-applicability",
+        "site-specific"
+      ],
+      "minimum_case_count": 6,
+      "available_case_count": 6,
+      "preferred_case_count": 8,
+      "observed_domain_count": 5,
+      "observed_document_family_count": 9,
+      "required_benchmark_facets": [
+        "universal",
+        "regional",
+        "site-specific",
+        "applicability-excluded"
+      ],
+      "observed_required_benchmark_facets": [
+        "applicability-excluded",
+        "regional",
+        "site-specific",
+        "universal"
+      ],
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "location-alias-v1",
+      "group_id": "location-alias-v1",
+      "matching_labels": [
+        "location-alias"
+      ],
+      "minimum_case_count": 4,
+      "available_case_count": 6,
+      "preferred_case_count": 6,
+      "observed_domain_count": 5,
+      "observed_document_family_count": 9,
+      "required_benchmark_facets": [
+        "alias-formal",
+        "alias-colloquial"
+      ],
+      "observed_required_benchmark_facets": [
+        "alias-colloquial",
+        "alias-formal"
+      ],
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "multi-evidence-v1",
+      "group_id": "multi-evidence-v1",
+      "matching_labels": [
+        "multi-evidence"
+      ],
+      "minimum_case_count": 6,
+      "available_case_count": 15,
+      "preferred_case_count": 8,
+      "observed_domain_count": 11,
+      "observed_document_family_count": 20,
+      "required_benchmark_facets": [
+        "two-evidence-units",
+        "three-plus-evidence-units"
+      ],
+      "observed_required_benchmark_facets": [
+        "three-plus-evidence-units",
+        "two-evidence-units"
+      ],
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "multi-document-v1",
+      "group_id": "multi-document-v1",
+      "matching_labels": [
+        "multi-document"
+      ],
+      "minimum_case_count": 4,
+      "available_case_count": 4,
+      "preferred_case_count": 6,
+      "observed_domain_count": 4,
+      "observed_document_family_count": 9,
+      "required_benchmark_facets": [
+        "cross-document-completeness"
+      ],
+      "observed_required_benchmark_facets": [
+        "cross-document-completeness"
+      ],
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "adversarial-v1",
+      "group_id": "adversarial-v1",
+      "matching_labels": [
+        "adversarial"
+      ],
+      "minimum_case_count": 4,
+      "available_case_count": 5,
+      "preferred_case_count": 6,
+      "observed_domain_count": 5,
+      "observed_document_family_count": 8,
+      "required_benchmark_facets": [
+        "keyword-stuffing",
+        "near-duplicate-wrong",
+        "conflicting-guidance",
+        "negative-instruction"
+      ],
+      "observed_required_benchmark_facets": [
+        "conflicting-guidance",
+        "keyword-stuffing",
+        "near-duplicate-wrong",
+        "negative-instruction"
+      ],
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "zero-evidence-v1",
+      "group_id": "zero-evidence-v1",
+      "matching_labels": [
+        "zero-evidence"
+      ],
+      "minimum_case_count": 8,
+      "available_case_count": 10,
+      "preferred_case_count": 10,
+      "observed_domain_count": 9,
+      "observed_document_family_count": 12,
+      "required_benchmark_facets": [
+        "no-trustworthy-candidate",
+        "compare-primary-empty",
+        "compare-comparison-empty"
+      ],
+      "observed_required_benchmark_facets": [
+        "compare-comparison-empty",
+        "compare-primary-empty",
+        "no-trustworthy-candidate"
+      ],
+      "compatible": true,
+      "failure_reasons": []
+    }
+  ],
+  "controlled_rejection": {
+    "threshold_sensitive_outcomes": [
+      "INSUFFICIENT_EVIDENCE",
+      "COMPARISON_SCOPE_INCOMPLETE"
+    ],
+    "acceptance_only_outcomes": [
+      "NO_ELIGIBLE_EVIDENCE",
+      "CLARIFICATION_REQUIRED",
+      "TEMPORAL_SCOPE_UNRESOLVED",
+      "NO_RETRIEVAL_CANDIDATES"
+    ],
+    "available_outcome_counts": {
+      "INSUFFICIENT_EVIDENCE": 5,
+      "COMPARISON_SCOPE_INCOMPLETE": 4,
+      "NO_ELIGIBLE_EVIDENCE": 1,
+      "CLARIFICATION_REQUIRED": 0,
+      "TEMPORAL_SCOPE_UNRESOLVED": 0,
+      "NO_RETRIEVAL_CANDIDATES": 0
+    },
+    "minimum_threshold_sensitive_case_count": 8,
+    "available_threshold_sensitive_case_count": 9,
+    "primary_empty_compare_case_count": 2,
+    "comparison_empty_compare_case_count": 2,
+    "metric_available": true,
+    "compatible": true,
+    "failure_reasons": []
+  },
+  "threshold_execution": {
+    "evaluated": true,
+    "compatible": true,
+    "complete_lineage_case_count": 41,
+    "reranked_candidate_count": 1968,
+    "distinct_reranker_score_count": 254,
+    "group_threshold_evaluable_case_counts": {
+      "current-v1": 19,
+      "compare-v1": 10,
+      "valid-at-date-v1": 6,
+      "historical-v1": 6,
+      "temporal-authority-v1": 30,
+      "applicability-v1": 4,
+      "location-alias-v1": 4,
+      "multi-evidence-v1": 15,
+      "multi-document-v1": 4,
+      "adversarial-v1": 5,
+      "zero-evidence-v1": 9
+    },
+    "failure_reasons": []
+  },
+  "domain_results": [
+    {
+      "requirement_id": "high-risk-care",
+      "domains": [
+        "medication",
+        "safeguarding",
+        "infection-control"
+      ],
+      "available_case_count": 11,
+      "minimum_total_case_count": 6,
+      "per_domain_available_case_count": {
+        "medication": 4,
+        "safeguarding": 4,
+        "infection-control": 3
+      },
+      "per_domain_minimum_case_count": {
+        "medication": 2,
+        "safeguarding": 2,
+        "infection-control": 2
+      },
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "safety",
+      "domains": [
+        "fire-safety",
+        "health-safety"
+      ],
+      "available_case_count": 9,
+      "minimum_total_case_count": 4,
+      "per_domain_available_case_count": {
+        "fire-safety": 5,
+        "health-safety": 4
+      },
+      "per_domain_minimum_case_count": {},
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "regulatory-responsibility",
+      "domains": [
+        "gdpr",
+        "complaints"
+      ],
+      "available_case_count": 8,
+      "minimum_total_case_count": 4,
+      "per_domain_available_case_count": {
+        "gdpr": 4,
+        "complaints": 4
+      },
+      "per_domain_minimum_case_count": {},
+      "compatible": true,
+      "failure_reasons": []
+    },
+    {
+      "requirement_id": "workforce-operations",
+      "domains": [
+        "hr",
+        "payroll",
+        "training",
+        "visitors"
+      ],
+      "available_case_count": 16,
+      "minimum_total_case_count": 6,
+      "per_domain_available_case_count": {
+        "hr": 4,
+        "payroll": 4,
+        "training": 4,
+        "visitors": 4
+      },
+      "per_domain_minimum_case_count": {},
+      "compatible": true,
+      "failure_reasons": []
+    }
+  ],
+  "independence": {
+    "compatible": true,
+    "failure_reasons": []
+  },
+  "pipeline_failures": {
+    "observed_counts": {},
+    "invalidate_observed_pre_threshold_failures": true,
+    "compatible": true,
+    "failure_reasons": []
+  },
+  "failure_reasons": [],
+  "result_digest": "bd8ef9f006b6c22220a280a7d780711d1664118417469b7439720cd8e38ea230"
+}
