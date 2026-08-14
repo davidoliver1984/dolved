@@ -63,7 +63,7 @@ class ThresholdReplayVariant(StrictModel):
 class ThresholdReplayDataset(StrictModel):
     schema_version: Literal["v1"] = "v1"
     benchmark_id: Literal["dolved-care-engineering"]
-    corpus_version: Literal["v2"]
+    corpus_version: Identifier
     corpus_digest: str
     split: Literal["threshold_calibration"]
     final_evidence_k: Literal[5]
@@ -87,7 +87,7 @@ class ThresholdBoundaryResult(StrictModel):
 class ThresholdReplayResult(StrictModel):
     schema_version: Literal["v1"] = "v1"
     benchmark_id: Literal["dolved-care-engineering"]
-    corpus_version: Literal["v2"]
+    corpus_version: Identifier
     corpus_digest: str
     split: Literal["threshold_calibration"]
     control_threshold: float

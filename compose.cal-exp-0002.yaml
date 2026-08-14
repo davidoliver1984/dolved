@@ -1,0 +1,35 @@
+services:
+  api:
+    volumes: !override
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - ${CALIBRATION_SNAPSHOT:?Prepare CAL-EXP-0002}:/evaluation/calibration/corpus.json:ro
+      - ${CALIBRATION_POPULATION_MANIFEST:?Prepare CAL-EXP-0002}:/evaluation/calibration/population-manifest.json:ro
+      - ${CALIBRATION_COMPATIBILITY_RESULT:?Prepare CAL-EXP-0002}:/evaluation/calibration/composition-compatibility.json:ro
+      - ${CALIBRATION_INDEPENDENCE_EVIDENCE:?Prepare CAL-EXP-0002}:/evaluation/calibration/independence-evidence.json:ro
+      - ${CALIBRATION_TAXONOMY_EVIDENCE:?Prepare CAL-EXP-0002}:/evaluation/calibration/taxonomy-evidence.json:ro
+      - ${CALIBRATION_AUTHORING_REVIEW:?Prepare CAL-EXP-0002}:/evaluation/calibration/authoring-review.json:ro
+      - ./tests/evaluation/policies/calibration-compatibility/v1/requirements.json:/evaluation/calibration/compatibility-requirements.json:ro
+      - ./tests/evaluation/population-specifications/evidence-threshold-calibration/v1/specification.json:/evaluation/calibration/population-specification.json:ro
+      - ./tests/evaluation/policies/evidence-threshold-calibration/v1/policy.json:/evaluation/calibration/policy.json:ro
+      - ${CALIBRATION_RUNS_ROOT:-./docs/evaluation/runs}:/evaluation-runs
+      - ${CALIBRATION_PROVISIONING_RECORD:?Prepare CAL-EXP-0002}:/app/storage/app/private/evaluation/dolved-care-engineering/v2/provisioning.json:ro
+      - api_vendor:/app/vendor
+
+  ai:
+    volumes: !override
+      - ./apps/ai:/app
+      - ./contracts:/contracts:ro
+      - ${CALIBRATION_SNAPSHOT:?Prepare CAL-EXP-0002}:/evaluation/calibration/corpus.json:ro
+      - ${CALIBRATION_POPULATION_MANIFEST:?Prepare CAL-EXP-0002}:/evaluation/calibration/population-manifest.json:ro
+      - ${CALIBRATION_COMPATIBILITY_RESULT:?Prepare CAL-EXP-0002}:/evaluation/calibration/composition-compatibility.json:ro
+      - ${CALIBRATION_INDEPENDENCE_EVIDENCE:?Prepare CAL-EXP-0002}:/evaluation/calibration/independence-evidence.json:ro
+      - ${CALIBRATION_TAXONOMY_EVIDENCE:?Prepare CAL-EXP-0002}:/evaluation/calibration/taxonomy-evidence.json:ro
+      - ${CALIBRATION_AUTHORING_REVIEW:?Prepare CAL-EXP-0002}:/evaluation/calibration/authoring-review.json:ro
+      - ./tests/evaluation/policies/calibration-compatibility/v1/requirements.json:/evaluation/calibration/compatibility-requirements.json:ro
+      - ./tests/evaluation/population-specifications/evidence-threshold-calibration/v1/specification.json:/evaluation/calibration/population-specification.json:ro
+      - ./tests/evaluation/policies/evidence-threshold-calibration/v1/policy.json:/evaluation/calibration/policy.json:ro
+      - ${CALIBRATION_RUNS_ROOT:-./docs/evaluation/runs}:/evaluation-runs
+      - ./scripts:/workspace/scripts:ro
+      - ai_venv:/app/.venv
+      - fastembed_cache:/opt/fastembed-cache

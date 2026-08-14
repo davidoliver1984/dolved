@@ -27,20 +27,36 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--observations", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument(
+        "--run-id",
+        default="CAL-EXP-0001-evidence-threshold-calibration",
+    )
+    parser.add_argument("--expected-cases", default=28, type=int)
+    parser.add_argument("--expected-variants", default=84, type=int)
     arguments = parser.parse_args()
     raw = json.loads(arguments.observations.read_text())
-    if raw.get("run_id") != "CAL-EXP-0001-evidence-threshold-calibration":
+    if raw.get("run_id") != arguments.run_id:
         raise ValueError("unexpected calibration run identity")
     observations = raw.get("observations")
-    if not isinstance(observations, list) or len(observations) != 84:
-        raise ValueError("calibration requires exactly 84 durable observations")
-    if len({item["case"]["case_id"] for item in observations}) != 28:
-        raise ValueError("calibration requires exactly 28 semantic cases")
+    if (
+        not isinstance(observations, list)
+        or len(observations) != arguments.expected_variants
+    ):
+        raise ValueError(
+            f"calibration requires exactly {arguments.expected_variants} durable observations"
+        )
+    if (
+        len({item["case"]["case_id"] for item in observations})
+        != arguments.expected_cases
+    ):
+        raise ValueError(
+            f"calibration requires exactly {arguments.expected_cases} semantic cases"
+        )
     documents = _document_mapping(raw)
     variants = tuple(_variant(item, documents) for item in observations)
     dataset = ThresholdReplayDataset(
         benchmark_id="dolved-care-engineering",
-        corpus_version="v2",
+        corpus_version=str(raw["benchmark"]["version"]),
         corpus_digest=str(raw["benchmark"]["digest"]),
         split="threshold_calibration",
         final_evidence_k=5,
@@ -89,9 +105,13 @@ def _variant(
         failure = classify_pre_threshold_failure(observation)
         failures = (failure,) if failure is not None else ()
 
+    planner_expectation = dict(case["planner_expectation"])
+    override = variant.get("planner_expectation_override")
+    if isinstance(override, dict):
+        planner_expectation.update(override)
     required_sides: tuple[Literal["PRIMARY", "COMPARISON"], ...] = (
         ("PRIMARY", "COMPARISON")
-        if case["planner_expectation"]["temporal_mode"] == "COMPARE"
+        if planner_expectation["temporal_mode"] == "COMPARE"
         else ("PRIMARY",)
     )
     return ThresholdReplayVariant(
