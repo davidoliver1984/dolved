@@ -65,20 +65,22 @@ prepare() {
     install -m 0444 "${population_root}/corpus.json" "${calibration_snapshot}"
     install -m 0444 "${population_root}/population-manifest.json" "${population_manifest}"
     install -m 0444 "${population_root}/composition-compatibility.json" "${compatibility_result}"
-    install -m 0444 "${population_root}/authoring-review.json" "${authoring_review}"
     install -m 0444 "${provisioning}" "${provisioning_record}"
     jq '.independence' "${population_manifest}" >"${independence_evidence}.tmp"
     jq '.benchmark_taxonomy' "${population_manifest}" >"${taxonomy_evidence}.tmp"
-    chmod 0444 "${independence_evidence}.tmp" "${taxonomy_evidence}.tmp"
+    jq '.authoring_review' "${population_manifest}" >"${authoring_review}.tmp"
+    chmod 0444 "${independence_evidence}.tmp" "${taxonomy_evidence}.tmp" "${authoring_review}.tmp"
     mv -f "${independence_evidence}.tmp" "${independence_evidence}"
     mv -f "${taxonomy_evidence}.tmp" "${taxonomy_evidence}"
+    mv -f "${authoring_review}.tmp" "${authoring_review}"
     jq -n \
         --arg repository_commit "$(git -C "${repository_root}" rev-parse HEAD)" \
         --arg corpus_sha256 "$(sha256 "${calibration_snapshot}")" \
         --arg population_manifest_sha256 "$(sha256 "${population_manifest}")" \
         --arg compatibility_result_sha256 "$(sha256 "${compatibility_result}")" \
+        --arg authoring_review_evidence_sha256 "$(sha256 "${authoring_review}")" \
         --arg provisioning_sha256 "$(sha256 "${provisioning_record}")" \
-        '{schema_version:"v1", repository_commit:$repository_commit, corpus_sha256:$corpus_sha256, population_manifest_sha256:$population_manifest_sha256, compatibility_result_sha256:$compatibility_result_sha256, provisioning_sha256:$provisioning_sha256}' \
+        '{schema_version:"v1", repository_commit:$repository_commit, corpus_sha256:$corpus_sha256, population_manifest_sha256:$population_manifest_sha256, compatibility_result_sha256:$compatibility_result_sha256, authoring_review_evidence_sha256:$authoring_review_evidence_sha256, provisioning_sha256:$provisioning_sha256}' \
         >"${input_lineage}.tmp"
     chmod 0444 "${input_lineage}.tmp"
     mv -f "${input_lineage}.tmp" "${input_lineage}"
@@ -89,6 +91,7 @@ assert_inputs() {
     [[ "$(sha256 "${calibration_snapshot}")" == "$(jq -er '.corpus_sha256' "${input_lineage}")" ]]
     [[ "$(sha256 "${population_manifest}")" == "$(jq -er '.population_manifest_sha256' "${input_lineage}")" ]]
     [[ "$(sha256 "${compatibility_result}")" == "$(jq -er '.compatibility_result_sha256' "${input_lineage}")" ]]
+    [[ "$(sha256 "${authoring_review}")" == "$(jq -er '.authoring_review_evidence_sha256' "${input_lineage}")" ]]
     [[ "$(sha256 "${provisioning_record}")" == "$(jq -er '.provisioning_sha256' "${input_lineage}")" ]]
     [[ "$(jq -er '.benchmark.version' "${calibration_snapshot}")" == '3' ]]
     [[ "$(jq -er '.split.name' "${calibration_snapshot}")" == 'threshold_calibration' ]]
