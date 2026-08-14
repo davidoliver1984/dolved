@@ -57,7 +57,7 @@ return [
         'model' => env('RETRIEVAL_PLANNER_MODEL', 'gpt-5-mini'),
         'contract_schema_version' => 'plan-response-v2',
         'prompt_version' => 'adr-0022-v1',
-        'adapter_version' => 'structured-chat-v2',
+        'adapter_version' => 'structured-chat-v3',
     ],
     'embedding' => [
         'estimated_cost_per_million_tokens_usd' => (float) env(

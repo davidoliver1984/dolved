@@ -1,6 +1,7 @@
 import hashlib
 import json
 import time
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any
 
@@ -54,6 +55,140 @@ def _strict_response_schema(value: Any) -> Any:
     return result
 
 
+def _provider_plan_schema() -> dict[str, Any]:
+    """Build a strict provider envelope whose intent branches are always valid plans."""
+    plan_schema = _strict_response_schema(RetrievalPlan.model_json_schema())
+    properties = plan_schema["properties"]
+    definitions = plan_schema.get("$defs", {})
+
+    explicit_date = next(
+        branch
+        for branch in properties["explicit_date"]["anyOf"]
+        if branch.get("type") == "string"
+    )
+    temporal_reference = next(
+        branch
+        for branch in properties["temporal_reference"]["anyOf"]
+        if "$ref" in branch
+    )
+
+    def intent(
+        mode: str,
+        *,
+        date: dict[str, Any] | None = None,
+        reference: dict[str, Any] | None = None,
+        clarification: bool = False,
+    ) -> dict[str, Any]:
+        return {
+            "type": "object",
+            "properties": {
+                "temporal_mode": {"type": "string", "enum": [mode]},
+                "explicit_date": deepcopy(date) if date else {"type": "null"},
+                "temporal_reference": (
+                    deepcopy(reference) if reference else {"type": "null"}
+                ),
+                "clarification_reason": (
+                    {
+                        "type": "string",
+                        "enum": ["unclassifiable_temporal_intent"],
+                    }
+                    if clarification
+                    else {"type": "null"}
+                ),
+            },
+            "required": [
+                "temporal_mode",
+                "explicit_date",
+                "temporal_reference",
+                "clarification_reason",
+            ],
+            "additionalProperties": False,
+        }
+
+    calendar_reference = {
+        "type": "object",
+        "properties": {
+            "kind": {"type": "string", "enum": ["calendar_period"]},
+            "value": deepcopy(definitions["TemporalReference"]["properties"]["value"]),
+        },
+        "required": ["kind", "value"],
+        "additionalProperties": False,
+    }
+    historical_reference = {
+        "type": "object",
+        "properties": {
+            "kind": {"type": "string", "enum": ["historical_reference"]},
+            "value": deepcopy(definitions["TemporalReference"]["properties"]["value"]),
+        },
+        "required": ["kind", "value"],
+        "additionalProperties": False,
+    }
+
+    return {
+        "type": "object",
+        "properties": {
+            "retrieval_queries": deepcopy(properties["retrieval_queries"]),
+            "intent": {
+                "anyOf": [
+                    intent("current"),
+                    intent("compare"),
+                    intent("compare", date=explicit_date),
+                    intent("compare", reference=temporal_reference),
+                    intent("valid_at_date", date=explicit_date),
+                    intent("valid_at_date", reference=calendar_reference),
+                    intent("historical_reference", reference=historical_reference),
+                    intent("clarification_required", clarification=True),
+                ]
+            },
+            "location_references": deepcopy(properties["location_references"]),
+        },
+        "required": ["retrieval_queries", "intent", "location_references"],
+        "additionalProperties": False,
+        "$defs": definitions,
+    }
+
+
+def _plan_from_provider_envelope(value: object) -> dict[str, object]:
+    if not isinstance(value, dict) or set(value) != {
+        "retrieval_queries",
+        "intent",
+        "location_references",
+    }:
+        raise RetrievalPlanningError(
+            "retrieval planner returned an invalid schema envelope",
+            category="schema_validation_failure",
+            provider_status=200,
+        )
+    intent = value["intent"]
+    if not isinstance(intent, dict) or set(intent) != {
+        "temporal_mode",
+        "explicit_date",
+        "temporal_reference",
+        "clarification_reason",
+    }:
+        raise RetrievalPlanningError(
+            "retrieval planner returned an invalid intent schema",
+            category="schema_validation_failure",
+            provider_status=200,
+        )
+    return {
+        "retrieval_queries": value["retrieval_queries"],
+        "temporal_mode": intent["temporal_mode"],
+        "explicit_date": intent["explicit_date"],
+        "temporal_reference": intent["temporal_reference"],
+        "location_references": value["location_references"],
+        "clarification_reason": intent["clarification_reason"],
+    }
+
+
+def _validation_failure_category(exception: ValidationError) -> str:
+    return (
+        "cross_field_validation_failure"
+        if any(not error["loc"] for error in exception.errors(include_input=False))
+        else "field_validation_failure"
+    )
+
+
 class StructuredChatRetrievalPlanner:
     """Isolated OpenAI-compatible structured-output planner adapter."""
 
@@ -68,7 +203,7 @@ class StructuredChatRetrievalPlanner:
         client: httpx.Client | None = None,
         contract_schema_version: str = "plan-response-v2",
         prompt_version: str = "adr-0022-v1",
-        adapter_version: str = "structured-chat-v2",
+        adapter_version: str = "structured-chat-v3",
     ) -> None:
         if not api_key.get_secret_value().strip():
             raise RetrievalPlanningError(
@@ -90,7 +225,7 @@ class StructuredChatRetrievalPlanner:
         self, question: str, *, evaluated_at: str
     ) -> PlanningResult:
         started = time.perf_counter()
-        schema = _strict_response_schema(RetrievalPlan.model_json_schema())
+        schema = _provider_plan_schema()
         with trace.get_tracer("maketime.python.retrieval").start_as_current_span(
             "plan retrieval intent",
             kind=SpanKind.CLIENT,
@@ -130,10 +265,34 @@ class StructuredChatRetrievalPlanner:
                     },
                 )
                 response.raise_for_status()
-                payload = response.json()
-                content = payload["choices"][0]["message"]["content"]
-                raw_plan = json.loads(content) if isinstance(content, str) else content
-                plan = RetrievalPlan.model_validate(raw_plan)
+                try:
+                    payload = response.json()
+                    content = payload["choices"][0]["message"]["content"]
+                    if not isinstance(content, str):
+                        raise TypeError("planner content is not a JSON string")
+                except KeyError, IndexError, TypeError, ValueError:
+                    raise RetrievalPlanningError(
+                        "retrieval planner returned an invalid response shape",
+                        category="response_shape_failure",
+                        provider_status=200,
+                    ) from None
+                try:
+                    raw_envelope = json.loads(content)
+                except json.JSONDecodeError:
+                    raise RetrievalPlanningError(
+                        "retrieval planner returned invalid JSON",
+                        category="json_decode_failure",
+                        provider_status=200,
+                    ) from None
+                raw_plan = _plan_from_provider_envelope(raw_envelope)
+                try:
+                    plan = RetrievalPlan.model_validate(raw_plan)
+                except ValidationError as exception:
+                    raise RetrievalPlanningError(
+                        "retrieval planner returned an invalid typed plan",
+                        category=_validation_failure_category(exception),
+                        provider_status=200,
+                    ) from None
                 span.set_attributes(
                     trace_attributes(
                         {
@@ -173,13 +332,18 @@ class StructuredChatRetrievalPlanner:
                     "retrieval planner transport failed",
                     category="transport_error",
                 ) from exception
-            except (
-                KeyError,
-                IndexError,
-                TypeError,
-                ValueError,
-                ValidationError,
-            ) as exception:
+            except RetrievalPlanningError as exception:
+                span.set_attributes(
+                    trace_attributes(
+                        {
+                            "error.type": exception.category,
+                            "rag.processing.outcome": "failed",
+                        }
+                    )
+                )
+                span.set_status(Status(StatusCode.ERROR))
+                raise
+            except (KeyError, IndexError, TypeError, ValueError) as exception:
                 span.set_attributes(
                     trace_attributes(
                         {
@@ -191,7 +355,7 @@ class StructuredChatRetrievalPlanner:
                 span.set_status(Status(StatusCode.ERROR))
                 raise RetrievalPlanningError(
                     "retrieval planner returned no usable plan",
-                    category="invalid_typed_plan",
+                    category="schema_validation_failure",
                     provider_status=200,
                 ) from exception
         if plan.retrieval_queries != (question,):

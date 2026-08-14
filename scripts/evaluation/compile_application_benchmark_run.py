@@ -21,13 +21,15 @@ def main() -> None:
     model = os.environ.get("RETRIEVAL_PLANNER_MODEL", "").strip()
     api_key = os.environ.get("RETRIEVAL_PLANNER_API_KEY", "").strip()
     if not provider or not model or not api_key:
-        raise SystemExit("Live RetrievalPlanner provider/model/credential configuration is required.")
+        raise SystemExit(
+            "Live RetrievalPlanner provider/model/credential configuration is required."
+        )
     planner = {
         "provider": provider,
         "model": model,
         "contract_schema_version": "plan-response-v2",
         "prompt_version": "adr-0022-v1",
-        "adapter_version": "structured-chat-v2",
+        "adapter_version": "structured-chat-v3",
     }
     planner["fingerprint"] = hashlib.sha256(
         json.dumps(planner, sort_keys=True, separators=(",", ":")).encode()
