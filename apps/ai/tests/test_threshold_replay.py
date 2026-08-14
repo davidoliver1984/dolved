@@ -8,6 +8,33 @@ from app.evaluation.threshold_replay import (
     threshold_boundaries,
 )
 
+
+def test_compare_may_retain_one_canonical_candidate_on_each_side() -> None:
+    variant = ThresholdReplayVariant(
+        case_id="case.compare",
+        variant_id="direct",
+        slices=("COMPARE",),
+        expected_outcome="EVIDENCE_FOUND",
+        required_sides=("PRIMARY", "COMPARISON"),
+        pre_threshold_candidates=(
+            PreThresholdCandidate(
+                candidate_id="chunk.shared",
+                side="PRIMARY",
+                reranker_rank=1,
+                reranker_score=0.8,
+            ),
+            PreThresholdCandidate(
+                candidate_id="chunk.shared",
+                side="COMPARISON",
+                reranker_rank=1,
+                reranker_score=0.7,
+            ),
+        ),
+    )
+
+    assert len(variant.pre_threshold_candidates) == 2
+
+
 LOAD_BEARING = (
     "CURRENT",
     "COMPARE",

@@ -46,9 +46,13 @@ class ThresholdReplayVariant(StrictModel):
 
     @model_validator(mode="after")
     def valid_candidate_lineage(self) -> ThresholdReplayVariant:
-        identities = [item.candidate_id for item in self.pre_threshold_candidates]
+        identities = [
+            (item.side, item.candidate_id) for item in self.pre_threshold_candidates
+        ]
         if len(identities) != len(set(identities)):
-            raise ValueError("pre-threshold candidate identities must be unique")
+            raise ValueError(
+                "pre-threshold candidate identities must be unique within each side"
+            )
         for side in self.required_sides:
             ranks = [
                 item.reranker_rank
