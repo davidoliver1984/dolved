@@ -18,6 +18,7 @@ use App\Support\Evaluation\EngineeringBenchmarkExperimentProgress;
 use App\Support\Evaluation\EngineeringBenchmarkSource;
 use App\Support\Evaluation\EngineeringBenchmarkState;
 use App\Support\Evaluation\Exp0004Definition;
+use App\Support\Evaluation\Exp0005Definition;
 use App\Support\Evaluation\ThresholdCalibrationDefinition;
 use Carbon\CarbonImmutable;
 use RuntimeException;
@@ -46,6 +47,12 @@ final readonly class RunEngineeringBenchmarkExperiment
     public function handleExp0004(string $repositoryCommit): array
     {
         return $this->run($repositoryCommit, false, Exp0004Definition::RUN_ID, 'exp0004');
+    }
+
+    /** @return array<string, mixed> */
+    public function handleExp0005(string $repositoryCommit): array
+    {
+        return $this->run($repositoryCommit, false, Exp0005Definition::RUN_ID, 'exp0005');
     }
 
     /** @return array<string, mixed> */
@@ -105,6 +112,9 @@ final readonly class RunEngineeringBenchmarkExperiment
         ) {
             throw new RuntimeException($runId.' requires the trusted, fully verified V2 hybrid corpus.');
         }
+        if ($mode === 'exp0005') {
+            Exp0005Definition::assertProvisioning($state);
+        }
         $workspace = Workspace::query()
             ->where('public_id', $state['workspace']['public_id'])
             ->where('slug', EngineeringBenchmark::WORKSPACE_SLUG)
@@ -114,11 +124,14 @@ final readonly class RunEngineeringBenchmarkExperiment
         if ($scope->activeCorpusGeneration === null) {
             throw new RuntimeException('The benchmark workspace has no active corpus generation.');
         }
-        if ($mode !== 'exp0003') {
+        if (in_array($mode, ['exp0004', 'calibration', 'cal_exp_0002', 'cal_exp_0003'], true)) {
             $policy = $this->policies->handleExp0003Control($scope->activeCorpusGeneration);
             $policy = Exp0004Definition::treatmentPolicy($policy, $this->canonical);
         } else {
             $policy = $this->policies->handle($scope->activeCorpusGeneration);
+        }
+        if ($mode === 'exp0005') {
+            Exp0005Definition::assertPolicy($policy);
         }
         $chunkConfigurations = DocumentChunk::query()
             ->where('workspace_id', $workspace->id)
@@ -205,6 +218,9 @@ final readonly class RunEngineeringBenchmarkExperiment
         if ($mode === 'cal_exp_0003' && $planner !== CalExp0003Definition::planner()) {
             throw new RuntimeException($runId.' requires the approved structured-chat-v3 planner lineage.');
         }
+        if ($mode === 'exp0005' && $planner !== Exp0005Definition::planner()) {
+            throw new RuntimeException($runId.' requires the approved ADR-0022-v2 planner lineage.');
+        }
         $calibrationDefinition = match ($mode) {
             'cal_exp_0002' => CalExp0002Definition::class,
             'cal_exp_0003' => CalExp0003Definition::class,
@@ -284,6 +300,8 @@ final readonly class RunEngineeringBenchmarkExperiment
         ];
         if ($mode === 'exp0004') {
             $lineage['experiment'] = Exp0004Definition::lineage();
+        } elseif ($mode === 'exp0005') {
+            $lineage['experiment'] = Exp0005Definition::lineage();
         } elseif ($mode === 'calibration') {
             $lineage['experiment'] = ThresholdCalibrationDefinition::lineage();
         } elseif ($mode === 'cal_exp_0002') {

@@ -21,6 +21,7 @@ TAIL ?= 100
 	evaluation-benchmark-compile \
 	evaluation-exp-0003 \
 	evaluation-exp-0004-runtime evaluation-exp-0004 \
+	evaluation-exp-0005-runtime evaluation-exp-0005 \
 	evaluation-calibration-runtime evaluation-calibration-run evaluation-calibration-replay \
 	evaluation-cal-exp-0002-runtime evaluation-cal-exp-0002-run evaluation-cal-exp-0002-replay \
 	evaluation-cal-exp-0003-runtime evaluation-cal-exp-0003-run evaluation-cal-exp-0003-replay \
@@ -58,6 +59,8 @@ help:
 		'  make evaluation-exp-0003  Run the post-reliability full V2 engineering baseline' \
 		'  make evaluation-exp-0004-runtime  Start and verify the isolated EXP-0004 runtime' \
 		'  make evaluation-exp-0004  Run the immutable RRF k=5 engineering experiment' \
+		'  make evaluation-exp-0005-runtime  Start and verify the isolated EXP-0005 runtime' \
+		'  make evaluation-exp-0005  Run the immutable ADR-0022-v2 consolidated engineering baseline' \
 		'  make evaluation-calibration-runtime  Start and verify the isolated threshold-calibration runtime' \
 		'  make evaluation-calibration-run  Run one immutable calibration provider pass' \
 		'  make evaluation-cal-exp-0002-runtime  Start and verify isolated CAL-EXP-0002 runtime' \
@@ -233,6 +236,12 @@ evaluation-exp-0004-runtime:
 
 evaluation-exp-0004:
 	./scripts/evaluation/exp0004_runtime.sh run
+
+evaluation-exp-0005-runtime:
+	./scripts/evaluation/exp0005_runtime.sh start
+
+evaluation-exp-0005:
+	./scripts/evaluation/exp0005_runtime.sh run
 
 evaluation-calibration-runtime:
 	./scripts/evaluation/calibration_runtime.sh start

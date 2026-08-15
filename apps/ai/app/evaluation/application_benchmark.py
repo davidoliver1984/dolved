@@ -797,6 +797,8 @@ def _experiment_description(run_id: str) -> str:
             "Controlled engineering RRF experiment: rrf_k=60 control versus "
             "rrf_k=5 treatment with all other retrieval variables frozen"
         )
+    if run_id.startswith("EXP-0005-"):
+        return "ADR-0022-v2 consolidated full-pipeline engineering baseline"
     return "Exact-commit ADR-0022 full-pipeline engineering experiment"
 
 
