@@ -476,6 +476,7 @@ class SemanticRetrievalTest extends TestCase
         foreach ([
             [$midlands, 'Midlands'],
             [$coventry, 'Coventry'],
+            [$southWest, 'South West'],
             [$bristol, ' Bristol home '],
             [$meadowCourt, 'Exeter home'],
         ] as [$location, $alias]) {
@@ -505,6 +506,18 @@ class SemanticRetrievalTest extends TestCase
             'Question', RetrievalTemporalMode::Current, null, null,
             ['South West Region', 'Meadow Court'], null, $this->lineage(), $this->plannerUsage(),
         ), $evaluatedAt);
+        $exactRegionResult = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['South West Region'], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+        $exactSiteResult = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['Harbour View'], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+        $regionAliasResult = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            ['South West'], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
 
         $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $coventryResult->outcome);
         $this->assertSame($coventry->public_id, $coventryResult->resolvedLocationPublicId);
@@ -512,6 +525,72 @@ class SemanticRetrievalTest extends TestCase
         $this->assertSame($bristol->public_id, $bristolResult->resolvedLocationPublicId);
         $this->assertSame([$document->public_id], $meadowResult->documentPublicIdsBySide['primary']);
         $this->assertSame($meadowCourt->public_id, $meadowResult->resolvedLocationPublicId);
+        $this->assertSame([$document->public_id], $exactRegionResult->documentPublicIdsBySide['primary']);
+        $this->assertSame($southWest->public_id, $exactRegionResult->resolvedLocationPublicId);
+        $this->assertSame([$document->public_id], $exactSiteResult->documentPublicIdsBySide['primary']);
+        $this->assertSame($bristol->public_id, $exactSiteResult->resolvedLocationPublicId);
+        $this->assertSame([$document->public_id], $regionAliasResult->documentPublicIdsBySide['primary']);
+        $this->assertSame($southWest->public_id, $regionAliasResult->resolvedLocationPublicId);
+    }
+
+    public function test_location_alias_resolution_remains_exact_hierarchical_and_fail_closed(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $region = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Midlands Region']);
+        $service = OrganisationalLocation::factory()->for($workspace)->create([
+            'name' => 'Willow Bank Community Service',
+            'parent_id' => $region->id,
+        ]);
+        $unrelated = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Harbour View']);
+        foreach ([
+            [$region, 'Midlands'],
+            [$service, 'Coventry'],
+            [$service, 'Coventry community team'],
+            [$service, 'shared service'],
+            [$unrelated, 'shared service'],
+        ] as [$location, $alias]) {
+            $model = new OrganisationalLocationAlias(['alias' => $alias]);
+            $model->workspace()->associate($workspace);
+            $model->organisationalLocation()->associate($location);
+            $model->save();
+        }
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        DB::table('document_applicability_snapshots')->where('document_id', $document->id)
+            ->update(['sealed_at' => null, 'scope' => 'specific']);
+        $document->applicabilitySnapshot->locations()->attach($region->id, ['workspace_id' => $workspace->id]);
+        $document->applicabilitySnapshot->update(['sealed_at' => now()]);
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+        $resolver = app(EligibilityResolver::class);
+        $evaluatedAt = CarbonImmutable::parse('2026-03-01');
+        $resolve = fn (array $references) => $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null,
+            $references, null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+
+        $canonicalRegion = $resolve(['Midlands Region']);
+        $canonicalService = $resolve(['Willow Bank Community Service']);
+        $existingAlias = $resolve(['Coventry community team']);
+        $newAlias = $resolve(['Coventry']);
+        $hierarchy = $resolve(['Midlands', 'Coventry']);
+        $unrelatedReferences = $resolve(['Coventry', 'Harbour View']);
+        $unknownShorthand = $resolve(['Cov']);
+        $suffixGuess = $resolve(['Willow Bank']);
+        $ambiguousAlias = $resolve(['shared service']);
+
+        $this->assertSame($region->public_id, $canonicalRegion->resolvedLocationPublicId);
+        foreach ([$canonicalService, $existingAlias, $newAlias, $hierarchy] as $result) {
+            $this->assertSame([$document->public_id], $result->documentPublicIdsBySide['primary']);
+            $this->assertSame($service->public_id, $result->resolvedLocationPublicId);
+        }
+        $this->assertSame('multiple_unrelated_location_references', $unrelatedReferences->reason);
+        foreach ([$unknownShorthand, $suffixGuess] as $result) {
+            $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+            $this->assertSame('unresolved_location_reference', $result->reason);
+            $this->assertNull($result->resolvedLocationPublicId);
+        }
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $ambiguousAlias->outcome);
+        $this->assertSame('ambiguous_location_reference', $ambiguousAlias->reason);
+        $this->assertNull($ambiguousAlias->resolvedLocationPublicId);
     }
 
     public function test_location_resolution_is_workspace_scoped_and_unresolved_input_never_broadens_scope(): void

@@ -408,7 +408,12 @@
         {
           "variant_id": "precision",
           "question": "Give the Midlands escalation timing for a missed end-of-visit check-in.",
-          "evaluation_facets": []
+          "evaluation_facets": [],
+          "planner_expectation_override": {
+            "location_references": [
+              "Midlands"
+            ]
+          }
         }
       ],
       "slices": [

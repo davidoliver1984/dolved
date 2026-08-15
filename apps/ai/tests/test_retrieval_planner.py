@@ -254,10 +254,27 @@ def test_planner_lineage_is_stable_and_excludes_credentials() -> None:
 
     assert lineage.provider == "test-provider"
     assert lineage.contract_schema_version == "plan-response-v2"
-    assert lineage.prompt_version == "adr-0022-v2"
+    assert lineage.prompt_version == "adr-0022-v3"
     assert lineage.adapter_version == "structured-chat-v3"
     assert len(lineage.fingerprint) == 64
     assert "test-key" not in lineage.model_dump_json()
+
+
+def test_adr_0022_v3_planner_fingerprint_is_stable() -> None:
+    lineage = StructuredChatRetrievalPlanner(
+        api_url="https://planner.invalid/v1/chat/completions",
+        api_key=SecretStr("test-key"),
+        provider_name="openai",
+        model="gpt-5-mini",
+        timeout_seconds=1,
+        client=httpx.Client(
+            transport=httpx.MockTransport(lambda _: httpx.Response(200))
+        ),
+    ).lineage()
+
+    assert lineage.fingerprint == (
+        "d27dba4c4569719b1f4ddf5d8612717308c705d98b06cb82b09505236f40614e"
+    )
 
 
 @pytest.mark.parametrize(
@@ -266,7 +283,7 @@ def test_planner_lineage_is_stable_and_excludes_credentials() -> None:
         ("provider_name", "another-provider"),
         ("model", "another-model"),
         ("contract_schema_version", "plan-response-v3"),
-        ("prompt_version", "adr-0022-v3"),
+        ("prompt_version", "adr-0022-v4"),
         ("adapter_version", "structured-chat-v4"),
     ],
 )
@@ -361,14 +378,83 @@ def test_prompt_keeps_ordinary_contrast_current_and_forbids_manufactured_dates()
     assert "second model" not in prompt.lower()
 
 
-def test_prompt_keeps_equipment_out_of_location_references() -> None:
+def test_prompt_defines_locations_by_policy_applicability_without_entity_blacklists() -> (
+    None
+):
     from app.retrieval.planner import _planner_prompt
 
     prompt = _planner_prompt("2026-08-14T12:00:00Z")
 
-    assert "equipment, storage" in prompt
-    assert "including a fridge" in prompt
+    assert '"Where does this policy apply?"' in prompt
+    assert "Named entities are not locations merely" in prompt
+    assert "departments or functions, regulators" in prompt
+    assert "equipment, storage areas" in prompt
     assert "not location references" in prompt
+    assert "HR" not in prompt
+    assert "ICO" not in prompt
+    assert "pharmacy" not in prompt
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "What must HR do after a grievance is received?",
+        "When must we notify the ICO about a personal data breach?",
+    ],
+)
+def test_exp_0005_false_positive_location_examples_accept_an_empty_location_plan(
+    question: str,
+) -> None:
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": "current",
+            "explicit_date": None,
+            "temporal_reference": None,
+            "location_references": [],
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2026-08-15T12:00:00Z")
+
+    assert result.location_references == ()
+
+
+@pytest.mark.parametrize(
+    ("question", "expected_locations"),
+    [
+        ("Should Finance approve this expense?", ()),
+        ("When must we notify the Care Quality Commission?", ()),
+        ("Send the outcome to the local authority.", ()),
+        ("Can the registered manager authorise this?", ()),
+        ("Does the mobile hoist need inspecting?", ()),
+        ("What evacuation procedure applies at Riverside House?", ("Riverside House",)),
+        ("What is the rule for the North West Region?", ("North West Region",)),
+        ("What contractor process applies in Bristol?", ("Bristol",)),
+        (
+            "What check-in rule applies to the Coventry community team?",
+            ("Coventry community team",),
+        ),
+        (
+            "Compare the arrangements for South West and Meadow Court.",
+            ("South West", "Meadow Court"),
+        ),
+    ],
+)
+def test_planner_contract_accepts_independent_actor_vs_place_controls(
+    question: str, expected_locations: tuple[str, ...]
+) -> None:
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": "current",
+            "explicit_date": None,
+            "temporal_reference": None,
+            "location_references": list(expected_locations),
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2026-08-15T12:00:00Z")
+
+    assert result.location_references == expected_locations
 
 
 def test_prompt_treats_predecessor_resurrection_question_as_current() -> None:

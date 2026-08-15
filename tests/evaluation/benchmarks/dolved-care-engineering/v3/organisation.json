@@ -27,9 +27,12 @@
     {"alias": "Preston home", "location_ids": ["location.moorland-view"]},
     {"alias": "Birmingham home", "location_ids": ["location.oakfield-lodge"]},
     {"alias": "Coventry community team", "location_ids": ["location.willow-bank"]},
+    {"alias": "Coventry", "location_ids": ["location.willow-bank"]},
+    {"alias": "Midlands", "location_ids": ["location.region.midlands"]},
     {"alias": "Bristol home", "location_ids": ["location.harbour-view"]},
     {"alias": "Bristol", "location_ids": ["location.harbour-view"]},
     {"alias": "Exeter home", "location_ids": ["location.meadow-court"]},
+    {"alias": "South West", "location_ids": ["location.region.south-west"]},
     {"alias": "the home", "location_ids": ["location.riverside-house", "location.moorland-view", "location.oakfield-lodge", "location.harbour-view", "location.meadow-court"]}
   ],
   "terminology": [

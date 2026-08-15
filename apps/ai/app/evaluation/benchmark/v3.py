@@ -77,6 +77,27 @@ def taxonomy_indexes(
     return domains, slices, facets
 
 
+def validate_location_names_and_aliases(organisation: dict[str, Any]) -> None:
+    """Enforce an exact, collision-safe V3 location vocabulary."""
+    canonical_names: dict[str, str] = {}
+    for location in organisation["locations"]:
+        normalised = str(location["name"]).strip().lower()
+        if normalised in canonical_names:
+            raise ValueError("organisation location names must be unique")
+        canonical_names[normalised] = str(location["location_id"])
+
+    aliases: set[str] = set()
+    for entry in organisation["aliases"]:
+        normalised = str(entry["alias"]).strip().lower()
+        if normalised in aliases:
+            raise ValueError("organisation aliases must be unique")
+        if normalised in canonical_names:
+            raise ValueError(
+                "organisation alias collides with a canonical location name"
+            )
+        aliases.add(normalised)
+
+
 def assert_facets(
     values: list[str], facets: dict[str, set[str]], scope: str, owner: str
 ) -> None:
@@ -751,6 +772,7 @@ def compile_benchmark(
     domains, _slices, facets = taxonomy_indexes(taxonomy)
     if manifest["evaluation_clock"] != organisation["evaluation_clock"]:
         raise ValueError("manifest and organisation evaluation clocks differ")
+    validate_location_names_and_aliases(organisation)
     locations = location_index(organisation)
     families, versions, authority = validate_catalog(
         catalog, benchmark_root, locations, domains, facets

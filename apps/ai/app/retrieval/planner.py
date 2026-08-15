@@ -202,7 +202,7 @@ class StructuredChatRetrievalPlanner:
         timeout_seconds: float,
         client: httpx.Client | None = None,
         contract_schema_version: str = "plan-response-v2",
-        prompt_version: str = "adr-0022-v2",
+        prompt_version: str = "adr-0022-v3",
         adapter_version: str = "structured-chat-v3",
     ) -> None:
         if not api_key.get_secret_value().strip():
@@ -428,11 +428,14 @@ CURRENT, unless it explicitly asks to compare the content of the versions.
 CLARIFICATION_REQUIRED: only when linguistic temporal intent genuinely cannot be classified;
 use reason unclassifiable_temporal_intent.
 
-location_references contains only organisational or geographic places: physical sites, homes,
-offices, named regions, or geographic areas explicitly present. Preserve wording, return
-multiple references separately, and never resolve aliases. Roles, people, equipment, storage
-areas or containers (including a fridge), objects, documents, organisations, and actions are
-not location references.
+location_references contains only geographic or organisational places/scopes that answer
+"Where does this policy apply?": physical sites, homes, offices, named regions, geographic
+areas, or community-service areas explicitly present. Preserve wording, return multiple
+references separately, and never resolve aliases. Named entities are not locations merely
+because they appear in the question. Actors, recipients, departments or functions, regulators,
+organisations, roles or people, equipment, storage areas or containers, objects, documents,
+and actions are not location references unless the same wording independently identifies an
+applicability place or scope in the question.
 
 The authoritative evaluation instant is """
         + evaluated_at

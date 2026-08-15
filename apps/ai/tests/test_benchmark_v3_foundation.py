@@ -3,8 +3,13 @@ import shutil
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from app.evaluation.benchmark.common import content_digest, digest_bytes
-from app.evaluation.benchmark.v3 import compile_benchmark
+from app.evaluation.benchmark.v3 import (
+    compile_benchmark,
+    validate_location_names_and_aliases,
+)
 
 BENCHMARKS_ROOT = Path("/evaluation/benchmarks/dolved-care-engineering")
 V2_ROOT = BENCHMARKS_ROOT / "v2"
@@ -100,10 +105,28 @@ def test_v3_post_calibration_reconciliation_respects_workspace_wide_scope() -> N
     )
 
 
-def test_v3_retains_v2_organisation_and_sources_byte_for_byte() -> None:
-    assert (V3_ROOT / "organisation.json").read_bytes() == (
-        V2_ROOT / "organisation.json"
-    ).read_bytes()
+def test_v3_retains_v2_organisation_structure_and_adds_only_reviewed_aliases() -> None:
+    v2_organisation = load_json(V2_ROOT / "organisation.json")
+    v3_organisation = load_json(V3_ROOT / "organisation.json")
+    assert v3_organisation["organisation"] == v2_organisation["organisation"]
+    assert v3_organisation["evaluation_clock"] == v2_organisation["evaluation_clock"]
+    assert v3_organisation["locations"] == v2_organisation["locations"]
+    assert v3_organisation["terminology"] == v2_organisation["terminology"]
+    assert all(
+        alias in v3_organisation["aliases"] for alias in v2_organisation["aliases"]
+    )
+    assert [
+        alias
+        for alias in v3_organisation["aliases"]
+        if alias not in v2_organisation["aliases"]
+    ] == [
+        {"alias": "Coventry", "location_ids": ["location.willow-bank"]},
+        {"alias": "Midlands", "location_ids": ["location.region.midlands"]},
+        {"alias": "South West", "location_ids": ["location.region.south-west"]},
+    ]
+    assert digest_bytes((V2_ROOT / "organisation.json").read_bytes()) == (
+        "87cc3601c63466c7ffb5ee8addcf933a4ebce06c84b0ed2e9efcf27df3fa8b3a"
+    )
     v2_sources = {
         path.relative_to(V2_ROOT / "documents"): path
         for path in (V2_ROOT / "documents").rglob("*.md")
@@ -116,6 +139,49 @@ def test_v3_retains_v2_organisation_and_sources_byte_for_byte() -> None:
     assert len(v3_sources) == 93
     for relative_path, v2_source in v2_sources.items():
         assert v2_source.read_bytes() == v3_sources[relative_path].read_bytes()
+
+
+def test_v3_location_alias_vocabulary_is_collision_safe() -> None:
+    organisation = load_json(V3_ROOT / "organisation.json")
+
+    validate_location_names_and_aliases(organisation)
+
+
+def test_v3_location_alias_vocabulary_rejects_duplicate_or_canonical_collisions() -> (
+    None
+):
+    duplicate = load_json(V3_ROOT / "organisation.json")
+    duplicate["aliases"].append(
+        {"alias": " coventry ", "location_ids": ["location.willow-bank"]}
+    )
+    canonical = load_json(V3_ROOT / "organisation.json")
+    canonical["aliases"].append(
+        {"alias": "RIVERSIDE HOUSE", "location_ids": ["location.riverside-house"]}
+    )
+
+    with pytest.raises(ValueError, match="aliases must be unique"):
+        validate_location_names_and_aliases(duplicate)
+    with pytest.raises(ValueError, match="collides with a canonical"):
+        validate_location_names_and_aliases(canonical)
+
+
+def test_midlands_variant_expects_the_region_alias_not_the_coventry_service() -> None:
+    cases = {
+        case["case_id"]: case
+        for path in sorted((V3_ROOT / "cases").glob("*.json"))
+        for case in load_json(path)["cases"]
+    }
+    case = cases["v3.hr.current.midlands-lone-worker"]
+    precision = next(
+        variant for variant in case["variants"] if variant["variant_id"] == "precision"
+    )
+
+    assert case["planner_expectation"]["location_references"] == [
+        "Coventry community team"
+    ]
+    assert precision["planner_expectation_override"] == {
+        "location_references": ["Midlands"]
+    }
 
 
 def test_v3_catalogue_review_and_lineage_bind_every_source() -> None:

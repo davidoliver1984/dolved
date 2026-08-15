@@ -1,7 +1,7 @@
 {
   "schema_version": "v3",
   "review_id": "catalogue-review.dolved-care-engineering.v3-foundation",
-  "review_version": "1",
+  "review_version": "2",
   "benchmark_id": "dolved-care-engineering",
   "corpus_version": "3",
   "taxonomy": {
@@ -10,7 +10,7 @@
     "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
   },
   "parent_benchmark_digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
-  "organisation_sha256": "87cc3601c63466c7ffb5ee8addcf933a4ebce06c84b0ed2e9efcf27df3fa8b3a",
+  "organisation_sha256": "9bcfefa56b05d0e0eadadcd3b4c1dbc1e0e2d6b05d7f086b8e4098c6289fae09",
   "document_catalog_sha256": "6a2d112eab795deffd8390674c34fcf26d645f2b50aa61af60646be45e024679",
   "source_digests": {
     "documents/complaints/advocacy-contacts.md": "64a8b2ffc093cb70d839152b2cc7bf63db94f47c25274a31f49b6d48fe4e17a5",

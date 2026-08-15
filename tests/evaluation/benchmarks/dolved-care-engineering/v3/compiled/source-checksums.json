@@ -7,7 +7,7 @@
     "taxonomy_version": "1",
     "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
   },
-  "organisation_sha256": "87cc3601c63466c7ffb5ee8addcf933a4ebce06c84b0ed2e9efcf27df3fa8b3a",
+  "organisation_sha256": "9bcfefa56b05d0e0eadadcd3b4c1dbc1e0e2d6b05d7f086b8e4098c6289fae09",
   "document_catalog_sha256": "6a2d112eab795deffd8390674c34fcf26d645f2b50aa61af60646be45e024679",
   "source_digests": {
     "documents/complaints/advocacy-contacts.md": "64a8b2ffc093cb70d839152b2cc7bf63db94f47c25274a31f49b6d48fe4e17a5",
@@ -106,5 +106,5 @@
   },
   "document_family_ids_digest": "d3ea3d84eb8dbb7d23c63d217f0b380fdcac4cba5336c17ce0ad389ee568bd1d",
   "document_version_ids_digest": "6027dd11e1b0ad816c355f20540647e2f651b7dcb0bfe745d6d8c268b8146e42",
-  "source_catalog_digest": "821ab74427cb281aaeb0daae041121d659beda511c468b6c41852568080f3b39"
+  "source_catalog_digest": "fb67f42856586c78a23f8648c5b48fa7e3fc7c742cf5accda44f5533e0298b0f"
 }

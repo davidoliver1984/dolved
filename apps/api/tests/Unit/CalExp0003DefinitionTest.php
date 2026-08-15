@@ -30,23 +30,20 @@ final class CalExp0003DefinitionTest extends TestCase
         $this->assertSame(CalExp0002Definition::lineage()['candidate_pipeline'], $lineage['candidate_pipeline']);
     }
 
-    public function test_runtime_configuration_matches_the_approved_planner_fingerprint(): void
+    public function test_historical_definition_retains_its_approved_planner_fingerprint(): void
     {
-        $planner = [
-            'provider' => (string) config('retrieval.planner.provider'),
-            'model' => (string) config('retrieval.planner.model'),
-            'contract_schema_version' => (string) config('retrieval.planner.contract_schema_version'),
-            'prompt_version' => (string) config('retrieval.planner.prompt_version'),
-            'adapter_version' => (string) config('retrieval.planner.adapter_version'),
-        ];
+        $planner = CalExp0003Definition::planner();
+        $fingerprint = $planner['fingerprint'];
+        unset($planner['fingerprint']);
         $fingerprintInput = $planner;
         ksort($fingerprintInput);
-        $planner['fingerprint'] = hash(
+        $calculated = hash(
             'sha256',
             json_encode($fingerprintInput, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES),
         );
 
-        $this->assertSame(CalExp0003Definition::planner(), $planner);
+        $this->assertSame(CalExp0003Definition::PLANNER_FINGERPRINT, $fingerprint);
+        $this->assertSame($fingerprint, $calculated);
     }
 
     public function test_command_has_no_split_or_dirty_override(): void
