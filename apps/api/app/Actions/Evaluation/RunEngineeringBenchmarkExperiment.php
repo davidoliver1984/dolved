@@ -218,8 +218,8 @@ final readonly class RunEngineeringBenchmarkExperiment
         if ($mode === 'cal_exp_0003' && $planner !== CalExp0003Definition::planner()) {
             throw new RuntimeException($runId.' requires the approved structured-chat-v3 planner lineage.');
         }
-        if ($mode === 'exp0005' && $planner !== Exp0005Definition::planner()) {
-            throw new RuntimeException($runId.' requires the approved ADR-0022-v2 planner lineage.');
+        if ($mode === 'exp0005') {
+            Exp0005Definition::assertPlanner($planner);
         }
         $calibrationDefinition = match ($mode) {
             'cal_exp_0002' => CalExp0002Definition::class,

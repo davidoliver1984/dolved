@@ -42,6 +42,18 @@ final class Exp0005DefinitionTest extends TestCase
         Exp0005Definition::assertPolicy($policy);
     }
 
+    public function test_planner_lineage_drift_fails_closed(): void
+    {
+        Exp0005Definition::assertPlanner(Exp0005Definition::planner());
+        $this->addToAssertionCount(1);
+
+        $planner = Exp0005Definition::planner();
+        $planner['prompt_version'] = 'adr-0022-v1';
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('requires the approved ADR-0022-v2 planner lineage');
+        Exp0005Definition::assertPlanner($planner);
+    }
+
     public function test_provisioning_lineage_is_accepted_and_drift_fails_closed(): void
     {
         $state = $this->state();

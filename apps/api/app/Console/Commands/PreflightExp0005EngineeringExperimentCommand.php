@@ -63,6 +63,21 @@ final class PreflightExp0005EngineeringExperimentCommand extends Command
 
             $policy = $policies->handle($generation);
             Exp0005Definition::assertPolicy($policy);
+
+            $planner = [
+                'provider' => (string) config('retrieval.planner.provider'),
+                'model' => (string) config('retrieval.planner.model'),
+                'contract_schema_version' => (string) config('retrieval.planner.contract_schema_version'),
+                'prompt_version' => (string) config('retrieval.planner.prompt_version'),
+                'adapter_version' => (string) config('retrieval.planner.adapter_version'),
+            ];
+            $fingerprintInput = $planner;
+            ksort($fingerprintInput);
+            $planner['fingerprint'] = hash(
+                'sha256',
+                json_encode($fingerprintInput, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES),
+            );
+            Exp0005Definition::assertPlanner($planner);
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
 

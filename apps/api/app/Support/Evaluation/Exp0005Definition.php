@@ -88,6 +88,14 @@ final class Exp0005Definition
         }
     }
 
+    /** @param array<string, string> $planner */
+    public static function assertPlanner(array $planner): void
+    {
+        if ($planner !== self::planner()) {
+            throw new RuntimeException(self::RUN_ID.' requires the approved ADR-0022-v2 planner lineage.');
+        }
+    }
+
     /** @param array<string, mixed> $state */
     public static function assertProvisioning(array $state): void
     {
