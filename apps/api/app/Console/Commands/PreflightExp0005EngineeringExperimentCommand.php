@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Actions\Evaluation\ResolveEngineeringBenchmarkPolicy;
 use App\Enums\WorkspaceCorpusGenerationStatus;
 use App\Models\DocumentChunk;
-use App\Models\EvidenceThresholdPolicy;
 use App\Models\Workspace;
 use App\Support\Evaluation\EngineeringBenchmark;
 use App\Support\Evaluation\EngineeringBenchmarkSource;
 use App\Support\Evaluation\EngineeringBenchmarkState;
-use App\Support\Evaluation\EngineeringRetrievalConfiguration;
 use App\Support\Evaluation\Exp0005Definition;
 use Illuminate\Console\Command;
 use RuntimeException;
@@ -26,6 +25,7 @@ final class PreflightExp0005EngineeringExperimentCommand extends Command
     public function handle(
         EngineeringBenchmarkSource $source,
         EngineeringBenchmarkState $states,
+        ResolveEngineeringBenchmarkPolicy $policies,
     ): int {
         try {
             $state = $states->read();
@@ -61,9 +61,7 @@ final class PreflightExp0005EngineeringExperimentCommand extends Command
                 throw new RuntimeException('EXP-0005 active corpus generation is not the verified 99-point hybrid generation.');
             }
 
-            $policy = EvidenceThresholdPolicy::query()
-                ->where('version', EngineeringRetrievalConfiguration::VERSION)
-                ->sole();
+            $policy = $policies->handle($generation);
             Exp0005Definition::assertPolicy($policy);
         } catch (Throwable $exception) {
             $this->components->error($exception->getMessage());
