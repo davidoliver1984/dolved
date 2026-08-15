@@ -68,6 +68,34 @@
       "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "Exact-date authority resolution yields a source-anchored historical answer."}
     },
     {
+      "case_id": "v3.medication.historical.controlled-drugs-v1",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.medication.controlled-drugs-lineage",
+      "cluster_rationale": "All wording variants identify the first attained controlled-drugs procedure without relying on an incomplete whole-year authority window.",
+      "leakage_group_ids": ["leakage.family.medication.controlled-drugs"],
+      "domain": "medication",
+      "variants": [
+        {"variant_id": "direct", "question": "Under version 1 of the controlled-drugs procedure, when did a discrepancy have to be reported?", "evaluation_facets": []},
+        {"variant_id": "colloquial", "question": "What did the old CD procedure say about when to report a stock discrepancy?", "evaluation_facets": ["abbreviation", "colloquial"], "planner_expectation_override": {"temporal_reference": {"kind": "historical_reference", "value": "old CD procedure"}}},
+        {"variant_id": "precision", "question": "Did controlled-drugs procedure version 1 allow reporting a discrepancy by the end of the shift?", "evaluation_facets": []}
+      ],
+      "slices": ["historical", "temporal-authority"],
+      "evaluation_facets": ["historical-explicit", "historical-ordinal", "historical-previous", "near-duplicate", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "source_path": "documents/medication/controlled-drugs-v1.md", "source_sha256": "d5787e6cd6a4d352a73dd57046f2a5d2e0f18f27af469cd2e279e4e87229f83b", "purpose": "EXPECTED_EVIDENCE"},
+        {"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v2", "source_path": "documents/medication/controlled-drugs-v2.md", "source_sha256": "2dad915e9dfe6775c424b684abd53a3477e0aba31ab1c1baca06e91ad9644b31", "purpose": "ELIGIBILITY_CONTEXT"}
+      ],
+      "planner_expectation": {"temporal_mode": "HISTORICAL_REFERENCE", "explicit_date": null, "temporal_reference": {"kind": "historical_reference", "value": "version 1"}, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [{"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}],
+        "excluded_versions": [{"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v2", "reason": "OUTSIDE_REQUESTED_TEMPORAL_SCOPE"}],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [{"evidence_id": "evidence.v3.medication.historical.controlled-drugs-v1.shift-end", "document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "side": "PRIMARY", "source_path": "documents/medication/controlled-drugs-v1.md", "canonical_excerpts": ["A discrepancy is reported to the registered manager before the end of the shift and the stock is secured while the check is repeated."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Version 1 discrepancy escalation", "notes": "The explicit attained-authority ordinal avoids the invalid whole-year 2023 interpretation."}]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "A source-anchored historical answer must survive reranking and thresholding after deterministic ordinal authority resolution."}
+    },
+    {
       "case_id": "v3.medication.current.fridge-excursion",
       "authoring_status": "REVIEWED",
       "cluster_id": "cluster.v3.medication.fridge-excursion",

@@ -1,7 +1,7 @@
 {
   "schema_version": "v3",
-  "review_id": "review.v3.health.compare.moving-handling-staffing",
-  "review_version": "4",
+  "review_id": "review.v3.medication.historical.controlled-drugs-v1",
+  "review_version": "1",
   "benchmark_id": "dolved-care-engineering",
   "corpus_version": "3",
   "taxonomy": {
@@ -9,11 +9,11 @@
     "taxonomy_version": "1",
     "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
   },
-  "case_id": "v3.health.compare.moving-handling-staffing",
-  "case_sha256": "7858014d6252578d2bc118b4dfd1c7478e76d0316773540b2ab54a5d08fccef8",
+  "case_id": "v3.medication.historical.controlled-drugs-v1",
+  "case_sha256": "4d32ff6555684fa107babe3794c9d1cfeff1736d7ce68c8cd64d6532855f5569",
   "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
-  "source_lineage_digest": "ae08ae2e6fcc50e1421ddd8b042cff22fc33f2a499b7f11510416eb4cfa3cd7e",
-  "evidence_unit_ids_digest": "e5813afa41e8dab9a9b30ff8cce53d0b2bccb5f30881c82645b9e7b9115e0352",
+  "source_lineage_digest": "801037ddc1196cf92c756a53f4bbcf2b6839bb4a379c7780277c5a4f74bf6d05",
+  "evidence_unit_ids_digest": "f4b926d5e2bc2b7942c95df7170574e9ff6fec5dd3e13074766b4fc52b1a25b8",
   "reviewed_at": "2026-08-15T12:00:00Z",
   "machine_validation": {
     "validator_id": "benchmark-v3-compiler",
@@ -30,5 +30,5 @@
     "approved": true
   },
   "reviewer_identity": "codex",
-  "review_note": "Post-EXP-0005 review confirmed this is a genuine comparison; variant-level references now match each wording while retaining both current and historical EvidenceUnits."
+  "review_note": "Post-EXP-0005 review replaced the misleading whole-year 2023 wording with explicit attained-authority ordinal references and verified the historical version 1 evidence."
 }

@@ -260,12 +260,21 @@
           "question": "How did the rule about one or two staff for a hoist change?",
           "evaluation_facets": [
             "colloquial"
-          ]
+          ],
+          "planner_expectation_override": {
+            "temporal_reference": null
+          }
         },
         {
           "variant_id": "precision",
           "question": "Compare today's hoist-transfer staffing rule with the first version.",
-          "evaluation_facets": []
+          "evaluation_facets": [],
+          "planner_expectation_override": {
+            "temporal_reference": {
+              "kind": "historical_reference",
+              "value": "first version"
+            }
+          }
         }
       ],
       "slices": [

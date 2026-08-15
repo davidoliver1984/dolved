@@ -202,7 +202,7 @@ class StructuredChatRetrievalPlanner:
         timeout_seconds: float,
         client: httpx.Client | None = None,
         contract_schema_version: str = "plan-response-v2",
-        prompt_version: str = "adr-0022-v3",
+        prompt_version: str = "adr-0022-v4",
         adapter_version: str = "structured-chat-v3",
     ) -> None:
         if not api_key.get_secret_value().strip():
@@ -418,8 +418,11 @@ locations, boundary values, products, or objects are CURRENT, not COMPARE.
 COMPARE: explicit change/difference between policy, document, procedure, or authority states
 over time. Do not create PRIMARY/COMPARISON objects.
 VALID_AT_DATE: what applied on an exact date or calendar period. Use explicit_date only for an
-exact calendar day. Otherwise use temporal_reference kind calendar_period and preserve wording.
-Never manufacture a day or time.
+exact calendar day. When the question explicitly supplies a calendar day, month, and year,
+preserve that calendar date exactly in explicit_date: 1 January 2026 becomes 2026-01-01,
+15 June 2024 becomes 2024-06-15, and 2025-10-03 remains 2025-10-03. Never substitute a
+different day, month, or year. Otherwise use temporal_reference kind calendar_period and
+preserve wording. Never manufacture a day or time.
 HISTORICAL_REFERENCE: one non-current state named linguistically (old, previous, version 1,
 the 2023 procedure, before withdrawal) without requesting comparison. Use temporal_reference
 kind historical_reference and preserve wording. A question asking whether an earlier version

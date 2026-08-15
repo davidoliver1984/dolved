@@ -28,7 +28,7 @@ def test_repository_v3_first_domain_authoring_batch_compiles(tmp_path: Path) -> 
     assert manifest["authored_counts"] == {
         "document_families": 71,
         "document_versions": 93,
-        "semantic_cases": 45,
+        "semantic_cases": 46,
     }
     case_sources = [
         load_json(path) for path in sorted((V3_ROOT / "cases").glob("*.json"))
@@ -48,10 +48,10 @@ def test_repository_v3_first_domain_authoring_batch_compiles(tmp_path: Path) -> 
         "training",
         "visitors",
     }
-    assert len(cases) == 45
-    assert len(reviews) == 44
+    assert len(cases) == 46
+    assert len(reviews) == 45
     statuses = {case["case_id"]: case["authoring_status"] for case in cases}
-    assert sum(status == "REVIEWED" for status in statuses.values()) == 44
+    assert sum(status == "REVIEWED" for status in statuses.values()) == 45
     assert statuses["v3.infection.current.outbreak-no-authority"] == "DRAFT"
     assert not (V3_ROOT / "splits").exists()
     assert not (V3_ROOT / "compiled/corpus.json").exists()
@@ -184,6 +184,55 @@ def test_midlands_variant_expects_the_region_alias_not_the_coventry_service() ->
     }
 
 
+def test_v3_historical_reconciliations_match_adr_0022_reference_semantics() -> None:
+    cases = {
+        case["case_id"]: case
+        for path in sorted((V3_ROOT / "cases").glob("*.json"))
+        for case in load_json(path)["cases"]
+    }
+    controlled = cases["v3.medication.historical.controlled-drugs-v1"]
+    hoist = cases["v3.health.compare.moving-handling-staffing"]
+
+    assert controlled["planner_expectation"] == {
+        "temporal_mode": "HISTORICAL_REFERENCE",
+        "explicit_date": None,
+        "temporal_reference": {
+            "kind": "historical_reference",
+            "value": "version 1",
+        },
+        "location_references": [],
+        "clarification_reason": None,
+        "expected_outcome": "PLAN_READY",
+    }
+    assert all(
+        "2023 procedure" not in variant["question"]
+        for variant in controlled["variants"]
+    )
+    assert (
+        controlled["eligibility_expectation"]["eligible_versions"][0][
+            "document_version_id"
+        ]
+        == "doc.medication.controlled-drugs.v1"
+    )
+    assert [
+        evidence["evidence_id"]
+        for evidence in controlled["retrieval_expectation"]["evidence_units"]
+    ] == ["evidence.v3.medication.historical.controlled-drugs-v1.shift-end"]
+
+    assert hoist["planner_expectation"]["temporal_mode"] == "COMPARE"
+    assert len(hoist["retrieval_expectation"]["evidence_units"]) == 2
+    variants = {variant["variant_id"]: variant for variant in hoist["variants"]}
+    assert variants["colloquial"]["planner_expectation_override"] == {
+        "temporal_reference": None
+    }
+    assert variants["precision"]["planner_expectation_override"] == {
+        "temporal_reference": {
+            "kind": "historical_reference",
+            "value": "first version",
+        }
+    }
+
+
 def test_v3_catalogue_review_and_lineage_bind_every_source() -> None:
     catalog = load_json(V3_ROOT / "document-catalog.json")
     review = load_json(V3_ROOT / "reviews/catalogue-review-v1.json")
@@ -214,8 +263,20 @@ def test_v3_catalogue_review_and_lineage_bind_every_source() -> None:
     assert source_checksums["source_digests"] == expected_sources
     assert review["document_family_ids_digest"] == content_digest(sorted(families))
     assert review["document_version_ids_digest"] == content_digest(sorted(versions))
-    assert len(lineage["case_changes"]) == 45
-    assert {change["classification"] for change in lineage["case_changes"]} == {"NEW"}
+    assert len(lineage["case_changes"]) == 46
+    assert {change["classification"] for change in lineage["case_changes"]} == {
+        "NEW",
+        "REVISED",
+    }
+    controlled_drugs = next(
+        change
+        for change in lineage["case_changes"]
+        if change["target_id"] == "v3.medication.historical.controlled-drugs-v1"
+    )
+    assert controlled_drugs["source_id"] == (
+        "medication.controlled-drugs.valid-at-date"
+    )
+    assert controlled_drugs["classification"] == "REVISED"
     assert len(lineage["document_changes"]) == 93
     assert {change["classification"] for change in lineage["document_changes"]} == {
         "METADATA_ENRICHED"

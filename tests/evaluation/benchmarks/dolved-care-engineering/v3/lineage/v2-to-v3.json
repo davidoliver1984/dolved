@@ -191,6 +191,12 @@
       "reason": "Independently authored from the V3 canonical medication source and catalogue lineage."
     },
     {
+      "source_id": "medication.controlled-drugs.valid-at-date",
+      "target_id": "v3.medication.historical.controlled-drugs-v1",
+      "classification": "REVISED",
+      "reason": "Re-authored as an explicit attained-authority ordinal so the historical question no longer implies a whole-year 2023 authority window."
+    },
+    {
       "source_id": null,
       "target_id": "v3.medication.valid-at-date.omitted-dose-2024",
       "classification": "NEW",

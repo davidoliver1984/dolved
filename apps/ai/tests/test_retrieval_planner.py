@@ -254,13 +254,13 @@ def test_planner_lineage_is_stable_and_excludes_credentials() -> None:
 
     assert lineage.provider == "test-provider"
     assert lineage.contract_schema_version == "plan-response-v2"
-    assert lineage.prompt_version == "adr-0022-v3"
+    assert lineage.prompt_version == "adr-0022-v4"
     assert lineage.adapter_version == "structured-chat-v3"
     assert len(lineage.fingerprint) == 64
     assert "test-key" not in lineage.model_dump_json()
 
 
-def test_adr_0022_v3_planner_fingerprint_is_stable() -> None:
+def test_adr_0022_v4_planner_fingerprint_is_stable() -> None:
     lineage = StructuredChatRetrievalPlanner(
         api_url="https://planner.invalid/v1/chat/completions",
         api_key=SecretStr("test-key"),
@@ -273,7 +273,7 @@ def test_adr_0022_v3_planner_fingerprint_is_stable() -> None:
     ).lineage()
 
     assert lineage.fingerprint == (
-        "d27dba4c4569719b1f4ddf5d8612717308c705d98b06cb82b09505236f40614e"
+        "063d8b87bd0351179410b433ed6b0400de50d76dd67ae6f9ceb27a572386f9b8"
     )
 
 
@@ -283,7 +283,7 @@ def test_adr_0022_v3_planner_fingerprint_is_stable() -> None:
         ("provider_name", "another-provider"),
         ("model", "another-model"),
         ("contract_schema_version", "plan-response-v3"),
-        ("prompt_version", "adr-0022-v4"),
+        ("prompt_version", "another-prompt"),
         ("adapter_version", "structured-chat-v4"),
     ],
 )
@@ -376,6 +376,90 @@ def test_prompt_keeps_ordinary_contrast_current_and_forbids_manufactured_dates()
     assert "not COMPARE" in prompt
     assert "Never manufacture a day" in prompt
     assert "second model" not in prompt.lower()
+
+
+def test_prompt_requires_exact_calendar_date_fidelity() -> None:
+    from app.retrieval.planner import _planner_prompt
+
+    prompt = _planner_prompt("2026-08-15T12:00:00Z")
+
+    assert "preserve that calendar date exactly" in prompt
+    assert "1 January 2026 becomes 2026-01-01" in prompt
+    assert "15 June 2024 becomes 2024-06-15" in prompt
+    assert "2025-10-03 remains 2025-10-03" in prompt
+    assert "Never substitute a" in prompt
+    assert "different day, month, or year" in prompt
+
+
+@pytest.mark.parametrize(
+    ("question", "explicit_date"),
+    [
+        ("What applied on 1 January 2026?", "2026-01-01"),
+        ("What applied on 15 June 2024?", "2024-06-15"),
+        ("What applied on January 1, 2026?", "2026-01-01"),
+        ("What applied on 2025-10-03?", "2025-10-03"),
+    ],
+)
+def test_exact_calendar_date_contract_controls_preserve_named_dates(
+    question: str, explicit_date: str
+) -> None:
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": "valid_at_date",
+            "explicit_date": explicit_date,
+            "temporal_reference": None,
+            "location_references": [],
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2026-08-15T12:00:00Z")
+
+    assert result.temporal_mode.value == "valid_at_date"
+    assert str(result.explicit_date) == explicit_date
+    assert result.temporal_reference is None
+
+
+@pytest.mark.parametrize(
+    ("question", "mode", "kind", "value"),
+    [
+        (
+            "What applied in January 2026?",
+            "valid_at_date",
+            "calendar_period",
+            "January 2026",
+        ),
+        (
+            "What applied in 2023?",
+            "valid_at_date",
+            "calendar_period",
+            "2023",
+        ),
+        (
+            "What did the 2023 procedure say?",
+            "historical_reference",
+            "historical_reference",
+            "2023 procedure",
+        ),
+    ],
+)
+def test_non_exact_temporal_controls_remain_typed_references(
+    question: str, mode: str, kind: str, value: str
+) -> None:
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": mode,
+            "explicit_date": None,
+            "temporal_reference": {"kind": kind, "value": value},
+            "location_references": [],
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2026-08-15T12:00:00Z")
+
+    assert result.explicit_date is None
+    assert result.temporal_reference is not None
+    assert result.temporal_reference.kind.value == kind
+    assert result.temporal_reference.value == value
 
 
 def test_prompt_defines_locations_by_policy_applicability_without_entity_blacklists() -> (
