@@ -165,6 +165,7 @@ close() {
         python /workspace/scripts/evaluation/compile_application_benchmark_run.py \
         --observations "/evaluation-runs/${run_id}/application-observations.json" \
         --output-directory "/evaluation-runs/${run_id}" \
+        --planner-prompt-version adr-0022-v4 \
         --historical-baseline /evaluation-runs/EXP-0005-adr0022-v2-consolidated-engineering-baseline/result.json
     compose run --rm --no-deps -T --env PYTHONPATH=/app ai \
         python /workspace/scripts/evaluation/report.py generate \

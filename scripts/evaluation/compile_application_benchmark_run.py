@@ -16,6 +16,11 @@ def main() -> None:
     parser.add_argument("--observations", type=Path, required=True)
     parser.add_argument("--output-directory", type=Path, required=True)
     parser.add_argument("--historical-baseline", type=Path)
+    parser.add_argument(
+        "--planner-prompt-version",
+        default="adr-0022-v2",
+        help="Immutable planner prompt lineage recorded by the provider run.",
+    )
     args = parser.parse_args()
     provider = os.environ.get("RETRIEVAL_PLANNER_PROVIDER", "").strip()
     model = os.environ.get("RETRIEVAL_PLANNER_MODEL", "").strip()
@@ -28,7 +33,7 @@ def main() -> None:
         "provider": provider,
         "model": model,
         "contract_schema_version": "plan-response-v2",
-        "prompt_version": "adr-0022-v2",
+        "prompt_version": args.planner_prompt_version,
         "adapter_version": "structured-chat-v3",
     }
     planner["fingerprint"] = hashlib.sha256(
