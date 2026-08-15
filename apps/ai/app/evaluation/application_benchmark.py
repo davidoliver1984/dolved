@@ -799,6 +799,8 @@ def _experiment_description(run_id: str) -> str:
         )
     if run_id.startswith("EXP-0005-"):
         return "ADR-0022-v2 consolidated full-pipeline engineering baseline"
+    if run_id.startswith("EXP-0006-"):
+        return "ADR-0022-v4 consolidated full-pipeline engineering confirmation"
     return "Exact-commit ADR-0022 full-pipeline engineering experiment"
 
 

@@ -19,6 +19,7 @@ use App\Support\Evaluation\EngineeringBenchmarkSource;
 use App\Support\Evaluation\EngineeringBenchmarkState;
 use App\Support\Evaluation\Exp0004Definition;
 use App\Support\Evaluation\Exp0005Definition;
+use App\Support\Evaluation\Exp0006Definition;
 use App\Support\Evaluation\ThresholdCalibrationDefinition;
 use Carbon\CarbonImmutable;
 use RuntimeException;
@@ -53,6 +54,12 @@ final readonly class RunEngineeringBenchmarkExperiment
     public function handleExp0005(string $repositoryCommit): array
     {
         return $this->run($repositoryCommit, false, Exp0005Definition::RUN_ID, 'exp0005');
+    }
+
+    /** @return array<string, mixed> */
+    public function handleExp0006(string $repositoryCommit): array
+    {
+        return $this->run($repositoryCommit, false, Exp0006Definition::RUN_ID, 'exp0006');
     }
 
     /** @return array<string, mixed> */
@@ -112,8 +119,9 @@ final readonly class RunEngineeringBenchmarkExperiment
         ) {
             throw new RuntimeException($runId.' requires the trusted, fully verified V2 hybrid corpus.');
         }
-        if ($mode === 'exp0005') {
-            Exp0005Definition::assertProvisioning($state);
+        if (in_array($mode, ['exp0005', 'exp0006'], true)) {
+            $definition = $mode === 'exp0005' ? Exp0005Definition::class : Exp0006Definition::class;
+            $definition::assertProvisioning($state);
         }
         $workspace = Workspace::query()
             ->where('public_id', $state['workspace']['public_id'])
@@ -130,8 +138,9 @@ final readonly class RunEngineeringBenchmarkExperiment
         } else {
             $policy = $this->policies->handle($scope->activeCorpusGeneration);
         }
-        if ($mode === 'exp0005') {
-            Exp0005Definition::assertPolicy($policy);
+        if (in_array($mode, ['exp0005', 'exp0006'], true)) {
+            $definition = $mode === 'exp0005' ? Exp0005Definition::class : Exp0006Definition::class;
+            $definition::assertPolicy($policy);
         }
         $chunkConfigurations = DocumentChunk::query()
             ->where('workspace_id', $workspace->id)
@@ -218,8 +227,9 @@ final readonly class RunEngineeringBenchmarkExperiment
         if ($mode === 'cal_exp_0003' && $planner !== CalExp0003Definition::planner()) {
             throw new RuntimeException($runId.' requires the approved structured-chat-v3 planner lineage.');
         }
-        if ($mode === 'exp0005') {
-            Exp0005Definition::assertPlanner($planner);
+        if (in_array($mode, ['exp0005', 'exp0006'], true)) {
+            $definition = $mode === 'exp0005' ? Exp0005Definition::class : Exp0006Definition::class;
+            $definition::assertPlanner($planner);
         }
         $calibrationDefinition = match ($mode) {
             'cal_exp_0002' => CalExp0002Definition::class,
@@ -302,6 +312,8 @@ final readonly class RunEngineeringBenchmarkExperiment
             $lineage['experiment'] = Exp0004Definition::lineage();
         } elseif ($mode === 'exp0005') {
             $lineage['experiment'] = Exp0005Definition::lineage();
+        } elseif ($mode === 'exp0006') {
+            $lineage['experiment'] = Exp0006Definition::lineage();
         } elseif ($mode === 'calibration') {
             $lineage['experiment'] = ThresholdCalibrationDefinition::lineage();
         } elseif ($mode === 'cal_exp_0002') {

@@ -1,0 +1,61 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "EXP-0006-adr0022-v4-consolidated-engineering-confirmation",
+  "benchmark": {
+    "id": "dolved-care-engineering",
+    "version": "v2",
+    "digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d"
+  },
+  "engineering_snapshot": {
+    "digest": "8f67bb00ad22fe8f74ecdc834f66f22a00bf97bffe409d6857ce44fc0a0a5de5",
+    "case_ids_digest": "fca770615b5fbf20e81b494454969d54dbab2bfa66abf728455e95832b57465f",
+    "case_count": 42,
+    "variant_count": 126
+  },
+  "planner": {
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "contract_schema_version": "plan-response-v2",
+    "adapter_version": "structured-chat-v3",
+    "prompt_version": "adr-0022-v4",
+    "fingerprint": "063d8b87bd0351179410b433ed6b0400de50d76dd67ae6f9ceb27a572386f9b8"
+  },
+  "retrieval": {
+    "dense": {
+      "provider": "voyage",
+      "model": "voyage-4-large",
+      "dimensions": 1024,
+      "candidate_k": 40,
+      "profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c"
+    },
+    "sparse": {
+      "provider": "fastembed",
+      "model": "prithivida/Splade_PP_en_v1",
+      "candidate_k": 40,
+      "profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d"
+    },
+    "fusion": {
+      "strategy": "rrf",
+      "weighting": "equal",
+      "rrf_k": 5,
+      "candidate_k": 15
+    },
+    "reranker": {
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "candidate_k": 15
+    },
+    "evidence_threshold": 0.337890625,
+    "final_evidence_k": 5,
+    "policy_fingerprint": "6626d78bd9445c70fd946a64b0a817b4e77b264a14d945d483ba497f9e681364"
+  },
+  "provisioning": {
+    "record_sha256": "8691c5aa5a40b1aeba527287226c3d41515c576eff6ff4b216d1e068bc3f370d",
+    "mapping_digest": "1c206bcf8ddf3021502fa5ebb46ee696bf1faf159d1cbfc82d514d08913ac338"
+  },
+  "active_generation": {
+    "public_id": "a6e60b44-4f77-45a8-ae01-677b5516a7eb",
+    "point_manifest_digest": "7cb89453fbf90e6e45d24454ec3d4e4f801774404ee90caae4b959a76f664ab0",
+    "expected_point_count": 99
+  }
+}

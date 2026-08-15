@@ -1,0 +1,24 @@
+services:
+  api:
+    volumes: !override
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - ./tests/evaluation/engineering-snapshots/dolved-care-engineering/v2/corpus.json:/evaluation/engineering-snapshots/dolved-care-engineering/v2/corpus.json:ro
+      - ./tests/evaluation/planner-expectations/v2/engineering-expectations.json:/evaluation/planner-expectations/v2/engineering-expectations.json:ro
+      - ${EXP0006_RUNS_ROOT:-./docs/evaluation/runs}:/evaluation-runs
+      - ${EXP0006_INDEX_FILE:-./docs/evaluation/EXPERIMENTS.md}:/evaluation-index/EXPERIMENTS.md
+      - ${EXP0006_PROVISIONING_RECORD:?Set EXP0006_PROVISIONING_RECORD to the verified isolated copy}:/app/storage/app/private/evaluation/dolved-care-engineering/v2/provisioning.json:ro
+      - api_vendor:/app/vendor
+
+  ai:
+    volumes: !override
+      - ./apps/ai:/app
+      - ./contracts:/contracts:ro
+      - ./tests/evaluation/engineering-snapshots/dolved-care-engineering/v2/corpus.json:/evaluation/engineering-snapshots/dolved-care-engineering/v2/corpus.json:ro
+      - ./tests/evaluation/planner-expectations/v2/engineering-expectations.json:/evaluation/planner-expectations/v2/engineering-expectations.json:ro
+      - ${EXP0006_RUNS_ROOT:-./docs/evaluation/runs}:/evaluation-runs
+      - ${EXP0006_INDEX_FILE:-./docs/evaluation/EXPERIMENTS.md}:/evaluation-index/EXPERIMENTS.md
+      - ./scripts:/workspace/scripts:ro
+      - ${EXP0006_PROVISIONING_RECORD:?Set EXP0006_PROVISIONING_RECORD to the verified isolated copy}:/evaluation-lineage/provisioning.json:ro
+      - ai_venv:/app/.venv
+      - fastembed_cache:/opt/fastembed-cache

@@ -60,6 +60,7 @@ help:
 		'  make evaluation-exp-0004-runtime  Start and verify the isolated EXP-0004 runtime' \
 		'  make evaluation-exp-0004  Run the immutable RRF k=5 engineering experiment' \
 		'  make evaluation-exp-0005-runtime  Start and verify the isolated EXP-0005 runtime' \
+		'  make evaluation-exp-0006-runtime  Start and verify the isolated EXP-0006 runtime' \
 		'  make evaluation-exp-0005  Run the immutable ADR-0022-v2 consolidated engineering baseline' \
 		'  make evaluation-calibration-runtime  Start and verify the isolated threshold-calibration runtime' \
 		'  make evaluation-calibration-run  Run one immutable calibration provider pass' \
@@ -242,6 +243,12 @@ evaluation-exp-0005-runtime:
 
 evaluation-exp-0005:
 	./scripts/evaluation/exp0005_runtime.sh run
+
+evaluation-exp-0006-runtime:
+	./scripts/evaluation/exp0006_runtime.sh start
+
+evaluation-exp-0006:
+	./scripts/evaluation/exp0006_runtime.sh run
 
 evaluation-calibration-runtime:
 	./scripts/evaluation/calibration_runtime.sh start
