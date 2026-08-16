@@ -1,0 +1,34 @@
+{
+  "schema_version": "v3",
+  "review_id": "review.v3.medication.historical.controlled-drugs-v1",
+  "review_version": "1",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "case_id": "v3.medication.historical.controlled-drugs-v1",
+  "case_sha256": "4d32ff6555684fa107babe3794c9d1cfeff1736d7ce68c8cd64d6532855f5569",
+  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_lineage_digest": "801037ddc1196cf92c756a53f4bbcf2b6839bb4a379c7780277c5a4f74bf6d05",
+  "evidence_unit_ids_digest": "f4b926d5e2bc2b7942c95df7170574e9ff6fec5dd3e13074766b4fc52b1a25b8",
+  "reviewed_at": "2026-08-15T12:00:00Z",
+  "machine_validation": {
+    "validator_id": "benchmark-v3-compiler",
+    "validator_version": "1",
+    "passed": true
+  },
+  "human_review": {
+    "source_truth": "REVIEWED",
+    "evidence_units": "REVIEWED",
+    "expected_outcome": "REVIEWED",
+    "temporal_facts": "REVIEWED",
+    "applicability_facts": "REVIEWED",
+    "controlled_rejection_rationale": "NOT_APPLICABLE",
+    "approved": true
+  },
+  "reviewer_identity": "codex",
+  "review_note": "Post-EXP-0005 review replaced the misleading whole-year 2023 wording with explicit attained-authority ordinal references and verified the historical version 1 evidence."
+}

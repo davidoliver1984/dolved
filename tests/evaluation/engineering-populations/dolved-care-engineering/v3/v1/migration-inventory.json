@@ -1,0 +1,834 @@
+{
+  "schema_version": "v1",
+  "inventory_id": "dolved-care-engineering-v2-to-v3-engineering-v1",
+  "migration_version": "v2-engineering-to-v3-engineering-v1",
+  "source": {
+    "benchmark_version": "2",
+    "benchmark_digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
+    "split": "engineering_tuning",
+    "case_count": 42
+  },
+  "calibration_identity_evidence": {
+    "case_ids_digest": "1808477d771b24f45b726dd4b05ce8defa5b1edc624b8907155ccac7ab7e4801",
+    "semantic_cluster_ids_digest": "d4ab378d0e82029c02ababadf7aef4ef34abe95c040eb1c556a3643716a0ba40",
+    "leakage_group_ids_digest": "2bd2b209bccbb7df13329f1a21738d4bb7d66bc959aea57d4078dcb9ba9e6869",
+    "comparison_method": "canonical-identity-and-leakage-set-intersection",
+    "comparison_method_version": "1"
+  },
+  "classification_counts": {
+    "RETAINABLE": 7,
+    "REQUIRES_V3_RECONCILIATION": 1,
+    "BLOCKED_BY_CALIBRATION_CLUSTER": 34,
+    "RETIRED": 0
+  },
+  "cases": [
+    {
+      "source_case_id": "complaints.handling.compare",
+      "source_cluster_id": "cluster.complaints-handling-lineage",
+      "domain": "complaints",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.complaints.handling"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.complaints.handling",
+        "leakage.related.complaints.feedback"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.complaints.handling",
+        "leakage.related.complaints.feedback"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.complaints.handling, leakage.related.complaints.feedback"
+    },
+    {
+      "source_case_id": "complaints.handling.current-deadlines",
+      "source_cluster_id": "cluster.complaints-handling-lineage",
+      "domain": "complaints",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.complaints.handling"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.complaints.handling",
+        "leakage.related.complaints.feedback"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.complaints.handling",
+        "leakage.related.complaints.feedback"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.complaints.handling, leakage.related.complaints.feedback"
+    },
+    {
+      "source_case_id": "gdpr.breach.ico-owner",
+      "source_cluster_id": "cluster.gdpr-breach",
+      "domain": "gdpr",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.gdpr.breach"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.gdpr.breach"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.gdpr.breach"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.gdpr.breach"
+    },
+    {
+      "source_case_id": "gdpr.data-protection.compare",
+      "source_cluster_id": "cluster.gdpr-data-protection-lineage",
+      "domain": "gdpr",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.gdpr.data-protection"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.gdpr.data-protection"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.gdpr.data-protection"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.gdpr.data-protection"
+    },
+    {
+      "source_case_id": "gdpr.data-protection.current-reporting",
+      "source_cluster_id": "cluster.gdpr-data-protection-lineage",
+      "domain": "gdpr",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.gdpr.data-protection"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.gdpr.data-protection"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.gdpr.data-protection"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.gdpr.data-protection"
+    },
+    {
+      "source_case_id": "health-safety.accident.current-riddor-timing",
+      "source_cluster_id": "cluster.accident-reporting-lineage",
+      "domain": "health-safety",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.health-safety.accident-reporting"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.accident-reporting"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.health-safety.accident-reporting"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.health-safety.accident-reporting"
+    },
+    {
+      "source_case_id": "health-safety.accident.valid-at-date",
+      "source_cluster_id": "cluster.accident-reporting-lineage",
+      "domain": "health-safety",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.health-safety.accident-reporting"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.accident-reporting"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.health-safety.accident-reporting"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.health-safety.accident-reporting"
+    },
+    {
+      "source_case_id": "health-safety.coshh.review-trigger",
+      "source_cluster_id": "cluster.coshh",
+      "domain": "health-safety",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.health-safety.coshh"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.coshh"
+      ],
+      "calibration_collision": false,
+      "calibration_collision_ids": [],
+      "proposed_v3_case_id": "v3.health.current.coshh-review-trigger",
+      "classification": "RETAINABLE",
+      "reason": "Semantic truth is retained; only V3 metadata and identity are added."
+    },
+    {
+      "source_case_id": "health-safety.moving-handling.compare",
+      "source_cluster_id": "cluster.moving-handling-lineage",
+      "domain": "health-safety",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.health-safety.moving-handling"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.moving-handling"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.health-safety.moving-handling"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.health-safety.moving-handling"
+    },
+    {
+      "source_case_id": "health-safety.moving-handling.current-staffing",
+      "source_cluster_id": "cluster.moving-handling-lineage",
+      "domain": "health-safety",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.health-safety.moving-handling"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.health-safety.moving-handling"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.health-safety.moving-handling"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.health-safety.moving-handling"
+    },
+    {
+      "source_case_id": "hr.annual-leave.compare",
+      "source_cluster_id": "cluster.hr-annual-leave-lineage",
+      "domain": "hr",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.hr.annual-leave"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.hr.annual-leave"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.hr.annual-leave"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.hr.annual-leave"
+    },
+    {
+      "source_case_id": "hr.annual-leave.current-notice",
+      "source_cluster_id": "cluster.hr-annual-leave-lineage",
+      "domain": "hr",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.hr.annual-leave"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.hr.annual-leave"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.hr.annual-leave"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.hr.annual-leave"
+    },
+    {
+      "source_case_id": "hr.annual-leave.valid-at-date",
+      "source_cluster_id": "cluster.hr-annual-leave-lineage",
+      "domain": "hr",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.hr.annual-leave"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.hr.annual-leave"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.hr.annual-leave"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.hr.annual-leave"
+    },
+    {
+      "source_case_id": "hr.disciplinary.suspension-neutral",
+      "source_cluster_id": "cluster.hr-disciplinary",
+      "domain": "hr",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.hr.disciplinary"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.hr.disciplinary"
+      ],
+      "calibration_collision": false,
+      "calibration_collision_ids": [],
+      "proposed_v3_case_id": "v3.hr.current.disciplinary-suspension",
+      "classification": "RETAINABLE",
+      "reason": "Semantic truth is retained; only V3 metadata and identity are added."
+    },
+    {
+      "source_case_id": "hr.lone-worker.coventry-overdue",
+      "source_cluster_id": "cluster.hr-midlands-lone-worker",
+      "domain": "hr",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.hr.lone-worker-welfare"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.hr.lone-worker-welfare",
+        "leakage.related.health-safety.lone-working"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.hr.lone-worker-welfare",
+        "leakage.related.health-safety.lone-working"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.hr.lone-worker-welfare, leakage.related.health-safety.lone-working"
+    },
+    {
+      "source_case_id": "infection.outbreak.valid-before-withdrawal",
+      "source_cluster_id": "cluster.outbreak-management-lineage",
+      "domain": "infection-control",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.infection.outbreak-management"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.infection.outbreak-management"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.infection.outbreak-management"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.infection.outbreak-management"
+    },
+    {
+      "source_case_id": "medication.controlled-drugs.current-discrepancy",
+      "source_cluster_id": "cluster.controlled-drugs-lineage",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.controlled-drugs"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.controlled-drugs"
+      ],
+      "calibration_collision": false,
+      "calibration_collision_ids": [],
+      "proposed_v3_case_id": "v3.medication.current.controlled-drugs-discrepancy",
+      "classification": "RETAINABLE",
+      "reason": "Semantic truth is retained; only V3 metadata and identity are added."
+    },
+    {
+      "source_case_id": "medication.controlled-drugs.valid-at-date",
+      "source_cluster_id": "cluster.controlled-drugs-lineage",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.controlled-drugs"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.controlled-drugs"
+      ],
+      "calibration_collision": false,
+      "calibration_collision_ids": [],
+      "proposed_v3_case_id": "v3.medication.historical.controlled-drugs-v1",
+      "classification": "REQUIRES_V3_RECONCILIATION",
+      "reason": "The V2 whole-year historical wording conflicted with ADR-0022; the separately reviewed V3 case is the accepted reconciliation."
+    },
+    {
+      "source_case_id": "medication.covert.capacity-requirements",
+      "source_cluster_id": "cluster.covert-medication",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.covert"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.covert"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.medication.covert"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.medication.covert"
+    },
+    {
+      "source_case_id": "medication.error-form.immediate-safety",
+      "source_cluster_id": "cluster.medication-error-form",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.errors"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.errors"
+      ],
+      "calibration_collision": false,
+      "calibration_collision_ids": [],
+      "proposed_v3_case_id": "v3.medication.current.error-form",
+      "classification": "RETAINABLE",
+      "reason": "Semantic truth is retained; only V3 metadata and identity are added."
+    },
+    {
+      "source_case_id": "medication.fridge.boundary-table",
+      "source_cluster_id": "cluster.refrigerated-medicines",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.fridge-reference"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.fridge-reference"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.medication.fridge-reference"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.medication.fridge-reference"
+    },
+    {
+      "source_case_id": "medication.prn.minimum-interval",
+      "source_cluster_id": "cluster.medication-prn",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.prn"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.prn"
+      ],
+      "calibration_collision": false,
+      "calibration_collision_ids": [],
+      "proposed_v3_case_id": "v3.medication.current.prn-prechecks",
+      "classification": "RETAINABLE",
+      "reason": "Semantic truth is retained; only V3 metadata and identity are added."
+    },
+    {
+      "source_case_id": "pilot.adversarial.visitor-negative",
+      "source_cluster_id": "cluster.visitor-access",
+      "domain": "visitors",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.visitors.general",
+        "family.visitors.search-optimised-draft"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.visitors.general",
+        "leakage.family.visitors.search-optimised-draft",
+        "leakage.related.visitors.general"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.visitors.general",
+        "leakage.family.visitors.search-optimised-draft",
+        "leakage.related.visitors.general"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.visitors.general, leakage.family.visitors.search-optimised-draft, leakage.related.visitors.general"
+    },
+    {
+      "source_case_id": "pilot.applicability.ambiguous-home",
+      "source_cluster_id": "cluster.south-west-fire-applicability",
+      "domain": "fire-safety",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [],
+      "leakage_group_ids": [],
+      "calibration_collision": true,
+      "calibration_collision_ids": [],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns the South West applicability/location ambiguity semantic boundary even though this controlled case has no expected family."
+    },
+    {
+      "source_case_id": "pilot.applicability.bristol-conflict",
+      "source_cluster_id": "cluster.south-west-fire-applicability",
+      "domain": "fire-safety",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.fire.harbour-view-evacuation",
+        "family.fire.south-west-evacuation"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.fire.harbour-view-evacuation",
+        "leakage.family.fire.south-west-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.fire.harbour-view-evacuation",
+        "leakage.family.fire.south-west-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.fire.harbour-view-evacuation, leakage.family.fire.south-west-evacuation, leakage.related.fire.harbour-view-evacuation"
+    },
+    {
+      "source_case_id": "pilot.applicability.regional-exeter",
+      "source_cluster_id": "cluster.south-west-fire-applicability",
+      "domain": "fire-safety",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.fire.harbour-view-evacuation",
+        "family.fire.south-west-evacuation"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.fire.harbour-view-evacuation",
+        "leakage.family.fire.south-west-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.fire.harbour-view-evacuation",
+        "leakage.family.fire.south-west-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.fire.harbour-view-evacuation, leakage.family.fire.south-west-evacuation, leakage.related.fire.harbour-view-evacuation"
+    },
+    {
+      "source_case_id": "pilot.compare.medication-administration",
+      "source_cluster_id": "cluster.medication-administration-lineage",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.administration"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.administration"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.medication.administration"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.medication.administration"
+    },
+    {
+      "source_case_id": "pilot.current.medication-administration",
+      "source_cluster_id": "cluster.medication-administration-lineage",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.administration"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.administration"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.medication.administration"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.medication.administration"
+    },
+    {
+      "source_case_id": "pilot.current.scheduled-medication-version",
+      "source_cluster_id": "cluster.medication-administration-lineage",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.administration"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.administration"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.medication.administration"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.medication.administration"
+    },
+    {
+      "source_case_id": "pilot.current.withdrawn-before-authority",
+      "source_cluster_id": "cluster.safeguarding-reporting-lineage",
+      "domain": "safeguarding",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.safeguarding.adult-reporting"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.adult-reporting"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.safeguarding.adult-reporting"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.safeguarding.adult-reporting"
+    },
+    {
+      "source_case_id": "pilot.current.withdrawn-no-resurrection",
+      "source_cluster_id": "cluster.outbreak-management-lineage",
+      "domain": "infection-control",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.infection.outbreak-management"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.infection.outbreak-management"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.infection.outbreak-management"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.infection.outbreak-management"
+    },
+    {
+      "source_case_id": "pilot.location-alias.bristol",
+      "source_cluster_id": "cluster.south-west-fire-applicability",
+      "domain": "fire-safety",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.fire.harbour-view-evacuation",
+        "family.fire.south-west-evacuation"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.fire.harbour-view-evacuation",
+        "leakage.family.fire.south-west-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.fire.harbour-view-evacuation",
+        "leakage.family.fire.south-west-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.fire.harbour-view-evacuation, leakage.family.fire.south-west-evacuation, leakage.related.fire.harbour-view-evacuation"
+    },
+    {
+      "source_case_id": "pilot.multi-document.medication-storage",
+      "source_cluster_id": "cluster.refrigerated-medicines",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.administration",
+        "family.medication.storage"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.administration",
+        "leakage.family.medication.storage"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.medication.administration",
+        "leakage.family.medication.storage"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.medication.administration, leakage.family.medication.storage"
+    },
+    {
+      "source_case_id": "pilot.table.training-refresh",
+      "source_cluster_id": "cluster.training-matrix",
+      "domain": "training",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.training.matrix"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.training.matrix"
+      ],
+      "calibration_collision": false,
+      "calibration_collision_ids": [],
+      "proposed_v3_case_id": "v3.training.current.fire-marshal-refresh",
+      "classification": "RETAINABLE",
+      "reason": "Semantic truth is retained; only V3 metadata and identity are added."
+    },
+    {
+      "source_case_id": "pilot.valid-at-date.medication-administration",
+      "source_cluster_id": "cluster.medication-administration-lineage",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.administration"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.administration"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.medication.administration"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.medication.administration"
+    },
+    {
+      "source_case_id": "safeguarding.allegations.compare-process",
+      "source_cluster_id": "cluster.allegations-lineage",
+      "domain": "safeguarding",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.safeguarding.allegations-staff"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.allegations-staff"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.safeguarding.allegations-staff"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.safeguarding.allegations-staff"
+    },
+    {
+      "source_case_id": "safeguarding.allegations.current-hr-timing",
+      "source_cluster_id": "cluster.allegations-lineage",
+      "domain": "safeguarding",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.safeguarding.allegations-staff"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.allegations-staff"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.safeguarding.allegations-staff"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.safeguarding.allegations-staff"
+    },
+    {
+      "source_case_id": "safeguarding.body-map.observable-facts",
+      "source_cluster_id": "cluster.body-map",
+      "domain": "safeguarding",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.safeguarding.body-map"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.body-map"
+      ],
+      "calibration_collision": false,
+      "calibration_collision_ids": [],
+      "proposed_v3_case_id": "v3.safeguarding.current.body-map",
+      "classification": "RETAINABLE",
+      "reason": "Semantic truth is retained; only V3 metadata and identity are added."
+    },
+    {
+      "source_case_id": "safeguarding.capacity.unwise-decision",
+      "source_cluster_id": "cluster.mental-capacity",
+      "domain": "safeguarding",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.safeguarding.mental-capacity"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.mental-capacity"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.safeguarding.mental-capacity"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.safeguarding.mental-capacity"
+    },
+    {
+      "source_case_id": "safeguarding.covert-medication.multi-document",
+      "source_cluster_id": "cluster.covert-medication",
+      "domain": "medication",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.medication.covert",
+        "family.safeguarding.mental-capacity"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.medication.covert",
+        "leakage.family.safeguarding.mental-capacity"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.medication.covert",
+        "leakage.family.safeguarding.mental-capacity"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.medication.covert, leakage.family.safeguarding.mental-capacity"
+    },
+    {
+      "source_case_id": "training.medication.compare",
+      "source_cluster_id": "cluster.training-medication-competency-lineage",
+      "domain": "training",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.training.medication-competency"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.training.medication-competency"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.training.medication-competency"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.training.medication-competency"
+    },
+    {
+      "source_case_id": "training.medication.current-rounds",
+      "source_cluster_id": "cluster.training-medication-competency-lineage",
+      "domain": "training",
+      "v2_split_owner": "engineering_tuning",
+      "document_family_ids": [
+        "family.training.medication-competency"
+      ],
+      "leakage_group_ids": [
+        "leakage.family.training.medication-competency"
+      ],
+      "calibration_collision": true,
+      "calibration_collision_ids": [
+        "leakage.family.training.medication-competency"
+      ],
+      "proposed_v3_case_id": null,
+      "classification": "BLOCKED_BY_CALIBRATION_CLUSTER",
+      "reason": "V3 calibration owns leakage group(s): leakage.family.training.medication-competency"
+    }
+  ]
+}

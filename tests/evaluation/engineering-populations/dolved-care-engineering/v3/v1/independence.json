@@ -1,0 +1,24 @@
+{
+  "schema_version": "v1",
+  "comparison_method": "canonical-identity-and-leakage-set-intersection",
+  "comparison_method_version": "1",
+  "engineering": {
+    "case_ids_digest": "f21d1626826d71c128424a1de987692e6e0645b018516cc5f0af504f0cbb597c",
+    "semantic_cluster_ids_digest": "47211e4721b3582066932438ecd94f3bebd8b3ab7c76680f7ebf218b765c50c9",
+    "leakage_group_ids_digest": "1a1254b951d5732dc4ecc1b4c28500c11f2d8297220ab0a84c27e3ef74b4067c"
+  },
+  "calibration": {
+    "case_ids_digest": "1808477d771b24f45b726dd4b05ce8defa5b1edc624b8907155ccac7ab7e4801",
+    "semantic_cluster_ids_digest": "d4ab378d0e82029c02ababadf7aef4ef34abe95c040eb1c556a3643716a0ba40",
+    "leakage_group_ids_digest": "2bd2b209bccbb7df13329f1a21738d4bb7d66bc959aea57d4078dcb9ba9e6869"
+  },
+  "held_out": {
+    "assignment_status": "UNASSIGNED_AND_UNAVAILABLE",
+    "content_accessed": false
+  },
+  "overlap": {
+    "case_ids": [],
+    "semantic_cluster_ids": [],
+    "leakage_group_ids": []
+  }
+}

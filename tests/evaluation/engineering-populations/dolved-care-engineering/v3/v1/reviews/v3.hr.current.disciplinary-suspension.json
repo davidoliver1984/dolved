@@ -1,0 +1,34 @@
+{
+  "schema_version": "v3",
+  "review_id": "review.v3.hr.current.disciplinary-suspension",
+  "review_version": "1",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "case_id": "v3.hr.current.disciplinary-suspension",
+  "case_sha256": "fd61f554a16f0d901c1a5a708a64d385976017ce43ebe2c24614310bf25d5cb8",
+  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_lineage_digest": "be010859d37e510d66443ff544ceb40b1ef57c8a4cab96b4ff621e75552a9395",
+  "evidence_unit_ids_digest": "a0f72440c8c1911e50f3e12ae7ca2bf81a34498b78beaeee0c38b9d99cf04e24",
+  "reviewer_identity": "codex",
+  "reviewed_at": "2026-08-15T12:00:00Z",
+  "review_note": "Mechanical V2 engineering migration reviewed for unchanged source truth, V3 taxonomy binding, evidence anchoring, temporal scope and applicability.",
+  "machine_validation": {
+    "validator_id": "benchmark-v3-compiler",
+    "validator_version": "1",
+    "passed": true
+  },
+  "human_review": {
+    "source_truth": "REVIEWED",
+    "evidence_units": "REVIEWED",
+    "expected_outcome": "REVIEWED",
+    "temporal_facts": "REVIEWED",
+    "applicability_facts": "REVIEWED",
+    "controlled_rejection_rationale": "NOT_APPLICABLE",
+    "approved": true
+  }
+}

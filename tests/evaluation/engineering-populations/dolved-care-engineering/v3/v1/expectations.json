@@ -1,0 +1,303 @@
+{
+  "schema_version": "v1",
+  "population_id": "dolved-care-engineering-v3-engineering-v1",
+  "expectations": [
+    {
+      "case_id": "v3.health.current.coshh-review-trigger",
+      "variant_id": "direct",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.health.current.coshh-review-trigger",
+      "variant_id": "product",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.health.current.coshh-review-trigger",
+      "variant_id": "colloquial",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.hr.current.disciplinary-suspension",
+      "variant_id": "direct",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.hr.current.disciplinary-suspension",
+      "variant_id": "review",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.hr.current.disciplinary-suspension",
+      "variant_id": "colloquial",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.current.controlled-drugs-discrepancy",
+      "variant_id": "direct",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.current.controlled-drugs-discrepancy",
+      "variant_id": "contrast",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.current.controlled-drugs-discrepancy",
+      "variant_id": "colloquial",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.current.error-form",
+      "variant_id": "direct",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.current.error-form",
+      "variant_id": "priority",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.current.error-form",
+      "variant_id": "colloquial",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.current.prn-prechecks",
+      "variant_id": "direct",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.current.prn-prechecks",
+      "variant_id": "expanded",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.current.prn-prechecks",
+      "variant_id": "colloquial",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.historical.controlled-drugs-v1",
+      "variant_id": "direct",
+      "planner_expectation": {
+        "temporal_mode": "HISTORICAL_REFERENCE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.historical.controlled-drugs-v1",
+      "variant_id": "colloquial",
+      "planner_expectation": {
+        "temporal_mode": "HISTORICAL_REFERENCE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "old CD procedure"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.historical.controlled-drugs-v1",
+      "variant_id": "precision",
+      "planner_expectation": {
+        "temporal_mode": "HISTORICAL_REFERENCE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.safeguarding.current.body-map",
+      "variant_id": "direct",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.safeguarding.current.body-map",
+      "variant_id": "cause",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.safeguarding.current.body-map",
+      "variant_id": "colloquial",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.training.current.fire-marshal-refresh",
+      "variant_id": "direct",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.training.current.fire-marshal-refresh",
+      "variant_id": "colloquial",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.training.current.fire-marshal-refresh",
+      "variant_id": "contrast",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    }
+  ]
+}

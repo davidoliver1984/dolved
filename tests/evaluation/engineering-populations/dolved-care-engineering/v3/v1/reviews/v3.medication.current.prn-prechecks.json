@@ -1,0 +1,34 @@
+{
+  "schema_version": "v3",
+  "review_id": "review.v3.medication.current.prn-prechecks",
+  "review_version": "1",
+  "benchmark_id": "dolved-care-engineering",
+  "corpus_version": "3",
+  "taxonomy": {
+    "taxonomy_id": "dolved-care-engineering-taxonomy",
+    "taxonomy_version": "1",
+    "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
+  },
+  "case_id": "v3.medication.current.prn-prechecks",
+  "case_sha256": "d5a94451a247e4a829fb9cd7e060a5fc0a19eb5914357828cf53b3c753f21917",
+  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_lineage_digest": "a3def5636feb23775905294a0c458259be50961b44abf8bcbf2a6ad34e656fdd",
+  "evidence_unit_ids_digest": "9152a140269c2ef3f7a1a9fc6627b97575b3c01a3009f6f8ee57fa30aa657c83",
+  "reviewer_identity": "codex",
+  "reviewed_at": "2026-08-15T12:00:00Z",
+  "review_note": "Mechanical V2 engineering migration reviewed for unchanged source truth, V3 taxonomy binding, evidence anchoring, temporal scope and applicability.",
+  "machine_validation": {
+    "validator_id": "benchmark-v3-compiler",
+    "validator_version": "1",
+    "passed": true
+  },
+  "human_review": {
+    "source_truth": "REVIEWED",
+    "evidence_units": "REVIEWED",
+    "expected_outcome": "REVIEWED",
+    "temporal_facts": "REVIEWED",
+    "applicability_facts": "REVIEWED",
+    "controlled_rejection_rationale": "NOT_APPLICABLE",
+    "approved": true
+  }
+}
