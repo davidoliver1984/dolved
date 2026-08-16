@@ -77,10 +77,11 @@
       "variants": [
         {"variant_id": "direct", "question": "Under version 1 of the controlled-drugs procedure, when did a discrepancy have to be reported?", "evaluation_facets": []},
         {"variant_id": "colloquial", "question": "What did the old CD procedure say about when to report a stock discrepancy?", "evaluation_facets": ["abbreviation", "colloquial"], "planner_expectation_override": {"temporal_reference": {"kind": "historical_reference", "value": "old CD procedure"}}},
-        {"variant_id": "precision", "question": "Did controlled-drugs procedure version 1 allow reporting a discrepancy by the end of the shift?", "evaluation_facets": []}
+        {"variant_id": "precision", "question": "Did controlled-drugs procedure version 1 allow reporting a discrepancy by the end of the shift?", "evaluation_facets": []},
+        {"variant_id": "exact-date", "question": "On 15 June 2024, when did a controlled-drug discrepancy have to be reported?", "evaluation_facets": [], "planner_expectation_override": {"temporal_mode": "VALID_AT_DATE", "explicit_date": "2024-06-15", "temporal_reference": null}}
       ],
-      "slices": ["historical", "temporal-authority"],
-      "evaluation_facets": ["historical-explicit", "historical-ordinal", "historical-previous", "near-duplicate", "universal"],
+      "slices": ["VALID_AT_DATE", "historical", "temporal-authority"],
+      "evaluation_facets": ["before-authority-transition", "historical-explicit", "historical-ordinal", "historical-previous", "near-duplicate", "universal"],
       "source_lineage": [
         {"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "source_path": "documents/medication/controlled-drugs-v1.md", "source_sha256": "d5787e6cd6a4d352a73dd57046f2a5d2e0f18f27af469cd2e279e4e87229f83b", "purpose": "EXPECTED_EVIDENCE"},
         {"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v2", "source_path": "documents/medication/controlled-drugs-v2.md", "source_sha256": "2dad915e9dfe6775c424b684abd53a3477e0aba31ab1c1baca06e91ad9644b31", "purpose": "ELIGIBILITY_CONTEXT"}
@@ -94,6 +95,40 @@
       "retrieval_expectation": {"evidence_units": [{"evidence_id": "evidence.v3.medication.historical.controlled-drugs-v1.shift-end", "document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "side": "PRIMARY", "source_path": "documents/medication/controlled-drugs-v1.md", "canonical_excerpts": ["A discrepancy is reported to the registered manager before the end of the shift and the stock is secured while the check is repeated."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Version 1 discrepancy escalation", "notes": "The explicit attained-authority ordinal avoids the invalid whole-year 2023 interpretation."}]},
       "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
       "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "A source-anchored historical answer must survive reranking and thresholding after deterministic ordinal authority resolution."}
+    },
+    {
+      "case_id": "v3.medication.compare.controlled-drugs-discrepancy",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.medication.controlled-drugs-lineage",
+      "cluster_rationale": "Current, historical, exact-date and comparison variants share the same controlled-drugs authority lineage and changed discrepancy-reporting instruction.",
+      "leakage_group_ids": ["leakage.family.medication.controlled-drugs"],
+      "domain": "medication",
+      "variants": [
+        {"variant_id": "direct", "question": "Compare controlled-drug discrepancy reporting in version 1 with the current procedure.", "evaluation_facets": ["historical-explicit"]},
+        {"variant_id": "colloquial", "question": "How did the CD stock-mismatch rule change from the old procedure to now?", "evaluation_facets": ["abbreviation", "colloquial"], "planner_expectation_override": {"temporal_reference": null}},
+        {"variant_id": "versioned", "question": "What changed between controlled-drugs procedure versions 1 and 2 when the stock count is wrong?", "evaluation_facets": ["historical-explicit"]}
+      ],
+      "slices": ["COMPARE", "multi-evidence", "temporal-authority"],
+      "evaluation_facets": ["changed-instruction", "historical-explicit", "near-duplicate", "two-evidence-units", "universal"],
+      "source_lineage": [
+        {"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "source_path": "documents/medication/controlled-drugs-v1.md", "source_sha256": "d5787e6cd6a4d352a73dd57046f2a5d2e0f18f27af469cd2e279e4e87229f83b", "purpose": "EXPECTED_EVIDENCE"},
+        {"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v2", "source_path": "documents/medication/controlled-drugs-v2.md", "source_sha256": "2dad915e9dfe6775c424b684abd53a3477e0aba31ab1c1baca06e91ad9644b31", "purpose": "EXPECTED_EVIDENCE"}
+      ],
+      "planner_expectation": {"temporal_mode": "COMPARE", "explicit_date": null, "temporal_reference": {"kind": "historical_reference", "value": "version 1"}, "location_references": [], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v2", "side": "PRIMARY", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}},
+          {"document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "side": "COMPARISON", "applicability": {"kind": "UNIVERSAL", "governing_location_id": null, "requested_location_id": null}}
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [
+        {"evidence_id": "evidence.v3.engineering.medication.controlled-drugs-compare.current", "document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v2", "side": "PRIMARY", "source_path": "documents/medication/controlled-drugs-v2.md", "canonical_excerpts": ["A discrepancy must be escalated immediately, not at the end of the shift."], "relevance_grade": 2, "minimum_token_coverage": 1.0, "locator": "Current discrepancy escalation", "notes": "Current PRIMARY evidence states the changed immediate-escalation rule."},
+        {"evidence_id": "evidence.v3.engineering.medication.controlled-drugs-compare.v1", "document_family_id": "family.medication.controlled-drugs", "document_version_id": "doc.medication.controlled-drugs.v1", "side": "COMPARISON", "source_path": "documents/medication/controlled-drugs-v1.md", "canonical_excerpts": ["A discrepancy is reported to the registered manager before the end of the shift and the stock is secured while the check is repeated."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Version 1 discrepancy escalation", "notes": "Historical COMPARISON evidence establishes the former shift-end reporting rule."}
+      ]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY", "COMPARISON"], "justification": "Independent PRIMARY and COMPARISON EvidenceUnits must both survive the engineering retrieval path."}
     },
     {
       "case_id": "v3.medication.current.fridge-excursion",

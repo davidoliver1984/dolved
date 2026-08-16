@@ -56,8 +56,8 @@ def test_provisioning_definition_is_deterministic_and_truthful(tmp_path: Path) -
     assert provisioning["status"] == "DEFINITION_ONLY"
     assert provisioning["provider_calls_performed"] is False
     assert len(provisioning["locations"]) == 10
-    assert len(provisioning["document_families"]) == 71
-    assert len(provisioning["documents"]) == 93
+    assert len(provisioning["document_families"]) == 72
+    assert len(provisioning["documents"]) == 94
     assert provisioning["canonical_chunks"]["expected_count"] is None
     assert provisioning["vector_projection"]["expected_point_count"] is None
     assert provisioning["vector_projection"]["dense"]["model"] == "voyage-4-large"

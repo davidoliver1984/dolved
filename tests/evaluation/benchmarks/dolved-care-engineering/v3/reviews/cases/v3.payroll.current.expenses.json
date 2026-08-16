@@ -11,7 +11,7 @@
   },
   "case_id": "v3.payroll.current.expenses",
   "case_sha256": "6d024cbab421993a4ccc2c03c495ee48675d938a7cae88472c7c62fcef03a76a",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "4c58ef83921fe5f553d88956b15ab5c27f08d32e6084d411068a06011760a8a4",
   "evidence_unit_ids_digest": "d0dbc089794996c22660b3642603eec98f53b806626e523a9f6fbc35213fc906",
   "reviewed_at": "2026-08-13T22:45:00Z",

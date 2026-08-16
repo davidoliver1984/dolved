@@ -2301,6 +2301,45 @@
       ]
     },
     {
+      "family_id": "family.infection-control.midlands-community-specimen-transport",
+      "domain": "infection-control",
+      "title": "Midlands Community Specimen Transport Procedure",
+      "document_type": "PROCEDURE",
+      "planned_phenomena": [
+        "regional"
+      ],
+      "relationships": [],
+      "leakage_group_ids": [
+        "leakage.family.infection-control.midlands-community-specimen-transport"
+      ],
+      "versions": [
+        {
+          "version_id": "doc.infection-control.midlands-community-specimen-transport.v1",
+          "version_number": "1.0",
+          "source_path": "documents/infection-control/midlands-community-specimen-transport.md",
+          "governance_state": "APPROVED",
+          "created_at": "2026-02-02T09:00:00Z",
+          "approved_at": "2026-03-16T10:00:00Z",
+          "effective_from": "2026-04-01T00:00:00Z",
+          "withdrawn_at": null,
+          "supersedes_version_id": null,
+          "applicability": {
+            "kind": "LOCATIONS",
+            "location_ids": [
+              "location.region.midlands"
+            ]
+          },
+          "source_sha256": "77c2e26636f3188b94f3679b3a197dd5bc27a15dc7f91826c625763f73aa2787",
+          "evaluation_facets": [
+            "regional"
+          ],
+          "leakage_group_ids": [
+            "leakage.family.infection-control.midlands-community-specimen-transport"
+          ]
+        }
+      ]
+    },
+    {
       "family_id": "family.visitors.general",
       "domain": "visitors",
       "title": "Visitors and Contractors Procedure",

@@ -11,7 +11,7 @@
   },
   "case_id": "v3.complaints.compare.handling-timescales",
   "case_sha256": "f7bc7e66a3787f7b68268cb4fd5af6c67ade650b12b7f57c01912849209a1363",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "fb566b966ff011370ad3053dc5fb14456c87c42630f74ca7452388758fd2979a",
   "evidence_unit_ids_digest": "cd7c6f84f83bb7680d9f54731c096d429db2edee699662a67a8e07c1a390d6ba",
   "reviewed_at": "2026-08-13T22:45:00Z",

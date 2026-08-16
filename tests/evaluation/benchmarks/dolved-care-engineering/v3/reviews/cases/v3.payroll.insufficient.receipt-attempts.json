@@ -11,7 +11,7 @@
   },
   "case_id": "v3.payroll.insufficient.receipt-attempts",
   "case_sha256": "d1735114a11a388e3e049ae35cbbb85d73cb4c4e8eac02f95a2e888847c238b6",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "ea1c26b0fd35b185f09ee9483741f05b11708fb69cca9e408e60395ae93b0ae5",
   "evidence_unit_ids_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
   "reviewed_at": "2026-08-13T22:45:00Z",

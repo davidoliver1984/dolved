@@ -11,7 +11,7 @@
   },
   "case_id": "v3.medication.current.prn-prechecks",
   "case_sha256": "d5a94451a247e4a829fb9cd7e060a5fc0a19eb5914357828cf53b3c753f21917",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "a3def5636feb23775905294a0c458259be50961b44abf8bcbf2a6ad34e656fdd",
   "evidence_unit_ids_digest": "9152a140269c2ef3f7a1a9fc6627b97575b3c01a3009f6f8ee57fa30aa657c83",
   "reviewer_identity": "codex",

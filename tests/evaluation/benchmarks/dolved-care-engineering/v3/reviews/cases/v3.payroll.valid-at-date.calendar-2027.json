@@ -11,7 +11,7 @@
   },
   "case_id": "v3.payroll.valid-at-date.calendar-2027",
   "case_sha256": "000afb0bd11d4f065497e5cb32fb3a20f602c3779925f4b176519cc17832b953",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "82dd009aa9b0cff3f9d9e56b125fcce6f6ce1afed253d6108ec0361c128859da",
   "evidence_unit_ids_digest": "af901def0301e8d8a4ff5f69c126f297d32c9ad66effc9ee5a28512367acba78",
   "reviewed_at": "2026-08-13T22:45:00Z",

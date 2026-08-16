@@ -11,7 +11,7 @@
   },
   "case_id": "v3.safeguarding.valid-at-date.adult-reporting",
   "case_sha256": "9be9df68f912cb6cf41834c1a6b98caedb39606d3531f71da1a168ea59797927",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "c3a3519891f15b4caeb5c2faeaa876e0befcd4da9097b51c571ef42be1fd0d55",
   "evidence_unit_ids_digest": "b52377c964767a8cdf4117eacf091462c590b0b5bc1c7804ea06e0b324dc69b7",
   "reviewed_at": "2026-08-13T22:45:00Z",

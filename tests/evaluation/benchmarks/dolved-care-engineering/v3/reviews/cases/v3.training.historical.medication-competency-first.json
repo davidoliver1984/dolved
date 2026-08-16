@@ -11,7 +11,7 @@
   },
   "case_id": "v3.training.historical.medication-competency-first",
   "case_sha256": "529687f9da001914afa4e308cc8f66e414b9ab17b5d721ebdbd13c98267d8b3c",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "41baf2a603cdbd4f866cd759366bacc8636c1e360c5e7e5eb638212f04d2e0e5",
   "evidence_unit_ids_digest": "36709547cefe8ed077293b300944405e69d4d5c8cb0c8a1e990b53260abe6e02",
   "reviewed_at": "2026-08-13T22:45:00Z",

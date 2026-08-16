@@ -26,9 +26,9 @@ def test_repository_v3_first_domain_authoring_batch_compiles(tmp_path: Path) -> 
     manifest = load_json(V3_ROOT / "manifest.json")
     assert manifest["status"] == "AUTHORING"
     assert manifest["authored_counts"] == {
-        "document_families": 71,
-        "document_versions": 93,
-        "semantic_cases": 46,
+        "document_families": 72,
+        "document_versions": 94,
+        "semantic_cases": 48,
     }
     case_sources = [
         load_json(path) for path in sorted((V3_ROOT / "cases").glob("*.json"))
@@ -48,10 +48,10 @@ def test_repository_v3_first_domain_authoring_batch_compiles(tmp_path: Path) -> 
         "training",
         "visitors",
     }
-    assert len(cases) == 46
-    assert len(reviews) == 45
+    assert len(cases) == 48
+    assert len(reviews) == 47
     statuses = {case["case_id"]: case["authoring_status"] for case in cases}
-    assert sum(status == "REVIEWED" for status in statuses.values()) == 45
+    assert sum(status == "REVIEWED" for status in statuses.values()) == 47
     assert statuses["v3.infection.current.outbreak-no-authority"] == "DRAFT"
     assert not (V3_ROOT / "splits").exists()
     assert not (V3_ROOT / "compiled/corpus.json").exists()
@@ -135,8 +135,11 @@ def test_v3_retains_v2_organisation_structure_and_adds_only_reviewed_aliases() -
         path.relative_to(V3_ROOT / "documents"): path
         for path in (V3_ROOT / "documents").rglob("*.md")
     }
-    assert v2_sources.keys() == v3_sources.keys()
-    assert len(v3_sources) == 93
+    assert set(v2_sources).issubset(v3_sources)
+    assert set(v3_sources) - set(v2_sources) == {
+        Path("infection-control/midlands-community-specimen-transport.md")
+    }
+    assert len(v3_sources) == 94
     for relative_path, v2_source in v2_sources.items():
         assert v2_source.read_bytes() == v3_sources[relative_path].read_bytes()
 
@@ -263,7 +266,7 @@ def test_v3_catalogue_review_and_lineage_bind_every_source() -> None:
     assert source_checksums["source_digests"] == expected_sources
     assert review["document_family_ids_digest"] == content_digest(sorted(families))
     assert review["document_version_ids_digest"] == content_digest(sorted(versions))
-    assert len(lineage["case_changes"]) == 46
+    assert len(lineage["case_changes"]) == 48
     assert {change["classification"] for change in lineage["case_changes"]} == {
         "NEW",
         "REVISED",
@@ -277,10 +280,30 @@ def test_v3_catalogue_review_and_lineage_bind_every_source() -> None:
         "medication.controlled-drugs.valid-at-date"
     )
     assert controlled_drugs["classification"] == "REVISED"
-    assert len(lineage["document_changes"]) == 93
+    assert len(lineage["document_changes"]) == 94
     assert {change["classification"] for change in lineage["document_changes"]} == {
-        "METADATA_ENRICHED"
+        "METADATA_ENRICHED",
+        "NEW",
     }
+    new_documents = [
+        change
+        for change in lineage["document_changes"]
+        if change["classification"] == "NEW"
+    ]
+    assert new_documents == [
+        {
+            "source_id": None,
+            "target_id": (
+                "doc.infection-control.midlands-community-specimen-transport.v1"
+            ),
+            "classification": "NEW",
+            "reason": (
+                "New fictional V3 engineering source provides independently "
+                "reviewed Midlands regional specimen-transport truth for location, "
+                "hierarchy and applicability regression coverage."
+            ),
+        }
+    ]
 
 
 def test_v3_symmetric_catalogue_relationships_are_reciprocal() -> None:

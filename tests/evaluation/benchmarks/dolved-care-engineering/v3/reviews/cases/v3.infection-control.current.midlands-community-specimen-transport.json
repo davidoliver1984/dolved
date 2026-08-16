@@ -1,6 +1,6 @@
 {
   "schema_version": "v3",
-  "review_id": "review.v3.health.current.coshh-review-trigger",
+  "review_id": "review.v3.infection-control.current.midlands-community-specimen-transport",
   "review_version": "1",
   "benchmark_id": "dolved-care-engineering",
   "corpus_version": "3",
@@ -9,14 +9,12 @@
     "taxonomy_version": "1",
     "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
   },
-  "case_id": "v3.health.current.coshh-review-trigger",
-  "case_sha256": "fba5e75a971d5379aa6f98260219e0e296ffbb1d6a970aa3378fed95980e5e94",
+  "case_id": "v3.infection-control.current.midlands-community-specimen-transport",
+  "case_sha256": "b96222b07e060a33646df967068efcb46c74d7beb1692e6ae69d1ec90c06573f",
   "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
-  "source_lineage_digest": "d166d0dc80c21170d65302c90a09d612837a643fdfb26facb965bcfa6682de12",
-  "evidence_unit_ids_digest": "4ca72c883db78de81ceb00b8f1554a813e9ea0f66c44607dd0c76f0564332073",
-  "reviewer_identity": "codex",
-  "reviewed_at": "2026-08-15T12:00:00Z",
-  "review_note": "Mechanical V2 engineering migration reviewed for unchanged source truth, V3 taxonomy binding, evidence anchoring, temporal scope and applicability.",
+  "source_lineage_digest": "b05c1b4105ebdbc30f219da75ae51642eac14eb7463c84442a56d72e8e73f663",
+  "evidence_unit_ids_digest": "eada69e2dc43650d2f710f6f80a1a7e1203ebf5d715e84f68982a4b6f2bcd450",
+  "reviewed_at": "2026-08-16T12:00:00Z",
   "machine_validation": {
     "validator_id": "benchmark-v3-compiler",
     "validator_version": "1",
@@ -30,5 +28,7 @@
     "applicability_facts": "REVIEWED",
     "controlled_rejection_rationale": "NOT_APPLICABLE",
     "approved": true
-  }
+  },
+  "reviewer_identity": "codex",
+  "review_note": "Engineering regression review confirms realistic non-numeric specimen packaging and courier-handover source truth, Midlands regional applicability, Coventry descendant resolution, two atomic EvidenceUnits and no calibration-owned wording or identity reuse."
 }

@@ -85,6 +85,10 @@ RECONCILED = {
         "v3.medication.historical.controlled-drugs-v1"
     )
 }
+ENGINEERING_ADDITIONS = {
+    "v3.infection-control.current.midlands-community-specimen-transport",
+    "v3.medication.compare.controlled-drugs-discrepancy",
+}
 SPECIAL_BLOCKS = {
     "pilot.applicability.ambiguous-home": (
         "V3 calibration owns the South West applicability/location ambiguity "
@@ -496,7 +500,10 @@ def main() -> None:
     ]
     current_v3 = authored_v3_cases()
     reconciled = [current_v3[target] for target in RECONCILED.values()]
-    cases = sorted(migrated + reconciled, key=lambda value: value["case_id"])
+    additions = [current_v3[target] for target in sorted(ENGINEERING_ADDITIONS)]
+    cases = sorted(
+        migrated + reconciled + additions, key=lambda value: value["case_id"]
+    )
 
     corpus = {
         "schema_version": "v3",
@@ -512,10 +519,11 @@ def main() -> None:
 
     catalog_digest = source_catalog_digest()
     reviews = [case_review(case, catalog_digest) for case in migrated]
+    reviewed_authored_cases = set(RECONCILED.values()) | ENGINEERING_ADDITIONS
     existing_reviews = {
         review["case_id"]: review
         for path in sorted((BENCHMARK_ROOT / "reviews/cases").glob("*.json"))
-        if (review := load(path))["case_id"] in RECONCILED.values()
+        if (review := load(path))["case_id"] in reviewed_authored_cases
     }
     reviews.extend(existing_reviews.values())
 

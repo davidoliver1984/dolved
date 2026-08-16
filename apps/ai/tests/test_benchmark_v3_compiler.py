@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+
 from app.evaluation.benchmark.common import (
     canonical_bytes,
     content_digest,
@@ -754,6 +755,30 @@ def test_variant_planner_override_preserves_historical_reference_wording() -> No
     }
 
     validate_variant_planner_expectation(shared, variant, "case.compare")
+
+
+def test_variant_planner_override_supports_exact_date_semantics() -> None:
+    shared: dict[str, Any] = {
+        "temporal_mode": "HISTORICAL_REFERENCE",
+        "explicit_date": None,
+        "temporal_reference": {
+            "kind": "historical_reference",
+            "value": "version 1",
+        },
+        "location_references": [],
+        "clarification_reason": None,
+        "expected_outcome": "PLAN_READY",
+    }
+    variant = {
+        "variant_id": "exact-date",
+        "planner_expectation_override": {
+            "temporal_mode": "VALID_AT_DATE",
+            "explicit_date": "2024-06-15",
+            "temporal_reference": None,
+        },
+    }
+
+    validate_variant_planner_expectation(shared, variant, "case.historical")
 
 
 def test_variant_planner_override_cannot_violate_shared_adr0022_mode() -> None:

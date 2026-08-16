@@ -75,6 +75,92 @@
       }
     },
     {
+      "case_id": "v3.infection-control.current.midlands-community-specimen-transport",
+      "variant_id": "coventry",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [
+          "Coventry"
+        ],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.infection-control.current.midlands-community-specimen-transport",
+      "variant_id": "hierarchy",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [
+          "Coventry",
+          "Midlands"
+        ],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.infection-control.current.midlands-community-specimen-transport",
+      "variant_id": "regional",
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [
+          "Midlands",
+          "Coventry"
+        ],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.compare.controlled-drugs-discrepancy",
+      "variant_id": "direct",
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.compare.controlled-drugs-discrepancy",
+      "variant_id": "colloquial",
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.compare.controlled-drugs-discrepancy",
+      "variant_id": "versioned",
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
       "case_id": "v3.medication.current.controlled-drugs-discrepancy",
       "variant_id": "direct",
       "planner_expectation": {
@@ -222,6 +308,18 @@
           "kind": "historical_reference",
           "value": "version 1"
         },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      }
+    },
+    {
+      "case_id": "v3.medication.historical.controlled-drugs-v1",
+      "variant_id": "exact-date",
+      "planner_expectation": {
+        "temporal_mode": "VALID_AT_DATE",
+        "explicit_date": "2024-06-15",
+        "temporal_reference": null,
         "location_references": [],
         "clarification_reason": null,
         "expected_outcome": "PLAN_READY"

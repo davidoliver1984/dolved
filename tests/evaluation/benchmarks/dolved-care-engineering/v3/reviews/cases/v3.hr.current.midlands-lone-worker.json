@@ -11,7 +11,7 @@
   },
   "case_id": "v3.hr.current.midlands-lone-worker",
   "case_sha256": "98a6a49177353681d7d967e2e6a6a6e7f1f086489b1cafab2bcb7b778fa4f523",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "bddccb54e702139bee71aa7fcd8e83f782d1f25fcc47e1a9be2795d0ec0149cf",
   "evidence_unit_ids_digest": "3400adb5b19bbb45c5d614dd83424c18119edd2d0d08c331a3bc9848aaa9357e",
   "reviewed_at": "2026-08-15T12:00:00Z",

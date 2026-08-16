@@ -11,7 +11,7 @@
   },
   "case_id": "v3.complaints.historical.handling-v1",
   "case_sha256": "f6965c0572c3195b934ddabd4f6522885c39e62ec11ae43ac5bebfd7ba062c07",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "1fc7ce659225db5cafbd92d904a0e1aa64c830994934223751df3be596c38efd",
   "evidence_unit_ids_digest": "fe48c14a4bd7c6df333e987ddad078e50b12fd4cdaf68c6e65eb3c05516047fc",
   "reviewed_at": "2026-08-13T22:45:00Z",

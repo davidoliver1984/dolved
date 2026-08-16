@@ -1,7 +1,7 @@
 {
   "schema_version": "v3",
   "review_id": "catalogue-review.dolved-care-engineering.v3-foundation",
-  "review_version": "2",
+  "review_version": "3",
   "benchmark_id": "dolved-care-engineering",
   "corpus_version": "3",
   "taxonomy": {
@@ -11,7 +11,7 @@
   },
   "parent_benchmark_digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
   "organisation_sha256": "9bcfefa56b05d0e0eadadcd3b4c1dbc1e0e2d6b05d7f086b8e4098c6289fae09",
-  "document_catalog_sha256": "6a2d112eab795deffd8390674c34fcf26d645f2b50aa61af60646be45e024679",
+  "document_catalog_sha256": "c234e38c559f69fba6be1726a2bf32835a776dabd66ca20ee2ec496e70f8bba8",
   "source_digests": {
     "documents/complaints/advocacy-contacts.md": "64a8b2ffc093cb70d839152b2cc7bf63db94f47c25274a31f49b6d48fe4e17a5",
     "documents/complaints/complaint-record-form.md": "fb322ac36b3719418d345210094f5a685f608bfdae290f79066b316e0a5b778c",
@@ -60,6 +60,7 @@
     "documents/infection-control/hand-hygiene-v2.md": "d1c503fe4740d547e6cca6433c0bb45d74c0015e877953537367f098c651f599",
     "documents/infection-control/isolation-risk-assessment.md": "4a9864a51a5cbb53f8cac087fcfdeffe2d8bc91628c3d3fd6ff39b23b79f8faf",
     "documents/infection-control/laundry-procedure.md": "4e561f6ff4946854e3bd3d107e794aec92ecd817ae645d2e9cbfdd48d5c97853",
+    "documents/infection-control/midlands-community-specimen-transport.md": "77c2e26636f3188b94f3679b3a197dd5bc27a15dc7f91826c625763f73aa2787",
     "documents/infection-control/outbreak-management-v1.md": "5514341b895f892fa0af797eb14571266ea6ec8c1de53ca509aeb2e06eaa904c",
     "documents/infection-control/outbreak-management-v2-withdrawn.md": "cc265374341f019510bffaef17f288fc76be5a06c8bf3d29dcacf64e9fa71214",
     "documents/infection-control/ppe-reference.md": "a7f4e9022d343c4d748ac3bf753870420e88041a7eabcefa3891014231680a61",
@@ -107,9 +108,9 @@
     "documents/visitors/search-optimised-unapproved-draft.md": "441bf10e4a5c872792ece92e3f679fb814ac7e851ef627dc1d4776186425ee41",
     "documents/visitors/visitors-contractors.md": "70d61dedbfb1ab74f308ab11944f0a8ba02e7c20dd0624444318ce7bfba93dfd"
   },
-  "document_family_ids_digest": "d3ea3d84eb8dbb7d23c63d217f0b380fdcac4cba5336c17ce0ad389ee568bd1d",
-  "document_version_ids_digest": "6027dd11e1b0ad816c355f20540647e2f651b7dcb0bfe745d6d8c268b8146e42",
-  "reviewed_at": "2026-08-13T12:00:00Z",
+  "document_family_ids_digest": "b6a0b43a32b1d14f37e9f6e81ff4f4d7fa22c205ec73f06ef5f79f24aa604507",
+  "document_version_ids_digest": "7366b33b21d5d156fea22f114dd2d7b0ae8bcb70a43497b0d265aa92cc5f518f",
+  "reviewed_at": "2026-08-16T12:00:00Z",
   "machine_validation": {
     "validator_id": "benchmark-v3-compiler",
     "validator_version": "1",

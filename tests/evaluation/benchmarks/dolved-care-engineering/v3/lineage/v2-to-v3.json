@@ -150,6 +150,12 @@
     },
     {
       "source_id": null,
+      "target_id": "v3.infection-control.current.midlands-community-specimen-transport",
+      "classification": "NEW",
+      "reason": "Engineering regression case independently authored from a new V3 Midlands community specimen-transport source; it does not reuse calibration wording or identities."
+    },
+    {
+      "source_id": null,
       "target_id": "v3.infection.compare.outbreak-current-v2",
       "classification": "NEW",
       "reason": "Independently authored from the V3 canonical infection-control source and catalogue lineage."
@@ -174,6 +180,12 @@
     },
     {
       "source_id": null,
+      "target_id": "v3.medication.compare.controlled-drugs-discrepancy",
+      "classification": "NEW",
+      "reason": "Engineering regression comparison authored inside the existing engineering-owned controlled-drugs lineage with independent PRIMARY and COMPARISON evidence."
+    },
+    {
+      "source_id": null,
       "target_id": "v3.medication.current.fridge-excursion",
       "classification": "NEW",
       "reason": "Independently authored from the V3 canonical medication source and catalogue lineage."
@@ -194,7 +206,7 @@
       "source_id": "medication.controlled-drugs.valid-at-date",
       "target_id": "v3.medication.historical.controlled-drugs-v1",
       "classification": "REVISED",
-      "reason": "Re-authored as an explicit attained-authority ordinal so the historical question no longer implies a whole-year 2023 authority window."
+      "reason": "Re-authored as an explicit attained-authority ordinal and extended with an equivalent exact-date regression variant inside the version 1 authority window."
     },
     {
       "source_id": null,
@@ -300,6 +312,12 @@
     }
   ],
   "document_changes": [
+    {
+      "source_id": null,
+      "target_id": "doc.infection-control.midlands-community-specimen-transport.v1",
+      "classification": "NEW",
+      "reason": "New fictional V3 engineering source provides independently reviewed Midlands regional specimen-transport truth for location, hierarchy and applicability regression coverage."
+    },
     {
       "source_id": "doc.complaints.advocacy.v1",
       "target_id": "doc.complaints.advocacy.v1",

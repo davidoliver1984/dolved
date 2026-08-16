@@ -11,7 +11,7 @@
   },
   "case_id": "v3.hr.historical.annual-leave-first",
   "case_sha256": "80cf131b4ce266260b21eede711fe56218c76fb8a1f15e461423e7cbaf0bb9d4",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "48b5e9ddfe292804e24b6f6d52860c4d44edacfea3de3df92b0626de72768eaf",
   "evidence_unit_ids_digest": "125487fbe97fcded1f95e585e2fe4af95bddaf5662254224bc31990993262d2e",
   "reviewed_at": "2026-08-13T22:45:00Z",

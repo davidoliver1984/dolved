@@ -12,19 +12,19 @@ final class V3EngineeringBenchmark
 
     public const POPULATION_ID = 'dolved-care-engineering-v3-engineering-v1';
 
-    public const POPULATION_DIGEST = '73c53fe6602a807fa12b022f8656f775af02cc1b83faed6aeb93fc9d9b424797';
+    public const POPULATION_DIGEST = 'faac5aa922671d13402fefc75b0c1e613f9edd8fc90bf7e9812b4bf3d14f5d6a';
 
-    public const BENCHMARK_AUTHORING_DIGEST = 'e87bd8c782671b4e83aa50897d2c4f67578689f0a786f94fa21f236b38bde4f3';
+    public const BENCHMARK_AUTHORING_DIGEST = 'eea41b2efb7b5d84c130365b9dc13fdd24ab93696f5ecb5e990c25930a233b03';
 
-    public const PROVISIONING_DEFINITION_DIGEST = 'aedb24a2cf8bc9bc664ea684cf38f3b712b9c9338453e852b774df0f829e949c';
+    public const PROVISIONING_DEFINITION_DIGEST = '125b30ec435ba1ba530d1d35778656023bdf2d601dae82200e41ce4078e22a43';
 
-    public const EXPECTED_CASES = 8;
+    public const EXPECTED_CASES = 10;
 
-    public const EXPECTED_VARIANTS = 24;
+    public const EXPECTED_VARIANTS = 31;
 
-    public const EXPECTED_FAMILIES = 71;
+    public const EXPECTED_FAMILIES = 72;
 
-    public const EXPECTED_VERSIONS = 93;
+    public const EXPECTED_VERSIONS = 94;
 
     public const WORKSPACE_SLUG = 'evaluation-dolved-care-engineering-v3';
 

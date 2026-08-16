@@ -13,7 +13,7 @@ The mechanical audit covers all 42 historical engineering cases:
   semantic boundary is calibration-owned;
 - none is silently copied, renamed across a protected boundary, or retired.
 
-The resulting population contains 8 semantic cases and 24 variants. Its small
+The resulting population contains 10 semantic cases and 31 variants. Its small
 size is an independence result, not a quota decision. It directly exercises
 the corrected controlled-drugs historical semantics. The medication error-form
 questions provide an independent actor/recipient-versus-place analogue. The
@@ -22,7 +22,7 @@ exact-date fidelity and moving/handling comparison corrections are not
 represented without crossing the calibration boundary.
 
 `provisioning-definition.json` is deliberately `DEFINITION_ONLY`. It binds the
-current organisation, complete 71-family/93-version catalogue, source digests,
+current organisation, complete 72-family/94-version catalogue, source digests,
 planned deterministic platform identities, chunking configuration and accepted
 dense/sparse profile lineage. It does not fabricate canonical chunk or Qdrant
 point identities before the normal ingestion workflow has created them. Dense

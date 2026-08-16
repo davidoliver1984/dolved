@@ -233,6 +233,18 @@ def test_variant_planner_override_is_typed_and_bounded() -> None:
         validator.validate(corpus)
 
 
+def test_variant_planner_override_supports_exact_date_semantics() -> None:
+    corpus = valid_corpus()
+    variant = corpus["cases"][0]["variants"][0]
+    variant["planner_expectation_override"] = {
+        "temporal_mode": "VALID_AT_DATE",
+        "explicit_date": "2024-06-15",
+        "temporal_reference": None,
+    }
+
+    validator_for_schema("corpus.schema.json").validate(corpus)
+
+
 def test_v3_taxonomy_owns_every_calibration_population_label_and_facet() -> None:
     taxonomy = load_json(V3_ROOT / "taxonomy.v1.json")
     specification = load_json(CALIBRATION_POPULATION_SPEC)

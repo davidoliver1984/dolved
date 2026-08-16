@@ -3,9 +3,9 @@
   "comparison_method": "canonical-identity-and-leakage-set-intersection",
   "comparison_method_version": "1",
   "engineering": {
-    "case_ids_digest": "f21d1626826d71c128424a1de987692e6e0645b018516cc5f0af504f0cbb597c",
-    "semantic_cluster_ids_digest": "47211e4721b3582066932438ecd94f3bebd8b3ab7c76680f7ebf218b765c50c9",
-    "leakage_group_ids_digest": "1a1254b951d5732dc4ecc1b4c28500c11f2d8297220ab0a84c27e3ef74b4067c"
+    "case_ids_digest": "5be81b3238889f6b68af049e37a28f8de1cf00b4ab7e4883b2e59d630e9dcfbf",
+    "semantic_cluster_ids_digest": "5fce94350a0b70f25e98a977c543d3ab057f21cf1a274d1bf8809dcdb70f767f",
+    "leakage_group_ids_digest": "644989b29ad14b91a23790005d628417af96dc949c27d5b1e3f15578d6c2e1dc"
   },
   "calibration": {
     "case_ids_digest": "1808477d771b24f45b726dd4b05ce8defa5b1edc624b8907155ccac7ab7e4801",

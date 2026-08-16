@@ -11,7 +11,7 @@
   },
   "case_id": "v3.hr.current.disciplinary-suspension",
   "case_sha256": "fd61f554a16f0d901c1a5a708a64d385976017ce43ebe2c24614310bf25d5cb8",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "be010859d37e510d66443ff544ceb40b1ef57c8a4cab96b4ff621e75552a9395",
   "evidence_unit_ids_digest": "a0f72440c8c1911e50f3e12ae7ca2bf81a34498b78beaeee0c38b9d99cf04e24",
   "reviewer_identity": "codex",

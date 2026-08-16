@@ -90,6 +90,8 @@
       "additionalProperties": false,
       "minProperties": 1,
       "properties": {
+        "temporal_mode": {"enum": ["CURRENT", "COMPARE", "VALID_AT_DATE", "HISTORICAL_REFERENCE", "CLARIFICATION_REQUIRED"]},
+        "explicit_date": {"type": ["string", "null"], "format": "date"},
         "temporal_reference": {"anyOf": [{"$ref": "#/$defs/temporal_reference"}, {"type": "null"}]},
         "location_references": {"type": "array", "maxItems": 8, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 255}}
       }

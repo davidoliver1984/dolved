@@ -11,7 +11,7 @@
   },
   "case_id": "v3.medication.current.controlled-drugs-discrepancy",
   "case_sha256": "fe4ad427f90743226fb5a78def8f6be63e2c002074242cbb845c9d17ae128a69",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "95b768c39ca4cf5a4b510e8c0745ea884f60c23817a6bb26cbf3033939aac9ac",
   "evidence_unit_ids_digest": "425c8c98357192f5d20935e1015bfd6d1f701dbc037bcc34d23587aa7462a1b6",
   "reviewer_identity": "codex",

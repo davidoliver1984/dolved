@@ -11,7 +11,7 @@
   },
   "case_id": "v3.medication.current.error-form",
   "case_sha256": "530f6f6190566dee989685216b2c3da5e2a229e2480ad78d21d5d0b8a19282c1",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "4759cdc57f81f5b2ac19c081a215343da9aa4b259eddb4e80cf9ea71196c6829",
   "evidence_unit_ids_digest": "461f4d2ebe34a376cfcc2e511fea3b12e15aeee81871db798228fa0a9a63aa20",
   "reviewer_identity": "codex",

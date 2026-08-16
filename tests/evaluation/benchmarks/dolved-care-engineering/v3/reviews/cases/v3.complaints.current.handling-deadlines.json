@@ -11,7 +11,7 @@
   },
   "case_id": "v3.complaints.current.handling-deadlines",
   "case_sha256": "3d98b4bcfdeb1ae49d459915b952bd48c33494bca0fa10d5958eef555ae4e5b8",
-  "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc",
+  "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "aaebfa342816c1b5293534d651658ce787c0e12926ecb2e0551f1dbff3c905b9",
   "evidence_unit_ids_digest": "6b9ef5b5ad19c3361b7138d1e645f4e0d9093216fd0036cc3a19927e3a3b2b96",
   "reviewed_at": "2026-08-13T22:45:00Z",

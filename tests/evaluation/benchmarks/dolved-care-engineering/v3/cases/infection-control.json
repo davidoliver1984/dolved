@@ -70,6 +70,38 @@
       "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "Two complementary documents must survive the candidate and threshold path."}
     },
     {
+      "case_id": "v3.infection-control.current.midlands-community-specimen-transport",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3-engineering.midlands-community-specimen-transport",
+      "cluster_rationale": "All variants ask the same packaging and courier-handover question for Willow Bank under the independently authored Midlands regional procedure.",
+      "leakage_group_ids": ["leakage.family.infection-control.midlands-community-specimen-transport"],
+      "domain": "infection-control",
+      "variants": [
+        {"variant_id": "coventry", "question": "How must the Coventry community team package a specimen, and what must staff do when handing it to the courier?", "evaluation_facets": ["alias-colloquial"]},
+        {"variant_id": "hierarchy", "question": "For the Coventry community team in the Midlands, what specimen packaging and courier-handover controls apply?", "evaluation_facets": ["alias-formal"], "planner_expectation_override": {"location_references": ["Coventry", "Midlands"]}},
+        {"variant_id": "regional", "question": "Under the Midlands regional procedure, how should the Coventry community team package and hand over a specimen?", "evaluation_facets": ["alias-formal"], "planner_expectation_override": {"location_references": ["Midlands", "Coventry"]}}
+      ],
+      "slices": ["CURRENT", "applicability", "location-alias", "multi-evidence", "region-specific", "regional-applicability"],
+      "evaluation_facets": ["alias-formal", "regional", "two-evidence-units"],
+      "source_lineage": [
+        {"document_family_id": "family.infection-control.midlands-community-specimen-transport", "document_version_id": "doc.infection-control.midlands-community-specimen-transport.v1", "source_path": "documents/infection-control/midlands-community-specimen-transport.md", "source_sha256": "77c2e26636f3188b94f3679b3a197dd5bc27a15dc7f91826c625763f73aa2787", "purpose": "EXPECTED_EVIDENCE"}
+      ],
+      "planner_expectation": {"temporal_mode": "CURRENT", "explicit_date": null, "temporal_reference": null, "location_references": ["Coventry"], "clarification_reason": null, "expected_outcome": "PLAN_READY"},
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {"document_family_id": "family.infection-control.midlands-community-specimen-transport", "document_version_id": "doc.infection-control.midlands-community-specimen-transport.v1", "side": "PRIMARY", "applicability": {"kind": "ANCESTOR", "governing_location_id": "location.region.midlands", "requested_location_id": "location.willow-bank"}}
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {"evidence_units": [
+        {"evidence_id": "evidence.v3.engineering.specimen-transport.packaging", "document_family_id": "family.infection-control.midlands-community-specimen-transport", "document_version_id": "doc.infection-control.midlands-community-specimen-transport.v1", "side": "PRIMARY", "source_path": "documents/infection-control/midlands-community-specimen-transport.md", "canonical_excerpts": ["Community staff must close the specimen in its labelled primary container,", "place it in a leak-resistant secondary pouch with absorbent material, and put", "the pouch inside the rigid, lidded specimen carrier."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Packaging", "notes": "The complete three-layer packaging instruction is required."},
+        {"evidence_id": "evidence.v3.engineering.specimen-transport.handover", "document_family_id": "family.infection-control.midlands-community-specimen-transport", "document_version_id": "doc.infection-control.midlands-community-specimen-transport.v1", "side": "PRIMARY", "source_path": "documents/infection-control/midlands-community-specimen-transport.md", "canonical_excerpts": ["Before handover, staff record the collection time and receiving service on the", "The closed carrier is handed directly to an approved courier;", "it must not be left unattended at reception or in a vehicle."], "relevance_grade": 2, "minimum_token_coverage": 0.8, "locator": "Courier handover", "notes": "The transport log and direct approved-courier handover controls are independently useful from packaging."}
+      ]},
+      "outcome_expectation": {"outcome": "EVIDENCE_FOUND", "controlled_rejection_rationale": null},
+      "threshold_observability": {"classification": "POSITIVE_EVIDENCE", "reranker_evaluable": true, "required_sides": ["PRIMARY"], "justification": "Engineering regression evidence exercises location extraction, alias resolution, most-specific descendant selection and inherited regional applicability before two source-anchored EvidenceUnits reach reranking."}
+    },
+    {
       "case_id": "v3.infection.current.outbreak-no-authority",
       "authoring_status": "DRAFT",
       "cluster_id": "cluster.v3.infection.outbreak-authority-gap",

@@ -213,6 +213,294 @@
       }
     },
     {
+      "case_id": "v3.infection-control.current.midlands-community-specimen-transport",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3-engineering.midlands-community-specimen-transport",
+      "cluster_rationale": "All variants ask the same packaging and courier-handover question for Willow Bank under the independently authored Midlands regional procedure.",
+      "leakage_group_ids": [
+        "leakage.family.infection-control.midlands-community-specimen-transport"
+      ],
+      "domain": "infection-control",
+      "variants": [
+        {
+          "variant_id": "coventry",
+          "question": "How must the Coventry community team package a specimen, and what must staff do when handing it to the courier?",
+          "evaluation_facets": [
+            "alias-colloquial"
+          ]
+        },
+        {
+          "variant_id": "hierarchy",
+          "question": "For the Coventry community team in the Midlands, what specimen packaging and courier-handover controls apply?",
+          "evaluation_facets": [
+            "alias-formal"
+          ],
+          "planner_expectation_override": {
+            "location_references": [
+              "Coventry",
+              "Midlands"
+            ]
+          }
+        },
+        {
+          "variant_id": "regional",
+          "question": "Under the Midlands regional procedure, how should the Coventry community team package and hand over a specimen?",
+          "evaluation_facets": [
+            "alias-formal"
+          ],
+          "planner_expectation_override": {
+            "location_references": [
+              "Midlands",
+              "Coventry"
+            ]
+          }
+        }
+      ],
+      "slices": [
+        "CURRENT",
+        "applicability",
+        "location-alias",
+        "multi-evidence",
+        "region-specific",
+        "regional-applicability"
+      ],
+      "evaluation_facets": [
+        "alias-formal",
+        "regional",
+        "two-evidence-units"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.infection-control.midlands-community-specimen-transport",
+          "document_version_id": "doc.infection-control.midlands-community-specimen-transport.v1",
+          "source_path": "documents/infection-control/midlands-community-specimen-transport.md",
+          "source_sha256": "77c2e26636f3188b94f3679b3a197dd5bc27a15dc7f91826c625763f73aa2787",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "CURRENT",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [
+          "Coventry"
+        ],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.infection-control.midlands-community-specimen-transport",
+            "document_version_id": "doc.infection-control.midlands-community-specimen-transport.v1",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "ANCESTOR",
+              "governing_location_id": "location.region.midlands",
+              "requested_location_id": "location.willow-bank"
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.engineering.specimen-transport.packaging",
+            "document_family_id": "family.infection-control.midlands-community-specimen-transport",
+            "document_version_id": "doc.infection-control.midlands-community-specimen-transport.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/infection-control/midlands-community-specimen-transport.md",
+            "canonical_excerpts": [
+              "Community staff must close the specimen in its labelled primary container,",
+              "place it in a leak-resistant secondary pouch with absorbent material, and put",
+              "the pouch inside the rigid, lidded specimen carrier."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Packaging",
+            "notes": "The complete three-layer packaging instruction is required."
+          },
+          {
+            "evidence_id": "evidence.v3.engineering.specimen-transport.handover",
+            "document_family_id": "family.infection-control.midlands-community-specimen-transport",
+            "document_version_id": "doc.infection-control.midlands-community-specimen-transport.v1",
+            "side": "PRIMARY",
+            "source_path": "documents/infection-control/midlands-community-specimen-transport.md",
+            "canonical_excerpts": [
+              "Before handover, staff record the collection time and receiving service on the",
+              "The closed carrier is handed directly to an approved courier;",
+              "it must not be left unattended at reception or in a vehicle."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Courier handover",
+            "notes": "The transport log and direct approved-courier handover controls are independently useful from packaging."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY"
+        ],
+        "justification": "Engineering regression evidence exercises location extraction, alias resolution, most-specific descendant selection and inherited regional applicability before two source-anchored EvidenceUnits reach reranking."
+      }
+    },
+    {
+      "case_id": "v3.medication.compare.controlled-drugs-discrepancy",
+      "authoring_status": "REVIEWED",
+      "cluster_id": "cluster.v3.medication.controlled-drugs-lineage",
+      "cluster_rationale": "Current, historical, exact-date and comparison variants share the same controlled-drugs authority lineage and changed discrepancy-reporting instruction.",
+      "leakage_group_ids": [
+        "leakage.family.medication.controlled-drugs"
+      ],
+      "domain": "medication",
+      "variants": [
+        {
+          "variant_id": "direct",
+          "question": "Compare controlled-drug discrepancy reporting in version 1 with the current procedure.",
+          "evaluation_facets": [
+            "historical-explicit"
+          ]
+        },
+        {
+          "variant_id": "colloquial",
+          "question": "How did the CD stock-mismatch rule change from the old procedure to now?",
+          "evaluation_facets": [
+            "abbreviation",
+            "colloquial"
+          ],
+          "planner_expectation_override": {
+            "temporal_reference": null
+          }
+        },
+        {
+          "variant_id": "versioned",
+          "question": "What changed between controlled-drugs procedure versions 1 and 2 when the stock count is wrong?",
+          "evaluation_facets": [
+            "historical-explicit"
+          ]
+        }
+      ],
+      "slices": [
+        "COMPARE",
+        "multi-evidence",
+        "temporal-authority"
+      ],
+      "evaluation_facets": [
+        "changed-instruction",
+        "historical-explicit",
+        "near-duplicate",
+        "two-evidence-units",
+        "universal"
+      ],
+      "source_lineage": [
+        {
+          "document_family_id": "family.medication.controlled-drugs",
+          "document_version_id": "doc.medication.controlled-drugs.v1",
+          "source_path": "documents/medication/controlled-drugs-v1.md",
+          "source_sha256": "d5787e6cd6a4d352a73dd57046f2a5d2e0f18f27af469cd2e279e4e87229f83b",
+          "purpose": "EXPECTED_EVIDENCE"
+        },
+        {
+          "document_family_id": "family.medication.controlled-drugs",
+          "document_version_id": "doc.medication.controlled-drugs.v2",
+          "source_path": "documents/medication/controlled-drugs-v2.md",
+          "source_sha256": "2dad915e9dfe6775c424b684abd53a3477e0aba31ab1c1baca06e91ad9644b31",
+          "purpose": "EXPECTED_EVIDENCE"
+        }
+      ],
+      "planner_expectation": {
+        "temporal_mode": "COMPARE",
+        "explicit_date": null,
+        "temporal_reference": {
+          "kind": "historical_reference",
+          "value": "version 1"
+        },
+        "location_references": [],
+        "clarification_reason": null,
+        "expected_outcome": "PLAN_READY"
+      },
+      "eligibility_expectation": {
+        "eligible_versions": [
+          {
+            "document_family_id": "family.medication.controlled-drugs",
+            "document_version_id": "doc.medication.controlled-drugs.v2",
+            "side": "PRIMARY",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          },
+          {
+            "document_family_id": "family.medication.controlled-drugs",
+            "document_version_id": "doc.medication.controlled-drugs.v1",
+            "side": "COMPARISON",
+            "applicability": {
+              "kind": "UNIVERSAL",
+              "governing_location_id": null,
+              "requested_location_id": null
+            }
+          }
+        ],
+        "excluded_versions": [],
+        "expected_outcome": "ELIGIBLE_SCOPE_READY"
+      },
+      "retrieval_expectation": {
+        "evidence_units": [
+          {
+            "evidence_id": "evidence.v3.engineering.medication.controlled-drugs-compare.current",
+            "document_family_id": "family.medication.controlled-drugs",
+            "document_version_id": "doc.medication.controlled-drugs.v2",
+            "side": "PRIMARY",
+            "source_path": "documents/medication/controlled-drugs-v2.md",
+            "canonical_excerpts": [
+              "A discrepancy must be escalated immediately, not at the end of the shift."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 1.0,
+            "locator": "Current discrepancy escalation",
+            "notes": "Current PRIMARY evidence states the changed immediate-escalation rule."
+          },
+          {
+            "evidence_id": "evidence.v3.engineering.medication.controlled-drugs-compare.v1",
+            "document_family_id": "family.medication.controlled-drugs",
+            "document_version_id": "doc.medication.controlled-drugs.v1",
+            "side": "COMPARISON",
+            "source_path": "documents/medication/controlled-drugs-v1.md",
+            "canonical_excerpts": [
+              "A discrepancy is reported to the registered manager before the end of the shift and the stock is secured while the check is repeated."
+            ],
+            "relevance_grade": 2,
+            "minimum_token_coverage": 0.8,
+            "locator": "Version 1 discrepancy escalation",
+            "notes": "Historical COMPARISON evidence establishes the former shift-end reporting rule."
+          }
+        ]
+      },
+      "outcome_expectation": {
+        "outcome": "EVIDENCE_FOUND",
+        "controlled_rejection_rationale": null
+      },
+      "threshold_observability": {
+        "classification": "POSITIVE_EVIDENCE",
+        "reranker_evaluable": true,
+        "required_sides": [
+          "PRIMARY",
+          "COMPARISON"
+        ],
+        "justification": "Independent PRIMARY and COMPARISON EvidenceUnits must both survive the engineering retrieval path."
+      }
+    },
+    {
       "case_id": "v3.medication.current.controlled-drugs-discrepancy",
       "authoring_status": "REVIEWED",
       "cluster_id": "cluster.v3.medication.controlled-drugs-lineage",
@@ -563,13 +851,25 @@
           "variant_id": "precision",
           "question": "Did controlled-drugs procedure version 1 allow reporting a discrepancy by the end of the shift?",
           "evaluation_facets": []
+        },
+        {
+          "variant_id": "exact-date",
+          "question": "On 15 June 2024, when did a controlled-drug discrepancy have to be reported?",
+          "evaluation_facets": [],
+          "planner_expectation_override": {
+            "temporal_mode": "VALID_AT_DATE",
+            "explicit_date": "2024-06-15",
+            "temporal_reference": null
+          }
         }
       ],
       "slices": [
+        "VALID_AT_DATE",
         "historical",
         "temporal-authority"
       ],
       "evaluation_facets": [
+        "before-authority-transition",
         "historical-explicit",
         "historical-ordinal",
         "historical-previous",

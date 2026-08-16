@@ -47,16 +47,16 @@ def test_population_is_valid_reviewed_and_source_anchored() -> None:
         format_checker=FormatChecker(),
     ).validate(corpus)
 
-    assert len(corpus["cases"]) == 8
-    assert sum(len(case["variants"]) for case in corpus["cases"]) == 24
+    assert len(corpus["cases"]) == 10
+    assert sum(len(case["variants"]) for case in corpus["cases"]) == 31
     assert all(case["authoring_status"] == "REVIEWED" for case in corpus["cases"])
-    assert len({case["case_id"] for case in corpus["cases"]}) == 8
+    assert len({case["case_id"] for case in corpus["cases"]}) == 10
 
     for case in corpus["cases"]:
         review = load(POPULATION / "reviews" / f"{case['case_id']}.json")
         assert review["case_sha256"] == digest(case)
         assert review["source_catalog_digest"] == (
-            "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc"
+            "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e"
         )
         assert review["human_review"]["approved"] is True
         for source in case["source_lineage"]:
@@ -164,3 +164,46 @@ def test_v2_and_spent_calibration_lineage_remain_unchanged() -> None:
     )
     assert calibration["case_count"] == 44
     assert calibration["variant_count"] == 132
+
+
+def test_regression_additions_preserve_engineering_ownership_and_semantics() -> None:
+    cases = {
+        case["case_id"]: case for case in load(POPULATION / "corpus.json")["cases"]
+    }
+
+    location = cases[
+        "v3.infection-control.current.midlands-community-specimen-transport"
+    ]
+    assert location["cluster_id"] == (
+        "cluster.v3-engineering.midlands-community-specimen-transport"
+    )
+    assert location["planner_expectation"]["location_references"] == ["Coventry"]
+    assert location["eligibility_expectation"]["eligible_versions"][0][
+        "applicability"
+    ] == {
+        "kind": "ANCESTOR",
+        "governing_location_id": "location.region.midlands",
+        "requested_location_id": "location.willow-bank",
+    }
+    assert len(location["retrieval_expectation"]["evidence_units"]) == 2
+
+    historical = cases["v3.medication.historical.controlled-drugs-v1"]
+    exact_date = next(
+        variant
+        for variant in historical["variants"]
+        if variant["variant_id"] == "exact-date"
+    )
+    assert exact_date["planner_expectation_override"] == {
+        "temporal_mode": "VALID_AT_DATE",
+        "explicit_date": "2024-06-15",
+        "temporal_reference": None,
+    }
+
+    comparison = cases["v3.medication.compare.controlled-drugs-discrepancy"]
+    assert comparison["planner_expectation"]["temporal_mode"] == "COMPARE"
+    evidence = comparison["retrieval_expectation"]["evidence_units"]
+    assert {unit["side"] for unit in evidence} == {"PRIMARY", "COMPARISON"}
+    assert comparison["threshold_observability"]["required_sides"] == [
+        "PRIMARY",
+        "COMPARISON",
+    ]
