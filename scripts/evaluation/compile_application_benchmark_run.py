@@ -16,6 +16,7 @@ def main() -> None:
     parser.add_argument("--observations", type=Path, required=True)
     parser.add_argument("--output-directory", type=Path, required=True)
     parser.add_argument("--historical-baseline", type=Path)
+    parser.add_argument("--planner-expectations", type=Path)
     parser.add_argument(
         "--planner-prompt-version",
         default="adr-0022-v2",
@@ -44,6 +45,7 @@ def main() -> None:
         output_directory=args.output_directory,
         planner=planner,
         historical_baseline_path=args.historical_baseline,
+        planner_expectations_path=args.planner_expectations,
     )
 
 

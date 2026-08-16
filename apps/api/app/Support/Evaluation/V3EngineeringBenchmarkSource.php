@@ -79,6 +79,47 @@ final readonly class V3EngineeringBenchmarkSource
         return $source;
     }
 
+    /** @return array<string, mixed> */
+    public function experimentCorpus(): array
+    {
+        $source = $this->load();
+        $corpus = $source['corpus'];
+        $cases = $corpus['cases'];
+        $caseIds = collect($cases)->pluck('case_id')->all();
+        $variantCount = collect($cases)->sum(
+            fn (array $case): int => count($case['variants']),
+        );
+        $caseIdsDigest = $this->canonical->digest($caseIds);
+        if (
+            ($source['manifest']['case_ids_digest'] ?? null) !== $caseIdsDigest
+            || count($caseIds) !== V3EngineeringBenchmark::EXPECTED_CASES
+            || $variantCount !== V3EngineeringBenchmark::EXPECTED_VARIANTS
+        ) {
+            throw new RuntimeException('The Benchmark V3 experiment population identities are invalid.');
+        }
+
+        return [
+            'schema_version' => 'v3',
+            'benchmark' => [
+                'id' => V3EngineeringBenchmark::ID,
+                'version' => V3EngineeringBenchmark::VERSION,
+                'digest' => V3EngineeringBenchmark::POPULATION_DIGEST,
+                'evaluation_clock' => $corpus['evaluation_clock'],
+                'matching_algorithm' => $corpus['matching_algorithm'],
+            ],
+            'split' => [
+                'name' => 'engineering',
+                'version' => 'v1',
+                'case_ids' => $caseIds,
+                'case_ids_digest' => $caseIdsDigest,
+            ],
+            'cases' => $cases,
+            'case_count' => count($cases),
+            'variant_count' => $variantCount,
+            'snapshot_digest' => hash_file('sha256', V3EngineeringBenchmark::root().'/corpus.json'),
+        ];
+    }
+
     public function document(string $relativePath, string $expectedSha256): string
     {
         if (preg_match('#^documents/[a-z0-9][a-z0-9./-]*\.md$#', $relativePath) !== 1) {

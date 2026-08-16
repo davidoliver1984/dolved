@@ -9,6 +9,8 @@ import pytest
 from app.evaluation.application_benchmark import (
     _candidate_records,
     _experiment_description,
+    _planner_expectations,
+    _population_metadata,
     compile_application_benchmark_run,
 )
 from app.evaluation.historical_result import load_comparison_result
@@ -22,6 +24,85 @@ def test_exp_0004_description_records_the_controlled_rrf_variable_truthfully() -
         "Controlled engineering RRF experiment: rrf_k=60 control versus rrf_k=5 "
         "treatment with all other retrieval variables frozen"
     )
+
+
+def test_v3_population_and_planner_truth_are_definition_driven(
+    tmp_path: Path,
+) -> None:
+    identities = {
+        (f"case-{case}", f"variant-{variant}")
+        for case in range(10)
+        for variant in range(3 if case < 9 else 4)
+    }
+    expectations = {
+        "schema_version": "v3",
+        "population_id": "v3-engineering",
+        "expectations": [
+            {
+                "case_id": case_id,
+                "variant_id": variant_id,
+                "planner_expectation": {
+                    "temporal_mode": "CURRENT",
+                    "explicit_date": None,
+                    "temporal_reference": None,
+                    "location_references": [],
+                    "clarification_reason": None,
+                    "expected_outcome": "PLAN_READY",
+                },
+            }
+            for case_id, variant_id in sorted(identities)
+        ],
+    }
+    path = tmp_path / "expectations.json"
+    path.write_text(json.dumps(expectations))
+    raw = {
+        "experiment": {
+            "engineering_population": {
+                "id": "v3-engineering",
+                "case_count": 10,
+                "variant_count": 31,
+            }
+        }
+    }
+
+    assert _population_metadata(raw) == {
+        "name": "v3-engineering",
+        "case_count": 10,
+        "variant_count": 31,
+    }
+    contracts = _planner_expectations(path, identities)
+    assert len(contracts) == 31
+    assert all(contract["contract_version"] == 2 for contract in contracts.values())
+    assert all("expected_outcome" not in contract for contract in contracts.values())
+
+
+def test_v3_planner_truth_fails_closed_on_missing_or_unexpected_identity(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "expectations.json"
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": "v3",
+                "expectations": [
+                    {
+                        "case_id": "case.one",
+                        "variant_id": "direct",
+                        "planner_expectation": {
+                            "temporal_mode": "CURRENT",
+                            "explicit_date": None,
+                            "temporal_reference": None,
+                            "location_references": [],
+                            "clarification_reason": None,
+                        },
+                    }
+                ],
+            }
+        )
+    )
+
+    with pytest.raises(ValueError, match="identities do not match"):
+        _planner_expectations(path, {("case.two", "direct")})
 
 
 def test_failed_search_does_not_fabricate_zero_candidate_funnel_counts() -> None:

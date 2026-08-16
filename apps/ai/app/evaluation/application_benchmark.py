@@ -51,23 +51,31 @@ def compile_application_benchmark_run(
     output_directory: Path,
     planner: dict[str, Any],
     historical_baseline_path: Path | None = None,
+    planner_expectations_path: Path | None = None,
 ) -> dict[str, Any]:
     raw = _object(json.loads(raw_path.read_text()), "application observations")
     observations = _list(raw.get("observations"), "observations")
-    if len(observations) != 126:
-        raise ValueError("the engineering run requires exactly 126 observations")
+    population = _population_metadata(raw)
+    if len(observations) != population["variant_count"]:
+        raise ValueError("the engineering run has an unexpected observation count")
     case_data: dict[str, dict[str, Any]] = {}
     for item in observations:
         case = _object(item.get("case"), "case")
         case_data[str(case["case_id"])] = case
-    if len(case_data) != 42:
-        raise ValueError("the engineering run requires exactly 42 cases")
+    if len(case_data) != population["case_count"]:
+        raise ValueError("the engineering run has an unexpected case count")
     if _object(raw.get("planner"), "planner lineage") != planner:
         raise ValueError(
             "persisted planner lineage does not match the compiler environment"
         )
     corpus = _corpus(raw, tuple(case_data.values()))
-    planner_expectations = _planner_expectations()
+    observed_identities = {
+        (str(item["case"]["case_id"]), str(item["variant"]["variant_id"]))
+        for item in observations
+    }
+    planner_expectations = _planner_expectations(
+        planner_expectations_path, observed_identities
+    )
     document_mapping = _document_mapping(raw)
     location_mapping = _location_mapping(raw)
     dense_observations = tuple(
@@ -175,11 +183,23 @@ def compile_application_benchmark_run(
 
 
 def _corpus(raw: dict[str, Any], cases: tuple[dict[str, Any], ...]) -> EvaluationCorpus:
+    benchmark = _object(raw.get("benchmark"), "benchmark")
+    v3 = "engineering_population" in _object(
+        raw.get("experiment") or {}, "experiment lineage"
+    )
     return EvaluationCorpus(
         schema_version="v2",
-        corpus_version="2",
-        title="Dolved Care Engineering Benchmark V2 engineering split",
-        matching_algorithm="normalised-token-coverage-v1",
+        corpus_version=str(benchmark["version"]) if v3 else "2",
+        title=(
+            "Dolved Care Engineering Benchmark V3 engineering regression population"
+            if v3
+            else "Dolved Care Engineering Benchmark V2 engineering split"
+        ),
+        matching_algorithm=(
+            str(benchmark["matching_algorithm"])
+            if v3
+            else "normalised-token-coverage-v1"
+        ),
         cases=tuple(
             EvaluationCase(
                 case_id=str(case["case_id"]),
@@ -688,9 +708,26 @@ def _expected_location_identity(
     if not isinstance(planner, dict):
         return None
     applicability = planner.get("applicability_reference")
-    if not isinstance(applicability, dict):
-        return None
-    location_id = applicability.get("resolved_location_id")
+    location_id = (
+        applicability.get("resolved_location_id")
+        if isinstance(applicability, dict)
+        else None
+    )
+    if location_id is None:
+        eligibility = case.get("eligibility_expectation")
+        eligible_value = (
+            eligibility.get("eligible_versions")
+            if isinstance(eligibility, dict)
+            else None
+        )
+        eligible = eligible_value if isinstance(eligible_value, list) else []
+        requested = {
+            item.get("applicability", {}).get("requested_location_id")
+            for item in eligible
+            if isinstance(item, dict) and isinstance(item.get("applicability"), dict)
+        }
+        requested.discard(None)
+        location_id = next(iter(requested)) if len(requested) == 1 else None
     return locations.get(str(location_id)) if location_id is not None else None
 
 
@@ -725,6 +762,7 @@ def _config(raw: dict[str, Any], planner: dict[str, Any]) -> dict[str, Any]:
     embedding = _object(generations.get("embedding_space"), "embedding space")
     sparse = _object(generations.get("sparse_space"), "sparse space")
     repository = _object(raw.get("repository"), "repository")
+    population = _population_metadata(raw)
     split_ids = benchmark["engineering_case_ids"]
     split_digest = content_digest(split_ids)
     return {
@@ -743,9 +781,9 @@ def _config(raw: dict[str, Any], planner: dict[str, Any]) -> dict[str, Any]:
         "split": {
             "version": benchmark["split_version"],
             "digest": split_digest,
-            "name": "engineering_tuning",
-            "case_count": 42,
-            "variant_count": 126,
+            "name": population["name"],
+            "case_count": population["case_count"],
+            "variant_count": population["variant_count"],
         },
         "harness_version": RetrievalEvaluationHarness.VERSION,
         "threshold_policy_identity": policy["fingerprint"],
@@ -801,6 +839,8 @@ def _experiment_description(run_id: str) -> str:
         return "ADR-0022-v2 consolidated full-pipeline engineering baseline"
     if run_id.startswith("EXP-0006-"):
         return "ADR-0022-v4 consolidated full-pipeline engineering confirmation"
+    if run_id.startswith("EXP-0007-"):
+        return "Benchmark V3 engineering regression confirmation"
     return "Exact-commit ADR-0022 full-pipeline engineering experiment"
 
 
@@ -1178,27 +1218,63 @@ def _percentile(values: list[float], quantile: float) -> float:
     return values[lower] + ((values[upper] - values[lower]) * fraction)
 
 
-def _planner_expectations() -> dict[tuple[str, str], dict[str, Any]]:
+def _planner_expectations(
+    path: Path | None = None,
+    expected_identities: set[tuple[str, str]] | None = None,
+) -> dict[tuple[str, str], dict[str, Any]]:
     payload = _object(
-        json.loads(PLANNER_EXPECTATIONS_PATH.read_text()), "planner expectations"
+        json.loads((path or PLANNER_EXPECTATIONS_PATH).read_text()),
+        "planner expectations",
     )
     if (
-        payload.get("schema_version") != "v2"
-        or payload.get("scope") != "engineering_tuning"
+        payload.get("schema_version") == "v2"
+        and payload.get("scope") == "engineering_tuning"
     ):
-        raise ValueError(
-            "planner expectations must be the reviewed engineering v2 truth"
-        )
-    values = {
-        (str(item["case_id"]), str(item["variant_id"])): _object(
-            item.get("contract"), "planner expectation contract"
-        )
-        for item in _list(payload.get("expectations"), "planner expectations")
-    }
-    if len(values) != 126:
-        raise ValueError("planner expectation v2 must contain 126 engineering variants")
+        values = {
+            (str(item["case_id"]), str(item["variant_id"])): _object(
+                item.get("contract"), "planner expectation contract"
+            )
+            for item in _list(payload.get("expectations"), "planner expectations")
+        }
+        if len(values) != 126:
+            raise ValueError(
+                "planner expectation v2 must contain 126 engineering variants"
+            )
+    elif payload.get("schema_version") == "v3":
+        values = {}
+        for item in _list(payload.get("expectations"), "planner expectations"):
+            contract = dict(
+                _object(item.get("planner_expectation"), "planner expectation contract")
+            )
+            contract["contract_version"] = 2
+            contract.pop("expected_outcome", None)
+            values[(str(item["case_id"]), str(item["variant_id"]))] = contract
+    else:
+        raise ValueError("planner expectations use an unsupported schema")
+
+    if expected_identities is not None and set(values) != expected_identities:
+        raise ValueError("planner expectation identities do not match observations")
 
     return values
+
+
+def _population_metadata(raw: dict[str, Any]) -> dict[str, Any]:
+    experiment = _object(raw.get("experiment") or {}, "experiment lineage")
+    population = experiment.get("engineering_population")
+    if isinstance(population, dict):
+        return {
+            "name": str(population["id"]),
+            "case_count": int(population["case_count"]),
+            "variant_count": int(population["variant_count"]),
+        }
+    split = experiment.get("engineering_split")
+    if isinstance(split, dict):
+        return {
+            "name": "engineering_tuning",
+            "case_count": int(split["case_count"]),
+            "variant_count": int(split["variant_count"]),
+        }
+    return {"name": "engineering_tuning", "case_count": 42, "variant_count": 126}
 
 
 def _write(path: Path, value: Any) -> None:

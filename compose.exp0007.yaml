@@ -10,6 +10,8 @@ services:
       - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/organisation.json:/evaluation/engineering/organisation.json:ro
       - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/document-catalog.json:/evaluation/engineering/document-catalog.json:ro
       - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/provisioning-definition.json:/evaluation/engineering/provisioning-definition.json:ro
+      - ${EXP0007_RUNS_ROOT:-/private/tmp/rag-platform-exp0007/runs}:/evaluation-runs
+      - ${EXP0007_INDEX_FILE:-/private/tmp/rag-platform-exp0007/index/EXPERIMENTS.md}:/evaluation-index/EXPERIMENTS.md
       - ${EXP0007_PROVISIONING_RECORD:?Set EXP0007_PROVISIONING_RECORD to the verified immutable copy}:/app/storage/app/private/evaluation/dolved-care-engineering/v3/provisioning.json:ro
       - api_vendor:/app/vendor
 
@@ -24,6 +26,8 @@ services:
       - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/organisation.json:/evaluation/engineering/organisation.json:ro
       - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/document-catalog.json:/evaluation/engineering/document-catalog.json:ro
       - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/provisioning-definition.json:/evaluation/engineering/provisioning-definition.json:ro
+      - ${EXP0007_RUNS_ROOT:-/private/tmp/rag-platform-exp0007/runs}:/evaluation-runs
+      - ${EXP0007_INDEX_FILE:-/private/tmp/rag-platform-exp0007/index/EXPERIMENTS.md}:/evaluation-index/EXPERIMENTS.md
       - ${EXP0007_PROVISIONING_RECORD:?Set EXP0007_PROVISIONING_RECORD to the verified immutable copy}:/evaluation-lineage/provisioning.json:ro
       - ./scripts:/workspace/scripts:ro
       - ai_venv:/app/.venv

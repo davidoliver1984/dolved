@@ -29,6 +29,9 @@ the verified provisioning record, contracts, and exact application source.
 Calibration, held-out, V2 engineering, and broad evaluation paths are
 prohibited.
 
-The current boundary provides definition and provider-free preflight only.
-No provider-backed EXP-0007 execution is performed by the runtime script until
-that execution is deliberately approved.
+The runtime lifecycle is `prepare`, `start`, `verify`, `run`, and `close`.
+Execution reuses the common durable per-variant checkpoint format and compiles
+the stored V3 observations into the existing result/report vocabulary. `close`
+requires all 31 expected identities and performs deterministic provider-free
+compilation twice before writing reports and checksums. Provider execution
+remains a separate deliberate approval after exact-commit preflight.

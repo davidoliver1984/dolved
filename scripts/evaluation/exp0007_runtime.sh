@@ -10,9 +10,11 @@ readonly definition="${repository_root}/tests/evaluation/experiment-definitions/
 readonly expected_record_sha="$(jq -er '.provisioning.record_sha256' "${definition}")"
 readonly environment_file="${EXP0007_ENV_FILE:-/Users/davidoliver/Desktop/RAG/.env}"
 readonly provisioning_record="${EXP0007_PROVISIONING_RECORD:-/private/tmp/rag-platform-exp0007/provisioning.json}"
+readonly runs_root="${EXP0007_RUNS_ROOT:-/private/tmp/rag-platform-exp0007/runs}"
+readonly index_file="${EXP0007_INDEX_FILE:-/private/tmp/rag-platform-exp0007/index/EXPERIMENTS.md}"
 
 usage() {
-    printf 'Usage: %s prepare <materialised-provisioning-source> | start | verify\n' "$0" >&2
+    printf 'Usage: %s prepare <materialised-provisioning-source> | start | verify | run | close\n' "$0" >&2
     exit 2
 }
 
@@ -44,7 +46,9 @@ assert_inputs() {
 }
 
 compose() {
-    EXP0007_PROVISIONING_RECORD="${provisioning_record}" docker compose \
+    EXP0007_PROVISIONING_RECORD="${provisioning_record}" \
+    EXP0007_RUNS_ROOT="${runs_root}" \
+    EXP0007_INDEX_FILE="${index_file}" docker compose \
         --project-name "${project_name}" \
         --env-file "${environment_file}" \
         --file "${repository_root}/compose.yaml" \
@@ -124,13 +128,63 @@ verify() {
 start() {
     assert_clean_lineage
     assert_inputs
+    mkdir -p "${runs_root}" "$(dirname "${index_file}")"
+    touch "${index_file}"
     compose up --detach --no-deps --force-recreate --wait api ai
     verify
+}
+
+close() {
+    local run_directory="${runs_root}/${run_id}"
+    [[ -f "${run_directory}/application-observations.json" ]] || {
+        printf 'Missing preserved EXP-0007 observations under %s\n' "${runs_root}" >&2
+        exit 1
+    }
+    [[ "$(jq -er '.observations | length' "${run_directory}/application-observations.json")" == '31' ]] || {
+        printf 'EXP-0007 cannot close without exactly 31 observations.\n' >&2
+        exit 1
+    }
+    compose run --rm --no-deps -T --env PYTHONPATH=/app ai \
+        python /workspace/scripts/evaluation/compile_application_benchmark_run.py \
+        --observations "/evaluation-runs/${run_id}/application-observations.json" \
+        --output-directory "/evaluation-runs/${run_id}" \
+        --planner-prompt-version adr-0022-v4 \
+        --planner-expectations /evaluation/engineering/expectations.json
+    local first
+    first="$(openssl dgst -sha256 "${run_directory}/result.json" "${run_directory}/config.json" "${run_directory}/comparison.json")"
+    compose run --rm --no-deps -T --env PYTHONPATH=/app ai \
+        python /workspace/scripts/evaluation/compile_application_benchmark_run.py \
+        --observations "/evaluation-runs/${run_id}/application-observations.json" \
+        --output-directory "/evaluation-runs/${run_id}" \
+        --planner-prompt-version adr-0022-v4 \
+        --planner-expectations /evaluation/engineering/expectations.json
+    [[ "${first}" == "$(openssl dgst -sha256 "${run_directory}/result.json" "${run_directory}/config.json" "${run_directory}/comparison.json")" ]] || {
+        printf 'EXP-0007 deterministic compilation changed between passes.\n' >&2
+        exit 1
+    }
+    compose run --rm --no-deps -T --env PYTHONPATH=/app ai \
+        python /workspace/scripts/evaluation/report.py generate \
+        --run-dir "/evaluation-runs/${run_id}" \
+        --runs-root /evaluation-runs \
+        --index /evaluation-index/EXPERIMENTS.md
+    compose run --rm --no-deps -T --env PYTHONPATH=/app ai \
+        python /workspace/scripts/evaluation/write_run_checksums.py \
+        --run-directory "/evaluation-runs/${run_id}"
+}
+
+run() {
+    verify
+    local head
+    head="$(git -C "${repository_root}" rev-parse HEAD)"
+    compose exec -T api php artisan evaluation:benchmark:run-exp-0007 --repository-commit="${head}"
+    close
 }
 
 case "${1:-}" in
     prepare) prepare "${2:-}" ;;
     start) start ;;
     verify) verify ;;
+    run) run ;;
+    close) close ;;
     *) usage ;;
 esac

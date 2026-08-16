@@ -208,6 +208,9 @@ final readonly class EngineeringBenchmarkExperimentProgress
     /** @return array{schema_version: string, lineage_digest: string, case_id: string, variant_id: string, observation: array<string, mixed>} */
     private function readValidatedRecord(string $path, string $lineageDigest): array
     {
+        if (! is_file($path)) {
+            throw new RuntimeException('An expected durable experiment observation is missing.');
+        }
         $record = $this->readJson($path, 'experiment variant observation');
         $recordedDigest = $record['record_digest'] ?? null;
         unset($record['record_digest']);

@@ -201,6 +201,55 @@ final class EngineeringBenchmarkExperimentProgressTest extends TestCase
         $this->assertLessThan(32 * 1024 * 1024, $maximum - $baseline);
     }
 
+    public function test_v3_population_checkpoints_exactly_ten_cases_and_thirty_one_variants(): void
+    {
+        $progress = app(EngineeringBenchmarkExperimentProgress::class);
+        $manifest = $progress->initialise('EXP-0007-synthetic', [
+            'experiment' => ['engineering_population' => ['case_count' => 10, 'variant_count' => 31]],
+        ]);
+        $identities = [];
+        for ($case = 0; $case < 10; $case++) {
+            $variantTotal = $case === 9 ? 4 : 3;
+            for ($variant = 0; $variant < $variantTotal; $variant++) {
+                $caseId = sprintf('v3.case.%02d', $case);
+                $variantId = sprintf('variant.%02d', $variant);
+                $identities[] = ['case_id' => $caseId, 'variant_id' => $variantId];
+                $progress->writeObservation(
+                    'EXP-0007-synthetic',
+                    $manifest['lineage_digest'],
+                    $caseId,
+                    $variantId,
+                    $this->observation($caseId, $variantId),
+                );
+            }
+        }
+
+        $path = $progress->finaliseFromCheckpoints(
+            'EXP-0007-synthetic',
+            $manifest['lineage_digest'],
+            ['schema_version' => 'v2', 'run_id' => 'EXP-0007-synthetic'],
+            $identities,
+        );
+        $payload = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+
+        $this->assertCount(31, $payload['observations']);
+        $this->assertCount(10, collect($payload['observations'])->pluck('case.case_id')->unique());
+    }
+
+    public function test_finalisation_fails_closed_when_an_expected_v3_variant_is_missing(): void
+    {
+        $progress = app(EngineeringBenchmarkExperimentProgress::class);
+        $manifest = $progress->initialise('EXP-0007-missing', ['benchmark' => ['version' => '3']]);
+
+        $this->expectException(RuntimeException::class);
+        $progress->finaliseFromCheckpoints(
+            'EXP-0007-missing',
+            $manifest['lineage_digest'],
+            ['schema_version' => 'v2', 'run_id' => 'EXP-0007-missing'],
+            [['case_id' => 'v3.case', 'variant_id' => 'missing']],
+        );
+    }
+
     /** @return array<string, mixed> */
     private function observation(
         string $caseId,

@@ -6,6 +6,7 @@ namespace Tests\Unit;
 
 use App\Support\Evaluation\Exp0007Definition;
 use App\Support\Evaluation\V3EngineeringBenchmark;
+use App\Support\Evaluation\V3EngineeringBenchmarkSource;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -33,6 +34,36 @@ final class Exp0007DefinitionTest extends TestCase
         $state['status'] = 'DENSE_VERIFIED';
         $this->expectException(RuntimeException::class);
         Exp0007Definition::assertProvisioning($state);
+    }
+
+    public function test_v3_execution_source_contains_the_exact_definition_population(): void
+    {
+        $corpus = app(V3EngineeringBenchmarkSource::class)->experimentCorpus();
+
+        $this->assertSame(V3EngineeringBenchmark::POPULATION_DIGEST, $corpus['benchmark']['digest']);
+        $this->assertSame(V3EngineeringBenchmark::EXPECTED_CASES, $corpus['case_count']);
+        $this->assertSame(V3EngineeringBenchmark::EXPECTED_VARIANTS, $corpus['variant_count']);
+        $this->assertCount(V3EngineeringBenchmark::EXPECTED_CASES, $corpus['split']['case_ids']);
+        $this->assertSame(
+            $corpus['split']['case_ids'],
+            collect($corpus['cases'])->pluck('case_id')->all(),
+        );
+    }
+
+    public function test_exp_0007_uses_v3_state_and_source_without_changing_historical_modes(): void
+    {
+        $command = file_get_contents(app_path('Console/Commands/RunExp0007EngineeringExperimentCommand.php'));
+        $runner = file_get_contents(app_path('Actions/Evaluation/RunEngineeringBenchmarkExperiment.php'));
+
+        $this->assertIsString($command);
+        $this->assertStringContainsString('evaluation:benchmark:run-exp-0007 {--repository-commit=}', $command);
+        $this->assertStringNotContainsString('--dirty', $command);
+        $this->assertIsString($runner);
+        $this->assertStringContainsString("Exp0007Definition::RUN_ID, 'exp0007'", $runner);
+        $this->assertStringContainsString('$this->v3States->read()', $runner);
+        $this->assertStringContainsString('$this->v3Source->experimentCorpus()', $runner);
+        $this->assertStringContainsString("Exp0005Definition::RUN_ID, 'exp0005'", $runner);
+        $this->assertStringContainsString("Exp0006Definition::RUN_ID, 'exp0006'", $runner);
     }
 
     /** @return array<string, mixed> */
