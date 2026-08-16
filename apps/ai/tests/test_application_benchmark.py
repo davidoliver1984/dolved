@@ -35,7 +35,7 @@ def test_v3_population_and_planner_truth_are_definition_driven(
         for variant in range(3 if case < 9 else 4)
     }
     expectations = {
-        "schema_version": "v3",
+        "schema_version": "v1",
         "population_id": "v3-engineering",
         "expectations": [
             {
@@ -70,7 +70,9 @@ def test_v3_population_and_planner_truth_are_definition_driven(
         "case_count": 10,
         "variant_count": 31,
     }
-    contracts = _planner_expectations(path, identities)
+    contracts = _planner_expectations(
+        path, identities, expected_population_id="v3-engineering"
+    )
     assert len(contracts) == 31
     assert all(contract["contract_version"] == 2 for contract in contracts.values())
     assert all("expected_outcome" not in contract for contract in contracts.values())
@@ -83,7 +85,8 @@ def test_v3_planner_truth_fails_closed_on_missing_or_unexpected_identity(
     path.write_text(
         json.dumps(
             {
-                "schema_version": "v3",
+                "schema_version": "v1",
+                "population_id": "v3-engineering",
                 "expectations": [
                     {
                         "case_id": "case.one",
@@ -102,7 +105,55 @@ def test_v3_planner_truth_fails_closed_on_missing_or_unexpected_identity(
     )
 
     with pytest.raises(ValueError, match="identities do not match"):
-        _planner_expectations(path, {("case.two", "direct")})
+        _planner_expectations(
+            path,
+            {("case.two", "direct")},
+            expected_population_id="v3-engineering",
+        )
+
+
+def test_real_v3_engineering_expectations_contract_is_schema_v1() -> None:
+    path = Path("/evaluation/engineering/expectations.json")
+    payload = json.loads(path.read_text())
+    identities = {
+        (str(item["case_id"]), str(item["variant_id"]))
+        for item in payload["expectations"]
+    }
+
+    contracts = _planner_expectations(
+        path,
+        identities,
+        expected_population_id="dolved-care-engineering-v3-engineering-v1",
+    )
+
+    assert payload["schema_version"] == "v1"
+    assert len(contracts) == 31
+
+
+def test_v3_expectations_fail_closed_on_population_or_schema_substitution(
+    tmp_path: Path,
+) -> None:
+    source = json.loads(Path("/evaluation/engineering/expectations.json").read_text())
+    identities = {
+        (str(item["case_id"]), str(item["variant_id"]))
+        for item in source["expectations"]
+    }
+    path = tmp_path / "expectations.json"
+    path.write_text(json.dumps(source))
+
+    with pytest.raises(ValueError, match="bound population"):
+        _planner_expectations(
+            path, identities, expected_population_id="wrong-population"
+        )
+
+    source["schema_version"] = "v3"
+    path.write_text(json.dumps(source))
+    with pytest.raises(ValueError, match="unsupported schema"):
+        _planner_expectations(
+            path,
+            identities,
+            expected_population_id="dolved-care-engineering-v3-engineering-v1",
+        )
 
 
 def test_failed_search_does_not_fabricate_zero_candidate_funnel_counts() -> None:
@@ -421,6 +472,20 @@ def test_application_benchmark_compiler_enforces_engineering_split_and_writes_bo
     assert (tmp_path / "run" / "result.json").is_file()
     assert (tmp_path / "run" / "comparison.json").is_file()
     assert (tmp_path / "run" / "provisioning-mapping.json").is_file()
+
+    repeat = tmp_path / "run-repeat"
+    compile_application_benchmark_run(
+        raw_path=raw_path,
+        output_directory=repeat,
+        planner={"provider": "openai", "model": "gpt-5-mini", "adapter_version": "1"},
+    )
+    for name in (
+        "result.json",
+        "config.json",
+        "comparison.json",
+        "provisioning-mapping.json",
+    ):
+        assert (tmp_path / "run" / name).read_bytes() == (repeat / name).read_bytes()
 
     baseline_path = tmp_path / "exp-0001-result.json"
     baseline_path.write_text(json.dumps(result))

@@ -74,7 +74,9 @@ def compile_application_benchmark_run(
         for item in observations
     }
     planner_expectations = _planner_expectations(
-        planner_expectations_path, observed_identities
+        planner_expectations_path,
+        observed_identities,
+        expected_population_id=population["name"],
     )
     document_mapping = _document_mapping(raw)
     location_mapping = _location_mapping(raw)
@@ -1221,6 +1223,8 @@ def _percentile(values: list[float], quantile: float) -> float:
 def _planner_expectations(
     path: Path | None = None,
     expected_identities: set[tuple[str, str]] | None = None,
+    *,
+    expected_population_id: str | None = None,
 ) -> dict[tuple[str, str], dict[str, Any]]:
     payload = _object(
         json.loads((path or PLANNER_EXPECTATIONS_PATH).read_text()),
@@ -1240,7 +1244,11 @@ def _planner_expectations(
             raise ValueError(
                 "planner expectation v2 must contain 126 engineering variants"
             )
-    elif payload.get("schema_version") == "v3":
+    elif (
+        payload.get("schema_version") == "v1"
+        and expected_population_id is not None
+        and payload.get("population_id") == expected_population_id
+    ):
         values = {}
         for item in _list(payload.get("expectations"), "planner expectations"):
             contract = dict(
@@ -1249,6 +1257,8 @@ def _planner_expectations(
             contract["contract_version"] = 2
             contract.pop("expected_outcome", None)
             values[(str(item["case_id"]), str(item["variant_id"]))] = contract
+    elif payload.get("schema_version") == "v1":
+        raise ValueError("V3 planner expectations do not match the bound population")
     else:
         raise ValueError("planner expectations use an unsupported schema")
 
