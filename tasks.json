@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R17",
-    "current_session": "R17-S01",
-    "next_action": "Review and accept the provider-neutral generation, sufficiency, citation, groundedness, retry and ownership boundary before drafting the required R17-S01 ADR. Do not implement generation yet.",
-    "completed_through": "R16-S08",
+    "current_session": "R17-S02",
+    "next_action": "Begin Stage 17.2, Build Grounded Prompt Assembly, inheriting the accepted ADR-0023 provider-neutral generation boundary, contract and context-packing policy. Do not call providers.",
+    "completed_through": "R17-S01",
     "completed_phase_count": 17,
     "total_phase_count": 24
   },

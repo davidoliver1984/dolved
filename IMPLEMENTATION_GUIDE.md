@@ -12320,41 +12320,110 @@ Generate answers that are constrained by retrieved evidence and accompanied by v
 
 ### Objective
 
-Create a provider-neutral interface for chat or completion models.
+Define the architectural boundary for grounded answer generation: a
+provider-neutral interface, the sufficiency/outcome model, the citation and
+evidence-lineage contract, and the Laravel/Python ownership split — so
+Stage 17.2 has a settled contract to implement prompt assembly against.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-16.
 
-### Planned decisions
+### Decision
 
-* supported provider;
-* model configuration;
-* structured versus text output;
-* streaming;
-* timeout and retry policy;
-* usage accounting;
-* safety controls;
-* test doubles;
-* prompt versioning.
+ADR 0023 was accepted in:
 
-### Required ADR
+```text
+docs/adr/0023-define-the-provider-neutral-grounded-generation-architecture-and-contract.md
+```
 
-docs/adr/ADR-XXX-generation-provider.md
+Full rationale, alternatives and consequences live in the ADR; summarised
+here without duplication:
+
+* a provider-neutral `Generator.generate(GenerationRequest) -> GenerationResult`
+  boundary, with OpenAI/gpt-5-mini recorded as the initial V1 adapter only —
+  not an architectural lock-in;
+* generation, not a separate LLM sufficiency judge, owns whether the
+  supplied evidence can materially answer the question;
+* three first-class outcomes — `ANSWERED`, `QUALIFIED`,
+  `INSUFFICIENT_EVIDENCE` — with enforced structural invariants, preferring
+  a useful qualified answer over unnecessary refusal;
+* `answer_parts[]` as the sole authoritative generated representation —
+  evidence-bound, natural-prose, no independent free-text answer field —
+  with all persistent identity (`AnswerPart`, `EvidenceSnapshot`) assigned
+  by Laravel, never the provider;
+* durable, per-answer `EvidenceSnapshot`s storing cited text verbatim,
+  resolving the citation/re-extraction design constraint deferred since
+  2026-07-30;
+* deterministic context-packing ownership split (Laravel: evidence set,
+  `COMPARE` structure, order, policy; Python: provider-specific rendering
+  and token measurement only), with a typed
+  `GENERATION_CONTEXT_BUDGET_EXCEEDED` failure kept structurally distinct
+  from `INSUFFICIENT_EVIDENCE`;
+* hostile evidence treated as untrusted data, with no autonomous
+  retrieval/tool capability granted to the generator;
+* a bounded operational-retry taxonomy with no semantic retry-to-success;
+* a versioned `generation_fingerprint`, extending the same snapshot-plus-
+  fingerprint idiom already used for chunking and embeddings;
+* the existing `rc1` protocol extended with one new purpose,
+  `generation.answer`, rather than a new protocol;
+* Phase 18 streaming explicitly deferred, inheriting only the
+  validate-before-authoritative constraint;
+* Stage 17.4 evaluation extends the existing `ModelAssistedEvaluator`/
+  `RagasEvaluator` boundary (ADR-0019/0020) rather than a new subsystem.
+
+ADR 0023 was produced through an independent architectural review, a first
+full draft, one bounded revision round addressing five specific review
+findings plus an editorial deduplication pass, and a final pre-acceptance
+contradiction check against every ADR it cites. No structural renumbering
+occurred.
+
+### Session verification
+
+This was an architecture-and-documentation-only session. No application
+code, migrations, contracts, prompts, provider adapters, or evaluation
+cases were created; no provider was called. Verification consisted of:
+
+* an independent architectural review of the proposed Phase 17 direction,
+  conducted before ADR drafting began;
+* a bounded final review against five specific findings (insufficiency-
+  reason scope, `AnswerPart` identity ownership, context-budget failure
+  typing, context-packing ownership, and the gpt-5-mini rationale), plus one
+  editorial deduplication pass;
+* a final pre-acceptance contradiction check confirming ADR-0023 remains
+  compatible with every accepted ADR it cites — Laravel/Python ownership
+  (ADR-0002), `rc1` authentication (ADR-0018, extended by ADR-0021),
+  provider-neutral boundaries (ADR-0013, ADR-0018, ADR-0021), canonical
+  chunk/provenance and extraction-run immutability (ADR-0010, ADR-0011),
+  audit and lineage (ADR-0006), and the evaluation boundary (ADR-0019,
+  ADR-0020);
+* confirming no retrieval, planning, eligibility, fusion, reranking, or
+  threshold-calibration content was reopened.
 
 ### Acceptance criteria
 
-* Provider SDK use is isolated.
-* Model identifiers are configurable.
-* Requests have bounded timeouts.
-* Usage metadata can be captured.
-* Tests do not require paid API calls.
-* Prompt versions are traceable.
+* Provider SDK use is isolated to one adapter. — Met.
+* Model/provider/adapter identity is explicit and versioned, not hard-coded
+  as a permanent choice. — Met.
+* Requests have bounded timeouts. — Met, inherited unchanged from `rc1`'s
+  existing requirement (ADR-0018), extended to `generation.answer`.
+* Usage metadata can be captured. — Met; ownership assigned (Python:
+  usage/latency; Laravel: Search/RAG audit persistence, ADR-0006).
+* Tests do not require paid API calls. — Committed by the accepted
+  architecture (a deterministic fake `Generator`, mirroring `Embedder`/
+  `RetrievalPlanner`); building it is Stage 17.3's responsibility, not this
+  session's.
+* Prompt versions are traceable. — Met; `prompt_version` is an explicit
+  fingerprint component.
 
 ### Commit boundary
 
-git add docs/adr apps/ai
+git add docs/adr/0023-define-the-provider-neutral-grounded-generation-architecture-and-contract.md \
+  docs/adr/README.md IMPLEMENTATION_GUIDE.md PROJECT_ROADMAP.md tasks.json \
+  docs/journal/2026-08-16-r17-s01-define-generation-provider-boundary.md
 git commit -m "Define generation provider boundary"
+git tag -a phase-17-s01 \
+  -m "Complete Stage 17.1: Define Generation Provider Boundary"
 
 ---
 
