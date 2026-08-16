@@ -1,0 +1,2250 @@
+{
+  "schema_version": "v1",
+  "provisioning_id": "dolved-care-engineering-v3-engineering-v1",
+  "status": "DEFINITION_ONLY",
+  "benchmark": {
+    "id": "dolved-care-engineering",
+    "version": "3",
+    "authoring_digest": "e87bd8c782671b4e83aa50897d2c4f67578689f0a786f94fa21f236b38bde4f3",
+    "population_digest": "73c53fe6602a807fa12b022f8656f775af02cc1b83faed6aeb93fc9d9b424797",
+    "organisation_sha256": "9bcfefa56b05d0e0eadadcd3b4c1dbc1e0e2d6b05d7f086b8e4098c6289fae09",
+    "document_catalog_sha256": "6a2d112eab795deffd8390674c34fcf26d645f2b50aa61af60646be45e024679",
+    "source_catalog_digest": "bc1876ad8d4e15f30c638021c5cf3d3d719c5ca694e52090614db58005a006fc"
+  },
+  "workspace": {
+    "logical_id": "workspace.evaluation.dolved-care-engineering.v3",
+    "public_id": "02e84820-c9cc-545d-8294-a5ad741b7d25",
+    "name": "Dolved Care Engineering Benchmark V3",
+    "slug": "evaluation-dolved-care-engineering-v3"
+  },
+  "locations": [
+    {
+      "location_id": "location.region.north-west",
+      "name": "North West Region",
+      "kind": "REGION",
+      "parent_location_id": null,
+      "public_id": "354f5b35-2042-5088-8379-618b0f8f3166",
+      "aliases": []
+    },
+    {
+      "location_id": "location.riverside-house",
+      "name": "Riverside House",
+      "kind": "CARE_HOME",
+      "parent_location_id": "location.region.north-west",
+      "public_id": "85ebfd49-7075-5a70-b41f-85d12c217aab",
+      "aliases": [
+        "Manchester home",
+        "the home"
+      ]
+    },
+    {
+      "location_id": "location.moorland-view",
+      "name": "Moorland View",
+      "kind": "CARE_HOME",
+      "parent_location_id": "location.region.north-west",
+      "public_id": "00705c9e-b0de-5c81-99ed-90cf34929683",
+      "aliases": [
+        "Preston home",
+        "the home"
+      ]
+    },
+    {
+      "location_id": "location.region.midlands",
+      "name": "Midlands Region",
+      "kind": "REGION",
+      "parent_location_id": null,
+      "public_id": "dd24ac62-9945-5049-ab1a-c4922076e683",
+      "aliases": [
+        "Midlands"
+      ]
+    },
+    {
+      "location_id": "location.oakfield-lodge",
+      "name": "Oakfield Lodge",
+      "kind": "CARE_HOME",
+      "parent_location_id": "location.region.midlands",
+      "public_id": "fc85826f-7ec6-507d-a30d-b295267afccf",
+      "aliases": [
+        "Birmingham home",
+        "the home"
+      ]
+    },
+    {
+      "location_id": "location.willow-bank",
+      "name": "Willow Bank Community Service",
+      "kind": "COMMUNITY_SERVICE",
+      "parent_location_id": "location.region.midlands",
+      "public_id": "20be6af3-ef96-5fff-a2b1-0d4e0a054e7c",
+      "aliases": [
+        "Coventry",
+        "Coventry community team"
+      ]
+    },
+    {
+      "location_id": "location.region.south-west",
+      "name": "South West Region",
+      "kind": "REGION",
+      "parent_location_id": null,
+      "public_id": "0675b9dd-484b-5baa-8b13-683796415d43",
+      "aliases": [
+        "South West"
+      ]
+    },
+    {
+      "location_id": "location.harbour-view",
+      "name": "Harbour View",
+      "kind": "CARE_HOME",
+      "parent_location_id": "location.region.south-west",
+      "public_id": "665c1382-6319-5dba-b607-fa74a857dc9e",
+      "aliases": [
+        "Bristol",
+        "Bristol home",
+        "the home"
+      ]
+    },
+    {
+      "location_id": "location.meadow-court",
+      "name": "Meadow Court",
+      "kind": "CARE_HOME",
+      "parent_location_id": "location.region.south-west",
+      "public_id": "2b14a443-293c-5575-b065-68326b8de917",
+      "aliases": [
+        "Exeter home",
+        "the home"
+      ]
+    },
+    {
+      "location_id": "location.central-support-office",
+      "name": "Central Support Office",
+      "kind": "OFFICE",
+      "parent_location_id": null,
+      "public_id": "3c0fb3be-0753-5607-854d-168dcfc2a7bb",
+      "aliases": [
+        "HQ",
+        "head office"
+      ]
+    }
+  ],
+  "document_families": [
+    {
+      "document_family_id": "family.hr.annual-leave",
+      "public_id": "44b626e2-9dc4-5ece-90e1-ed2668b1f441",
+      "domain": "hr",
+      "leakage_group_ids": [
+        "leakage.family.hr.annual-leave"
+      ]
+    },
+    {
+      "document_family_id": "family.hr.sickness-absence",
+      "public_id": "9f0c7f12-2836-55d0-be8a-c8118ad01ac4",
+      "domain": "hr",
+      "leakage_group_ids": [
+        "leakage.family.hr.sickness-absence"
+      ]
+    },
+    {
+      "document_family_id": "family.hr.disciplinary",
+      "public_id": "8154af41-0610-5051-b453-acf7b93bbd5f",
+      "domain": "hr",
+      "leakage_group_ids": [
+        "leakage.family.hr.disciplinary"
+      ]
+    },
+    {
+      "document_family_id": "family.hr.grievance",
+      "public_id": "07802f1f-3613-5dd0-b1ef-073963888a53",
+      "domain": "hr",
+      "leakage_group_ids": [
+        "leakage.family.hr.grievance"
+      ]
+    },
+    {
+      "document_family_id": "family.hr.recruitment",
+      "public_id": "7f814c3d-ca49-5124-93e3-043bbd2136c9",
+      "domain": "hr",
+      "leakage_group_ids": [
+        "leakage.family.hr.recruitment"
+      ]
+    },
+    {
+      "document_family_id": "family.hr.flexible-working",
+      "public_id": "c98d2ecf-7874-5c7c-9728-c33828b0fb8f",
+      "domain": "hr",
+      "leakage_group_ids": [
+        "leakage.family.hr.flexible-working"
+      ]
+    },
+    {
+      "document_family_id": "family.hr.lone-worker-welfare",
+      "public_id": "cb39397e-4f67-5c52-a4bc-2c20f6582878",
+      "domain": "hr",
+      "leakage_group_ids": [
+        "leakage.family.hr.lone-worker-welfare",
+        "leakage.related.health-safety.lone-working"
+      ]
+    },
+    {
+      "document_family_id": "family.hr.new-starter-form",
+      "public_id": "32fd7105-4545-565e-820c-66a1cd0cc76c",
+      "domain": "hr",
+      "leakage_group_ids": [
+        "leakage.family.hr.new-starter-form"
+      ]
+    },
+    {
+      "document_family_id": "family.hr.family-leave",
+      "public_id": "6e8a3454-65ba-51eb-8156-f884c376f59c",
+      "domain": "hr",
+      "leakage_group_ids": [
+        "leakage.family.hr.family-leave"
+      ]
+    },
+    {
+      "document_family_id": "family.medication.administration",
+      "public_id": "8ff6a3e7-6df3-539e-b669-c8c7a972823f",
+      "domain": "medication",
+      "leakage_group_ids": [
+        "leakage.family.medication.administration"
+      ]
+    },
+    {
+      "document_family_id": "family.medication.storage",
+      "public_id": "4669c0d9-b2b2-5471-911e-b50fc9dbe7a5",
+      "domain": "medication",
+      "leakage_group_ids": [
+        "leakage.family.medication.storage"
+      ]
+    },
+    {
+      "document_family_id": "family.medication.prn",
+      "public_id": "d5c2dcdc-72b6-58b6-9fc8-b2ee6ec72c91",
+      "domain": "medication",
+      "leakage_group_ids": [
+        "leakage.family.medication.prn"
+      ]
+    },
+    {
+      "document_family_id": "family.medication.controlled-drugs",
+      "public_id": "31520796-8e95-5325-8938-29b2bb910b71",
+      "domain": "medication",
+      "leakage_group_ids": [
+        "leakage.family.medication.controlled-drugs"
+      ]
+    },
+    {
+      "document_family_id": "family.medication.errors",
+      "public_id": "f7d88d90-c1d4-5050-a109-8343a92c4ec5",
+      "domain": "medication",
+      "leakage_group_ids": [
+        "leakage.family.medication.errors"
+      ]
+    },
+    {
+      "document_family_id": "family.medication.covert",
+      "public_id": "ea8404a2-183f-522c-bdb2-24f613bcb073",
+      "domain": "medication",
+      "leakage_group_ids": [
+        "leakage.family.medication.covert"
+      ]
+    },
+    {
+      "document_family_id": "family.medication.fridge-reference",
+      "public_id": "636eea7c-1e95-5cb6-a270-2d42472bff78",
+      "domain": "medication",
+      "leakage_group_ids": [
+        "leakage.family.medication.fridge-reference"
+      ]
+    },
+    {
+      "document_family_id": "family.medication.self-administration",
+      "public_id": "bb62402e-aea1-5b31-84b0-64a2ac25c724",
+      "domain": "medication",
+      "leakage_group_ids": [
+        "leakage.family.medication.self-administration"
+      ]
+    },
+    {
+      "document_family_id": "family.safeguarding.adult-reporting",
+      "public_id": "74fd3a86-4c6e-5d88-af47-6dbeae8ac542",
+      "domain": "safeguarding",
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.adult-reporting"
+      ]
+    },
+    {
+      "document_family_id": "family.safeguarding.whistleblowing",
+      "public_id": "09c3c74f-7bff-5159-84f9-947b0d20ba5a",
+      "domain": "safeguarding",
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.whistleblowing"
+      ]
+    },
+    {
+      "document_family_id": "family.safeguarding.mental-capacity",
+      "public_id": "31cb50c8-8bed-57f3-abe8-a6f931b768fd",
+      "domain": "safeguarding",
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.mental-capacity"
+      ]
+    },
+    {
+      "document_family_id": "family.safeguarding.dols",
+      "public_id": "94f21001-c4f4-55be-904d-ee12d4606ac3",
+      "domain": "safeguarding",
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.dols"
+      ]
+    },
+    {
+      "document_family_id": "family.safeguarding.missing-person",
+      "public_id": "c66a9ffc-47b5-5ac2-abc4-f3a8354f1e34",
+      "domain": "safeguarding",
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.missing-person"
+      ]
+    },
+    {
+      "document_family_id": "family.safeguarding.allegations-staff",
+      "public_id": "08b5b883-4e1e-5c0b-ad0d-304b5e2455c0",
+      "domain": "safeguarding",
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.allegations-staff"
+      ]
+    },
+    {
+      "document_family_id": "family.safeguarding.body-map",
+      "public_id": "a8a9d5e9-1693-58bc-8e40-afb368ed8766",
+      "domain": "safeguarding",
+      "leakage_group_ids": [
+        "leakage.family.safeguarding.body-map"
+      ]
+    },
+    {
+      "document_family_id": "family.fire.south-west-evacuation",
+      "public_id": "08b54f27-cc0e-5304-997a-7171dc916bba",
+      "domain": "fire-safety",
+      "leakage_group_ids": [
+        "leakage.family.fire.south-west-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ]
+    },
+    {
+      "document_family_id": "family.fire.harbour-view-evacuation",
+      "public_id": "7401d385-d068-5444-ad94-5f93d2150076",
+      "domain": "fire-safety",
+      "leakage_group_ids": [
+        "leakage.family.fire.harbour-view-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ]
+    },
+    {
+      "document_family_id": "family.fire.north-west-evacuation",
+      "public_id": "863a3f17-6ad7-588d-b7e8-bbd1e5d122c5",
+      "domain": "fire-safety",
+      "leakage_group_ids": [
+        "leakage.family.fire.north-west-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ]
+    },
+    {
+      "document_family_id": "family.fire.midlands-evacuation",
+      "public_id": "cbaf826f-db25-5e27-a3a6-94195075d3c9",
+      "domain": "fire-safety",
+      "leakage_group_ids": [
+        "leakage.family.fire.midlands-evacuation",
+        "leakage.related.fire.harbour-view-evacuation"
+      ]
+    },
+    {
+      "document_family_id": "family.fire.drills",
+      "public_id": "ffb02d80-82cf-5864-93e6-10d2dd7f472f",
+      "domain": "fire-safety",
+      "leakage_group_ids": [
+        "leakage.family.fire.drills"
+      ]
+    },
+    {
+      "document_family_id": "family.fire.peep",
+      "public_id": "99189f9d-e45b-526f-89b0-9a2e34afc64b",
+      "domain": "fire-safety",
+      "leakage_group_ids": [
+        "leakage.family.fire.peep"
+      ]
+    },
+    {
+      "document_family_id": "family.health-safety.accident-reporting",
+      "public_id": "4579b367-c4ac-590e-a4d1-7a14185e930b",
+      "domain": "health-safety",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.accident-reporting"
+      ]
+    },
+    {
+      "document_family_id": "family.health-safety.coshh",
+      "public_id": "4f6859fb-0f2a-5427-9840-f227c2188d3d",
+      "domain": "health-safety",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.coshh"
+      ]
+    },
+    {
+      "document_family_id": "family.health-safety.moving-handling",
+      "public_id": "840c21c6-06a6-56ab-b8e7-425959b348e8",
+      "domain": "health-safety",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.moving-handling"
+      ]
+    },
+    {
+      "document_family_id": "family.health-safety.lone-working",
+      "public_id": "7fdf1e11-0dd6-50e7-9ee3-21c13d7dc63a",
+      "domain": "health-safety",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.lone-working",
+        "leakage.related.health-safety.lone-working"
+      ]
+    },
+    {
+      "document_family_id": "family.health-safety.risk-assessment",
+      "public_id": "5cb10b53-f46f-5863-baf4-f7fea6ab55d7",
+      "domain": "health-safety",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.risk-assessment"
+      ]
+    },
+    {
+      "document_family_id": "family.health-safety.equipment-checks",
+      "public_id": "2d1c86b6-d634-5bae-a35d-03aa996d9cef",
+      "domain": "health-safety",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.equipment-checks"
+      ]
+    },
+    {
+      "document_family_id": "family.health-safety.slips-trips",
+      "public_id": "c2066c68-a32d-5e46-8c3b-a88cc6aaa1c3",
+      "domain": "health-safety",
+      "leakage_group_ids": [
+        "leakage.family.health-safety.slips-trips"
+      ]
+    },
+    {
+      "document_family_id": "family.infection.outbreak-management",
+      "public_id": "3eabb4c4-c26d-5cab-aec5-b69f490a5448",
+      "domain": "infection-control",
+      "leakage_group_ids": [
+        "leakage.family.infection.outbreak-management"
+      ]
+    },
+    {
+      "document_family_id": "family.infection.ppe",
+      "public_id": "cab6a901-3000-59fb-a4c1-10198fe50274",
+      "domain": "infection-control",
+      "leakage_group_ids": [
+        "leakage.family.infection.ppe",
+        "leakage.related.infection.ppe"
+      ]
+    },
+    {
+      "document_family_id": "family.infection.hand-hygiene",
+      "public_id": "5a7106f9-22f8-5309-af74-848e35434a0f",
+      "domain": "infection-control",
+      "leakage_group_ids": [
+        "leakage.family.infection.hand-hygiene"
+      ]
+    },
+    {
+      "document_family_id": "family.infection.clinical-waste",
+      "public_id": "83fd8abc-27cd-54cd-a77b-8c8090818407",
+      "domain": "infection-control",
+      "leakage_group_ids": [
+        "leakage.family.infection.clinical-waste"
+      ]
+    },
+    {
+      "document_family_id": "family.infection.laundry",
+      "public_id": "ba5baf60-2897-51f2-b938-1451f4ff37c9",
+      "domain": "infection-control",
+      "leakage_group_ids": [
+        "leakage.family.infection.laundry"
+      ]
+    },
+    {
+      "document_family_id": "family.infection.respiratory-ppe",
+      "public_id": "94ff0351-cf8f-5ef2-a856-cc6c41726ae0",
+      "domain": "infection-control",
+      "leakage_group_ids": [
+        "leakage.family.infection.respiratory-ppe",
+        "leakage.related.infection.ppe"
+      ]
+    },
+    {
+      "document_family_id": "family.infection.isolation",
+      "public_id": "74326455-5c32-5c69-827d-246afb251327",
+      "domain": "infection-control",
+      "leakage_group_ids": [
+        "leakage.family.infection.isolation"
+      ]
+    },
+    {
+      "document_family_id": "family.visitors.general",
+      "public_id": "cd0ea3ab-f09c-545a-9696-955fc99d1bbf",
+      "domain": "visitors",
+      "leakage_group_ids": [
+        "leakage.family.visitors.general",
+        "leakage.related.visitors.general"
+      ]
+    },
+    {
+      "document_family_id": "family.visitors.search-optimised-draft",
+      "public_id": "5104f6e8-6d52-503f-ba09-fc4c7cc18937",
+      "domain": "visitors",
+      "leakage_group_ids": [
+        "leakage.family.visitors.search-optimised-draft",
+        "leakage.related.visitors.general"
+      ]
+    },
+    {
+      "document_family_id": "family.visitors.outbreak-restrictions",
+      "public_id": "48cd8efe-16a5-5eba-a7d4-bcaee5f96e35",
+      "domain": "visitors",
+      "leakage_group_ids": [
+        "leakage.family.visitors.outbreak-restrictions"
+      ]
+    },
+    {
+      "document_family_id": "family.visitors.contractor-sign-in",
+      "public_id": "555c2187-0477-5edf-bddc-dc969b0d98f7",
+      "domain": "visitors",
+      "leakage_group_ids": [
+        "leakage.family.visitors.contractor-sign-in"
+      ]
+    },
+    {
+      "document_family_id": "family.gdpr.data-protection",
+      "public_id": "b2dc0de4-66be-5ac7-9b63-5a3cc14beaae",
+      "domain": "gdpr",
+      "leakage_group_ids": [
+        "leakage.family.gdpr.data-protection"
+      ]
+    },
+    {
+      "document_family_id": "family.gdpr.subject-access",
+      "public_id": "92de0a9e-443e-5023-acb4-0592345af4fe",
+      "domain": "gdpr",
+      "leakage_group_ids": [
+        "leakage.family.gdpr.subject-access"
+      ]
+    },
+    {
+      "document_family_id": "family.gdpr.breach",
+      "public_id": "f5bcdbf8-b23b-50b6-9639-aa82b9f364a5",
+      "domain": "gdpr",
+      "leakage_group_ids": [
+        "leakage.family.gdpr.breach"
+      ]
+    },
+    {
+      "document_family_id": "family.gdpr.retention",
+      "public_id": "59928a56-6e59-5c9c-b089-46e3ae550feb",
+      "domain": "gdpr",
+      "leakage_group_ids": [
+        "leakage.family.gdpr.retention"
+      ]
+    },
+    {
+      "document_family_id": "family.gdpr.cctv",
+      "public_id": "740a96d9-1c80-5442-9bec-6117f7b829a5",
+      "domain": "gdpr",
+      "leakage_group_ids": [
+        "leakage.family.gdpr.cctv"
+      ]
+    },
+    {
+      "document_family_id": "family.complaints.handling",
+      "public_id": "0514b8c3-c030-5edd-9a99-eecfe7c6a225",
+      "domain": "complaints",
+      "leakage_group_ids": [
+        "leakage.family.complaints.handling",
+        "leakage.related.complaints.feedback"
+      ]
+    },
+    {
+      "document_family_id": "family.complaints.duty-candour",
+      "public_id": "382d00dd-7109-512b-97d7-92ebf142555c",
+      "domain": "complaints",
+      "leakage_group_ids": [
+        "leakage.family.complaints.duty-candour"
+      ]
+    },
+    {
+      "document_family_id": "family.complaints.feedback",
+      "public_id": "66d04a62-0c61-54e3-b13d-bec1443f4dd1",
+      "domain": "complaints",
+      "leakage_group_ids": [
+        "leakage.family.complaints.feedback",
+        "leakage.related.complaints.feedback"
+      ]
+    },
+    {
+      "document_family_id": "family.complaints.advocacy",
+      "public_id": "be31d29e-2a3a-5f53-be6a-c40cbc23283a",
+      "domain": "complaints",
+      "leakage_group_ids": [
+        "leakage.family.complaints.advocacy"
+      ]
+    },
+    {
+      "document_family_id": "family.complaints.form",
+      "public_id": "5f6616c5-0587-58d7-a233-d8d338a1481c",
+      "domain": "complaints",
+      "leakage_group_ids": [
+        "leakage.family.complaints.form"
+      ]
+    },
+    {
+      "document_family_id": "family.payroll.calendar",
+      "public_id": "6212fa87-1c02-5e14-86be-c5eb6f2957d6",
+      "domain": "payroll",
+      "leakage_group_ids": [
+        "leakage.family.payroll.calendar"
+      ]
+    },
+    {
+      "document_family_id": "family.payroll.overtime",
+      "public_id": "f27ed484-4962-5d62-891e-7fba457c2dfa",
+      "domain": "payroll",
+      "leakage_group_ids": [
+        "leakage.family.payroll.overtime"
+      ]
+    },
+    {
+      "document_family_id": "family.payroll.expenses",
+      "public_id": "3be704e2-3a07-5400-aef3-382395a32f67",
+      "domain": "payroll",
+      "leakage_group_ids": [
+        "leakage.family.payroll.expenses"
+      ]
+    },
+    {
+      "document_family_id": "family.payroll.pension",
+      "public_id": "ae5b97f2-ab5b-5f24-997c-c90a1e3e4ff5",
+      "domain": "payroll",
+      "leakage_group_ids": [
+        "leakage.family.payroll.pension"
+      ]
+    },
+    {
+      "document_family_id": "family.payroll.mileage",
+      "public_id": "f4497bfd-39c9-5f7a-8a38-d31aac878ee3",
+      "domain": "payroll",
+      "leakage_group_ids": [
+        "leakage.family.payroll.mileage"
+      ]
+    },
+    {
+      "document_family_id": "family.training.matrix",
+      "public_id": "96aa861d-04b5-5a89-8f69-9af407a22015",
+      "domain": "training",
+      "leakage_group_ids": [
+        "leakage.family.training.matrix"
+      ]
+    },
+    {
+      "document_family_id": "family.training.induction",
+      "public_id": "9a83a081-a808-57f6-9e15-8fe596c9526d",
+      "domain": "training",
+      "leakage_group_ids": [
+        "leakage.family.training.induction"
+      ]
+    },
+    {
+      "document_family_id": "family.training.medication-competency",
+      "public_id": "488fee95-040a-56b8-b786-ae5366df8265",
+      "domain": "training",
+      "leakage_group_ids": [
+        "leakage.family.training.medication-competency"
+      ]
+    },
+    {
+      "document_family_id": "family.training.safeguarding",
+      "public_id": "d7d10b64-6f0e-5c38-aa98-ea7e54e93802",
+      "domain": "training",
+      "leakage_group_ids": [
+        "leakage.family.training.safeguarding"
+      ]
+    },
+    {
+      "document_family_id": "family.training.fire",
+      "public_id": "cdf4ec44-6b51-55ba-95f3-7942664e5bed",
+      "domain": "training",
+      "leakage_group_ids": [
+        "leakage.family.training.fire"
+      ]
+    },
+    {
+      "document_family_id": "family.reference.abbreviations",
+      "public_id": "0b6b73e3-888c-5232-82a9-4b323deab946",
+      "domain": "reference",
+      "leakage_group_ids": [
+        "leakage.family.reference.abbreviations"
+      ]
+    },
+    {
+      "document_family_id": "family.reference.contacts",
+      "public_id": "9a51e81d-28de-5124-8505-cd56879579f8",
+      "domain": "reference",
+      "leakage_group_ids": [
+        "leakage.family.reference.contacts"
+      ]
+    },
+    {
+      "document_family_id": "family.reference.emergency-numbers",
+      "public_id": "e95297d1-dd30-5aba-b421-a270c4bb05d3",
+      "domain": "reference",
+      "leakage_group_ids": [
+        "leakage.family.reference.emergency-numbers"
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "document_family_id": "family.hr.annual-leave",
+      "document_family_public_id": "44b626e2-9dc4-5ece-90e1-ed2668b1f441",
+      "document_version_id": "doc.hr.annual-leave.v1",
+      "document_public_id": "ec0b7e58-95dc-5b17-a235-26f354787ec2",
+      "source_path": "documents/hr/annual-leave-v1.md",
+      "source_sha256": "f38ec75b265ee85af5a37974503c70ddb60ab346e1558c4c9be5236b372fa8f5",
+      "governance_state": "APPROVED",
+      "effective_from": "2023-01-01T00:00:00Z",
+      "approved_at": "2022-12-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.hr.annual-leave",
+      "document_family_public_id": "44b626e2-9dc4-5ece-90e1-ed2668b1f441",
+      "document_version_id": "doc.hr.annual-leave.v2",
+      "document_public_id": "d4a369be-55a1-5476-ac72-e6b20ece3152",
+      "source_path": "documents/hr/annual-leave-v2.md",
+      "source_sha256": "e45f0f5dd7b602d7a88202bbb43e142c44a57814e846e8ab7f228025bfd6114a",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-01-01T00:00:00Z",
+      "approved_at": "2024-12-16T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.hr.annual-leave",
+      "document_family_public_id": "44b626e2-9dc4-5ece-90e1-ed2668b1f441",
+      "document_version_id": "doc.hr.annual-leave.v3",
+      "document_public_id": "6829d055-e6b3-5fd8-bb70-d08a34d30825",
+      "source_path": "documents/hr/annual-leave-v3-scheduled.md",
+      "source_sha256": "9c2f771f15476fa0b442708331ab7e40b65931b969829086c807b2850d5577fd",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-10-01T00:00:00Z",
+      "approved_at": "2026-07-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.hr.sickness-absence",
+      "document_family_public_id": "9f0c7f12-2836-55d0-be8a-c8118ad01ac4",
+      "document_version_id": "doc.hr.sickness-absence.v1",
+      "document_public_id": "77e7f4ff-06f1-525d-9079-14361053828e",
+      "source_path": "documents/hr/sickness-absence-v1.md",
+      "source_sha256": "8c7ccf1f6fc96bcc1014c779fcb112a007c2b240a47ce027d165a7266163e864",
+      "governance_state": "APPROVED",
+      "effective_from": "2023-03-01T00:00:00Z",
+      "approved_at": "2023-02-20T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.hr.sickness-absence",
+      "document_family_public_id": "9f0c7f12-2836-55d0-be8a-c8118ad01ac4",
+      "document_version_id": "doc.hr.sickness-absence.v2",
+      "document_public_id": "078fd910-09fc-5220-b043-d0a616fe948f",
+      "source_path": "documents/hr/sickness-absence-v2.md",
+      "source_sha256": "51dc20f7807f09d6923a2ac8e42794ea075d783b70c096ffb50c7d6f6467f685",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-10T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.hr.disciplinary",
+      "document_family_public_id": "8154af41-0610-5051-b453-acf7b93bbd5f",
+      "document_version_id": "doc.hr.disciplinary.v1",
+      "document_public_id": "e36d30d4-14c9-5ad7-896c-3704ff0828fc",
+      "source_path": "documents/hr/disciplinary-policy.md",
+      "source_sha256": "ea881fdefe99e98bbbb97e66cfb1f3b7e1560ccaeeb78e174e2388bb9af146cb",
+      "governance_state": "APPROVED",
+      "effective_from": "2024-03-01T00:00:00Z",
+      "approved_at": "2024-02-12T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.hr.grievance",
+      "document_family_public_id": "07802f1f-3613-5dd0-b1ef-073963888a53",
+      "document_version_id": "doc.hr.grievance.v1",
+      "document_public_id": "d8e16e31-b80e-5a21-9c2e-df02a832ab89",
+      "source_path": "documents/hr/grievance-procedure.md",
+      "source_sha256": "1ab34bdb587bcd48ae7a8e564e1ad401a5964421462d49aa801d841cee10b051",
+      "governance_state": "APPROVED",
+      "effective_from": "2024-03-01T00:00:00Z",
+      "approved_at": "2024-02-12T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.hr.recruitment",
+      "document_family_public_id": "7f814c3d-ca49-5124-93e3-043bbd2136c9",
+      "document_version_id": "doc.hr.recruitment.v1",
+      "document_public_id": "c13a5964-d1e1-5c83-9ec9-d84ad4915565",
+      "source_path": "documents/hr/safer-recruitment-policy.md",
+      "source_sha256": "2b05162ce6c811ee40543723745b55e524bc7c9c29a72cbb6c008351975b824d",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-10T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.hr.flexible-working",
+      "document_family_public_id": "c98d2ecf-7874-5c7c-9728-c33828b0fb8f",
+      "document_version_id": "doc.hr.flexible-working.v1",
+      "document_public_id": "fb246e25-4a13-576e-b345-4d37658fa4c9",
+      "source_path": "documents/hr/flexible-working-procedure.md",
+      "source_sha256": "01812c96f2049c8a82e53c5aab3057de42c4eb5898b005a7c91091df3dd40611",
+      "governance_state": "APPROVED",
+      "effective_from": "2024-04-15T00:00:00Z",
+      "approved_at": "2024-04-08T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.hr.lone-worker-welfare",
+      "document_family_public_id": "cb39397e-4f67-5c52-a4bc-2c20f6582878",
+      "document_version_id": "doc.hr.lone-worker-welfare.v1",
+      "document_public_id": "e35c9db6-6662-5e0e-9d3b-3de32dcaef82",
+      "source_path": "documents/hr/midlands-lone-worker-welfare.md",
+      "source_sha256": "8953f8fe0d511dd93957ff9f60a19862bae278a77af05637ccef5b50409797e1",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-01T00:00:00Z",
+      "approved_at": "2025-04-21T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "LOCATIONS",
+        "location_ids": [
+          "location.region.midlands"
+        ]
+      }
+    },
+    {
+      "document_family_id": "family.hr.new-starter-form",
+      "document_family_public_id": "32fd7105-4545-565e-820c-66a1cd0cc76c",
+      "document_version_id": "doc.hr.new-starter-form.v1",
+      "document_public_id": "86cb4f7e-f51c-5303-b464-4405a86a6002",
+      "source_path": "documents/hr/new-starter-information-form.md",
+      "source_sha256": "8ba2d0b51fc877cfe809b9794aad72586cd3505d391c63fea4ba29a0dab85f09",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-19T00:00:00Z",
+      "approved_at": "2025-05-12T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.hr.family-leave",
+      "document_family_public_id": "6e8a3454-65ba-51eb-8156-f884c376f59c",
+      "document_version_id": "doc.hr.family-leave.v1",
+      "document_public_id": "f640ad69-60ff-58d9-83a4-ed96adb312a9",
+      "source_path": "documents/hr/family-leave-reference.md",
+      "source_sha256": "c2f9c4b71d49013866d0050f5a9ff8fb699d5086013274ad509313c94f8036ed",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.administration",
+      "document_family_public_id": "8ff6a3e7-6df3-539e-b669-c8c7a972823f",
+      "document_version_id": "doc.medication.administration.v1",
+      "document_public_id": "4aa36a0b-513a-5195-aa17-9a724e7b45d8",
+      "source_path": "documents/medication/safe-administration-v1.md",
+      "source_sha256": "eb941e3a04dceabc1c694c3b84bcbad5a2f383748177c87343a9202c5c8ed696",
+      "governance_state": "APPROVED",
+      "effective_from": "2024-01-01T00:00:00Z",
+      "approved_at": "2023-11-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.administration",
+      "document_family_public_id": "8ff6a3e7-6df3-539e-b669-c8c7a972823f",
+      "document_version_id": "doc.medication.administration.v2",
+      "document_public_id": "92b5611e-ad81-579b-b863-ea14370a5b84",
+      "source_path": "documents/medication/safe-administration-v2.md",
+      "source_sha256": "997cd45a57cdabde57b4a800fcbd855752f9aebb57849c8f1d84c75475b9a696",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-01T00:00:00Z",
+      "approved_at": "2025-04-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.administration",
+      "document_family_public_id": "8ff6a3e7-6df3-539e-b669-c8c7a972823f",
+      "document_version_id": "doc.medication.administration.v3",
+      "document_public_id": "65443696-fc22-5e86-b42b-6e5f793d2dfa",
+      "source_path": "documents/medication/safe-administration-v3.md",
+      "source_sha256": "3940ec1d3a35404458951111a9a1d3c449a29e75f6b9d59e88b6c01b30f68b46",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-10-01T00:00:00Z",
+      "approved_at": "2026-07-01T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.storage",
+      "document_family_public_id": "4669c0d9-b2b2-5471-911e-b50fc9dbe7a5",
+      "document_version_id": "doc.medication.storage.v1",
+      "document_public_id": "57c0ec31-46ec-58fa-b71e-b8a913d20440",
+      "source_path": "documents/medication/storage-temperature-procedure.md",
+      "source_sha256": "52e87ef6decfbcc35d347942d54087837cdf64e5b3d746a03f8b42af680eb436",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-10T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.prn",
+      "document_family_public_id": "d5c2dcdc-72b6-58b6-9fc8-b2ee6ec72c91",
+      "document_version_id": "doc.medication.prn.v1",
+      "document_public_id": "62bd843f-1024-58b4-b8a9-945f48128ac0",
+      "source_path": "documents/medication/prn-protocol.md",
+      "source_sha256": "97bd45c6664615212ea9b17cce08404d4630617f638c43ce00c9ca4361bbf98d",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-03T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.controlled-drugs",
+      "document_family_public_id": "31520796-8e95-5325-8938-29b2bb910b71",
+      "document_version_id": "doc.medication.controlled-drugs.v1",
+      "document_public_id": "67c83108-d9a9-553e-9c71-78014d857738",
+      "source_path": "documents/medication/controlled-drugs-v1.md",
+      "source_sha256": "d5787e6cd6a4d352a73dd57046f2a5d2e0f18f27af469cd2e279e4e87229f83b",
+      "governance_state": "APPROVED",
+      "effective_from": "2023-06-01T00:00:00Z",
+      "approved_at": "2023-05-22T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.controlled-drugs",
+      "document_family_public_id": "31520796-8e95-5325-8938-29b2bb910b71",
+      "document_version_id": "doc.medication.controlled-drugs.v2",
+      "document_public_id": "d5a9db25-f899-536b-a1a5-6326944fbc08",
+      "source_path": "documents/medication/controlled-drugs-v2.md",
+      "source_sha256": "2dad915e9dfe6775c424b684abd53a3477e0aba31ab1c1baca06e91ad9644b31",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-07-01T00:00:00Z",
+      "approved_at": "2025-06-16T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.errors",
+      "document_family_public_id": "f7d88d90-c1d4-5050-a109-8343a92c4ec5",
+      "document_version_id": "doc.medication.errors.v1",
+      "document_public_id": "0942c29d-c808-5911-9868-2c9c75508cb1",
+      "source_path": "documents/medication/medication-error-form.md",
+      "source_sha256": "2b8c66fe8861e482300eec8e1401806bba4a7c96e743aa38d4d5ca6b05afe3ae",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-01T00:00:00Z",
+      "approved_at": "2025-04-14T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.covert",
+      "document_family_public_id": "ea8404a2-183f-522c-bdb2-24f613bcb073",
+      "document_version_id": "doc.medication.covert.v1",
+      "document_public_id": "e16d1339-2d3c-59b8-8e77-52e79558ed85",
+      "source_path": "documents/medication/covert-administration-policy.md",
+      "source_sha256": "f7823fca89244a7d0526d7e7cc30346099f07e545bc08c9e33a982ea67e4a13b",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-08-01T00:00:00Z",
+      "approved_at": "2025-07-14T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.fridge-reference",
+      "document_family_public_id": "636eea7c-1e95-5cb6-a270-2d42472bff78",
+      "document_version_id": "doc.medication.fridge-reference.v1",
+      "document_public_id": "dd86e031-2ed4-581f-931b-b45d15e8e54f",
+      "source_path": "documents/medication/fridge-monitoring-reference.md",
+      "source_sha256": "a0bac45631e864fc283b189f5a41577493cbf20f64f9127401587d92cbadabd3",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-10T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.medication.self-administration",
+      "document_family_public_id": "bb62402e-aea1-5b31-84b0-64a2ac25c724",
+      "document_version_id": "doc.medication.self-administration.v1",
+      "document_public_id": "1b342d33-b03b-574a-88ad-73b4825af5e8",
+      "source_path": "documents/medication/self-administration-risk-assessment.md",
+      "source_sha256": "d462a76b01ab635ec25c284b1cb95dfa9962562215d1e66a711591a9c936f0bf",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-09-01T00:00:00Z",
+      "approved_at": "2025-08-18T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.safeguarding.adult-reporting",
+      "document_family_public_id": "74fd3a86-4c6e-5d88-af47-6dbeae8ac542",
+      "document_version_id": "doc.safeguarding.adult-reporting.v1",
+      "document_public_id": "33ffb55b-5e8d-5f6f-b4d2-991360872bee",
+      "source_path": "documents/safeguarding/adult-reporting-v1.md",
+      "source_sha256": "41c5934872a2a9f9575879937d005730a7c87623ae9027cf96fa8b99735fccf2",
+      "governance_state": "APPROVED",
+      "effective_from": "2024-07-01T00:00:00Z",
+      "approved_at": "2024-06-10T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.safeguarding.adult-reporting",
+      "document_family_public_id": "74fd3a86-4c6e-5d88-af47-6dbeae8ac542",
+      "document_version_id": "doc.safeguarding.adult-reporting.v2",
+      "document_public_id": "6dcf2397-3577-5ecd-9689-c06a11d28622",
+      "source_path": "documents/safeguarding/adult-reporting-v2-withdrawn.md",
+      "source_sha256": "3b286913e7669ba7c64412dd1ac915b1f7374f0a4a798ccd12064f1dc17bb048",
+      "governance_state": "WITHDRAWN",
+      "effective_from": "2026-09-01T00:00:00Z",
+      "approved_at": "2026-05-15T10:00:00Z",
+      "withdrawn_at": "2026-07-10T10:00:00Z",
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.safeguarding.whistleblowing",
+      "document_family_public_id": "09c3c74f-7bff-5159-84f9-947b0d20ba5a",
+      "document_version_id": "doc.safeguarding.whistleblowing.v1",
+      "document_public_id": "da171f6e-d9f0-5b08-bc18-3a44aabfb794",
+      "source_path": "documents/safeguarding/whistleblowing-procedure.md",
+      "source_sha256": "e6c1abf6d807887d17808ca4b3f41228e2608430e4608449204de536d5794c09",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-03T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.safeguarding.mental-capacity",
+      "document_family_public_id": "31cb50c8-8bed-57f3-abe8-a6f931b768fd",
+      "document_version_id": "doc.safeguarding.mental-capacity.v1",
+      "document_public_id": "6801645a-3f3c-5c87-b5d2-79e3561cec26",
+      "source_path": "documents/safeguarding/mental-capacity-procedure.md",
+      "source_sha256": "82c8bac80fe161c7ffdfaceded4e231c0e30ed594bab9e53a48b018d5cecff5f",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.safeguarding.dols",
+      "document_family_public_id": "94f21001-c4f4-55be-904d-ee12d4606ac3",
+      "document_version_id": "doc.safeguarding.dols.v1",
+      "document_public_id": "58f05ca7-f3f4-5b6a-acc1-0e2cca59534c",
+      "source_path": "documents/safeguarding/dols-reference.md",
+      "source_sha256": "dbecb1a1e5511334ce0173f3faea98fe21ac3f7f0d1714e03864944d2cad2812",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.safeguarding.missing-person",
+      "document_family_public_id": "c66a9ffc-47b5-5ac2-abc4-f3a8354f1e34",
+      "document_version_id": "doc.safeguarding.missing-person.v1",
+      "document_public_id": "abe40e3b-271a-51aa-977b-f55b52526e5a",
+      "source_path": "documents/safeguarding/missing-person-procedure.md",
+      "source_sha256": "0e670843ea866c4898dda28c6f321288185b463d1af546ea45db6f2ca123ab7f",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-07-01T00:00:00Z",
+      "approved_at": "2025-06-02T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.safeguarding.allegations-staff",
+      "document_family_public_id": "08b5b883-4e1e-5c0b-ad0d-304b5e2455c0",
+      "document_version_id": "doc.safeguarding.allegations-staff.v1",
+      "document_public_id": "9c3739ef-cdc5-5fcb-84cd-875a514a6f9a",
+      "source_path": "documents/safeguarding/allegations-staff-v1.md",
+      "source_sha256": "966ee4d265c08ab2edcb2cfb3d4a2843bc43c4ebbad52cbc9f2d9e46aacadf56",
+      "governance_state": "APPROVED",
+      "effective_from": "2023-10-01T00:00:00Z",
+      "approved_at": "2023-09-11T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.safeguarding.allegations-staff",
+      "document_family_public_id": "08b5b883-4e1e-5c0b-ad0d-304b5e2455c0",
+      "document_version_id": "doc.safeguarding.allegations-staff.v2",
+      "document_public_id": "ced98388-f72c-5748-9577-24c9c6623318",
+      "source_path": "documents/safeguarding/allegations-staff-v2.md",
+      "source_sha256": "74e8fb3800295c728de50f5c68ff967e996f3bbf95aebf4e3f7c50de4d00358f",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-10-01T00:00:00Z",
+      "approved_at": "2025-09-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.safeguarding.body-map",
+      "document_family_public_id": "a8a9d5e9-1693-58bc-8e40-afb368ed8766",
+      "document_version_id": "doc.safeguarding.body-map.v1",
+      "document_public_id": "3705b45f-d1e1-5138-a957-224975323e68",
+      "source_path": "documents/safeguarding/body-map-form.md",
+      "source_sha256": "fd4bebf3cc6a1c2f0e74738ef7e6cc7f1fd73ddb99abfe64d90cd88a1b635dd0",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-01T00:00:00Z",
+      "approved_at": "2025-04-14T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.fire.south-west-evacuation",
+      "document_family_public_id": "08b54f27-cc0e-5304-997a-7171dc916bba",
+      "document_version_id": "doc.fire.south-west-evacuation.v1",
+      "document_public_id": "6cfed711-adbc-5d3e-bf1c-891e23966030",
+      "source_path": "documents/fire-safety/south-west-evacuation.md",
+      "source_sha256": "9fb4e06e5ef378c10aa935ac026b944461544b72f24b50db3a15e344e03bdd13",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-10T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "LOCATIONS",
+        "location_ids": [
+          "location.region.south-west"
+        ]
+      }
+    },
+    {
+      "document_family_id": "family.fire.harbour-view-evacuation",
+      "document_family_public_id": "7401d385-d068-5444-ad94-5f93d2150076",
+      "document_version_id": "doc.fire.harbour-view-evacuation.v1",
+      "document_public_id": "766310b3-4f49-5d49-afb9-1b36083ecd73",
+      "source_path": "documents/fire-safety/harbour-view-evacuation.md",
+      "source_sha256": "c6fd853ec681f0edb8f578bc2aa28f4243a1c923d6fe1cf680b448bcd16c8bda",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "LOCATIONS",
+        "location_ids": [
+          "location.harbour-view"
+        ]
+      }
+    },
+    {
+      "document_family_id": "family.fire.north-west-evacuation",
+      "document_family_public_id": "863a3f17-6ad7-588d-b7e8-bbd1e5d122c5",
+      "document_version_id": "doc.fire.north-west-evacuation.v1",
+      "document_public_id": "aa8fea02-05e2-543e-8544-0ff484e44309",
+      "source_path": "documents/fire-safety/north-west-evacuation.md",
+      "source_sha256": "7cb7da4c5f03593c0b17f50e37d8a5b6558e41e8b9fdc0a8f550b7995594908b",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-10T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "LOCATIONS",
+        "location_ids": [
+          "location.region.north-west"
+        ]
+      }
+    },
+    {
+      "document_family_id": "family.fire.midlands-evacuation",
+      "document_family_public_id": "cbaf826f-db25-5e27-a3a6-94195075d3c9",
+      "document_version_id": "doc.fire.midlands-evacuation.v1",
+      "document_public_id": "35bd3442-46fe-5662-8b8e-8d81fd42fba6",
+      "source_path": "documents/fire-safety/midlands-evacuation.md",
+      "source_sha256": "8efe73c9a44881368622914e712ab72957a6bfa57080124f0aa954c7177dfad4",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-10T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "LOCATIONS",
+        "location_ids": [
+          "location.region.midlands"
+        ]
+      }
+    },
+    {
+      "document_family_id": "family.fire.drills",
+      "document_family_public_id": "ffb02d80-82cf-5864-93e6-10d2dd7f472f",
+      "document_version_id": "doc.fire.drills.v1",
+      "document_public_id": "45951c22-66d1-5e5a-a157-1bb86ec42a3b",
+      "source_path": "documents/fire-safety/fire-drills-v1.md",
+      "source_sha256": "b68d4a2856b4661d75cac0c8423e8ffd6c7d52a9491a9b9ef787e01a9e11ad3f",
+      "governance_state": "APPROVED",
+      "effective_from": "2023-04-01T00:00:00Z",
+      "approved_at": "2023-03-13T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.fire.drills",
+      "document_family_public_id": "ffb02d80-82cf-5864-93e6-10d2dd7f472f",
+      "document_version_id": "doc.fire.drills.v2",
+      "document_public_id": "f38e8ffe-c6c2-57ab-98d5-e57f12062fe1",
+      "source_path": "documents/fire-safety/fire-drills-v2.md",
+      "source_sha256": "f5efae5749b9d5caf476bbac23efd724508692a10a4e35c5d80ed670f7150a4a",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.fire.peep",
+      "document_family_public_id": "99189f9d-e45b-526f-89b0-9a2e34afc64b",
+      "document_version_id": "doc.fire.peep.v1",
+      "document_public_id": "56bac08b-0a14-5bda-bb66-6f78942c41c2",
+      "source_path": "documents/fire-safety/peep-v1.md",
+      "source_sha256": "7dcea90d80bab85405cefd679af4495063188356722840da7c339ee182dd8850",
+      "governance_state": "APPROVED",
+      "effective_from": "2024-04-01T00:00:00Z",
+      "approved_at": "2024-03-11T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.fire.peep",
+      "document_family_public_id": "99189f9d-e45b-526f-89b0-9a2e34afc64b",
+      "document_version_id": "doc.fire.peep.v2",
+      "document_public_id": "15c4cce9-a1da-5045-aa5d-d002cfa3e886",
+      "source_path": "documents/fire-safety/peep-v2-scheduled.md",
+      "source_sha256": "e6ebd698be2bccc4e27eea9c6feff271070fcd152bc9e464f81265ad70e2b5c3",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-11-01T00:00:00Z",
+      "approved_at": "2026-07-20T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.health-safety.accident-reporting",
+      "document_family_public_id": "4579b367-c4ac-590e-a4d1-7a14185e930b",
+      "document_version_id": "doc.health-safety.accident-reporting.v1",
+      "document_public_id": "8dc46741-7518-535d-8775-4471f406f65b",
+      "source_path": "documents/health-safety/accident-reporting-v1.md",
+      "source_sha256": "b93211f822ffdf842d8630eeb8bc1b4c87ceb034f99619a33c56c4b952e579f9",
+      "governance_state": "APPROVED",
+      "effective_from": "2023-07-01T00:00:00Z",
+      "approved_at": "2023-06-12T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.health-safety.accident-reporting",
+      "document_family_public_id": "4579b367-c4ac-590e-a4d1-7a14185e930b",
+      "document_version_id": "doc.health-safety.accident-reporting.v2",
+      "document_public_id": "4fed57a1-ba58-51a2-8305-29f0c1167a70",
+      "source_path": "documents/health-safety/accident-reporting-v2.md",
+      "source_sha256": "b15f28bc72f6ad57c96373880899e3017ac6239996d35cf0c6ffc6a58ed7bce6",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-07-01T00:00:00Z",
+      "approved_at": "2025-06-16T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.health-safety.coshh",
+      "document_family_public_id": "4f6859fb-0f2a-5427-9840-f227c2188d3d",
+      "document_version_id": "doc.health-safety.coshh.v1",
+      "document_public_id": "f620311f-d1a7-51e0-ba4c-539d3a7103b5",
+      "source_path": "documents/health-safety/coshh-procedure.md",
+      "source_sha256": "711afe04cbab9fa4c317b17d89f27547332c72c6bf288ad8202d89b635c84a82",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.health-safety.moving-handling",
+      "document_family_public_id": "840c21c6-06a6-56ab-b8e7-425959b348e8",
+      "document_version_id": "doc.health-safety.moving-handling.v1",
+      "document_public_id": "3ab801f3-d4b2-564a-9f75-1a2dd36d6f32",
+      "source_path": "documents/health-safety/moving-handling-v1.md",
+      "source_sha256": "ef6c53d1866776ba9b00f8b47efcd1cdfd9fc36e1c6688a3addeae848ec750ff",
+      "governance_state": "APPROVED",
+      "effective_from": "2023-10-01T00:00:00Z",
+      "approved_at": "2023-09-11T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.health-safety.moving-handling",
+      "document_family_public_id": "840c21c6-06a6-56ab-b8e7-425959b348e8",
+      "document_version_id": "doc.health-safety.moving-handling.v2",
+      "document_public_id": "7f5df065-bb07-5092-87b8-863df5d24478",
+      "source_path": "documents/health-safety/moving-handling-v2.md",
+      "source_sha256": "b02927ff66913948b52720fe33b30935ddb22972762b811cfb39ba5a94386cbf",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-10-01T00:00:00Z",
+      "approved_at": "2025-09-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.health-safety.lone-working",
+      "document_family_public_id": "7fdf1e11-0dd6-50e7-9ee3-21c13d7dc63a",
+      "document_version_id": "doc.health-safety.lone-working.v1",
+      "document_public_id": "46ffe6ca-a3ff-59de-aa00-a6b22873dbc8",
+      "source_path": "documents/health-safety/lone-working-policy.md",
+      "source_sha256": "a5f23b4951e14faf4fcd6de5b0e5d95c1a5a68241502dd518b4ae857a42c75d3",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-01T00:00:00Z",
+      "approved_at": "2025-04-21T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.health-safety.risk-assessment",
+      "document_family_public_id": "5cb10b53-f46f-5863-baf4-f7fea6ab55d7",
+      "document_version_id": "doc.health-safety.risk-assessment.v1",
+      "document_public_id": "17138d5a-3949-5423-95be-ee9920e65737",
+      "source_path": "documents/health-safety/workplace-risk-assessment-form.md",
+      "source_sha256": "f6abe7c6d3cdab3c0aaa1b652cec916f2c75a2551458e1087c08102dd81705bb",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.health-safety.equipment-checks",
+      "document_family_public_id": "2d1c86b6-d634-5bae-a35d-03aa996d9cef",
+      "document_version_id": "doc.health-safety.equipment-checks.v1",
+      "document_public_id": "5ef867a7-7060-5bb2-b455-481e865729dc",
+      "source_path": "documents/health-safety/equipment-inspection-schedule.md",
+      "source_sha256": "cb700bc5a827da64b527b5f3bca78a51b95da7f99d962afeb3b28a16133b23d2",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.health-safety.slips-trips",
+      "document_family_public_id": "c2066c68-a32d-5e46-8c3b-a88cc6aaa1c3",
+      "document_version_id": "doc.health-safety.slips-trips.v1",
+      "document_public_id": "d8b09efa-975b-527f-8898-2edbed5f1985",
+      "source_path": "documents/health-safety/slips-trips-procedure.md",
+      "source_sha256": "ffcf7a3177ec7546a064ceee0dec144e7adb82d900a1a4513380da43c216f74f",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-06-01T00:00:00Z",
+      "approved_at": "2025-05-19T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.infection.outbreak-management",
+      "document_family_public_id": "3eabb4c4-c26d-5cab-aec5-b69f490a5448",
+      "document_version_id": "doc.infection.outbreak-management.v1",
+      "document_public_id": "403ff00e-b56a-5ac4-944a-76899650accc",
+      "source_path": "documents/infection-control/outbreak-management-v1.md",
+      "source_sha256": "5514341b895f892fa0af797eb14571266ea6ec8c1de53ca509aeb2e06eaa904c",
+      "governance_state": "APPROVED",
+      "effective_from": "2024-10-01T00:00:00Z",
+      "approved_at": "2024-09-16T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.infection.outbreak-management",
+      "document_family_public_id": "3eabb4c4-c26d-5cab-aec5-b69f490a5448",
+      "document_version_id": "doc.infection.outbreak-management.v2",
+      "document_public_id": "992f7398-a38b-584d-8b39-81ddea3286d3",
+      "source_path": "documents/infection-control/outbreak-management-v2-withdrawn.md",
+      "source_sha256": "cc265374341f019510bffaef17f288fc76be5a06c8bf3d29dcacf64e9fa71214",
+      "governance_state": "WITHDRAWN",
+      "effective_from": "2025-10-01T00:00:00Z",
+      "approved_at": "2025-09-15T10:00:00Z",
+      "withdrawn_at": "2026-06-01T12:00:00Z",
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.infection.ppe",
+      "document_family_public_id": "cab6a901-3000-59fb-a4c1-10198fe50274",
+      "document_version_id": "doc.infection.ppe.v1",
+      "document_public_id": "a4447ca2-f0fd-54f2-81d7-f7ebf015cc68",
+      "source_path": "documents/infection-control/ppe-reference.md",
+      "source_sha256": "a7f4e9022d343c4d748ac3bf753870420e88041a7eabcefa3891014231680a61",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.infection.hand-hygiene",
+      "document_family_public_id": "5a7106f9-22f8-5309-af74-848e35434a0f",
+      "document_version_id": "doc.infection.hand-hygiene.v1",
+      "document_public_id": "ec90a948-5f4f-56c8-accd-b52d983443c5",
+      "source_path": "documents/infection-control/hand-hygiene-v1.md",
+      "source_sha256": "37618e099da6704d233c97ccf267b27ebf601e31624d87258aa1a2394c57c155",
+      "governance_state": "APPROVED",
+      "effective_from": "2023-04-01T00:00:00Z",
+      "approved_at": "2023-03-13T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.infection.hand-hygiene",
+      "document_family_public_id": "5a7106f9-22f8-5309-af74-848e35434a0f",
+      "document_version_id": "doc.infection.hand-hygiene.v2",
+      "document_public_id": "cefdad68-f8ba-5e7e-b240-b62a6da157b2",
+      "source_path": "documents/infection-control/hand-hygiene-v2.md",
+      "source_sha256": "d1c503fe4740d547e6cca6433c0bb45d74c0015e877953537367f098c651f599",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.infection.clinical-waste",
+      "document_family_public_id": "83fd8abc-27cd-54cd-a77b-8c8090818407",
+      "document_version_id": "doc.infection.clinical-waste.v1",
+      "document_public_id": "d992838d-a232-51b4-b7ca-4a924efa6767",
+      "source_path": "documents/infection-control/clinical-waste-procedure.md",
+      "source_sha256": "d31b1c9d3a96635e4f6ec8249bf935d4d91db7a400f131742e8ba2782b969de9",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-01T00:00:00Z",
+      "approved_at": "2025-04-14T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.infection.laundry",
+      "document_family_public_id": "ba5baf60-2897-51f2-b938-1451f4ff37c9",
+      "document_version_id": "doc.infection.laundry.v1",
+      "document_public_id": "2a058dd9-ecfa-58ec-8dfe-e37b1949b001",
+      "source_path": "documents/infection-control/laundry-procedure.md",
+      "source_sha256": "4e561f6ff4946854e3bd3d107e794aec92ecd817ae645d2e9cbfdd48d5c97853",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-06-01T00:00:00Z",
+      "approved_at": "2025-05-12T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.infection.respiratory-ppe",
+      "document_family_public_id": "94ff0351-cf8f-5ef2-a856-cc6c41726ae0",
+      "document_version_id": "doc.infection.respiratory-ppe.v1",
+      "document_public_id": "2b9ee6c2-20f0-59bc-bb1c-a522fadc9e9b",
+      "source_path": "documents/infection-control/respiratory-ppe-procedure.md",
+      "source_sha256": "d7afa21216322ee9ba0cff8fd5fb5723616513579016b1c9ff58e09e3186bb63",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-10-01T00:00:00Z",
+      "approved_at": "2025-09-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.infection.isolation",
+      "document_family_public_id": "74326455-5c32-5c69-827d-246afb251327",
+      "document_version_id": "doc.infection.isolation.v1",
+      "document_public_id": "4e8d3e6b-cacd-5329-878d-677823075622",
+      "source_path": "documents/infection-control/isolation-risk-assessment.md",
+      "source_sha256": "4a9864a51a5cbb53f8cac087fcfdeffe2d8bc91628c3d3fd6ff39b23b79f8faf",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-10-01T00:00:00Z",
+      "approved_at": "2025-09-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.visitors.general",
+      "document_family_public_id": "cd0ea3ab-f09c-545a-9696-955fc99d1bbf",
+      "document_version_id": "doc.visitors.general.v1",
+      "document_public_id": "13ac40a9-5dba-5d60-bfce-a15dda104330",
+      "source_path": "documents/visitors/visitors-contractors.md",
+      "source_sha256": "70d61dedbfb1ab74f308ab11944f0a8ba02e7c20dd0624444318ce7bfba93dfd",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-10T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.visitors.search-optimised-draft",
+      "document_family_public_id": "5104f6e8-6d52-503f-ba09-fc4c7cc18937",
+      "document_version_id": "doc.visitors.search-optimised-draft.v1",
+      "document_public_id": "eee37975-ace9-5070-b578-3eeda3ad441e",
+      "source_path": "documents/visitors/search-optimised-unapproved-draft.md",
+      "source_sha256": "441bf10e4a5c872792ece92e3f679fb814ac7e851ef627dc1d4776186425ee41",
+      "governance_state": "DRAFT",
+      "effective_from": "2026-06-01T00:00:00Z",
+      "approved_at": null,
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.visitors.outbreak-restrictions",
+      "document_family_public_id": "48cd8efe-16a5-5eba-a7d4-bcaee5f96e35",
+      "document_version_id": "doc.visitors.outbreak-restrictions.v1",
+      "document_public_id": "e4f6d6cb-2d7e-5a21-8966-03dff2aaee2d",
+      "source_path": "documents/visitors/outbreak-restrictions-v1.md",
+      "source_sha256": "83227741c4e313e79d89a4160da6726d6a60444f4f09b0e04979fec0c40e66dc",
+      "governance_state": "APPROVED",
+      "effective_from": "2023-10-01T00:00:00Z",
+      "approved_at": "2023-09-11T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.visitors.outbreak-restrictions",
+      "document_family_public_id": "48cd8efe-16a5-5eba-a7d4-bcaee5f96e35",
+      "document_version_id": "doc.visitors.outbreak-restrictions.v2",
+      "document_public_id": "185b6086-ae8a-5fcb-97b8-b18608d3bf57",
+      "source_path": "documents/visitors/outbreak-restrictions-v2.md",
+      "source_sha256": "1bc3c57186d854d20f9788d415dd6d0e58fadd6f90e13d5b4ccb6a2eae6248e2",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-10-01T00:00:00Z",
+      "approved_at": "2025-09-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.visitors.contractor-sign-in",
+      "document_family_public_id": "555c2187-0477-5edf-bddc-dc969b0d98f7",
+      "document_version_id": "doc.visitors.contractor-sign-in.v1",
+      "document_public_id": "88db2d21-1486-52e1-9671-3694b083633a",
+      "source_path": "documents/visitors/contractor-sign-in-form.md",
+      "source_sha256": "0bea6a68fb19e5fecc5a0bd2dec55f9741e0fdfba06299cbcefeb11f10a22e64",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.gdpr.data-protection",
+      "document_family_public_id": "b2dc0de4-66be-5ac7-9b63-5a3cc14beaae",
+      "document_version_id": "doc.gdpr.data-protection.v1",
+      "document_public_id": "905dcb35-399a-5e1e-849f-22ad2d02b5fd",
+      "source_path": "documents/gdpr/data-protection-v1.md",
+      "source_sha256": "3ded992a7bb0bda8d153fd47843766355ca257ea1932ad3dac5302d5fccff7fc",
+      "governance_state": "APPROVED",
+      "effective_from": "2024-01-01T00:00:00Z",
+      "approved_at": "2023-12-11T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.gdpr.data-protection",
+      "document_family_public_id": "b2dc0de4-66be-5ac7-9b63-5a3cc14beaae",
+      "document_version_id": "doc.gdpr.data-protection.v2",
+      "document_public_id": "ee8b3809-0a5d-50af-96ee-944d3bd706df",
+      "source_path": "documents/gdpr/data-protection-v2.md",
+      "source_sha256": "c6fee6d32a596d2ab9ad9e85d506d5b35c4237e828f3c99af071f1acdde378d6",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-01-01T00:00:00Z",
+      "approved_at": "2025-12-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.gdpr.subject-access",
+      "document_family_public_id": "92de0a9e-443e-5023-acb4-0592345af4fe",
+      "document_version_id": "doc.gdpr.subject-access.v1",
+      "document_public_id": "6c75befe-ca8f-5a0f-ac1f-a0b41f32b657",
+      "source_path": "documents/gdpr/subject-access-v1.md",
+      "source_sha256": "5b8f3232a82ef5927d1c34fc57960597d21909cf74c6f0c0162a38adc2052ef5",
+      "governance_state": "APPROVED",
+      "effective_from": "2024-04-01T00:00:00Z",
+      "approved_at": "2024-03-11T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.gdpr.subject-access",
+      "document_family_public_id": "92de0a9e-443e-5023-acb4-0592345af4fe",
+      "document_version_id": "doc.gdpr.subject-access.v2",
+      "document_public_id": "38303523-7710-5624-ac88-bc1f8771d272",
+      "source_path": "documents/gdpr/subject-access-v2-scheduled.md",
+      "source_sha256": "14d62dd16227c2eb564ec2cf812878e609c27d596f573f22d37f2b644e14e7a1",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-12-01T00:00:00Z",
+      "approved_at": "2026-07-20T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.gdpr.breach",
+      "document_family_public_id": "f5bcdbf8-b23b-50b6-9639-aa82b9f364a5",
+      "document_version_id": "doc.gdpr.breach.v1",
+      "document_public_id": "6289302f-e50a-58b6-aba1-752148dc1974",
+      "source_path": "documents/gdpr/personal-data-breach.md",
+      "source_sha256": "2405edb574a452cad38b6a1413f989907cbbed98171f7f7d634bd1ffea39a488",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.gdpr.retention",
+      "document_family_public_id": "59928a56-6e59-5c9c-b089-46e3ae550feb",
+      "document_version_id": "doc.gdpr.retention.v1",
+      "document_public_id": "f5b54190-2131-548f-968f-f4971a3f5a1b",
+      "source_path": "documents/gdpr/records-retention-schedule.md",
+      "source_sha256": "081d06e52db3b27b953858d10f339d0208776ca02f1f92ae5992e1777a41dfb3",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-01T00:00:00Z",
+      "approved_at": "2025-04-14T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.gdpr.cctv",
+      "document_family_public_id": "740a96d9-1c80-5442-9bec-6117f7b829a5",
+      "document_version_id": "doc.gdpr.cctv.v1",
+      "document_public_id": "bb786716-ec07-5f26-aecf-7ddffee7e0ce",
+      "source_path": "documents/gdpr/cctv-access-request-form.md",
+      "source_sha256": "1d4b11dd1dde063ea3721dd4e7c1f16d31ca73ddd7f72daa3a884e5bb0fefa92",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-06-01T00:00:00Z",
+      "approved_at": "2025-05-19T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.complaints.handling",
+      "document_family_public_id": "0514b8c3-c030-5edd-9a99-eecfe7c6a225",
+      "document_version_id": "doc.complaints.handling.v1",
+      "document_public_id": "2a625cb5-58ed-5191-81a6-1b9120d1b3e9",
+      "source_path": "documents/complaints/handling-v1.md",
+      "source_sha256": "03cce40d44fc007bffdb93f558349c0293a6c58a8956dfc08589ead38a4a869c",
+      "governance_state": "APPROVED",
+      "effective_from": "2023-07-01T00:00:00Z",
+      "approved_at": "2023-06-12T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.complaints.handling",
+      "document_family_public_id": "0514b8c3-c030-5edd-9a99-eecfe7c6a225",
+      "document_version_id": "doc.complaints.handling.v2",
+      "document_public_id": "6d9d7ae8-1423-51c0-b410-8d8485e390b3",
+      "source_path": "documents/complaints/handling-v2.md",
+      "source_sha256": "2c1ff87df715203920ba962d461306c98a2219569fd3d56ae7830aa8e9f24572",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-07-01T00:00:00Z",
+      "approved_at": "2025-06-16T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.complaints.duty-candour",
+      "document_family_public_id": "382d00dd-7109-512b-97d7-92ebf142555c",
+      "document_version_id": "doc.complaints.duty-candour.v1",
+      "document_public_id": "fbba9383-6b50-5b7f-88a8-0e0fb693300f",
+      "source_path": "documents/complaints/duty-of-candour.md",
+      "source_sha256": "1caad3698bff6f4de86f07ea82c8173c09a1c794cc104781d04f99c132ef3ad8",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.complaints.feedback",
+      "document_family_public_id": "66d04a62-0c61-54e3-b13d-bec1443f4dd1",
+      "document_version_id": "doc.complaints.feedback.v1",
+      "document_public_id": "7f7b4d4c-eb24-5ad1-8cfd-45e7e5336e9c",
+      "source_path": "documents/complaints/feedback-procedure.md",
+      "source_sha256": "dabe22ea37e8c2a18a02f13648f7f8834b087df33f0a3d3b2c6dd577be24b3b3",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.complaints.advocacy",
+      "document_family_public_id": "be31d29e-2a3a-5f53-be6a-c40cbc23283a",
+      "document_version_id": "doc.complaints.advocacy.v1",
+      "document_public_id": "eca5a60e-b485-5796-a299-8642eb34abba",
+      "source_path": "documents/complaints/advocacy-contacts.md",
+      "source_sha256": "64a8b2ffc093cb70d839152b2cc7bf63db94f47c25274a31f49b6d48fe4e17a5",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-01T00:00:00Z",
+      "approved_at": "2025-04-14T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.complaints.form",
+      "document_family_public_id": "5f6616c5-0587-58d7-a233-d8d338a1481c",
+      "document_version_id": "doc.complaints.form.v1",
+      "document_public_id": "f5b9a476-ed15-56f8-b244-38030f6c9613",
+      "source_path": "documents/complaints/complaint-record-form.md",
+      "source_sha256": "fb322ac36b3719418d345210094f5a685f608bfdae290f79066b316e0a5b778c",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-07-01T00:00:00Z",
+      "approved_at": "2025-06-16T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.payroll.calendar",
+      "document_family_public_id": "6212fa87-1c02-5e14-86be-c5eb6f2957d6",
+      "document_version_id": "doc.payroll.calendar.v1",
+      "document_public_id": "cbf4bf14-b52c-533b-960f-0570acf96f38",
+      "source_path": "documents/payroll/calendar-2026.md",
+      "source_sha256": "8c890abd3864d458bf83e56fa589154d962f037b6787ec9f84110fa5cb6dc1a4",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-01-01T00:00:00Z",
+      "approved_at": "2025-12-01T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.payroll.calendar",
+      "document_family_public_id": "6212fa87-1c02-5e14-86be-c5eb6f2957d6",
+      "document_version_id": "doc.payroll.calendar.v2",
+      "document_public_id": "61fee74f-ba83-54de-b786-bb51c91bf4bb",
+      "source_path": "documents/payroll/calendar-2027-scheduled.md",
+      "source_sha256": "f016b3444abfbdf2a2190796d76c62527b53447d9f5b6169b892e7c7da72617b",
+      "governance_state": "APPROVED",
+      "effective_from": "2027-01-01T00:00:00Z",
+      "approved_at": "2026-07-20T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.payroll.overtime",
+      "document_family_public_id": "f27ed484-4962-5d62-891e-7fba457c2dfa",
+      "document_version_id": "doc.payroll.overtime.v1",
+      "document_public_id": "53e0acd2-3eb9-5ce7-8d23-b3fae362c333",
+      "source_path": "documents/payroll/overtime-procedure.md",
+      "source_sha256": "6ed7e400c01eb8ad1d5da42cc18d411bbb104132e0c65cd54cbec67a14d01225",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-03-01T00:00:00Z",
+      "approved_at": "2025-02-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.payroll.expenses",
+      "document_family_public_id": "3be704e2-3a07-5400-aef3-382395a32f67",
+      "document_version_id": "doc.payroll.expenses.v1",
+      "document_public_id": "be66c8b4-2e44-5ad8-814b-7f8471a3728a",
+      "source_path": "documents/payroll/expenses-procedure.md",
+      "source_sha256": "0356b9e5a94ead0e9c2488374a488ef0a7ced63880767d64546901e5d2aae336",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.payroll.pension",
+      "document_family_public_id": "ae5b97f2-ab5b-5f24-997c-c90a1e3e4ff5",
+      "document_version_id": "doc.payroll.pension.v1",
+      "document_public_id": "9707cd36-cb63-5f81-a465-30e2eb40b07b",
+      "source_path": "documents/payroll/pension-reference.md",
+      "source_sha256": "020f6b7d4066c5f1a4bf31ef4c94f7d764f589255cf655feef605331d6504a7d",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-01T00:00:00Z",
+      "approved_at": "2025-04-14T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.payroll.mileage",
+      "document_family_public_id": "f4497bfd-39c9-5f7a-8a38-d31aac878ee3",
+      "document_version_id": "doc.payroll.mileage.v1",
+      "document_public_id": "003a94b3-df2c-5c7c-adca-4a341ffffeea",
+      "source_path": "documents/payroll/mileage-claim-form.md",
+      "source_sha256": "5984fdafbd24fc8338a9d147be2e6877dc54f6c0fb1a6113d5bf1bddf9ca5078",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-05-01T00:00:00Z",
+      "approved_at": "2025-04-14T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.training.matrix",
+      "document_family_public_id": "96aa861d-04b5-5a89-8f69-9af407a22015",
+      "document_version_id": "doc.training.matrix.v1",
+      "document_public_id": "7a463429-ab8f-5a67-8cd8-85c0d6617081",
+      "source_path": "documents/training/mandatory-training-matrix.md",
+      "source_sha256": "73347a8f4bf1a77a306c7b10280c84994ebe5ca02e4ca5d6337dd0d3b05c0182",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-01-01T00:00:00Z",
+      "approved_at": "2025-12-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.training.induction",
+      "document_family_public_id": "9a83a081-a808-57f6-9e15-8fe596c9526d",
+      "document_version_id": "doc.training.induction.v1",
+      "document_public_id": "9583313d-709c-5dd5-91ea-6c426c969658",
+      "source_path": "documents/training/induction-v1.md",
+      "source_sha256": "cd58efd579590469f1de74a137d2c1764c78c04da117b815be0bfdc9d4c62be3",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-01-01T00:00:00Z",
+      "approved_at": "2024-12-16T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.training.induction",
+      "document_family_public_id": "9a83a081-a808-57f6-9e15-8fe596c9526d",
+      "document_version_id": "doc.training.induction.v2",
+      "document_public_id": "1fcabaa1-9eea-5ee1-898c-58cde9843b85",
+      "source_path": "documents/training/induction-v2-scheduled.md",
+      "source_sha256": "af59632b7d84cab39d8f195f970d7c3dfcb4f74f8972ba934ea9cf4855fc6814",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-11-01T00:00:00Z",
+      "approved_at": "2026-07-20T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.training.medication-competency",
+      "document_family_public_id": "488fee95-040a-56b8-b786-ae5366df8265",
+      "document_version_id": "doc.training.medication-competency.v1",
+      "document_public_id": "ef4491da-e229-5b7f-a139-8a30f6d5e793",
+      "source_path": "documents/training/medication-competency-v1.md",
+      "source_sha256": "e87f7ac73bead2eef8e789b5e9a7f03c1ad4cd2b87340d0219de2e6be16da156",
+      "governance_state": "APPROVED",
+      "effective_from": "2024-01-01T00:00:00Z",
+      "approved_at": "2023-12-11T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.training.medication-competency",
+      "document_family_public_id": "488fee95-040a-56b8-b786-ae5366df8265",
+      "document_version_id": "doc.training.medication-competency.v2",
+      "document_public_id": "9ead562a-90a0-5162-aaa6-395cde79a31d",
+      "source_path": "documents/training/medication-competency-v2.md",
+      "source_sha256": "43ea065674563c32849f255e5c54378b9641fcbd8d78cde2a0b9f846246dacae",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-01-01T00:00:00Z",
+      "approved_at": "2025-12-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.training.safeguarding",
+      "document_family_public_id": "d7d10b64-6f0e-5c38-aa98-ea7e54e93802",
+      "document_version_id": "doc.training.safeguarding.v1",
+      "document_public_id": "33505619-4ea6-5717-bf7f-b21ce935e92e",
+      "source_path": "documents/training/safeguarding-levels.md",
+      "source_sha256": "9e862db5889d858fd0f101402114651c780ecf3ea55d9d31ee24082ff32a56da",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.training.fire",
+      "document_family_public_id": "cdf4ec44-6b51-55ba-95f3-7942664e5bed",
+      "document_version_id": "doc.training.fire.v1",
+      "document_public_id": "59808ff9-23fb-5194-865e-1baef10371d2",
+      "source_path": "documents/training/fire-training-record.md",
+      "source_sha256": "8be17b73041276818f9077e37f4c17c7ce7305e3102bf64e229d818a375593fd",
+      "governance_state": "APPROVED",
+      "effective_from": "2025-04-01T00:00:00Z",
+      "approved_at": "2025-03-17T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.reference.abbreviations",
+      "document_family_public_id": "0b6b73e3-888c-5232-82a9-4b323deab946",
+      "document_version_id": "doc.reference.abbreviations.v1",
+      "document_public_id": "e8293477-a8d6-5f6c-aede-0d2a44b4a533",
+      "source_path": "documents/reference/care-abbreviations.md",
+      "source_sha256": "1c9becfbc579532ea5cc2863c4d38ab2d4ed6acc5ebfa38d8bb774737ed402b9",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-01-01T00:00:00Z",
+      "approved_at": "2025-12-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.reference.contacts",
+      "document_family_public_id": "9a51e81d-28de-5124-8505-cd56879579f8",
+      "document_version_id": "doc.reference.contacts.v1",
+      "document_public_id": "19224d1f-c460-52b1-aaf3-384ddb327577",
+      "source_path": "documents/reference/operational-contacts.md",
+      "source_sha256": "46d005dc5aa0f136fb041e0fff9f915d9934a60e6a87384a616b39a92045dde4",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-01-01T00:00:00Z",
+      "approved_at": "2025-12-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.reference.emergency-numbers",
+      "document_family_public_id": "e95297d1-dd30-5aba-b421-a270c4bb05d3",
+      "document_version_id": "doc.reference.emergency-numbers.v1",
+      "document_public_id": "edb0378c-e0e1-5945-8acf-66f20e8effa2",
+      "source_path": "documents/reference/emergency-numbers-2026.md",
+      "source_sha256": "c0cb89ea57d055a29bd0e7f9d6c27585e4ba82cce08f1304ddb4f063c0fe20db",
+      "governance_state": "APPROVED",
+      "effective_from": "2026-01-01T00:00:00Z",
+      "approved_at": "2025-12-15T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    },
+    {
+      "document_family_id": "family.reference.emergency-numbers",
+      "document_family_public_id": "e95297d1-dd30-5aba-b421-a270c4bb05d3",
+      "document_version_id": "doc.reference.emergency-numbers.v2",
+      "document_public_id": "d2101f65-b621-512a-89e0-85326ebd3245",
+      "source_path": "documents/reference/emergency-numbers-2027-scheduled.md",
+      "source_sha256": "1d7e0ab8b25e68980ac5a94f1fe748dbdd8a52ad7781d41cc5b4b2302ad2db8b",
+      "governance_state": "APPROVED",
+      "effective_from": "2027-01-01T00:00:00Z",
+      "approved_at": "2026-07-20T10:00:00Z",
+      "withdrawn_at": null,
+      "applicability": {
+        "kind": "UNIVERSAL",
+        "location_ids": []
+      }
+    }
+  ],
+  "canonical_chunks": {
+    "materialisation_status": "PENDING_NORMAL_INGESTION",
+    "identity_owner": "baseline-structural chunker after authoritative document IDs exist",
+    "strategy": "baseline-structural",
+    "strategy_version": "1",
+    "configuration": {
+      "tokenizer": "tiktoken/o200k_base",
+      "target_tokens": 400,
+      "max_tokens": 512,
+      "overlap_tokens": 64,
+      "preferred_min_tokens": 100
+    },
+    "expected_count": null,
+    "reason": "Canonical chunks are created through the accepted ingestion protocol; the definition does not fabricate pre-ingestion chunk identities."
+  },
+  "vector_projection": {
+    "materialisation_status": "PENDING_PROVIDER_BACKED_INGESTION",
+    "collection_name": "rag-platform-vectors-v1",
+    "workspace_corpus_generation_id": "27ac7c5b-9eb3-5a35-9ec9-751f43459cd3",
+    "dense": {
+      "embedding_space_generation_id": "4d275a01-9d25-5452-8c83-1894e2d2d4ce",
+      "provider": "voyage",
+      "model": "voyage-4-large",
+      "dimensions": 1024,
+      "vector_name": "text-dense-v1",
+      "distance": "COSINE",
+      "profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c"
+    },
+    "sparse": {
+      "sparse_space_generation_id": "001cc8a5-005f-5b7b-967b-1c98227c9a13",
+      "provider": "fastembed",
+      "model": "prithivida/Splade_PP_en_v1",
+      "vector_name": "text-sparse-v1",
+      "profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d"
+    },
+    "point_identity_algorithm": "vector-point/v1 UUIDv5",
+    "expected_point_count": null
+  },
+  "provider_calls_performed": false,
+  "definition_digest": "aedb24a2cf8bc9bc664ea684cf38f3b712b9c9338453e852b774df0f829e949c"
+}
