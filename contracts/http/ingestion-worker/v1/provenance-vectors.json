@@ -1,0 +1,121 @@
+{
+  "contract_version": 1,
+  "chunks": [
+    {
+      "chunk_id": "00000000-0000-0000-0000-000000000101",
+      "ordinal": 0,
+      "text": "  # Text provenance\n\n    Indentation and trailing spaces are canonical.  \n ",
+      "token_count": 13,
+      "strategy_name": "baseline-structural",
+      "strategy_version": "1",
+      "configuration": {
+        "empty_label": "",
+        "overlap_tokens": 40,
+        "target_tokens": 400
+      },
+      "configuration_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "provenance": [
+        {
+          "normalised_element_id": "00000000-0000-0000-0000-000000000111",
+          "source_element_ids": ["00000000-0000-0000-0000-000000000121"],
+          "source_locations": [
+            {
+              "kind": "text",
+              "start_character": 12,
+              "end_character": 36,
+              "start_line": 2,
+              "end_line": 3
+            },
+            {
+              "kind": "text",
+              "start_character": 40,
+              "end_character": 64,
+              "start_line": 5,
+              "end_line": 6
+            }
+          ],
+          "element_start_character": 0,
+          "element_end_character": 24,
+          "chunk_start_character": 0,
+          "chunk_end_character": 24,
+          "role": "primary"
+        }
+      ],
+      "content_digest": "9fa4092ff120b9079f44186c8e7c2140c28fcd7b2b188e93f1d370dcc18002f8"
+    },
+    {
+      "chunk_id": "00000000-0000-0000-0000-000000000102",
+      "ordinal": 1,
+      "text": "PDF provenance example.",
+      "token_count": 5,
+      "strategy_name": "baseline-structural",
+      "strategy_version": "1",
+      "configuration": {"overlap_tokens": 40, "target_tokens": 400},
+      "configuration_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "provenance": [
+        {
+          "normalised_element_id": "00000000-0000-0000-0000-000000000112",
+          "source_element_ids": ["00000000-0000-0000-0000-000000000122"],
+          "source_locations": [
+            {
+              "kind": "pdf",
+              "page_number": 2,
+              "page_width": 612.0,
+              "page_height": 792.0,
+              "x0": 72.5,
+              "top": 96.25,
+              "x1": 310.75,
+              "bottom": 118.5,
+              "rotation_degrees": 0,
+              "has_distinct_crop_box": false,
+              "start_character": null,
+              "end_character": null
+            }
+          ],
+          "element_start_character": 0,
+          "element_end_character": 23,
+          "chunk_start_character": 0,
+          "chunk_end_character": 23,
+          "role": "primary"
+        }
+      ],
+      "content_digest": "31699e99825b3c2f68fc179a97d5df12924d15525ef6744df065db8f5b6028a7"
+    },
+    {
+      "chunk_id": "00000000-0000-0000-0000-000000000103",
+      "ordinal": 2,
+      "text": "DOCX provenance example.",
+      "token_count": 6,
+      "strategy_name": "baseline-structural",
+      "strategy_version": "1",
+      "configuration": {"overlap_tokens": 40, "target_tokens": 400},
+      "configuration_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "provenance": [
+        {
+          "normalised_element_id": "00000000-0000-0000-0000-000000000113",
+          "source_element_ids": ["00000000-0000-0000-0000-000000000123"],
+          "source_locations": [
+            {
+              "kind": "docx",
+              "body_block_index": 7,
+              "table_row_index": 1,
+              "table_column_index": 2,
+              "start_character": 8,
+              "end_character": 32
+            },
+            {
+              "kind": "docx",
+              "body_block_index": 8
+            }
+          ],
+          "element_start_character": 0,
+          "element_end_character": 24,
+          "chunk_start_character": 0,
+          "chunk_end_character": 24,
+          "role": "primary"
+        }
+      ],
+      "content_digest": "63d55ce505ff2aad132a79c4a9125caa032c17cf3a1644329b4c97ab2444662c"
+    }
+  ]
+}

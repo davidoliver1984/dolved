@@ -50,3 +50,21 @@ def test_shared_canonicalisation_vector() -> None:
         )
         == identity["expected_point_id"]
     )
+
+
+def test_shared_provenance_vectors_cover_supported_wire_shapes_and_digests() -> None:
+    path = Path("/contracts/http/ingestion-worker/v1/provenance-vectors.json")
+    chunks = json.loads(path.read_text(encoding="utf-8"))["chunks"]
+
+    assert {
+        location["kind"]
+        for chunk in chunks
+        for contribution in chunk["provenance"]
+        for location in contribution["source_locations"]
+    } == {"text", "pdf", "docx"}
+    assert len(chunks[0]["provenance"][0]["source_locations"]) == 2
+    assert chunks[1]["provenance"][0]["source_locations"][0]["start_character"] is None
+    assert "start_character" not in chunks[2]["provenance"][0]["source_locations"][1]
+    assert all(
+        chunk_content_digest(chunk) == chunk["content_digest"] for chunk in chunks
+    )

@@ -27,9 +27,13 @@ use App\Services\Ingestion\IngestionCanonicaliser;
 use App\Services\Ingestion\IngestionWorkerRequestAuthenticator;
 use App\Support\Ingestion\DocumentIngestionRequestedPayload;
 use Carbon\CarbonImmutable;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class EndToEndIngestionOrchestrationTest extends TestCase
@@ -177,6 +181,76 @@ class EndToEndIngestionOrchestrationTest extends TestCase
         $this->assertNull($page['next_cursor']);
     }
 
+    public function test_python_provenance_shapes_survive_the_http_boundary_and_persist_with_their_digest(): void
+    {
+        [$attempt, $context] = $this->claim();
+        $chunks = $this->provenanceVectors();
+
+        $response = $this->submitChunksOverHttp($attempt, $context, $chunks);
+
+        $response->assertOk()->assertJsonPath('data.persisted_chunk_count', 3);
+        foreach ($chunks as $chunk) {
+            $persisted = $attempt->chunks()->where('public_id', $chunk['chunk_id'])->sole();
+
+            $this->assertSame($chunk['text'], $persisted->text);
+            $this->assertSame($chunk['content_digest'], $persisted->content_digest);
+            $this->assertSame($chunk['configuration'], $persisted->configuration);
+            $this->assertEquals($chunk['provenance'], $persisted->provenance);
+        }
+
+        $canonical = $attempt->chunks()->where('ordinal', 0)->sole();
+        $this->assertStringStartsWith('  #', $canonical->text);
+        $this->assertStringEndsWith("  \n ", $canonical->text);
+        $this->assertSame('', $canonical->configuration['empty_label']);
+    }
+
+    public function test_unknown_or_malformed_source_location_fields_are_rejected(): void
+    {
+        [$attempt, $context] = $this->claim();
+        $unknown = $this->provenanceVectors()[0];
+        $unknown['provenance'][0]['source_locations'][0]['unsupported'] = 'value';
+        $unknown['content_digest'] = app(IngestionCanonicaliser::class)->chunkContentDigest($unknown);
+
+        $this->submitChunksOverHttp($attempt, $context, [$unknown])->assertUnprocessable();
+        $this->assertDatabaseCount('document_chunks', 0);
+
+        $malformed = $this->provenanceVectors()[1];
+        $malformed['provenance'][0]['source_locations'][0]['x0'] = 2.0;
+        $malformed['provenance'][0]['source_locations'][0]['x1'] = 1.0;
+        $malformed['content_digest'] = app(IngestionCanonicaliser::class)->chunkContentDigest($malformed);
+
+        $this->submitChunksOverHttp($attempt, $context, [$malformed])->assertUnprocessable();
+        $this->assertDatabaseCount('document_chunks', 0);
+    }
+
+    public function test_intentionally_incorrect_cross_service_digest_still_fails_closed(): void
+    {
+        [$attempt, $context] = $this->claim();
+        $chunk = $this->provenanceVectors()[2];
+        $chunk['content_digest'] = str_repeat('f', 64);
+
+        $this->submitChunksOverHttp($attempt, $context, [$chunk])
+            ->assertUnprocessable()
+            ->assertJsonPath('error.code', 'chunk_digest_mismatch');
+        $this->assertDatabaseCount('document_chunks', 0);
+    }
+
+    public function test_canonical_chunk_exemption_does_not_disable_ordinary_request_normalisation(): void
+    {
+        $request = Request::create(
+            '/ordinary-request',
+            'POST',
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode(['name' => '  ordinary value  ', 'empty' => ''], JSON_THROW_ON_ERROR),
+        );
+
+        (new TrimStrings)->handle($request, fn (Request $request): Request => $request);
+        (new ConvertEmptyStringsToNull)->handle($request, fn (Request $request): Request => $request);
+
+        $this->assertSame('ordinary value', $request->input('name'));
+        $this->assertNull($request->input('empty'));
+    }
+
     public function test_permanent_failure_is_authoritative_and_idempotent(): void
     {
         [$attempt, $context] = $this->claim();
@@ -322,5 +396,54 @@ class EndToEndIngestionOrchestrationTest extends TestCase
     private function eventDigest(): string
     {
         return hash('sha256', json_encode($this->event, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    private function provenanceVectors(): array
+    {
+        $fixture = json_decode(
+            file_get_contents('/contracts/http/ingestion-worker/v1/provenance-vectors.json'),
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        );
+
+        return $fixture['chunks'];
+    }
+
+    /**
+     * @param  array<string, mixed>  $context
+     * @param  array<int, array<string, mixed>>  $chunks
+     */
+    private function submitChunksOverHttp(
+        IngestionEventClaim $attempt,
+        array $context,
+        array $chunks,
+    ): TestResponse {
+        $payload = [...$context, 'chunks' => $chunks];
+        $path = "/api/internal/ingestion/events/{$attempt->event_id}/chunks";
+        $body = json_encode(
+            $payload,
+            JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION,
+        );
+        $timestamp = (string) now()->timestamp;
+        $canonical = implode("\n", [
+            $timestamp,
+            'POST',
+            $path,
+            hash('sha256', $body),
+            $attempt->event_id,
+            'ingestion.chunks.submit',
+        ]);
+        $secret = base64_decode('MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=', true);
+        $this->assertIsString($secret);
+
+        return $this->call('POST', $path, server: $this->transformHeadersToServerVars([
+            'Content-Type' => 'application/json',
+            IngestionWorkerRequestAuthenticator::KEY_ID_HEADER => 'test-v2',
+            IngestionWorkerRequestAuthenticator::TIMESTAMP_HEADER => $timestamp,
+            IngestionWorkerRequestAuthenticator::EVENT_ID_HEADER => $attempt->event_id,
+            IngestionWorkerRequestAuthenticator::PURPOSE_HEADER => 'ingestion.chunks.submit',
+            IngestionWorkerRequestAuthenticator::SIGNATURE_HEADER => 'v2='.hash_hmac('sha256', $canonical, $secret),
+        ]), content: $body);
     }
 }
