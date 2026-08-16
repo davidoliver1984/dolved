@@ -9,6 +9,7 @@ services:
       - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/independence.json:/evaluation/engineering/independence.json:ro
       - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/organisation.json:/evaluation/engineering/organisation.json:ro
       - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/document-catalog.json:/evaluation/engineering/document-catalog.json:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/documents:/evaluation/engineering/source/documents:ro
       - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/provisioning-definition.json:/evaluation/engineering/provisioning-definition.json:ro
       - api_vendor:/app/vendor
 
@@ -24,5 +25,18 @@ services:
       - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/document-catalog.json:/evaluation/engineering/document-catalog.json:ro
       - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/provisioning-definition.json:/evaluation/engineering/provisioning-definition.json:ro
       - ./scripts:/workspace/scripts:ro
+      - ai_venv:/app/.venv
+      - fastembed_cache:/opt/fastembed-cache
+
+  publisher:
+    volumes: !override
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - api_vendor:/app/vendor
+
+  worker:
+    volumes: !override
+      - ./apps/ai:/app
+      - ./contracts:/contracts:ro
       - ai_venv:/app/.venv
       - fastembed_cache:/opt/fastembed-cache

@@ -79,6 +79,20 @@ final readonly class V3EngineeringBenchmarkSource
         return $source;
     }
 
+    public function document(string $relativePath, string $expectedSha256): string
+    {
+        if (preg_match('#^documents/[a-z0-9][a-z0-9./-]*\.md$#', $relativePath) !== 1) {
+            throw new RuntimeException('The Benchmark V3 source path is invalid.');
+        }
+        $path = V3EngineeringBenchmark::root().'/source/'.$relativePath;
+        $contents = file_get_contents($path);
+        if (! is_string($contents) || ! hash_equals($expectedSha256, hash('sha256', $contents))) {
+            throw new RuntimeException("Benchmark V3 source integrity failed: {$relativePath}");
+        }
+
+        return $contents;
+    }
+
     /** @return array<string, mixed> */
     private function json(string $name): array
     {

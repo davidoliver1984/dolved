@@ -28,6 +28,14 @@ final class V3EngineeringBenchmark
 
     public const WORKSPACE_SLUG = 'evaluation-dolved-care-engineering-v3';
 
+    public const WORKSPACE_NAME = 'Dolved Care Engineering Benchmark V3';
+
+    public const OWNER_EMAIL = 'evaluation-v3@dolved.invalid';
+
+    public const OWNER_NAME = 'Dolved V3 Engineering Evaluation';
+
+    public const STATE_PATH = 'evaluation/dolved-care-engineering/v3/provisioning.json';
+
     public const ROOT = '/evaluation/engineering';
 
     public static function root(): string
