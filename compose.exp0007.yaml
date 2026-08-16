@@ -1,0 +1,30 @@
+services:
+  api:
+    volumes: !override
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/corpus.json:/evaluation/engineering/corpus.json:ro
+      - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/expectations.json:/evaluation/engineering/expectations.json:ro
+      - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/population-manifest.json:/evaluation/engineering/population-manifest.json:ro
+      - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/independence.json:/evaluation/engineering/independence.json:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/organisation.json:/evaluation/engineering/organisation.json:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/document-catalog.json:/evaluation/engineering/document-catalog.json:ro
+      - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/provisioning-definition.json:/evaluation/engineering/provisioning-definition.json:ro
+      - ${EXP0007_PROVISIONING_RECORD:?Set EXP0007_PROVISIONING_RECORD to the verified immutable copy}:/app/storage/app/private/evaluation/dolved-care-engineering/v3/provisioning.json:ro
+      - api_vendor:/app/vendor
+
+  ai:
+    volumes: !override
+      - ./apps/ai:/app
+      - ./contracts:/contracts:ro
+      - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/corpus.json:/evaluation/engineering/corpus.json:ro
+      - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/expectations.json:/evaluation/engineering/expectations.json:ro
+      - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/population-manifest.json:/evaluation/engineering/population-manifest.json:ro
+      - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/independence.json:/evaluation/engineering/independence.json:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/organisation.json:/evaluation/engineering/organisation.json:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v3/document-catalog.json:/evaluation/engineering/document-catalog.json:ro
+      - ./tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/provisioning-definition.json:/evaluation/engineering/provisioning-definition.json:ro
+      - ${EXP0007_PROVISIONING_RECORD:?Set EXP0007_PROVISIONING_RECORD to the verified immutable copy}:/evaluation-lineage/provisioning.json:ro
+      - ./scripts:/workspace/scripts:ro
+      - ai_venv:/app/.venv
+      - fastembed_cache:/opt/fastembed-cache
