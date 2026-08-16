@@ -1,0 +1,119 @@
+{
+  "baseline_result_selector": "dense",
+  "benchmark": {
+    "digest": "d24d61a9aef55c8d3ca8d6609fbb44683665acc22e8d4f9652f00cb4d575d4c3",
+    "id": "dolved-care-engineering",
+    "version": "3"
+  },
+  "candidate_pipeline": {
+    "dense_candidate_k": 40,
+    "evidence_threshold": 0.337890625,
+    "final_evidence_k": 5,
+    "fusion_candidate_k": 15,
+    "reranker_candidate_k": 15,
+    "rrf_k": 5,
+    "sparse_candidate_k": 40
+  },
+  "corpus": {
+    "digest": "d24d61a9aef55c8d3ca8d6609fbb44683665acc22e8d4f9652f00cb4d575d4c3",
+    "version": "3"
+  },
+  "decision": null,
+  "description": "Exact-commit ADR-0022 full-pipeline engineering experiment",
+  "harness_version": "retrieval-evaluation-v1",
+  "planner": {
+    "adapter_version": "structured-chat-v3",
+    "contract_schema_version": "plan-response-v2",
+    "fingerprint": "b18ce9cfcb769bbe2c2d28e74ba9b1ffa90a62c887de7e9b04d595cc6a1cf690",
+    "model": "gpt-5-mini",
+    "prompt_version": "adr-0022-v5",
+    "provider": "openai"
+  },
+  "pricing": {
+    "embedding_cost_per_million_tokens_usd": 0.12,
+    "embedding_pricing_snapshot": "voyage-pricing-2026-08-12",
+    "generation": "not_executed",
+    "planner_cost_basis": "unavailable",
+    "reranker_cost_basis": "unavailable"
+  },
+  "providers": {
+    "dense": {
+      "adapter_version": "1",
+      "dimensions": 1024,
+      "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+      "model": "voyage-4-large",
+      "provider": "voyage"
+    },
+    "fusion": {
+      "rrf_k": 5,
+      "strategy": "rrf",
+      "version": "1"
+    },
+    "reranking": {
+      "adapter_version": "1",
+      "model": "rerank-2.5",
+      "provider": "voyage"
+    },
+    "sparse": {
+      "adapter_version": "1",
+      "model": "prithivida/Splade_PP_en_v1",
+      "model_revision": "efcd182bc7eb351e81a9445752d4388c2bab500b",
+      "provider": "fastembed",
+      "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d"
+    }
+  },
+  "provisioning_mapping_digest": "942e3260ef8e7f85d786eea2534fa5240ae27dc94f61bfc17208bc99fbcacb5e",
+  "provisioning_snapshot_digest": "c1dc655c419d47e2220b51900fcb9b53ec0c758959e9d1c2d4d4f2ba354da0d1",
+  "reliability": {
+    "embedding": {
+      "initial_backoff_seconds": 15,
+      "maximum_attempts": 4,
+      "maximum_backoff_seconds": 120,
+      "maximum_provider_cooldown_seconds": 120,
+      "request_timeout_seconds": 10
+    },
+    "laravel": {
+      "minimum_timeout_seconds": 480,
+      "outer_maximum_attempts": 2,
+      "timeout_seconds": 480,
+      "typed_provider_rate_limit_replay": false
+    },
+    "python_retry_owner": true,
+    "reranker": {
+      "initial_backoff_seconds": 15,
+      "maximum_attempts": 3,
+      "maximum_backoff_seconds": 90,
+      "maximum_provider_cooldown_seconds": 90,
+      "request_timeout_seconds": 10
+    },
+    "shared_voyage_cooldown": {
+      "participants": [
+        "dense_embedding",
+        "reranker"
+      ],
+      "provider_timing_precedence": [
+        "retry_after",
+        "rate_limit_reset",
+        "configured_fallback"
+      ],
+      "scope": "python_process"
+    }
+  },
+  "repository": {
+    "commit": "a21431bc0f9137978f3c4d082619954f8814bd9d",
+    "dirty": false
+  },
+  "result_selector": "hybrid",
+  "run_id": "EXP-0008-v3-final-engineering-confirmation",
+  "schema_version": "v2",
+  "split": {
+    "case_count": 10,
+    "digest": "5be81b3238889f6b68af049e37a28f8de1cf00b4ab7e4883b2e59d630e9dcfbf",
+    "name": "dolved-care-engineering-v3-engineering-v1",
+    "variant_count": 31,
+    "version": "v1"
+  },
+  "status": "EXPERIMENTAL",
+  "threshold_policy_identity": "6626d78bd9445c70fd946a64b0a817b4e77b264a14d945d483ba497f9e681364",
+  "threshold_status": "CALIBRATING_EXPERIMENTAL_UNPROMOTED"
+}

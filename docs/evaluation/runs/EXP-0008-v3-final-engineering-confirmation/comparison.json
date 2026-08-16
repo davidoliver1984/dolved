@@ -1,0 +1,93 @@
+{
+  "baseline_experiment_id": "EXP-0008-v3-final-engineering-confirmation-dense-control",
+  "baseline_repository_commit": "a21431bc0f9137978f3c4d082619954f8814bd9d",
+  "baseline_result_digest": "93ae11d21d749591d3ed93a4c8dc9d76e563a5be538c84287d913e250d4a31c1",
+  "candidate_result_digest": "4d24edd3882f2d2112378ec75308f6ae82395dcd58bef9c4ad09a276a06e2ea8",
+  "comparison_note": "Equal-K comparison: dense and hybrid are both evaluated at final K=5.",
+  "gate": null,
+  "metrics": {
+    "mrr": {
+      "baseline": 0.9416666666666667,
+      "candidate": 0.9333333333333333,
+      "delta": -0.008333333333333304
+    },
+    "ndcg_at_k": {
+      "baseline": 0.9218302151694034,
+      "candidate": 0.9156790443955944,
+      "delta": -0.0061511707738090005
+    },
+    "precision_at_k": {
+      "baseline": 0.21000000000000005,
+      "candidate": 0.21000000000000005,
+      "delta": 0.0
+    },
+    "recall_at_k": {
+      "baseline": 0.9666666666666666,
+      "candidate": 0.9666666666666666,
+      "delta": 0.0
+    }
+  },
+  "schema_version": "v1",
+  "slices": {
+    "COMPARE": {
+      "mrr": 0.08333333333333337,
+      "ndcg_at_k": 0.06151170773809034,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "CURRENT": {
+      "mrr": -0.02083333333333337,
+      "ndcg_at_k": -0.015377926934522668,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "VALID_AT_DATE": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "applicability": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "historical": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "location-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "multi-evidence": {
+      "mrr": 0.04166666666666674,
+      "ndcg_at_k": 0.030755853869045113,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "region-specific": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "regional-applicability": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "temporal-authority": {
+      "mrr": 0.04166666666666674,
+      "ndcg_at_k": 0.030755853869045113,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    }
+  }
+}

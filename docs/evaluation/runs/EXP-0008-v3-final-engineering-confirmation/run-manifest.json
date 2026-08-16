@@ -1,0 +1,1190 @@
+{
+    "lineage": {
+        "benchmark": {
+            "digest": "d24d61a9aef55c8d3ca8d6609fbb44683665acc22e8d4f9652f00cb4d575d4c3",
+            "engineering_case_ids": [
+                "v3.health.current.coshh-review-trigger",
+                "v3.hr.current.disciplinary-suspension",
+                "v3.infection-control.current.midlands-community-specimen-transport",
+                "v3.medication.compare.controlled-drugs-discrepancy",
+                "v3.medication.current.controlled-drugs-discrepancy",
+                "v3.medication.current.error-form",
+                "v3.medication.current.prn-prechecks",
+                "v3.medication.historical.controlled-drugs-v1",
+                "v3.safeguarding.current.body-map",
+                "v3.training.current.fire-marshal-refresh"
+            ],
+            "engineering_case_ids_digest": "5be81b3238889f6b68af049e37a28f8de1cf00b4ab7e4883b2e59d630e9dcfbf",
+            "engineering_snapshot_digest": "4ebeb404dc7ccae7d8a677a77702aa5e1c043dfa78621a391c5176f39480e493",
+            "evaluation_clock": "2026-08-01T12:00:00+00:00",
+            "id": "dolved-care-engineering",
+            "matching_algorithm": "normalised-token-coverage-v1",
+            "split_version": "v1",
+            "version": "3"
+        },
+        "chunking": {
+            "configuration": {
+                "max_tokens": 512,
+                "overlap_tokens": 64,
+                "preferred_min_tokens": 100,
+                "target_tokens": 400,
+                "tokenizer": {
+                    "encoding": "o200k_base",
+                    "library": "tiktoken",
+                    "library_version": "0.13.0",
+                    "vocabulary_fingerprint": "740d8e335bee7a52cd7e7fed95b6f7afd56cb651f2968727e4009fddda82db0c"
+                }
+            },
+            "configuration_fingerprint": "b6c1f7786d90c57d0fef2ddb250f08c7b71c1593d62c69b3da0f179457ddfc9d",
+            "strategy_name": "baseline-structural",
+            "strategy_version": "1"
+        },
+        "experiment": {
+            "active_generation": {
+                "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                "expected_point_count": 100,
+                "point_manifest_digest": "f7784417846affca3a86a18fe84426de1d4e21e2736cebd63d5320ddc91650c5",
+                "public_id": "289ccffe-2264-4867-aa1e-d8eb1af43300",
+                "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d"
+            },
+            "benchmark": {
+                "authoring_digest": "72eb717e8f0fd561022a252a80e56ce5b3e73106087b3b6e8772c56b9eef0df4",
+                "id": "dolved-care-engineering",
+                "version": "3"
+            },
+            "catalogue_sha256": "c234e38c559f69fba6be1726a2bf32835a776dabd66ca20ee2ec496e70f8bba8",
+            "engineering_population": {
+                "case_count": 10,
+                "case_ids_digest": "5be81b3238889f6b68af049e37a28f8de1cf00b4ab7e4883b2e59d630e9dcfbf",
+                "corpus_sha256": "4ebeb404dc7ccae7d8a677a77702aa5e1c043dfa78621a391c5176f39480e493",
+                "digest": "d24d61a9aef55c8d3ca8d6609fbb44683665acc22e8d4f9652f00cb4d575d4c3",
+                "expectations_sha256": "acd1c1f0e4869921fa86cd147a5c24ff3877026388309f2f1dd1aa5048bf74da",
+                "id": "dolved-care-engineering-v3-engineering-v1",
+                "manifest_sha256": "d1dd1df24350013ec4ad6364e0344b5d57a02650fbb445f3dce86568d2f7aa68",
+                "variant_count": 31,
+                "variant_identities_digest": "652f3620060c8f2aa3c692a036ffa7a6ea7d5be9c20538ac29e78402392571ee"
+            },
+            "id": "EXP-0008-v3-final-engineering-confirmation",
+            "materialisation_reuse": {
+                "current_provisioning_definition_sha256": "2d9e99817e42e5c673d1448940f4b7e7f52db72157a783520c819217797a5b39",
+                "current_source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
+                "mapping_digest": "942e3260ef8e7f85d786eea2534fa5240ae27dc94f61bfc17208bc99fbcacb5e",
+                "materialised_population_digest": "faac5aa922671d13402fefc75b0c1e613f9edd8fc90bf7e9812b4bf3d14f5d6a",
+                "reason": "Only engineering question/review lineage changed; organisation, catalogue and all ingestion sources are unchanged.",
+                "record_sha256": "b0aafb2a27670e673ff391947e3672a2893c94b86eccd699d007f4ad6c241b19"
+            },
+            "organisation_sha256": "9bcfefa56b05d0e0eadadcd3b4c1dbc1e0e2d6b05d7f086b8e4098c6289fae09",
+            "planner": {
+                "adapter_version": "structured-chat-v3",
+                "contract_schema_version": "plan-response-v2",
+                "fingerprint": "b18ce9cfcb769bbe2c2d28e74ba9b1ffa90a62c887de7e9b04d595cc6a1cf690",
+                "model": "gpt-5-mini",
+                "prompt_version": "adr-0022-v5",
+                "provider": "openai"
+            },
+            "retrieval": {
+                "dense": {
+                    "candidate_k": 40,
+                    "dimensions": 1024,
+                    "model": "voyage-4-large",
+                    "provider": "voyage"
+                },
+                "evidence_threshold": 0.337890625,
+                "final_evidence_k": 5,
+                "fusion": {
+                    "candidate_k": 15,
+                    "rrf_k": 5,
+                    "strategy": "rrf",
+                    "weighting": "equal"
+                },
+                "policy_fingerprint": "6626d78bd9445c70fd946a64b0a817b4e77b264a14d945d483ba497f9e681364",
+                "reranker": {
+                    "candidate_k": 15,
+                    "model": "rerank-2.5",
+                    "provider": "voyage"
+                },
+                "sparse": {
+                    "candidate_k": 40,
+                    "model": "prithivida/Splade_PP_en_v1",
+                    "provider": "fastembed"
+                }
+            }
+        },
+        "mapping": {
+            "benchmark": {
+                "authoring_digest": "eea41b2efb7b5d84c130365b9dc13fdd24ab93696f5ecb5e990c25930a233b03",
+                "evaluation_clock": "2026-08-01T12:00:00Z",
+                "id": "dolved-care-engineering",
+                "population_digest": "faac5aa922671d13402fefc75b0c1e613f9edd8fc90bf7e9812b4bf3d14f5d6a",
+                "population_id": "dolved-care-engineering-v3-engineering-v1",
+                "version": "3"
+            },
+            "document_families": {
+                "family.complaints.advocacy": "be31d29e-2a3a-5f53-be6a-c40cbc23283a",
+                "family.complaints.duty-candour": "382d00dd-7109-512b-97d7-92ebf142555c",
+                "family.complaints.feedback": "66d04a62-0c61-54e3-b13d-bec1443f4dd1",
+                "family.complaints.form": "5f6616c5-0587-58d7-a233-d8d338a1481c",
+                "family.complaints.handling": "0514b8c3-c030-5edd-9a99-eecfe7c6a225",
+                "family.fire.drills": "ffb02d80-82cf-5864-93e6-10d2dd7f472f",
+                "family.fire.harbour-view-evacuation": "7401d385-d068-5444-ad94-5f93d2150076",
+                "family.fire.midlands-evacuation": "cbaf826f-db25-5e27-a3a6-94195075d3c9",
+                "family.fire.north-west-evacuation": "863a3f17-6ad7-588d-b7e8-bbd1e5d122c5",
+                "family.fire.peep": "99189f9d-e45b-526f-89b0-9a2e34afc64b",
+                "family.fire.south-west-evacuation": "08b54f27-cc0e-5304-997a-7171dc916bba",
+                "family.gdpr.breach": "f5bcdbf8-b23b-50b6-9639-aa82b9f364a5",
+                "family.gdpr.cctv": "740a96d9-1c80-5442-9bec-6117f7b829a5",
+                "family.gdpr.data-protection": "b2dc0de4-66be-5ac7-9b63-5a3cc14beaae",
+                "family.gdpr.retention": "59928a56-6e59-5c9c-b089-46e3ae550feb",
+                "family.gdpr.subject-access": "92de0a9e-443e-5023-acb4-0592345af4fe",
+                "family.health-safety.accident-reporting": "4579b367-c4ac-590e-a4d1-7a14185e930b",
+                "family.health-safety.coshh": "4f6859fb-0f2a-5427-9840-f227c2188d3d",
+                "family.health-safety.equipment-checks": "2d1c86b6-d634-5bae-a35d-03aa996d9cef",
+                "family.health-safety.lone-working": "7fdf1e11-0dd6-50e7-9ee3-21c13d7dc63a",
+                "family.health-safety.moving-handling": "840c21c6-06a6-56ab-b8e7-425959b348e8",
+                "family.health-safety.risk-assessment": "5cb10b53-f46f-5863-baf4-f7fea6ab55d7",
+                "family.health-safety.slips-trips": "c2066c68-a32d-5e46-8c3b-a88cc6aaa1c3",
+                "family.hr.annual-leave": "44b626e2-9dc4-5ece-90e1-ed2668b1f441",
+                "family.hr.disciplinary": "8154af41-0610-5051-b453-acf7b93bbd5f",
+                "family.hr.family-leave": "6e8a3454-65ba-51eb-8156-f884c376f59c",
+                "family.hr.flexible-working": "c98d2ecf-7874-5c7c-9728-c33828b0fb8f",
+                "family.hr.grievance": "07802f1f-3613-5dd0-b1ef-073963888a53",
+                "family.hr.lone-worker-welfare": "cb39397e-4f67-5c52-a4bc-2c20f6582878",
+                "family.hr.new-starter-form": "32fd7105-4545-565e-820c-66a1cd0cc76c",
+                "family.hr.recruitment": "7f814c3d-ca49-5124-93e3-043bbd2136c9",
+                "family.hr.sickness-absence": "9f0c7f12-2836-55d0-be8a-c8118ad01ac4",
+                "family.infection-control.midlands-community-specimen-transport": "b0bcbcb1-6082-5c66-b1a4-2d3f2d3a0931",
+                "family.infection.clinical-waste": "83fd8abc-27cd-54cd-a77b-8c8090818407",
+                "family.infection.hand-hygiene": "5a7106f9-22f8-5309-af74-848e35434a0f",
+                "family.infection.isolation": "74326455-5c32-5c69-827d-246afb251327",
+                "family.infection.laundry": "ba5baf60-2897-51f2-b938-1451f4ff37c9",
+                "family.infection.outbreak-management": "3eabb4c4-c26d-5cab-aec5-b69f490a5448",
+                "family.infection.ppe": "cab6a901-3000-59fb-a4c1-10198fe50274",
+                "family.infection.respiratory-ppe": "94ff0351-cf8f-5ef2-a856-cc6c41726ae0",
+                "family.medication.administration": "8ff6a3e7-6df3-539e-b669-c8c7a972823f",
+                "family.medication.controlled-drugs": "31520796-8e95-5325-8938-29b2bb910b71",
+                "family.medication.covert": "ea8404a2-183f-522c-bdb2-24f613bcb073",
+                "family.medication.errors": "f7d88d90-c1d4-5050-a109-8343a92c4ec5",
+                "family.medication.fridge-reference": "636eea7c-1e95-5cb6-a270-2d42472bff78",
+                "family.medication.prn": "d5c2dcdc-72b6-58b6-9fc8-b2ee6ec72c91",
+                "family.medication.self-administration": "bb62402e-aea1-5b31-84b0-64a2ac25c724",
+                "family.medication.storage": "4669c0d9-b2b2-5471-911e-b50fc9dbe7a5",
+                "family.payroll.calendar": "6212fa87-1c02-5e14-86be-c5eb6f2957d6",
+                "family.payroll.expenses": "3be704e2-3a07-5400-aef3-382395a32f67",
+                "family.payroll.mileage": "f4497bfd-39c9-5f7a-8a38-d31aac878ee3",
+                "family.payroll.overtime": "f27ed484-4962-5d62-891e-7fba457c2dfa",
+                "family.payroll.pension": "ae5b97f2-ab5b-5f24-997c-c90a1e3e4ff5",
+                "family.reference.abbreviations": "0b6b73e3-888c-5232-82a9-4b323deab946",
+                "family.reference.contacts": "9a51e81d-28de-5124-8505-cd56879579f8",
+                "family.reference.emergency-numbers": "e95297d1-dd30-5aba-b421-a270c4bb05d3",
+                "family.safeguarding.adult-reporting": "74fd3a86-4c6e-5d88-af47-6dbeae8ac542",
+                "family.safeguarding.allegations-staff": "08b5b883-4e1e-5c0b-ad0d-304b5e2455c0",
+                "family.safeguarding.body-map": "a8a9d5e9-1693-58bc-8e40-afb368ed8766",
+                "family.safeguarding.dols": "94f21001-c4f4-55be-904d-ee12d4606ac3",
+                "family.safeguarding.mental-capacity": "31cb50c8-8bed-57f3-abe8-a6f931b768fd",
+                "family.safeguarding.missing-person": "c66a9ffc-47b5-5ac2-abc4-f3a8354f1e34",
+                "family.safeguarding.whistleblowing": "09c3c74f-7bff-5159-84f9-947b0d20ba5a",
+                "family.training.fire": "cdf4ec44-6b51-55ba-95f3-7942664e5bed",
+                "family.training.induction": "9a83a081-a808-57f6-9e15-8fe596c9526d",
+                "family.training.matrix": "96aa861d-04b5-5a89-8f69-9af407a22015",
+                "family.training.medication-competency": "488fee95-040a-56b8-b786-ae5366df8265",
+                "family.training.safeguarding": "d7d10b64-6f0e-5c38-aa98-ea7e54e93802",
+                "family.visitors.contractor-sign-in": "555c2187-0477-5edf-bddc-dc969b0d98f7",
+                "family.visitors.general": "cd0ea3ab-f09c-545a-9696-955fc99d1bbf",
+                "family.visitors.outbreak-restrictions": "48cd8efe-16a5-5eba-a7d4-bcaee5f96e35",
+                "family.visitors.search-optimised-draft": "5104f6e8-6d52-503f-ba09-fc4c7cc18937"
+            },
+            "document_versions": {
+                "doc.complaints.advocacy.v1": {
+                    "family_id": "family.complaints.advocacy",
+                    "public_id": "eca5a60e-b485-5796-a299-8642eb34abba",
+                    "source_digest": "64a8b2ffc093cb70d839152b2cc7bf63db94f47c25274a31f49b6d48fe4e17a5",
+                    "source_path": "documents/complaints/advocacy-contacts.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/eca5a60e-b485-5796-a299-8642eb34abba/source.md"
+                },
+                "doc.complaints.duty-candour.v1": {
+                    "family_id": "family.complaints.duty-candour",
+                    "public_id": "fbba9383-6b50-5b7f-88a8-0e0fb693300f",
+                    "source_digest": "1caad3698bff6f4de86f07ea82c8173c09a1c794cc104781d04f99c132ef3ad8",
+                    "source_path": "documents/complaints/duty-of-candour.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/fbba9383-6b50-5b7f-88a8-0e0fb693300f/source.md"
+                },
+                "doc.complaints.feedback.v1": {
+                    "family_id": "family.complaints.feedback",
+                    "public_id": "7f7b4d4c-eb24-5ad1-8cfd-45e7e5336e9c",
+                    "source_digest": "dabe22ea37e8c2a18a02f13648f7f8834b087df33f0a3d3b2c6dd577be24b3b3",
+                    "source_path": "documents/complaints/feedback-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/7f7b4d4c-eb24-5ad1-8cfd-45e7e5336e9c/source.md"
+                },
+                "doc.complaints.form.v1": {
+                    "family_id": "family.complaints.form",
+                    "public_id": "f5b9a476-ed15-56f8-b244-38030f6c9613",
+                    "source_digest": "fb322ac36b3719418d345210094f5a685f608bfdae290f79066b316e0a5b778c",
+                    "source_path": "documents/complaints/complaint-record-form.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/f5b9a476-ed15-56f8-b244-38030f6c9613/source.md"
+                },
+                "doc.complaints.handling.v1": {
+                    "family_id": "family.complaints.handling",
+                    "public_id": "2a625cb5-58ed-5191-81a6-1b9120d1b3e9",
+                    "source_digest": "03cce40d44fc007bffdb93f558349c0293a6c58a8956dfc08589ead38a4a869c",
+                    "source_path": "documents/complaints/handling-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/2a625cb5-58ed-5191-81a6-1b9120d1b3e9/source.md"
+                },
+                "doc.complaints.handling.v2": {
+                    "family_id": "family.complaints.handling",
+                    "public_id": "6d9d7ae8-1423-51c0-b410-8d8485e390b3",
+                    "source_digest": "2c1ff87df715203920ba962d461306c98a2219569fd3d56ae7830aa8e9f24572",
+                    "source_path": "documents/complaints/handling-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/6d9d7ae8-1423-51c0-b410-8d8485e390b3/source.md"
+                },
+                "doc.fire.drills.v1": {
+                    "family_id": "family.fire.drills",
+                    "public_id": "45951c22-66d1-5e5a-a157-1bb86ec42a3b",
+                    "source_digest": "b68d4a2856b4661d75cac0c8423e8ffd6c7d52a9491a9b9ef787e01a9e11ad3f",
+                    "source_path": "documents/fire-safety/fire-drills-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/45951c22-66d1-5e5a-a157-1bb86ec42a3b/source.md"
+                },
+                "doc.fire.drills.v2": {
+                    "family_id": "family.fire.drills",
+                    "public_id": "f38e8ffe-c6c2-57ab-98d5-e57f12062fe1",
+                    "source_digest": "f5efae5749b9d5caf476bbac23efd724508692a10a4e35c5d80ed670f7150a4a",
+                    "source_path": "documents/fire-safety/fire-drills-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/f38e8ffe-c6c2-57ab-98d5-e57f12062fe1/source.md"
+                },
+                "doc.fire.harbour-view-evacuation.v1": {
+                    "family_id": "family.fire.harbour-view-evacuation",
+                    "public_id": "766310b3-4f49-5d49-afb9-1b36083ecd73",
+                    "source_digest": "c6fd853ec681f0edb8f578bc2aa28f4243a1c923d6fe1cf680b448bcd16c8bda",
+                    "source_path": "documents/fire-safety/harbour-view-evacuation.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/766310b3-4f49-5d49-afb9-1b36083ecd73/source.md"
+                },
+                "doc.fire.midlands-evacuation.v1": {
+                    "family_id": "family.fire.midlands-evacuation",
+                    "public_id": "35bd3442-46fe-5662-8b8e-8d81fd42fba6",
+                    "source_digest": "8efe73c9a44881368622914e712ab72957a6bfa57080124f0aa954c7177dfad4",
+                    "source_path": "documents/fire-safety/midlands-evacuation.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/35bd3442-46fe-5662-8b8e-8d81fd42fba6/source.md"
+                },
+                "doc.fire.north-west-evacuation.v1": {
+                    "family_id": "family.fire.north-west-evacuation",
+                    "public_id": "aa8fea02-05e2-543e-8544-0ff484e44309",
+                    "source_digest": "7cb7da4c5f03593c0b17f50e37d8a5b6558e41e8b9fdc0a8f550b7995594908b",
+                    "source_path": "documents/fire-safety/north-west-evacuation.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/aa8fea02-05e2-543e-8544-0ff484e44309/source.md"
+                },
+                "doc.fire.peep.v1": {
+                    "family_id": "family.fire.peep",
+                    "public_id": "56bac08b-0a14-5bda-bb66-6f78942c41c2",
+                    "source_digest": "7dcea90d80bab85405cefd679af4495063188356722840da7c339ee182dd8850",
+                    "source_path": "documents/fire-safety/peep-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/56bac08b-0a14-5bda-bb66-6f78942c41c2/source.md"
+                },
+                "doc.fire.peep.v2": {
+                    "family_id": "family.fire.peep",
+                    "public_id": "15c4cce9-a1da-5045-aa5d-d002cfa3e886",
+                    "source_digest": "e6ebd698be2bccc4e27eea9c6feff271070fcd152bc9e464f81265ad70e2b5c3",
+                    "source_path": "documents/fire-safety/peep-v2-scheduled.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/15c4cce9-a1da-5045-aa5d-d002cfa3e886/source.md"
+                },
+                "doc.fire.south-west-evacuation.v1": {
+                    "family_id": "family.fire.south-west-evacuation",
+                    "public_id": "6cfed711-adbc-5d3e-bf1c-891e23966030",
+                    "source_digest": "9fb4e06e5ef378c10aa935ac026b944461544b72f24b50db3a15e344e03bdd13",
+                    "source_path": "documents/fire-safety/south-west-evacuation.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/6cfed711-adbc-5d3e-bf1c-891e23966030/source.md"
+                },
+                "doc.gdpr.breach.v1": {
+                    "family_id": "family.gdpr.breach",
+                    "public_id": "6289302f-e50a-58b6-aba1-752148dc1974",
+                    "source_digest": "2405edb574a452cad38b6a1413f989907cbbed98171f7f7d634bd1ffea39a488",
+                    "source_path": "documents/gdpr/personal-data-breach.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/6289302f-e50a-58b6-aba1-752148dc1974/source.md"
+                },
+                "doc.gdpr.cctv.v1": {
+                    "family_id": "family.gdpr.cctv",
+                    "public_id": "bb786716-ec07-5f26-aecf-7ddffee7e0ce",
+                    "source_digest": "1d4b11dd1dde063ea3721dd4e7c1f16d31ca73ddd7f72daa3a884e5bb0fefa92",
+                    "source_path": "documents/gdpr/cctv-access-request-form.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/bb786716-ec07-5f26-aecf-7ddffee7e0ce/source.md"
+                },
+                "doc.gdpr.data-protection.v1": {
+                    "family_id": "family.gdpr.data-protection",
+                    "public_id": "905dcb35-399a-5e1e-849f-22ad2d02b5fd",
+                    "source_digest": "3ded992a7bb0bda8d153fd47843766355ca257ea1932ad3dac5302d5fccff7fc",
+                    "source_path": "documents/gdpr/data-protection-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/905dcb35-399a-5e1e-849f-22ad2d02b5fd/source.md"
+                },
+                "doc.gdpr.data-protection.v2": {
+                    "family_id": "family.gdpr.data-protection",
+                    "public_id": "ee8b3809-0a5d-50af-96ee-944d3bd706df",
+                    "source_digest": "c6fee6d32a596d2ab9ad9e85d506d5b35c4237e828f3c99af071f1acdde378d6",
+                    "source_path": "documents/gdpr/data-protection-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/ee8b3809-0a5d-50af-96ee-944d3bd706df/source.md"
+                },
+                "doc.gdpr.retention.v1": {
+                    "family_id": "family.gdpr.retention",
+                    "public_id": "f5b54190-2131-548f-968f-f4971a3f5a1b",
+                    "source_digest": "081d06e52db3b27b953858d10f339d0208776ca02f1f92ae5992e1777a41dfb3",
+                    "source_path": "documents/gdpr/records-retention-schedule.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/f5b54190-2131-548f-968f-f4971a3f5a1b/source.md"
+                },
+                "doc.gdpr.subject-access.v1": {
+                    "family_id": "family.gdpr.subject-access",
+                    "public_id": "6c75befe-ca8f-5a0f-ac1f-a0b41f32b657",
+                    "source_digest": "5b8f3232a82ef5927d1c34fc57960597d21909cf74c6f0c0162a38adc2052ef5",
+                    "source_path": "documents/gdpr/subject-access-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/6c75befe-ca8f-5a0f-ac1f-a0b41f32b657/source.md"
+                },
+                "doc.gdpr.subject-access.v2": {
+                    "family_id": "family.gdpr.subject-access",
+                    "public_id": "38303523-7710-5624-ac88-bc1f8771d272",
+                    "source_digest": "14d62dd16227c2eb564ec2cf812878e609c27d596f573f22d37f2b644e14e7a1",
+                    "source_path": "documents/gdpr/subject-access-v2-scheduled.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/38303523-7710-5624-ac88-bc1f8771d272/source.md"
+                },
+                "doc.health-safety.accident-reporting.v1": {
+                    "family_id": "family.health-safety.accident-reporting",
+                    "public_id": "8dc46741-7518-535d-8775-4471f406f65b",
+                    "source_digest": "b93211f822ffdf842d8630eeb8bc1b4c87ceb034f99619a33c56c4b952e579f9",
+                    "source_path": "documents/health-safety/accident-reporting-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/8dc46741-7518-535d-8775-4471f406f65b/source.md"
+                },
+                "doc.health-safety.accident-reporting.v2": {
+                    "family_id": "family.health-safety.accident-reporting",
+                    "public_id": "4fed57a1-ba58-51a2-8305-29f0c1167a70",
+                    "source_digest": "b15f28bc72f6ad57c96373880899e3017ac6239996d35cf0c6ffc6a58ed7bce6",
+                    "source_path": "documents/health-safety/accident-reporting-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/4fed57a1-ba58-51a2-8305-29f0c1167a70/source.md"
+                },
+                "doc.health-safety.coshh.v1": {
+                    "family_id": "family.health-safety.coshh",
+                    "public_id": "f620311f-d1a7-51e0-ba4c-539d3a7103b5",
+                    "source_digest": "711afe04cbab9fa4c317b17d89f27547332c72c6bf288ad8202d89b635c84a82",
+                    "source_path": "documents/health-safety/coshh-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/f620311f-d1a7-51e0-ba4c-539d3a7103b5/source.md"
+                },
+                "doc.health-safety.equipment-checks.v1": {
+                    "family_id": "family.health-safety.equipment-checks",
+                    "public_id": "5ef867a7-7060-5bb2-b455-481e865729dc",
+                    "source_digest": "cb700bc5a827da64b527b5f3bca78a51b95da7f99d962afeb3b28a16133b23d2",
+                    "source_path": "documents/health-safety/equipment-inspection-schedule.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/5ef867a7-7060-5bb2-b455-481e865729dc/source.md"
+                },
+                "doc.health-safety.lone-working.v1": {
+                    "family_id": "family.health-safety.lone-working",
+                    "public_id": "46ffe6ca-a3ff-59de-aa00-a6b22873dbc8",
+                    "source_digest": "a5f23b4951e14faf4fcd6de5b0e5d95c1a5a68241502dd518b4ae857a42c75d3",
+                    "source_path": "documents/health-safety/lone-working-policy.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/46ffe6ca-a3ff-59de-aa00-a6b22873dbc8/source.md"
+                },
+                "doc.health-safety.moving-handling.v1": {
+                    "family_id": "family.health-safety.moving-handling",
+                    "public_id": "3ab801f3-d4b2-564a-9f75-1a2dd36d6f32",
+                    "source_digest": "ef6c53d1866776ba9b00f8b47efcd1cdfd9fc36e1c6688a3addeae848ec750ff",
+                    "source_path": "documents/health-safety/moving-handling-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/3ab801f3-d4b2-564a-9f75-1a2dd36d6f32/source.md"
+                },
+                "doc.health-safety.moving-handling.v2": {
+                    "family_id": "family.health-safety.moving-handling",
+                    "public_id": "7f5df065-bb07-5092-87b8-863df5d24478",
+                    "source_digest": "b02927ff66913948b52720fe33b30935ddb22972762b811cfb39ba5a94386cbf",
+                    "source_path": "documents/health-safety/moving-handling-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/7f5df065-bb07-5092-87b8-863df5d24478/source.md"
+                },
+                "doc.health-safety.risk-assessment.v1": {
+                    "family_id": "family.health-safety.risk-assessment",
+                    "public_id": "17138d5a-3949-5423-95be-ee9920e65737",
+                    "source_digest": "f6abe7c6d3cdab3c0aaa1b652cec916f2c75a2551458e1087c08102dd81705bb",
+                    "source_path": "documents/health-safety/workplace-risk-assessment-form.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/17138d5a-3949-5423-95be-ee9920e65737/source.md"
+                },
+                "doc.health-safety.slips-trips.v1": {
+                    "family_id": "family.health-safety.slips-trips",
+                    "public_id": "d8b09efa-975b-527f-8898-2edbed5f1985",
+                    "source_digest": "ffcf7a3177ec7546a064ceee0dec144e7adb82d900a1a4513380da43c216f74f",
+                    "source_path": "documents/health-safety/slips-trips-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/d8b09efa-975b-527f-8898-2edbed5f1985/source.md"
+                },
+                "doc.hr.annual-leave.v1": {
+                    "family_id": "family.hr.annual-leave",
+                    "public_id": "ec0b7e58-95dc-5b17-a235-26f354787ec2",
+                    "source_digest": "f38ec75b265ee85af5a37974503c70ddb60ab346e1558c4c9be5236b372fa8f5",
+                    "source_path": "documents/hr/annual-leave-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/ec0b7e58-95dc-5b17-a235-26f354787ec2/source.md"
+                },
+                "doc.hr.annual-leave.v2": {
+                    "family_id": "family.hr.annual-leave",
+                    "public_id": "d4a369be-55a1-5476-ac72-e6b20ece3152",
+                    "source_digest": "e45f0f5dd7b602d7a88202bbb43e142c44a57814e846e8ab7f228025bfd6114a",
+                    "source_path": "documents/hr/annual-leave-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/d4a369be-55a1-5476-ac72-e6b20ece3152/source.md"
+                },
+                "doc.hr.annual-leave.v3": {
+                    "family_id": "family.hr.annual-leave",
+                    "public_id": "6829d055-e6b3-5fd8-bb70-d08a34d30825",
+                    "source_digest": "9c2f771f15476fa0b442708331ab7e40b65931b969829086c807b2850d5577fd",
+                    "source_path": "documents/hr/annual-leave-v3-scheduled.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/6829d055-e6b3-5fd8-bb70-d08a34d30825/source.md"
+                },
+                "doc.hr.disciplinary.v1": {
+                    "family_id": "family.hr.disciplinary",
+                    "public_id": "e36d30d4-14c9-5ad7-896c-3704ff0828fc",
+                    "source_digest": "ea881fdefe99e98bbbb97e66cfb1f3b7e1560ccaeeb78e174e2388bb9af146cb",
+                    "source_path": "documents/hr/disciplinary-policy.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/e36d30d4-14c9-5ad7-896c-3704ff0828fc/source.md"
+                },
+                "doc.hr.family-leave.v1": {
+                    "family_id": "family.hr.family-leave",
+                    "public_id": "f640ad69-60ff-58d9-83a4-ed96adb312a9",
+                    "source_digest": "c2f9c4b71d49013866d0050f5a9ff8fb699d5086013274ad509313c94f8036ed",
+                    "source_path": "documents/hr/family-leave-reference.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/f640ad69-60ff-58d9-83a4-ed96adb312a9/source.md"
+                },
+                "doc.hr.flexible-working.v1": {
+                    "family_id": "family.hr.flexible-working",
+                    "public_id": "fb246e25-4a13-576e-b345-4d37658fa4c9",
+                    "source_digest": "01812c96f2049c8a82e53c5aab3057de42c4eb5898b005a7c91091df3dd40611",
+                    "source_path": "documents/hr/flexible-working-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/fb246e25-4a13-576e-b345-4d37658fa4c9/source.md"
+                },
+                "doc.hr.grievance.v1": {
+                    "family_id": "family.hr.grievance",
+                    "public_id": "d8e16e31-b80e-5a21-9c2e-df02a832ab89",
+                    "source_digest": "1ab34bdb587bcd48ae7a8e564e1ad401a5964421462d49aa801d841cee10b051",
+                    "source_path": "documents/hr/grievance-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/d8e16e31-b80e-5a21-9c2e-df02a832ab89/source.md"
+                },
+                "doc.hr.lone-worker-welfare.v1": {
+                    "family_id": "family.hr.lone-worker-welfare",
+                    "public_id": "e35c9db6-6662-5e0e-9d3b-3de32dcaef82",
+                    "source_digest": "8953f8fe0d511dd93957ff9f60a19862bae278a77af05637ccef5b50409797e1",
+                    "source_path": "documents/hr/midlands-lone-worker-welfare.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/e35c9db6-6662-5e0e-9d3b-3de32dcaef82/source.md"
+                },
+                "doc.hr.new-starter-form.v1": {
+                    "family_id": "family.hr.new-starter-form",
+                    "public_id": "86cb4f7e-f51c-5303-b464-4405a86a6002",
+                    "source_digest": "8ba2d0b51fc877cfe809b9794aad72586cd3505d391c63fea4ba29a0dab85f09",
+                    "source_path": "documents/hr/new-starter-information-form.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/86cb4f7e-f51c-5303-b464-4405a86a6002/source.md"
+                },
+                "doc.hr.recruitment.v1": {
+                    "family_id": "family.hr.recruitment",
+                    "public_id": "c13a5964-d1e1-5c83-9ec9-d84ad4915565",
+                    "source_digest": "2b05162ce6c811ee40543723745b55e524bc7c9c29a72cbb6c008351975b824d",
+                    "source_path": "documents/hr/safer-recruitment-policy.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/c13a5964-d1e1-5c83-9ec9-d84ad4915565/source.md"
+                },
+                "doc.hr.sickness-absence.v1": {
+                    "family_id": "family.hr.sickness-absence",
+                    "public_id": "77e7f4ff-06f1-525d-9079-14361053828e",
+                    "source_digest": "8c7ccf1f6fc96bcc1014c779fcb112a007c2b240a47ce027d165a7266163e864",
+                    "source_path": "documents/hr/sickness-absence-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/77e7f4ff-06f1-525d-9079-14361053828e/source.md"
+                },
+                "doc.hr.sickness-absence.v2": {
+                    "family_id": "family.hr.sickness-absence",
+                    "public_id": "078fd910-09fc-5220-b043-d0a616fe948f",
+                    "source_digest": "51dc20f7807f09d6923a2ac8e42794ea075d783b70c096ffb50c7d6f6467f685",
+                    "source_path": "documents/hr/sickness-absence-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/078fd910-09fc-5220-b043-d0a616fe948f/source.md"
+                },
+                "doc.infection-control.midlands-community-specimen-transport.v1": {
+                    "family_id": "family.infection-control.midlands-community-specimen-transport",
+                    "public_id": "db621ae7-725b-5f01-942c-b145f06ec7c4",
+                    "source_digest": "77c2e26636f3188b94f3679b3a197dd5bc27a15dc7f91826c625763f73aa2787",
+                    "source_path": "documents/infection-control/midlands-community-specimen-transport.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/db621ae7-725b-5f01-942c-b145f06ec7c4/source.md"
+                },
+                "doc.infection.clinical-waste.v1": {
+                    "family_id": "family.infection.clinical-waste",
+                    "public_id": "d992838d-a232-51b4-b7ca-4a924efa6767",
+                    "source_digest": "d31b1c9d3a96635e4f6ec8249bf935d4d91db7a400f131742e8ba2782b969de9",
+                    "source_path": "documents/infection-control/clinical-waste-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/d992838d-a232-51b4-b7ca-4a924efa6767/source.md"
+                },
+                "doc.infection.hand-hygiene.v1": {
+                    "family_id": "family.infection.hand-hygiene",
+                    "public_id": "ec90a948-5f4f-56c8-accd-b52d983443c5",
+                    "source_digest": "37618e099da6704d233c97ccf267b27ebf601e31624d87258aa1a2394c57c155",
+                    "source_path": "documents/infection-control/hand-hygiene-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/ec90a948-5f4f-56c8-accd-b52d983443c5/source.md"
+                },
+                "doc.infection.hand-hygiene.v2": {
+                    "family_id": "family.infection.hand-hygiene",
+                    "public_id": "cefdad68-f8ba-5e7e-b240-b62a6da157b2",
+                    "source_digest": "d1c503fe4740d547e6cca6433c0bb45d74c0015e877953537367f098c651f599",
+                    "source_path": "documents/infection-control/hand-hygiene-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/cefdad68-f8ba-5e7e-b240-b62a6da157b2/source.md"
+                },
+                "doc.infection.isolation.v1": {
+                    "family_id": "family.infection.isolation",
+                    "public_id": "4e8d3e6b-cacd-5329-878d-677823075622",
+                    "source_digest": "4a9864a51a5cbb53f8cac087fcfdeffe2d8bc91628c3d3fd6ff39b23b79f8faf",
+                    "source_path": "documents/infection-control/isolation-risk-assessment.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/4e8d3e6b-cacd-5329-878d-677823075622/source.md"
+                },
+                "doc.infection.laundry.v1": {
+                    "family_id": "family.infection.laundry",
+                    "public_id": "2a058dd9-ecfa-58ec-8dfe-e37b1949b001",
+                    "source_digest": "4e561f6ff4946854e3bd3d107e794aec92ecd817ae645d2e9cbfdd48d5c97853",
+                    "source_path": "documents/infection-control/laundry-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/2a058dd9-ecfa-58ec-8dfe-e37b1949b001/source.md"
+                },
+                "doc.infection.outbreak-management.v1": {
+                    "family_id": "family.infection.outbreak-management",
+                    "public_id": "403ff00e-b56a-5ac4-944a-76899650accc",
+                    "source_digest": "5514341b895f892fa0af797eb14571266ea6ec8c1de53ca509aeb2e06eaa904c",
+                    "source_path": "documents/infection-control/outbreak-management-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/403ff00e-b56a-5ac4-944a-76899650accc/source.md"
+                },
+                "doc.infection.outbreak-management.v2": {
+                    "family_id": "family.infection.outbreak-management",
+                    "public_id": "992f7398-a38b-584d-8b39-81ddea3286d3",
+                    "source_digest": "cc265374341f019510bffaef17f288fc76be5a06c8bf3d29dcacf64e9fa71214",
+                    "source_path": "documents/infection-control/outbreak-management-v2-withdrawn.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/992f7398-a38b-584d-8b39-81ddea3286d3/source.md"
+                },
+                "doc.infection.ppe.v1": {
+                    "family_id": "family.infection.ppe",
+                    "public_id": "a4447ca2-f0fd-54f2-81d7-f7ebf015cc68",
+                    "source_digest": "a7f4e9022d343c4d748ac3bf753870420e88041a7eabcefa3891014231680a61",
+                    "source_path": "documents/infection-control/ppe-reference.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/a4447ca2-f0fd-54f2-81d7-f7ebf015cc68/source.md"
+                },
+                "doc.infection.respiratory-ppe.v1": {
+                    "family_id": "family.infection.respiratory-ppe",
+                    "public_id": "2b9ee6c2-20f0-59bc-bb1c-a522fadc9e9b",
+                    "source_digest": "d7afa21216322ee9ba0cff8fd5fb5723616513579016b1c9ff58e09e3186bb63",
+                    "source_path": "documents/infection-control/respiratory-ppe-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/2b9ee6c2-20f0-59bc-bb1c-a522fadc9e9b/source.md"
+                },
+                "doc.medication.administration.v1": {
+                    "family_id": "family.medication.administration",
+                    "public_id": "4aa36a0b-513a-5195-aa17-9a724e7b45d8",
+                    "source_digest": "eb941e3a04dceabc1c694c3b84bcbad5a2f383748177c87343a9202c5c8ed696",
+                    "source_path": "documents/medication/safe-administration-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/4aa36a0b-513a-5195-aa17-9a724e7b45d8/source.md"
+                },
+                "doc.medication.administration.v2": {
+                    "family_id": "family.medication.administration",
+                    "public_id": "92b5611e-ad81-579b-b863-ea14370a5b84",
+                    "source_digest": "997cd45a57cdabde57b4a800fcbd855752f9aebb57849c8f1d84c75475b9a696",
+                    "source_path": "documents/medication/safe-administration-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/92b5611e-ad81-579b-b863-ea14370a5b84/source.md"
+                },
+                "doc.medication.administration.v3": {
+                    "family_id": "family.medication.administration",
+                    "public_id": "65443696-fc22-5e86-b42b-6e5f793d2dfa",
+                    "source_digest": "3940ec1d3a35404458951111a9a1d3c449a29e75f6b9d59e88b6c01b30f68b46",
+                    "source_path": "documents/medication/safe-administration-v3.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/65443696-fc22-5e86-b42b-6e5f793d2dfa/source.md"
+                },
+                "doc.medication.controlled-drugs.v1": {
+                    "family_id": "family.medication.controlled-drugs",
+                    "public_id": "67c83108-d9a9-553e-9c71-78014d857738",
+                    "source_digest": "d5787e6cd6a4d352a73dd57046f2a5d2e0f18f27af469cd2e279e4e87229f83b",
+                    "source_path": "documents/medication/controlled-drugs-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/67c83108-d9a9-553e-9c71-78014d857738/source.md"
+                },
+                "doc.medication.controlled-drugs.v2": {
+                    "family_id": "family.medication.controlled-drugs",
+                    "public_id": "d5a9db25-f899-536b-a1a5-6326944fbc08",
+                    "source_digest": "2dad915e9dfe6775c424b684abd53a3477e0aba31ab1c1baca06e91ad9644b31",
+                    "source_path": "documents/medication/controlled-drugs-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/d5a9db25-f899-536b-a1a5-6326944fbc08/source.md"
+                },
+                "doc.medication.covert.v1": {
+                    "family_id": "family.medication.covert",
+                    "public_id": "e16d1339-2d3c-59b8-8e77-52e79558ed85",
+                    "source_digest": "f7823fca89244a7d0526d7e7cc30346099f07e545bc08c9e33a982ea67e4a13b",
+                    "source_path": "documents/medication/covert-administration-policy.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/e16d1339-2d3c-59b8-8e77-52e79558ed85/source.md"
+                },
+                "doc.medication.errors.v1": {
+                    "family_id": "family.medication.errors",
+                    "public_id": "0942c29d-c808-5911-9868-2c9c75508cb1",
+                    "source_digest": "2b8c66fe8861e482300eec8e1401806bba4a7c96e743aa38d4d5ca6b05afe3ae",
+                    "source_path": "documents/medication/medication-error-form.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/0942c29d-c808-5911-9868-2c9c75508cb1/source.md"
+                },
+                "doc.medication.fridge-reference.v1": {
+                    "family_id": "family.medication.fridge-reference",
+                    "public_id": "dd86e031-2ed4-581f-931b-b45d15e8e54f",
+                    "source_digest": "a0bac45631e864fc283b189f5a41577493cbf20f64f9127401587d92cbadabd3",
+                    "source_path": "documents/medication/fridge-monitoring-reference.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/dd86e031-2ed4-581f-931b-b45d15e8e54f/source.md"
+                },
+                "doc.medication.prn.v1": {
+                    "family_id": "family.medication.prn",
+                    "public_id": "62bd843f-1024-58b4-b8a9-945f48128ac0",
+                    "source_digest": "97bd45c6664615212ea9b17cce08404d4630617f638c43ce00c9ca4361bbf98d",
+                    "source_path": "documents/medication/prn-protocol.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/62bd843f-1024-58b4-b8a9-945f48128ac0/source.md"
+                },
+                "doc.medication.self-administration.v1": {
+                    "family_id": "family.medication.self-administration",
+                    "public_id": "1b342d33-b03b-574a-88ad-73b4825af5e8",
+                    "source_digest": "d462a76b01ab635ec25c284b1cb95dfa9962562215d1e66a711591a9c936f0bf",
+                    "source_path": "documents/medication/self-administration-risk-assessment.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/1b342d33-b03b-574a-88ad-73b4825af5e8/source.md"
+                },
+                "doc.medication.storage.v1": {
+                    "family_id": "family.medication.storage",
+                    "public_id": "57c0ec31-46ec-58fa-b71e-b8a913d20440",
+                    "source_digest": "52e87ef6decfbcc35d347942d54087837cdf64e5b3d746a03f8b42af680eb436",
+                    "source_path": "documents/medication/storage-temperature-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/57c0ec31-46ec-58fa-b71e-b8a913d20440/source.md"
+                },
+                "doc.payroll.calendar.v1": {
+                    "family_id": "family.payroll.calendar",
+                    "public_id": "cbf4bf14-b52c-533b-960f-0570acf96f38",
+                    "source_digest": "8c890abd3864d458bf83e56fa589154d962f037b6787ec9f84110fa5cb6dc1a4",
+                    "source_path": "documents/payroll/calendar-2026.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/cbf4bf14-b52c-533b-960f-0570acf96f38/source.md"
+                },
+                "doc.payroll.calendar.v2": {
+                    "family_id": "family.payroll.calendar",
+                    "public_id": "61fee74f-ba83-54de-b786-bb51c91bf4bb",
+                    "source_digest": "f016b3444abfbdf2a2190796d76c62527b53447d9f5b6169b892e7c7da72617b",
+                    "source_path": "documents/payroll/calendar-2027-scheduled.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/61fee74f-ba83-54de-b786-bb51c91bf4bb/source.md"
+                },
+                "doc.payroll.expenses.v1": {
+                    "family_id": "family.payroll.expenses",
+                    "public_id": "be66c8b4-2e44-5ad8-814b-7f8471a3728a",
+                    "source_digest": "0356b9e5a94ead0e9c2488374a488ef0a7ced63880767d64546901e5d2aae336",
+                    "source_path": "documents/payroll/expenses-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/be66c8b4-2e44-5ad8-814b-7f8471a3728a/source.md"
+                },
+                "doc.payroll.mileage.v1": {
+                    "family_id": "family.payroll.mileage",
+                    "public_id": "003a94b3-df2c-5c7c-adca-4a341ffffeea",
+                    "source_digest": "5984fdafbd24fc8338a9d147be2e6877dc54f6c0fb1a6113d5bf1bddf9ca5078",
+                    "source_path": "documents/payroll/mileage-claim-form.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/003a94b3-df2c-5c7c-adca-4a341ffffeea/source.md"
+                },
+                "doc.payroll.overtime.v1": {
+                    "family_id": "family.payroll.overtime",
+                    "public_id": "53e0acd2-3eb9-5ce7-8d23-b3fae362c333",
+                    "source_digest": "6ed7e400c01eb8ad1d5da42cc18d411bbb104132e0c65cd54cbec67a14d01225",
+                    "source_path": "documents/payroll/overtime-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/53e0acd2-3eb9-5ce7-8d23-b3fae362c333/source.md"
+                },
+                "doc.payroll.pension.v1": {
+                    "family_id": "family.payroll.pension",
+                    "public_id": "9707cd36-cb63-5f81-a465-30e2eb40b07b",
+                    "source_digest": "020f6b7d4066c5f1a4bf31ef4c94f7d764f589255cf655feef605331d6504a7d",
+                    "source_path": "documents/payroll/pension-reference.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/9707cd36-cb63-5f81-a465-30e2eb40b07b/source.md"
+                },
+                "doc.reference.abbreviations.v1": {
+                    "family_id": "family.reference.abbreviations",
+                    "public_id": "e8293477-a8d6-5f6c-aede-0d2a44b4a533",
+                    "source_digest": "1c9becfbc579532ea5cc2863c4d38ab2d4ed6acc5ebfa38d8bb774737ed402b9",
+                    "source_path": "documents/reference/care-abbreviations.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/e8293477-a8d6-5f6c-aede-0d2a44b4a533/source.md"
+                },
+                "doc.reference.contacts.v1": {
+                    "family_id": "family.reference.contacts",
+                    "public_id": "19224d1f-c460-52b1-aaf3-384ddb327577",
+                    "source_digest": "46d005dc5aa0f136fb041e0fff9f915d9934a60e6a87384a616b39a92045dde4",
+                    "source_path": "documents/reference/operational-contacts.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/19224d1f-c460-52b1-aaf3-384ddb327577/source.md"
+                },
+                "doc.reference.emergency-numbers.v1": {
+                    "family_id": "family.reference.emergency-numbers",
+                    "public_id": "edb0378c-e0e1-5945-8acf-66f20e8effa2",
+                    "source_digest": "c0cb89ea57d055a29bd0e7f9d6c27585e4ba82cce08f1304ddb4f063c0fe20db",
+                    "source_path": "documents/reference/emergency-numbers-2026.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/edb0378c-e0e1-5945-8acf-66f20e8effa2/source.md"
+                },
+                "doc.reference.emergency-numbers.v2": {
+                    "family_id": "family.reference.emergency-numbers",
+                    "public_id": "d2101f65-b621-512a-89e0-85326ebd3245",
+                    "source_digest": "1d7e0ab8b25e68980ac5a94f1fe748dbdd8a52ad7781d41cc5b4b2302ad2db8b",
+                    "source_path": "documents/reference/emergency-numbers-2027-scheduled.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/d2101f65-b621-512a-89e0-85326ebd3245/source.md"
+                },
+                "doc.safeguarding.adult-reporting.v1": {
+                    "family_id": "family.safeguarding.adult-reporting",
+                    "public_id": "33ffb55b-5e8d-5f6f-b4d2-991360872bee",
+                    "source_digest": "41c5934872a2a9f9575879937d005730a7c87623ae9027cf96fa8b99735fccf2",
+                    "source_path": "documents/safeguarding/adult-reporting-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/33ffb55b-5e8d-5f6f-b4d2-991360872bee/source.md"
+                },
+                "doc.safeguarding.adult-reporting.v2": {
+                    "family_id": "family.safeguarding.adult-reporting",
+                    "public_id": "6dcf2397-3577-5ecd-9689-c06a11d28622",
+                    "source_digest": "3b286913e7669ba7c64412dd1ac915b1f7374f0a4a798ccd12064f1dc17bb048",
+                    "source_path": "documents/safeguarding/adult-reporting-v2-withdrawn.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/6dcf2397-3577-5ecd-9689-c06a11d28622/source.md"
+                },
+                "doc.safeguarding.allegations-staff.v1": {
+                    "family_id": "family.safeguarding.allegations-staff",
+                    "public_id": "9c3739ef-cdc5-5fcb-84cd-875a514a6f9a",
+                    "source_digest": "966ee4d265c08ab2edcb2cfb3d4a2843bc43c4ebbad52cbc9f2d9e46aacadf56",
+                    "source_path": "documents/safeguarding/allegations-staff-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/9c3739ef-cdc5-5fcb-84cd-875a514a6f9a/source.md"
+                },
+                "doc.safeguarding.allegations-staff.v2": {
+                    "family_id": "family.safeguarding.allegations-staff",
+                    "public_id": "ced98388-f72c-5748-9577-24c9c6623318",
+                    "source_digest": "74e8fb3800295c728de50f5c68ff967e996f3bbf95aebf4e3f7c50de4d00358f",
+                    "source_path": "documents/safeguarding/allegations-staff-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/ced98388-f72c-5748-9577-24c9c6623318/source.md"
+                },
+                "doc.safeguarding.body-map.v1": {
+                    "family_id": "family.safeguarding.body-map",
+                    "public_id": "3705b45f-d1e1-5138-a957-224975323e68",
+                    "source_digest": "fd4bebf3cc6a1c2f0e74738ef7e6cc7f1fd73ddb99abfe64d90cd88a1b635dd0",
+                    "source_path": "documents/safeguarding/body-map-form.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/3705b45f-d1e1-5138-a957-224975323e68/source.md"
+                },
+                "doc.safeguarding.dols.v1": {
+                    "family_id": "family.safeguarding.dols",
+                    "public_id": "58f05ca7-f3f4-5b6a-acc1-0e2cca59534c",
+                    "source_digest": "dbecb1a1e5511334ce0173f3faea98fe21ac3f7f0d1714e03864944d2cad2812",
+                    "source_path": "documents/safeguarding/dols-reference.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/58f05ca7-f3f4-5b6a-acc1-0e2cca59534c/source.md"
+                },
+                "doc.safeguarding.mental-capacity.v1": {
+                    "family_id": "family.safeguarding.mental-capacity",
+                    "public_id": "6801645a-3f3c-5c87-b5d2-79e3561cec26",
+                    "source_digest": "82c8bac80fe161c7ffdfaceded4e231c0e30ed594bab9e53a48b018d5cecff5f",
+                    "source_path": "documents/safeguarding/mental-capacity-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/6801645a-3f3c-5c87-b5d2-79e3561cec26/source.md"
+                },
+                "doc.safeguarding.missing-person.v1": {
+                    "family_id": "family.safeguarding.missing-person",
+                    "public_id": "abe40e3b-271a-51aa-977b-f55b52526e5a",
+                    "source_digest": "0e670843ea866c4898dda28c6f321288185b463d1af546ea45db6f2ca123ab7f",
+                    "source_path": "documents/safeguarding/missing-person-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/abe40e3b-271a-51aa-977b-f55b52526e5a/source.md"
+                },
+                "doc.safeguarding.whistleblowing.v1": {
+                    "family_id": "family.safeguarding.whistleblowing",
+                    "public_id": "da171f6e-d9f0-5b08-bc18-3a44aabfb794",
+                    "source_digest": "e6c1abf6d807887d17808ca4b3f41228e2608430e4608449204de536d5794c09",
+                    "source_path": "documents/safeguarding/whistleblowing-procedure.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/da171f6e-d9f0-5b08-bc18-3a44aabfb794/source.md"
+                },
+                "doc.training.fire.v1": {
+                    "family_id": "family.training.fire",
+                    "public_id": "59808ff9-23fb-5194-865e-1baef10371d2",
+                    "source_digest": "8be17b73041276818f9077e37f4c17c7ce7305e3102bf64e229d818a375593fd",
+                    "source_path": "documents/training/fire-training-record.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/59808ff9-23fb-5194-865e-1baef10371d2/source.md"
+                },
+                "doc.training.induction.v1": {
+                    "family_id": "family.training.induction",
+                    "public_id": "9583313d-709c-5dd5-91ea-6c426c969658",
+                    "source_digest": "cd58efd579590469f1de74a137d2c1764c78c04da117b815be0bfdc9d4c62be3",
+                    "source_path": "documents/training/induction-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/9583313d-709c-5dd5-91ea-6c426c969658/source.md"
+                },
+                "doc.training.induction.v2": {
+                    "family_id": "family.training.induction",
+                    "public_id": "1fcabaa1-9eea-5ee1-898c-58cde9843b85",
+                    "source_digest": "af59632b7d84cab39d8f195f970d7c3dfcb4f74f8972ba934ea9cf4855fc6814",
+                    "source_path": "documents/training/induction-v2-scheduled.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/1fcabaa1-9eea-5ee1-898c-58cde9843b85/source.md"
+                },
+                "doc.training.matrix.v1": {
+                    "family_id": "family.training.matrix",
+                    "public_id": "7a463429-ab8f-5a67-8cd8-85c0d6617081",
+                    "source_digest": "73347a8f4bf1a77a306c7b10280c84994ebe5ca02e4ca5d6337dd0d3b05c0182",
+                    "source_path": "documents/training/mandatory-training-matrix.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/7a463429-ab8f-5a67-8cd8-85c0d6617081/source.md"
+                },
+                "doc.training.medication-competency.v1": {
+                    "family_id": "family.training.medication-competency",
+                    "public_id": "ef4491da-e229-5b7f-a139-8a30f6d5e793",
+                    "source_digest": "e87f7ac73bead2eef8e789b5e9a7f03c1ad4cd2b87340d0219de2e6be16da156",
+                    "source_path": "documents/training/medication-competency-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/ef4491da-e229-5b7f-a139-8a30f6d5e793/source.md"
+                },
+                "doc.training.medication-competency.v2": {
+                    "family_id": "family.training.medication-competency",
+                    "public_id": "9ead562a-90a0-5162-aaa6-395cde79a31d",
+                    "source_digest": "43ea065674563c32849f255e5c54378b9641fcbd8d78cde2a0b9f846246dacae",
+                    "source_path": "documents/training/medication-competency-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/9ead562a-90a0-5162-aaa6-395cde79a31d/source.md"
+                },
+                "doc.training.safeguarding.v1": {
+                    "family_id": "family.training.safeguarding",
+                    "public_id": "33505619-4ea6-5717-bf7f-b21ce935e92e",
+                    "source_digest": "9e862db5889d858fd0f101402114651c780ecf3ea55d9d31ee24082ff32a56da",
+                    "source_path": "documents/training/safeguarding-levels.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/33505619-4ea6-5717-bf7f-b21ce935e92e/source.md"
+                },
+                "doc.visitors.contractor-sign-in.v1": {
+                    "family_id": "family.visitors.contractor-sign-in",
+                    "public_id": "88db2d21-1486-52e1-9671-3694b083633a",
+                    "source_digest": "0bea6a68fb19e5fecc5a0bd2dec55f9741e0fdfba06299cbcefeb11f10a22e64",
+                    "source_path": "documents/visitors/contractor-sign-in-form.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/88db2d21-1486-52e1-9671-3694b083633a/source.md"
+                },
+                "doc.visitors.general.v1": {
+                    "family_id": "family.visitors.general",
+                    "public_id": "13ac40a9-5dba-5d60-bfce-a15dda104330",
+                    "source_digest": "70d61dedbfb1ab74f308ab11944f0a8ba02e7c20dd0624444318ce7bfba93dfd",
+                    "source_path": "documents/visitors/visitors-contractors.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/13ac40a9-5dba-5d60-bfce-a15dda104330/source.md"
+                },
+                "doc.visitors.outbreak-restrictions.v1": {
+                    "family_id": "family.visitors.outbreak-restrictions",
+                    "public_id": "e4f6d6cb-2d7e-5a21-8966-03dff2aaee2d",
+                    "source_digest": "83227741c4e313e79d89a4160da6726d6a60444f4f09b0e04979fec0c40e66dc",
+                    "source_path": "documents/visitors/outbreak-restrictions-v1.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/e4f6d6cb-2d7e-5a21-8966-03dff2aaee2d/source.md"
+                },
+                "doc.visitors.outbreak-restrictions.v2": {
+                    "family_id": "family.visitors.outbreak-restrictions",
+                    "public_id": "185b6086-ae8a-5fcb-97b8-b18608d3bf57",
+                    "source_digest": "1bc3c57186d854d20f9788d415dd6d0e58fadd6f90e13d5b4ccb6a2eae6248e2",
+                    "source_path": "documents/visitors/outbreak-restrictions-v2.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/185b6086-ae8a-5fcb-97b8-b18608d3bf57/source.md"
+                },
+                "doc.visitors.search-optimised-draft.v1": {
+                    "family_id": "family.visitors.search-optimised-draft",
+                    "public_id": "eee37975-ace9-5070-b578-3eeda3ad441e",
+                    "source_digest": "441bf10e4a5c872792ece92e3f679fb814ac7e851ef627dc1d4776186425ee41",
+                    "source_path": "documents/visitors/search-optimised-unapproved-draft.md",
+                    "storage_key": "workspaces/02e84820-c9cc-545d-8294-a5ad741b7d25/documents/eee37975-ace9-5070-b578-3eeda3ad441e/source.md"
+                }
+            },
+            "generations": {
+                "dense_corpus": {
+                    "point_count": 100,
+                    "point_ids": [
+                        "4db97388-d914-5c9e-b5ad-d4b4706f9b7f",
+                        "64e8ffe0-08e0-5c67-9ab1-fb274b4549c8",
+                        "dfb97063-dcef-58ce-85d3-26b99dfb74c1",
+                        "5349e15d-f702-5d4b-a91b-f678cbf486f7",
+                        "18ccbfd8-618f-5c69-8862-e0b40028b8f2",
+                        "6c6d421c-1631-5eae-a29b-2832f2ad5c87",
+                        "cceefcd0-276d-5c6c-8adc-817e1cf455e3",
+                        "dbdac6f9-79b6-5870-8d11-19f55f0aca0a",
+                        "99715c93-91ae-5a00-aaed-6c75bb72c187",
+                        "97253a8c-1a0b-5bc7-a999-e7940c95b54a",
+                        "e4862b6d-8c55-545c-8fd1-184f6f7d2011",
+                        "4042a908-b03c-5db9-80be-13ad4097f64b",
+                        "2dba794f-a73f-5802-903c-9a4491e39a92",
+                        "910f942c-9aee-515a-9fed-0667cc353304",
+                        "faa4067a-f4c7-5261-bff7-6ecbab33ff26",
+                        "616abb65-d43c-530f-8ef3-53d7b25b7e5c",
+                        "3929c649-3fe5-5808-a328-89fc3fa9310e",
+                        "7f037622-4cae-57c8-b6d5-d75c27c54d26",
+                        "ddb108f0-5d43-55b5-9d48-39360cc97912",
+                        "3f5a29ea-1b64-5d2b-b030-ef315e63a8a6",
+                        "398bb5a7-45da-51b6-8087-fa317283f7e7",
+                        "6923016c-67e0-5fe4-a64f-d656ae97ae83",
+                        "b8604945-339f-58af-a964-31f0fe697a60",
+                        "1676a4ed-dab2-516a-ac3e-2cec89f1c1b0",
+                        "2a40c68a-7bfc-50de-8a32-f6ca86870526",
+                        "adc12fda-1d56-5fdd-b544-e627da8cb487",
+                        "f0e6d0c8-e5e2-5fdc-9004-a88edea5a5b4",
+                        "2f8a28a9-5387-5b59-ab10-dbe5354ce612",
+                        "30a92c09-242c-5db6-b069-612f676e18d0",
+                        "16929245-c268-5832-8dc7-4ea9c7c65703",
+                        "2c6066b2-03a9-5c7a-b303-e180805ee064",
+                        "e091bfd9-d090-5413-87eb-594570c60b25",
+                        "6fc11a1c-a727-50f1-9b88-17bfb7ef8542",
+                        "c6783e04-a50f-56c4-af79-db7b51a72819",
+                        "64031978-0f61-5a69-848c-4ca35bd58e71",
+                        "752f93cd-0bde-5f17-812e-fc1cb2a3aa14",
+                        "1b12976b-b3e9-58bb-a12b-6b62df83da2b",
+                        "240b20c0-4b5d-5bf8-bf94-7b64c85a0927",
+                        "92ac63ab-491e-522b-a399-6d3b94a7cca0",
+                        "f3734780-49ff-512d-bcc7-ed0df1c193c2",
+                        "44930d97-4080-57f4-abcc-c0205ec294bb",
+                        "1fd71b45-3989-5b8d-a522-e05713d65101",
+                        "58b2c3a0-4994-54c9-b216-65338d6a01e7",
+                        "2c4e8dcb-9763-5b0a-a741-ae28913bed9e",
+                        "78faeb7a-fa02-5ce0-885b-5edf4eb7c084",
+                        "4022fd87-58e9-5a10-b9a8-b31c8a7891f2",
+                        "c139dbf4-b186-5e85-ac23-6e2391b259c7",
+                        "ab86375f-b542-5fcd-a870-0175841e8f2e",
+                        "360561ed-4d12-5580-8b62-60af282624c1",
+                        "2ca8be9c-9c8d-5e36-b876-4c66d25e3c6e",
+                        "cf7d84c1-3b94-5075-a348-c3e4a9d95757",
+                        "398b83e7-870f-5e62-945e-f40123fbebf2",
+                        "077f5095-5e2e-57c7-956d-a9799e02ab3a",
+                        "08334bcf-e1c5-5582-809f-24c0c45bed56",
+                        "5a755c7f-7814-562b-8cb7-5672e9cc44ae",
+                        "f184ea65-9d4a-56b0-b29f-98073d37b012",
+                        "fb5fd41c-0671-57ce-8d10-990d0fd406e4",
+                        "ec6bd05e-18d8-52df-af4f-bd6efd164bd8",
+                        "f2308de7-3b6c-554a-a6f1-8229834b88c1",
+                        "bdc3801c-ef8b-5481-acd2-11cb248c6189",
+                        "1d4f278b-b8c3-5927-b4f2-fa92d94ea670",
+                        "e26d0fbe-6478-530b-be33-82752f1e856e",
+                        "1e3d7f49-7a3b-5c60-ac7c-aa91fb7c75a1",
+                        "34dfb63d-a231-5ec7-bc01-3c730df23cda",
+                        "bb7aa430-7176-5a27-8bc6-d1307fa05911",
+                        "6fc3c58e-65c1-5d65-94ba-82cfb28872c5",
+                        "1722b177-b315-50b7-a289-0b58b48699a5",
+                        "7aad73e0-28e3-54d4-bb2a-580c6b90b125",
+                        "39dff04d-05d7-5b53-bb5f-e1afb74d165d",
+                        "6622ba73-a0c8-5a06-bec1-a547c7a1ef75",
+                        "7be98b8c-3820-50e3-96de-41698952dd32",
+                        "f95208e6-7d08-5ea2-b821-971766d827d4",
+                        "91db1e99-28be-5853-b36d-cee805b82c27",
+                        "0c4e3549-be20-59f2-9c04-6f67874d2246",
+                        "d9722fe2-902c-51a1-a981-98b9b2d3517a",
+                        "af6c6c71-da11-5ae6-a8df-08a5d3a61e77",
+                        "85d08c2f-a73e-5ec7-8d6e-8d6070628d51",
+                        "c53b131a-0043-5a49-88c2-845d7d5c3a3b",
+                        "e00eb7a5-e3d7-5231-b750-66f7e4e6dece",
+                        "963f7c47-212a-5695-bbb4-a8e70fbdf331",
+                        "23ac1d30-a37e-544a-befd-2561d03b0d82",
+                        "6d7a0185-6c86-5c95-8297-c8a67c2fedf5",
+                        "d1e046f4-d7af-5da7-8770-0ad82714b787",
+                        "f0b03cea-cf1f-504e-ae58-dfcbf011d42d",
+                        "8a7a32e0-c2c9-5462-a637-cde63cad56a7",
+                        "3092bbd6-6ae9-5ef6-b4e3-437fbd146510",
+                        "cb4a6a51-531a-52f1-af4e-f60074ed67c2",
+                        "3e1fa077-f8fc-5ab2-bb7e-9f63bd59a47c",
+                        "c74c18a8-abcd-532c-80a0-f36b8a118b03",
+                        "9dac77a2-00d0-5076-b7d7-ceb3c042d5c2",
+                        "63183670-8e58-5b44-acf5-c54b7809db4f",
+                        "7faa33b8-dd80-5d0a-bb39-6028f6d325b9",
+                        "bf4f8083-0f1f-5a38-b70b-3e82eac2d6e3",
+                        "751c8e61-5b5c-5a8b-bce0-baeed78680a7",
+                        "872ab628-8729-558b-94bb-cae1eeb9bfa7",
+                        "fbc4101f-f8cf-5ec0-bfcf-bac9d1b28fff",
+                        "0665e7a0-e552-54be-91c2-5f6d250df8ee",
+                        "39d75fba-d62b-5e1f-84ff-01e5b575d538",
+                        "da72a494-8e4d-5b9e-9b6f-2179fe7fda42",
+                        "039e9fdd-e6c3-51a7-b647-5f6f817e1269"
+                    ],
+                    "public_id": "d31405cc-26ce-415f-aab2-3aaf4986feca"
+                },
+                "embedding_space": {
+                    "collection_name": "rag-platform-vectors-v1",
+                    "dimensions": 1024,
+                    "distance": "cosine",
+                    "profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                    "public_id": "8da556fc-2839-455b-bf40-6b5802678b43",
+                    "vector_name": "dense"
+                },
+                "hybrid_corpus": {
+                    "actual_point_count": 100,
+                    "expected_point_count": 100,
+                    "point_ids": [
+                        "cf05bf4b-c9f5-5117-984f-fbbc70b67d5f",
+                        "6e170752-0dfe-5408-b1f9-40401c39a88c",
+                        "dae8a3af-d7a4-58ef-b38b-aa8e423c3ec6",
+                        "084762b6-bec6-5051-94f1-8c41a311160e",
+                        "7abe9d43-cf57-58bf-b571-2e1abcdbd9cf",
+                        "8859bbe0-6db1-5a4b-8f2b-e804f30dae2f",
+                        "3baa1677-7cdb-5deb-bb9c-6989929dc16d",
+                        "653fe476-4981-52a1-a4ee-caeee43f779d",
+                        "392d32bf-5f71-5139-a9cd-1ad6ef2ddac2",
+                        "d5986f43-1bc2-5a6e-b64b-6aabfd96a3a0",
+                        "4f3f0453-0594-53af-b8ab-89d408a71d7f",
+                        "87b6699a-be42-5736-9d8a-f3bcb6958f43",
+                        "8ae5ae33-4254-56cb-8dbd-d43459e16a8e",
+                        "ab939e36-136d-55eb-8af1-e7b70cff26e1",
+                        "c479004e-d3fb-5ee4-a056-44b869743863",
+                        "a90f4a76-8112-5889-bf04-463bf17c6d7d",
+                        "ecd492f5-09a9-564f-8e23-6128ccd5a275",
+                        "0d5e5195-e4ba-5495-9319-9d7418fa7aca",
+                        "fb383d38-01dd-508b-94d0-b06012d52933",
+                        "8a79dbf0-519e-5195-824c-07167a996f5d",
+                        "9d66cd16-c4c9-5706-9de7-50761fb003b5",
+                        "0bb3b506-8b48-56a5-8c64-defa50b43d34",
+                        "3a72a1d0-bf5f-5e1a-a5fc-11772e7bf61f",
+                        "b4204792-7f4c-5017-b736-eb2f0de7e61b",
+                        "a55d2f44-7304-5910-b3d7-14ed572d231a",
+                        "e4c9eba7-6b18-58a1-928c-6d0dcf1461ef",
+                        "25a85d8f-c977-5257-b6f9-220f88179a13",
+                        "0c2abc48-944f-5783-a3ae-9ad469e9f537",
+                        "a9484215-f9f0-51b4-bea4-a3399feaab0f",
+                        "619fd603-25b3-53f9-bc61-dc9b453bf923",
+                        "0a7004c4-5138-54f4-b668-0098ecc6f063",
+                        "5696a49f-8439-5fb1-9c26-52e018ee5bcf",
+                        "e52a5de9-5431-54b6-8fae-a1303f311305",
+                        "8b798c20-33e9-50d3-b288-eb486d878b12",
+                        "28d7842d-0f34-5ec3-9707-bd45afc18e17",
+                        "d9835d18-cea2-5a39-8e7a-b56f872f8f78",
+                        "5bbc404f-4db9-51b3-98c2-77afc3a394f3",
+                        "db718f14-872b-5fa8-bcbe-ccbd9857ac0e",
+                        "235ffe4f-f67c-5932-a5d4-a5a245fab0e5",
+                        "801dfba8-04e5-5770-9438-d2f26f01dc2d",
+                        "2cdfd2f4-eb43-5efb-ae37-39c5fcd3792b",
+                        "669bde91-158b-598b-bd4b-0162138e2692",
+                        "8437fa79-1287-59f4-b389-eceac14d8e64",
+                        "04f9b9a1-1f16-55f7-83a9-a38fb8cb475d",
+                        "f25f9443-3fcd-5553-a113-4c1f244fa5d7",
+                        "d331b9a2-f7b8-58e5-8d8a-2064ee3b8a22",
+                        "921aca8b-eb02-5d38-b50d-f7eeea5d58f2",
+                        "05ca4f2b-ec96-5ae7-a0bc-356ea491d80c",
+                        "54db1346-ed58-5340-a7dc-4897abaafe3f",
+                        "46ea6de0-5c80-55e6-9587-1a6a87081645",
+                        "12450c9b-f06d-591b-a1ac-e01180fd71a8",
+                        "1fea9e02-d140-5b66-9672-0c90975fbc83",
+                        "e71f57bf-3e13-5eef-a6cf-d19847ddc7bb",
+                        "b83bf9de-33bb-5be4-b945-18b93e762820",
+                        "4c209c0a-13a8-5fdd-9937-715f7dc677c4",
+                        "53648421-e68f-5087-8112-7d47a47952cb",
+                        "e4b6ec4c-8a20-5980-b97f-b52a141d5c30",
+                        "00d86617-f91a-5de3-9326-b48b0cf57b71",
+                        "edf41775-c954-52b8-a61c-4c2812e3199c",
+                        "8ea72611-dcfc-5d23-b885-a25b3422d0a5",
+                        "69e8e1e7-6db4-5e81-8269-e2e07f2c6d98",
+                        "ac057399-e2b9-5d2b-bbc5-f328ff522e00",
+                        "98707214-795c-538a-a69b-27ad070bf77a",
+                        "88b5324f-0a69-5eb6-8e03-9009a27c4cb1",
+                        "ed4ea6e1-ae9f-5f97-a970-68293746bff3",
+                        "2432f4c4-0086-5655-a2fe-84946ed868c0",
+                        "23c948a6-4e94-563f-922a-7bd47e4a4660",
+                        "b1c6acfb-a6d1-5369-ad3c-152d466f55a8",
+                        "535f564e-d46b-5e25-ae1e-2e6d5ca091db",
+                        "87aa30f4-0d52-5146-a6b6-61bff2e0b7da",
+                        "ceea31ba-c669-5348-a3c9-be414d0d7b41",
+                        "511e11a4-38a1-55c3-8dd7-8e4a12394160",
+                        "98c62fe3-2ac7-5198-ad8a-b345d2b85974",
+                        "152f2ce0-ef98-50df-b0f4-6fd6f17a1f7b",
+                        "ccfc4128-827e-578c-ad2a-bec9417e2216",
+                        "ebdab44e-598f-5302-89a6-b2cb29179fbf",
+                        "124abd5d-2e62-5e9c-b52e-2bc3fcef4840",
+                        "b01ab695-e706-5f56-814c-b43be6dac3a4",
+                        "97bf43b9-b1e7-5461-ad20-5ca481298123",
+                        "0325e982-2b0c-59b5-8a4a-b7b0ca65e825",
+                        "dfd967a4-19f2-5098-95f4-e0fd3309c2db",
+                        "0d0d2160-c7f5-5b2f-b823-f9cc0b39a56b",
+                        "6cfa0eb2-bbfd-5dd0-9b1f-37203983f42e",
+                        "bc6ec2d2-590f-5b75-9d73-5bb32b54d9d4",
+                        "69dc1ff0-1111-528a-bf70-bd4008a1bba1",
+                        "3139a678-a2c7-5dfb-acb3-3df5d44d8b9f",
+                        "58f8615f-e8cc-5f85-8e4a-cdefe25d56f2",
+                        "91e66e14-74c5-53d2-a6f7-3356b800df20",
+                        "0bd521b5-36f9-57b7-982a-a90f9d074b09",
+                        "644136b2-917c-5ddc-b29a-c0dbcc3632b7",
+                        "ea6abb7d-abff-5101-8bef-2c78f7c08513",
+                        "c6b8cc98-c5f7-59c8-b5a0-f80fa1e1edce",
+                        "3087b209-c5b9-5982-bce6-632cf76d0ff9",
+                        "d4b32a78-1cfd-5ee7-826f-4665e34e5d85",
+                        "7c77fc48-a842-5521-a851-f715dbf50597",
+                        "80735992-b895-5da9-b86f-dd88f1c0e0d4",
+                        "e87d6c3e-76e0-5744-9cdb-375e16460046",
+                        "de48ef86-92b7-5419-9f43-007b1aef6dba",
+                        "c73bcece-be71-5daf-8468-abc818614486",
+                        "0c733956-8bee-5b0d-ac49-bf692227f225"
+                    ],
+                    "point_manifest_digest": "f7784417846affca3a86a18fe84426de1d4e21e2736cebd63d5320ddc91650c5",
+                    "public_id": "289ccffe-2264-4867-aa1e-d8eb1af43300",
+                    "verified_at": "2026-08-16T08:27:15+00:00"
+                },
+                "sparse_space": {
+                    "profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+                    "public_id": "5e25eb0a-cff1-4f4d-9246-9ca186d892f2",
+                    "vector_name": "sparse"
+                }
+            },
+            "locations": {
+                "location.central-support-office": "3c0fb3be-0753-5607-854d-168dcfc2a7bb",
+                "location.harbour-view": "665c1382-6319-5dba-b607-fa74a857dc9e",
+                "location.meadow-court": "2b14a443-293c-5575-b065-68326b8de917",
+                "location.moorland-view": "00705c9e-b0de-5c81-99ed-90cf34929683",
+                "location.oakfield-lodge": "fc85826f-7ec6-507d-a30d-b295267afccf",
+                "location.region.midlands": "dd24ac62-9945-5049-ab1a-c4922076e683",
+                "location.region.north-west": "354f5b35-2042-5088-8379-618b0f8f3166",
+                "location.region.south-west": "0675b9dd-484b-5baa-8b13-683796415d43",
+                "location.riverside-house": "85ebfd49-7075-5a70-b41f-85d12c217aab",
+                "location.willow-bank": "20be6af3-ef96-5fff-a2b1-0d4e0a054e7c"
+            },
+            "provisioning_mapping_digest": "942e3260ef8e7f85d786eea2534fa5240ae27dc94f61bfc17208bc99fbcacb5e",
+            "schema_version": "v1",
+            "snapshot_digest": "c1dc655c419d47e2220b51900fcb9b53ec0c758959e9d1c2d4d4f2ba354da0d1",
+            "workspace": {
+                "name": "Dolved Care Engineering Benchmark V3",
+                "public_id": "02e84820-c9cc-545d-8294-a5ad741b7d25",
+                "slug": "evaluation-dolved-care-engineering-v3"
+            }
+        },
+        "planner": {
+            "adapter_version": "structured-chat-v3",
+            "contract_schema_version": "plan-response-v2",
+            "fingerprint": "b18ce9cfcb769bbe2c2d28e74ba9b1ffa90a62c887de7e9b04d595cc6a1cf690",
+            "model": "gpt-5-mini",
+            "prompt_version": "adr-0022-v5",
+            "provider": "openai"
+        },
+        "policy": {
+            "activated_at": null,
+            "calibration_corpus_digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
+            "calibration_corpus_version": "v2-foundation-experimental",
+            "dense_candidate_k": 40,
+            "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+            "evidence_threshold": 0.337890625,
+            "final_evidence_k": 5,
+            "fingerprint": "6626d78bd9445c70fd946a64b0a817b4e77b264a14d945d483ba497f9e681364",
+            "fusion_candidate_k": 15,
+            "fusion_strategy": "rrf",
+            "fusion_version": "1",
+            "public_id": "19500df1-50d8-4049-920b-845d5086b2f1",
+            "reranker_adapter_version": "1",
+            "reranker_candidate_k": 15,
+            "reranker_model": "rerank-2.5",
+            "reranker_provider": "voyage",
+            "retired_at": null,
+            "rrf_k": 5,
+            "sparse_candidate_k": 40,
+            "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+            "status": "calibrating",
+            "version": "engineering-rrf-k-5-after-exp0004"
+        },
+        "pricing": {
+            "embedding_cost_per_million_tokens_usd": 0.12,
+            "embedding_pricing_snapshot": "voyage-pricing-2026-08-12",
+            "generation": "not_executed",
+            "planner_cost_basis": "unavailable",
+            "reranker_cost_basis": "unavailable"
+        },
+        "reliability": {
+            "embedding": {
+                "initial_backoff_seconds": 15,
+                "maximum_attempts": 4,
+                "maximum_backoff_seconds": 120,
+                "maximum_provider_cooldown_seconds": 120,
+                "request_timeout_seconds": 10
+            },
+            "laravel": {
+                "minimum_timeout_seconds": 480,
+                "outer_maximum_attempts": 2,
+                "timeout_seconds": 480,
+                "typed_provider_rate_limit_replay": false
+            },
+            "python_retry_owner": true,
+            "reranker": {
+                "initial_backoff_seconds": 15,
+                "maximum_attempts": 3,
+                "maximum_backoff_seconds": 90,
+                "maximum_provider_cooldown_seconds": 90,
+                "request_timeout_seconds": 10
+            },
+            "shared_voyage_cooldown": {
+                "participants": [
+                    "dense_embedding",
+                    "reranker"
+                ],
+                "provider_timing_precedence": [
+                    "retry_after",
+                    "rate_limit_reset",
+                    "configured_fallback"
+                ],
+                "scope": "python_process"
+            }
+        },
+        "repository": {
+            "commit": "a21431bc0f9137978f3c4d082619954f8814bd9d",
+            "dirty": false
+        }
+    },
+    "lineage_digest": "b875afd80cd3e80ba4fb42da2ee8f9bbb3d974e2e148d48bc9c8474013b572ba",
+    "run_id": "EXP-0008-v3-final-engineering-confirmation",
+    "schema_version": "v1",
+    "started_at": "2026-08-16T10:43:56+00:00"
+}

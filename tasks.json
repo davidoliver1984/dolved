@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R16",
-    "current_session": "R16-S08",
-    "next_action": "Review the CAL-EXP-0003 controlled-rejection diagnosis and decide bounded planner/benchmark/sufficiency follow-up. Threshold 0.337890625 is calibrated and frozen only for the exact CAL-EXP-0003 lineage; do not production-promote it or close R16-S08 before separate sealed held-out acceptance.",
-    "completed_through": "R16-S07",
-    "completed_phase_count": 16,
+    "current_phase": "R17",
+    "current_session": "R17-S01",
+    "next_action": "Review and accept the provider-neutral generation, sufficiency, citation, groundedness, retry and ownership boundary before drafting the required R17-S01 ADR. Do not implement generation yet.",
+    "completed_through": "R16-S08",
+    "completed_phase_count": 17,
     "total_phase_count": 24
   },
   "phases": [
@@ -3176,8 +3176,8 @@
           "guide_stage": "Stage 16.8 \u2014 Implement Hybrid Retrieval and Reranking",
           "title": "Implement Hybrid Retrieval and Reranking",
           "guide_start_line": 12082,
-        "guide_end_line": 12285,
-          "status": "in_progress",
+          "guide_end_line": 12310,
+          "status": "completed",
           "objective": "Implement the Stage 16.7 architecture: sparse retrieval, RRF fusion, the Reranker contract with Voyage as its V1 provider, calibrated thresholds and abstention.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -3186,7 +3186,7 @@
             "stage": "Stage 16.8 \u2014 Implement Hybrid Retrieval and Reranking",
             "source_lines": {
               "start": 12082,
-          "end": 12285
+                "end": 12310
             }
           },
           "workflow": [
@@ -3209,7 +3209,7 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r16-s08-implement-hybrid-retrieval-and-reranking.md",
-            "status": "in_progress"
+            "status": "completed"
           },
           "completion_evidence": [
             "Hybrid sparse/FastEmbed, deterministic RRF and Voyage reranker boundaries implemented across apps/ai",
@@ -3220,17 +3220,20 @@
       "Complete live dense-versus-hybrid evaluation used 40/40/15/15/0.337890625/5 with RRF 60: hybrid recall 1.0, precision 0.1130434783, MRR 0.5014492754, nDCG 0.9516022960 and no hard failures versus dense K=3 recall 0.9565217391, precision 0.1739130435, MRR 0.5 and nDCG 0.9404752067",
       "Threshold 0.337890625 remained recall-safe but accepted five candidates for every preliminary held-out evidence case; that historical uncommitted result was not activated",
       "CAL-EXP-0003 exact-commit calibration completed with 44 cases, 132 variants, zero execution failures and compatible provider-free replay across 256 boundaries; the policy retained 0.337890625 with recall 0.798246, benchmark precision 0.198246, MRR 0.791667 and nDCG 0.774316",
-      "Threshold 0.337890625 is frozen only for the exact CAL-EXP-0003 lineage; sealed held-out acceptance and deliberate production activation remain pending"
+      "Threshold 0.337890625 is frozen only for the exact CAL-EXP-0003 lineage; sealed held-out acceptance and deliberate production activation remain pending",
+      "EXP-0008 final engineering confirmation completed 31/31 variants with Recall@K 0.9667, clean-upstream Recall@K 1.0000 and 36/36 correctly scoped expected EvidenceUnits retained at every downstream retrieval stage",
+      "docs/evaluation/runs/EXP-0008-v3-final-engineering-confirmation/closure.md",
+      "Planner accepted with two documented residual content/event-time versus authority-time risks; no semantic retry-to-success and no downstream retrieval defect demonstrated"
           ]
         }
       ],
-      "guide_end_line": 12232,
-      "status": "not_started",
+      "guide_end_line": 12310,
+      "status": "completed",
       "objective": "Retrieve relevant, tenant-safe source chunks for a user query.",
       "gate": {
         "id": "R16-GATE",
         "title": "Retrieval Acceptance Gate",
-        "status": "not_started",
+        "status": "completed",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
@@ -3238,22 +3241,29 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-16 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "CAL-EXP-0003 retained evidence_threshold 0.337890625 for its exact calibration lineage without held-out or production-promotion claims",
+          "EXP-0008 final V3 engineering confirmation: Recall@K 0.9667, clean-upstream Recall@K 1.0000, benchmark precision 0.2100, MRR 0.9333 and nDCG 0.9157",
+          "All 36 correctly scoped expected EvidenceUnits survived Dense, Sparse, union, fusion, reranking, threshold and final evidence",
+          "Planner accepted at 29/31 strict correctness with two documented residual content/event-time versus authority-time risks",
+          "docs/evaluation/runs/EXP-0008-v3-final-engineering-confirmation/closure.md",
+          "docs/journal/2026-08-08-r16-s08-implement-hybrid-retrieval-and-reranking.md"
+        ]
       }
     },
     {
       "id": "R17",
       "guide_phase": "Phase 17 \u2014 Grounded Generation",
       "title": "Grounded Generation",
-      "guide_start_line": 12233,
+      "guide_start_line": 12311,
       "sessions": [
         {
           "id": "R17-S01",
           "guide_stage": "Stage 17.1 \u2014 Define Generation Provider Boundary",
           "title": "Define Generation Provider Boundary",
-          "guide_start_line": 12241,
-          "guide_end_line": 12282,
-          "status": "not_started",
+          "guide_start_line": 12319,
+          "guide_end_line": 12360,
+          "status": "in_progress",
           "objective": "Create a provider-neutral interface for chat or completion models.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
@@ -3261,8 +3271,8 @@
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.1 \u2014 Define Generation Provider Boundary",
             "source_lines": {
-              "start": 12241,
-              "end": 12282
+              "start": 12319,
+              "end": 12360
             }
           },
           "workflow": [
@@ -3293,8 +3303,8 @@
           "id": "R17-S02",
           "guide_stage": "Stage 17.2 \u2014 Build Grounded Prompt Assembly",
           "title": "Build Grounded Prompt Assembly",
-          "guide_start_line": 12283,
-          "guide_end_line": 12318,
+          "guide_start_line": 12361,
+          "guide_end_line": 12396,
           "status": "not_started",
           "objective": "Construct prompts from the user query, tenant-safe retrieved chunks and explicit grounding instructions.",
           "session_mode": "implementation",
@@ -3303,8 +3313,8 @@
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.2 \u2014 Build Grounded Prompt Assembly",
             "source_lines": {
-              "start": 12283,
-              "end": 12318
+              "start": 12361,
+              "end": 12396
             }
           },
           "workflow": [
@@ -3335,8 +3345,8 @@
           "id": "R17-S03",
           "guide_stage": "Stage 17.3 \u2014 Generate Answers with Citations",
           "title": "Generate Answers with Citations",
-          "guide_start_line": 12319,
-          "guide_end_line": 12350,
+          "guide_start_line": 12397,
+          "guide_end_line": 12428,
           "status": "not_started",
           "objective": "Produce answers that cite retrieved source locations.",
           "session_mode": "implementation",
@@ -3345,8 +3355,8 @@
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.3 \u2014 Generate Answers with Citations",
             "source_lines": {
-              "start": 12319,
-              "end": 12350
+              "start": 12397,
+              "end": 12428
             }
           },
           "workflow": [
@@ -3377,8 +3387,8 @@
           "id": "R17-S04",
           "guide_stage": "Stage 17.4 \u2014 Add Answer Evaluation",
           "title": "Add Answer Evaluation",
-          "guide_start_line": 12351,
-          "guide_end_line": 12395,
+          "guide_start_line": 12429,
+          "guide_end_line": 12473,
           "status": "not_started",
           "objective": "Evaluate groundedness, citation correctness and answer usefulness.",
           "session_mode": "implementation",
@@ -3387,8 +3397,8 @@
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.4 \u2014 Add Answer Evaluation",
             "source_lines": {
-              "start": 12351,
-              "end": 12395
+              "start": 12429,
+              "end": 12473
             }
           },
           "workflow": [
@@ -3416,8 +3426,8 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 12395,
-      "status": "not_started",
+      "guide_end_line": 12473,
+      "status": "in_progress",
       "objective": "Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.",
       "gate": {
         "id": "R17-GATE",

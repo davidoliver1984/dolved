@@ -12094,14 +12094,16 @@ invented as a hard-coded number.
 
 ### Status
 
-Implemented, engineering-evaluated and calibration-complete for review. After
+Completed, engineering-evaluated and calibration-complete. After
 the preliminary uncommitted runs, the repository established an immutable V3
 calibration population and executed CAL-EXP-0003 once from exact commit
 `e3a356d5872f43611572c33c0d8f2ee09e5e8002`. Post-provider compatibility
 passed and the predeclared policy retained `0.337890625` for that exact lineage.
 The threshold is calibrated but is not held-out accepted or production
-promoted. R16-S08 remains open pending separate sealed held-out acceptance and
-any deliberate activation decision.
+promoted. EXP-0008 closed the current retrieval engineering block without
+accessing the sealed held-out population; held-out acceptance and deliberate
+production activation remain separate future release decisions rather than
+unfinished hybrid-retrieval implementation.
 
 ### Implementation
 
@@ -12190,19 +12192,18 @@ docs/adr/0021-define-hybrid-retrieval-and-reranking-architecture.md
   through the `Reranker` contract, not a direct Voyage SDK call. — Met.
 * Evidence below the calibrated `evidence_threshold` results in explicit
   `INSUFFICIENT_EVIDENCE`, not a low-confidence answer presented as if
-  grounded. — Implemented and tested; production activation awaits the live
-  calibrated policy.
+  grounded. — Met. The exact-lineage calibrated value remains unpromoted;
+  production activation is a separate release decision.
 * Workspace membership, authorisation, temporal authority (ADR-0017) and
   applicability eligibility are verified through the complete
   fused/reranked path, not only the semantic baseline. — Met.
 * `evidence_threshold` and any configuration claimed as an improvement are
   selected on a calibration/tuning split and assessed on a separate
   held-out acceptance split that did not influence selection, using
-  Stage 16.6's evaluation harness. — Split isolation and calibration mechanics
-  are implemented and tested. The first live end-to-end assessment found that
-  `0.337890625` remained recall-safe but was not selective enough on actual
-  retrieved held-out candidates, so acceptance and activation remain pending a
-  deliberate recalibration from the committed pipeline.
+  Stage 16.6's evaluation harness. — Calibration selection and physical split
+  isolation are implemented and tested. CAL-EXP-0003 mechanically retained
+  `0.337890625`. The sealed held-out population was not accessed during this
+  closure, so no held-out-acceptance or production-promotion claim is made.
 * No stage can be configured to exceed the candidates an upstream stage
   actually produced; statically-knowable violations are rejected at
   configuration-validation time. — Met in database, application and Python
@@ -12265,23 +12266,45 @@ docs/adr/0021-define-hybrid-retrieval-and-reranking-architecture.md
   `COMPARE` call) and therefore is not represented as Voyage model latency.
   No reranker price was configured, so no reranker cost was invented.
 
-### Remaining closure item
+### Final engineering closure
 
 CAL-EXP-0003 retained `0.337890625` after an exact-commit provider pass and
 provider-free replay over the compatible V3 calibration population. Its
 controlled-rejection diagnosis found two planner semantic errors, ten benchmark
 expectations inconsistent with ADR-0018's workspace-wide relevance boundary,
 and thirteen relevance-versus-answer-sufficiency failures; it did not identify
-a scalar-threshold implementation defect. Before activation, assess the frozen
-lineage once on the still-sealed held-out population. Persist or activate a
-policy only if that result is accepted and keep the binding to the exact
-provider, model, adapter, dense/sparse profiles, RRF, candidate configuration
-and corpus digest.
+a scalar-threshold implementation defect.
+
+EXP-0008 then executed the final ten-case, 31-variant V3 engineering regression
+population once from commit
+`a21431bc0f9137978f3c4d082619954f8814bd9d`. It recorded case-first Recall@K
+`0.9667`, clean-upstream Recall@K `1.0000`, benchmark precision `0.2100`, MRR
+`0.9333` and nDCG@K `0.9157`. Every one of the 36 correctly scoped expected
+EvidenceUnits remained present at Dense, Sparse, union, fusion, reranker,
+threshold and final-evidence stages. No downstream retrieval defect was
+demonstrated.
+
+Planner correctness was `29/31`; eligibility and outcome correctness were each
+`30/31`. The remaining body-map and fire-marshal observations are accepted
+content/event-time versus document-authority-time classification risk. The
+planner remained fail-closed and no semantic retry-to-success occurred.
+
+The retrieval core is therefore mature for the current phase and the planner
+is accepted with known residual risk. Do not reopen planner/retrieval tuning
+merely to improve this engineering benchmark. Revisit only for a future
+regression, a material recurring real-corpus pattern, a systemic sealed-
+acceptance result, or a deliberately approved planner architecture stage.
+
+The sealed held-out population remains untouched. Before any future production
+activation, assess and deliberately accept the exact frozen policy lineage,
+keeping its provider, model, adapter, dense/sparse profiles, RRF, candidate
+configuration and corpus digest binding intact.
 
 ### Commit boundary
 
-git add apps/ai apps/api contracts docs/adr tests
-git commit -m "Implement hybrid retrieval and reranking"
+git add IMPLEMENTATION_GUIDE.md PROJECT_ROADMAP.md tasks.json \
+  docs/evaluation docs/journal/2026-08-08-r16-s08-implement-hybrid-retrieval-and-reranking.md
+git commit -m "Close EXP-0008 retrieval engineering baseline"
 
 ---
 

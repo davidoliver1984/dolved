@@ -195,3 +195,38 @@ semantic errors, ten benchmark expectations that conflict with ADR-0018's
 workspace-wide relevance boundary, and thirteen cases where topically relevant
 evidence did not establish the demanded fact. No application correction,
 threshold change, provider call or held-out access occurred during closure.
+
+## 2026-08-16 final engineering closure
+
+The path from calibration to closure was intentionally non-linear and remains
+recorded as such. CAL-EXP-0003 retained `0.337890625` for its exact lineage.
+Its controlled-rejection diagnosis separated retrieval relevance from answer
+sufficiency, after which bounded planner, location and temporal corrections
+were evaluated through EXP-0005 and EXP-0006. Benchmark V3 gained a dedicated
+engineering population and provisioning boundary; materialisation exposed and
+corrected the canonical-chunk HTTP ingestion contract before the corpus was
+successfully indexed. EXP-0007 then isolated remaining planner reference
+semantics, leading to the accepted `adr-0022-v5` lineage and a narrow
+engineering comparison-wording reconciliation.
+
+EXP-0008 was the final consolidated engineering confirmation. It executed ten
+cases and 31 variants once from commit
+`a21431bc0f9137978f3c4d082619954f8814bd9d`, with calibration, held-out, V2
+engineering and broad benchmark paths physically unavailable. It recorded
+Recall@K `0.9667`, clean-upstream Recall@K `1.0000`, benchmark precision
+`0.2100`, MRR `0.9333` and nDCG@K `0.9157`. All 36 correctly scoped expected
+EvidenceUnits survived Dense, Sparse, union, fusion, reranking, threshold and
+final evidence.
+
+Two planner observations remain accepted risk: body-map colloquial wording
+clarified instead of resolving `CURRENT`, losing one expected EvidenceUnit;
+fire-marshal duration contrast resolved as `COMPARE` instead of `CURRENT` but
+lost no evidence. They are the residual content/event-time versus authority-
+time semantic class. The planner remained fail-closed and did not retry
+semantically to obtain a preferred answer.
+
+R16-S08 and Phase 16 are closed for the current engineering phase. This is not
+a claim of calibration, sealed held-out acceptance, customer-corpus quality or
+unseen generalisation. The threshold remains unpromoted. Work advances to
+R17-S01 architecture review for the generation provider boundary; no generation
+implementation has begun.

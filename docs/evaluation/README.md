@@ -86,3 +86,13 @@ The frozen Benchmark V3 calibration population is compiled provider-free with
 purpose-specific population projection, not a benchmark-level split release.
 Composition compatibility is evaluated before any provider call; execution
 compatibility remains a separate post-run gate.
+
+## Current retrieval engineering status
+
+EXP-0008 is the accepted final engineering-only confirmation for the current
+planner/retrieval block. It recorded case-first Recall@K `0.9667`, clean-
+upstream Recall@K `1.0000`, and complete `36/36` retention of correctly scoped
+expected EvidenceUnits through every downstream retrieval stage. It is not
+calibration, sealed-held-out acceptance, customer-corpus evidence, or unseen-
+generalisation evidence. See the immutable
+[EXP-0008 closure](runs/EXP-0008-v3-final-engineering-confirmation/closure.md).

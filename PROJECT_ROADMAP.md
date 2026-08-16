@@ -450,6 +450,13 @@ uploaded document reliably reaches INDEXED or a diagnosable FAILED state.
 
 ## Phase 16 — Retrieval
 
+**Status:** Complete for the current engineering phase. EXP-0008 recorded
+`0.9667` engineering Recall@K, `1.0000` clean-upstream Recall@K and retained all
+36 correctly scoped expected EvidenceUnits through every downstream retrieval
+stage. The planner is accepted with two documented residual content/event-time
+versus authority-time risks. The calibrated threshold remains exact-lineage,
+unpromoted and not sealed-held-out accepted.
+
 ### Objectives
 
 Retrieve relevant, tenant-safe source chunks for a user query.
@@ -509,6 +516,9 @@ implementation exists yet for this constraint to apply to.
 ---
 
 ## Phase 17 — Grounded Generation
+
+**Status:** Architecture review begins at R17-S01. No generation implementation
+has started.
 
 ### Objectives
 
