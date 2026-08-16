@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dolved.local/contracts/evaluation/thin-intent-classifier/v1/classification.schema.json",
+  "title": "Thin Linguistic Retrieval Intent Classification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "temporal_intent",
+    "explicit_date",
+    "temporal_reference",
+    "applicability_reference"
+  ],
+  "properties": {
+    "temporal_intent": {
+      "enum": ["CURRENT", "COMPARE", "VALID_AT_DATE"]
+    },
+    "explicit_date": {
+      "type": ["string", "null"],
+      "format": "date"
+    },
+    "temporal_reference": {
+      "type": ["string", "null"],
+      "maxLength": 255,
+      "description": "Question wording only; never an application identifier or resolved authority."
+    },
+    "applicability_reference": {
+      "type": ["string", "null"],
+      "maxLength": 255,
+      "description": "Question wording only; never a resolved location or application identifier."
+    }
+  }
+}

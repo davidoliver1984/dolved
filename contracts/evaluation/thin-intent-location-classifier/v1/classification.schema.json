@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dolved.local/contracts/evaluation/thin-intent-location-classifier/v1/classification.schema.json",
+  "title": "Thin Linguistic Intent and Location Classification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["temporal_intent", "explicit_date", "temporal_reference", "location_references"],
+  "properties": {
+    "temporal_intent": {"enum": ["CURRENT", "COMPARE", "VALID_AT_DATE"]},
+    "explicit_date": {"type": ["string", "null"], "format": "date"},
+    "temporal_reference": {"type": ["string", "null"], "minLength": 1, "maxLength": 255},
+    "location_references": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {"type": "string", "minLength": 1, "maxLength": 255}
+    }
+  }
+}

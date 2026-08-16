@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dolved.invalid/contracts/evaluation/thin-intent-historical-reference/v1/classification.schema.json",
+  "title": "Thin Historical Reference Classification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "temporal_intent",
+    "explicit_date",
+    "temporal_reference",
+    "location_references"
+  ],
+  "properties": {
+    "temporal_intent": {
+      "type": "string",
+      "enum": [
+        "CURRENT",
+        "COMPARE",
+        "VALID_AT_DATE",
+        "HISTORICAL_REFERENCE"
+      ]
+    },
+    "explicit_date": {
+      "anyOf": [
+        { "type": "string", "format": "date" },
+        { "type": "null" }
+      ]
+    },
+    "temporal_reference": {
+      "anyOf": [
+        { "type": "string", "minLength": 1, "maxLength": 255 },
+        { "type": "null" }
+      ]
+    },
+    "location_references": {
+      "type": "array",
+      "maxItems": 8,
+      "items": { "type": "string" }
+    }
+  }
+}
