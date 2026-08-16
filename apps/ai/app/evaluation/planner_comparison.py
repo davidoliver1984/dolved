@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -55,6 +56,10 @@ def compare_planner_contract(
         and actual_location_identity is not None
         and expected_location_identity == actual_location_identity
     )
+    equivalent_historical_reference = _historical_reference_equivalent(
+        expected_contract["temporal_reference"],
+        actual_contract["temporal_reference"],
+    )
     differences = tuple(
         {
             "field": field,
@@ -67,6 +72,7 @@ def compare_planner_contract(
         for field in PLANNER_FIELDS
         if expected_contract[field] != actual_contract[field]
         and not (field == "location_references" and equivalent_location_representation)
+        and not (field == "temporal_reference" and equivalent_historical_reference)
     )
     return PlannerComparison(expected_contract, actual_contract, differences)
 
@@ -110,6 +116,45 @@ def _reference(value: Any) -> dict[str, str] | None:
         "kind": str(kind).upper(),
         "value": str(reference),
     }
+
+
+def _historical_reference_equivalent(expected: Any, actual: Any) -> bool:
+    """Accept only references with the same deterministic Laravel selector."""
+    expected_selector = _historical_selector(expected)
+    actual_selector = _historical_selector(actual)
+    return expected_selector is not None and expected_selector == actual_selector
+
+
+def _historical_selector(value: Any) -> tuple[str, int | str] | None:
+    if not isinstance(value, dict) or value.get("kind") != "HISTORICAL_REFERENCE":
+        return None
+    reference = value.get("value")
+    if not isinstance(reference, str):
+        return None
+
+    text = reference.strip().casefold()
+    versions = re.findall(r"\bversion\s+(\d+)\b", text)
+    years = re.findall(r"\b(\d{4})\b", text)
+    relative = re.search(r"\b(old|older|previous|prior)\b", text) is not None
+    withdrawal = "withdraw" in text
+    has_version = bool(versions)
+    strategies = (
+        int(has_version)
+        + int(bool(years))
+        + int(relative)
+        + int(withdrawal and not has_version)
+    )
+    if strategies != 1 or len(set(versions)) > 1 or len(set(years)) > 1:
+        return None
+    if versions:
+        return ("version", int(versions[0]))
+    if years:
+        return ("year", years[0])
+    if withdrawal:
+        return ("withdrawn", "withdrawn")
+    if relative:
+        return ("relative_previous", "relative_previous")
+    return None
 
 
 def _difference_classification(field: str, expected: Any, actual: Any) -> str:
