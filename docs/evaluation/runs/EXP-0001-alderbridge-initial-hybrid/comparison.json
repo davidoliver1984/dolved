@@ -1,0 +1,297 @@
+{
+  "baseline_experiment_id": "EXP-0001-alderbridge-initial-hybrid-dense",
+  "baseline_repository_commit": "95b04a1177dd3fc1d19eae05b17d4273b59343cb-dirty",
+  "baseline_result_digest": "5ad0d2abd0a173607573a3ba51fc854888b2a06a6ca17a5278e2964b9d20be95",
+  "candidate_result_digest": "96e6390f452aab5b192ce2c083cbaaf5a015be0f0fc2c19627884efd7a0e1d8d",
+  "comparison_note": "Equal-K comparison: dense and hybrid are both evaluated at final K=5.",
+  "gate": null,
+  "metrics": {
+    "mrr": {
+      "baseline": 0.004065040650406504,
+      "candidate": 0.004065040650406504,
+      "delta": 0.0
+    },
+    "ndcg_at_k": {
+      "baseline": 0.05691056910569106,
+      "candidate": 0.05691056910569106,
+      "delta": 0.0
+    },
+    "precision_at_k": {
+      "baseline": 0.0008130081300813008,
+      "candidate": 0.0008130081300813008,
+      "delta": 0.0
+    },
+    "recall_at_k": {
+      "baseline": 0.05691056910569106,
+      "candidate": 0.05691056910569106,
+      "delta": 0.0
+    }
+  },
+  "schema_version": "v1",
+  "slices": {
+    "COMPARE": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "COSHH-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "CURRENT": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "ICO-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "MCA-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "RIDDOR-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "VALID_AT_DATE": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "abbreviation": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "adversarial": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "ambiguous-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "applicability": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "clarification": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "colloquial": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "conflicting-guidance": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "descendant-site": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "forms": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "historical": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "keyword-stuffing": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "location-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "long-form": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "multi-document": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "multi-evidence": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "near-duplicate": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "near-numeric-values": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "near-time-values": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "near-version-duplicate": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "negative-exclusion": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "negative-instruction": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "never-authoritative": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "numeric-boundary": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "numeric-range": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "predecessor-resurrection": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "prose": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "region-specific": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "regional-applicability": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "role-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "scheduled-future": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "site-specific": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "table-evidence": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "tables": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "temporal-authority": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "withdrawn": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "withdrawn-before-authority": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "zero-evidence": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    }
+  }
+}
