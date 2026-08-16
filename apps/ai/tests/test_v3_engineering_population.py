@@ -201,6 +201,19 @@ def test_regression_additions_preserve_engineering_ownership_and_semantics() -> 
 
     comparison = cases["v3.medication.compare.controlled-drugs-discrepancy"]
     assert comparison["planner_expectation"]["temporal_mode"] == "COMPARE"
+    versioned = next(
+        variant
+        for variant in comparison["variants"]
+        if variant["variant_id"] == "versioned"
+    )
+    assert versioned["question"] == (
+        "What changed between version 1 and the current controlled-drugs "
+        "procedure when the stock count is wrong?"
+    )
+    assert comparison["planner_expectation"]["temporal_reference"] == {
+        "kind": "historical_reference",
+        "value": "version 1",
+    }
     evidence = comparison["retrieval_expectation"]["evidence_units"]
     assert {unit["side"] for unit in evidence} == {"PRIMARY", "COMPARISON"}
     assert comparison["threshold_observability"]["required_sides"] == [

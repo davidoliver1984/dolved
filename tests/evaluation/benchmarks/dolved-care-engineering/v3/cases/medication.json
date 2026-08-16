@@ -106,7 +106,7 @@
       "variants": [
         {"variant_id": "direct", "question": "Compare controlled-drug discrepancy reporting in version 1 with the current procedure.", "evaluation_facets": ["historical-explicit"]},
         {"variant_id": "colloquial", "question": "How did the CD stock-mismatch rule change from the old procedure to now?", "evaluation_facets": ["abbreviation", "colloquial"], "planner_expectation_override": {"temporal_reference": null}},
-        {"variant_id": "versioned", "question": "What changed between controlled-drugs procedure versions 1 and 2 when the stock count is wrong?", "evaluation_facets": ["historical-explicit"]}
+        {"variant_id": "versioned", "question": "What changed between version 1 and the current controlled-drugs procedure when the stock count is wrong?", "evaluation_facets": ["historical-explicit"]}
       ],
       "slices": ["COMPARE", "multi-evidence", "temporal-authority"],
       "evaluation_facets": ["changed-instruction", "historical-explicit", "near-duplicate", "two-evidence-units", "universal"],

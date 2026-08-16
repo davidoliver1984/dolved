@@ -10,7 +10,7 @@
     "taxonomy_sha256": "4f4d17654f2a510a70b640abf794ddefd1e5b84990c150f5a3dff9a7bf203af5"
   },
   "case_id": "v3.medication.compare.controlled-drugs-discrepancy",
-  "case_sha256": "953470b55039475926fd73852ea419911b42b67f1d6d1d88d2685dfc4e4bf5f5",
+  "case_sha256": "3250cb01bdd09b35af0b333aa52756890f1318711f388fd1c34747788bcba54f",
   "source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
   "source_lineage_digest": "3dc6241915e7a6acbc05e88929432b2b08c5db41e7b858f08833256785ca9e07",
   "evidence_unit_ids_digest": "319860da934eaee633ba25c32ff655ce8d896904f895fcd5743a3d751f90e885",
@@ -30,5 +30,5 @@
     "approved": true
   },
   "reviewer_identity": "codex",
-  "review_note": "Engineering regression review confirms two-sided ADR-0022 COMPARE semantics, independently source-anchored current and version 1 discrepancy rules, and no copied calibration wording."
+  "review_note": "Engineering regression review confirms the revised wording explicitly compares historical version 1 with the current procedure, preserves independently source-anchored PRIMARY and COMPARISON evidence, and does not copy calibration wording."
 }

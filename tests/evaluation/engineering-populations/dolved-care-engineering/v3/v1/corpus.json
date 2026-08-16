@@ -383,7 +383,7 @@
         },
         {
           "variant_id": "versioned",
-          "question": "What changed between controlled-drugs procedure versions 1 and 2 when the stock count is wrong?",
+          "question": "What changed between version 1 and the current controlled-drugs procedure when the stock count is wrong?",
           "evaluation_facets": [
             "historical-explicit"
           ]
