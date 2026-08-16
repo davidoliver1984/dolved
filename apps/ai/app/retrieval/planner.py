@@ -202,7 +202,7 @@ class StructuredChatRetrievalPlanner:
         timeout_seconds: float,
         client: httpx.Client | None = None,
         contract_schema_version: str = "plan-response-v2",
-        prompt_version: str = "adr-0022-v4",
+        prompt_version: str = "adr-0022-v5",
         adapter_version: str = "structured-chat-v3",
     ) -> None:
         if not api_key.get_secret_value().strip():
@@ -413,10 +413,17 @@ Use only language in the question. Never resolve authority, documents, versions,
 locations, applicability, permissions, or eligible scope. Preserve the question exactly as
 the sole retrieval query.
 
-CURRENT: what rule/value/status applies now. Contrasts between current values, options,
-locations, boundary values, products, or objects are CURRENT, not COMPARE.
+CURRENT: what rule/value/status applies now. Timing, duration, sequence, deadlines, incident
+chronology, grammatical tense, or numeric contrasts inside the rule are policy content, not
+document-authority time, and remain CURRENT unless the question asks which authoritative
+document state applied. Contrasts between current values, options, locations, boundary values,
+products, or objects are CURRENT, not COMPARE.
 COMPARE: explicit change/difference between policy, document, procedure, or authority states
-over time. Do not create PRIMARY/COMPARISON objects.
+over time. When the question explicitly names the historical comparison selector, preserve it
+in explicit_date or temporal_reference; do not discard it merely because the application can
+default to the immediately previous attained version. A null selector remains valid for a
+genuinely relative current-versus-previous comparison that supplies no explicit selector.
+Do not create PRIMARY/COMPARISON objects.
 VALID_AT_DATE: what applied on an exact date or calendar period. Use explicit_date only for an
 exact calendar day. When the question explicitly supplies a calendar day, month, and year,
 preserve that calendar date exactly in explicit_date: 1 January 2026 becomes 2026-01-01,
@@ -433,12 +440,16 @@ use reason unclassifiable_temporal_intent.
 
 location_references contains only geographic or organisational places/scopes that answer
 "Where does this policy apply?": physical sites, homes, offices, named regions, geographic
-areas, or community-service areas explicitly present. Preserve wording, return multiple
-references separately, and never resolve aliases. Named entities are not locations merely
-because they appear in the question. Actors, recipients, departments or functions, regulators,
-organisations, roles or people, equipment, storage areas or containers, objects, documents,
-and actions are not location references unless the same wording independently identifies an
-applicability place or scope in the question.
+areas, or community-service areas explicitly present. Preserve the smallest independently
+meaningful applicability referent, excluding surrounding document or entity wording: in
+"Midlands regional procedure", the referent is "Midlands", not the whole document phrase.
+When multiple independently meaningful scopes are explicit, return each separately. Preserve
+both an explicit parent and descendant, such as "Coventry" and "Midlands"; never collapse
+relational wording into one combined reference, and never resolve or reconcile them.
+Named entities are not locations merely because they appear in the question. Actors, recipients,
+departments or functions, regulators, organisations, roles or people, equipment, storage areas
+or containers, objects, documents, and actions are not location references unless the same
+wording independently identifies an applicability place or scope in the question.
 
 The authoritative evaluation instant is """
         + evaluated_at

@@ -56,7 +56,7 @@ return [
         'provider' => env('RETRIEVAL_PLANNER_PROVIDER', 'openai'),
         'model' => env('RETRIEVAL_PLANNER_MODEL', 'gpt-5-mini'),
         'contract_schema_version' => 'plan-response-v2',
-        'prompt_version' => 'adr-0022-v4',
+        'prompt_version' => 'adr-0022-v5',
         'adapter_version' => 'structured-chat-v3',
     ],
     'embedding' => [

@@ -254,13 +254,13 @@ def test_planner_lineage_is_stable_and_excludes_credentials() -> None:
 
     assert lineage.provider == "test-provider"
     assert lineage.contract_schema_version == "plan-response-v2"
-    assert lineage.prompt_version == "adr-0022-v4"
+    assert lineage.prompt_version == "adr-0022-v5"
     assert lineage.adapter_version == "structured-chat-v3"
     assert len(lineage.fingerprint) == 64
     assert "test-key" not in lineage.model_dump_json()
 
 
-def test_adr_0022_v4_planner_fingerprint_is_stable() -> None:
+def test_adr_0022_v5_planner_fingerprint_is_stable() -> None:
     lineage = StructuredChatRetrievalPlanner(
         api_url="https://planner.invalid/v1/chat/completions",
         api_key=SecretStr("test-key"),
@@ -273,7 +273,7 @@ def test_adr_0022_v4_planner_fingerprint_is_stable() -> None:
     ).lineage()
 
     assert lineage.fingerprint == (
-        "063d8b87bd0351179410b433ed6b0400de50d76dd67ae6f9ceb27a572386f9b8"
+        "b18ce9cfcb769bbe2c2d28e74ba9b1ffa90a62c887de7e9b04d595cc6a1cf690"
     )
 
 
@@ -474,6 +474,10 @@ def test_prompt_defines_locations_by_policy_applicability_without_entity_blackli
     assert "departments or functions, regulators" in prompt
     assert "equipment, storage areas" in prompt
     assert "not location references" in prompt
+    assert "smallest independently" in prompt
+    assert '"Midlands", not the whole document phrase' in prompt
+    assert "return each separately" in prompt
+    assert "never collapse" in prompt
     assert "HR" not in prompt
     assert "ICO" not in prompt
     assert "pharmacy" not in prompt
@@ -539,6 +543,110 @@ def test_planner_contract_accepts_independent_actor_vs_place_controls(
     ).plan(question, evaluated_at="2026-08-15T12:00:00Z")
 
     assert result.location_references == expected_locations
+
+
+@pytest.mark.parametrize(
+    ("question", "expected_locations"),
+    [
+        (
+            "Under the Midlands regional procedure, what applies in Coventry?",
+            ("Midlands", "Coventry"),
+        ),
+        (
+            "Which Harbour View policy governs visitors?",
+            ("Harbour View",),
+        ),
+        (
+            "For Meadow Court in the South West, which fire procedure applies?",
+            ("Meadow Court", "South West"),
+        ),
+        ("What should the safeguarding lead send to the council?", ()),
+        ("When must the medicine fridge be checked?", ()),
+    ],
+)
+def test_location_referent_contract_preserves_minimal_separate_scopes(
+    question: str, expected_locations: tuple[str, ...]
+) -> None:
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": "current",
+            "explicit_date": None,
+            "temporal_reference": None,
+            "location_references": list(expected_locations),
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2026-08-15T12:00:00Z")
+
+    assert result.location_references == expected_locations
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "Do I guess how the mark happened or just describe what I can see?",
+        "How quickly must the duty manager respond after an incident?",
+        "Is eight degrees acceptable but nine degrees too warm?",
+    ],
+)
+def test_content_and_event_time_controls_remain_current(question: str) -> None:
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": "current",
+            "explicit_date": None,
+            "temporal_reference": None,
+            "location_references": [],
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2026-08-15T12:00:00Z")
+
+    assert result.temporal_mode.value == "current"
+
+
+@pytest.mark.parametrize(
+    ("question", "reference"),
+    [
+        (
+            "Compare controlled-drug reporting in version 1 with the current procedure.",
+            {"kind": "historical_reference", "value": "version 1"},
+        ),
+        (
+            "Compare policy version 3 with the current policy.",
+            {"kind": "historical_reference", "value": "version 3"},
+        ),
+        ("Compare the current procedure with the previous procedure.", None),
+    ],
+)
+def test_compare_contract_preserves_explicit_selectors_and_permits_relative_default(
+    question: str, reference: dict[str, str] | None
+) -> None:
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": "compare",
+            "explicit_date": None,
+            "temporal_reference": reference,
+            "location_references": [],
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2026-08-15T12:00:00Z")
+
+    assert result.temporal_mode.value == "compare"
+    assert (
+        None if result.temporal_reference is None else result.temporal_reference.value
+    ) == (None if reference is None else reference["value"])
+
+
+def test_prompt_distinguishes_authority_time_from_policy_content_time() -> None:
+    from app.retrieval.planner import _planner_prompt
+
+    prompt = _planner_prompt("2026-08-14T12:00:00Z")
+
+    assert "policy content, not" in prompt
+    assert "document-authority time" in prompt
+    assert "explicitly names the historical comparison selector" in prompt
+    assert "default to the immediately previous attained version" in prompt
 
 
 def test_prompt_treats_predecessor_resurrection_question_as_current() -> None:

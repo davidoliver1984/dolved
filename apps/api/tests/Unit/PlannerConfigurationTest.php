@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 final class PlannerConfigurationTest extends TestCase
 {
-    public function test_current_planner_lineage_matches_adr_0022_v4(): void
+    public function test_current_planner_lineage_matches_adr_0022_v5(): void
     {
         $lineage = [
             'provider' => (string) config('retrieval.planner.provider'),
@@ -25,10 +25,10 @@ final class PlannerConfigurationTest extends TestCase
         );
 
         $this->assertSame('plan-response-v2', $lineage['contract_schema_version']);
-        $this->assertSame('adr-0022-v4', $lineage['prompt_version']);
+        $this->assertSame('adr-0022-v5', $lineage['prompt_version']);
         $this->assertSame('structured-chat-v3', $lineage['adapter_version']);
         $this->assertSame(
-            '063d8b87bd0351179410b433ed6b0400de50d76dd67ae6f9ceb27a572386f9b8',
+            'b18ce9cfcb769bbe2c2d28e74ba9b1ffa90a62c887de7e9b04d595cc6a1cf690',
             $fingerprint,
         );
     }
