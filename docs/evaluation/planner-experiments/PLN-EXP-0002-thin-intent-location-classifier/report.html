@@ -1,0 +1,2230 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PLN-EXP-0002-thin-intent-location-classifier</title><style>body{font-family:system-ui;max-width:1500px;margin:auto;padding:2rem;background:#f6f7f9;color:#18202a}section,table{background:white}section{padding:1rem;margin:1rem 0}table{border-collapse:collapse;width:100%;font-size:.82rem}th,td{border:1px solid #d7dce2;padding:.5rem;vertical-align:top;text-align:left}pre{white-space:pre-wrap;margin:0}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}.metric{padding:1rem;background:#eef3f8}</style></head><body><h1>PLN-EXP-0002-thin-intent-location-classifier</h1><p>Isolated BENCHMARK_TEXT classifier experiment.</p><section class=metrics><div class=metric><strong>Reliability</strong><br>1.0000</div><div class=metric><strong>Temporal</strong><br>0.9027</div><div class=metric><strong>Location precision</strong><br>0.8000</div><div class=metric><strong>Location recall</strong><br>0.8000</div><div class=metric><strong>Cost</strong><br>$0.148295</div></section><section><h2>Lineage and aggregate</h2><pre>{
+  &quot;lineage&quot;: {
+    &quot;schema_version&quot;: &quot;v1&quot;,
+    &quot;experiment_id&quot;: &quot;PLN-EXP-0002-thin-intent-location-classifier&quot;,
+    &quot;repository_commit&quot;: &quot;95b04a1177dd3fc1d19eae05b17d4273b59343cb&quot;,
+    &quot;benchmark&quot;: {
+      &quot;id&quot;: &quot;dolved-care-engineering&quot;,
+      &quot;version&quot;: &quot;2&quot;,
+      &quot;digest&quot;: &quot;b9f2906d430f45c6e88bf64c7cfbacd5dce558de08bac0497ad2170bd231ccc7&quot;,
+      &quot;split_version&quot;: &quot;1&quot;,
+      &quot;split&quot;: &quot;engineering_tuning&quot;,
+      &quot;case_count&quot;: 42,
+      &quot;variant_count&quot;: 126
+    },
+    &quot;expectation_digest&quot;: &quot;d3002c8dc2e00e4758a4c44aed034348b5a6359db5b23ce86ad06e6dbe91e925&quot;,
+    &quot;provider&quot;: &quot;openai&quot;,
+    &quot;model&quot;: &quot;gpt-5-mini&quot;,
+    &quot;adapter&quot;: &quot;isolated-thin-intent-location-structured-chat-v1&quot;,
+    &quot;contract&quot;: &quot;contracts/evaluation/thin-intent-location-classifier/v1/classification.schema.json&quot;,
+    &quot;text_capture_mode&quot;: &quot;BENCHMARK_TEXT&quot;,
+    &quot;pricing_usd_per_million_tokens&quot;: {
+      &quot;input&quot;: 0.25,
+      &quot;cached_input&quot;: 0.025,
+      &quot;output&quot;: 2.0
+    }
+  },
+  &quot;aggregate&quot;: {
+    &quot;total_variants&quot;: 126,
+    &quot;valid_structured_responses&quot;: 126,
+    &quot;invalid_structured_responses&quot;: 0,
+    &quot;structured_output_reliability&quot;: 1.0,
+    &quot;temporal_scored_variants&quot;: 113,
+    &quot;temporal_review_variants&quot;: 13,
+    &quot;temporal_intent_accuracy&quot;: 0.9026548672566371,
+    &quot;temporal_intent_by_mode&quot;: {
+      &quot;CURRENT&quot;: 0.8888888888888888,
+      &quot;COMPARE&quot;: 0.9523809523809523,
+      &quot;VALID_AT_DATE&quot;: 1.0
+    },
+    &quot;confusion_matrix&quot;: {
+      &quot;CURRENT&quot;: {
+        &quot;CURRENT&quot;: 80,
+        &quot;COMPARE&quot;: 10,
+        &quot;VALID_AT_DATE&quot;: 0
+      },
+      &quot;COMPARE&quot;: {
+        &quot;CURRENT&quot;: 1,
+        &quot;COMPARE&quot;: 20,
+        &quot;VALID_AT_DATE&quot;: 0
+      },
+      &quot;VALID_AT_DATE&quot;: {
+        &quot;CURRENT&quot;: 0,
+        &quot;COMPARE&quot;: 0,
+        &quot;VALID_AT_DATE&quot;: 2
+      }
+    },
+    &quot;explicit_date_accuracy&quot;: 1.0,
+    &quot;false_date_hallucination_count&quot;: 0,
+    &quot;location_reference_precision&quot;: 0.8,
+    &quot;location_reference_recall&quot;: 0.8,
+    &quot;location_exact_match_accuracy&quot;: 0.976,
+    &quot;location_scored_variants&quot;: 125,
+    &quot;location_true_positives&quot;: 12,
+    &quot;location_false_positives&quot;: 3,
+    &quot;location_false_negatives&quot;: 3,
+    &quot;location_false_positive_examples&quot;: [
+      {
+        &quot;case_id&quot;: &quot;pilot.applicability.bristol-conflict&quot;,
+        &quot;variant_id&quot;: &quot;multi-document&quot;,
+        &quot;question&quot;: &quot;Show me both applicable evacuation instructions for the Bristol home.&quot;,
+        &quot;references&quot;: [
+          &quot;bristol home&quot;
+        ]
+      },
+      {
+        &quot;case_id&quot;: &quot;pilot.applicability.regional-exeter&quot;,
+        &quot;variant_id&quot;: &quot;alias&quot;,
+        &quot;question&quot;: &quot;Which evacuation procedure applies at the Exeter home?&quot;,
+        &quot;references&quot;: [
+          &quot;exeter home&quot;
+        ]
+      },
+      {
+        &quot;case_id&quot;: &quot;pilot.location-alias.bristol&quot;,
+        &quot;variant_id&quot;: &quot;alias&quot;,
+        &quot;question&quot;: &quot;Where do visitors assemble during a fire at the Bristol home?&quot;,
+        &quot;references&quot;: [
+          &quot;bristol home&quot;
+        ]
+      }
+    ],
+    &quot;location_missed_examples&quot;: [
+      {
+        &quot;case_id&quot;: &quot;pilot.applicability.bristol-conflict&quot;,
+        &quot;variant_id&quot;: &quot;multi-document&quot;,
+        &quot;question&quot;: &quot;Show me both applicable evacuation instructions for the Bristol home.&quot;,
+        &quot;references&quot;: [
+          &quot;the bristol home&quot;
+        ]
+      },
+      {
+        &quot;case_id&quot;: &quot;pilot.applicability.regional-exeter&quot;,
+        &quot;variant_id&quot;: &quot;alias&quot;,
+        &quot;question&quot;: &quot;Which evacuation procedure applies at the Exeter home?&quot;,
+        &quot;references&quot;: [
+          &quot;the exeter home&quot;
+        ]
+      },
+      {
+        &quot;case_id&quot;: &quot;pilot.location-alias.bristol&quot;,
+        &quot;variant_id&quot;: &quot;alias&quot;,
+        &quot;question&quot;: &quot;Where do visitors assemble during a fire at the Bristol home?&quot;,
+        &quot;references&quot;: [
+          &quot;the bristol home&quot;
+        ]
+      }
+    ],
+    &quot;failure_categories&quot;: {},
+    &quot;latency_ms&quot;: {
+      &quot;mean&quot;: 6134.583904880942,
+      &quot;p50&quot;: 5442.111626998667,
+      &quot;p95&quot;: 9829.086878999078
+    },
+    &quot;usage&quot;: {
+      &quot;input_tokens&quot;: 73062,
+      &quot;cached_input_tokens&quot;: 0,
+      &quot;output_tokens&quot;: 65015
+    },
+    &quot;estimated_cost_usd&quot;: 0.1482955
+  },
+  &quot;comparison&quot;: {
+    &quot;comparability_note&quot;: &quot;PLN-EXP-0002 changes VALID_AT_DATE to exact-day-only and replaces a singular applicability reference with plural location extraction. Review denominators.&quot;,
+    &quot;pln_exp0001&quot;: {
+      &quot;structured_output_reliability&quot;: 1.0,
+      &quot;temporal_intent_accuracy&quot;: 0.9285714285714286,
+      &quot;temporal_intent_by_mode&quot;: {
+        &quot;COMPARE&quot;: 0.9523809523809523,
+        &quot;CURRENT&quot;: 0.9111111111111111,
+        &quot;VALID_AT_DATE&quot;: 1.0
+      },
+      &quot;location_presence_precision&quot;: 0.2619047619047619,
+      &quot;location_presence_recall&quot;: 1.0,
+      &quot;estimated_cost_usd&quot;: 0.113264
+    },
+    &quot;pln_exp0002&quot;: {
+      &quot;structured_output_reliability&quot;: 1.0,
+      &quot;temporal_intent_accuracy&quot;: 0.9026548672566371,
+      &quot;temporal_intent_by_mode&quot;: {
+        &quot;CURRENT&quot;: 0.8888888888888888,
+        &quot;COMPARE&quot;: 0.9523809523809523,
+        &quot;VALID_AT_DATE&quot;: 1.0
+      },
+      &quot;location_reference_precision&quot;: 0.8,
+      &quot;location_reference_recall&quot;: 0.8,
+      &quot;estimated_cost_usd&quot;: 0.1482955
+    }
+  }
+}</pre></section><h2>Per-variant results</h2><table><thead><tr><th>Case</th><th>Variant</th><th>Question</th><th>Expected</th><th>Actual</th><th>Scores</th></tr></thead><tbody><tr><td>complaints.handling.compare</td><td>direct</td><td>How did complaint response times change from the old policy?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;the old policy&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>complaints.handling.compare</td><td>compare</td><td>Compare version 1 and version 2 complaint deadlines.</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;version 1 and version 2 complaint deadlines&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>complaints.handling.compare</td><td>colloquial</td><td>Did complaint handling get faster?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;get faster&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>complaints.handling.current-deadlines</td><td>direct</td><td>What are the current complaint acknowledgement and response targets?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;current&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>complaints.handling.current-deadlines</td><td>colloquial</td><td>How quickly should we reply to a complaint now?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;now&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>complaints.handling.current-deadlines</td><td>contrast</td><td>Is the acknowledgement deadline three days or two?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;three days or two&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>gdpr.breach.ico-owner</td><td>direct</td><td>Who decides whether a data breach is reported to the ICO?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>gdpr.breach.ico-owner</td><td>timing</td><td>Should frontline staff contact the ICO within 72 hours?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;within 72 hours&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>gdpr.breach.ico-owner</td><td>colloquial</td><td>Do I tell the regulator myself after a privacy incident?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>gdpr.data-protection.compare</td><td>direct</td><td>Compare the old and current privacy incident reporting deadlines.</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;old and current privacy incident reporting deadlines&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>gdpr.data-protection.compare</td><td>change</td><td>Did data-loss reporting change from 24 hours to four hours?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;from 24 hours to four hours&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>gdpr.data-protection.compare</td><td>history</td><td>What changed in the data protection policy?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;What changed&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>gdpr.data-protection.current-reporting</td><td>direct</td><td>How quickly must suspected personal-data loss be reported now?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>gdpr.data-protection.current-reporting</td><td>email</td><td>I sent information to the wrong person — when do I report it?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>gdpr.data-protection.current-reporting</td><td>colloquial</td><td>How fast do I tell privacy about a data mistake?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>health-safety.accident.current-riddor-timing</td><td>direct</td><td>How quickly must a possible RIDDOR incident reach the health and safety lead now?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;now&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>health-safety.accident.current-riddor-timing</td><td>expanded</td><td>What is the current deadline for escalating a potentially reportable incident?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;current deadline&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>health-safety.accident.current-riddor-timing</td><td>colloquial</td><td>How soon do we tell safety about something that might need RIDDOR reporting?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>health-safety.accident.valid-at-date</td><td>dated</td><td>What RIDDOR escalation deadline applied in January 2024?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;in January 2024&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>health-safety.accident.valid-at-date</td><td>historical</td><td>How long did managers have under the old accident procedure?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;the old accident procedure&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>health-safety.accident.valid-at-date</td><td>contrast</td><td>Was the safety-lead deadline two working days in 2024?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;in 2024&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>health-safety.coshh.review-trigger</td><td>direct</td><td>When must a COSHH assessment be reviewed?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>health-safety.coshh.review-trigger</td><td>product</td><td>Do we need a new hazardous-substance assessment when a product formulation changes?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;when a product formulation changes&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>health-safety.coshh.review-trigger</td><td>colloquial</td><td>The cleaning chemical changed — can we wait for the annual COSHH review?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;The cleaning chemical changed \u2014 can we wait for the annual COSHH review?&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>health-safety.moving-handling.compare</td><td>direct</td><td>How did the hoist staffing rule change from the previous policy?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;the previous policy&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>health-safety.moving-handling.compare</td><td>compare</td><td>Compare old and current requirements for two-person hoist transfers.</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;old and current requirements&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>health-safety.moving-handling.compare</td><td>colloquial</td><td>Did the old policy say two staff for every hoist?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;the old policy&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>health-safety.moving-handling.current-staffing</td><td>direct</td><td>Do all hoist transfers require two staff under the current policy?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;current policy&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>health-safety.moving-handling.current-staffing</td><td>assessment</td><td>What decides whether one or two trained staff perform a hoist transfer?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>health-safety.moving-handling.current-staffing</td><td>colloquial</td><td>Is two carers always the rule for using a hoist?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.annual-leave.compare</td><td>direct</td><td>Compare the current annual leave notice rule with the previous policy.</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;current annual leave notice rule with the previous policy&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.annual-leave.compare</td><td>change</td><td>What changed for booking a week off?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;changed for booking a week off&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.annual-leave.compare</td><td>allowance</td><td>How did the leave allowance and booking notice change?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;How did the leave allowance and booking notice change?&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.annual-leave.current-notice</td><td>direct</td><td>How much notice do I need now for a week of annual leave?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;now&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.annual-leave.current-notice</td><td>colloquial</td><td>How early should I book five days off?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;How early&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.annual-leave.current-notice</td><td>table</td><td>What is the current notice period for five working days&#x27; holiday?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;current notice period for five working days&#x27; holiday&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.annual-leave.valid-at-date</td><td>dated</td><td>How much leave did full-time staff receive in June 2024?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;in June 2024&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>hr.annual-leave.valid-at-date</td><td>old</td><td>What was the annual leave allowance under version 1?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;under version 1&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>hr.annual-leave.valid-at-date</td><td>contrast</td><td>Was the allowance 28 days in 2024?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;in 2024&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>hr.disciplinary.suspension-neutral</td><td>direct</td><td>Is suspension a disciplinary punishment?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.disciplinary.suspension-neutral</td><td>review</td><td>How often must a precautionary suspension be reviewed?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.disciplinary.suspension-neutral</td><td>colloquial</td><td>Does being suspended mean the allegation is proven?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.lone-worker.coventry-overdue</td><td>alias</td><td>What happens when a Coventry community worker misses their check-out?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Coventry&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Coventry&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 1,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.lone-worker.coventry-overdue</td><td>timing</td><td>When does the Midlands coordinator escalate an overdue welfare check?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Midlands&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Midlands&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 1,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>hr.lone-worker.coventry-overdue</td><td>colloquial</td><td>Our lone worker is 15 minutes late checking in — what next?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;15 minutes late checking in&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>infection.outbreak.valid-before-withdrawal</td><td>dated</td><td>What outbreak monitoring applied on 1 January 2026?</td><td><pre>{
+  &quot;explicit_date&quot;: &quot;2026-01-01&quot;,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;VALID_AT_DATE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: &quot;2026-01-01&quot;,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;VALID_AT_DATE&quot;,
+  &quot;temporal_reference&quot;: &quot;applied on 1 January 2026&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>infection.outbreak.valid-before-withdrawal</td><td>historical</td><td>Before it was withdrawn, what did outbreak version 2 require?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;Before it was withdrawn&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>infection.outbreak.valid-before-withdrawal</td><td>contrast</td><td>Was twice-daily symptom monitoring authoritative in January 2026?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;January 2026&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>medication.controlled-drugs.current-discrepancy</td><td>direct</td><td>When must a controlled-drug discrepancy be escalated now?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;now&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.controlled-drugs.current-discrepancy</td><td>contrast</td><td>Can a controlled drugs stock mismatch wait until shift end?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.controlled-drugs.current-discrepancy</td><td>colloquial</td><td>The CD count is wrong — what do we do straight away?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.controlled-drugs.valid-at-date</td><td>dated</td><td>In January 2024, when did a controlled-drug discrepancy have to be reported?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;In January 2024&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>medication.controlled-drugs.valid-at-date</td><td>historical</td><td>What was the old CD stock discrepancy deadline?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;old&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>medication.controlled-drugs.valid-at-date</td><td>contrast</td><td>Did the 2023 procedure allow reporting by the end of the shift?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;2023 procedure&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>medication.covert.capacity-requirements</td><td>direct</td><td>What approvals are required before medicine can be given covertly?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.covert.capacity-requirements</td><td>refusal</td><td>Can we hide medicine in food because a resident refuses it?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.covert.capacity-requirements</td><td>abbreviation</td><td>Does covert medication need an MCA and best-interests decision?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.error-form.immediate-safety</td><td>direct</td><td>What goes on the medication error form?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.error-form.immediate-safety</td><td>priority</td><td>Should I finish the medicines incident form before calling for clinical advice?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;before calling for clinical advice&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.error-form.immediate-safety</td><td>colloquial</td><td>What details do I write down after a meds mistake?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.fridge.boundary-table</td><td>upper</td><td>Is a medicines fridge reading of exactly 8°C in range?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.fridge.boundary-table</td><td>decimal</td><td>What action is required at 8.1 degrees?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.fridge.boundary-table</td><td>colloquial</td><td>Is eight okay but just over eight too warm?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;Is eight okay but just over eight too warm?&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>medication.prn.minimum-interval</td><td>direct</td><td>What must I check before giving a PRN medicine?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.prn.minimum-interval</td><td>expanded</td><td>What information is needed before giving when-required medication?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>medication.prn.minimum-interval</td><td>colloquial</td><td>It is on the meds chart as needed — is that enough to give it?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.adversarial.visitor-negative</td><td>direct</td><td>What must a visitor do when the fire alarm sounds?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;when the fire alarm sounds&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.adversarial.visitor-negative</td><td>sign-in</td><td>Do visitors have to sign in and what happens during an evacuation?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.adversarial.visitor-negative</td><td>colloquial</td><td>Can a visitor use the lift in a fire and skip the reception book?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.applicability.ambiguous-home</td><td>ambiguous</td><td>Where is the fire assembly point at the home?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;the home&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;the home&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 1,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.applicability.ambiguous-home</td><td>pronoun</td><td>Which evacuation plan applies there?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: null,
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: null,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.applicability.ambiguous-home</td><td>underspecified</td><td>What should visitors do when the alarm sounds at our care home?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;our care home&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;our care home&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 1,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.applicability.bristol-conflict</td><td>direct</td><td>What regional and local fire instructions apply at Harbour View?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Harbour View&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Harbour View&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 1,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.applicability.bristol-conflict</td><td>conflict</td><td>Why do the South West and Bristol procedures name different assembly points?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;South West&quot;,
+    &quot;Bristol&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;South West&quot;,
+    &quot;Bristol&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;name different assembly points&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 2,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>pilot.applicability.bristol-conflict</td><td>multi-document</td><td>Show me both applicable evacuation instructions for the Bristol home.</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;the Bristol home&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Bristol home&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: false,
+  &quot;location_false_negatives&quot;: 1,
+  &quot;location_false_positives&quot;: 1,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.applicability.regional-exeter</td><td>alias</td><td>Which evacuation procedure applies at the Exeter home?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;the Exeter home&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Exeter home&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: false,
+  &quot;location_false_negatives&quot;: 1,
+  &quot;location_false_positives&quot;: 1,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.applicability.regional-exeter</td><td>canonical</td><td>Where does Meadow Court assemble under the regional procedure?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Meadow Court&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Meadow Court&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 1,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.applicability.regional-exeter</td><td>inheritance</td><td>Does the South West fire procedure cover Meadow Court?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;South West&quot;,
+    &quot;Meadow Court&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;South West&quot;,
+    &quot;Meadow Court&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 2,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.compare.medication-administration</td><td>direct</td><td>Compare the current medicine checks with the previous policy.</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;current medicine checks with the previous policy&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.compare.medication-administration</td><td>change</td><td>What changed in the checks before giving medication?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;changed&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.compare.medication-administration</td><td>colloquial</td><td>What extra check was added to the newer meds policy?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;newer meds policy&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.current.medication-administration</td><td>direct</td><td>When should I sign the MAR after giving a medicine?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;after giving a medicine&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.current.medication-administration</td><td>colloquial</td><td>Do I tick the meds chart before or after the resident takes it?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;before or after the resident takes it&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.current.medication-administration</td><td>abbreviation</td><td>What does the current policy say about signing a MAR?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;current policy&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.current.scheduled-medication-version</td><td>direct</td><td>Do omitted doses currently need an electronic incident reference on the MAR?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;currently&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.current.scheduled-medication-version</td><td>scheduled</td><td>Has the October electronic MAR rule started yet?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;October electronic MAR rule started yet&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>pilot.current.scheduled-medication-version</td><td>colloquial</td><td>Do we have to add the incident number to the meds chart now?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;now&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.current.withdrawn-before-authority</td><td>direct</td><td>Who must staff tell immediately about a safeguarding concern?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.current.withdrawn-before-authority</td><td>scheduled</td><td>Did the proposed central safeguarding mailbox replace reporting to the manager?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;proposed central safeguarding mailbox replace reporting to the manager&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>pilot.current.withdrawn-before-authority</td><td>colloquial</td><td>Do I email triage first or tell the home manager straight away?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.current.withdrawn-no-resurrection</td><td>direct</td><td>What is the current respiratory outbreak procedure?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;current respiratory outbreak procedure&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.current.withdrawn-no-resurrection</td><td>withdrawn</td><td>After version 2 was withdrawn, did the old outbreak procedure become current again?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;After version 2 was withdrawn&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>pilot.current.withdrawn-no-resurrection</td><td>colloquial</td><td>Which outbreak rules do we use now that the newer one was pulled?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;now that the newer one was pulled&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>pilot.location-alias.bristol</td><td>alias</td><td>Where do visitors assemble during a fire at the Bristol home?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;the Bristol home&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Bristol home&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: false,
+  &quot;location_false_negatives&quot;: 1,
+  &quot;location_false_positives&quot;: 1,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.location-alias.bristol</td><td>canonical</td><td>What is the Harbour View fire assembly point?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Harbour View&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Harbour View&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 1,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.location-alias.bristol</td><td>colloquial</td><td>If the alarm goes at Bristol, where should visitors wait outside?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Bristol&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [
+    &quot;Bristol&quot;
+  ],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 1,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.multi-document.medication-storage</td><td>direct</td><td>What should I do if the medicines fridge reads 9°C before the drug round?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;before the drug round&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.multi-document.medication-storage</td><td>colloquial</td><td>The meds fridge is too warm — can I still give the medicine and who do I call?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.multi-document.medication-storage</td><td>numeric</td><td>What do the policy and storage procedure require for a 9 degree fridge reading?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.table.training-refresh</td><td>direct</td><td>How often must a fire marshal repeat practical training?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.table.training-refresh</td><td>colloquial</td><td>When does the fire warden course need renewing?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.table.training-refresh</td><td>contrast</td><td>Is fire marshal refresher training yearly or every two years?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;yearly or every two years&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: false
+}</pre></td></tr><tr><td>pilot.valid-at-date.medication-administration</td><td>dated</td><td>What MAR code applied to a refused dose on 1 June 2024?</td><td><pre>{
+  &quot;explicit_date&quot;: &quot;2024-06-01&quot;,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;VALID_AT_DATE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: &quot;2024-06-01&quot;,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;VALID_AT_DATE&quot;,
+  &quot;temporal_reference&quot;: &quot;1 June 2024&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>pilot.valid-at-date.medication-administration</td><td>historical</td><td>In June 2024, how did staff record medicine refusal?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;In June 2024&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>pilot.valid-at-date.medication-administration</td><td>colloquial</td><td>What did the old meds policy say to put on the chart when someone refused?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;old meds policy&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: null
+}</pre></td></tr><tr><td>safeguarding.allegations.compare-process</td><td>direct</td><td>How did the HR notification rule change between allegations procedures?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;between allegations procedures&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.allegations.compare-process</td><td>compare</td><td>Compare the old and current deadlines for telling HR about a staff allegation.</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;old and current deadlines for telling HR about a staff allegation&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.allegations.compare-process</td><td>colloquial</td><td>Did HR used to be told later than they are now?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;used to be told later than they are now&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.allegations.current-hr-timing</td><td>direct</td><td>When must HR be informed about an allegation against staff now?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;now&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.allegations.current-hr-timing</td><td>contrast</td><td>Can the manager wait one working day before telling HR?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;one working day before telling HR&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.allegations.current-hr-timing</td><td>colloquial</td><td>How quickly do we tell HR when a staff safeguarding allegation comes in?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.body-map.observable-facts</td><td>direct</td><td>What should be recorded on an injury body map?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.body-map.observable-facts</td><td>cause</td><td>Should staff write what they think caused a bruise on the body map?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.body-map.observable-facts</td><td>colloquial</td><td>Do I guess how the mark happened or just describe what I can see?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.capacity.unwise-decision</td><td>direct</td><td>Does making an unwise decision mean someone lacks capacity?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.capacity.unwise-decision</td><td>MCA</td><td>Under the MCA, is capacity assessed once for every decision?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.capacity.unwise-decision</td><td>colloquial</td><td>Can we say a resident has no capacity just because we disagree with their choice?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.covert-medication.multi-document</td><td>direct</td><td>What capacity and medicines evidence is needed for covert administration?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.covert-medication.multi-document</td><td>multi</td><td>Which policies together govern hiding medicine in food?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>safeguarding.covert-medication.multi-document</td><td>colloquial</td><td>If someone cannot decide about tablets, what do both the MCA and meds rules require?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>training.medication.compare</td><td>direct</td><td>How did the medication competency assessment change?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;How did the medication competency assessment change?&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>training.medication.compare</td><td>compare</td><td>Compare old and current observed-round requirements.</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;old and current observed-round requirements&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>training.medication.compare</td><td>colloquial</td><td>Did med sign-off change from three rounds to four?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;COMPARE&quot;,
+  &quot;temporal_reference&quot;: &quot;from three rounds to four&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>training.medication.current-rounds</td><td>direct</td><td>How many observed medication rounds are required now?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: &quot;now&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>training.medication.current-rounds</td><td>controlled</td><td>Must the medication competency include a controlled-drug round?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr><tr><td>training.medication.current-rounds</td><td>colloquial</td><td>How many med rounds do I need signed off?</td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;
+}</pre></td><td><pre>{
+  &quot;explicit_date&quot;: null,
+  &quot;location_references&quot;: [],
+  &quot;temporal_intent&quot;: &quot;CURRENT&quot;,
+  &quot;temporal_reference&quot;: null
+}</pre></td><td><pre>{
+  &quot;explicit_date_correct&quot;: true,
+  &quot;location_exact_match&quot;: true,
+  &quot;location_false_negatives&quot;: 0,
+  &quot;location_false_positives&quot;: 0,
+  &quot;location_true_positives&quot;: 0,
+  &quot;temporal_intent_correct&quot;: true
+}</pre></td></tr></tbody></table></body></html>
