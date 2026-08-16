@@ -3310,9 +3310,9 @@
           "guide_stage": "Stage 17.2 \u2014 Build Grounded Prompt Assembly",
           "title": "Build Grounded Prompt Assembly",
           "guide_start_line": 12430,
-          "guide_end_line": 12465,
+          "guide_end_line": 12505,
           "status": "not_started",
-          "objective": "Construct prompts from the user query, tenant-safe retrieved chunks and explicit grounding instructions.",
+          "objective": "Build the provider-neutral generation contracts, outcome model, context-packing policy and persistence/validation foundation ADR-0023 defines (Laravel and Python), without provider-specific prompt rendering or a concrete adapter.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
@@ -3320,7 +3320,7 @@
             "stage": "Stage 17.2 \u2014 Build Grounded Prompt Assembly",
             "source_lines": {
               "start": 12430,
-              "end": 12465
+              "end": 12505
             }
           },
           "workflow": [
@@ -3351,18 +3351,18 @@
           "id": "R17-S03",
           "guide_stage": "Stage 17.3 \u2014 Generate Answers with Citations",
           "title": "Generate Answers with Citations",
-          "guide_start_line": 12466,
-          "guide_end_line": 12497,
+          "guide_start_line": 12508,
+          "guide_end_line": 12564,
           "status": "not_started",
-          "objective": "Produce answers that cite retrieved source locations.",
+          "objective": "Implement concrete grounded generation against the Stage 17.2 contract: deterministic prompt rendering, exact prompt wording, the OpenAI/gpt-5-mini adapter, and bounded provider retry/failure mapping.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.3 \u2014 Generate Answers with Citations",
             "source_lines": {
-              "start": 12466,
-              "end": 12497
+              "start": 12508,
+              "end": 12564
             }
           },
           "workflow": [
@@ -3393,8 +3393,8 @@
           "id": "R17-S04",
           "guide_stage": "Stage 17.4 \u2014 Add Answer Evaluation",
           "title": "Add Answer Evaluation",
-          "guide_start_line": 12498,
-          "guide_end_line": 12542,
+          "guide_start_line": 12567,
+          "guide_end_line": 12609,
           "status": "not_started",
           "objective": "Evaluate groundedness, citation correctness and answer usefulness.",
           "session_mode": "implementation",
@@ -3403,8 +3403,8 @@
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.4 \u2014 Add Answer Evaluation",
             "source_lines": {
-              "start": 12498,
-              "end": 12542
+              "start": 12567,
+              "end": 12609
             }
           },
           "workflow": [
@@ -3432,7 +3432,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 12542,
+      "guide_end_line": 12609,
       "status": "in_progress",
       "objective": "Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.",
       "gate": {

@@ -8,6 +8,56 @@ Accepted
 
 2026-08-16
 
+## Post-acceptance implementation-readiness clarification
+
+### Clarification date
+
+2026-08-16
+
+Before R17-S02 implementation began, a repository-level readiness review
+found that several illustrative names and stage-boundary statements in this
+ADR did not map literally onto the persistence identities and implementation
+stages that already exist. The repository owner explicitly approved this
+same-day, pre-implementation clarification to the Accepted ADR because it
+records factual identity/terminology mappings and makes already-accepted
+ownership executable; it does not reverse or alter an architectural
+decision.
+
+The clarification is deliberately narrow:
+
+- `EvidenceSnapshot` uses the real persisted identities
+  `document_chunk_id`, `document_id` and `ingestion_event_claim_id`. These
+  replace the illustrative `canonical_chunk_id`, `document_version_id` and
+  `extraction_run_id` names in the initially accepted text. A document
+  version is already a `Document` row, and the canonical chunk's durable
+  production lineage is its ingestion-event claim; no new extraction-run
+  persistence entity is introduced.
+- Laravel assembles generation from an explicit internal snapshot containing
+  the original question, the final authorised `RetrievalResult`, the
+  temporal-authority and applicability/location facts already resolved for
+  that retrieval, the authorised workspace scope, and correlation/lineage
+  context. Generation assembly reflects this settled input and never
+  re-resolves temporal authority, location, applicability or eligibility.
+- The `rc1` `generation.answer` response envelope has three mutually
+  exclusive alternatives: a completed `GenerationResult`; a typed
+  `GENERATION_CONTEXT_BUDGET_EXCEEDED` structural failure; or a typed
+  `GenerationProviderError`. The budget failure is neither a business
+  outcome nor a provider error. It may be raised locally by Laravel before a
+  call, or returned by Python after deterministic provider-specific
+  rendering/token measurement and before a provider call.
+- R17-S02 owns the language-neutral contracts, Laravel context packing and
+  request assembly, deterministic validation, persistence/migrations,
+  fingerprint contract, provider-neutral Python model/interface foundation,
+  and `rc1` contract extension. It contains no provider prompt wording,
+  OpenAI adapter or live provider call. R17-S03 owns deterministic
+  provider-specific rendering, prompt wording/version, OpenAI/gpt-5-mini,
+  generation-specific structured-output verification, provider token
+  measurement, bounded retry/failure mapping and real-provider verification.
+
+This explicitly approved clarification is not a precedent for silently
+editing Accepted ADRs. A substantive change to an accepted architectural
+decision still requires a new or superseding ADR.
+
 ## Relationship to prior ADRs
 
 ### Consumes ADR-0018 and ADR-0021's final evidence; decides nothing about retrieval
@@ -164,6 +214,27 @@ ADR-0021 — closed).
 
 ## Decision
 
+### Generation assembly input
+
+`RetrievalResult` is the settled evidence outcome, but it is not by itself
+the complete Laravel assembly input. Laravel assembles the canonical
+`GenerationRequest` from one internal, immutable snapshot containing:
+
+```text
+GenerationAssemblyInput
+  original_question
+  retrieval_result                 # EVIDENCE_FOUND; final authorised evidence
+  resolved_temporal_authority      # already resolved upstream
+  resolved_applicability_location  # already resolved upstream
+  authorised_workspace_scope      # application-only; not provider metadata
+  correlation_and_lineage_context
+```
+
+This snapshot transports existing application truth into generation. It does
+not authorise a second temporal, historical, location, applicability or
+eligibility resolution pass. Provider-facing data minimisation still applies:
+only the minimum interpretation context defined below crosses `rc1`.
+
 ### The end-to-end flow
 
 ```text
@@ -172,8 +243,9 @@ RetrievalResult (EVIDENCE_FOUND, final evidence set)
   -> Laravel: assembles canonical GenerationRequest
   -> Laravel calls Python's Generator (rc1: generation.answer)
   -> Python: deterministically renders provider-specific input
-       (or returns a typed GENERATION_CONTEXT_BUDGET_EXCEEDED result if the
-        proposed package does not fit the provider's actual limits)
+       (or returns the typed GENERATION_CONTEXT_BUDGET_EXCEEDED structural
+        failure envelope if the proposed package does not fit the provider's
+        actual limits)
   -> Python: provider call (OpenAI gpt-5-mini)
   -> Python: typed parse -> GenerationResult (or typed GenerationProviderError)
   -> Laravel: deterministic validation
@@ -201,6 +273,18 @@ Generator.generate(request: GenerationRequest) -> GenerationResult
 `QUALIFIED` and `INSUFFICIENT_EVIDENCE` are ordinary `GenerationResult`
 values, never exceptions. It raises a typed `GenerationProviderError` only
 for the operational-failure categories in "Retry/failure taxonomy" below.
+Provider-specific render/token measurement may instead raise the distinct
+typed `GenerationContextBudgetExceeded` structural failure before a provider
+call. At the `rc1` boundary these map to three mutually exclusive envelopes:
+
+```text
+completed                 -> GenerationResult
+context_budget_exceeded   -> GenerationContextBudgetExceeded
+provider_error            -> GenerationProviderError
+```
+
+The exact JSON schema and serialisation of this tagged response are R17-S02
+implementation work; the three-way semantic distinction is fixed here.
 No application code outside one isolated adapter implementation depends on
 a specific provider's SDK, request shape, or response structure —
 `GenerationRequest` and `GenerationResult` never expose provider-specific
@@ -411,9 +495,9 @@ item actually cited by the answer — not per `AnswerPart` — recording:
 
 ```text
 EvidenceSnapshot
-  canonical_chunk_id
-  document_version_id
-  extraction_run_id
+  document_chunk_id
+  document_id
+  ingestion_event_claim_id
   source_provenance
   cited_text_verbatim
   content_digest
@@ -530,8 +614,11 @@ must never be treated as though it were.** The two mean structurally
 different things. `INSUFFICIENT_EVIDENCE` is a `GenerationResult` business
 outcome: generation actually reasoned over the supplied evidence and found
 it cannot materially answer the question. `GENERATION_CONTEXT_BUDGET_EXCEEDED`
-is an application-level packing failure, raised before a `GenerationRequest`
-is even successfully assembled — the required, authorised evidence may be
+is an application-level structural packing failure. Laravel may raise it
+before an `rc1` call when its deterministic policy cannot assemble a valid
+package; Python may return the same typed failure envelope after
+provider-specific rendering/token measurement rejects a proposed package
+and before any provider call. The required, authorised evidence may be
 entirely sufficient to answer the question; the application simply cannot
 represent it within the configured generation context envelope. Conflating
 the two would misreport a packaging/configuration limitation as though it

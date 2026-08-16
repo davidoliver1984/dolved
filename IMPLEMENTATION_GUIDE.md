@@ -12431,35 +12431,77 @@ git tag -a phase-17-s01 \
 
 ### Objective
 
-Construct prompts from the user query, tenant-safe retrieved chunks and explicit grounding instructions.
+Build the provider-neutral generation foundation ADR-0023 defines: the
+language-neutral `GenerationRequest`/`GenerationResult` contracts, the
+`ANSWERED`/`QUALIFIED`/`INSUFFICIENT_EVIDENCE` outcome model and its
+structural invariants, Laravel's deterministic context-packing policy and
+`GenerationRequest` assembly, `GeneratedAnswer`/`AnswerPart`/
+`EvidenceSnapshot` persistence, deterministic `GenerationResult`
+validation, the generation configuration snapshot/fingerprint contract, and
+the provider-neutral `Generator` interface/protocol foundation (Python
+request/result models, the `rc1` `generation.answer` contract extension) —
+without yet building the concrete provider adapter or writing prompt
+wording. This stage is not restricted to `apps/ai`; per ADR-0023, most of
+this ownership sits in `apps/api`.
 
 ### Status
 
 Not yet executed.
 
-### Planned principles
+### Scope (per ADR-0023's ownership split)
 
-* source material is clearly delimited;
-* instructions state that sources may contain untrusted text;
-* retrieved text cannot override system instructions;
-* the model must distinguish evidence from inference;
-* insufficient evidence should produce an honest limitation;
-* source identifiers are stable enough for citation mapping;
-* token budgets are bounded.
+* language-neutral generation contracts (`contracts/`);
+* `GenerationOutcome` and related enums/value objects;
+* `GenerationRequest`/`GenerationResult` contract definitions;
+* `answer_parts[]` structural invariants;
+* Laravel deterministic context-packing policy (evidence set,
+  `PRIMARY`/`COMPARISON` structure, order, omission policy);
+* request-scoped evidence-handle (`evidence_id`) mapping;
+* `GenerationRequest` assembly, including the generation assembly input
+  (question, `RetrievalResult`, already-resolved temporal/applicability
+  facts, correlation context — an implementation interpretation of
+  ADR-0023's ownership boundary, recorded in the R17-S01/R17-S02
+  implementation-readiness journal, not a separate ADR section);
+* deterministic `GenerationResult` validation (citation membership,
+  outcome invariants, evidence-identity checks);
+* `GeneratedAnswer`/`AnswerPart`/`EvidenceSnapshot` persistence design and
+  migrations/models, with application-owned identity assignment;
+* the `generation_fingerprint` contract and its versioned configuration
+  set;
+* Python-side provider-neutral request/result models and the `Generator`
+  interface/protocol foundation (no concrete adapter yet);
+* the `rc1` `generation.answer` contract extension, including its
+  three-shape response envelope (`GenerationResult` /
+  `GENERATION_CONTEXT_BUDGET_EXCEEDED` structural failure / provider
+  failure).
+
+Explicitly NOT this stage: exact provider-specific prompt rendering, actual
+system/user/evidence prompt wording, the OpenAI adapter, or any live
+provider call — all Stage 17.3.
 
 ### Acceptance criteria
 
-* Prompt assembly is deterministic.
-* Retrieved sources are clearly delimited.
-* Prompt injection from documents is treated as untrusted content.
-* Context-size limits are enforced.
-* Source identifiers survive generation.
-* Prompt templates are versioned and tested.
+* Contracts are provider-neutral; no provider-specific field exists outside
+  what Stage 17.3's adapter will own.
+* `GenerationResult`'s outcome/`answer_parts`/`unsupported_aspects`/
+  `insufficiency_reason` invariants are enforced deterministically.
+* Context-packing ownership matches ADR-0023: Laravel decides evidence
+  set/order/policy; no provider-specific token measurement lives in
+  Laravel.
+* `GENERATION_CONTEXT_BUDGET_EXCEEDED` is representable and structurally
+  distinct from `INSUFFICIENT_EVIDENCE` and from a provider failure.
+* `EvidenceSnapshot` persists cited text verbatim with real, existing
+  lineage identifiers (`document_chunk_id`, `document_id`,
+  `ingestion_event_claim_id` — not invented fields).
+* `AnswerPart`/`EvidenceSnapshot` persistent identity is assigned by
+  Laravel, never accepted from the provider-facing result.
+* Tests do not require a paid API call (a deterministic fake `Generator`
+  exercises the contract).
 
 ### Commit boundary
 
-git add apps/ai tests
-git commit -m "Build grounded prompt assembly"
+git add contracts apps/api apps/ai docs/adr tests
+git commit -m "Build grounded generation contracts and application boundary"
 
 ---
 
@@ -12467,30 +12509,57 @@ git commit -m "Build grounded prompt assembly"
 
 ### Objective
 
-Produce answers that cite retrieved source locations.
+Implement concrete grounded generation against the Stage 17.2 contract:
+deterministic provider-specific prompt rendering, the OpenAI/gpt-5-mini
+adapter (per ADR-0023, initial V1 profile only), exact prompt wording and
+versioning, strict structured-output plumbing, provider/model-specific
+token measurement, bounded provider retry, and provider failure mapping —
+producing real, validated `GenerationResult`s end to end.
 
-### Design constraint
+### Design note
 
-Review the citation and re-extraction design constraint recorded in
-`PROJECT_ROADMAP.md` before implementation begins.
+The citation and re-extraction design constraint recorded in
+`PROJECT_ROADMAP.md` was resolved by ADR-0023 (`EvidenceSnapshot`); this
+stage implements that design, it does not re-decide it.
 
 ### Status
 
 Not yet executed.
 
+### Scope
+
+* deterministic provider-specific input rendering (a pure function of
+  `GenerationRequest` and prompt version);
+* exact grounded-generation system/user/evidence prompt wording and
+  version;
+* the OpenAI adapter and gpt-5-mini integration;
+* strict structured-output provider plumbing, confirmed reliable for
+  generation specifically — not assumed from `RetrievalPlanner`'s narrower
+  classification use of the same model, per ADR-0023;
+* provider/model-specific token measurement reconciling Laravel's
+  proposed package against real provider limits;
+* bounded provider retry implementation and provider failure mapping;
+* real provider verification (isolated, opt-in, no paid calls in ordinary
+  tests).
+
 ### Acceptance criteria
 
-* Answers cite source identifiers.
-* Citations map to real retrieved chunks.
-* Unsupported citations are rejected or flagged.
-* Insufficient evidence is handled honestly.
-* The answer cannot cite another tenant’s material.
-* Provider failures are represented clearly.
-* Tests cover grounded and ungrounded cases.
+* Answers cite source identifiers via `answer_parts[].evidence_ids`.
+* Citations map to real, authorised evidence supplied in the request.
+* Unsupported citations are rejected deterministically by Stage 17.2's
+  validation layer, not silently accepted.
+* Insufficient evidence is handled honestly (`INSUFFICIENT_EVIDENCE`, with
+  a bounded `insufficiency_reason`).
+* The answer cannot cite another tenant's material.
+* Provider failures, and `GENERATION_CONTEXT_BUDGET_EXCEEDED`, are
+  represented clearly and never conflated with each other or with
+  `INSUFFICIENT_EVIDENCE`.
+* Tests cover grounded, qualified, ungrounded and structural-failure
+  cases.
 
 ### Commit boundary
 
-git add apps/ai tests
+git add apps/ai apps/api tests
 git commit -m "Generate grounded answers with citations"
 
 ---
