@@ -1,0 +1,600 @@
+{
+  "baseline_experiment_id": "EXP-0001-alderbridge-initial-hybrid",
+  "baseline_repository_commit": "95b04a1177dd3fc1d19eae05b17d4273b59343cb-dirty",
+  "baseline_result_digest": "8fa758630a6e999853de86287173bb6fcc9d783a1bec765337756bf2b87d2522",
+  "candidate_result_digest": "e942dd2191fc7e84176db1c21a7b98d923a0f920fa0f6fb3c0adf23c229fa692",
+  "comparison_note": "EXP-0001 versus EXP-0002 uses the same benchmark but changed ADR-0022 planner semantics and successful-retrieval denominators; interpret deltas with the classifier/resolution populations shown in result.json.",
+  "gate": null,
+  "historical_unavailable_fields": {
+    "generation_usage": null,
+    "planner_contract_schema_version": null,
+    "pricing": null,
+    "stage_usage": null
+  },
+  "metrics": {
+    "mrr": {
+      "baseline": 0.004065040650406504,
+      "candidate": 0.09126984126984126,
+      "delta": 0.08720480061943477
+    },
+    "ndcg_at_k": {
+      "baseline": 0.05691056910569106,
+      "candidate": 0.13978688248226553,
+      "delta": 0.08287631337657447
+    },
+    "precision_at_k": {
+      "baseline": 0.0008130081300813008,
+      "candidate": 0.01825396825396825,
+      "delta": 0.01744096012388695
+    },
+    "recall_at_k": {
+      "baseline": 0.05691056910569106,
+      "candidate": 0.1388888888888889,
+      "delta": 0.08197831978319783
+    }
+  },
+  "schema_version": "v1",
+  "slices": {
+    "COMPARE": {
+      "mrr": 0.2857142857142857,
+      "ndcg_at_k": 0.2857142857142857,
+      "precision_at_k": 0.05714285714285715,
+      "recall_at_k": 0.2857142857142857
+    },
+    "COSHH-alias": {
+      "mrr": 0.3333333333333333,
+      "ndcg_at_k": 0.3333333333333333,
+      "precision_at_k": 0.06666666666666667,
+      "recall_at_k": 0.3333333333333333
+    },
+    "CURRENT": {
+      "mrr": 0.0553639846743295,
+      "ndcg_at_k": 0.04857519869356257,
+      "precision_at_k": 0.0110727969348659,
+      "recall_at_k": 0.04731800766283524
+    },
+    "ICO-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "MCA-alias": {
+      "mrr": 0.2222222222222222,
+      "ndcg_at_k": 0.2222222222222222,
+      "precision_at_k": 0.044444444444444446,
+      "recall_at_k": 0.2222222222222222
+    },
+    "RIDDOR-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "VALID_AT_DATE": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "abbreviation": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "adversarial": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "ambiguous-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "applicability": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "clarification": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "colloquial": {
+      "mrr": 0.16666666666666666,
+      "ndcg_at_k": 0.16666666666666666,
+      "precision_at_k": 0.03333333333333333,
+      "recall_at_k": 0.16666666666666666
+    },
+    "conflicting-guidance": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "descendant-site": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "forms": {
+      "mrr": 0.041666666666666664,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.008333333333333333,
+      "recall_at_k": 0.0
+    },
+    "historical": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "keyword-stuffing": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "location-alias": {
+      "mrr": 0.1111111111111111,
+      "ndcg_at_k": 0.1111111111111111,
+      "precision_at_k": 0.022222222222222223,
+      "recall_at_k": 0.1111111111111111
+    },
+    "long-form": {
+      "mrr": 0.3333333333333333,
+      "ndcg_at_k": 0.3333333333333333,
+      "precision_at_k": 0.06666666666666667,
+      "recall_at_k": 0.3333333333333333
+    },
+    "multi-document": {
+      "mrr": 0.1111111111111111,
+      "ndcg_at_k": 0.06812746586282871,
+      "precision_at_k": 0.022222222222222223,
+      "recall_at_k": 0.05555555555555555
+    },
+    "multi-evidence": {
+      "mrr": 0.20833333333333334,
+      "ndcg_at_k": 0.20027389984928037,
+      "precision_at_k": 0.041666666666666664,
+      "recall_at_k": 0.19791666666666666
+    },
+    "near-duplicate": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "near-numeric-values": {
+      "mrr": 0.06666666666666667,
+      "ndcg_at_k": 0.06666666666666667,
+      "precision_at_k": 0.013333333333333332,
+      "recall_at_k": 0.06666666666666667
+    },
+    "near-time-values": {
+      "mrr": 0.14285714285714285,
+      "ndcg_at_k": 0.14285714285714285,
+      "precision_at_k": 0.028571428571428574,
+      "recall_at_k": 0.14285714285714285
+    },
+    "near-version-duplicate": {
+      "mrr": 0.07142857142857142,
+      "ndcg_at_k": 0.07142857142857142,
+      "precision_at_k": 0.014285714285714287,
+      "recall_at_k": 0.07142857142857142
+    },
+    "negative-exclusion": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "negative-instruction": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "never-authoritative": {
+      "mrr": 0.08333333333333333,
+      "ndcg_at_k": 0.16666666666666666,
+      "precision_at_k": 0.016666666666666666,
+      "recall_at_k": 0.16666666666666666
+    },
+    "numeric-boundary": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "numeric-range": {
+      "mrr": 0.3333333333333333,
+      "ndcg_at_k": 0.20438239758848611,
+      "precision_at_k": 0.06666666666666667,
+      "recall_at_k": 0.16666666666666666
+    },
+    "predecessor-resurrection": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "prose": {
+      "mrr": 0.16666666666666666,
+      "ndcg_at_k": 0.16666666666666666,
+      "precision_at_k": 0.03333333333333333,
+      "recall_at_k": 0.16666666666666666
+    },
+    "region-specific": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "regional-applicability": {
+      "mrr": 0.3333333333333333,
+      "ndcg_at_k": 0.3333333333333333,
+      "precision_at_k": 0.06666666666666667,
+      "recall_at_k": 0.3333333333333333
+    },
+    "role-alias": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "scheduled-future": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "site-specific": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "table-evidence": {
+      "mrr": -0.05555555555555555,
+      "ndcg_at_k": -0.1111111111111111,
+      "precision_at_k": -0.011111111111111112,
+      "recall_at_k": -0.1111111111111111
+    },
+    "tables": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "temporal-authority": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "withdrawn": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    },
+    "withdrawn-before-authority": {
+      "mrr": 0.16666666666666666,
+      "ndcg_at_k": 0.3333333333333333,
+      "precision_at_k": 0.03333333333333333,
+      "recall_at_k": 0.3333333333333333
+    },
+    "zero-evidence": {
+      "mrr": 0.0,
+      "ndcg_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0
+    }
+  },
+  "within_run_dense_comparison": {
+    "baseline_experiment_id": "EXP-0002-adr0022-corrected-planning-baseline-dense-control",
+    "baseline_repository_commit": "99c038687716816e52c29583279c1fdf941e1364",
+    "baseline_result_digest": "85c4f38f6f72670537e2fd71d405b08dc1210a4e2dad12c5ffa9e52d70a3b7b9",
+    "candidate_result_digest": "e942dd2191fc7e84176db1c21a7b98d923a0f920fa0f6fb3c0adf23c229fa692",
+    "comparison_note": "Equal-K comparison: dense and hybrid are both evaluated at final K=5.",
+    "gate": null,
+    "metrics": {
+      "mrr": {
+        "baseline": 0.19126984126984126,
+        "candidate": 0.09126984126984126,
+        "delta": -0.09999999999999999
+      },
+      "ndcg_at_k": {
+        "baseline": 0.25118025646331316,
+        "candidate": 0.13978688248226553,
+        "delta": -0.11139337398104762
+      },
+      "precision_at_k": {
+        "baseline": 0.044444444444444446,
+        "candidate": 0.01825396825396825,
+        "delta": -0.026190476190476195
+      },
+      "recall_at_k": {
+        "baseline": 0.2619047619047619,
+        "candidate": 0.1388888888888889,
+        "delta": -0.12301587301587302
+      }
+    },
+    "schema_version": "v1",
+    "slices": {
+      "COMPARE": {
+        "mrr": -0.13571428571428568,
+        "ndcg_at_k": -0.149515287332117,
+        "precision_at_k": -0.038095238095238085,
+        "recall_at_k": -0.19047619047619047
+      },
+      "COSHH-alias": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "CURRENT": {
+        "mrr": -0.09722222222222221,
+        "ndcg_at_k": -0.10995271208486157,
+        "precision_at_k": -0.025555555555555557,
+        "recall_at_k": -0.11666666666666667
+      },
+      "ICO-alias": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "MCA-alias": {
+        "mrr": -0.2222222222222222,
+        "ndcg_at_k": -0.2222222222222222,
+        "precision_at_k": -0.044444444444444446,
+        "recall_at_k": -0.2222222222222222
+      },
+      "RIDDOR-alias": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "VALID_AT_DATE": {
+        "mrr": -0.06666666666666667,
+        "ndcg_at_k": -0.06666666666666667,
+        "precision_at_k": -0.013333333333333332,
+        "recall_at_k": -0.06666666666666667
+      },
+      "abbreviation": {
+        "mrr": -0.08333333333333333,
+        "ndcg_at_k": -0.08333333333333333,
+        "precision_at_k": -0.016666666666666666,
+        "recall_at_k": -0.08333333333333333
+      },
+      "adversarial": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "ambiguous-alias": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "applicability": {
+        "mrr": -0.08333333333333333,
+        "ndcg_at_k": -0.08333333333333331,
+        "precision_at_k": -0.03333333333333333,
+        "recall_at_k": -0.08333333333333331
+      },
+      "clarification": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "colloquial": {
+        "mrr": -0.33333333333333337,
+        "ndcg_at_k": -0.33333333333333337,
+        "precision_at_k": -0.06666666666666668,
+        "recall_at_k": -0.33333333333333337
+      },
+      "conflicting-guidance": {
+        "mrr": -0.2222222222222222,
+        "ndcg_at_k": -0.2222222222222222,
+        "precision_at_k": -0.06666666666666667,
+        "recall_at_k": -0.2222222222222222
+      },
+      "descendant-site": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "forms": {
+        "mrr": -0.08333333333333333,
+        "ndcg_at_k": -0.08333333333333333,
+        "precision_at_k": -0.016666666666666666,
+        "recall_at_k": -0.08333333333333333
+      },
+      "historical": {
+        "mrr": -0.06666666666666667,
+        "ndcg_at_k": -0.06666666666666667,
+        "precision_at_k": -0.013333333333333332,
+        "recall_at_k": -0.06666666666666667
+      },
+      "keyword-stuffing": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "location-alias": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "long-form": {
+        "mrr": -0.3333333333333333,
+        "ndcg_at_k": -0.3333333333333333,
+        "precision_at_k": -0.06666666666666667,
+        "recall_at_k": -0.3333333333333333
+      },
+      "multi-document": {
+        "mrr": -0.05555555555555555,
+        "ndcg_at_k": -0.12003102342797912,
+        "precision_at_k": -0.06666666666666667,
+        "recall_at_k": -0.16666666666666666
+      },
+      "multi-evidence": {
+        "mrr": -0.14791666666666664,
+        "ndcg_at_k": -0.16740760670024996,
+        "precision_at_k": -0.04583333333333334,
+        "recall_at_k": -0.19791666666666663
+      },
+      "near-duplicate": {
+        "mrr": -0.16666666666666666,
+        "ndcg_at_k": -0.16666666666666666,
+        "precision_at_k": -0.06666666666666667,
+        "recall_at_k": -0.16666666666666666
+      },
+      "near-numeric-values": {
+        "mrr": -0.16666666666666663,
+        "ndcg_at_k": -0.2,
+        "precision_at_k": -0.03333333333333334,
+        "recall_at_k": -0.2
+      },
+      "near-time-values": {
+        "mrr": -0.09523809523809523,
+        "ndcg_at_k": -0.09523809523809523,
+        "precision_at_k": -0.019047619047619042,
+        "recall_at_k": -0.09523809523809523
+      },
+      "near-version-duplicate": {
+        "mrr": -0.06785714285714287,
+        "ndcg_at_k": -0.07475764366605847,
+        "precision_at_k": -0.019047619047619046,
+        "recall_at_k": -0.09523809523809523
+      },
+      "negative-exclusion": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "negative-instruction": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "never-authoritative": {
+        "mrr": -0.125,
+        "ndcg_at_k": -0.13591081279762143,
+        "precision_at_k": -0.03333333333333334,
+        "recall_at_k": -0.16666666666666666
+      },
+      "numeric-boundary": {
+        "mrr": -0.16666666666666666,
+        "ndcg_at_k": -0.3333333333333333,
+        "precision_at_k": -0.03333333333333333,
+        "recall_at_k": -0.3333333333333333
+      },
+      "numeric-range": {
+        "mrr": 0.16666666666666666,
+        "ndcg_at_k": -0.026759736950604157,
+        "precision_at_k": -0.06666666666666667,
+        "recall_at_k": -0.16666666666666666
+      },
+      "predecessor-resurrection": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "prose": {
+        "mrr": -0.08333333333333334,
+        "ndcg_at_k": -0.10515495892857621,
+        "precision_at_k": -0.03333333333333333,
+        "recall_at_k": -0.16666666666666666
+      },
+      "region-specific": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "regional-applicability": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "role-alias": {
+        "mrr": -0.3333333333333333,
+        "ndcg_at_k": -0.3333333333333333,
+        "precision_at_k": -0.06666666666666667,
+        "recall_at_k": -0.3333333333333333
+      },
+      "scheduled-future": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "site-specific": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      },
+      "table-evidence": {
+        "mrr": -0.2222222222222222,
+        "ndcg_at_k": -0.2222222222222222,
+        "precision_at_k": -0.044444444444444446,
+        "recall_at_k": -0.2222222222222222
+      },
+      "tables": {
+        "mrr": -0.16666666666666666,
+        "ndcg_at_k": -0.2222222222222222,
+        "precision_at_k": -0.03333333333333333,
+        "recall_at_k": -0.2222222222222222
+      },
+      "temporal-authority": {
+        "mrr": -0.3333333333333333,
+        "ndcg_at_k": -0.3333333333333333,
+        "precision_at_k": -0.06666666666666667,
+        "recall_at_k": -0.3333333333333333
+      },
+      "withdrawn": {
+        "mrr": -0.16666666666666666,
+        "ndcg_at_k": -0.16666666666666663,
+        "precision_at_k": -0.03333333333333333,
+        "recall_at_k": -0.16666666666666663
+      },
+      "withdrawn-before-authority": {
+        "mrr": -0.25,
+        "ndcg_at_k": -0.27182162559524287,
+        "precision_at_k": -0.06666666666666668,
+        "recall_at_k": -0.3333333333333333
+      },
+      "zero-evidence": {
+        "mrr": 0.0,
+        "ndcg_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0
+      }
+    }
+  }
+}

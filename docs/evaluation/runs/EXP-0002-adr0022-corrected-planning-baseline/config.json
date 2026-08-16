@@ -1,0 +1,84 @@
+{
+  "baseline_result_selector": "dense",
+  "benchmark": {
+    "digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
+    "id": "dolved-care-engineering",
+    "version": "v2"
+  },
+  "candidate_pipeline": {
+    "dense_candidate_k": 40,
+    "evidence_threshold": 0.337890625,
+    "final_evidence_k": 5,
+    "fusion_candidate_k": 15,
+    "reranker_candidate_k": 15,
+    "rrf_k": 60,
+    "sparse_candidate_k": 40
+  },
+  "corpus": {
+    "digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
+    "version": "v2"
+  },
+  "decision": null,
+  "description": "First exact-commit ADR-0022 full-pipeline engineering baseline",
+  "harness_version": "retrieval-evaluation-v1",
+  "planner": {
+    "adapter_version": "structured-chat-v2",
+    "contract_schema_version": "plan-response-v2",
+    "fingerprint": "b2e82859b06ae8f4058278eb24c343939c44375e0300c8800bda0d9e5681f85c",
+    "model": "gpt-5-mini",
+    "prompt_version": "adr-0022-v1",
+    "provider": "openai"
+  },
+  "pricing": {
+    "embedding_cost_per_million_tokens_usd": 0.12,
+    "embedding_pricing_snapshot": "voyage-pricing-2026-08-12",
+    "generation": "not_executed",
+    "planner_cost_basis": "unavailable",
+    "reranker_cost_basis": "unavailable"
+  },
+  "providers": {
+    "dense": {
+      "adapter_version": "1",
+      "dimensions": 1024,
+      "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+      "model": "voyage-4-large",
+      "provider": "voyage"
+    },
+    "fusion": {
+      "rrf_k": 60,
+      "strategy": "rrf",
+      "version": "1"
+    },
+    "reranking": {
+      "adapter_version": "1",
+      "model": "rerank-2.5",
+      "provider": "voyage"
+    },
+    "sparse": {
+      "adapter_version": "1",
+      "model": "prithivida/Splade_PP_en_v1",
+      "model_revision": "efcd182bc7eb351e81a9445752d4388c2bab500b",
+      "provider": "fastembed",
+      "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d"
+    }
+  },
+  "provisioning_mapping_digest": "1c206bcf8ddf3021502fa5ebb46ee696bf1faf159d1cbfc82d514d08913ac338",
+  "provisioning_snapshot_digest": "6c115d1b7b98d59e8e6e4bebf6485e06c88dd2c4908802af821ad65e6ebc99df",
+  "repository": {
+    "commit": "99c038687716816e52c29583279c1fdf941e1364",
+    "dirty": false
+  },
+  "result_selector": "hybrid",
+  "run_id": "EXP-0002-adr0022-corrected-planning-baseline",
+  "schema_version": "v2",
+  "split": {
+    "case_count": 42,
+    "digest": "fca770615b5fbf20e81b494454969d54dbab2bfa66abf728455e95832b57465f",
+    "name": "engineering_tuning",
+    "variant_count": 126,
+    "version": "1"
+  },
+  "status": "EXPERIMENTAL",
+  "threshold_policy_identity": "11386497e6316bf199abb75ad0c6ca8baaafe759c297d5044dfc7ce07630eb21",
+  "threshold_status": "CALIBRATING_EXPERIMENTAL_UNPROMOTED"
+}
