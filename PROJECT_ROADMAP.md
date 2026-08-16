@@ -560,6 +560,14 @@ This is intentionally deferred until retrieval and answer generation provide
 enough context to define the actual citation requirements. No Phase 10
 implementation change is required.
 
+**Resolved 2026-08-16 by ADR-0023** (Stage 17.1): extraction runs remain
+permanently immutable per ADR-0010 (unchanged); citations reference a
+durable, per-answer `EvidenceSnapshot` — a separate evidence identity, not
+the raw element UUID directly — that stores the cited text verbatim
+alongside its canonical lineage, so a historical answer resolves its own
+evidence independently of any later re-extraction. See ADR-0023 for the
+full design.
+
 ---
 
 ### Design constraint — Quality lineage across the pipeline
@@ -588,6 +596,13 @@ existing.
 This is intentionally deferred rather than actioned now — no Phase 13
 implementation change is required, and each named ADR records its own
 lineage fields when it is actually written.
+
+**Phase 17 link recorded 2026-08-16 by ADR-0023** (Stage 17.1): a versioned
+`generation_fingerprint`, covering provider, model, generation contract
+version, prompt version, adapter version and an explicitly defined
+quality-affecting configuration set, persisted with every generated answer.
+See ADR-0023 for the full design; the chain's other links remain owned by
+their respective ADRs as already recorded above.
 
 ---
 

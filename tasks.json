@@ -3262,8 +3262,8 @@
           "guide_stage": "Stage 17.1 \u2014 Define Generation Provider Boundary",
           "title": "Define Generation Provider Boundary",
           "guide_start_line": 12319,
-          "guide_end_line": 12360,
-          "status": "in_progress",
+          "guide_end_line": 12429,
+          "status": "completed",
           "objective": "Create a provider-neutral interface for chat or completion models.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
@@ -3272,7 +3272,7 @@
             "stage": "Stage 17.1 \u2014 Define Generation Provider Boundary",
             "source_lines": {
               "start": 12319,
-              "end": 12360
+              "end": 12429
             }
           },
           "workflow": [
@@ -3295,16 +3295,22 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r17-s01-define-generation-provider-boundary.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "docs/adr/0023-define-the-provider-neutral-grounded-generation-architecture-and-contract.md",
+            "docs/adr/README.md (index updated)",
+            "IMPLEMENTATION_GUIDE.md Stage 17.1 (Decision, Session verification, Acceptance criteria checked)",
+            "PROJECT_ROADMAP.md (Phase 17 design constraints reconciled against ADR-0023)",
+            "docs/journal/2026-08-16-r17-s01-define-generation-provider-boundary.md"
+          ]
         },
         {
           "id": "R17-S02",
           "guide_stage": "Stage 17.2 \u2014 Build Grounded Prompt Assembly",
           "title": "Build Grounded Prompt Assembly",
-          "guide_start_line": 12361,
-          "guide_end_line": 12396,
+          "guide_start_line": 12430,
+          "guide_end_line": 12465,
           "status": "not_started",
           "objective": "Construct prompts from the user query, tenant-safe retrieved chunks and explicit grounding instructions.",
           "session_mode": "implementation",
@@ -3313,8 +3319,8 @@
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.2 \u2014 Build Grounded Prompt Assembly",
             "source_lines": {
-              "start": 12361,
-              "end": 12396
+              "start": 12430,
+              "end": 12465
             }
           },
           "workflow": [
@@ -3345,8 +3351,8 @@
           "id": "R17-S03",
           "guide_stage": "Stage 17.3 \u2014 Generate Answers with Citations",
           "title": "Generate Answers with Citations",
-          "guide_start_line": 12397,
-          "guide_end_line": 12428,
+          "guide_start_line": 12466,
+          "guide_end_line": 12497,
           "status": "not_started",
           "objective": "Produce answers that cite retrieved source locations.",
           "session_mode": "implementation",
@@ -3355,8 +3361,8 @@
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.3 \u2014 Generate Answers with Citations",
             "source_lines": {
-              "start": 12397,
-              "end": 12428
+              "start": 12466,
+              "end": 12497
             }
           },
           "workflow": [
@@ -3387,8 +3393,8 @@
           "id": "R17-S04",
           "guide_stage": "Stage 17.4 \u2014 Add Answer Evaluation",
           "title": "Add Answer Evaluation",
-          "guide_start_line": 12429,
-          "guide_end_line": 12473,
+          "guide_start_line": 12498,
+          "guide_end_line": 12542,
           "status": "not_started",
           "objective": "Evaluate groundedness, citation correctness and answer usefulness.",
           "session_mode": "implementation",
@@ -3397,8 +3403,8 @@
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.4 \u2014 Add Answer Evaluation",
             "source_lines": {
-              "start": 12429,
-              "end": 12473
+              "start": 12498,
+              "end": 12542
             }
           },
           "workflow": [
@@ -3426,7 +3432,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 12473,
+      "guide_end_line": 12542,
       "status": "in_progress",
       "objective": "Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.",
       "gate": {
