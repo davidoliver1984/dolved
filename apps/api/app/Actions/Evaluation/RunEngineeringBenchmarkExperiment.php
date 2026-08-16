@@ -22,6 +22,9 @@ use App\Support\Evaluation\Exp0004Definition;
 use App\Support\Evaluation\Exp0005Definition;
 use App\Support\Evaluation\Exp0006Definition;
 use App\Support\Evaluation\Exp0007Definition;
+use App\Support\Evaluation\Exp0008Definition;
+use App\Support\Evaluation\Exp0008EngineeringBenchmark;
+use App\Support\Evaluation\Exp0008EngineeringBenchmarkSource;
 use App\Support\Evaluation\ThresholdCalibrationDefinition;
 use App\Support\Evaluation\V3EngineeringBenchmark;
 use App\Support\Evaluation\V3EngineeringBenchmarkSource;
@@ -36,6 +39,7 @@ final readonly class RunEngineeringBenchmarkExperiment
     public function __construct(
         private EngineeringBenchmarkSource $source,
         private V3EngineeringBenchmarkSource $v3Source,
+        private Exp0008EngineeringBenchmarkSource $exp0008Source,
         private EngineeringBenchmarkState $states,
         private V3EngineeringBenchmarkState $v3States,
         private ResolveEngineeringBenchmarkPolicy $policies,
@@ -73,6 +77,12 @@ final readonly class RunEngineeringBenchmarkExperiment
     public function handleExp0007(string $repositoryCommit): array
     {
         return $this->run($repositoryCommit, false, Exp0007Definition::RUN_ID, 'exp0007');
+    }
+
+    /** @return array<string, mixed> */
+    public function handleExp0008(string $repositoryCommit): array
+    {
+        return $this->run($repositoryCommit, false, Exp0008Definition::RUN_ID, 'exp0008');
     }
 
     /** @return array<string, mixed> */
@@ -122,14 +132,16 @@ final readonly class RunEngineeringBenchmarkExperiment
         if ($repositoryDirty) {
             throw new RuntimeException($runId.' requires a clean exact-commit worktree.');
         }
-        $v3 = $mode === 'exp0007';
+        $v3 = in_array($mode, ['exp0007', 'exp0008'], true);
         $state = $v3 ? $this->v3States->read() : $this->states->read();
         if ($v3) {
-            Exp0007Definition::assertProvisioning($state);
+            ($mode === 'exp0008' ? Exp0008Definition::class : Exp0007Definition::class)::assertProvisioning($state);
             if (
                 ($state['benchmark']['id'] ?? null) !== V3EngineeringBenchmark::ID
                 || ($state['benchmark']['version'] ?? null) !== V3EngineeringBenchmark::VERSION
-                || ($state['benchmark']['population_digest'] ?? null) !== V3EngineeringBenchmark::POPULATION_DIGEST
+                || ($state['benchmark']['population_digest'] ?? null) !== ($mode === 'exp0008'
+                    ? Exp0008Definition::MATERIALISED_POPULATION_DIGEST
+                    : V3EngineeringBenchmark::POPULATION_DIGEST)
                 || ($state['workspace']['slug'] ?? null) !== V3EngineeringBenchmark::WORKSPACE_SLUG
             ) {
                 throw new RuntimeException($runId.' requires the immutable materialised V3 engineering corpus.');
@@ -161,9 +173,9 @@ final readonly class RunEngineeringBenchmarkExperiment
             $policy = Exp0004Definition::treatmentPolicy($policy, $this->canonical);
         } elseif ($v3) {
             $policy = EvidenceThresholdPolicy::query()
-                ->where('fingerprint', Exp0007Definition::POLICY_FINGERPRINT)
+                ->where('fingerprint', $mode === 'exp0008' ? Exp0008Definition::POLICY_FINGERPRINT : Exp0007Definition::POLICY_FINGERPRINT)
                 ->sole();
-            Exp0007Definition::assertPolicy($policy);
+            ($mode === 'exp0008' ? Exp0008Definition::class : Exp0007Definition::class)::assertPolicy($policy);
         } else {
             $policy = $this->policies->handle($scope->activeCorpusGeneration);
         }
@@ -185,6 +197,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             'cal_exp_0002' => $this->source->calExp0002Corpus(),
             'cal_exp_0003' => $this->source->calExp0003Corpus(),
             'exp0007' => $this->v3Source->experimentCorpus(),
+            'exp0008' => $this->exp0008Source->experimentCorpus(),
             default => $this->source->engineeringCorpus(),
         };
         $expectedCases = match ($mode) {
@@ -192,6 +205,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             'cal_exp_0002' => CalExp0002Definition::EXPECTED_CASES,
             'cal_exp_0003' => CalExp0003Definition::EXPECTED_CASES,
             'exp0007' => V3EngineeringBenchmark::EXPECTED_CASES,
+            'exp0008' => Exp0008EngineeringBenchmark::EXPECTED_CASES,
             default => EngineeringBenchmark::EXPECTED_ENGINEERING_CASES,
         };
         $expectedVariants = match ($mode) {
@@ -199,6 +213,7 @@ final readonly class RunEngineeringBenchmarkExperiment
             'cal_exp_0002' => CalExp0002Definition::EXPECTED_VARIANTS,
             'cal_exp_0003' => CalExp0003Definition::EXPECTED_VARIANTS,
             'exp0007' => V3EngineeringBenchmark::EXPECTED_VARIANTS,
+            'exp0008' => Exp0008EngineeringBenchmark::EXPECTED_VARIANTS,
             default => EngineeringBenchmark::EXPECTED_ENGINEERING_VARIANTS,
         };
         $caseIds = $corpus['split']['case_ids'] ?? null;
@@ -217,6 +232,7 @@ final readonly class RunEngineeringBenchmarkExperiment
                 'cal_exp_0002' => CalExp0002Definition::EVALUATION_CLOCK,
                 'cal_exp_0003' => CalExp0003Definition::EVALUATION_CLOCK,
                 'exp0007' => $corpus['benchmark']['evaluation_clock'],
+                'exp0008' => $corpus['benchmark']['evaluation_clock'],
                 default => $corpus['benchmark']['evaluation_clock'],
             },
         );
@@ -265,6 +281,8 @@ final readonly class RunEngineeringBenchmarkExperiment
             $definition::assertPlanner($planner);
         } elseif ($mode === 'exp0007') {
             Exp0007Definition::assertPlanner($planner);
+        } elseif ($mode === 'exp0008') {
+            Exp0008Definition::assertPlanner($planner);
         }
         $calibrationDefinition = match ($mode) {
             'cal_exp_0002' => CalExp0002Definition::class,
@@ -279,7 +297,7 @@ final readonly class RunEngineeringBenchmarkExperiment
                 ? $calibrationDefinition::BENCHMARK_VERSION
                 : EngineeringBenchmark::VERSION),
             'digest' => $v3
-                ? V3EngineeringBenchmark::POPULATION_DIGEST
+                ? ($mode === 'exp0008' ? Exp0008EngineeringBenchmark::POPULATION_DIGEST : V3EngineeringBenchmark::POPULATION_DIGEST)
                 : ($calibrationDefinition !== null
                 ? $calibrationDefinition::BENCHMARK_DIGEST
                 : $state['benchmark']['digest']),
@@ -358,6 +376,8 @@ final readonly class RunEngineeringBenchmarkExperiment
             $lineage['experiment'] = Exp0006Definition::lineage();
         } elseif ($mode === 'exp0007') {
             $lineage['experiment'] = Exp0007Definition::lineage();
+        } elseif ($mode === 'exp0008') {
+            $lineage['experiment'] = Exp0008Definition::lineage();
         } elseif ($mode === 'calibration') {
             $lineage['experiment'] = ThresholdCalibrationDefinition::lineage();
         } elseif ($mode === 'cal_exp_0002') {

@@ -36,18 +36,10 @@ final class Exp0007DefinitionTest extends TestCase
         Exp0007Definition::assertProvisioning($state);
     }
 
-    public function test_v3_execution_source_contains_the_exact_definition_population(): void
+    public function test_historical_execution_source_fails_closed_after_population_supersession(): void
     {
-        $corpus = app(V3EngineeringBenchmarkSource::class)->experimentCorpus();
-
-        $this->assertSame(V3EngineeringBenchmark::POPULATION_DIGEST, $corpus['benchmark']['digest']);
-        $this->assertSame(V3EngineeringBenchmark::EXPECTED_CASES, $corpus['case_count']);
-        $this->assertSame(V3EngineeringBenchmark::EXPECTED_VARIANTS, $corpus['variant_count']);
-        $this->assertCount(V3EngineeringBenchmark::EXPECTED_CASES, $corpus['split']['case_ids']);
-        $this->assertSame(
-            $corpus['split']['case_ids'],
-            collect($corpus['cases'])->pluck('case_id')->all(),
-        );
+        $this->expectException(RuntimeException::class);
+        app(V3EngineeringBenchmarkSource::class)->experimentCorpus();
     }
 
     public function test_exp_0007_uses_v3_state_and_source_without_changing_historical_modes(): void

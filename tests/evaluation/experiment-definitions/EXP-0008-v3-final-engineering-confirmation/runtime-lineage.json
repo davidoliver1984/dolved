@@ -1,0 +1,54 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "EXP-0008-v3-final-engineering-confirmation",
+  "benchmark": {
+    "id": "dolved-care-engineering",
+    "version": "3",
+    "authoring_digest": "72eb717e8f0fd561022a252a80e56ce5b3e73106087b3b6e8772c56b9eef0df4"
+  },
+  "engineering_population": {
+    "id": "dolved-care-engineering-v3-engineering-v1",
+    "digest": "d24d61a9aef55c8d3ca8d6609fbb44683665acc22e8d4f9652f00cb4d575d4c3",
+    "manifest_sha256": "d1dd1df24350013ec4ad6364e0344b5d57a02650fbb445f3dce86568d2f7aa68",
+    "corpus_sha256": "4ebeb404dc7ccae7d8a677a77702aa5e1c043dfa78621a391c5176f39480e493",
+    "expectations_sha256": "acd1c1f0e4869921fa86cd147a5c24ff3877026388309f2f1dd1aa5048bf74da",
+    "case_ids_digest": "5be81b3238889f6b68af049e37a28f8de1cf00b4ab7e4883b2e59d630e9dcfbf",
+    "variant_identities_digest": "652f3620060c8f2aa3c692a036ffa7a6ea7d5be9c20538ac29e78402392571ee",
+    "case_count": 10,
+    "variant_count": 31
+  },
+  "organisation_sha256": "9bcfefa56b05d0e0eadadcd3b4c1dbc1e0e2d6b05d7f086b8e4098c6289fae09",
+  "catalogue_sha256": "c234e38c559f69fba6be1726a2bf32835a776dabd66ca20ee2ec496e70f8bba8",
+  "planner": {
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "contract_schema_version": "plan-response-v2",
+    "adapter_version": "structured-chat-v3",
+    "prompt_version": "adr-0022-v5",
+    "fingerprint": "b18ce9cfcb769bbe2c2d28e74ba9b1ffa90a62c887de7e9b04d595cc6a1cf690"
+  },
+  "retrieval": {
+    "dense_candidate_k": 40,
+    "sparse_candidate_k": 40,
+    "rrf_k": 5,
+    "fusion_candidate_k": 15,
+    "reranker_candidate_k": 15,
+    "evidence_threshold": 0.337890625,
+    "final_evidence_k": 5,
+    "policy_fingerprint": "6626d78bd9445c70fd946a64b0a817b4e77b264a14d945d483ba497f9e681364"
+  },
+  "materialisation_reuse": {
+    "record_sha256": "b0aafb2a27670e673ff391947e3672a2893c94b86eccd699d007f4ad6c241b19",
+    "mapping_digest": "942e3260ef8e7f85d786eea2534fa5240ae27dc94f61bfc17208bc99fbcacb5e",
+    "materialised_population_digest": "faac5aa922671d13402fefc75b0c1e613f9edd8fc90bf7e9812b4bf3d14f5d6a",
+    "current_source_catalog_digest": "4b6864760d735f5b59ec7027e2e6006d21435fb738d366d5d52e78fd48a3ae6e",
+    "current_provisioning_definition_sha256": "2d9e99817e42e5c673d1448940f4b7e7f52db72157a783520c819217797a5b39"
+  },
+  "active_generation": {
+    "public_id": "289ccffe-2264-4867-aa1e-d8eb1af43300",
+    "point_manifest_digest": "f7784417846affca3a86a18fe84426de1d4e21e2736cebd63d5320ddc91650c5",
+    "expected_point_count": 100,
+    "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+    "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d"
+  }
+}
