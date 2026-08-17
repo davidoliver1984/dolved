@@ -517,8 +517,8 @@ implementation exists yet for this constraint to apply to.
 
 ## Phase 17 — Grounded Generation
 
-**Status:** Architecture review begins at R17-S01. No generation implementation
-has started.
+**Status:** R17-S01 through R17-S03 are complete. R17-S04 answer evaluation is
+the next stage and has not begun.
 
 ### Objectives
 

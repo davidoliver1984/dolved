@@ -21,6 +21,7 @@ use App\Services\Generation\AssembleGenerationRequest;
 use App\Services\Generation\GenerationClient;
 use App\Services\Generation\GenerationContextPacker;
 use App\Services\Generation\GenerationFingerprint;
+use App\Services\Generation\GenerationProfileFactory;
 use App\Services\Generation\ValidateGenerationResult;
 use App\Support\Generation\AnswerPartResult;
 use App\Support\Generation\GenerationAssemblyInput;
@@ -236,6 +237,29 @@ class GroundedGenerationFoundationTest extends TestCase
         $this->assertNotSame($first['generation_fingerprint'], $changed['generation_fingerprint']);
         $this->assertSame(1, $first['fingerprint_scheme_version']);
         $this->assertSame('614ebe8ad04f52d681a5b62b6d0a41883a42f8386c36251fc470d18e44d2ba6d', $first['generation_fingerprint']);
+    }
+
+    public function test_configured_openai_generation_profile_matches_python_adapter_lineage(): void
+    {
+        $profile = app(GenerationProfileFactory::class)->configured();
+        $fingerprint = app(GenerationFingerprint::class)->make(
+            $profile->provider,
+            $profile->model,
+            $profile->contractVersion,
+            $profile->promptVersion,
+            $profile->adapterVersion,
+            $profile->qualityAffectingConfiguration,
+        );
+
+        $this->assertSame('openai', $profile->provider);
+        $this->assertSame('gpt-5-mini', $profile->model);
+        $this->assertSame('generation-result-v1', $profile->contractVersion);
+        $this->assertSame('grounded-generation-v2', $profile->promptVersion);
+        $this->assertSame('openai-responses-v1', $profile->adapterVersion);
+        $this->assertSame(
+            '40a18f357fbc864ff54781e607300c3374dd65829563fc2b334a2876de19b2f5',
+            $fingerprint['generation_fingerprint'],
+        );
     }
 
     public function test_rc1_budget_failure_remains_typed_and_distinct(): void

@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R17",
-    "current_session": "R17-S03",
-    "next_action": "Begin R17-S03 — Generate Answers with Citations from the committed ADR-0023/R17-S02 boundary: implement deterministic provider rendering, the versioned grounded-generation prompt, OpenAI gpt-5-mini adapter, strict structured output, token measurement and bounded failure mapping. Stop before live provider calls unless explicitly authorised.",
-    "completed_through": "R17-S02",
+    "current_session": "R17-S04",
+    "next_action": "Begin R17-S04 — Add Answer Evaluation: evaluate groundedness, citation correctness and answer usefulness against the committed R17-S03 grounded-generation boundary.",
+    "completed_through": "R17-S03",
     "completed_phase_count": 17,
     "total_phase_count": 24
   },
@@ -3359,7 +3359,7 @@
           "title": "Generate Answers with Citations",
           "guide_start_line": 12508,
           "guide_end_line": 12564,
-          "status": "in_progress",
+          "status": "completed",
           "objective": "Implement concrete grounded generation against the Stage 17.2 contract: deterministic prompt rendering, exact prompt wording, the OpenAI/gpt-5-mini adapter, and bounded provider retry/failure mapping.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -3391,9 +3391,15 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r17-s03-generate-answers-with-citations.md",
-            "status": "in_progress"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "apps/ai grounded-generation-v2 prompt, deterministic OpenAI Responses rendering, strict typed output and bounded provider failure mapping",
+            "apps/api and apps/ai generation profile/fingerprint wiring for OpenAI gpt-5-mini",
+            "provider-free outcome, citation, retry, token-budget and rc1 boundary verification",
+            "bounded five-fixture live verification recorded in docs/journal/2026-08-17-r17-s03-generate-answers-with-citations.md",
+            "IMPLEMENTATION_GUIDE.md Stage 17.3 implementation evidence and verification"
+          ]
         },
         {
           "id": "R17-S04",

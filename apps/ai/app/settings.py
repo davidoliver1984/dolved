@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import AliasChoices, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -74,6 +74,24 @@ class Settings(BaseSettings):
     retrieval_planner_provider: str = "openai"
     retrieval_planner_model: str = "gpt-5-mini"
     retrieval_planner_timeout_seconds: float = Field(default=60.0, gt=0)
+    generation_openai_api_key: SecretStr = Field(
+        default=SecretStr(""),
+        validation_alias=AliasChoices(
+            "GENERATION_OPENAI_API_KEY", "OPENAI_API_KEY", "RETRIEVAL_PLANNER_API_KEY"
+        ),
+    )
+    generation_provider: str = "openai"
+    generation_model: str = "gpt-5-mini"
+    generation_prompt_version: str = "grounded-generation-v2"
+    generation_contract_version: str = "generation-result-v1"
+    generation_adapter_version: str = "openai-responses-v1"
+    generation_reasoning_effort: str = "low"
+    generation_max_output_tokens: int = Field(default=4096, ge=1, le=128_000)
+    generation_context_window_tokens: int = Field(default=400_000, ge=1)
+    generation_timeout_seconds: float = Field(default=120.0, gt=0)
+    generation_max_attempts: int = Field(default=3, ge=1, le=10)
+    generation_initial_backoff_seconds: float = Field(default=2.0, ge=0)
+    generation_max_backoff_seconds: float = Field(default=30.0, ge=0)
     otel_exporter_otlp_endpoint: str = "http://otel-collector:4318"
     otel_exporter_otlp_protocol: str = "http/protobuf"
     otel_exporter_otlp_timeout: int = Field(default=250, ge=1)
@@ -100,6 +118,15 @@ class Settings(BaseSettings):
         ):
             raise ValueError(
                 "reranker backoff exceeds the finite provider cooldown bound"
+            )
+        if (
+            self.generation_max_backoff_seconds
+            < self.generation_initial_backoff_seconds
+        ):
+            raise ValueError("generation maximum backoff precedes initial backoff")
+        if self.generation_max_output_tokens >= self.generation_context_window_tokens:
+            raise ValueError(
+                "generation output budget must fit within the context window"
             )
         return self
 

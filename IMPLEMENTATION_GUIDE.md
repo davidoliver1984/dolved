@@ -12539,7 +12539,7 @@ stage implements that design, it does not re-decide it.
 
 ### Status
 
-Not yet executed.
+Completed and provider-verified on 2026-08-17. R17-S04 has not begun.
 
 ### Scope
 
@@ -12556,6 +12556,29 @@ Not yet executed.
 * bounded provider retry implementation and provider failure mapping;
 * real provider verification (isolated, opt-in, no paid calls in ordinary
   tests).
+
+### Implementation evidence
+
+* `apps/ai/app/generation/prompt.py` owns the exact
+  `grounded-generation-v2` system prompt. V2 makes the ANSWERED / QUALIFIED /
+  INSUFFICIENT_EVIDENCE decision order explicit after bounded live V1 evidence
+  showed missing requested details could otherwise cause excessive refusal.
+* `apps/ai/app/generation/openai_adapter.py` owns deterministic minimal
+  rendering, the adapter-private strict response model, accepted local
+  gpt-5-mini token measurement, bounded transport retry and typed provider
+  failure mapping. OpenAI SDK automatic retry is disabled.
+* `apps/ai/app/generation/factory.py` and the authenticated existing rc1 route
+  wire the concrete adapter without changing the provider-neutral request,
+  result or response-envelope contracts.
+* The initial profile is OpenAI `gpt-5-mini`, `generation-result-v1`,
+  `grounded-generation-v2`, `openai-responses-v1`, reasoning effort `low`,
+  maximum output 4,096 tokens and a 400,000-token context window. Its
+  fingerprint is
+  `40a18f357fbc864ff54781e607300c3374dd65829563fc2b334a2876de19b2f5`.
+* Provider-free and bounded live verification, including the preserved V1
+  outcome-selection failures and the separate five-call V2 correction check,
+  is recorded in
+  `docs/journal/2026-08-17-r17-s03-generate-answers-with-citations.md`.
 
 ### Acceptance criteria
 

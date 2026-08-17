@@ -6,6 +6,7 @@ from app.generation.errors import (
     GenerationContextBudgetError,
     GenerationProviderFailure,
 )
+from app.generation.factory import build_generator
 from app.generation.models import (
     GenerationProviderError,
     GenerationRequest,
@@ -35,7 +36,13 @@ class UnconfiguredGenerator:
 
 
 def generator_dependency() -> Generator:
-    return UnconfiguredGenerator()
+    settings = get_settings()
+    if not settings.generation_openai_api_key.get_secret_value().strip():
+        return UnconfiguredGenerator()
+    try:
+        return build_generator(settings)
+    except ValueError:
+        return UnconfiguredGenerator()
 
 
 @router.post("/answer", response_model=GenerationResponse)
