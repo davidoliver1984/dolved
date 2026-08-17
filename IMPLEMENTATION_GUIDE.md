@@ -12446,7 +12446,8 @@ this ownership sits in `apps/api`.
 
 ### Status
 
-Not yet executed.
+Completed provider-free and accepted on 2026-08-17. No provider adapter,
+prompt wording or live call is present; those remain Stage 17.3 ownership.
 
 ### Scope (per ADR-0023's ownership split)
 
@@ -12497,6 +12498,20 @@ provider call — all Stage 17.3.
   Laravel, never accepted from the provider-facing result.
 * Tests do not require a paid API call (a deterministic fake `Generator`
   exercises the contract).
+
+### Implementation evidence
+
+* `contracts/http/retrieval-call/rc1/generation-answer-v1.schema.json` and
+  `generation-answer-response-v1.schema.json` define the language-neutral
+  request and mutually exclusive response envelope.
+* Laravel owns canonical assembly, whole-evidence packing, request-scoped
+  handles, structural validation, fingerprinting and transactional
+  `GeneratedAnswer`/`AnswerPart`/`EvidenceSnapshot` persistence.
+* Python owns immutable provider-neutral models, the `Generator` protocol,
+  typed boundary failures and a deterministic test double. The runtime
+  dependency fails closed until R17-S03 supplies a concrete adapter.
+* Focused and repository-wide provider-free verification is recorded in
+  `docs/journal/2026-08-16-r17-s02-build-grounded-prompt-assembly.md`.
 
 ### Commit boundary
 

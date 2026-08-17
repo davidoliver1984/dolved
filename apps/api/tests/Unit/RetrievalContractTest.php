@@ -145,6 +145,98 @@ final class RetrievalContractTest extends TestCase
                 'event_id' => (string) Str::uuid(),
             ]],
         ]);
+
+        $generationRequest = [
+            'contract_version' => 1,
+            'request_id' => (string) Str::uuid(),
+            'workspace_id' => $workspaceId,
+            'question' => 'What is the current procedure?',
+            'evidence' => [[
+                'evidence_id' => 'ev-01',
+                'text' => 'Canonical evidence.',
+                'document_chunk_id' => 1,
+                'document_id' => 2,
+                'ingestion_event_claim_id' => 3,
+                'source_provenance' => [['kind' => 'text']],
+                'temporal_authority' => ['mode' => 'current'],
+                'applicability_context' => ['scope' => 'universal'],
+                'side' => 'primary',
+            ]],
+            'constraints' => [
+                'context_policy_version' => 'whole-evidence-v1',
+                'max_context_characters' => 60000,
+                'required_sides' => ['primary'],
+            ],
+        ];
+        $this->assertMatchesSchema('generation-answer-v1.schema.json', $generationRequest);
+        $this->assertMatchesSchema('generation-answer-response-v1.schema.json', [
+            'contract_version' => 1,
+            'request_id' => $generationRequest['request_id'],
+            'status' => 'completed',
+            'result' => [
+                'contract_version' => 1,
+                'outcome' => 'answered',
+                'answer_parts' => [['text' => 'Grounded answer.', 'evidence_ids' => ['ev-01']]],
+                'unsupported_aspects' => [],
+                'insufficiency_reason' => null,
+                'usage' => null,
+            ],
+        ]);
+        $this->assertMatchesSchema('generation-answer-response-v1.schema.json', [
+            'contract_version' => 1,
+            'request_id' => $generationRequest['request_id'],
+            'status' => 'context_budget_exceeded',
+            'failure' => [
+                'code' => 'GENERATION_CONTEXT_BUDGET_EXCEEDED',
+                'policy_version' => 'whole-evidence-v1',
+                'proposed_units' => 60001,
+                'maximum_units' => 60000,
+            ],
+        ]);
+        $this->assertMatchesSchema('generation-answer-response-v1.schema.json', [
+            'contract_version' => 1,
+            'request_id' => $generationRequest['request_id'],
+            'status' => 'provider_error',
+            'error' => [
+                'category' => 'timeout', 'provider' => null, 'model' => null,
+                'http_status' => null, 'attempt_count' => 1, 'latency_ms' => 10,
+            ],
+        ]);
+    }
+
+    public function test_generation_response_schema_rejects_mixed_missing_unknown_and_smuggled_shapes(): void
+    {
+        $requestId = (string) Str::uuid();
+        $result = [
+            'contract_version' => 1,
+            'outcome' => 'answered',
+            'answer_parts' => [['text' => 'Grounded answer.', 'evidence_ids' => ['ev-01']]],
+            'unsupported_aspects' => [],
+            'insufficiency_reason' => null,
+            'usage' => null,
+        ];
+        $failure = [
+            'code' => 'GENERATION_CONTEXT_BUDGET_EXCEEDED',
+            'policy_version' => 'whole-evidence-v1',
+            'proposed_units' => 101,
+            'maximum_units' => 100,
+        ];
+        $error = [
+            'category' => 'timeout', 'provider' => null, 'model' => null,
+            'http_status' => null, 'attempt_count' => 1, 'latency_ms' => 10,
+        ];
+        $base = ['contract_version' => 1, 'request_id' => $requestId];
+
+        foreach ([
+            $base + ['status' => 'completed', 'result' => $result, 'error' => $error],
+            $base + ['status' => 'completed', 'result' => $result, 'failure' => $failure],
+            $base + ['status' => 'context_budget_exceeded', 'failure' => $failure, 'error' => $error],
+            $base + ['status' => 'unknown_fourth_shape', 'result' => $result],
+            $base + ['result' => $result],
+            $base + ['status' => 'completed', 'result' => $result, 'smuggled' => []],
+        ] as $invalid) {
+            $this->assertDoesNotMatchSchema('generation-answer-response-v1.schema.json', $invalid);
+        }
     }
 
     /** @param array<string, mixed> $payload */
@@ -159,5 +251,18 @@ final class RetrievalContractTest extends TestCase
         $result = (new Validator)->validate($object, $schema);
 
         $this->assertTrue($result->isValid(), $result->error()?->message() ?? 'Contract validation failed.');
+    }
+
+    /** @param array<string, mixed> $payload */
+    private function assertDoesNotMatchSchema(string $name, array $payload): void
+    {
+        $contents = file_get_contents('/contracts/http/retrieval-call/rc1/'.$name);
+        if ($contents === false) {
+            throw new RuntimeException('Unable to read the shared retrieval contract.');
+        }
+        $schema = json_decode($contents, flags: JSON_THROW_ON_ERROR);
+        $object = json_decode(json_encode($payload, JSON_THROW_ON_ERROR), flags: JSON_THROW_ON_ERROR);
+
+        $this->assertFalse((new Validator)->validate($object, $schema)->isValid());
     }
 }

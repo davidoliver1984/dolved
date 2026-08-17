@@ -17,6 +17,7 @@ cache before processing the body.
 | `POST /api/internal/retrieval/rerank` | `retrieval.rerank` | `rerank-v1.schema.json` |
 | `POST /api/internal/retrieval/corpus/rebuild-batch` | `retrieval.corpus.rebuild` | `corpus-rebuild-batch-v1.schema.json` |
 | `POST /api/internal/retrieval/corpus/verify` | `retrieval.corpus.verify` | `corpus-verify-v1.schema.json` |
+| `POST /api/internal/retrieval/generation/answer` | `generation.answer` | request: `generation-answer-v1.schema.json`; response: `generation-answer-response-v1.schema.json` |
 
 ## Signed headers
 
@@ -59,3 +60,9 @@ new generation.
 
 `canonicalisation-vectors.json` contains ADR-0018's normative cross-language test
 vector. Every deliberate retry uses a fresh request ID and a fresh signature.
+
+`generation.answer` preserves the same authentication, freshness, replay and
+body-integrity rules. Its response is exactly one of a completed business result,
+a structural `GENERATION_CONTEXT_BUDGET_EXCEEDED` failure, or a typed provider
+error. The structural failure is neither `INSUFFICIENT_EVIDENCE` nor a provider
+error.
