@@ -1,0 +1,52 @@
+{
+  "evaluation_harness_digest": "1d1b735f1b0c4fb362aa17b3eafb30c3bea887f3b509b7832786fa82c2950966",
+  "evaluation_harness_uncommitted": true,
+  "evaluation_harness_version": "generation-evaluation-v2",
+  "evaluator_lineage": {
+    "cost_basis": "unavailable",
+    "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+    "implementation": "openai-grounded-answer-evaluator",
+    "metrics": [
+      "ANSWER_PART_GROUNDEDNESS",
+      "ANSWER_FACTUAL_PRECISION",
+      "ANSWER_COMPLETENESS",
+      "QUALIFIED_USEFULNESS",
+      "INSUFFICIENCY_CORRECTNESS"
+    ],
+    "model": "gpt-5-mini",
+    "prompt_version": "grounded-answer-evaluator-v1",
+    "provider": "openai",
+    "representation_version": "generation-result-evaluation-v1",
+    "same_model_as_generator": true,
+    "version": "v1"
+  },
+  "evaluator_request_count": 13,
+  "experiment_id": "GEN-EXP-0002-corrected-grounded-generation-evaluator",
+  "generation_lineage": {
+    "adapter_version": "openai-responses-v1",
+    "contract_version": "generation-result-v1",
+    "fingerprint": "40a18f357fbc864ff54781e607300c3374dd65829563fc2b334a2876de19b2f5",
+    "model": "gpt-5-mini",
+    "prompt_version": "grounded-generation-v2",
+    "provider": "openai",
+    "quality_affecting_configuration": {
+      "context_window_tokens": 400000,
+      "max_output_tokens": 4096,
+      "reasoning_effort": "low",
+      "store": false,
+      "truncation": "disabled"
+    }
+  },
+  "generation_provider_calls": 0,
+  "population_digest": "0382f60f2adf3b12bf2180179f5d2ebbb15f2b4c0a1e3853c1c49392c7d7936e",
+  "population_id": "grounded-generation-v1",
+  "repository_commit": "d52339f2e14fabf2ef5ef435d446bb2fb0cd5e11",
+  "retrieval_executed": false,
+  "schema_version": "v2",
+  "sealed_held_out_accessed": false,
+  "selective_rerun_permitted": false,
+  "source_generation_observations_bytes": 34414,
+  "source_generation_observations_sha256": "bee2cdf0ddfda896cf23f8c3a27ec7b250db9d202180ed52b4d3ab6cf0f6c38e",
+  "source_generation_run_id": "GEN-EXP-0001-grounded-generation-baseline",
+  "trial_count": 1
+}

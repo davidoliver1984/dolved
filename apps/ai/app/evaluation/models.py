@@ -455,6 +455,59 @@ class ModelAssistedStatus(StrEnum):
 
 class ModelAssistedMetric(StrEnum):
     CONTEXT_RELEVANCE = "CONTEXT_RELEVANCE"
+    ANSWER_PART_GROUNDEDNESS = "ANSWER_PART_GROUNDEDNESS"
+    ANSWER_FACTUAL_PRECISION = "ANSWER_FACTUAL_PRECISION"
+    ANSWER_COMPLETENESS = "ANSWER_COMPLETENESS"
+    QUALIFIED_USEFULNESS = "QUALIFIED_USEFULNESS"
+    INSUFFICIENCY_CORRECTNESS = "INSUFFICIENCY_CORRECTNESS"
+
+
+class ModelAssistedAnswerPart(StrictModel):
+    part_index: Annotated[int, Field(ge=1)]
+    text: Annotated[str, Field(min_length=1)]
+    evidence_ids: tuple[Identifier, ...] = Field(min_length=1)
+
+
+class ModelAssistedGenerationResult(StrictModel):
+    outcome: Literal["answered", "qualified", "insufficient_evidence"]
+    answer_parts: tuple[ModelAssistedAnswerPart, ...] = ()
+    unsupported_aspects: tuple[Annotated[str, Field(min_length=1)], ...] = ()
+    insufficiency_reason: str | None = None
+
+    @model_validator(mode="after")
+    def validate_outcome_shape(self) -> ModelAssistedGenerationResult:
+        if self.outcome == "answered" and (
+            not self.answer_parts
+            or self.unsupported_aspects
+            or self.insufficiency_reason is not None
+        ):
+            raise ValueError("answered evaluator input has an invalid result shape")
+        if self.outcome == "qualified" and (
+            not self.answer_parts
+            or not self.unsupported_aspects
+            or self.insufficiency_reason is not None
+        ):
+            raise ValueError("qualified evaluator input has an invalid result shape")
+        if self.outcome == "insufficient_evidence" and (
+            self.answer_parts
+            or not self.unsupported_aspects
+            or not self.insufficiency_reason
+        ):
+            raise ValueError("insufficient evaluator input has an invalid result shape")
+        return self
+
+
+class ModelAssistedMetricObservation(StrictModel):
+    metric: ModelAssistedMetric
+    status: ModelAssistedStatus
+    answer_part_indices: tuple[Annotated[int, Field(ge=1)], ...] = ()
+    latency_ms: Annotated[float, Field(ge=0)] | None = None
+    failure_code: Identifier | None = None
+    retry_count: Annotated[int, Field(ge=0)] | None = None
+    input_tokens: Annotated[int, Field(ge=0)] | None = None
+    output_tokens: Annotated[int, Field(ge=0)] | None = None
+    cost_usd: Annotated[float, Field(ge=0)] | None = None
+    provider_status: Annotated[int, Field(ge=100, le=599)] | None = None
 
 
 class ModelAssistedEvaluationRequest(StrictModel):
@@ -463,6 +516,27 @@ class ModelAssistedEvaluationRequest(StrictModel):
     question: str
     retrieved_evidence: tuple[RetrievedCandidate, ...]
     metrics: tuple[ModelAssistedMetric, ...] = (ModelAssistedMetric.CONTEXT_RELEVANCE,)
+    generated_answer: str | None = None
+    reference_answer: str | None = None
+    generated_result: ModelAssistedGenerationResult | None = None
+    reference_unsupported_aspects: tuple[Annotated[str, Field(min_length=1)], ...] = ()
+
+    @model_validator(mode="after")
+    def validate_answer_metric_inputs(self) -> ModelAssistedEvaluationRequest:
+        answer_metrics = set(self.metrics) - {ModelAssistedMetric.CONTEXT_RELEVANCE}
+        if answer_metrics and not (self.generated_answer or self.generated_result):
+            raise ValueError(
+                "answer-dependent metrics require generated_answer or generated_result"
+            )
+        reference_metrics = answer_metrics.intersection(
+            {
+                ModelAssistedMetric.ANSWER_FACTUAL_PRECISION,
+                ModelAssistedMetric.ANSWER_COMPLETENESS,
+            }
+        )
+        if reference_metrics and not self.reference_answer:
+            raise ValueError("answer comparison metrics require reference_answer")
+        return self
 
 
 class ModelAssistedEvaluationResult(StrictModel):
@@ -474,6 +548,13 @@ class ModelAssistedEvaluationResult(StrictModel):
     )
     evaluator_identity: dict[str, Any]
     failure_code: str | None = None
+    metric_observations: tuple[ModelAssistedMetricObservation, ...] = ()
+    details: dict[str, Any] = Field(default_factory=dict)
+    latency_ms: Annotated[float, Field(ge=0)] | None = None
+    retry_count: Annotated[int, Field(ge=0)] | None = None
+    input_tokens: Annotated[int, Field(ge=0)] | None = None
+    output_tokens: Annotated[int, Field(ge=0)] | None = None
+    cost_usd: Annotated[float, Field(ge=0)] | None = None
 
 
 class ExperimentResult(StrictModel):

@@ -1,0 +1,1197 @@
+[
+  {
+    "answer_evaluation": {
+      "case_id": "generation.regression.quarantine-duration",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": [
+              "UNSUPPORTED_QUANTITY"
+            ]
+          }
+        ],
+        "qualification_useful": true
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 739,
+      "latency_ms": 5540.464795019943,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 739,
+          "latency_ms": 5540.464795019943,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 360,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 739,
+          "latency_ms": 5540.464795019943,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 360,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 739,
+          "latency_ms": 5540.464795019943,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 360,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 739,
+          "latency_ms": 5540.464795019943,
+          "metric": "QUALIFIED_USEFULNESS",
+          "output_tokens": 360,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 360,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0,
+        "QUALIFIED_USEFULNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.regression.quarantine-duration",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": true,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.regression.lone-worker-timer",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": []
+          }
+        ],
+        "qualification_useful": true
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 732,
+      "latency_ms": 4270.899502036627,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 732,
+          "latency_ms": 4270.899502036627,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 299,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 732,
+          "latency_ms": 4270.899502036627,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 299,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 732,
+          "latency_ms": 4270.899502036627,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 299,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 732,
+          "latency_ms": 4270.899502036627,
+          "metric": "QUALIFIED_USEFULNESS",
+          "output_tokens": 299,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 299,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0,
+        "QUALIFIED_USEFULNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.regression.lone-worker-timer",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": true,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.regression.incident-record",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": []
+          }
+        ],
+        "qualification_useful": null
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 680,
+      "latency_ms": 3130.8677929919213,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 680,
+          "latency_ms": 3130.8677929919213,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 238,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 680,
+          "latency_ms": 3130.8677929919213,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 238,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 680,
+          "latency_ms": 3130.8677929919213,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 238,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 238,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.regression.incident-record",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.regression.dismissal-insufficient",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": true,
+        "part_judgements": [],
+        "qualification_useful": null
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 709,
+      "latency_ms": 2565.2477929834276,
+      "metric_observations": [
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 709,
+          "latency_ms": 2565.2477929834276,
+          "metric": "INSUFFICIENCY_CORRECTNESS",
+          "output_tokens": 186,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 186,
+      "retry_count": 0,
+      "scores": {
+        "INSUFFICIENCY_CORRECTNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.regression.dismissal-insufficient",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": true,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.regression.missing-authoriser",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": []
+          }
+        ],
+        "qualification_useful": true
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 723,
+      "latency_ms": 3320.845500973519,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 723,
+          "latency_ms": 3320.845500973519,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 293,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 723,
+          "latency_ms": 3320.845500973519,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 293,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 723,
+          "latency_ms": 3320.845500973519,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 293,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 723,
+          "latency_ms": 3320.845500973519,
+          "metric": "QUALIFIED_USEFULNESS",
+          "output_tokens": 293,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 293,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0,
+        "QUALIFIED_USEFULNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.regression.missing-authoriser",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": true,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.multi-document-spill",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": []
+          }
+        ],
+        "qualification_useful": null
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 772,
+      "latency_ms": 2958.0663350061513,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 772,
+          "latency_ms": 2958.0663350061513,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 282,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 772,
+          "latency_ms": 2958.0663350061513,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 282,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 772,
+          "latency_ms": 2958.0663350061513,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 282,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 282,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.independent.multi-document-spill",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.compare-recording",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": []
+          }
+        ],
+        "qualification_useful": null
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 764,
+      "latency_ms": 3119.5593349984847,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 764,
+          "latency_ms": 3119.5593349984847,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 285,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 764,
+          "latency_ms": 3119.5593349984847,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 285,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 764,
+          "latency_ms": 3119.5593349984847,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 285,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 285,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.independent.compare-recording",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.modality",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": []
+          }
+        ],
+        "qualification_useful": null
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 741,
+      "latency_ms": 3525.345625996124,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 741,
+          "latency_ms": 3525.345625996124,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 327,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 741,
+          "latency_ms": 3525.345625996124,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 327,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 741,
+          "latency_ms": 3525.345625996124,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 327,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 327,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.independent.modality",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.badge-grace-period",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": []
+          }
+        ],
+        "qualification_useful": true
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 740,
+      "latency_ms": 7501.153753953986,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 740,
+          "latency_ms": 7501.153753953986,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 368,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 740,
+          "latency_ms": 7501.153753953986,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 368,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 740,
+          "latency_ms": 7501.153753953986,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 368,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 740,
+          "latency_ms": 7501.153753953986,
+          "metric": "QUALIFIED_USEFULNESS",
+          "output_tokens": 368,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 368,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0,
+        "QUALIFIED_USEFULNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.independent.badge-grace-period",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": true,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.hostile-fire-door",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": []
+          }
+        ],
+        "qualification_useful": null
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 699,
+      "latency_ms": 2871.318418008741,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 699,
+          "latency_ms": 2871.318418008741,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 260,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 699,
+          "latency_ms": 2871.318418008741,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 260,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 699,
+          "latency_ms": 2871.318418008741,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 260,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 260,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.independent.hostile-fire-door",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.receipt-attempt-count",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": []
+          }
+        ],
+        "qualification_useful": true
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 750,
+      "latency_ms": 4048.8771270029247,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 750,
+          "latency_ms": 4048.8771270029247,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 290,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 750,
+          "latency_ms": 4048.8771270029247,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 290,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 750,
+          "latency_ms": 4048.8771270029247,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 290,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 750,
+          "latency_ms": 4048.8771270029247,
+          "metric": "QUALIFIED_USEFULNESS",
+          "output_tokens": 290,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 290,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0,
+        "QUALIFIED_USEFULNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.independent.receipt-attempt-count",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": true,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.historical-training",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": null,
+        "part_judgements": [
+          {
+            "grounded": true,
+            "part_index": 1,
+            "unsupported_categories": []
+          }
+        ],
+        "qualification_useful": null
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 712,
+      "latency_ms": 7410.446461988613,
+      "metric_observations": [
+        {
+          "answer_part_indices": [
+            1
+          ],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 712,
+          "latency_ms": 7410.446461988613,
+          "metric": "ANSWER_PART_GROUNDEDNESS",
+          "output_tokens": 262,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 712,
+          "latency_ms": 7410.446461988613,
+          "metric": "ANSWER_FACTUAL_PRECISION",
+          "output_tokens": 262,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        },
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 712,
+          "latency_ms": 7410.446461988613,
+          "metric": "ANSWER_COMPLETENESS",
+          "output_tokens": 262,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 262,
+      "retry_count": 0,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0,
+        "ANSWER_PART_GROUNDEDNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.independent.historical-training",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.payroll-insufficient",
+      "cost_usd": null,
+      "details": {
+        "insufficiency_correct": true,
+        "part_judgements": [],
+        "qualification_useful": null
+      },
+      "evaluator_identity": {
+        "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+        "implementation": "openai-grounded-answer-evaluator",
+        "model": "gpt-5-mini",
+        "prompt_version": "grounded-answer-evaluator-v1",
+        "provider": "openai",
+        "representation_version": "generation-result-evaluation-v1",
+        "version": "v1"
+      },
+      "failure_code": null,
+      "input_tokens": 670,
+      "latency_ms": 4048.190377012361,
+      "metric_observations": [
+        {
+          "answer_part_indices": [],
+          "cost_usd": null,
+          "failure_code": null,
+          "input_tokens": 670,
+          "latency_ms": 4048.190377012361,
+          "metric": "INSUFFICIENCY_CORRECTNESS",
+          "output_tokens": 408,
+          "provider_status": null,
+          "retry_count": 0,
+          "status": "COMPLETED"
+        }
+      ],
+      "output_tokens": 408,
+      "retry_count": 0,
+      "scores": {
+        "INSUFFICIENCY_CORRECTNESS": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-result"
+    },
+    "answer_part_evaluations": [],
+    "case_id": "generation.independent.payroll-insufficient",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": true,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  }
+]

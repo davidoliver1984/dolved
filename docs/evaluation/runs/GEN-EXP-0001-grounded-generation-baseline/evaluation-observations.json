@@ -1,0 +1,575 @@
+[
+  {
+    "answer_evaluation": {
+      "case_id": "generation.regression.quarantine-duration",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.regression.quarantine-duration",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": null,
+        "scores": {
+          "ANSWER_PART_GROUNDEDNESS": 1.0
+        },
+        "status": "COMPLETED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.regression.quarantine-duration",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": true,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.regression.lone-worker-timer",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 0.0,
+        "ANSWER_FACTUAL_PRECISION": 0.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.regression.lone-worker-timer",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": null,
+        "scores": {
+          "ANSWER_PART_GROUNDEDNESS": 1.0
+        },
+        "status": "COMPLETED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.regression.lone-worker-timer",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": true,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": [
+      "prompt/generation semantic: advisory factual precision below 1",
+      "prompt/generation semantic: advisory answer completeness below 1"
+    ]
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.regression.incident-record",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.regression.incident-record",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": null,
+        "scores": {
+          "ANSWER_PART_GROUNDEDNESS": 1.0
+        },
+        "status": "COMPLETED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.regression.incident-record",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": null,
+    "answer_part_evaluations": [],
+    "case_id": "generation.regression.dismissal-insufficient",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": true,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.regression.missing-authoriser",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.regression.missing-authoriser",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": null,
+        "scores": {
+          "ANSWER_PART_GROUNDEDNESS": 1.0
+        },
+        "status": "COMPLETED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.regression.missing-authoriser",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": true,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.multi-document-spill",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 0.5
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.independent.multi-document-spill",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": null,
+        "scores": {
+          "ANSWER_PART_GROUNDEDNESS": 0.5
+        },
+        "status": "COMPLETED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.independent.multi-document-spill",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": [
+      "prompt/generation semantic: advisory groundedness below 1",
+      "prompt/generation semantic: advisory factual precision below 1"
+    ]
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.compare-recording",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 0.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.independent.compare-recording",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": "evaluator_failed",
+        "scores": {},
+        "status": "FAILED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.independent.compare-recording",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": [
+      "evaluator/benchmark defect: groundedness unavailable",
+      "prompt/generation semantic: advisory factual precision below 1"
+    ]
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.modality",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.independent.modality",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": null,
+        "scores": {
+          "ANSWER_PART_GROUNDEDNESS": 0.6666666666666666
+        },
+        "status": "COMPLETED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.independent.modality",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": [
+      "prompt/generation semantic: advisory groundedness below 1"
+    ]
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.badge-grace-period",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.independent.badge-grace-period",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": null,
+        "scores": {
+          "ANSWER_PART_GROUNDEDNESS": 0.0
+        },
+        "status": "COMPLETED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.independent.badge-grace-period",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": true,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": [
+      "prompt/generation semantic: advisory groundedness below 1"
+    ]
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.hostile-fire-door",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.independent.hostile-fire-door",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": null,
+        "scores": {
+          "ANSWER_PART_GROUNDEDNESS": 1.0
+        },
+        "status": "COMPLETED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.independent.hostile-fire-door",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.receipt-attempt-count",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.independent.receipt-attempt-count",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": null,
+        "scores": {
+          "ANSWER_PART_GROUNDEDNESS": 1.0
+        },
+        "status": "COMPLETED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.independent.receipt-attempt-count",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": true,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": {
+      "case_id": "generation.independent.historical-training",
+      "evaluator_identity": {
+        "implementation": "ragas",
+        "model": "gpt-5-mini",
+        "provider": "openai",
+        "ragas_version": "0.4.3"
+      },
+      "failure_code": null,
+      "scores": {
+        "ANSWER_COMPLETENESS": 1.0,
+        "ANSWER_FACTUAL_PRECISION": 1.0
+      },
+      "status": "COMPLETED",
+      "variant_id": "complete-answer"
+    },
+    "answer_part_evaluations": [
+      {
+        "case_id": "generation.independent.historical-training",
+        "evaluator_identity": {
+          "implementation": "ragas",
+          "model": "gpt-5-mini",
+          "provider": "openai",
+          "ragas_version": "0.4.3"
+        },
+        "failure_code": null,
+        "scores": {
+          "ANSWER_PART_GROUNDEDNESS": 1.0
+        },
+        "status": "COMPLETED",
+        "variant_id": "part-01"
+      }
+    ],
+    "case_id": "generation.independent.historical-training",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": null,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  },
+  {
+    "answer_evaluation": null,
+    "answer_part_evaluations": [],
+    "case_id": "generation.independent.payroll-insufficient",
+    "deterministic": {
+      "citation_membership_correct": true,
+      "insufficiency_shape_correct": true,
+      "internal_identifier_leakage": false,
+      "outcome_correct": true,
+      "over_refusal": false,
+      "overclaiming": false,
+      "prohibited_fragment_leakage": [],
+      "qualified_shape_useful": null,
+      "structural_invariants_correct": true
+    },
+    "failure_inventory": []
+  }
+]

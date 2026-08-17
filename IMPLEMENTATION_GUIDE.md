@@ -12618,18 +12618,49 @@ lineage across the pipeline."
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-17. Phase 17 is complete.
 
-### Planned measures
+### Implementation evidence
 
-* citation precision;
-* citation recall where measurable;
-* groundedness;
-* answer relevance;
-* abstention quality;
-* latency;
-* token usage;
-* cost.
+* The repository-owned `ModelAssistedEvaluator` boundary now carries typed
+  generation-result context and per-metric observations without coupling the
+  application contract to an evaluator framework.
+* `generation-evaluation-v2` evaluates a versioned 13-case synthetic
+  population covering ANSWERED, QUALIFIED and INSUFFICIENT_EVIDENCE outcomes,
+  citation membership, multi-evidence synthesis, hostile evidence and
+  grounded absence. Deterministic checks remain authoritative.
+* Stage 17 answer semantics use
+  `openai-grounded-answer-evaluator/v1`, OpenAI `gpt-5-mini`, representation
+  `generation-result-evaluation-v1` and prompt
+  `grounded-answer-evaluator-v1`; fingerprint
+  `9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7`.
+* Ragas remains available for Phase 16 context relevance. GEN-EXP-0001
+  preserves the original Ragas answer-metric behaviour as immutable
+  historical evidence; Ragas is not the Stage 17 grounded-answer evaluator.
+* GEN-EXP-0002 is an evaluator-only replay of GEN-EXP-0001's byte-identical
+  application observations. It made zero generation calls and did not
+  selectively rerun generation. The corrected result is advisory engineering
+  evidence, not unseen-generalisation evidence.
+* Reports distinguish total, successfully scored, evaluator-failed and
+  unevaluable AnswerParts. Every metric separately reports eligible, scored,
+  failed and unevaluable counts, coverage, and the mean over successful
+  scores. Unavailable cost remains `null`, never zero.
+
+### Verified result
+
+The authoritative deterministic result is 13/13 outcome correctness (6/6
+ANSWERED, 5/5 QUALIFIED and 2/2 INSUFFICIENT_EVIDENCE), 13/13 citation
+membership, 11/11 valid AnswerParts, zero invented evidence handles, zero
+over-refusal, zero overclaiming, zero unsupported quantity/date/actor/
+authority/procedure invention, zero internal-identifier leakage and zero
+hostile-evidence leakage in the one hostile case.
+
+The corrected advisory semantic replay scored groundedness, factual precision
+and completeness at 1.0000 over 11/11 eligible AnswerParts, QUALIFIED
+usefulness at 1.0000 over 5/5 cases and insufficiency correctness at 1.0000
+over 2/2 cases, with no evaluator failures or unevaluable AnswerParts. The
+evaluator uses the same base model as generation, so these model-assisted
+scores are advisory and do not prove universal generation quality.
 
 ### Acceptance criteria
 
@@ -12638,6 +12669,28 @@ Not yet executed.
 * Model-graded metrics are not treated as unquestionable truth.
 * Human-review fields are supported.
 * Prompt/model changes can be compared.
+
+All criteria are satisfied by the versioned population, deterministic
+contract/citation checks, preserved generation/evaluator lineage and immutable
+GEN-EXP-0001/GEN-EXP-0002 artefacts. No genuine generation defect was
+demonstrated by this bounded population.
+
+### Phase 17 acceptance gate
+
+Phase 17 now supports the accepted ADR-0023 boundary end-to-end: authorised
+retrieved evidence is assembled into a `GenerationRequest`, processed through
+the provider-neutral `Generator` and concrete OpenAI adapter, returned as a
+typed ANSWERED / QUALIFIED / INSUFFICIENT_EVIDENCE result with citation-bound
+natural AnswerParts, deterministically validated and persisted by Laravel with
+durable evidence lineage, and measured through bounded answer-quality
+evaluation. ADR-0023 remains authoritative; the evaluator correction required
+no new ADR.
+
+### Commit boundary
+
+```text
+git commit -m "Close grounded generation evaluation"
+```
 * Regression thresholds are documented.
 
 ### Commit boundary

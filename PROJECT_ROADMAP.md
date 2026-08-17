@@ -517,8 +517,9 @@ implementation exists yet for this constraint to apply to.
 
 ## Phase 17 — Grounded Generation
 
-**Status:** R17-S01 through R17-S03 are complete. R17-S04 answer evaluation is
-the next stage and has not begun.
+**Status:** Complete on 2026-08-17. R17-S01 through R17-S04 and the Phase 17
+acceptance gate are closed. The next session is R18-S01 — Define Conversation
+Domain.
 
 ### Objectives
 
@@ -534,6 +535,15 @@ Generate answers that are constrained by retrieved evidence and accompanied by v
 ### Deliverable
 
 Reliable RAG responses.
+
+**Completion evidence:** ADR-0023's provider-neutral generation architecture
+is implemented through deterministic request assembly, typed grounded outcomes,
+citation-bound AnswerParts, durable evidence snapshots, the OpenAI/gpt-5-mini
+adapter and bounded answer evaluation. GEN-EXP-0001 preserves the original
+provider-backed baseline; GEN-EXP-0002 preserves the evaluator-only corrected
+replay with zero generation calls. The corrected bounded population recorded
+13/13 deterministic outcome correctness and complete advisory semantic metric
+coverage, with the same-model evaluator limitation retained explicitly.
 
 ---
 

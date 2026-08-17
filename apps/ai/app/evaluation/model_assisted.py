@@ -8,6 +8,7 @@ from app.evaluation.models import (
     EvaluationCorpus,
     ModelAssistedEvaluationRequest,
     ModelAssistedEvaluationResult,
+    ModelAssistedMetricObservation,
     ModelAssistedStatus,
     VariantObservation,
 )
@@ -26,6 +27,24 @@ class FakeModelAssistedEvaluator:
     async def evaluate(
         self, request: ModelAssistedEvaluationRequest
     ) -> ModelAssistedEvaluationResult:
+        details: dict[str, object] = {}
+        if request.generated_result is not None:
+            details = {
+                "part_judgements": [
+                    {
+                        "part_index": part.part_index,
+                        "grounded": self._score == 1.0,
+                        "unsupported_categories": [],
+                    }
+                    for part in request.generated_result.answer_parts
+                ],
+                "qualification_useful": True
+                if request.generated_result.outcome == "qualified"
+                else None,
+                "insufficiency_correct": True
+                if request.generated_result.outcome == "insufficient_evidence"
+                else None,
+            }
         return ModelAssistedEvaluationResult(
             status=ModelAssistedStatus.COMPLETED,
             case_id=request.case_id,
@@ -35,6 +54,14 @@ class FakeModelAssistedEvaluator:
                 "implementation": "deterministic-fake",
                 "version": "v1",
             },
+            metric_observations=tuple(
+                ModelAssistedMetricObservation(
+                    metric=metric,
+                    status=ModelAssistedStatus.COMPLETED,
+                )
+                for metric in request.metrics
+            ),
+            details=details,
         )
 
 

@@ -10,3 +10,10 @@ This index is generated from immutable run directories. Raw JSON remains authori
 | [EXP-0004-rrf-k-5-controlled-engineering-experiment](runs/EXP-0004-rrf-k-5-controlled-engineering-experiment/report.md) | 2026-08-13 | Controlled engineering RRF experiment: rrf_k=60 control versus rrf_k=5 treatment with all other retrieval variables frozen | dolved-care-engineering v2 | 0.8889 | 0.1802 | 0.8181 | 0.8600 | EXPERIMENTAL | — | — |
 | [CAL-EXP-0003-v3-post-planner-hardening-calibration](runs/CAL-EXP-0003-v3-post-planner-hardening-calibration/closure.md) | 2026-08-14 | Exact-lineage evidence-threshold calibration after planner hardening | dolved-care-engineering v3 calibration | 0.7982 | 0.1982 | 0.7917 | 0.7743 | CALIBRATED_NOT_HELD_OUT_ACCEPTED | Retain `0.337890625` | — |
 | [EXP-0008-v3-final-engineering-confirmation](runs/EXP-0008-v3-final-engineering-confirmation/report.md) | 2026-08-16 | Final consolidated V3 engineering-only planner/retrieval confirmation | dolved-care-engineering v3 engineering | 0.9667 | 0.2100 | 0.9333 | 0.9157 | EXPERIMENTAL (engineering-only) | Accepted final engineering confirmation; close current retrieval block | — |
+
+## Grounded-generation experiments
+
+| Experiment | Date | Population | Generation calls | Deterministic outcome correctness | Advisory semantic result | Decision |
+|---|---|---|---:|---:|---|---|
+| [GEN-EXP-0001-grounded-generation-baseline](runs/GEN-EXP-0001-grounded-generation-baseline/report.md) | 2026-08-17 | grounded-generation-v1 (13 cases) | 13 | 13/13 | Historical Ragas answer-metric baseline | Preserved immutable original provider-backed baseline |
+| [GEN-EXP-0002-corrected-grounded-generation-evaluator](runs/GEN-EXP-0002-corrected-grounded-generation-evaluator/report.md) | 2026-08-17 | grounded-generation-v1 (same 13 cases) | 0 | 13/13 | 1.0000 across all eligible metrics with complete coverage | Accepted evaluator-only corrected replay; advisory engineering evidence |

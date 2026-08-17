@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R17",
-    "current_session": "R17-S04",
-    "next_action": "Begin R17-S04 — Add Answer Evaluation: evaluate groundedness, citation correctness and answer usefulness against the committed R17-S03 grounded-generation boundary.",
-    "completed_through": "R17-S03",
-    "completed_phase_count": 17,
+    "current_phase": "R18",
+    "current_session": "R18-S01",
+    "next_action": "Begin R18-S01 — Define Conversation Domain: model conversations, messages, citations and generation metadata without beginning streaming implementation.",
+    "completed_through": "R17-S04",
+    "completed_phase_count": 18,
     "total_phase_count": 24
   },
   "phases": [
@@ -3310,7 +3310,7 @@
           "guide_stage": "Stage 17.2 \u2014 Build Grounded Prompt Assembly",
           "title": "Build Grounded Prompt Assembly",
           "guide_start_line": 12430,
-          "guide_end_line": 12505,
+          "guide_end_line": 12522,
           "status": "completed",
           "objective": "Build the provider-neutral generation contracts, outcome model, context-packing policy and persistence/validation foundation ADR-0023 defines (Laravel and Python), without provider-specific prompt rendering or a concrete adapter.",
           "session_mode": "implementation",
@@ -3320,7 +3320,7 @@
             "stage": "Stage 17.2 \u2014 Build Grounded Prompt Assembly",
             "source_lines": {
               "start": 12430,
-              "end": 12505
+              "end": 12522
             }
           },
           "workflow": [
@@ -3357,8 +3357,8 @@
           "id": "R17-S03",
           "guide_stage": "Stage 17.3 \u2014 Generate Answers with Citations",
           "title": "Generate Answers with Citations",
-          "guide_start_line": 12508,
-          "guide_end_line": 12564,
+          "guide_start_line": 12523,
+          "guide_end_line": 12602,
           "status": "completed",
           "objective": "Implement concrete grounded generation against the Stage 17.2 contract: deterministic prompt rendering, exact prompt wording, the OpenAI/gpt-5-mini adapter, and bounded provider retry/failure mapping.",
           "session_mode": "implementation",
@@ -3367,8 +3367,8 @@
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.3 \u2014 Generate Answers with Citations",
             "source_lines": {
-              "start": 12508,
-              "end": 12564
+              "start": 12523,
+              "end": 12602
             }
           },
           "workflow": [
@@ -3405,9 +3405,9 @@
           "id": "R17-S04",
           "guide_stage": "Stage 17.4 \u2014 Add Answer Evaluation",
           "title": "Add Answer Evaluation",
-          "guide_start_line": 12567,
-          "guide_end_line": 12609,
-          "status": "not_started",
+          "guide_start_line": 12605,
+          "guide_end_line": 12700,
+          "status": "completed",
           "objective": "Evaluate groundedness, citation correctness and answer usefulness.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -3415,8 +3415,8 @@
             "phase": "Phase 17 \u2014 Grounded Generation",
             "stage": "Stage 17.4 \u2014 Add Answer Evaluation",
             "source_lines": {
-              "start": 12567,
-              "end": 12609
+              "start": 12605,
+              "end": 12700
             }
           },
           "workflow": [
@@ -3439,18 +3439,26 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r17-s04-add-answer-evaluation.md",
-            "status": "not_started"
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Provider-neutral generation evaluation extensions and per-metric observability in apps/ai/app/evaluation",
+            "Versioned grounded-generation-v1 population and provider-free deterministic evaluation/reporting harness",
+            "GEN-EXP-0001 immutable original provider-backed generation baseline",
+            "GEN-EXP-0002 evaluator-only corrected replay with zero generation calls and byte-identical application observations",
+            "docs/evaluation/runs/GEN-EXP-0002-corrected-grounded-generation-evaluator/closure.md",
+            "docs/journal/2026-08-17-r17-s04-add-answer-evaluation.md",
+            "IMPLEMENTATION_GUIDE.md Stage 17.4 verified result and Phase 17 acceptance gate"
+          ]
         }
       ],
-      "guide_end_line": 12609,
-      "status": "in_progress",
+      "guide_end_line": 12700,
+      "status": "completed",
       "objective": "Generate answers that are constrained by retrieved evidence and accompanied by verifiable citations.",
       "gate": {
         "id": "R17-GATE",
         "title": "Grounded Generation Acceptance Gate",
-        "status": "not_started",
+        "status": "completed",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
@@ -3458,21 +3466,28 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-17 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "ADR-0023 remains the authoritative provider-neutral grounded-generation architecture",
+          "Authorised evidence → GenerationRequest → Generator → OpenAI adapter → typed outcome → citation-bound AnswerParts → Laravel validation/persistence is implemented",
+          "GEN-EXP-0002 deterministic result: 13/13 outcome correctness, 13/13 citation membership and 11/11 valid AnswerParts",
+          "GEN-EXP-0002 advisory semantic evaluation: complete coverage, no evaluator failures and 1.0000 across every eligible metric",
+          "docs/evaluation/runs/GEN-EXP-0002-corrected-grounded-generation-evaluator/closure.md",
+          "docs/journal/2026-08-17-r17-s04-add-answer-evaluation.md"
+        ]
       }
     },
     {
       "id": "R18",
       "guide_phase": "Phase 18 \u2014 Conversation and Streaming",
       "title": "Conversation and Streaming",
-      "guide_start_line": 12396,
+      "guide_start_line": 12703,
       "sessions": [
         {
           "id": "R18-S01",
           "guide_stage": "Stage 18.1 \u2014 Define Conversation Domain",
           "title": "Define Conversation Domain",
-          "guide_start_line": 12404,
-          "guide_end_line": 12439,
+          "guide_start_line": 12711,
+          "guide_end_line": 12744,
           "status": "not_started",
           "objective": "Model conversations, messages, citations and generation metadata.",
           "session_mode": "architecture",
@@ -3481,8 +3496,8 @@
             "phase": "Phase 18 \u2014 Conversation and Streaming",
             "stage": "Stage 18.1 \u2014 Define Conversation Domain",
             "source_lines": {
-              "start": 12404,
-              "end": 12439
+              "start": 12711,
+              "end": 12744
             }
           },
           "workflow": [
@@ -3513,8 +3528,8 @@
           "id": "R18-S02",
           "guide_stage": "Stage 18.2 \u2014 Implement Chat Orchestration API",
           "title": "Implement Chat Orchestration API",
-          "guide_start_line": 12440,
-          "guide_end_line": 12476,
+          "guide_start_line": 12747,
+          "guide_end_line": 12781,
           "status": "not_started",
           "objective": "Coordinate retrieval and generation through a stable Laravel-facing API.",
           "session_mode": "implementation",
@@ -3523,8 +3538,8 @@
             "phase": "Phase 18 \u2014 Conversation and Streaming",
             "stage": "Stage 18.2 \u2014 Implement Chat Orchestration API",
             "source_lines": {
-              "start": 12440,
-              "end": 12476
+              "start": 12747,
+              "end": 12781
             }
           },
           "workflow": [
@@ -3555,8 +3570,8 @@
           "id": "R18-S03",
           "guide_stage": "Stage 18.3 \u2014 Implement Streaming Responses",
           "title": "Implement Streaming Responses",
-          "guide_start_line": 12477,
-          "guide_end_line": 12514,
+          "guide_start_line": 12784,
+          "guide_end_line": 12819,
           "status": "not_started",
           "objective": "Stream generated answer tokens or events to the browser.",
           "session_mode": "implementation",
@@ -3565,8 +3580,8 @@
             "phase": "Phase 18 \u2014 Conversation and Streaming",
             "stage": "Stage 18.3 \u2014 Implement Streaming Responses",
             "source_lines": {
-              "start": 12477,
-              "end": 12514
+              "start": 12784,
+              "end": 12819
             }
           },
           "workflow": [
@@ -3597,8 +3612,8 @@
           "id": "R18-S04",
           "guide_stage": "Stage 18.4 \u2014 Build Chat Interface",
           "title": "Build Chat Interface",
-          "guide_start_line": 12515,
-          "guide_end_line": 12554,
+          "guide_start_line": 12822,
+          "guide_end_line": 12859,
           "status": "not_started",
           "objective": "Create the tenant-aware conversational UI.",
           "session_mode": "implementation",
@@ -3607,8 +3622,8 @@
             "phase": "Phase 18 \u2014 Conversation and Streaming",
             "stage": "Stage 18.4 \u2014 Build Chat Interface",
             "source_lines": {
-              "start": 12515,
-              "end": 12554
+              "start": 12822,
+              "end": 12859
             }
           },
           "workflow": [
@@ -3636,7 +3651,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 12554,
+      "guide_end_line": 12859,
       "status": "not_started",
       "objective": "Expose the RAG workflow as a persistent, streaming conversational experience.",
       "gate": {

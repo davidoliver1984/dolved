@@ -1,0 +1,52 @@
+{
+  "case_count": 13,
+  "evaluation_harness_digest": "6d0bfad9a811f0caec9cefa4866b5b2f13b0c0544f26586ed9b951ca3997705e",
+  "evaluation_harness_uncommitted": true,
+  "evaluation_harness_version": "generation-evaluation-v1",
+  "evaluator_lineage": {
+    "implementation": "ragas",
+    "metric_prompt_lineage": "ragas-0.4.3-collection-defaults",
+    "metrics": [
+      "ANSWER_PART_GROUNDEDNESS",
+      "ANSWER_FACTUAL_PRECISION",
+      "ANSWER_COMPLETENESS"
+    ],
+    "model": "gpt-5-mini",
+    "provider": "openai",
+    "provider_cost": null,
+    "provider_internal_request_count": null,
+    "provider_token_usage": null,
+    "ragas_version": "0.4.3",
+    "same_model_as_generator": true
+  },
+  "experiment_id": "GEN-EXP-0001-grounded-generation-baseline",
+  "generation_lineage": {
+    "adapter_version": "openai-responses-v1",
+    "contract_version": "generation-result-v1",
+    "fingerprint": "40a18f357fbc864ff54781e607300c3374dd65829563fc2b334a2876de19b2f5",
+    "model": "gpt-5-mini",
+    "prompt_version": "grounded-generation-v2",
+    "provider": "openai",
+    "quality_affecting_configuration": {
+      "context_window_tokens": 400000,
+      "max_output_tokens": 4096,
+      "reasoning_effort": "low",
+      "store": false,
+      "truncation": "disabled"
+    }
+  },
+  "outcome_distribution": {
+    "answered": 6,
+    "insufficient_evidence": 2,
+    "qualified": 5
+  },
+  "population_digest": "0382f60f2adf3b12bf2180179f5d2ebbb15f2b4c0a1e3853c1c49392c7d7936e",
+  "population_id": "grounded-generation-v1",
+  "population_path": "docs/evaluation/generation/populations/grounded-generation-v1.json",
+  "repository_commit": "d52339f2e14fabf2ef5ef435d446bb2fb0cd5e11",
+  "retrieval_executed": false,
+  "schema_version": "v1",
+  "sealed_held_out_accessed": false,
+  "selective_rerun_permitted": false,
+  "trial_count": 1
+}

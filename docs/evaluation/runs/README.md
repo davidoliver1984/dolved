@@ -37,6 +37,12 @@ Run IDs use `EXP-NNNN-short-description`. Do not reuse or rename an ID after its
 artefacts have been reviewed. A superseding experiment receives a new directory;
 history remains intact.
 
+Grounded-generation runs use `GEN-EXP-NNNN-short-description` and preserve the
+same immutability rule. `application-observations.json` is the authoritative
+provider-backed generation record; evaluator-only successors bind its SHA-256
+and must record zero generation calls. A corrected evaluator replay receives a
+new run identity and never rewrites the original evaluator result.
+
 ## Required `config.json` shape
 
 ```json

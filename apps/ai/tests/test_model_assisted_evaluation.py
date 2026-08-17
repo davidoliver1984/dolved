@@ -63,6 +63,69 @@ async def test_ragas_adapter_maps_aggregate_context_relevance() -> None:
 
 
 @pytest.mark.asyncio
+async def test_ragas_adapter_maps_generation_metrics_without_leaking_ragas_types() -> (
+    None
+):
+    calls: list[tuple[str, dict[str, object]]] = []
+
+    class Scorer:
+        def __init__(self, name: str, score: float) -> None:
+            self.name = name
+            self.score = score
+
+        async def ascore(self, **kwargs: object) -> SimpleNamespace:
+            calls.append((self.name, kwargs))
+            return SimpleNamespace(value=self.score)
+
+    scorers = {
+        ModelAssistedMetric.ANSWER_PART_GROUNDEDNESS: Scorer("grounded", 0.9),
+        ModelAssistedMetric.ANSWER_FACTUAL_PRECISION: Scorer("precision", 0.8),
+        ModelAssistedMetric.ANSWER_COMPLETENESS: Scorer("completeness", 0.7),
+    }
+    evaluator = RagasEvaluator(
+        object(),
+        provider="test",
+        model="independent-judge",
+        ragas_version="0.4.3",
+        scorers=scorers,
+    )
+    generation_request = ModelAssistedEvaluationRequest(
+        case_id="case.one",
+        variant_id="complete-answer",
+        question="What is the policy?",
+        retrieved_evidence=request().retrieved_evidence,
+        metrics=(
+            ModelAssistedMetric.ANSWER_FACTUAL_PRECISION,
+            ModelAssistedMetric.ANSWER_COMPLETENESS,
+        ),
+        generated_answer="Remote work is allowed.",
+        reference_answer="The policy allows remote work.",
+    )
+    result = await evaluator.evaluate(generation_request)
+    assert result.status is ModelAssistedStatus.COMPLETED
+    assert result.scores == {
+        ModelAssistedMetric.ANSWER_FACTUAL_PRECISION: 0.8,
+        ModelAssistedMetric.ANSWER_COMPLETENESS: 0.7,
+    }
+    assert calls == [
+        (
+            "precision",
+            {
+                "response": "Remote work is allowed.",
+                "reference": "The policy allows remote work.",
+            },
+        ),
+        (
+            "completeness",
+            {
+                "response": "Remote work is allowed.",
+                "reference": "The policy allows remote work.",
+            },
+        ),
+    ]
+
+
+@pytest.mark.asyncio
 async def test_ragas_failure_is_controlled_and_does_not_raise() -> None:
     class BrokenScorer:
         async def ascore(self, **kwargs: object) -> None:
@@ -77,7 +140,10 @@ async def test_ragas_failure_is_controlled_and_does_not_raise() -> None:
     )
     result = await evaluator.evaluate(request())
     assert result.status is ModelAssistedStatus.FAILED
-    assert result.failure_code == "evaluator_failed"
+    assert result.failure_code == "metric_evaluation_failed"
+    assert result.metric_observations[0].failure_code == (
+        "framework_or_provider_failure"
+    )
 
 
 @pytest.mark.asyncio
