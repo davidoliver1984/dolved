@@ -5,6 +5,11 @@ from uuid import uuid4
 
 from jsonschema import Draft202012Validator, FormatChecker
 
+from app.conversation.models import (
+    ContextualisationRequest,
+    ContextualisationResponse,
+    ContextualisationResult,
+)
 from app.embedding.models import V1_VOYAGE_PROFILE
 from app.reranking.models import RerankCandidate, RerankerProfile, RerankRequest
 from app.retrieval.corpus_rebuild import (
@@ -92,6 +97,34 @@ def test_python_request_models_match_shared_rc1_schemas() -> None:
     )
     validate("plan-response-v2.schema.json", response.model_dump(mode="json"))
     validate("search-v1.schema.json", search.model_dump(mode="json"))
+
+    contextualisation = ContextualisationRequest(
+        request_id=uuid4(),
+        workspace_id=workspace_id,
+        current_message="What about the current version?",
+        history=(),
+        context_policy_version="bounded-completed-turns-v1",
+    )
+    validate(
+        "conversation-contextualize-v1.schema.json",
+        contextualisation.model_dump(mode="json"),
+    )
+    contextualisation_response = ContextualisationResponse(
+        request_id=contextualisation.request_id,
+        result=ContextualisationResult(
+            status="resolved",
+            resolved_query=contextualisation.current_message,
+            used_prior_context=False,
+            interpretation_metadata={"used_turn_ordinals": []},
+            clarification_question=None,
+            contextualiser_version="conversation-context-v1",
+            usage={"execution": "deterministic", "request_count": 0},
+        ),
+    )
+    validate(
+        "conversation-contextualize-response-v1.schema.json",
+        contextualisation_response.model_dump(mode="json"),
+    )
 
     rerank = RerankRequest(
         request_id=uuid4(),

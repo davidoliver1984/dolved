@@ -7,6 +7,7 @@ namespace App\Services\Retrieval;
 use App\Enums\DocumentApplicabilityScope;
 use App\Enums\DocumentStatus;
 use App\Enums\EligibilityClarificationReason;
+use App\Enums\RetrievalClarificationSource;
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
 use App\Enums\RetrievalTemporalReferenceKind;
@@ -39,6 +40,7 @@ final readonly class EligibilityResolver
             return new EligibleRetrievalScope(
                 RetrievalOutcome::ClarificationRequired,
                 reason: $plan->clarificationReason?->value,
+                clarificationSource: RetrievalClarificationSource::Planner,
             );
         }
         if ($authorised->activeCorpusGeneration === null) {
@@ -50,6 +52,7 @@ final readonly class EligibilityResolver
             return new EligibleRetrievalScope(
                 RetrievalOutcome::ClarificationRequired,
                 reason: $location->value,
+                clarificationSource: RetrievalClarificationSource::EligibilityResolver,
             );
         }
 
@@ -66,6 +69,7 @@ final readonly class EligibilityResolver
                     RetrievalOutcome::ClarificationRequired,
                     reason: $comparison->value,
                     resolvedLocationPublicId: $location?->public_id,
+                    clarificationSource: RetrievalClarificationSource::EligibilityResolver,
                 );
             }
             $primary = $this->eligible($primary, $authorised, $location);
@@ -103,6 +107,7 @@ final readonly class EligibilityResolver
                 RetrievalOutcome::ClarificationRequired,
                 reason: $resolved->value,
                 resolvedLocationPublicId: $location?->public_id,
+                clarificationSource: RetrievalClarificationSource::EligibilityResolver,
             );
         }
         $eligible = $this->eligible($resolved, $authorised, $location);

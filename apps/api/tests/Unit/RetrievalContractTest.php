@@ -92,6 +92,34 @@ final class RetrievalContractTest extends TestCase
             ]],
         ));
         $this->assertMatchesSchema('search-v1.schema.json', $search);
+        $contextualise = [
+            'contract_version' => 1,
+            'request_id' => (string) Str::uuid(),
+            'workspace_id' => $workspaceId,
+            'current_message' => 'What about that procedure?',
+            'history' => [[
+                'user_message' => 'Which procedure applies?',
+                'assistant_message' => 'The current procedure applies.',
+                'assistant_kind' => 'grounded_answer',
+                'user_ordinal' => 1,
+                'assistant_ordinal' => 2,
+            ]],
+            'context_policy_version' => 'bounded-completed-turns-v1',
+        ];
+        $this->assertMatchesSchema('conversation-contextualize-v1.schema.json', $contextualise);
+        $this->assertMatchesSchema('conversation-contextualize-response-v1.schema.json', [
+            'contract_version' => 1,
+            'request_id' => $contextualise['request_id'],
+            'result' => [
+                'status' => 'resolved',
+                'resolved_query' => 'Which current procedure applies?',
+                'used_prior_context' => true,
+                'interpretation_metadata' => ['used_turn_ordinals' => [1]],
+                'clarification_question' => null,
+                'contextualiser_version' => 'conversation-context-v1',
+                'usage' => ['execution' => 'provider_api', 'request_count' => 1],
+            ],
+        ]);
         $rerank = [
             'contract_version' => 1,
             'request_id' => (string) Str::uuid(),

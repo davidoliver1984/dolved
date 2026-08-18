@@ -74,6 +74,20 @@ class Settings(BaseSettings):
     retrieval_planner_provider: str = "openai"
     retrieval_planner_model: str = "gpt-5-mini"
     retrieval_planner_timeout_seconds: float = Field(default=60.0, gt=0)
+    contextualiser_api_url: str = "https://api.openai.com/v1/chat/completions"
+    contextualiser_api_key: SecretStr = Field(
+        default=SecretStr(""),
+        validation_alias=AliasChoices(
+            "CONTEXTUALISER_API_KEY", "OPENAI_API_KEY", "RETRIEVAL_PLANNER_API_KEY"
+        ),
+    )
+    contextualiser_provider: str = "openai"
+    contextualiser_model: str = "gpt-5-mini"
+    contextualiser_contract_version: str = "conversation-contextualisation-v1"
+    contextualiser_prompt_version: str = "conversation-contextualisation-v1"
+    contextualiser_adapter_version: str = "structured-chat-v1"
+    contextualiser_timeout_seconds: float = Field(default=60.0, gt=0)
+    contextualiser_max_attempts: int = Field(default=3, ge=1, le=10)
     generation_openai_api_key: SecretStr = Field(
         default=SecretStr(""),
         validation_alias=AliasChoices(

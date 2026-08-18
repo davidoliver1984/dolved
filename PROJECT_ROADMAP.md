@@ -618,8 +618,8 @@ their respective ADRs as already recorded above.
 
 ## Phase 18 — Conversation and Streaming
 
-**Status:** In progress. R18-S01 completed on 2026-08-18 through accepted
-ADR-0024; R18-S02 is next and no application implementation has begun.
+**Status:** In progress. R18-S01 and R18-S02 completed on 2026-08-18;
+R18-S03 incremental delivery is next.
 
 ### Objectives
 
@@ -646,6 +646,15 @@ retrieval-outcome-to-conversation mapping, authoritative versus provisional
 streaming persistence, retry/cancellation/idempotency semantics and the
 `generation.stream`/SSE transport boundary. R18-S02 implements orchestration;
 R18-S03 implements incremental delivery; R18-S04 builds the chat interface.
+
+**Application boundary implemented 2026-08-18** (Stage 18.2): Laravel now
+persists tenant-scoped conversations, immutable messages, durable queued runs,
+contextualisation and retrieval snapshots, controlled assistant outcomes and
+the authoritative Phase 17 generated-answer graph. Submission/retry are
+idempotent, cancellation and abandoned-worker timeout reconciliation fail
+closed, and only `EVIDENCE_FOUND` reaches generation. Python exposes a bounded,
+authenticated contextualisation capability but does not retrieve or authorise.
+Browser streaming was deliberately not started and remains R18-S03.
 
 ---
 

@@ -12796,7 +12796,7 @@ Coordinate retrieval and generation through a stable Laravel-facing API.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-18.
 
 ### Planned flow
 
@@ -12822,6 +12822,30 @@ Not yet executed.
 * Correlation identifiers span services.
 * Timeouts and cancellation are handled.
 * Integration tests cover the complete request.
+
+### Implementation evidence
+
+* Added tenant-scoped conversations, immutable messages, durable generation
+  runs, contextualisation/retrieval snapshots and controlled assistant-response
+  persistence, with additive links to Phase 17 `GeneratedAnswer` authority.
+* Added idempotent submission/retry, cancellation, one-active-run enforcement,
+  durable database-queue execution and stale-run reconciliation.
+* Added authenticated `conversation.contextualize` rc1 contracts. Python only
+  contextualises bounded history; Laravel retains authorisation, retrieval,
+  handoff, generation assembly, validation and atomic persistence.
+* Implemented the complete ADR-0024 outcome handoff. Browser SSE remains R18-S03.
+
+### Verification
+
+* Focused Laravel conversation/retrieval/generation: 52 tests, 266 assertions.
+* Containerised shared-contract/conversation integration: 9 tests, 66 assertions.
+* Python 3.14 contextualisation/shared-contract tests: 7 passed.
+* Provider-free Python regression: 532 passed, 3 skipped; three unrelated
+  environment-sensitive failures remained in the generic non-experiment runtime.
+* Full Laravel regression: 277 passed, 2 skipped; eight historical V3 harness
+  tests require their specialised immutable runtime mount.
+* Pint, Ruff, Ruff format, Mypy, PHP syntax, Compose configuration and
+  `git diff --check` passed. No provider calls were made.
 
 ### Commit boundary
 

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dolved.local/contracts/http/retrieval-call/rc1/conversation-contextualize-response-v1.schema.json",
+  "title": "Conversation contextualisation response v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "request_id", "result"],
+  "properties": {
+    "contract_version": { "const": 1 },
+    "request_id": { "type": "string", "format": "uuid" },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "resolved_query", "used_prior_context", "interpretation_metadata", "clarification_question", "contextualiser_version", "usage"],
+      "properties": {
+        "status": { "enum": ["resolved", "clarification_required"] },
+        "resolved_query": { "type": ["string", "null"], "maxLength": 8000 },
+        "used_prior_context": { "type": "boolean" },
+        "interpretation_metadata": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["used_turn_ordinals"],
+              "properties": {
+                "used_turn_ordinals": {
+                  "type": "array",
+                  "maxItems": 3,
+                  "uniqueItems": true,
+                  "items": { "type": "integer", "minimum": 1 }
+                }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "clarification_question": { "type": ["string", "null"], "maxLength": 1000 },
+        "contextualiser_version": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "usage": { "type": ["object", "null"] }
+      }
+    }
+  }
+}

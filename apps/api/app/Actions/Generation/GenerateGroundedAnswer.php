@@ -11,6 +11,7 @@ use App\Services\Generation\GenerationFingerprint;
 use App\Services\Generation\ValidateGenerationResult;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Generation\GenerationProfile;
+use App\Support\Generation\PreparedGroundedAnswer;
 
 final readonly class GenerateGroundedAnswer
 {
@@ -24,8 +25,26 @@ final readonly class GenerateGroundedAnswer
 
     public function handle(GenerationAssemblyInput $input, GenerationProfile $profile): GeneratedAnswer
     {
+        $prepared = $this->prepare($input, $profile);
+
+        return $this->persistence->handle(
+            $input->authorisedScope,
+            $input->question,
+            $prepared->correlationId,
+            $prepared->request,
+            $prepared->result,
+            $prepared->fingerprint,
+        );
+    }
+
+    /** @param null|callable(string): void $observeStage */
+    public function prepare(GenerationAssemblyInput $input, GenerationProfile $profile, ?callable $observeStage = null): PreparedGroundedAnswer
+    {
+        $observeStage?->__invoke('preparing_evidence');
         $request = $this->assembler->handle($input);
+        $observeStage?->__invoke('generating');
         $payload = $this->client->generate($input->authorisedScope->workspace, $request);
+        $observeStage?->__invoke('validating');
         $result = $this->validator->handle($request, $payload);
         $fingerprint = $this->fingerprints->make(
             $profile->provider,
@@ -37,13 +56,6 @@ final readonly class GenerateGroundedAnswer
         );
         $correlationId = (string) ($input->correlationLineage['correlation_id'] ?? $request->requestId);
 
-        return $this->persistence->handle(
-            $input->authorisedScope,
-            $input->question,
-            $correlationId,
-            $request,
-            $result,
-            $fingerprint,
-        );
+        return new PreparedGroundedAnswer($request, $result, $fingerprint, $correlationId);
     }
 }

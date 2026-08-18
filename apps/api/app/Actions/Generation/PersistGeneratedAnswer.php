@@ -17,13 +17,15 @@ use Illuminate\Support\Str;
 final class PersistGeneratedAnswer
 {
     /** @param array{fingerprint_scheme_version: int, generation_fingerprint: string, snapshot: array<string, mixed>} $fingerprint */
-    public function handle(AuthorisedKnowledgeScope $authorised, string $question, string $correlationId, GenerationRequest $request, GenerationResult $result, array $fingerprint): GeneratedAnswer
+    public function handle(AuthorisedKnowledgeScope $authorised, string $question, string $correlationId, GenerationRequest $request, GenerationResult $result, array $fingerprint, ?int $assistantMessageId = null, ?int $generationRunId = null): GeneratedAnswer
     {
-        return DB::transaction(function () use ($authorised, $question, $correlationId, $request, $result, $fingerprint): GeneratedAnswer {
+        return DB::transaction(function () use ($authorised, $question, $correlationId, $request, $result, $fingerprint, $assistantMessageId, $generationRunId): GeneratedAnswer {
             $answer = GeneratedAnswer::query()->create([
                 'public_id' => (string) Str::uuid(),
                 'workspace_id' => $authorised->workspace->id,
                 'created_by_user_id' => $authorised->user->id,
+                'assistant_message_id' => $assistantMessageId,
+                'generation_run_id' => $generationRunId,
                 'correlation_id' => $correlationId,
                 'question' => $question,
                 'outcome' => $result->outcome,

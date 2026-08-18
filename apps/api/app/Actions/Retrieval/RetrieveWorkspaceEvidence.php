@@ -16,6 +16,7 @@ use App\Services\Retrieval\ResolveEvidenceThresholdPolicy;
 use App\Services\Retrieval\RetrievalClient;
 use App\Support\Documents\DocumentAuthorityTimeline;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
+use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\RetrievalResult;
 use Carbon\CarbonImmutable;
@@ -190,11 +191,23 @@ final readonly class RetrieveWorkspaceEvidence
                 'resolved_location_public_id' => $eligible->resolvedLocationPublicId,
             ]);
             if (! $eligible->canSearch()) {
-                return new RetrievalResult($eligible->outcome, reason: $eligible->reason);
+                return new RetrievalResult(
+                    $eligible->outcome,
+                    reason: $eligible->reason,
+                    clarificationSource: $eligible->clarificationSource,
+                    resolvedTemporalAuthority: $this->resolvedTemporalAuthority($plan, $eligible, $evaluatedAt),
+                    resolvedApplicabilityLocation: ['resolved_location_public_id' => $eligible->resolvedLocationPublicId],
+                    lineage: ['planner' => $plan->classifierLineage->toArray()],
+                );
             }
             $corpus = $authorised->activeCorpusGeneration;
             if ($corpus === null) {
-                return new RetrievalResult(RetrievalOutcome::NoEligibleEvidence);
+                return new RetrievalResult(
+                    RetrievalOutcome::NoEligibleEvidence,
+                    resolvedTemporalAuthority: $this->resolvedTemporalAuthority($plan, $eligible, $evaluatedAt),
+                    resolvedApplicabilityLocation: ['resolved_location_public_id' => $eligible->resolvedLocationPublicId],
+                    lineage: ['planner' => $plan->classifierLineage->toArray()],
+                );
             }
             $policy = $denseOnly || $corpus->sparse_space_generation_id === null
                 ? null
@@ -254,7 +267,7 @@ final readonly class RetrieveWorkspaceEvidence
                 return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates);
             }
             if ($policy === null) {
-                return new RetrievalResult(RetrievalOutcome::EvidenceFound, $hydrated);
+                return $this->evidenceFoundResult($hydrated, $plan, $freshEligible, $evaluatedAt, $search->lineage);
             }
 
             $currentStage = 'reranker';
@@ -325,7 +338,12 @@ final readonly class RetrieveWorkspaceEvidence
             )->sortBy('rank')->values()->all();
             $observe?->__invoke('final_evidence', $accepted);
 
-            return new RetrievalResult(RetrievalOutcome::EvidenceFound, $accepted);
+            return $this->evidenceFoundResult($accepted, $plan, $finalEligible, $evaluatedAt, [
+                ...$search->lineage,
+                'reranker_profile' => $reranked['profile'],
+                'evidence_threshold_policy_version' => $policy->version,
+                'evidence_threshold_policy_fingerprint' => $policy->fingerprint,
+            ]);
         } catch (RetrievalException $exception) {
             $failure = $exception instanceof RetrievalExecutionException
                 ? $exception->observation->toArray()
@@ -345,8 +363,51 @@ final readonly class RetrieveWorkspaceEvidence
                 ];
             $observe?->__invoke('failure', $failure);
 
-            return new RetrievalResult(RetrievalOutcome::RetrievalFailed);
+            return new RetrievalResult(
+                RetrievalOutcome::RetrievalFailed,
+                lineage: [
+                    'planner' => isset($plan) ? $plan->classifierLineage->toArray() : null,
+                    'failure' => $failure,
+                ],
+            );
         }
+    }
+
+    /** @param list<array<string, mixed>> $candidates @param array<string, mixed> $lineage */
+    private function evidenceFoundResult(
+        array $candidates,
+        RetrievalPlan $plan,
+        EligibleRetrievalScope $eligible,
+        CarbonImmutable $evaluatedAt,
+        array $lineage,
+    ): RetrievalResult {
+        return new RetrievalResult(
+            RetrievalOutcome::EvidenceFound,
+            $candidates,
+            resolvedTemporalAuthority: $this->resolvedTemporalAuthority($plan, $eligible, $evaluatedAt),
+            resolvedApplicabilityLocation: [
+                'resolved_location_public_id' => $eligible->resolvedLocationPublicId,
+            ],
+            lineage: [
+                'planner' => $plan->classifierLineage->toArray(),
+                'retrieval' => $lineage,
+            ],
+        );
+    }
+
+    /** @return array<string, mixed> */
+    private function resolvedTemporalAuthority(RetrievalPlan $plan, EligibleRetrievalScope $eligible, CarbonImmutable $evaluatedAt): array
+    {
+        return [
+            'temporal_mode' => $plan->temporalMode->value,
+            'evaluated_at' => $evaluatedAt->toIso8601String(),
+            'explicit_date' => $plan->explicitDate?->toDateString(),
+            'temporal_reference' => $plan->temporalReference === null ? null : [
+                'kind' => $plan->temporalReference['kind']->value,
+                'value' => $plan->temporalReference['value'],
+            ],
+            'eligible_document_public_ids_by_side' => $eligible->documentPublicIdsBySide,
+        ];
     }
 
     /**

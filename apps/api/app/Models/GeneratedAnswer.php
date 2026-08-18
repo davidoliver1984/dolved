@@ -28,6 +28,16 @@ class GeneratedAnswer extends Model
         return $this->belongsTo(User::class, 'created_by_user_id');
     }
 
+    public function assistantMessage(): BelongsTo
+    {
+        return $this->belongsTo(Message::class, 'assistant_message_id');
+    }
+
+    public function generationRun(): BelongsTo
+    {
+        return $this->belongsTo(GenerationRun::class);
+    }
+
     public function answerParts(): HasMany
     {
         return $this->hasMany(AnswerPart::class)->orderBy('ordinal');
@@ -40,6 +50,10 @@ class GeneratedAnswer extends Model
 
     public function renderedText(): string
     {
+        if ($this->outcome === GenerationOutcome::InsufficientEvidence) {
+            return (string) $this->insufficiency_reason;
+        }
+
         return $this->answerParts()
             ->pluck('text')
             ->implode("\n\n");

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dolved.local/contracts/http/retrieval-call/rc1/conversation-contextualize-v1.schema.json",
+  "title": "Conversation contextualisation request v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "request_id", "workspace_id", "current_message", "history", "context_policy_version"],
+  "properties": {
+    "contract_version": { "const": 1 },
+    "request_id": { "type": "string", "format": "uuid" },
+    "workspace_id": { "type": "string", "format": "uuid" },
+    "current_message": { "type": "string", "minLength": 1, "maxLength": 8000 },
+    "history": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["user_message", "assistant_message", "assistant_kind", "user_ordinal", "assistant_ordinal"],
+        "properties": {
+          "user_message": { "type": "string", "minLength": 1, "maxLength": 8000 },
+          "assistant_message": { "type": "string", "minLength": 1, "maxLength": 24000 },
+          "assistant_kind": { "enum": ["grounded_answer", "clarification", "no_answer"] },
+          "user_ordinal": { "type": "integer", "minimum": 1 },
+          "assistant_ordinal": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "context_policy_version": { "type": "string", "minLength": 1, "maxLength": 255 }
+  }
+}

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DocumentIngestionController;
 use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\Internal\DocumentIngestionClaimController;
@@ -85,6 +86,12 @@ Route::prefix('/internal/ingestion/events/{eventId}')->group(function (): void {
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('/workspaces', [WorkspaceController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}', [WorkspaceController::class, 'show']);
+    Route::get('/workspaces/{workspacePublicId}/conversations', [ConversationController::class, 'index']);
+    Route::post('/workspaces/{workspacePublicId}/conversations', [ConversationController::class, 'store']);
+    Route::get('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}', [ConversationController::class, 'show']);
+    Route::post('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}/messages', [ConversationController::class, 'message']);
+    Route::post('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}/runs/{runPublicId}/retry', [ConversationController::class, 'retry']);
+    Route::post('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}/runs/{runPublicId}/cancel', [ConversationController::class, 'cancel']);
     Route::get(
         '/workspaces/{workspacePublicId}/documents/uploads/configuration',
         [DocumentUploadController::class, 'configuration'],

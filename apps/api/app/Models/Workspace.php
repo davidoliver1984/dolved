@@ -62,6 +62,12 @@ class Workspace extends Model
         return $this->hasMany(OrganisationalLocation::class);
     }
 
+    /** @return HasMany<Conversation, $this> */
+    public function conversations(): HasMany
+    {
+        return $this->hasMany(Conversation::class);
+    }
+
     /** @return HasMany<DocumentGovernanceAuditEvent, $this> */
     public function documentGovernanceAuditEvents(): HasMany
     {

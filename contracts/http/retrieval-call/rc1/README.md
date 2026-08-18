@@ -18,6 +18,7 @@ cache before processing the body.
 | `POST /api/internal/retrieval/corpus/rebuild-batch` | `retrieval.corpus.rebuild` | `corpus-rebuild-batch-v1.schema.json` |
 | `POST /api/internal/retrieval/corpus/verify` | `retrieval.corpus.verify` | `corpus-verify-v1.schema.json` |
 | `POST /api/internal/retrieval/generation/answer` | `generation.answer` | request: `generation-answer-v1.schema.json`; response: `generation-answer-response-v1.schema.json` |
+| `POST /api/internal/retrieval/conversation/contextualize` | `conversation.contextualize` | request: `conversation-contextualize-v1.schema.json`; response: `conversation-contextualize-response-v1.schema.json` |
 
 ## Signed headers
 
@@ -66,3 +67,8 @@ body-integrity rules. Its response is exactly one of a completed business result
 a structural `GENERATION_CONTEXT_BUDGET_EXCEEDED` failure, or a typed provider
 error. The structural failure is neither `INSUFFICIENT_EVIDENCE` nor a provider
 error.
+
+`conversation.contextualize` resolves bounded completed conversation turns into
+a standalone retrieval question or a typed clarification. It never treats prior
+assistant text as authoritative evidence and does not perform retrieval or answer
+generation.

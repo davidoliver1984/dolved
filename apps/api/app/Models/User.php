@@ -65,6 +65,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * @return HasMany<Conversation, $this>
+     */
+    public function createdConversations(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'created_by_user_id');
+    }
+
+    /**
      * @return HasManyThrough<Workspace, WorkspaceMembership, $this>
      */
     public function workspaces(): HasManyThrough
