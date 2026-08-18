@@ -5,7 +5,7 @@ export default function Home() {
     <main className="landing-shell">
       <nav className="site-nav">
         <Link className="wordmark" href="/">
-          Make Time<span>.</span>
+          Dolved<span>.</span>
         </Link>
         <div>
           <Link className="text-link" href="/login">
@@ -25,7 +25,7 @@ export default function Home() {
           Start knowing.
         </h1>
         <p className="hero-copy">
-          Make Time turns the documents your team already trusts into clear,
+          Dolved turns the documents your team already trusts into clear,
           grounded answers—with the source always in sight.
         </p>
         <div className="hero-actions">

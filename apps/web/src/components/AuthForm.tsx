@@ -90,7 +90,7 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
     <main className="auth-shell">
       <section className="auth-panel">
         <Link className="wordmark" href="/">
-          Make Time<span>.</span>
+          Dolved<span>.</span>
         </Link>
 
         <div className="auth-heading">

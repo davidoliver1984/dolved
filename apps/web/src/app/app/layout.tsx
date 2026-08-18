@@ -35,7 +35,7 @@ export default async function AuthenticatedApplicationLayout({
     <main className="workspace-shell">
       <nav aria-label="Account" className="site-nav">
         <span className="wordmark">
-          Make Time<span>.</span>
+          Dolved<span>.</span>
         </span>
         <div className="account-nav">
           <span>{user.email}</span>

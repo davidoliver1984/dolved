@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Make Time",
-    template: "%s · Make Time",
+    default: "Dolved",
+    template: "%s · Dolved",
   },
   description: "Grounded answers from the knowledge your team already owns.",
 };
