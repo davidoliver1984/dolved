@@ -11,6 +11,7 @@ return [
     'contract_version' => env('GENERATION_CONTRACT_VERSION', 'generation-result-v1'),
     'prompt_version' => env('GENERATION_PROMPT_VERSION', 'grounded-generation-v2'),
     'adapter_version' => env('GENERATION_ADAPTER_VERSION', 'openai-responses-v1'),
+    'delivery_mode' => env('GENERATION_DELIVERY_MODE', 'streaming_parts'),
     'quality_affecting_configuration' => [
         'reasoning_effort' => env('GENERATION_REASONING_EFFORT', 'low'),
         'max_output_tokens' => (int) env('GENERATION_MAX_OUTPUT_TOKENS', 4096),

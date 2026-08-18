@@ -4,7 +4,7 @@ import hashlib
 import json
 import random
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from typing import Any, Literal, cast
 
@@ -18,11 +18,13 @@ from app.generation.errors import (
 )
 from app.generation.models import (
     AnswerPart,
+    AnswerPartCandidate,
     GenerationContextBudgetExceeded,
     GenerationOutcome,
     GenerationProviderError,
     GenerationRequest,
     GenerationResult,
+    GenerationStreamEvent,
 )
 from app.generation.prompt import PROMPT_VERSION, SYSTEM_PROMPT
 
@@ -327,6 +329,96 @@ class OpenAIGenerator:
                 self._sleep(self._retry_delay(exception, attempt))
         raise AssertionError("finite generation retry loop did not terminate")
 
+    def stream(self, request: GenerationRequest) -> Iterator[GenerationStreamEvent]:
+        """Emit only structurally complete answer parts, followed by one terminal event."""
+        rendered = render_openai_request(request, self.profile)
+        measured_input_tokens = self._meter.measure(rendered)
+        proposed = measured_input_tokens + self.profile.max_output_tokens
+        if proposed > self.profile.context_window_tokens:
+            raise GenerationContextBudgetError(
+                GenerationContextBudgetExceeded(
+                    policy_version=request.constraints.context_policy_version,
+                    proposed_units=proposed,
+                    maximum_units=self.profile.context_window_tokens,
+                )
+            )
+
+        started = self._monotonic()
+        emitted = False
+        for attempt in range(1, self._max_attempts + 1):
+            parser = IncrementalAnswerPartParser()
+            sequence = 1
+            try:
+                with self._client.responses.stream(
+                    model=rendered.model,
+                    instructions=rendered.instructions,
+                    input=rendered.input,
+                    text_format=OpenAIGenerationOutput,
+                    max_output_tokens=rendered.max_output_tokens,
+                    reasoning=cast(Any, {"effort": rendered.reasoning_effort}),
+                    store=False,
+                    truncation="disabled",
+                ) as stream:
+                    for event in stream:
+                        if getattr(event, "type", None) != "response.output_text.delta":
+                            continue
+                        for candidate in parser.feed(str(getattr(event, "delta", ""))):
+                            candidate.validate_against(request)
+                            emitted = True
+                            yield GenerationStreamEvent(
+                                request_id=request.request_id,
+                                sequence=sequence,
+                                event_type="answer_part_candidate",
+                                candidate=candidate,
+                            )
+                            sequence += 1
+                    response = stream.get_final_response()
+                parsed = getattr(response, "output_parsed", None)
+                if parsed is None:
+                    category: GenerationErrorCategory = (
+                        "provider_refusal"
+                        if self._has_refusal(response)
+                        else "malformed_typed_output"
+                    )
+                    self._fail(category, started, attempt, None)
+                provider_output = (
+                    parsed
+                    if isinstance(parsed, OpenAIGenerationOutput)
+                    else OpenAIGenerationOutput.model_validate(parsed)
+                )
+                result = self._to_result(
+                    provider_output,
+                    request,
+                    response,
+                    measured_input_tokens,
+                    attempt,
+                    started,
+                ).validate_against(request)
+                candidates = [
+                    (part.text, tuple(part.evidence_ids)) for part in parser.parts
+                ]
+                completed_parts = [
+                    (part.text, tuple(part.evidence_ids))
+                    for part in result.answer_parts
+                ]
+                if candidates != completed_parts:
+                    self._fail("contract_validation_failure", started, attempt, None)
+                yield GenerationStreamEvent(
+                    request_id=request.request_id,
+                    sequence=sequence,
+                    event_type="generation_completed",
+                    result=result,
+                )
+                return
+            except GenerationProviderFailure:
+                raise
+            except (openai.OpenAIError, ValidationError, ValueError) as exception:
+                category, status, retryable = self._classify(exception)
+                if emitted or not retryable or attempt == self._max_attempts:
+                    self._fail(category, started, attempt, status)
+                self._sleep(self._retry_delay(exception, attempt))
+        raise AssertionError("finite generation stream retry loop did not terminate")
+
     def _to_result(
         self,
         output: OpenAIGenerationOutput,
@@ -430,3 +522,43 @@ class OpenAIGenerator:
                 latency_ms=(self._monotonic() - started) * 1000,
             )
         )
+
+
+class IncrementalAnswerPartParser:
+    """Conservatively extracts complete objects from the answer_parts JSON array."""
+
+    def __init__(self) -> None:
+        self._buffer = ""
+        self._cursor: int | None = None
+        self.parts: list[AnswerPartCandidate] = []
+
+    def feed(self, delta: str) -> list[AnswerPartCandidate]:
+        self._buffer += delta
+        if self._cursor is None:
+            marker = self._buffer.find('"answer_parts"')
+            if marker < 0:
+                return []
+            opening = self._buffer.find("[", marker)
+            if opening < 0:
+                return []
+            self._cursor = opening + 1
+
+        added: list[AnswerPartCandidate] = []
+        decoder = json.JSONDecoder()
+        while self._cursor is not None:
+            while (
+                self._cursor < len(self._buffer)
+                and self._buffer[self._cursor] in " \r\n\t,"
+            ):
+                self._cursor += 1
+            if self._cursor >= len(self._buffer) or self._buffer[self._cursor] == "]":
+                break
+            try:
+                value, end = decoder.raw_decode(self._buffer, self._cursor)
+            except json.JSONDecodeError:
+                break
+            candidate = AnswerPartCandidate.model_validate(value)
+            self.parts.append(candidate)
+            added.append(candidate)
+            self._cursor = end
+        return added

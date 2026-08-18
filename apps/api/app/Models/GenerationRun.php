@@ -10,6 +10,7 @@ use App\Enums\MessageRole;
 use App\Enums\RetrievalOutcome;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use LogicException;
 
@@ -95,5 +96,10 @@ class GenerationRun extends Model
     public function generatedAnswer(): HasOne
     {
         return $this->hasOne(GeneratedAnswer::class);
+    }
+
+    public function deliveryEvents(): HasMany
+    {
+        return $this->hasMany(ChatDeliveryEvent::class)->orderBy('sequence');
     }
 }

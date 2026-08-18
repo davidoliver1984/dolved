@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from types import SimpleNamespace
-from typing import Any, Literal, cast
+from typing import Any, Literal, Self, cast
 from uuid import uuid4
 
 import httpx
@@ -19,6 +19,7 @@ from app.generation.openai_adapter import (
     ADAPTER_VERSION,
     CONTRACT_VERSION,
     MODEL,
+    IncrementalAnswerPartParser,
     OpenAIAnswerPart,
     OpenAIGenerationOutput,
     OpenAIGenerationProfile,
@@ -114,6 +115,35 @@ class FakeResponses:
         return value
 
 
+class FakeStream:
+    def __init__(self, events: list[object], final: object) -> None:
+        self.events = events
+        self.final = final
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        return None
+
+    def __iter__(self):
+        return iter(self.events)
+
+    def get_final_response(self) -> object:
+        return self.final
+
+
+class FakeStreamingResponses(FakeResponses):
+    def __init__(self, events: list[object], final: object) -> None:
+        super().__init__([])
+        self.events = events
+        self.final = final
+
+    def stream(self, **kwargs: object) -> FakeStream:
+        self.calls.append(kwargs)
+        return FakeStream(self.events, self.final)
+
+
 def response(parsed: object, *, output_items: list[object] | None = None) -> object:
     return SimpleNamespace(
         output_parsed=parsed,
@@ -145,6 +175,68 @@ def generator(
         ),
         responses,
     )
+
+
+def test_incremental_parser_emits_only_complete_answer_parts() -> None:
+    parser = IncrementalAnswerPartParser()
+    assert parser.feed('{"outcome":"answered","answer_parts":[{"text":"First') == []
+    first = parser.feed('.","evidence_ids":["ev-01"]},{"text":"Second')
+    assert [part.text for part in first] == ["First."]
+    second = parser.feed('.","evidence_ids":["ev-02"]}],"unsupported_aspects":[]}')
+    assert [part.text for part in second] == ["Second."]
+    assert [part.text for part in parser.parts] == ["First.", "Second."]
+
+
+def test_openai_stream_emits_complete_candidates_before_independent_terminal_result() -> (
+    None
+):
+    request = generation_request()
+    parsed = output(text="Staff must record the action.")
+    events: list[object] = [
+        SimpleNamespace(
+            type="response.output_text.delta",
+            delta='{"outcome":"answered","answer_parts":[{"text":"Staff must ',
+        ),
+        SimpleNamespace(
+            type="response.output_text.delta",
+            delta='record the action.","evidence_ids":["ev-01"]}],"unsupported_aspects":[],"insufficiency_reason":null}',
+        ),
+    ]
+    responses = FakeStreamingResponses(events, response(parsed))
+    streamed = OpenAIGenerator(
+        api_key="test-key",
+        client=SimpleNamespace(responses=responses),
+        monotonic=iter([1.0, 1.2, 1.3]).__next__,
+    )
+
+    result = list(streamed.stream(request))
+
+    assert [event.event_type for event in result] == [
+        "answer_part_candidate",
+        "generation_completed",
+    ]
+    assert result[0].candidate is not None
+    assert result[0].candidate.text == "Staff must record the action."
+    assert result[1].result is not None
+    assert result[1].result.answer_parts[0].text == result[0].candidate.text
+    assert responses.calls[0]["text_format"] is OpenAIGenerationOutput
+
+
+def test_streaming_profile_fails_closed_instead_of_animating_only_final_result() -> (
+    None
+):
+    request = generation_request()
+    responses = FakeStreamingResponses([], response(output()))
+    streamed = OpenAIGenerator(
+        api_key="test-key",
+        client=SimpleNamespace(responses=responses),
+        monotonic=iter([1.0, 1.2, 1.3]).__next__,
+    )
+
+    with pytest.raises(GenerationProviderFailure) as failure:
+        list(streamed.stream(request))
+
+    assert failure.value.error.category == "contract_validation_failure"
 
 
 def test_rendering_is_deterministic_minimal_and_keeps_hostile_evidence_as_data() -> (

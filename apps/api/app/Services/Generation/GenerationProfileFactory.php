@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Generation;
 
+use App\Enums\GenerationDeliveryMode;
 use App\Support\Generation\GenerationProfile;
 
 final class GenerationProfileFactory
@@ -19,6 +20,7 @@ final class GenerationProfileFactory
             (string) config('generation.contract_version'),
             (string) config('generation.prompt_version'),
             (string) config('generation.adapter_version'),
+            GenerationDeliveryMode::from((string) config('generation.delivery_mode')),
             $configuration,
         );
     }

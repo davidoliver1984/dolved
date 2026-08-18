@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace App\Actions\Conversation;
 
+use App\Enums\ChatStreamEventType;
 use App\Enums\GenerationRunStatus;
 use App\Exceptions\ConversationException;
 use App\Models\GenerationRun;
+use App\Services\Conversation\ChatDeliveryEventRecorder;
 use Illuminate\Support\Facades\DB;
 
 final readonly class CancelGenerationRun
 {
+    public function __construct(private ChatDeliveryEventRecorder $events) {}
+
     public function handle(GenerationRun $run): GenerationRun
     {
-        return DB::transaction(function () use ($run): GenerationRun {
+        $cancelled = DB::transaction(function () use ($run): GenerationRun {
             $locked = GenerationRun::query()->lockForUpdate()->findOrFail($run->id);
             if ($locked->status->isTerminal()) {
                 throw new ConversationException('A terminal generation run cannot be cancelled.');
@@ -37,5 +41,11 @@ final readonly class CancelGenerationRun
 
             return $locked->fresh();
         });
+        if ($cancelled->status === GenerationRunStatus::Cancelled
+            && ! $cancelled->deliveryEvents()->where('event_type', ChatStreamEventType::RunCancelled->value)->exists()) {
+            $this->events->record($cancelled, ChatStreamEventType::RunCancelled, []);
+        }
+
+        return $cancelled;
     }
 }

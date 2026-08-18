@@ -11,6 +11,10 @@ return [
     'candidate_k' => (int) env('CONVERSATION_RETRIEVAL_CANDIDATE_K', 40),
     'run_timeout_seconds' => (int) env('CONVERSATION_RUN_TIMEOUT_SECONDS', 900),
     'queue' => env('CONVERSATION_QUEUE', 'conversation-generation'),
+    'delivery_event_limit' => (int) env('CONVERSATION_DELIVERY_EVENT_LIMIT', 128),
+    'delivery_event_retention_seconds' => (int) env('CONVERSATION_DELIVERY_EVENT_RETENTION_SECONDS', 86_400),
+    'sse_connection_seconds' => (int) env('CONVERSATION_SSE_CONNECTION_SECONDS', 25),
+    'sse_poll_microseconds' => (int) env('CONVERSATION_SSE_POLL_MICROSECONDS', 100_000),
     'contextualiser' => [
         'provider' => env('CONTEXTUALISER_PROVIDER', 'openai'),
         'model' => env('CONTEXTUALISER_MODEL', 'gpt-5-mini'),

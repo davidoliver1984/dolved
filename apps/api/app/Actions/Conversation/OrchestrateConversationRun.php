@@ -7,6 +7,7 @@ namespace App\Actions\Conversation;
 use App\Actions\Generation\GenerateGroundedAnswer;
 use App\Actions\Generation\PersistGeneratedAnswer;
 use App\Actions\Retrieval\RetrieveWorkspaceEvidence;
+use App\Enums\ChatStreamEventType;
 use App\Enums\ContextualisationStatus;
 use App\Enums\GenerationOutcome;
 use App\Enums\GenerationRunFailureCode;
@@ -14,9 +15,11 @@ use App\Enums\GenerationRunStatus;
 use App\Enums\MessageKind;
 use App\Enums\MessageRole;
 use App\Enums\RetrievalOutcome;
+use App\Exceptions\GenerationCancelled;
 use App\Exceptions\GenerationContextBudgetExceeded;
 use App\Exceptions\GenerationException;
 use App\Exceptions\GenerationProviderException;
+use App\Exceptions\GenerationStreamException;
 use App\Models\ContextualisationResultSnapshot;
 use App\Models\ControlledAssistantResponse;
 use App\Models\Conversation;
@@ -24,13 +27,16 @@ use App\Models\GenerationRun;
 use App\Models\Message;
 use App\Models\RetrievalOutcomeSnapshot;
 use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
+use App\Services\Conversation\ChatDeliveryEventRecorder;
 use App\Services\Conversation\ContextualisationClient;
 use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Conversation\ConversationHistoryBuilder;
 use App\Services\Generation\GenerationProfileFactory;
 use App\Support\Conversation\ContextualisationRequest;
 use App\Support\Conversation\ContextualisationResult;
+use App\Support\Generation\AnswerPartResult;
 use App\Support\Generation\GenerationAssemblyInput;
+use App\Support\Generation\GenerationRequest;
 use App\Support\Generation\PreparedGroundedAnswer;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\RetrievalResult;
@@ -50,6 +56,7 @@ final readonly class OrchestrateConversationRun
         private GenerateGroundedAnswer $generation,
         private GenerationProfileFactory $profiles,
         private PersistGeneratedAnswer $persistence,
+        private ChatDeliveryEventRecorder $events,
     ) {}
 
     public function handle(int $runId): void
@@ -60,6 +67,7 @@ final readonly class OrchestrateConversationRun
             if ($run === null) {
                 return;
             }
+            $this->progress($run, GenerationRunStatus::Contextualising);
             $stage = GenerationRunStatus::Contextualising;
             $userMessage = $run->userMessage;
             $workspace = $run->conversation->workspace;
@@ -103,9 +111,14 @@ final readonly class OrchestrateConversationRun
                 $scope,
                 ['correlation_id' => $run->correlation_id, 'generation_run_id' => $run->public_id],
             );
+            $profile = $this->profiles->configured();
+            $run->update([
+                'delivery_mode' => $profile->deliveryMode->value,
+                'generation_endpoint' => $profile->deliveryMode->value === 'streaming_parts' ? 'generation.stream' : 'generation.answer',
+            ]);
             $prepared = $this->generation->prepare(
                 $input,
-                $this->profiles->configured(),
+                $profile,
                 function (string $next) use ($run, &$stage): void {
                     $status = GenerationRunStatus::from($next);
                     $stage = $status;
@@ -113,8 +126,13 @@ final readonly class OrchestrateConversationRun
                         throw new GenerationException('Generation was cancelled before completion.');
                     }
                 },
+                function (AnswerPartResult $candidate, GenerationRequest $request) use ($run): void {
+                    $this->recordCandidate($run, $request, $candidate);
+                },
             );
             $this->completeAnswer($run, $scope, $input->question, $prepared);
+        } catch (GenerationCancelled) {
+            $this->fail($runId, GenerationRunFailureCode::InternalFailure);
         } catch (GenerationContextBudgetExceeded $exception) {
             $this->fail($runId, GenerationRunFailureCode::GenerationContextBudgetExceeded);
         } catch (GenerationProviderException $exception) {
@@ -122,6 +140,8 @@ final readonly class OrchestrateConversationRun
                 ? GenerationRunFailureCode::ProviderResponseTimeout
                 : GenerationRunFailureCode::ProviderUnavailable;
             $this->fail($runId, $code, ['generation' => ['attempt_count' => $exception->attemptCount, 'latency_ms' => $exception->latencyMs]]);
+        } catch (GenerationStreamException) {
+            $this->fail($runId, GenerationRunFailureCode::StreamProtocolFailure);
         } catch (GenerationException $exception) {
             $code = $stage === GenerationRunStatus::Contextualising
                 ? GenerationRunFailureCode::ContextualisationFailed
@@ -198,6 +218,7 @@ final readonly class OrchestrateConversationRun
                 'rendered_text' => $question,
             ]);
             $locked->update(['status' => GenerationRunStatus::ClarificationRequired, 'assistant_message_id' => $message->id, 'completed_at' => now()]);
+            $this->events->record($locked, ChatStreamEventType::ClarificationRequired, ['message_id' => $message->public_id, 'text' => $question]);
         });
     }
 
@@ -264,6 +285,8 @@ final readonly class OrchestrateConversationRun
                 'rendered_text' => $rendered['text'],
             ]);
             $locked->update(['status' => $terminal, 'assistant_message_id' => $message->id, 'completed_at' => now()]);
+            $type = $terminal === GenerationRunStatus::ClarificationRequired ? ChatStreamEventType::ClarificationRequired : ChatStreamEventType::AnswerCompleted;
+            $this->events->record($locked, $type, ['message_id' => $message->public_id, 'kind' => $rendered['kind']->value, 'text' => $rendered['text']]);
         });
     }
 
@@ -295,6 +318,22 @@ final readonly class OrchestrateConversationRun
                 'usage' => [...($locked->usage ?? []), 'generation' => $answer->usage],
                 'completed_at' => now(),
             ]);
+            $this->events->record($locked, ChatStreamEventType::AnswerCompleted, [
+                'message_id' => $message->public_id,
+                'answer_id' => $answer->public_id,
+                'outcome' => $answer->outcome->value,
+                'text' => $message->display_text,
+                'unsupported_aspects' => $answer->unsupported_aspects,
+                'insufficiency_reason' => $answer->insufficiency_reason,
+                'parts' => $answer->answerParts->map(fn ($part): array => [
+                    'id' => $part->public_id,
+                    'text' => $part->text,
+                    'citations' => $part->evidenceSnapshots->map(fn ($snapshot): array => [
+                        'id' => $snapshot->public_id,
+                        'provisional_reference' => $this->citationReference($run, $snapshot->evidence_handle),
+                    ])->all(),
+                ])->all(),
+            ]);
         });
     }
 
@@ -319,7 +358,7 @@ final readonly class OrchestrateConversationRun
 
     private function transition(GenerationRun $run, GenerationRunStatus $status): bool
     {
-        return DB::transaction(function () use ($run, $status): bool {
+        $transitioned = DB::transaction(function () use ($run, $status): bool {
             $locked = GenerationRun::query()->lockForUpdate()->findOrFail($run->id);
             if ($locked->status === GenerationRunStatus::CancellationRequested) {
                 $locked->update(['status' => GenerationRunStatus::Cancelled, 'cancellation_acknowledged_at' => now(), 'completed_at' => now()]);
@@ -333,6 +372,14 @@ final readonly class OrchestrateConversationRun
 
             return true;
         });
+        if ($transitioned) {
+            $this->progress($run, $status);
+        } elseif ($run->fresh()->status === GenerationRunStatus::Cancelled
+            && ! $run->deliveryEvents()->where('event_type', ChatStreamEventType::RunCancelled->value)->exists()) {
+            $this->events->record($run, ChatStreamEventType::RunCancelled, []);
+        }
+
+        return $transitioned;
     }
 
     private function lockCompletableRun(GenerationRun $run): ?GenerationRun
@@ -341,6 +388,7 @@ final readonly class OrchestrateConversationRun
         $conversation = Conversation::query()->lockForUpdate()->findOrFail($run->conversation_id);
         if ($locked->status === GenerationRunStatus::CancellationRequested || in_array($conversation->status->value, ['deleting', 'deleted'], true)) {
             $locked->update(['status' => GenerationRunStatus::Cancelled, 'cancellation_acknowledged_at' => now(), 'completed_at' => now()]);
+            $this->events->record($locked, ChatStreamEventType::RunCancelled, []);
 
             return null;
         }
@@ -354,18 +402,51 @@ final readonly class OrchestrateConversationRun
     /** @param array<string, mixed>|null $usage */
     public function fail(int $runId, GenerationRunFailureCode $code, ?array $usage = null): void
     {
-        DB::transaction(function () use ($runId, $code, $usage): void {
+        $failed = DB::transaction(function () use ($runId, $code, $usage): ?GenerationRun {
             $run = GenerationRun::query()->lockForUpdate()->find($runId);
             if (! $run instanceof GenerationRun || $run->status->isTerminal()) {
-                return;
+                return null;
             }
             if ($run->status === GenerationRunStatus::CancellationRequested) {
                 $run->update(['status' => GenerationRunStatus::Cancelled, 'cancellation_acknowledged_at' => now(), 'completed_at' => now()]);
 
-                return;
+                return $run;
             }
             $run->update(['status' => GenerationRunStatus::Failed, 'failure_code' => $code, 'usage' => $usage ?? $run->usage, 'completed_at' => now()]);
+
+            return $run;
         });
+        if ($failed instanceof GenerationRun) {
+            $type = $failed->status === GenerationRunStatus::Cancelled ? ChatStreamEventType::RunCancelled : ChatStreamEventType::RunFailed;
+            $payload = $type === ChatStreamEventType::RunFailed ? ['failure_code' => $code->value, 'retryable' => true] : [];
+            $this->events->record($failed, $type, $payload);
+        }
+    }
+
+    private function progress(GenerationRun $run, GenerationRunStatus $status): void
+    {
+        $this->events->record($run, ChatStreamEventType::RunProgress, ['stage' => $status->value, 'display_key' => 'conversation.progress.'.$status->value]);
+    }
+
+    private function recordCandidate(GenerationRun $run, GenerationRequest $request, AnswerPartResult $candidate): void
+    {
+        if ($run->fresh()->status === GenerationRunStatus::CancellationRequested) {
+            throw new GenerationCancelled('Generation cancellation was requested.');
+        }
+        $evidence = collect($request->evidence)->keyBy('evidenceId');
+        $citations = array_map(fn (string $evidenceId): array => [
+            'reference' => $this->citationReference($run, $evidenceId),
+            'source' => ['side' => $evidence->get($evidenceId)?->side->value],
+        ], $candidate->evidenceIds);
+        $this->events->record($run, ChatStreamEventType::AnswerPartAcceptedForDisplay, [
+            'text' => $candidate->text,
+            'citations' => $citations,
+        ], true);
+    }
+
+    private function citationReference(GenerationRun $run, string $evidenceId): string
+    {
+        return 'cite_'.substr(hash_hmac('sha256', $run->public_id.'|'.$evidenceId, (string) config('app.key')), 0, 24);
     }
 
     /** @return list<GenerationRunStatus> */

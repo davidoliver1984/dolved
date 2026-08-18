@@ -166,3 +166,49 @@ class GenerationResponse(ImmutableModel):
                 "generation response must contain exactly its tagged payload"
             )
         return self
+
+
+class AnswerPartCandidate(ImmutableModel):
+    text: NonEmptyText
+    evidence_ids: tuple[EvidenceId, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_candidate(self) -> AnswerPartCandidate:
+        AnswerPart(text=self.text, evidence_ids=self.evidence_ids)
+        return self
+
+    def validate_against(self, request: GenerationRequest) -> AnswerPartCandidate:
+        authorised = {item.evidence_id for item in request.evidence}
+        if not set(self.evidence_ids).issubset(authorised):
+            raise ValueError("generation candidate cites evidence outside the request")
+        return self
+
+
+class GenerationStreamEvent(ImmutableModel):
+    contract_version: Literal[1] = 1
+    request_id: UUID
+    sequence: int = Field(ge=1)
+    event_type: Literal[
+        "answer_part_candidate",
+        "generation_completed",
+        "generation_failed",
+        "context_budget_exceeded",
+    ]
+    candidate: AnswerPartCandidate | None = None
+    result: GenerationResult | None = None
+    error: GenerationProviderError | None = None
+    failure: GenerationContextBudgetExceeded | None = None
+
+    @model_validator(mode="after")
+    def exactly_one_stream_shape(self) -> GenerationStreamEvent:
+        fields = {
+            "answer_part_candidate": self.candidate,
+            "generation_completed": self.result,
+            "generation_failed": self.error,
+            "context_budget_exceeded": self.failure,
+        }
+        if sum(value is not None for value in fields.values()) != 1:
+            raise ValueError("generation stream event must contain one tagged payload")
+        if fields[self.event_type] is None:
+            raise ValueError("generation stream event payload does not match its type")
+        return self

@@ -6,12 +6,14 @@ namespace Tests\Feature;
 
 use App\Actions\Generation\GenerateGroundedAnswer;
 use App\Actions\Generation\PersistGeneratedAnswer;
+use App\Enums\GenerationDeliveryMode;
 use App\Enums\GenerationOutcome;
 use App\Enums\GenerationSide;
 use App\Enums\RetrievalOutcome;
 use App\Exceptions\GenerationContextBudgetExceeded;
 use App\Exceptions\GenerationException;
 use App\Exceptions\GenerationProviderException;
+use App\Exceptions\GenerationStreamException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
 use App\Models\IngestionEventClaim;
@@ -145,7 +147,7 @@ class GroundedGenerationFoundationTest extends TestCase
                 'usage' => ['latency_ms' => 2, 'input_tokens' => null, 'output_tokens' => null, 'cost_usd' => null],
             ],
         ]));
-        $profile = new GenerationProfile('deterministic', 'contract-fake', 'generation-v1', 'none', 'fake-v1', ['response_mode' => 'fixture']);
+        $profile = new GenerationProfile('deterministic', 'contract-fake', 'generation-v1', 'none', 'fake-v1', GenerationDeliveryMode::CompleteResultOnly, ['response_mode' => 'fixture']);
         $answer = app(GenerateGroundedAnswer::class)->handle($input, $profile);
 
         $this->assertCount(2, $answer->answerParts);
@@ -256,6 +258,7 @@ class GroundedGenerationFoundationTest extends TestCase
         $this->assertSame('generation-result-v1', $profile->contractVersion);
         $this->assertSame('grounded-generation-v2', $profile->promptVersion);
         $this->assertSame('openai-responses-v1', $profile->adapterVersion);
+        $this->assertSame(GenerationDeliveryMode::StreamingParts, $profile->deliveryMode);
         $this->assertSame(
             '40a18f357fbc864ff54781e607300c3374dd65829563fc2b334a2876de19b2f5',
             $fingerprint['generation_fingerprint'],
@@ -296,6 +299,54 @@ class GroundedGenerationFoundationTest extends TestCase
         ]));
         $this->expectException(GenerationProviderException::class);
         app(GenerationClient::class)->generate($workspace, $request);
+    }
+
+    public function test_rc1_generation_stream_validates_sequence_and_returns_independent_terminal_result(): void
+    {
+        $workspace = Workspace::factory()->create();
+        $request = $this->simpleRequest();
+        $candidate = $this->streamEvent($request, 1, 'answer_part_candidate', 'candidate', ['text' => 'Grounded.', 'evidence_ids' => ['ev-01']]);
+        $result = [
+            'contract_version' => 1, 'outcome' => 'answered',
+            'answer_parts' => [['text' => 'Grounded.', 'evidence_ids' => ['ev-01']]],
+            'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+        ];
+        $terminal = $this->streamEvent($request, 2, 'generation_completed', 'result', $result);
+        Http::fake(fn () => Http::response(json_encode($candidate, JSON_THROW_ON_ERROR)."\n".json_encode($terminal, JSON_THROW_ON_ERROR)."\n"));
+        $observed = [];
+
+        $returned = app(GenerationClient::class)->stream($workspace, $request, function (array $part) use (&$observed): void {
+            $observed[] = $part;
+        });
+
+        $this->assertSame([$candidate['candidate']], $observed);
+        $this->assertSame($result, $returned);
+        Http::assertSent(fn ($sent): bool => $sent->hasHeader('X-Retrieval-Caller-Purpose', 'generation.stream'));
+    }
+
+    public function test_rc1_generation_stream_fails_closed_on_sequence_gap(): void
+    {
+        $workspace = Workspace::factory()->create();
+        $request = $this->simpleRequest();
+        $terminal = $this->streamEvent($request, 2, 'generation_completed', 'result', [
+            'contract_version' => 1, 'outcome' => 'answered',
+            'answer_parts' => [['text' => 'Grounded.', 'evidence_ids' => ['ev-01']]],
+            'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+        ]);
+        Http::fake(fn () => Http::response(json_encode($terminal, JSON_THROW_ON_ERROR)."\n"));
+
+        $this->expectException(GenerationStreamException::class);
+        app(GenerationClient::class)->stream($workspace, $request, fn () => null);
+    }
+
+    /** @param array<string, mixed> $payload @return array<string, mixed> */
+    private function streamEvent(GenerationRequest $request, int $sequence, string $type, string $field, array $payload): array
+    {
+        return [
+            'contract_version' => 1, 'request_id' => $request->requestId, 'sequence' => $sequence,
+            'event_type' => $type, 'candidate' => null, 'result' => null, 'error' => null, 'failure' => null,
+            $field => $payload,
+        ];
     }
 
     private function simpleRequest(): GenerationRequest

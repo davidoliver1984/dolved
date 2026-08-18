@@ -15,6 +15,7 @@ enum GenerationRunFailureCode: string
     case RunTimeout = 'run_timeout';
     case ProviderContractFailure = 'provider_contract_failure';
     case GenerationContractInvalid = 'generation_contract_invalid';
+    case StreamProtocolFailure = 'stream_protocol_failure';
     case DeterministicValidationFailed = 'deterministic_validation_failed';
     case PersistenceFailed = 'persistence_failed';
     case InternalFailure = 'internal_failure';

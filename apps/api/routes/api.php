@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatStreamController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DocumentIngestionController;
 use App\Http\Controllers\DocumentUploadController;
@@ -92,6 +93,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::post('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}/messages', [ConversationController::class, 'message']);
     Route::post('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}/runs/{runPublicId}/retry', [ConversationController::class, 'retry']);
     Route::post('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}/runs/{runPublicId}/cancel', [ConversationController::class, 'cancel']);
+    Route::get('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}/runs/{runPublicId}/events', [ChatStreamController::class, 'show']);
     Route::get(
         '/workspaces/{workspacePublicId}/documents/uploads/configuration',
         [DocumentUploadController::class, 'configuration'],

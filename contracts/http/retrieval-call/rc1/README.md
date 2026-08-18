@@ -18,6 +18,7 @@ cache before processing the body.
 | `POST /api/internal/retrieval/corpus/rebuild-batch` | `retrieval.corpus.rebuild` | `corpus-rebuild-batch-v1.schema.json` |
 | `POST /api/internal/retrieval/corpus/verify` | `retrieval.corpus.verify` | `corpus-verify-v1.schema.json` |
 | `POST /api/internal/retrieval/generation/answer` | `generation.answer` | request: `generation-answer-v1.schema.json`; response: `generation-answer-response-v1.schema.json` |
+| `POST /api/internal/retrieval/generation/stream` | `generation.stream` | request: `generation-answer-v1.schema.json`; response frames: `generation-stream-event-v1.schema.json` |
 | `POST /api/internal/retrieval/conversation/contextualize` | `conversation.contextualize` | request: `conversation-contextualize-v1.schema.json`; response: `conversation-contextualize-response-v1.schema.json` |
 
 ## Signed headers
@@ -72,3 +73,11 @@ error.
 a standalone retrieval question or a typed clarification. It never treats prior
 assistant text as authoritative evidence and does not perform retrieval or answer
 generation.
+# `generation.stream`
+
+`POST /api/internal/retrieval/generation/stream` reuses the rc1 request signing
+format with the distinct `generation.stream` purpose. The request body is
+`generation-answer-v1`; the response is UTF-8 NDJSON with one
+`generation-stream-event-v1` object per line. Sequences start at one, increase
+by one and end with exactly one completed, failed or context-budget event.
+Candidate events are non-authoritative and never cross directly to a browser.

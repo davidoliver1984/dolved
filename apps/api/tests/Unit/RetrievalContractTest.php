@@ -210,6 +210,22 @@ final class RetrievalContractTest extends TestCase
                 'usage' => null,
             ],
         ]);
+        $streamBase = [
+            'contract_version' => 1, 'request_id' => $generationRequest['request_id'],
+            'candidate' => null, 'result' => null, 'error' => null, 'failure' => null,
+        ];
+        $this->assertMatchesSchema('generation-stream-event-v1.schema.json', array_replace($streamBase, [
+            'sequence' => 1, 'event_type' => 'answer_part_candidate',
+            'candidate' => ['text' => 'Grounded answer.', 'evidence_ids' => ['ev-01']],
+        ]));
+        $this->assertMatchesSchema('generation-stream-event-v1.schema.json', array_replace($streamBase, [
+            'sequence' => 2, 'event_type' => 'generation_completed',
+            'result' => [
+                'contract_version' => 1, 'outcome' => 'answered',
+                'answer_parts' => [['text' => 'Grounded answer.', 'evidence_ids' => ['ev-01']]],
+                'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+            ],
+        ]));
         $this->assertMatchesSchema('generation-answer-response-v1.schema.json', [
             'contract_version' => 1,
             'request_id' => $generationRequest['request_id'],

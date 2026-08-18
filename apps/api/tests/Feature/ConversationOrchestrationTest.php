@@ -8,6 +8,7 @@ use App\Actions\Conversation\CreateConversation;
 use App\Actions\Conversation\OrchestrateConversationRun;
 use App\Actions\Conversation\ReconcileStaleGenerationRuns;
 use App\Actions\Conversation\SubmitConversationMessage;
+use App\Enums\ChatStreamEventType;
 use App\Enums\GenerationRunStatus;
 use App\Enums\MessageKind;
 use App\Enums\MessageRole;
@@ -24,6 +25,7 @@ use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceCorpusGeneration;
 use App\Models\WorkspaceCorpusGenerationChunk;
+use App\Services\Conversation\ChatDeliveryEventRecorder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -222,7 +224,7 @@ class ConversationOrchestrationTest extends TestCase
                 ]);
             }
 
-            return Http::response([
+            $result = [
                 'contract_version' => 1, 'request_id' => $body['request_id'], 'status' => 'completed',
                 'result' => [
                     'contract_version' => 1, 'outcome' => 'answered',
@@ -230,7 +232,20 @@ class ConversationOrchestrationTest extends TestCase
                     'unsupported_aspects' => [], 'insufficiency_reason' => null,
                     'usage' => ['latency_ms' => 2, 'input_tokens' => 20, 'output_tokens' => 8, 'cost_usd' => null],
                 ],
-            ]);
+            ];
+            $candidate = [
+                'contract_version' => 1, 'request_id' => $body['request_id'], 'sequence' => 1,
+                'event_type' => 'answer_part_candidate',
+                'candidate' => ['text' => 'It requires a documented safety check.', 'evidence_ids' => ['ev-01']],
+                'result' => null, 'error' => null, 'failure' => null,
+            ];
+            $terminal = [
+                'contract_version' => 1, 'request_id' => $body['request_id'], 'sequence' => 2,
+                'event_type' => 'generation_completed', 'candidate' => null,
+                'result' => $result['result'], 'error' => null, 'failure' => null,
+            ];
+
+            return Http::response(json_encode($candidate, JSON_THROW_ON_ERROR)."\n".json_encode($terminal, JSON_THROW_ON_ERROR)."\n", 200, ['Content-Type' => 'application/x-ndjson']);
         });
 
         app(OrchestrateConversationRun::class)->handle($run->id);
@@ -246,7 +261,46 @@ class ConversationOrchestrationTest extends TestCase
         $this->assertDatabaseCount('evidence_snapshots', 1);
         $this->assertDatabaseHas('messages', ['id' => $run->assistant_message_id, 'kind' => 'grounded_answer']);
         $this->assertSame($run->id, $run->generatedAnswer?->generation_run_id);
+        $this->assertSame('streaming_parts', $run->delivery_mode);
+        $this->assertSame('generation.stream', $run->generation_endpoint);
+        $events = $run->deliveryEvents()->get();
+        $this->assertSame([
+            'run_progress', 'run_progress', 'run_progress', 'run_progress',
+            'answer_part_accepted_for_display', 'run_progress', 'answer_completed',
+        ], $events->pluck('event_type')->map->value->all());
+        $this->assertTrue($events[4]->provisional);
+        $this->assertFalse($events[6]->provisional);
+        $provisional = json_encode($events[4]->safe_payload, JSON_THROW_ON_ERROR);
+        $this->assertStringNotContainsString('ev-01', $provisional);
+        $this->assertStringNotContainsString('document_chunk_id', $provisional);
+        $this->assertSame($run->assistantMessage?->public_id, $events[6]->safe_payload['message_id']);
         Http::assertSentCount(4);
+    }
+
+    public function test_sse_replays_after_last_event_id_and_closes_on_terminal_event(): void
+    {
+        Queue::fake();
+        [$run, $conversation] = $this->runFixture();
+        $recorder = app(ChatDeliveryEventRecorder::class);
+        $recorder->record($run, ChatStreamEventType::RunProgress, ['stage' => 'retrieving', 'display_key' => 'conversation.progress.retrieving']);
+        $recorder->record($run, ChatStreamEventType::RunFailed, ['failure_code' => 'internal_failure', 'retryable' => true]);
+
+        $response = $this->actingAs($run->userMessage->createdBy)->withHeader('Last-Event-ID', '1')->get(
+            "/api/workspaces/{$conversation->workspace->public_id}/conversations/{$conversation->public_id}/runs/{$run->public_id}/events",
+        );
+
+        $response->assertOk()
+            ->assertHeader('Content-Type', 'text/event-stream; charset=UTF-8')
+            ->assertHeader('X-Accel-Buffering', 'no');
+        $this->assertStringContainsString('no-cache, no-transform', (string) $response->headers->get('Cache-Control'));
+        $content = $response->streamedContent();
+        $this->assertStringNotContainsString('id: 1', $content);
+        $this->assertStringContainsString("id: 2\nevent: run_failed", $content);
+        $this->assertStringContainsString('"failure_code":"internal_failure"', $content);
+
+        $foreign = Workspace::factory()->withOwner()->create();
+        $this->get("/api/workspaces/{$foreign->public_id}/conversations/{$conversation->public_id}/runs/{$run->public_id}/events")
+            ->assertNotFound();
     }
 
     public function test_message_role_invariants_and_immutability_fail_closed(): void
@@ -279,6 +333,7 @@ class ConversationOrchestrationTest extends TestCase
         $this->assertSame(GenerationRunStatus::Failed, $run->fresh()->status);
         $this->assertSame('run_timeout', $run->fresh()->failure_code?->value);
 
+        DB::table('chat_delivery_events')->where('generation_run_id', $run->id)->delete();
         DB::table('generation_runs')->where('id', $run->id)->update([
             'status' => GenerationRunStatus::CancellationRequested,
             'completed_at' => null,

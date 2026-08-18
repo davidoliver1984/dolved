@@ -618,8 +618,8 @@ their respective ADRs as already recorded above.
 
 ## Phase 18 — Conversation and Streaming
 
-**Status:** In progress. R18-S01 and R18-S02 completed on 2026-08-18;
-R18-S03 incremental delivery is next.
+**Status:** In progress. R18-S01 through R18-S03 completed on 2026-08-18;
+R18-S04 chat interface is next.
 
 ### Objectives
 
@@ -654,7 +654,17 @@ the authoritative Phase 17 generated-answer graph. Submission/retry are
 idempotent, cancellation and abandoned-worker timeout reconciliation fail
 closed, and only `EVIDENCE_FOUND` reaches generation. Python exposes a bounded,
 authenticated contextualisation capability but does not retrieve or authorise.
-Browser streaming was deliberately not started and remains R18-S03.
+Browser streaming was deliberately not started in R18-S02.
+
+**Incremental delivery implemented 2026-08-18** (Stage 18.3): the configured
+streaming generation profile now uses a distinct authenticated
+`generation.stream` NDJSON response. Laravel validates complete answer-part
+candidates before storing bounded, non-authoritative delivery projections and
+serves only application-owned events through tenant-scoped, replayable SSE.
+Terminal answer persistence remains atomic and authoritative; provisional text
+is retractable, expires, and never enters conversation history. A credentialed
+browser client now handles ordered replay and terminal closure, ready for the
+R18-S04 interface.
 
 ---
 

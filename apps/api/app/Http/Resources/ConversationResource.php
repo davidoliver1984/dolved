@@ -34,6 +34,7 @@ class ConversationResource extends JsonResource
                 'retry_of_run_id' => $run->retryOf?->public_id,
                 'status' => $run->status->value,
                 'failure_code' => $run->failure_code?->value,
+                'delivery_mode' => $run->delivery_mode,
                 'retryable' => $run->status->isRetryEligible(),
                 'created_at' => $run->created_at?->toIso8601String(),
                 'completed_at' => $run->completed_at?->toIso8601String(),

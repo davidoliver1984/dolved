@@ -232,6 +232,7 @@ def test_generation_route_fails_closed_when_no_provider_adapter_is_configured(
         "RETRIEVAL_CALLER_HMAC_KEYS",
         json.dumps({"test": base64.b64encode(secret).decode()}),
     )
+    monkeypatch.setenv("GENERATION_OPENAI_API_KEY", "")
     get_settings.cache_clear()
     payload = request_payload()
     path = "/api/internal/retrieval/generation/answer"
@@ -253,18 +254,52 @@ def test_generation_route_fails_closed_when_no_provider_adapter_is_configured(
     }
 
 
+def test_generation_stream_route_is_rc1_scoped_and_emits_ordered_ndjson(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    secret = b"s" * 32
+    monkeypatch.setenv(
+        "RETRIEVAL_CALLER_HMAC_KEYS",
+        json.dumps({"test": base64.b64encode(secret).decode()}),
+    )
+    get_settings.cache_clear()
+    payload = request_payload()
+    path = "/api/internal/retrieval/generation/stream"
+    body, headers = signed_request(payload, secret, path, "generation.stream")
+    app.dependency_overrides[generator_dependency] = DeterministicGenerator
+    try:
+        response = TestClient(app).post(path, content=body, headers=headers)
+    finally:
+        app.dependency_overrides.clear()
+        get_settings.cache_clear()
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("application/x-ndjson")
+    events = [json.loads(line) for line in response.text.splitlines()]
+    assert [event["sequence"] for event in events] == [1, 2]
+    assert [event["event_type"] for event in events] == [
+        "answer_part_candidate",
+        "generation_completed",
+    ]
+    assert events[0]["candidate"]["evidence_ids"] == ["ev-01"]
+    assert events[1]["result"]["answer_parts"] == [events[0]["candidate"]]
+
+
 def signed_request(
-    payload: dict[str, object], secret: bytes, path: str
+    payload: dict[str, object],
+    secret: bytes,
+    path: str,
+    purpose: str = "generation.answer",
 ) -> tuple[bytes, dict[str, str]]:
     body = json.dumps(payload, separators=(",", ":")).encode()
     timestamp = str(int(time.time()))
-    canonical = f"{timestamp}\nPOST\n{path}\n{hashlib.sha256(body).hexdigest()}\n{payload['workspace_id']}\ngeneration.answer\n{payload['request_id']}"
+    canonical = f"{timestamp}\nPOST\n{path}\n{hashlib.sha256(body).hexdigest()}\n{payload['workspace_id']}\n{purpose}\n{payload['request_id']}"
     signature = hmac.new(secret, canonical.encode(), hashlib.sha256).hexdigest()
     return body, {
         "X-Retrieval-Caller-Key-ID": "test",
         "X-Retrieval-Caller-Timestamp": timestamp,
         "X-Retrieval-Caller-Workspace-ID": str(payload["workspace_id"]),
         "X-Retrieval-Caller-Request-ID": str(payload["request_id"]),
-        "X-Retrieval-Caller-Purpose": "generation.answer",
+        "X-Retrieval-Caller-Purpose": purpose,
         "X-Retrieval-Caller-Signature": f"rc1={signature}",
     }

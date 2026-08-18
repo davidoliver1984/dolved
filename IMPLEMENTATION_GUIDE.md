@@ -12862,17 +12862,45 @@ Stream generated answer tokens or events to the browser.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-18.
 
-### Planned decisions
+### Implementation evidence
 
-* Server-Sent Events versus another streaming transport.
-* Event schema.
-* Completion and error events.
-* Cancellation behaviour.
-* Proxy buffering.
-* Persisting partial versus final responses.
-* Reconnection behaviour.
+* Added the distinct authenticated `generation.stream` rc1 purpose. Python
+  consumes the provider's structured response stream, emits only complete
+  provider-neutral `AnswerPartCandidate`s as NDJSON frames and finishes with
+  one independently complete typed result or failure event.
+* Laravel validates every frame, sequence, request identity and candidate
+  citation before recording an application-owned projection. Invalid streams
+  fail closed and never fall back mid-call to an apparently successful result.
+* Added bounded, immutable `ChatDeliveryEvent` persistence, opaque run-scoped
+  provisional citation references, final persistent citation reconciliation,
+  expiry/purge policy and explicit progress/completion/failure/cancellation
+  events. Provisional rows never become `Message`, `AnswerPart` or
+  `EvidenceSnapshot` authority.
+* Added an authenticated tenant-scoped SSE endpoint with no-buffering headers,
+  monotonic event IDs, `Last-Event-ID` replay and connection-independent run
+  execution. Disconnect never cancels work; the existing cancellation command
+  stops consumption and closes upstream streaming where possible.
+* Added the credentialed browser EventSource client used by R18-S04, including
+  sequence de-duplication, terminal closure and malformed-event failure.
+
+### Verification
+
+* Focused Laravel generation/conversation/streaming: 22 tests, 106 assertions.
+* Focused Python 3.14 generation contracts/adapter: 34 passed; Ruff, format and
+  Mypy passed.
+* Browser SSE client: 1 Vitest test; ESLint and TypeScript passed.
+* Full Python: 548 passed, 4 skipped; two V3 engineering tests require the
+  specialised `/evaluation/engineering` mount. Full Mypy passed. Four unrelated
+  historical experiment-test import-order findings remain in the broad Ruff
+  invocation; all changed Python paths pass.
+* Full Laravel: 239 passed and 2 skipped in the generic host environment; the
+  remaining historical ingestion/evaluation tests require configured storage,
+  contract and immutable evaluation mounts. All changed Laravel paths and the
+  focused integration boundary pass Pint and tests.
+* Shared JSON contracts, PHP syntax, `git diff --check` and provider-free SDK
+  stream-signature inspection passed. No provider calls were made.
 
 ### Acceptance criteria
 
