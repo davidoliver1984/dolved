@@ -13000,6 +13000,37 @@ Completed on 2026-08-18.
 git add apps/web
 git commit -m "Build streaming RAG chat interface"
 
+### Phase 18 acceptance gate
+
+Closed on 2026-08-18 after the completed R18-S01 through R18-S04 boundaries
+received an independent two-pass implementation review across Laravel, Python
+and the browser surface.
+
+The review confirmed the accepted ADR-0024 boundary: fail-closed incremental
+candidate validation; separation of provisional delivery from atomic
+authoritative persistence; HMAC-backed run-scoped provisional citations; the
+PostgreSQL single-active-run invariant; complete retrieval-outcome mapping;
+bounded Python contextualisation/generation ownership; genuine Responses API
+streaming; and strict terminal-result reconciliation. The apparent Python
+`except A, B:` syntax finding was verified as a false positive from using
+Python 3.13 rather than the repository's required Python 3.14 / PEP 758 syntax.
+
+The visual review also identified and removed unrelated legacy “Make Time”
+branding from the shared web shells. The committed regression test now binds
+the landing, authentication and authenticated application surfaces to the
+Dolved product identity. No conversation, retrieval or generation semantics
+changed.
+
+Acceptance evidence:
+
+* independent full-stack review: no blocking issues;
+* Python container verification: 40 focused tests passed; Ruff and Mypy clean;
+* R18-S04 web verification: 10 files and 31 tests passed, ESLint, TypeScript
+  and production build passed;
+* focused Laravel conversation verification: 8 tests and 71 assertions passed;
+* temporary visual-review fixture removed before closure;
+* no provider calls were repeated for closure.
+
 ---
 
 # Phase 19 — Administration

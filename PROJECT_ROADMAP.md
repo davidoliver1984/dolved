@@ -618,8 +618,8 @@ their respective ADRs as already recorded above.
 
 ## Phase 18 — Conversation and Streaming
 
-**Status:** Implementation complete. R18-S01 through R18-S04 completed on
-2026-08-18; the Phase 18 acceptance gate is next.
+**Status:** Completed on 2026-08-18. R18-S01 through R18-S04 and the Phase 18
+acceptance gate are closed.
 
 ### Objectives
 
@@ -677,6 +677,12 @@ existing authority/applicability pipeline; it does not invent a selectable
 document-filter API. Durable citation inspection uses the already-persisted,
 tenant-scoped answer-part and evidence-snapshot graph rather than trusting
 provisional delivery data.
+
+**Acceptance gate closed 2026-08-18:** an independent two-pass full-stack
+review found no blockers and verified the ADR-0024 ownership, streaming,
+failure, persistence, tenancy and citation invariants. The visual gate also
+removed legacy branding from another project and bound all shared web shells to
+the Dolved identity. Phase 19 administration is next.
 
 ---
 
