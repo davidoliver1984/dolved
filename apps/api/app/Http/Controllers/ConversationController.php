@@ -111,6 +111,12 @@ class ConversationController extends Controller
 
     private function loadConversation(Conversation $conversation): Conversation
     {
-        return $conversation->load(['messages.inReplyTo', 'generationRuns.userMessage', 'generationRuns.assistantMessage', 'generationRuns.retryOf']);
+        return $conversation->load([
+            'messages.inReplyTo',
+            'generationRuns.userMessage',
+            'generationRuns.assistantMessage',
+            'generationRuns.retryOf',
+            'generationRuns.generatedAnswer.answerParts.evidenceSnapshots.document',
+        ]);
     }
 }

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { DocumentUploadPanel } from "@/components/DocumentUploadPanel";
+import { ChatWorkspace } from "@/components/ChatWorkspace";
 import { WorkspaceSwitcher } from "@/components/WorkspaceSwitcher";
 import {
   userWorkspace,
@@ -29,7 +30,7 @@ export default async function WorkspacePage({
       />
 
       <div>
-        <section className="workspace-welcome">
+        <section className="workspace-welcome compact-welcome">
           <p className="eyebrow">Active workspace</p>
           <h1>{activeWorkspace.name}</h1>
           <p>
@@ -39,10 +40,18 @@ export default async function WorkspacePage({
           </p>
         </section>
 
-        <DocumentUploadPanel
-          configuration={uploadConfiguration}
-          workspacePublicId={activeWorkspace.public_id}
+        <ChatWorkspace
+          workspaceId={activeWorkspace.public_id}
+          workspaceName={activeWorkspace.name}
         />
+
+        <details className="document-tools">
+          <summary>Document upload</summary>
+          <DocumentUploadPanel
+            configuration={uploadConfiguration}
+            workspacePublicId={activeWorkspace.public_id}
+          />
+        </details>
       </div>
     </div>
   );

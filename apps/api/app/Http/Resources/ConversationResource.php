@@ -36,6 +36,22 @@ class ConversationResource extends JsonResource
                 'failure_code' => $run->failure_code?->value,
                 'delivery_mode' => $run->delivery_mode,
                 'retryable' => $run->status->isRetryEligible(),
+                'answer' => $run->relationLoaded('generatedAnswer') && $run->generatedAnswer !== null ? [
+                    'id' => $run->generatedAnswer->public_id,
+                    'outcome' => $run->generatedAnswer->outcome->value,
+                    'unsupported_aspects' => $run->generatedAnswer->unsupported_aspects,
+                    'insufficiency_reason' => $run->generatedAnswer->insufficiency_reason,
+                    'parts' => $run->generatedAnswer->answerParts->map(fn ($part): array => [
+                        'id' => $part->public_id,
+                        'text' => $part->text,
+                        'citations' => $part->evidenceSnapshots->map(fn ($snapshot): array => [
+                            'id' => $snapshot->public_id,
+                            'document_id' => $snapshot->document?->public_id,
+                            'cited_text' => $snapshot->cited_text_verbatim,
+                            'source_provenance' => $snapshot->source_provenance,
+                        ])->all(),
+                    ])->all(),
+                ] : null,
                 'created_at' => $run->created_at?->toIso8601String(),
                 'completed_at' => $run->completed_at?->toIso8601String(),
             ])->all()),

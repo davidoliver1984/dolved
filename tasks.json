@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R18",
-    "current_session": "R18-S04",
-    "next_action": "Begin R18-S04 — build the tenant-aware chat interface on the completed durable orchestration and replayable SSE boundaries.",
-    "completed_through": "R18-S03",
+    "current_session": "R18-GATE",
+    "next_action": "Run the Phase 18 Conversation and Streaming acceptance gate on the completed conversation, orchestration, streaming and chat-interface boundaries.",
+    "completed_through": "R18-S04",
     "completed_phase_count": 18,
     "total_phase_count": 24
   },
@@ -3634,7 +3634,7 @@
           "title": "Build Chat Interface",
           "guide_start_line": 12871,
           "guide_end_line": 12908,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Create the tenant-aware conversational UI.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -3666,9 +3666,17 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r18-s04-build-chat-interface.md",
-            "status": "not_started"
+            "status": "completed",
+            "actual_path": "docs/journal/2026-08-18-r18-s04-build-chat-interface.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Tenant-scoped conversation history and new-chat experience",
+            "Accessible idempotent composer with active-run cancellation and retry",
+            "Replayable SSE progress, provisional answer display and authoritative terminal replacement",
+            "Durable expandable EvidenceSnapshot citations and non-destructive loading/error states",
+            "30 passing web tests and 8 passing conversation API tests plus lint, TypeScript, Pint and production build",
+            "docs/journal/2026-08-18-r18-s04-build-chat-interface.md"
+          ]
         }
       ],
       "guide_end_line": 12908,
@@ -3677,7 +3685,7 @@
       "gate": {
         "id": "R18-GATE",
         "title": "Conversation and Streaming Acceptance Gate",
-        "status": "not_started",
+        "status": "in_progress",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",

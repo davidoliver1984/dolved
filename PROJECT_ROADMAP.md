@@ -618,8 +618,8 @@ their respective ADRs as already recorded above.
 
 ## Phase 18 — Conversation and Streaming
 
-**Status:** In progress. R18-S01 through R18-S03 completed on 2026-08-18;
-R18-S04 chat interface is next.
+**Status:** Implementation complete. R18-S01 through R18-S04 completed on
+2026-08-18; the Phase 18 acceptance gate is next.
 
 ### Objectives
 
@@ -665,6 +665,18 @@ Terminal answer persistence remains atomic and authoritative; provisional text
 is retractable, expires, and never enters conversation history. A credentialed
 browser client now handles ordered replay and terminal closure, ready for the
 R18-S04 interface.
+
+**Chat interface implemented 2026-08-18** (Stage 18.4): the authenticated
+workspace now exposes tenant-scoped conversation history, new-chat and message
+submission, visible replayable progress and provisional answer parts,
+authoritative terminal replacement, citation-reference inspection,
+cancellation/retry controls and non-destructive error handling. Keyboard and
+responsive behaviour are covered by the web implementation and its critical
+interaction tests. The interface searches all documents made eligible by the
+existing authority/applicability pipeline; it does not invent a selectable
+document-filter API. Durable citation inspection uses the already-persisted,
+tenant-scoped answer-part and evidence-snapshot graph rather than trusting
+provisional delivery data.
 
 ---
 

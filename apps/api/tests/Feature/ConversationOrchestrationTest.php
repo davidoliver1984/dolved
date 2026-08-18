@@ -274,6 +274,14 @@ class ConversationOrchestrationTest extends TestCase
         $this->assertStringNotContainsString('ev-01', $provisional);
         $this->assertStringNotContainsString('document_chunk_id', $provisional);
         $this->assertSame($run->assistantMessage?->public_id, $events[6]->safe_payload['message_id']);
+        $this->actingAs($user)
+            ->getJson("/api/workspaces/{$workspace->public_id}/conversations/{$conversation->public_id}")
+            ->assertOk()
+            ->assertJsonPath('data.runs.0.answer.outcome', 'answered')
+            ->assertJsonPath('data.runs.0.answer.parts.0.text', 'It requires a documented safety check.')
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.document_id', $document->public_id)
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.cited_text', $chunk->text)
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.source_provenance', $chunk->provenance);
         Http::assertSentCount(4);
     }
 

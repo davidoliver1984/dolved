@@ -12928,7 +12928,7 @@ Create the tenant-aware conversational UI.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-18.
 
 ### Planned capabilities
 
@@ -12952,6 +12952,48 @@ Not yet executed.
 * Errors do not destroy prior messages.
 * The interface is keyboard accessible.
 * Critical interactions are tested.
+
+### Actual implementation
+
+* Added a tenant-scoped conversation workspace with history navigation,
+  empty/loading/error states and an idempotent new-conversation flow.
+* Added the accessible message composer: Enter submits, Shift+Enter preserves a
+  newline, competing sends are disabled while a run is active, and cancellation
+  remains available for the active run.
+* Connected the replayable R18-S03 SSE client to visible progress and explicitly
+  provisional answer parts. Terminal events replace provisional content with
+  the authoritative persisted transcript; connection errors preserve both the
+  conversation and the active-run constraint while EventSource reconnects.
+* Projected the already-authoritative, workspace-scoped answer-part and
+  `EvidenceSnapshot` graph through the conversation resource, then added
+  expandable source citation references, cited text and provenance. Citations
+  therefore remain inspectable after navigation or refresh rather than existing
+  only in a live delivery event. Retry controls cover eligible failed runs, and
+  historical messages remain readable when a later request or connection fails.
+* Kept retrieval scope truthful: the V1 interface states that all documents
+  eligible for the workspace and question are searched. It does not fabricate a
+  user-selectable document-filter contract that the orchestration API does not
+  expose.
+* Kept the existing document upload surface available behind a secondary
+  disclosure so chat is the primary workspace experience without removing prior
+  capability.
+
+### Verification evidence
+
+* `npm test` — 9 files, 30 tests passed.
+* `npm run lint` — passed.
+* `./node_modules/.bin/tsc --noEmit` — passed.
+* `npm run build` — passed; Next.js compiled, type-checked and generated all
+  routes successfully. The existing multiple-lockfile root warning remains.
+* `php artisan test --filter=ConversationOrchestrationTest` — 8 tests and 71
+  assertions passed.
+* `./vendor/bin/pint --test` on the changed API/test paths — passed.
+* Full `php artisan test` — 239 tests passed; 6 failures and 43 errors were
+  caused by the host test environment's absent evaluation/contract mounts and
+  unconfigured document-storage bucket. The focused conversation suite is
+  green; no R18-S04 assertion failed.
+* `git diff --check` — passed.
+* No provider calls were made.
 
 ### Commit boundary
 
