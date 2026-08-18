@@ -618,6 +618,9 @@ their respective ADRs as already recorded above.
 
 ## Phase 18 — Conversation and Streaming
 
+**Status:** In progress. R18-S01 completed on 2026-08-18 through accepted
+ADR-0024; R18-S02 is next and no application implementation has begun.
+
 ### Objectives
 
 Expose the RAG workflow as a persistent, streaming conversational experience.
@@ -632,6 +635,17 @@ Expose the RAG workflow as a persistent, streaming conversational experience.
 ### Deliverable
 
 Production-quality chat interface.
+
+**Architecture boundary recorded 2026-08-18 by ADR-0024** (Stage 18.1):
+tenant-owned conversations and visible messages are separated from durable,
+connection-independent generation runs; Laravel retains tenancy,
+authorisation, retrieval, orchestration, validation, persistence and SSE
+projection; Python provides authenticated provider-neutral contextualisation
+and generation capabilities but never retrieves. The ADR fixes the complete
+retrieval-outcome-to-conversation mapping, authoritative versus provisional
+streaming persistence, retry/cancellation/idempotency semantics and the
+`generation.stream`/SSE transport boundary. R18-S02 implements orchestration;
+R18-S03 implements incremental delivery; R18-S04 builds the chat interface.
 
 ---
 

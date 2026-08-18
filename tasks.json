@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R18",
-    "current_session": "R18-S01",
-    "next_action": "Begin R18-S01 — Define Conversation Domain: model conversations, messages, citations and generation metadata without beginning streaming implementation.",
-    "completed_through": "R17-S04",
+    "current_session": "R18-S02",
+    "next_action": "Begin R18-S02 — Implement Chat Orchestration API against accepted ADR-0024 without beginning R18-S03 streaming delivery.",
+    "completed_through": "R18-S01",
     "completed_phase_count": 18,
     "total_phase_count": 24
   },
@@ -3487,8 +3487,8 @@
           "guide_stage": "Stage 18.1 \u2014 Define Conversation Domain",
           "title": "Define Conversation Domain",
           "guide_start_line": 12711,
-          "guide_end_line": 12744,
-          "status": "not_started",
+          "guide_end_line": 12788,
+          "status": "completed",
           "objective": "Model conversations, messages, citations and generation metadata.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
@@ -3497,7 +3497,7 @@
             "stage": "Stage 18.1 \u2014 Define Conversation Domain",
             "source_lines": {
               "start": 12711,
-              "end": 12744
+              "end": 12788
             }
           },
           "workflow": [
@@ -3520,16 +3520,22 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r18-s01-define-conversation-domain.md",
-            "status": "not_started"
+            "status": "completed",
+            "actual_path": "docs/journal/2026-08-18-r18-s01-define-conversation-domain.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Accepted ADR-0024 defines the tenant-owned conversation/message/run domain and Laravel/Python ownership boundary",
+            "The dated implementation-readiness clarification maps all eight existing retrieval outcomes without changing retrieval semantics",
+            "ADR-0024 defines connection-independent execution, provisional versus authoritative persistence and the generation.stream/SSE boundary",
+            "docs/journal/2026-08-18-r18-s01-define-conversation-domain.md"
+          ]
         },
         {
           "id": "R18-S02",
           "guide_stage": "Stage 18.2 \u2014 Implement Chat Orchestration API",
           "title": "Implement Chat Orchestration API",
-          "guide_start_line": 12747,
-          "guide_end_line": 12781,
+          "guide_start_line": 12791,
+          "guide_end_line": 12830,
           "status": "not_started",
           "objective": "Coordinate retrieval and generation through a stable Laravel-facing API.",
           "session_mode": "implementation",
@@ -3538,8 +3544,8 @@
             "phase": "Phase 18 \u2014 Conversation and Streaming",
             "stage": "Stage 18.2 \u2014 Implement Chat Orchestration API",
             "source_lines": {
-              "start": 12747,
-              "end": 12781
+              "start": 12791,
+              "end": 12830
             }
           },
           "workflow": [
@@ -3570,8 +3576,8 @@
           "id": "R18-S03",
           "guide_stage": "Stage 18.3 \u2014 Implement Streaming Responses",
           "title": "Implement Streaming Responses",
-          "guide_start_line": 12784,
-          "guide_end_line": 12819,
+          "guide_start_line": 12833,
+          "guide_end_line": 12868,
           "status": "not_started",
           "objective": "Stream generated answer tokens or events to the browser.",
           "session_mode": "implementation",
@@ -3580,8 +3586,8 @@
             "phase": "Phase 18 \u2014 Conversation and Streaming",
             "stage": "Stage 18.3 \u2014 Implement Streaming Responses",
             "source_lines": {
-              "start": 12784,
-              "end": 12819
+              "start": 12833,
+              "end": 12868
             }
           },
           "workflow": [
@@ -3612,8 +3618,8 @@
           "id": "R18-S04",
           "guide_stage": "Stage 18.4 \u2014 Build Chat Interface",
           "title": "Build Chat Interface",
-          "guide_start_line": 12822,
-          "guide_end_line": 12859,
+          "guide_start_line": 12871,
+          "guide_end_line": 12908,
           "status": "not_started",
           "objective": "Create the tenant-aware conversational UI.",
           "session_mode": "implementation",
@@ -3622,8 +3628,8 @@
             "phase": "Phase 18 \u2014 Conversation and Streaming",
             "stage": "Stage 18.4 \u2014 Build Chat Interface",
             "source_lines": {
-              "start": 12822,
-              "end": 12859
+              "start": 12871,
+              "end": 12908
             }
           },
           "workflow": [
@@ -3651,8 +3657,8 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 12859,
-      "status": "not_started",
+      "guide_end_line": 12908,
+      "status": "in_progress",
       "objective": "Expose the RAG workflow as a persistent, streaming conversational experience.",
       "gate": {
         "id": "R18-GATE",

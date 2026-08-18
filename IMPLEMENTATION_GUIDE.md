@@ -12716,16 +12716,46 @@ Model conversations, messages, citations and generation metadata.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-18 through accepted ADR-0024. Architecture and
+documentation only; no R18-S02 application implementation has begun.
 
-### Planned entities
+### Accepted domain boundary
 
-conversations
-messages
-message_citations
-generation_runs
+* `Conversation` is tenant-owned and contains immutable-ordinal visible turns.
+* `Message` persists `USER` and `ASSISTANT` roles. Assistant messages are
+  discriminated as `GROUNDED_ANSWER`, `CLARIFICATION` or `NO_ANSWER`, each
+  backed by the authoritative record ADR-0024 requires.
+* `GenerationRun` owns execution lifecycle, retry/idempotency, cancellation,
+  model/configuration lineage and usage metadata independently of a browser
+  connection.
+* Citation authority remains ADR-0023's `GeneratedAnswer` → `AnswerPart` →
+  `EvidenceSnapshot` model; conversation persistence does not duplicate or
+  weaken it.
+* Contextualisation and retrieval outcomes receive durable, typed snapshots so
+  every visible controlled response has auditable application-owned lineage.
+* Provisional streamed candidates and resumable chat events are explicitly
+  non-authoritative. Only fully validated final generation becomes the durable
+  grounded answer.
 
-Exact names may change.
+### Accepted ownership and handoff
+
+Laravel remains the identity, tenancy, authorisation, retrieval, eligibility,
+orchestration, persistence and browser-streaming boundary. Python owns only
+provider-neutral model capabilities and provider-specific execution behind
+authenticated `rc1` calls; it never retrieves or resolves authority,
+applicability or tenancy.
+
+Generation runs only after Laravel receives `EVIDENCE_FOUND` with a non-empty,
+currently authorised final evidence set. Every other retrieval outcome follows
+ADR-0024's explicit controlled handoff and never reaches the Generator.
+
+ADR-0024 also fixes the later transport boundary: a new authenticated
+`generation.stream` response may carry provisional `AnswerPartCandidate`
+events, while Laravel validates, durably sequences and projects application-
+owned events over SSE. `generation.answer` remains the complete-result fallback.
+Connection-independent execution uses Laravel queued jobs; the framework queue
+configuration already exists, but no application-owned queued generation job
+has yet been implemented.
 
 ### Acceptance criteria
 
@@ -12737,9 +12767,23 @@ Exact names may change.
 * Conversation deletion semantics are defined.
 * Cross-tenant access is prohibited.
 
+### Verification
+
+* ADR-0024 is `Accepted` and indexed.
+* Its dated post-acceptance implementation-readiness clarification completely
+  maps all eight existing `RetrievalOutcome` values without changing the
+  accepted Laravel/Python ownership boundary.
+* The distinction between genuine `RETRIEVAL_FAILED`, preserved
+  `TEMPORAL_SCOPE_UNRESOLVED`, controlled no-answer outcomes and clarification
+  remains explicit.
+* Queue wording reflects the repository truth: framework/configuration support
+  exists; application-owned queued generation work does not yet exist.
+* No application, planner, retrieval, threshold, calibration or benchmark
+  behaviour changed and no provider was called.
+
 ### Commit boundary
 
-git add apps/api docs/adr
+git add docs/adr IMPLEMENTATION_GUIDE.md PROJECT_ROADMAP.md tasks.json docs/journal
 git commit -m "Define conversation domain"
 
 ---
@@ -12757,12 +12801,17 @@ Not yet executed.
 ### Planned flow
 
 1. Laravel authorises the user and tenant.
-2. Laravel persists the user message.
-3. Laravel invokes the AI service.
-4. AI retrieves tenant-filtered context.
-5. AI generates a grounded answer.
-6. Laravel persists the answer and citations.
-7. The result is returned or streamed to the browser.
+2. Laravel durably persists the user message and generation run once.
+3. Connection-independent Laravel orchestration contextualises through the
+   provider-neutral Python boundary where required.
+4. Laravel plans, resolves eligibility and retrieves tenant-filtered evidence.
+5. Laravel applies ADR-0024's complete retrieval-outcome handoff; only
+   `EVIDENCE_FOUND` reaches generation assembly.
+6. Python generates against the application-owned evidence package.
+7. Laravel validates and atomically persists the authoritative answer,
+   citations, lineage and terminal run state.
+8. The API exposes the durable conversation/run state; incremental browser
+   delivery remains R18-S03.
 
 ### Acceptance criteria
 
