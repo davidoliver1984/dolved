@@ -6,7 +6,8 @@ export type ChatStreamEventType =
   | "answer_completed"
   | "clarification_required"
   | "run_failed"
-  | "run_cancelled";
+  | "run_cancelled"
+  | "authorization_revoked";
 
 export type ChatStreamEvent = {
   sequence: number;
@@ -20,6 +21,7 @@ const terminal = new Set<ChatStreamEventType>([
   "clarification_required",
   "run_failed",
   "run_cancelled",
+  "authorization_revoked",
 ]);
 
 export function subscribeToGenerationRun(
@@ -54,6 +56,7 @@ export function subscribeToGenerationRun(
     "clarification_required",
     "run_failed",
     "run_cancelled",
+    "authorization_revoked",
   ] satisfies ChatStreamEventType[]) {
     source.addEventListener(type, accept as EventListener);
   }

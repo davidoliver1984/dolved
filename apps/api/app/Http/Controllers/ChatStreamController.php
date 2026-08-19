@@ -8,6 +8,7 @@ use App\Models\ChatDeliveryEvent;
 use App\Models\Conversation;
 use App\Models\GenerationRun;
 use App\Models\User;
+use App\Models\WorkspaceMembership;
 use App\Queries\Workspaces\FindWorkspaceForUser;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -30,10 +31,33 @@ class ChatStreamController extends Controller
             ->firstOrFail();
         $after = max(0, (int) $request->header('Last-Event-ID', '0'));
 
-        return response()->stream(function () use ($run, $after): void {
+        return response()->stream(function () use ($run, $after, $user, $workspace): void {
             $cursor = $after;
             $deadline = microtime(true) + (float) config('conversation.sse_connection_seconds');
+            $reauthoriseAt = 0.0;
             do {
+                if (microtime(true) >= $reauthoriseAt) {
+                    $authorised = WorkspaceMembership::query()
+                        ->where('workspace_id', $workspace->id)
+                        ->where('user_id', $user->id)
+                        ->exists();
+                    if (! $authorised) {
+                        $sequence = $cursor + 1;
+                        $data = json_encode([
+                            'sequence' => $sequence,
+                            'type' => 'authorization_revoked',
+                            'provisional' => false,
+                            'payload' => ['code' => 'workspace_membership_revoked'],
+                        ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                        echo "id: {$sequence}\n";
+                        echo "event: authorization_revoked\n";
+                        echo "data: {$data}\n\n";
+                        $this->flush();
+
+                        return;
+                    }
+                    $reauthoriseAt = microtime(true) + (float) config('workspace_administration.sse_reauthorise_seconds');
+                }
                 $events = ChatDeliveryEvent::query()
                     ->where('generation_run_id', $run->id)
                     ->where('sequence', '>', $cursor)

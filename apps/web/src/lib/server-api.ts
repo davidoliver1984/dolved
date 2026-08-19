@@ -1,6 +1,14 @@
 import "server-only";
 
-import type { DocumentPage, User, Workspace } from "@/lib/api";
+import type {
+  DocumentPage,
+  User,
+  Workspace,
+  WorkspaceAdministrationPage,
+  WorkspaceAdministrationSnapshot,
+  WorkspaceInvitation,
+  WorkspaceMembership,
+} from "@/lib/api";
 import { forwardedAuthCookieHeader } from "@/lib/auth-cookies";
 import type { DocumentUploadConfiguration } from "@/lib/document-upload";
 import { serverEnvironment } from "@/lib/env/server";
@@ -106,4 +114,21 @@ export async function initialWorkspaceDocuments(
     throw new Error("The workspace document list is unavailable.");
   }
   return (await response.json()) as DocumentPage;
+}
+
+export async function initialWorkspaceAdministration(
+  workspacePublicId: string,
+): Promise<WorkspaceAdministrationSnapshot> {
+  const base = `/api/workspaces/${encodeURIComponent(workspacePublicId)}`;
+  const [membersResponse, invitationsResponse] = await Promise.all([
+    serverFetch(`${base}/members`),
+    serverFetch(`${base}/invitations`),
+  ]);
+  if (!membersResponse.ok || !invitationsResponse.ok) {
+    throw new Error("Workspace administration is unavailable.");
+  }
+  const memberships = (await membersResponse.json()) as WorkspaceAdministrationPage<WorkspaceMembership>;
+  const invitations = (await invitationsResponse.json()) as WorkspaceAdministrationPage<WorkspaceInvitation>;
+
+  return { memberships: memberships.data, invitations: invitations.data };
 }

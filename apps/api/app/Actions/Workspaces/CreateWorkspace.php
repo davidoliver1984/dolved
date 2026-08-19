@@ -22,6 +22,7 @@ class CreateWorkspace
             $workspace->save();
 
             $membership = new WorkspaceMembership([
+                'public_id' => (string) Str::uuid(),
                 'role' => WorkspaceRole::Owner,
                 'joined_at' => now(),
             ]);

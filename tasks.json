@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R19",
-    "current_session": "R19-S02",
-    "next_action": "Begin R19-S02 implementation against accepted ADR-0025 — build tenant and membership administration on the completed document-administration boundary.",
-    "completed_through": "R19-S01",
+    "current_session": "R19-S03",
+    "next_action": "Begin R19-S03 implementation against accepted ADR-0025 — add tenant-scoped usage visibility on the completed document and membership administration boundaries.",
+    "completed_through": "R19-S02",
     "completed_phase_count": 19,
     "total_phase_count": 24
   },
@@ -3765,8 +3765,8 @@
           "guide_stage": "Stage 19.2 \u2014 Build Tenant and Membership Administration",
           "title": "Build Tenant and Membership Administration",
           "guide_start_line": 13161,
-          "guide_end_line": 13191,
-          "status": "not_started",
+          "guide_end_line": 13224,
+          "status": "completed",
           "objective": "Allow authorised tenant administrators to manage members and roles.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -3775,7 +3775,7 @@
             "stage": "Stage 19.2 \u2014 Build Tenant and Membership Administration",
             "source_lines": {
               "start": 13161,
-              "end": 13191
+              "end": 13224
             }
           },
           "workflow": [
@@ -3798,16 +3798,24 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r19-s02-build-tenant-and-membership-administration.md",
-            "status": "not_started"
+            "status": "completed",
+            "actual_path": "docs/journal/2026-08-19-r19-s02-build-tenant-and-membership-administration.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "ADR-0025 fixed-role capability matrix enforced for invitation, membership, role and ownership actions",
+            "Digest-only one-time-link invitations with verified-email acceptance, scheduled expiry and delivery-independent validity",
+            "Atomic row-locked ownership transfer preserves exactly one owner and owners cannot leave before transfer",
+            "Bounded SSE membership reauthorization terminates delivery safely after revocation",
+            "38 focused Laravel tests with 199 assertions and 36 web tests passed with Pint, ESLint, TypeScript and production build clean",
+            "docs/journal/2026-08-19-r19-s02-build-tenant-and-membership-administration.md"
+          ]
         },
         {
           "id": "R19-S03",
           "guide_stage": "Stage 19.3 \u2014 Add Usage Visibility",
           "title": "Add Usage Visibility",
-          "guide_start_line": 13194,
-          "guide_end_line": 13238,
+          "guide_start_line": 13227,
+          "guide_end_line": 13271,
           "status": "not_started",
           "objective": "Expose document, storage, ingestion and model-usage information.",
           "session_mode": "implementation",
@@ -3816,8 +3824,8 @@
             "phase": "Phase 19 \u2014 Administration",
             "stage": "Stage 19.3 \u2014 Add Usage Visibility",
             "source_lines": {
-              "start": 13194,
-              "end": 13238
+              "start": 13227,
+              "end": 13271
             }
           },
           "workflow": [

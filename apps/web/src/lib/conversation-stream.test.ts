@@ -45,4 +45,19 @@ describe("conversation stream", () => {
     expect(received).toHaveBeenCalledTimes(2);
     expect(source.closed).toBe(true);
   });
+
+  it("treats membership revocation as a terminal stream event", () => {
+    vi.stubGlobal("EventSource", FakeEventSource);
+    const received = vi.fn();
+    subscribeToGenerationRun("workspace", "conversation", "run", received, vi.fn());
+    const source = FakeEventSource.latest;
+    source.emit("authorization_revoked", {
+      sequence: 1,
+      type: "authorization_revoked",
+      provisional: false,
+      payload: { code: "workspace_membership_revoked" },
+    });
+    expect(received).toHaveBeenCalledOnce();
+    expect(source.closed).toBe(true);
+  });
 });

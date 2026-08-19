@@ -13173,7 +13173,40 @@ membership and role state; the browser only requests authorised transitions.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-19.
+
+### Implemented boundary
+
+* Added durable, tenant-scoped membership public identities, invitations,
+  idempotent administration commands and privacy-safe business audit events.
+* Enforced ADR-0025's fixed owner/admin/member capability matrix for listing,
+  invitation issue/revoke/accept, promotion/demotion, removal, voluntary leave
+  and ownership transfer. Ownership transfer locks both memberships and
+  demotes the outgoing owner before promoting the target so the existing
+  non-deferrable one-owner index is never violated.
+* Invitations store only a token digest, return the raw link once, require the
+  matching verified email, expire after the configurable seven-day window and
+  remain valid independently of email delivery. Reissue closes the prior
+  pending invitation and the database enforces one pending identity per
+  workspace and normalized email.
+* Added scheduled expiry materialisation, safe success/failure audits and
+  repeat-safe mutation handling without logging invitation tokens or content.
+* Added bounded membership reauthorization to existing SSE delivery loops.
+  Revocation emits a safe terminal event before any further answer content.
+* Added the owner/admin membership and invitation UI, ordinary-member leave
+  control and verified-email invitation acceptance surface. Laravel-provided
+  capabilities remain authoritative.
+
+### Verification evidence
+
+* 38 focused Laravel tests and 199 assertions passed across persistence,
+  workspace access, membership administration and conversation streaming.
+* The container-wide Laravel run passed 297 tests with two skips; eight
+  historical V3 engineering tests require an intentionally absent
+  `/evaluation/engineering` mount and were unchanged by this stage.
+* 36 web tests passed with ESLint, TypeScript and the production Next.js build
+  clean. The invitation surface also passed a local visual layout check.
+* Pint and `git diff --check` passed. No provider calls were made.
 
 ### Acceptance criteria
 

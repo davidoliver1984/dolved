@@ -704,6 +704,47 @@ progress {
   padding: 1rem 0;
 }
 
+.administration-list {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+}
+
+.administration-list li {
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.administration-list li > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.status-panel {
+  background: var(--mint);
+  border-radius: 12px;
+  margin: 1rem 0;
+  overflow-wrap: anywhere;
+  padding: 1rem;
+}
+
+.status-panel code {
+  display: block;
+  margin: 0.75rem 0;
+}
+
+.form-error {
+  color: #79260e;
+  font-weight: 700;
+}
+
 .workspace-welcome p:last-child {
   font-size: 1.15rem;
   max-width: 640px;

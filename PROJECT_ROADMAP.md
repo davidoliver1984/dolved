@@ -716,8 +716,16 @@ workspace members can inspect tenant-scoped document state, metadata, warnings
 and safe failures. Owner/admin retry is idempotent. Owner/admin deletion is a
 durable asynchronous operation that establishes ingestion quiescence before
 Laravel-scoped Python vector cleanup, then removes source objects and chunks
-without erasing historical citation snapshots. Tenant/membership controls and
-usage visibility remain for Stages 19.2 and 19.3.
+without erasing historical citation snapshots.
+
+**Tenant and membership administration implemented 2026-08-19** (Stage 19.2):
+owners and admins can inspect current membership and administer only the roles
+permitted by ADR-0025. Invitations are digest-backed, verified-email-bound,
+one-time-link and independently valid from their delivery attempt. Role changes,
+member removal, voluntary leave and row-locked ownership transfer are durable,
+idempotent and audited. Existing SSE connections now reauthorize membership on
+a bounded interval and terminate safely after revocation. Usage visibility
+remains for Stage 19.3.
 
 ---
 

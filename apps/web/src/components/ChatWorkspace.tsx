@@ -194,6 +194,11 @@ export function ChatWorkspace({
             void finishRun(conversationId).catch((caught) =>
               setError(firstError(caught)),
             );
+          } else if (event.type === "authorization_revoked") {
+            setBusy(false);
+            setProgress(null);
+            setProvisionalParts([]);
+            setError("Your access to this workspace has ended. No further answer content will be shown.");
           }
         },
         () => {

@@ -9,6 +9,7 @@ use App\Http\Controllers\Internal\DocumentDeletionOperationController;
 use App\Http\Controllers\Internal\DocumentIngestionClaimController;
 use App\Http\Controllers\Internal\IngestionOperationController;
 use App\Http\Controllers\RetrievalController;
+use App\Http\Controllers\WorkspaceAdministrationController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -100,6 +101,15 @@ Route::prefix('/internal/document-deletions/{eventId}')->group(function (): void
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('/workspaces', [WorkspaceController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}', [WorkspaceController::class, 'show']);
+    Route::get('/workspaces/{workspacePublicId}/members', [WorkspaceAdministrationController::class, 'members']);
+    Route::get('/workspaces/{workspacePublicId}/invitations', [WorkspaceAdministrationController::class, 'invitations']);
+    Route::post('/workspaces/{workspacePublicId}/invitations', [WorkspaceAdministrationController::class, 'issue']);
+    Route::delete('/workspaces/{workspacePublicId}/invitations/{invitationPublicId}', [WorkspaceAdministrationController::class, 'revoke']);
+    Route::patch('/workspaces/{workspacePublicId}/memberships/{membershipPublicId}/role', [WorkspaceAdministrationController::class, 'changeRole']);
+    Route::delete('/workspaces/{workspacePublicId}/memberships/{membershipPublicId}', [WorkspaceAdministrationController::class, 'remove']);
+    Route::post('/workspaces/{workspacePublicId}/memberships/{membershipPublicId}/ownership-transfers', [WorkspaceAdministrationController::class, 'transfer']);
+    Route::delete('/workspaces/{workspacePublicId}/membership', [WorkspaceAdministrationController::class, 'leave']);
+    Route::post('/workspace-invitations/accept', [WorkspaceAdministrationController::class, 'accept']);
     Route::get('/workspaces/{workspacePublicId}/documents', [DocumentAdministrationController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}/documents/{documentPublicId}', [DocumentAdministrationController::class, 'show']);
     Route::post('/workspaces/{workspacePublicId}/documents/{documentPublicId}/retries', [DocumentAdministrationController::class, 'retry']);

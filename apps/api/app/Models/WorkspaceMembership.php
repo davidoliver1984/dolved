@@ -8,12 +8,20 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
-#[Fillable(['workspace_id', 'user_id', 'role', 'joined_at'])]
+#[Fillable(['public_id', 'workspace_id', 'user_id', 'role', 'joined_at'])]
 class WorkspaceMembership extends Model
 {
     /** @use HasFactory<WorkspaceMembershipFactory> */
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::creating(function (WorkspaceMembership $membership): void {
+            $membership->public_id ??= (string) Str::uuid();
+        });
+    }
 
     /**
      * Get the attributes that should be cast.

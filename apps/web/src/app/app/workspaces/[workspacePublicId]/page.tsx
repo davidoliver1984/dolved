@@ -3,7 +3,9 @@ import { DocumentUploadPanel } from "@/components/DocumentUploadPanel";
 import { DocumentAdministration } from "@/components/DocumentAdministration";
 import { ChatWorkspace } from "@/components/ChatWorkspace";
 import { WorkspaceSwitcher } from "@/components/WorkspaceSwitcher";
+import { WorkspaceAdministration } from "@/components/WorkspaceAdministration";
 import {
+  initialWorkspaceAdministration,
   userWorkspace,
   userWorkspaces,
   initialWorkspaceDocuments,
@@ -25,6 +27,9 @@ export default async function WorkspacePage({
   }
 
   const documentPage = await initialWorkspaceDocuments(workspacePublicId);
+  const administration = activeWorkspace.role === "member"
+    ? null
+    : await initialWorkspaceAdministration(workspacePublicId);
 
   return (
     <div className="workspace-layout">
@@ -60,6 +65,12 @@ export default async function WorkspacePage({
         <DocumentAdministration
           initialPage={documentPage}
           workspacePublicId={activeWorkspace.public_id}
+        />
+
+        <WorkspaceAdministration
+          actorRole={activeWorkspace.role}
+          initialSnapshot={administration}
+          workspaceId={activeWorkspace.public_id}
         />
       </div>
     </div>

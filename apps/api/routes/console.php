@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Conversation\ReconcileStaleGenerationRuns;
+use App\Actions\Workspaces\ExpireWorkspaceInvitations;
 use App\Models\ChatDeliveryEvent;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -22,3 +23,9 @@ Artisan::command('conversation:purge-expired-delivery-events', function (): void
 })->purpose('Remove bounded-retention provisional and replay delivery data');
 
 Schedule::command('conversation:purge-expired-delivery-events')->hourly()->withoutOverlapping();
+
+Artisan::command('workspace-invitations:expire', function (ExpireWorkspaceInvitations $expire): void {
+    $this->info("Expired {$expire->handle()} workspace invitations.");
+})->purpose('Materialise expired workspace invitation state and audit its transition');
+
+Schedule::command('workspace-invitations:expire')->everyMinute()->withoutOverlapping();

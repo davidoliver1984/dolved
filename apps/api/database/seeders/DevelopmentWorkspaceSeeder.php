@@ -9,6 +9,7 @@ use App\Models\Workspace;
 use App\Models\WorkspaceMembership;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DevelopmentWorkspaceSeeder extends Seeder
 {
@@ -49,26 +50,16 @@ class DevelopmentWorkspaceSeeder extends Seeder
             'beacon-operations',
         );
 
-        WorkspaceMembership::query()->updateOrCreate(
-            [
-                'workspace_id' => $secondaryWorkspace->id,
-                'user_id' => $primaryUser->id,
-            ],
-            [
-                'role' => WorkspaceRole::Admin,
-                'joined_at' => now(),
-            ],
+        $this->membership(
+            $secondaryWorkspace,
+            $primaryUser,
+            WorkspaceRole::Admin,
         );
 
-        WorkspaceMembership::query()->updateOrCreate(
-            [
-                'workspace_id' => $primaryWorkspace->id,
-                'user_id' => $secondaryUser->id,
-            ],
-            [
-                'role' => WorkspaceRole::Member,
-                'joined_at' => now(),
-            ],
+        $this->membership(
+            $primaryWorkspace,
+            $secondaryUser,
+            WorkspaceRole::Member,
         );
     }
 
@@ -80,5 +71,17 @@ class DevelopmentWorkspaceSeeder extends Seeder
     ): Workspace {
         return Workspace::query()->where('slug', $slug)->first()
             ?? $createWorkspace->handle($owner, $name);
+    }
+
+    private function membership(Workspace $workspace, User $user, WorkspaceRole $role): void
+    {
+        $membership = WorkspaceMembership::query()->firstOrNew([
+            'workspace_id' => $workspace->id,
+            'user_id' => $user->id,
+        ]);
+        $membership->public_id ??= (string) Str::uuid();
+        $membership->role = $role;
+        $membership->joined_at ??= now();
+        $membership->save();
     }
 }

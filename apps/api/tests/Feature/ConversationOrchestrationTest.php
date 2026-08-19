@@ -25,6 +25,7 @@ use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceCorpusGeneration;
 use App\Models\WorkspaceCorpusGenerationChunk;
+use App\Models\WorkspaceMembership;
 use App\Services\Conversation\ChatDeliveryEventRecorder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -309,6 +310,31 @@ class ConversationOrchestrationTest extends TestCase
         $foreign = Workspace::factory()->withOwner()->create();
         $this->get("/api/workspaces/{$foreign->public_id}/conversations/{$conversation->public_id}/runs/{$run->public_id}/events")
             ->assertNotFound();
+    }
+
+    public function test_open_sse_stream_terminates_before_delivering_more_events_after_membership_revocation(): void
+    {
+        Queue::fake();
+        [$run, $conversation] = $this->runFixture();
+        app(ChatDeliveryEventRecorder::class)->record(
+            $run,
+            ChatStreamEventType::RunProgress,
+            ['stage' => 'retrieving', 'display_key' => 'conversation.progress.retrieving'],
+        );
+        $user = $run->userMessage->createdBy;
+        $response = $this->actingAs($user)->get(
+            "/api/workspaces/{$conversation->workspace->public_id}/conversations/{$conversation->public_id}/runs/{$run->public_id}/events",
+        );
+
+        WorkspaceMembership::query()
+            ->where('workspace_id', $conversation->workspace_id)
+            ->where('user_id', $user->id)
+            ->delete();
+
+        $content = $response->streamedContent();
+        $this->assertStringContainsString('event: authorization_revoked', $content);
+        $this->assertStringContainsString('"code":"workspace_membership_revoked"', $content);
+        $this->assertStringNotContainsString('event: run_progress', $content);
     }
 
     public function test_message_role_invariants_and_immutability_fail_closed(): void
