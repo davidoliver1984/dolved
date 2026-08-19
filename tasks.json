@@ -40,7 +40,7 @@
   "progress": {
     "current_phase": "R19",
     "current_session": "R19-S01",
-    "next_action": "Begin R19-S01 — build tenant-scoped document administration on the completed conversation and streaming platform.",
+    "next_action": "Begin R19-S01 implementation against accepted ADR-0025 — build tenant-scoped document administration on the completed conversation and streaming platform.",
     "completed_through": "R18-S04",
     "completed_phase_count": 19,
     "total_phase_count": 24
@@ -3708,14 +3708,14 @@
       "id": "R19",
       "guide_phase": "Phase 19 \u2014 Administration",
       "title": "Administration",
-      "guide_start_line": 12555,
+      "guide_start_line": 13036,
       "sessions": [
         {
           "id": "R19-S01",
           "guide_stage": "Stage 19.1 \u2014 Build Document Administration",
           "title": "Build Document Administration",
-          "guide_start_line": 12563,
-          "guide_end_line": 12599,
+          "guide_start_line": 13058,
+          "guide_end_line": 13104,
           "status": "not_started",
           "objective": "Allow authorised users to inspect, retry and delete documents.",
           "session_mode": "implementation",
@@ -3724,8 +3724,8 @@
             "phase": "Phase 19 \u2014 Administration",
             "stage": "Stage 19.1 \u2014 Build Document Administration",
             "source_lines": {
-              "start": 12563,
-              "end": 12599
+              "start": 13058,
+              "end": 13104
             }
           },
           "workflow": [
@@ -3743,8 +3743,8 @@
             "Commit the verified session or phase boundary.",
             "Mark the session complete and advance current_session."
           ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
+          "requires_architecture_review": true,
+          "requires_adr": true,
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r19-s01-build-document-administration.md",
@@ -3756,8 +3756,8 @@
           "id": "R19-S02",
           "guide_stage": "Stage 19.2 \u2014 Build Tenant and Membership Administration",
           "title": "Build Tenant and Membership Administration",
-          "guide_start_line": 12600,
-          "guide_end_line": 12625,
+          "guide_start_line": 13107,
+          "guide_end_line": 13137,
           "status": "not_started",
           "objective": "Allow authorised tenant administrators to manage members and roles.",
           "session_mode": "implementation",
@@ -3766,8 +3766,8 @@
             "phase": "Phase 19 \u2014 Administration",
             "stage": "Stage 19.2 \u2014 Build Tenant and Membership Administration",
             "source_lines": {
-              "start": 12600,
-              "end": 12625
+              "start": 13107,
+              "end": 13137
             }
           },
           "workflow": [
@@ -3798,8 +3798,8 @@
           "id": "R19-S03",
           "guide_stage": "Stage 19.3 \u2014 Add Usage Visibility",
           "title": "Add Usage Visibility",
-          "guide_start_line": 12626,
-          "guide_end_line": 12662,
+          "guide_start_line": 13140,
+          "guide_end_line": 13184,
           "status": "not_started",
           "objective": "Expose document, storage, ingestion and model-usage information.",
           "session_mode": "implementation",
@@ -3808,8 +3808,8 @@
             "phase": "Phase 19 \u2014 Administration",
             "stage": "Stage 19.3 \u2014 Add Usage Visibility",
             "source_lines": {
-              "start": 12626,
-              "end": 12662
+              "start": 13140,
+              "end": 13184
             }
           },
           "workflow": [
@@ -3837,7 +3837,7 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 12662,
+      "guide_end_line": 13184,
       "status": "not_started",
       "objective": "Provide operational visibility and safe tenant-level controls.",
       "gate": {
@@ -3845,6 +3845,7 @@
         "title": "Administration Acceptance Gate",
         "status": "not_started",
         "requirements": [
+          "Implement and verify all Phase 19 sessions against accepted ADR-0025.",
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
           "Ensure relevant ADRs and the ADR index are current.",

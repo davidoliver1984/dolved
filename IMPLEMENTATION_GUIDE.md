@@ -13039,6 +13039,20 @@ Acceptance evidence:
 
 Provide operational visibility and safe tenant-level controls.
 
+### Accepted architecture
+
+[ADR-0025](docs/adr/0025-define-the-administration-and-tenant-control-plane.md)
+is the authoritative Phase 19 control-plane architecture. It retains the fixed
+`OWNER`/`ADMIN`/`MEMBER` role model, keeps administrative authority and durable
+state transitions in Laravel, and limits Python to provider-native ingestion and
+vector operations under authenticated, Laravel-scoped contracts. Document
+deletion is asynchronous and must establish ingestion quiescence before verified
+vector, object and relational cleanup; historical `EvidenceSnapshot` records
+remain independently inspectable after their source chunks are removed. Usage
+visibility is tenant-scoped, explicitly non-billing-grade, and depends on new
+content-free historical activity and normalised usage records rather than being
+derived solely from live content rows.
+
 ---
 
 ## Stage 19.1 — Build Document Administration
@@ -13062,6 +13076,18 @@ Not yet executed.
 * filter and search;
 * inspect source metadata.
 
+### Implementation boundary
+
+Implement ADR-0025's document-administration boundary across Laravel, Python and
+the web application. Laravel owns authorization, authoritative lifecycle state,
+retry idempotency, deletion orchestration, persistence and final cleanup. Python
+transports typed extraction warnings, participates in ingestion cancellation and
+performs only the bounded provider-native vector deletion Laravel authorises.
+Cross-language lifecycle operations remain purpose-scoped and authenticated.
+Ordinary members retain document read access but cannot invoke retry or deletion.
+Historical `EvidenceSnapshot` rows are preserved and made independent of the
+disposable source chunk before hard chunk deletion is enabled.
+
 ### Acceptance criteria
 
 * Permissions are enforced server-side.
@@ -13073,7 +13099,7 @@ Not yet executed.
 
 ### Commit boundary
 
-git add apps/api apps/web
+git add apps/api apps/ai apps/web contracts
 git commit -m "Add document administration"
 
 ---
@@ -13083,6 +13109,13 @@ git commit -m "Add document administration"
 ### Objective
 
 Allow authorised tenant administrators to manage members and roles.
+
+### Implementation boundary
+
+Implement ADR-0025's fixed-role capability matrix, invitation lifecycle,
+membership removal, guarded ownership transfer, bounded stream reauthorization
+and business-audit requirements. Laravel remains the sole authority for tenant,
+membership and role state; the browser only requests authorised transitions.
 
 ### Status
 
@@ -13125,6 +13158,16 @@ Not yet executed.
 * generation token usage;
 * estimated provider cost where available.
 
+### Implementation boundary
+
+Implement ADR-0025's distinction between current gauges and deletion-independent
+historical interval activity. Add content-free activity records and normalised,
+stage-aware usage persistence; do not infer historical usage solely from live
+messages, runs or answers. Python may parse provider-native usage and calculate
+estimates from versioned provider/model pricing snapshots, while Laravel owns
+tenant aggregation, authorization, labelling and presentation. Unavailable values
+remain unavailable rather than zero, and the surface is not billing-grade.
+
 ### Acceptance criteria
 
 * Usage is tenant-scoped.
@@ -13136,7 +13179,7 @@ Not yet executed.
 
 ### Commit boundary
 
-git add apps/api apps/web
+git add apps/api apps/ai apps/web contracts
 git commit -m "Add tenant usage visibility"
 
 ---

@@ -702,6 +702,15 @@ Provide operational visibility and safe tenant-level controls.
 
 Complete administration tools.
 
+**Architecture boundary accepted 2026-08-19 through ADR-0025:** the fixed
+owner/admin/member capability model governs administrative actions; Laravel owns
+tenant authority and durable transitions while Python performs only authenticated,
+Laravel-scoped provider-native work. Document deletion is asynchronous and waits
+for ingestion quiescence before verified cleanup, preserving historical
+`EvidenceSnapshot` records independently of deleted source chunks. Historical
+usage is backed by content-free, deletion-independent activity records and is a
+tenant-facing estimate/projection rather than billing-grade accounting.
+
 ---
 
 ## Phase 20 — Observability and Operations
