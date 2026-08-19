@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\ChatStreamController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\DocumentAdministrationController;
 use App\Http\Controllers\DocumentIngestionController;
 use App\Http\Controllers\DocumentUploadController;
+use App\Http\Controllers\Internal\DocumentDeletionOperationController;
 use App\Http\Controllers\Internal\DocumentIngestionClaimController;
 use App\Http\Controllers\Internal\IngestionOperationController;
 use App\Http\Controllers\RetrievalController;
@@ -82,11 +84,26 @@ Route::prefix('/internal/ingestion/events/{eventId}')->group(function (): void {
         ->middleware('ingestion.worker:ingestion.complete')->name('ingestion.complete');
     Route::post('/fail', [IngestionOperationController::class, 'fail'])
         ->middleware('ingestion.worker:ingestion.fail')->name('ingestion.fail');
+    Route::post('/cancel', [IngestionOperationController::class, 'cancel'])
+        ->middleware('ingestion.worker:ingestion.attempt.cancel')->name('ingestion.attempt.cancel');
+});
+
+Route::prefix('/internal/document-deletions/{eventId}')->group(function (): void {
+    Route::post('/claim', [DocumentDeletionOperationController::class, 'claim'])
+        ->middleware('ingestion.worker:document.deletion.claim')->name('document.deletion.claim');
+    Route::post('/complete', [DocumentDeletionOperationController::class, 'complete'])
+        ->middleware('ingestion.worker:document.deletion.complete')->name('document.deletion.complete');
+    Route::post('/fail', [DocumentDeletionOperationController::class, 'fail'])
+        ->middleware('ingestion.worker:document.deletion.fail')->name('document.deletion.fail');
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('/workspaces', [WorkspaceController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}', [WorkspaceController::class, 'show']);
+    Route::get('/workspaces/{workspacePublicId}/documents', [DocumentAdministrationController::class, 'index']);
+    Route::get('/workspaces/{workspacePublicId}/documents/{documentPublicId}', [DocumentAdministrationController::class, 'show']);
+    Route::post('/workspaces/{workspacePublicId}/documents/{documentPublicId}/retries', [DocumentAdministrationController::class, 'retry']);
+    Route::delete('/workspaces/{workspacePublicId}/documents/{documentPublicId}', [DocumentAdministrationController::class, 'destroy']);
     Route::get('/workspaces/{workspacePublicId}/conversations', [ConversationController::class, 'index']);
     Route::post('/workspaces/{workspacePublicId}/conversations', [ConversationController::class, 'store']);
     Route::get('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}', [ConversationController::class, 'show']);

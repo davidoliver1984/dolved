@@ -30,7 +30,11 @@ from app.ingestion.canonicalisation import (
     point_manifest_digest,
 )
 from app.ingestion.heartbeat import CoordinatedHeartbeat, HeartbeatLost
-from app.ingestion.protocol_client import ClaimGrant, IngestionProtocolClient
+from app.ingestion.protocol_client import (
+    ClaimGrant,
+    IngestionProtocolClient,
+    IngestionProtocolError,
+)
 from app.ingestion.sqs import IngestionQueueMessage, SqsIngestionQueue
 from app.normalisation.structural import StructuralNormaliser
 from app.sparse.errors import SparseEncodingError
@@ -133,16 +137,19 @@ class IngestionOrchestrator:
             with heartbeat:
                 if grant.reset_open_attempt:
                     self._cleanup_provisional(context, grant)
-                chunks = (
-                    self._resume_chunks(context)
-                    if grant.resume_sealed_attempt
-                    else self._extract_submit_and_seal(event, context, heartbeat)
-                )
+                if grant.resume_sealed_attempt:
+                    chunks = self._resume_chunks(context)
+                    warnings: list[dict[str, str]] = []
+                else:
+                    chunks, warnings = self._extract_submit_and_seal(
+                        event, context, heartbeat
+                    )
                 heartbeat.assert_healthy()
                 evidence = self._embed_persist_verify(
-                    event, context, grant, chunks, heartbeat
+                    event, context, grant, chunks, warnings, heartbeat
                 )
                 self._protocol.authorise_publication(context, evidence)
+                self._protocol.renew(context)
                 heartbeat.assert_healthy()
                 provisional, published = self._scopes(event, grant)
                 self._vector_store.publish(provisional)
@@ -165,8 +172,25 @@ class IngestionOrchestrator:
                 heartbeat.assert_healthy()
                 self._protocol.complete(context, evidence)
                 return ProcessingOutcome(True, "indexed")
-        except HeartbeatLost:
+        except HeartbeatLost as exception:
+            if (
+                isinstance(exception.cause, IngestionProtocolError)
+                and exception.cause.code == "document_deleting"
+            ):
+                try:
+                    self._protocol.cancel(context)
+                except Exception:  # noqa: BLE001 -- unconfirmed cancellation must retry
+                    return ProcessingOutcome(False, "cancellation_unconfirmed")
+                return ProcessingOutcome(True, "cancelled")
             return ProcessingOutcome(False, "heartbeat_lost")
+        except IngestionProtocolError as exception:
+            if exception.code == "document_deleting":
+                try:
+                    self._protocol.cancel(context)
+                except Exception:  # noqa: BLE001 -- unconfirmed cancellation must retry
+                    return ProcessingOutcome(False, "cancellation_unconfirmed")
+                return ProcessingOutcome(True, "cancelled")
+            return ProcessingOutcome(False, exception.code)
         except ExtractionFailure as exception:
             return self._processing_failure(
                 context,
@@ -266,7 +290,7 @@ class IngestionOrchestrator:
         event: dict[str, Any],
         context: dict[str, Any],
         heartbeat: CoordinatedHeartbeat,
-    ) -> list[dict[str, Any]]:
+    ) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
         source = self._source(event)
         extraction_context = ExtractionContext(
             workspace_id=UUID(str(event["workspace_id"])),
@@ -310,7 +334,11 @@ class IngestionOrchestrator:
                 "configuration_fingerprint": result.configuration_fingerprint,
             },
         )
-        return chunks
+        warnings = [
+            {"code": warning.code, "message": warning.message}
+            for warning in (*extracted.warnings, *result.warnings)
+        ][:20]
+        return chunks, warnings
 
     def _resume_chunks(self, context: dict[str, Any]) -> list[dict[str, Any]]:
         cursor = 0
@@ -331,6 +359,7 @@ class IngestionOrchestrator:
         context: dict[str, Any],
         grant: ClaimGrant,
         chunks: list[dict[str, Any]],
+        warnings: list[dict[str, str]],
         heartbeat: CoordinatedHeartbeat,
     ) -> dict[str, Any]:
         profile = self._embedding_profile
@@ -379,6 +408,8 @@ class IngestionOrchestrator:
                 )
                 sparse_embeddings.extend(sparse_result.encodings)
         vector_space = self._vector_space(grant)
+        self._protocol.renew(context)
+        heartbeat.assert_healthy()
         self._vector_store.ensure_vector_space(vector_space)
         identities = self._point_identities(event, grant, chunks)
         by_chunk = {item.source_id: item for item in embeddings}
@@ -428,7 +459,7 @@ class IngestionOrchestrator:
                 else None
             ),
             "workspace_corpus_generation_id": grant.workspace_corpus_generation_id,
-            "warnings": [],
+            "warnings": warnings,
         }
 
     def _point_identities(

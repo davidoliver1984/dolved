@@ -40,6 +40,7 @@ use LogicException;
     'publication_authorised_at',
     'completed_at',
     'failed_at',
+    'cancelled_at',
     'failure_code',
     'failure_message',
 ])]
@@ -82,6 +83,7 @@ class IngestionEventClaim extends Model
             'publication_authorised_at' => 'immutable_datetime',
             'completed_at' => 'immutable_datetime',
             'failed_at' => 'immutable_datetime',
+            'cancelled_at' => 'immutable_datetime',
         ];
     }
 

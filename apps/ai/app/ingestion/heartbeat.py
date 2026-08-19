@@ -20,6 +20,7 @@ class CoordinatedHeartbeat:
         self._healthy = threading.Event()
         self._healthy.set()
         self._thread = threading.Thread(target=self._run, daemon=True)
+        self._failure: Exception | None = None
 
     def __enter__(self) -> Self:
         self._thread.start()
@@ -31,23 +32,32 @@ class CoordinatedHeartbeat:
 
     def assert_healthy(self) -> None:
         if not self._healthy.is_set():
-            raise HeartbeatLost("The processing lease or SQS visibility is uncertain.")
+            raise HeartbeatLost(
+                "The processing lease or SQS visibility is uncertain.",
+                cause=self._failure,
+            )
 
     def _run(self) -> None:
         while not self._stop.wait(self._interval):
             cycle_healthy = True
             try:
                 self._renew_lease()
-            except Exception:  # noqa: BLE001 -- loss of either authority is fatal
+            except Exception as exception:  # noqa: BLE001 -- loss of either authority is fatal
                 cycle_healthy = False
+                if self._failure is None:
+                    self._failure = exception
             try:
                 self._extend_visibility()
-            except Exception:  # noqa: BLE001 -- both operations must be attempted
+            except Exception as exception:  # noqa: BLE001 -- both operations must be attempted
                 cycle_healthy = False
+                if self._failure is None:
+                    self._failure = exception
             if not cycle_healthy:
                 self._healthy.clear()
                 return
 
 
 class HeartbeatLost(RuntimeError):
-    pass
+    def __init__(self, message: str, *, cause: Exception | None = None) -> None:
+        super().__init__(message)
+        self.cause = cause

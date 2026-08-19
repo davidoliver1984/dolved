@@ -50,6 +50,10 @@ class ClaimDocumentIngestion
                 if ($attempt->status === IngestionAttemptStatus::Failed) {
                     return new IngestionClaimResult(IngestionClaimOutcome::PermanentlyFailed, DocumentStatus::Failed);
                 }
+                if ($attempt->status === IngestionAttemptStatus::Cancelled
+                    || in_array($document->status, [DocumentStatus::Deleting, DocumentStatus::Deleted], true)) {
+                    return new IngestionClaimResult(IngestionClaimOutcome::StaleEvent, $document->status);
+                }
                 if ($attempt->lease_expires_at !== null && $attempt->lease_expires_at->isFuture()) {
                     return new IngestionClaimResult(IngestionClaimOutcome::OwnedByAnotherWorker, $document->status);
                 }

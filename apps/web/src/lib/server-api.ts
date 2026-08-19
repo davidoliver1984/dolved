@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { User, Workspace } from "@/lib/api";
+import type { DocumentPage, User, Workspace } from "@/lib/api";
 import { forwardedAuthCookieHeader } from "@/lib/auth-cookies";
 import type { DocumentUploadConfiguration } from "@/lib/document-upload";
 import { serverEnvironment } from "@/lib/env/server";
@@ -94,4 +94,16 @@ export async function workspaceUploadConfiguration(
   };
 
   return payload.data;
+}
+
+export async function initialWorkspaceDocuments(
+  workspacePublicId: string,
+): Promise<DocumentPage> {
+  const response = await serverFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/documents?per_page=25`,
+  );
+  if (!response.ok) {
+    throw new Error("The workspace document list is unavailable.");
+  }
+  return (await response.json()) as DocumentPage;
 }

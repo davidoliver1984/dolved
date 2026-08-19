@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use App\Enums\DocumentStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -47,6 +48,7 @@ class ConversationResource extends JsonResource
                         'citations' => $part->evidenceSnapshots->map(fn ($snapshot): array => [
                             'id' => $snapshot->public_id,
                             'document_id' => $snapshot->document?->public_id,
+                            'source_removed' => $snapshot->document?->status === DocumentStatus::Deleted,
                             'cited_text' => $snapshot->cited_text_verbatim,
                             'source_provenance' => $snapshot->source_provenance,
                         ])->all(),

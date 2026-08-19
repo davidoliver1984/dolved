@@ -76,7 +76,11 @@ class CompleteIngestionAttempt
             $workspace->forceFill([
                 'active_workspace_corpus_generation_id' => $generation->id,
             ])->save();
-            $document->forceFill(['status' => DocumentStatus::Indexed])->save();
+            $document->forceFill([
+                'status' => DocumentStatus::Indexed,
+                'failure_category' => null,
+                'failure_message' => null,
+            ])->save();
             $attempt->forceFill([
                 'status' => IngestionAttemptStatus::Completed,
                 'completed_at' => now(),

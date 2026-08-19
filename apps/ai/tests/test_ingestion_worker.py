@@ -4,6 +4,7 @@ from typing import cast
 
 import pytest
 
+from app.deletion.orchestrator import DeletionResult, DocumentDeletionOrchestrator
 from app.ingestion.claim_client import ClaimDisposition, IngestionClaimClient
 from app.ingestion.contract import CONTRACT_DIRECTORY
 from app.ingestion.orchestrator import IngestionOrchestrator, ProcessingOutcome
@@ -204,3 +205,43 @@ def test_full_orchestration_acknowledges_only_authoritative_terminal_outcomes(
     worker.run_once()
 
     assert queue.acknowledged == expected
+
+
+def test_deletion_event_routes_only_to_deletion_orchestrator() -> None:
+    deletion_event = json.dumps(
+        {
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "event_type": "document.deletion.requested",
+            "event_version": 1,
+            "occurred_at": "2026-08-19T10:00:00Z",
+            "workspace_id": "200c38eb-8fcf-341a-9db0-07c4e6ebff01",
+            "document_id": "168cec21-f2b1-348b-9b08-01e9befe4181",
+            "correlation_id": "749b6237-6e17-406b-a4e6-1f8a23d0ca9b",
+            "vector_scopes": [],
+        },
+        separators=(",", ":"),
+    )
+
+    class FakeDeletionOrchestrator:
+        called = False
+
+        def process(self, **_: object) -> DeletionResult:
+            self.called = True
+            return DeletionResult(True, "deleted")
+
+    queue = FakeQueue([message("deletion-1", deletion_event)])
+    claims = FakeClaimClient(ClaimDisposition.RETRY)
+    deletion = FakeDeletionOrchestrator()
+    worker = IngestionWorker(
+        queue=cast(SqsIngestionQueue, queue),
+        claim_client=cast(IngestionClaimClient, claims),
+        stop_event=threading.Event(),
+        error_wait_seconds=0.1,
+        deletion_orchestrator=cast(DocumentDeletionOrchestrator, deletion),
+    )
+
+    worker.run_once()
+
+    assert deletion.called is True
+    assert claims.event_ids == []
+    assert queue.acknowledged == ["deletion-1"]

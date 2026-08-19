@@ -1,3 +1,4 @@
+import json
 import logging
 import threading
 import time
@@ -6,6 +7,11 @@ from opentelemetry import metrics, trace
 from opentelemetry.propagate import extract
 from opentelemetry.trace import SpanKind, Status, StatusCode
 
+from app.deletion.contract import (
+    InvalidDocumentDeletionEvent,
+    parse_and_validate_deletion_event,
+)
+from app.deletion.orchestrator import DocumentDeletionOrchestrator
 from app.ingestion.claim_client import ClaimDisposition, IngestionClaimClient
 from app.ingestion.contract import InvalidIngestionEvent, parse_and_validate_event
 from app.ingestion.orchestrator import IngestionOrchestrator
@@ -24,6 +30,7 @@ class IngestionWorker:
         stop_event: threading.Event,
         error_wait_seconds: float,
         orchestrator: IngestionOrchestrator | None = None,
+        deletion_orchestrator: DocumentDeletionOrchestrator | None = None,
         reconcile_dlq: bool = False,
     ) -> None:
         self._queue = queue
@@ -31,6 +38,7 @@ class IngestionWorker:
         self._stop_event = stop_event
         self._error_wait_seconds = error_wait_seconds
         self._orchestrator = orchestrator
+        self._deletion_orchestrator = deletion_orchestrator
         self._reconcile_dlq = reconcile_dlq
 
     def run_once(self) -> int:
@@ -116,6 +124,31 @@ class IngestionWorker:
         context: dict[str, object],
         attributes: dict[str, object],
     ) -> str:
+
+        try:
+            discriminator = json.loads(message.body)
+        except json.JSONDecodeError:
+            discriminator = None
+        if (
+            isinstance(discriminator, dict)
+            and discriminator.get("event_type") == "document.deletion.requested"
+        ):
+            try:
+                deletion_event = parse_and_validate_deletion_event(message.body)
+            except InvalidDocumentDeletionEvent:
+                logger.warning(
+                    "Document deletion event is poison and remains unacknowledged.",
+                    extra={**context, "processing_outcome": "invalid_event"},
+                )
+                return "invalid_event"
+            if self._deletion_orchestrator is None:
+                return "deletion_orchestrator_unavailable"
+            deletion_result = self._deletion_orchestrator.process(
+                event=deletion_event, raw_body=message.body
+            )
+            if deletion_result.acknowledge:
+                self._queue.acknowledge(message)
+            return deletion_result.code
 
         try:
             event = parse_and_validate_event(message.body)

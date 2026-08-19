@@ -711,6 +711,14 @@ for ingestion quiescence before verified cleanup, preserving historical
 usage is backed by content-free, deletion-independent activity records and is a
 tenant-facing estimate/projection rather than billing-grade accounting.
 
+**Document administration implemented 2026-08-19** (Stage 19.1): active
+workspace members can inspect tenant-scoped document state, metadata, warnings
+and safe failures. Owner/admin retry is idempotent. Owner/admin deletion is a
+durable asynchronous operation that establishes ingestion quiescence before
+Laravel-scoped Python vector cleanup, then removes source objects and chunks
+without erasing historical citation snapshots. Tenant/membership controls and
+usage visibility remain for Stages 19.2 and 19.3.
+
 ---
 
 ## Phase 20 — Observability and Operations
@@ -885,7 +893,7 @@ A phase is complete only when:
 | Retrieval | ⬜ Not Started |
 | Grounded Generation | ⬜ Not Started |
 | Conversation and Streaming | ⬜ Not Started |
-| Administration | ⬜ Not Started |
+| Administration | 🟨 In Progress |
 | Observability and Operations | ⬜ Not Started |
 | Testing and Quality Strategy | ⬜ Not Started |
 | CI/CD and Production Readiness | ⬜ Not Started |

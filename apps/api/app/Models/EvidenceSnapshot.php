@@ -14,7 +14,10 @@ class EvidenceSnapshot extends Model
 
     protected function casts(): array
     {
-        return ['source_provenance' => 'array'];
+        return [
+            'source_provenance' => 'array',
+            'source_chunk_ordinal' => 'integer',
+        ];
     }
 
     public function generatedAnswer(): BelongsTo

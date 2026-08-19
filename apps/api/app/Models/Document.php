@@ -147,4 +147,24 @@ class Document extends Model
     {
         return $this->hasMany(DocumentChunk::class);
     }
+
+    public function ingestionAttempts(): HasMany
+    {
+        return $this->hasMany(IngestionEventClaim::class);
+    }
+
+    public function latestIngestionAttempt(): HasOne
+    {
+        return $this->hasOne(IngestionEventClaim::class)->latestOfMany();
+    }
+
+    public function ingestionRetries(): HasMany
+    {
+        return $this->hasMany(DocumentIngestionRetry::class);
+    }
+
+    public function deletionOperation(): HasOne
+    {
+        return $this->hasOne(DocumentDeletionOperation::class);
+    }
 }

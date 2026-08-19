@@ -17,6 +17,15 @@ return [
         1,
         (int) env('DOCUMENT_UPLOAD_CONCURRENCY', 3),
     ),
+    'administration_queue' => env('DOCUMENT_ADMINISTRATION_QUEUE', 'document-administration'),
+    'deletion_quiescence_retry_seconds' => max(
+        1,
+        (int) env('DOCUMENT_DELETION_QUIESCENCE_RETRY_SECONDS', 5),
+    ),
+    'deletion_contract_path' => env(
+        'DOCUMENT_DELETION_CONTRACT_PATH',
+        base_path('../../contracts/events/document-deletion-requested/v1.schema.json'),
+    ),
     'formats' => [
         'pdf' => ['application/pdf'],
         'docx' => [

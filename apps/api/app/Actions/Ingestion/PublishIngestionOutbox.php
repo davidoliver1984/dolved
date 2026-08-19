@@ -7,6 +7,7 @@ namespace App\Actions\Ingestion;
 use App\Contracts\Ingestion\IngestionEventPublisher;
 use App\Exceptions\InvalidIngestionEvent;
 use App\Models\OutboxEvent;
+use App\Services\Documents\DocumentDeletionContractValidator;
 use App\Services\Ingestion\DocumentIngestionContractValidator;
 use App\Telemetry\TelemetryAttributeAllowlist;
 use App\Telemetry\TelemetryLifecycle;
@@ -34,7 +35,8 @@ class PublishIngestionOutbox
     private readonly HistogramInterface $publicationDuration;
 
     public function __construct(
-        private readonly DocumentIngestionContractValidator $validator,
+        private readonly DocumentIngestionContractValidator $ingestionValidator,
+        private readonly DocumentDeletionContractValidator $deletionValidator,
         private readonly IngestionEventPublisher $publisher,
         TracerProviderInterface $tracerProvider,
         MeterProviderInterface $meterProvider,
@@ -114,7 +116,7 @@ class PublishIngestionOutbox
             'rag.document.id' => $event->document_public_id,
         ];
         $span = $this->tracer
-            ->spanBuilder('messaging.publish document.ingestion.requested')
+            ->spanBuilder("messaging.publish {$event->event_type}")
             ->setParent($this->parentContext($event))
             ->setSpanKind(SpanKind::KIND_PRODUCER)
             ->setAttributes($this->allowlist->trace($attributes))
@@ -124,7 +126,11 @@ class PublishIngestionOutbox
 
         try {
             try {
-                $this->validator->validate($event->payload);
+                match ($event->event_type) {
+                    'document.ingestion.requested' => $this->ingestionValidator->validate($event->payload),
+                    'document.deletion.requested' => $this->deletionValidator->validate($event->payload),
+                    default => throw new InvalidIngestionEvent('The outbox event type is unsupported.'),
+                };
             } catch (InvalidIngestionEvent $exception) {
                 $this->markTerminalFailure($event, $exception);
                 $summary['failed']++;

@@ -13063,7 +13063,7 @@ Allow authorised users to inspect, retry and delete documents.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-19.
 
 ### Planned capabilities
 
@@ -13096,6 +13096,60 @@ disposable source chunk before hard chunk deletion is enabled.
 * Delete removes or schedules removal of derived vectors.
 * Failures are understandable without exposing secrets.
 * Cross-tenant administration is impossible.
+
+### Actual implementation
+
+* Added tenant-scoped document list and detail resources with bounded filtering,
+  search and pagination. The read model exposes authoritative lifecycle state,
+  source metadata, safe failure details, persisted extraction warnings and
+  visibly stalled deletion operations without exposing storage keys or worker
+  credentials.
+* Added server-authorised owner/admin retry and delete capabilities while
+  retaining read access for ordinary active members. Retry reuses the immutable
+  source identity, is serialized under the document lock, and uses a durable
+  per-document idempotency-key ledger before publishing through the existing
+  ingestion outbox.
+* Added asynchronous document deletion as a Laravel-owned durable operation.
+  `DELETING` blocks new claims and lease renewal; active attempts either report
+  the new `Cancelled` terminal state over a distinct HMAC purpose or expire.
+  Only then does Laravel durably enumerate the union of attempt and corpus-
+  assignment generation scopes and publish the typed deletion event.
+* Added the bounded Python deletion worker path. It accepts only Laravel's exact
+  typed scopes, uses filter-based `delete(scope)` rather than collection
+  removal, verifies zero remaining points and distinguishes authoritative
+  collection absence from retryable unavailability and malformed scope.
+* Added final Laravel cleanup of the source object, corpus pivots and content-
+  bearing chunks only after verified vector cleanup. Existing and future
+  `EvidenceSnapshot` rows own stable source-chunk/event lineage, their chunk FK
+  becomes nullable with `nullOnDelete`, and historical citations explicitly
+  report that their source document has been removed.
+* Transported extraction/normalisation warnings already produced by Python into
+  the validated publication evidence persisted by Laravel. Successful retry
+  clears the document's previous failure fields only when ingestion actually
+  reaches its terminal success state.
+* Added the workspace document-administration interface with authoritative
+  status cards, filtering, pagination, safe diagnostics, retry and an explicit
+  asynchronous deletion confirmation that preserves prior conversation
+  citations.
+
+### Verification evidence
+
+* Focused Laravel administration, snapshot, claim, publication and end-to-end
+  ingestion suites: 79 tests and 389 assertions passed.
+* Full Laravel suite: 287 tests passed and 2 skipped; 8 evaluation-definition
+  tests require `/evaluation/engineering`, which is intentionally absent from
+  the current isolated conversation runtime. No R19-S01 test failed.
+* Python R19-S01 deletion/ingestion/worker/Qdrant suite: 35 tests passed.
+* Environment-compatible broad Python suite: 544 tests passed and 3 skipped;
+  the remaining 2 tests require the intentionally absent engineering
+  expectations mount. The live-provider collector and one repository-path-
+  specific generation collector were excluded from this provider-free gate.
+* Ruff passed for the application and changed tests; Ruff formatting reported
+  139 files already formatted; Mypy passed all 136 application source files.
+* Web verification: 11 test files and 33 tests passed; ESLint and TypeScript
+  passed; the production Next.js build completed successfully.
+* Pint, JSON parsing and `git diff --check` passed.
+* No provider calls were made.
 
 ### Commit boundary
 

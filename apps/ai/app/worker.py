@@ -6,6 +6,8 @@ from types import FrameType
 
 import boto3  # type: ignore[import-untyped]
 
+from app.deletion.client import DocumentDeletionClient
+from app.deletion.orchestrator import DocumentDeletionOrchestrator
 from app.embedding.factory import create_deferred_embedder, embedding_profile
 from app.ingestion.claim_client import IngestionClaimClient
 from app.ingestion.orchestrator import IngestionOrchestrator
@@ -63,18 +65,27 @@ def build_worker(
         max_attempts=settings.ingestion_worker_callback_max_attempts,
         initial_backoff_seconds=settings.ingestion_worker_callback_backoff_seconds,
     )
+    vector_store = create_vector_store(settings)
     orchestrator = IngestionOrchestrator(
         protocol=protocol,
         object_store=s3_client,
         embedder=create_deferred_embedder(settings),
         embedding_profile=embedding_profile(settings),
         sparse_encoder=create_deferred_sparse_encoder(settings),
-        vector_store=create_vector_store(settings),
+        vector_store=vector_store,
         queue=queue,
         heartbeat_seconds=settings.ingestion_worker_heartbeat_seconds,
         embedding_batch_size=settings.embedding_batch_size,
         chunk_batch_size=settings.ingestion_chunk_batch_size,
         resume_page_size=settings.ingestion_resume_page_size,
+    )
+    deletion_orchestrator = DocumentDeletionOrchestrator(
+        client=DocumentDeletionClient(
+            base_url=settings.ingestion_worker_api_url,
+            timeout_seconds=settings.ingestion_worker_api_timeout_seconds,
+            signer=signer,
+        ),
+        vector_store=vector_store,
     )
 
     return IngestionWorker(
@@ -83,6 +94,7 @@ def build_worker(
         stop_event=stop_event,
         error_wait_seconds=settings.ingestion_worker_error_wait_seconds,
         orchestrator=orchestrator,
+        deletion_orchestrator=deletion_orchestrator,
         reconcile_dlq=reconcile_dlq,
     )
 

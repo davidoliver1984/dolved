@@ -58,6 +58,12 @@ final class PersistGeneratedAnswer
                     || ! hash_equals((string) $chunk->text, $evidence->text)) {
                     throw new GenerationException('Evidence changed or escaped the authorised workspace before persistence.');
                 }
+                $sourceIngestionEventId = DB::table('ingestion_event_claims')
+                    ->where('id', $evidence->ingestionEventClaimId)
+                    ->value('event_id');
+                if (! is_string($sourceIngestionEventId)) {
+                    throw new GenerationException('Evidence ingestion lineage is unavailable.');
+                }
                 $byHandle[$evidence->evidenceId] = EvidenceSnapshot::query()->create([
                     'public_id' => (string) Str::uuid(),
                     'workspace_id' => $authorised->workspace->id,
@@ -66,6 +72,9 @@ final class PersistGeneratedAnswer
                     'document_chunk_id' => $evidence->documentChunkId,
                     'document_id' => $evidence->documentId,
                     'ingestion_event_claim_id' => $evidence->ingestionEventClaimId,
+                    'source_chunk_public_id' => $chunk->public_id,
+                    'source_chunk_ordinal' => $chunk->ordinal,
+                    'source_ingestion_event_id' => $sourceIngestionEventId,
                     'source_provenance' => $evidence->sourceProvenance,
                     'cited_text_verbatim' => $evidence->text,
                     'content_digest' => hash('sha256', $evidence->text),

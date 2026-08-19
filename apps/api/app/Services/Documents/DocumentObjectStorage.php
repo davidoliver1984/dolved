@@ -71,6 +71,25 @@ class DocumentObjectStorage
         }
     }
 
+    public function delete(Document $document): void
+    {
+        try {
+            $disk = $this->filesystems->disk(
+                (string) config('documents.storage_disk'),
+            );
+
+            if ($disk->exists($document->storage_key) && ! $disk->delete($document->storage_key)) {
+                throw DocumentUploadException::storageUnavailable();
+            }
+        } catch (DocumentUploadException $exception) {
+            throw $exception;
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw DocumentUploadException::storageUnavailable();
+        }
+    }
+
     /**
      * @param  array<string, mixed>  $headers
      * @return array<string, string>

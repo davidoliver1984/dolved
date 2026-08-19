@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R19",
-    "current_session": "R19-S01",
-    "next_action": "Begin R19-S01 implementation against accepted ADR-0025 — build tenant-scoped document administration on the completed conversation and streaming platform.",
-    "completed_through": "R18-S04",
+    "current_session": "R19-S02",
+    "next_action": "Begin R19-S02 implementation against accepted ADR-0025 — build tenant and membership administration on the completed document-administration boundary.",
+    "completed_through": "R19-S01",
     "completed_phase_count": 19,
     "total_phase_count": 24
   },
@@ -3715,8 +3715,8 @@
           "guide_stage": "Stage 19.1 \u2014 Build Document Administration",
           "title": "Build Document Administration",
           "guide_start_line": 13058,
-          "guide_end_line": 13104,
-          "status": "not_started",
+          "guide_end_line": 13158,
+          "status": "completed",
           "objective": "Allow authorised users to inspect, retry and delete documents.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -3725,7 +3725,7 @@
             "stage": "Stage 19.1 \u2014 Build Document Administration",
             "source_lines": {
               "start": 13058,
-              "end": 13104
+              "end": 13158
             }
           },
           "workflow": [
@@ -3748,16 +3748,24 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r19-s01-build-document-administration.md",
-            "status": "not_started"
+            "status": "completed",
+            "actual_path": "docs/journal/2026-08-19-r19-s01-build-document-administration.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Tenant-scoped document list/detail with authoritative lifecycle, metadata, warnings, filtering and pagination",
+            "Owner/admin-only idempotent ingestion retry using the existing outbox pipeline",
+            "Asynchronous deletion with ingestion quiescence, exact vector scopes and verified cleanup",
+            "EvidenceSnapshot lineage remains durable after source chunks are deleted",
+            "79 focused Laravel tests, 35 focused Python tests and 33 web tests passed with Pint, Ruff, Mypy, ESLint, TypeScript and production build clean",
+            "docs/journal/2026-08-19-r19-s01-build-document-administration.md"
+          ]
         },
         {
           "id": "R19-S02",
           "guide_stage": "Stage 19.2 \u2014 Build Tenant and Membership Administration",
           "title": "Build Tenant and Membership Administration",
-          "guide_start_line": 13107,
-          "guide_end_line": 13137,
+          "guide_start_line": 13161,
+          "guide_end_line": 13191,
           "status": "not_started",
           "objective": "Allow authorised tenant administrators to manage members and roles.",
           "session_mode": "implementation",
@@ -3766,8 +3774,8 @@
             "phase": "Phase 19 \u2014 Administration",
             "stage": "Stage 19.2 \u2014 Build Tenant and Membership Administration",
             "source_lines": {
-              "start": 13107,
-              "end": 13137
+              "start": 13161,
+              "end": 13191
             }
           },
           "workflow": [
@@ -3798,8 +3806,8 @@
           "id": "R19-S03",
           "guide_stage": "Stage 19.3 \u2014 Add Usage Visibility",
           "title": "Add Usage Visibility",
-          "guide_start_line": 13140,
-          "guide_end_line": 13184,
+          "guide_start_line": 13194,
+          "guide_end_line": 13238,
           "status": "not_started",
           "objective": "Expose document, storage, ingestion and model-usage information.",
           "session_mode": "implementation",
@@ -3808,8 +3816,8 @@
             "phase": "Phase 19 \u2014 Administration",
             "stage": "Stage 19.3 \u2014 Add Usage Visibility",
             "source_lines": {
-              "start": 13140,
-              "end": 13184
+              "start": 13194,
+              "end": 13238
             }
           },
           "workflow": [
@@ -3837,8 +3845,8 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 13184,
-      "status": "not_started",
+      "guide_end_line": 13238,
+      "status": "in_progress",
       "objective": "Provide operational visibility and safe tenant-level controls.",
       "gate": {
         "id": "R19-GATE",

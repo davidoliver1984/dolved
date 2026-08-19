@@ -230,6 +230,19 @@ class QdrantVectorStore:
                 "The vector-store scope could not be counted."
             ) from exception
 
+    def collection_exists(self, vector_space: VectorSpace) -> bool:
+        try:
+            exists = self._client.collection_exists(vector_space.collection_name)
+            if exists:
+                self._validate_vector_space_safe(vector_space)
+            return bool(exists)
+        except VectorStoreError:
+            raise
+        except Exception as exception:
+            raise VectorStoreUnavailableError(
+                "The vector-store collection could not be inspected."
+            ) from exception
+
     def verify_completeness(
         self, request: VectorCompletenessRequest
     ) -> VectorCompletenessReport:

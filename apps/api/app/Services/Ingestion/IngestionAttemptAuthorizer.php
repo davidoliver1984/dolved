@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Ingestion;
 
+use App\Enums\DocumentStatus;
 use App\Enums\IngestionAttemptStatus;
 use App\Exceptions\IngestionAttemptException;
 use App\Models\IngestionEventClaim;
@@ -18,6 +19,8 @@ class IngestionAttemptAuthorizer
         string $leaseToken,
         bool $allowCompleted = false,
         bool $allowFailed = false,
+        bool $allowCancelled = false,
+        bool $allowDeleting = false,
     ): void {
         if (
             $attempt->event_id !== $eventId
@@ -27,6 +30,18 @@ class IngestionAttemptAuthorizer
             throw IngestionAttemptException::invalid(
                 'attempt_scope_mismatch',
                 'The ingestion attempt does not match the requested scope.',
+            );
+        }
+
+        $attempt->loadMissing('document');
+        if (! $allowDeleting && in_array(
+            $attempt->document->status,
+            [DocumentStatus::Deleting, DocumentStatus::Deleted],
+            true,
+        )) {
+            throw IngestionAttemptException::invalid(
+                'document_deleting',
+                'The ingestion operation is no longer authorised because the document is being deleted.',
             );
         }
 
@@ -42,6 +57,8 @@ class IngestionAttemptAuthorizer
 
         $terminalRetry = ($allowCompleted && $attempt->status === IngestionAttemptStatus::Completed)
             || ($allowFailed && $attempt->status === IngestionAttemptStatus::Failed);
+        $terminalRetry = $terminalRetry
+            || ($allowCancelled && $attempt->status === IngestionAttemptStatus::Cancelled);
         if (! $terminalRetry && ($attempt->lease_expires_at === null || $attempt->lease_expires_at->isPast())) {
             throw IngestionAttemptException::invalid(
                 'expired_lease',

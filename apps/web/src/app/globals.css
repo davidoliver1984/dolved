@@ -122,6 +122,67 @@ progress {
   border-color: var(--ink);
 }
 
+.danger-button {
+  background: #fff5f1;
+  border: 1px solid #b83b21;
+  border-radius: 999px;
+  color: #8e2d18;
+  cursor: pointer;
+  font-weight: 800;
+  min-height: 42px;
+  padding: 0 1.1rem;
+}
+
+.document-administration {
+  border-top: 1px solid var(--line);
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+}
+
+.document-admin-heading,
+.document-card-title,
+.document-actions {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.document-pagination {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.document-admin-heading h2 { font-size: 2rem; margin-top: 0.4rem; }
+.document-filters { align-items: end; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.document-filters label { color: var(--muted); display: grid; font-size: 0.75rem; font-weight: 800; gap: 0.3rem; }
+.document-filters input,
+.document-filters select { background: var(--card); border: 1px solid var(--line); border-radius: 10px; min-height: 42px; padding: 0 0.75rem; }
+.document-list { display: grid; gap: 1rem; margin-top: 1.25rem; }
+.document-card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 1.25rem; }
+.document-card-title h3 { overflow-wrap: anywhere; }
+.document-card-title p,
+.document-empty { color: var(--muted); margin-top: 0.3rem; }
+.document-status { background: var(--mint); border-radius: 999px; font-size: 0.72rem; font-weight: 900; padding: 0.45rem 0.7rem; text-transform: uppercase; }
+.status-failed { background: #ffe0d8; color: #8e2d18; }
+.status-deleting, .status-deleted { background: #e2e3e0; color: #4d5752; }
+.document-metadata { display: grid; gap: 0.75rem; grid-template-columns: repeat(3, 1fr); margin: 1rem 0; }
+.document-metadata dt { color: var(--muted); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+.document-metadata dd { margin-top: 0.2rem; }
+.document-failure,
+.document-notice { background: #fff0ea; border-left: 4px solid var(--accent); margin-top: 1rem; padding: 0.85rem; }
+.document-warnings { margin-top: 1rem; }
+.document-warnings ul { margin: 0.75rem 0 0 1.25rem; }
+.document-actions { justify-content: flex-end; margin-top: 1rem; }
+
+@media (max-width: 760px) {
+  .document-admin-heading { align-items: stretch; flex-direction: column; }
+  .document-metadata { grid-template-columns: 1fr; }
+}
+
 .hero {
   max-width: 980px;
   padding: 11vh 0 9vh;

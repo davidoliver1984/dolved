@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { DocumentUploadPanel } from "@/components/DocumentUploadPanel";
+import { DocumentAdministration } from "@/components/DocumentAdministration";
 import { ChatWorkspace } from "@/components/ChatWorkspace";
 import { WorkspaceSwitcher } from "@/components/WorkspaceSwitcher";
 import {
   userWorkspace,
   userWorkspaces,
+  initialWorkspaceDocuments,
   workspaceUploadConfiguration,
 } from "@/lib/server-api";
 
@@ -21,6 +23,8 @@ export default async function WorkspacePage({
   if (!activeWorkspace || !uploadConfiguration) {
     notFound();
   }
+
+  const documentPage = await initialWorkspaceDocuments(workspacePublicId);
 
   return (
     <div className="workspace-layout">
@@ -52,6 +56,11 @@ export default async function WorkspacePage({
             workspacePublicId={activeWorkspace.public_id}
           />
         </details>
+
+        <DocumentAdministration
+          initialPage={documentPage}
+          workspacePublicId={activeWorkspace.public_id}
+        />
       </div>
     </div>
   );

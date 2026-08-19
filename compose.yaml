@@ -210,7 +210,7 @@ services:
       target: development
     image: rag-platform-api:development
     init: true
-    command: php artisan queue:work conversation --queue=conversation-generation --tries=1 --timeout=900 --sleep=1
+    command: php artisan queue:work conversation --queue=conversation-generation,document-administration --tries=1 --timeout=900 --sleep=1
     environment:
       APP_NAME: Make Time
       APP_ENV: ${APP_ENV:-local}
@@ -224,6 +224,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
       DB_QUEUE_CONNECTION: pgsql
       CONVERSATION_QUEUE: ${CONVERSATION_QUEUE:-conversation-generation}
+      DOCUMENT_ADMINISTRATION_QUEUE: ${DOCUMENT_ADMINISTRATION_QUEUE:-document-administration}
       CONVERSATION_QUEUE_RETRY_AFTER: ${CONVERSATION_QUEUE_RETRY_AFTER:-960}
       CONVERSATION_CONTEXT_TURN_LIMIT: ${CONVERSATION_CONTEXT_TURN_LIMIT:-3}
       CONVERSATION_CONTEXT_MAX_CHARACTERS: ${CONVERSATION_CONTEXT_MAX_CHARACTERS:-24000}

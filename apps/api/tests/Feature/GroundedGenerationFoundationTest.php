@@ -157,13 +157,16 @@ class GroundedGenerationFoundationTest extends TestCase
         $this->assertSame($chunk->text, $snapshot->cited_text_verbatim);
         $this->assertSame($chunk->provenance, $snapshot->source_provenance);
         $this->assertSame(hash('sha256', $chunk->text), $snapshot->content_digest);
+        $this->assertSame($chunk->public_id, $snapshot->source_chunk_public_id);
+        $this->assertSame($chunk->ordinal, $snapshot->source_chunk_ordinal);
+        $this->assertSame($chunk->ingestionAttempt->event_id, $snapshot->source_ingestion_event_id);
         $this->assertSame($snapshot->id, $answer->answerParts[0]->evidenceSnapshots[0]->id);
         $this->assertSame($snapshot->id, $answer->answerParts[1]->evidenceSnapshots[0]->id);
         $this->assertNotSame('ev-01', $answer->answerParts[0]->public_id);
-        DB::table('document_chunks')->where('id', $chunk->id)->update([
-            'text' => 'Later source state must not rewrite the citation snapshot.',
-        ]);
+        DB::table('document_chunks')->where('id', $chunk->id)->delete();
+        $this->assertNull($snapshot->fresh()->document_chunk_id);
         $this->assertSame($chunk->text, $snapshot->fresh()->cited_text_verbatim);
+        $this->assertSame($chunk->public_id, $snapshot->fresh()->source_chunk_public_id);
     }
 
     public function test_child_persistence_failure_rolls_back_the_complete_answer_graph(): void

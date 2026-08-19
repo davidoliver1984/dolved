@@ -16,6 +16,68 @@ export type Workspace = {
   role: WorkspaceRole;
 };
 
+export type AdminDocument = {
+  public_id: string;
+  source_filename: string;
+  media_type: string;
+  size_bytes: number;
+  status: string;
+  governance_status: string;
+  failure_category: string | null;
+  failure_message: string | null;
+  extraction_warnings: { code: string; message: string }[];
+  created_by?: { name: string | null };
+  deletion?: {
+    public_id: string;
+    status: string;
+    failure_code: string | null;
+    stuck: boolean;
+  } | null;
+  capabilities: { retry: boolean; delete: boolean };
+  created_at: string;
+  updated_at: string;
+};
+
+export type DocumentPage = {
+  data: AdminDocument[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+};
+
+export function workspaceDocuments(
+  workspacePublicId: string,
+  query = "",
+): Promise<DocumentPage> {
+  return apiFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/documents${query ? `?${query}` : ""}`,
+  );
+}
+
+export function retryWorkspaceDocument(
+  workspacePublicId: string,
+  documentPublicId: string,
+  idempotencyKey: string,
+): Promise<unknown> {
+  return apiFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/documents/${encodeURIComponent(documentPublicId)}/retries`,
+    { method: "POST", body: JSON.stringify({ idempotency_key: idempotencyKey }) },
+  );
+}
+
+export function deleteWorkspaceDocument(
+  workspacePublicId: string,
+  documentPublicId: string,
+): Promise<unknown> {
+  return apiFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/documents/${encodeURIComponent(documentPublicId)}`,
+    { method: "DELETE" },
+  );
+}
+
 type ValidationErrors = Record<string, string[]>;
 
 export class ApiError extends Error {

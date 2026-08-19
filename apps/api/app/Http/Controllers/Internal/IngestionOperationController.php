@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Internal;
 
 use App\Actions\Ingestion\AuthoriseIngestionPublication;
+use App\Actions\Ingestion\CancelIngestionAttempt;
 use App\Actions\Ingestion\CompleteIngestionAttempt;
 use App\Actions\Ingestion\FailIngestionAttempt;
 use App\Actions\Ingestion\RenewIngestionLease;
@@ -60,5 +61,12 @@ class IngestionOperationController extends Controller
         $attempt = $action->handle($eventId, $request->validated());
 
         return response()->json(['data' => ['outcome' => 'failed', 'document_status' => $attempt->document->status->value]]);
+    }
+
+    public function cancel(IngestionOperationRequest $request, string $eventId, CancelIngestionAttempt $action): JsonResponse
+    {
+        $attempt = $action->handle($eventId, $request->validated());
+
+        return response()->json(['data' => ['outcome' => 'cancelled', 'attempt_status' => $attempt->status->value]]);
     }
 }

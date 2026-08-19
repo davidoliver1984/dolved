@@ -136,6 +136,13 @@ class IngestionProtocolClient:
             },
         )
 
+    def cancel(self, context: dict[str, Any]) -> dict[str, Any]:
+        return self._operation(
+            context,
+            "cancel",
+            "ingestion.attempt.cancel",
+        )
+
     def _operation(
         self,
         context: dict[str, Any],

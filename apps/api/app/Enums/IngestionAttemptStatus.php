@@ -11,4 +11,5 @@ enum IngestionAttemptStatus: string
     case PublicationAuthorised = 'publication_authorised';
     case Completed = 'completed';
     case Failed = 'failed';
+    case Cancelled = 'cancelled';
 }

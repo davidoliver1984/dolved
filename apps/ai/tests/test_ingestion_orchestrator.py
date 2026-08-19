@@ -8,6 +8,8 @@ from app.embedding.models import (
     EmbeddingProfile,
     EmbeddingResult,
 )
+from app.extraction.models import ExtractionWarning
+from app.extraction.plain_text import PlainTextExtractor
 from app.ingestion.canonicalisation import chunk_content_digest
 from app.ingestion.heartbeat import CoordinatedHeartbeat, HeartbeatLost
 from app.ingestion.orchestrator import IngestionOrchestrator
@@ -220,11 +222,50 @@ def test_normal_path_seals_authorises_publishes_verifies_and_completes() -> None
 
     assert outcome.acknowledge is True
     assert outcome.code == "indexed"
-    assert protocol.calls == ["claim", "submit", "seal", "authorise", "complete"]
+    assert protocol.calls == [
+        "claim",
+        "submit",
+        "seal",
+        "renew",
+        "authorise",
+        "renew",
+        "complete",
+    ]
     assert all(
         point.publication_status is VectorPublicationStatus.PUBLISHED
         for point in vectors.points.values()
     )
+
+
+def test_extraction_warnings_reach_publication_evidence(monkeypatch: Any) -> None:
+    content = b"Canonical text for ingestion.\n"
+    event = {**EVENT, "byte_size": len(content)}
+    protocol = FakeProtocol(grant())
+    flow = orchestrator(protocol, FakeVectorStore(), content)
+
+    class WarningExtractor:
+        def extract(self, source: Any, *, context: Any) -> Any:
+            extracted = PlainTextExtractor().extract(source, context=context)
+            return extracted.model_copy(
+                update={
+                    "warnings": (
+                        ExtractionWarning(
+                            code="images_not_extracted",
+                            message="Images were not extracted.",
+                        ),
+                    )
+                }
+            )
+
+    monkeypatch.setattr(flow, "_extractor", lambda _: WarningExtractor())
+
+    outcome = flow.process(event=event, raw_body="{}", message=message())
+
+    assert outcome.acknowledge is True
+    assert protocol.evidence is not None
+    assert protocol.evidence["warnings"] == [
+        {"code": "images_not_extracted", "message": "Images were not extracted."}
+    ]
 
 
 def test_sealed_reclaim_resumes_without_reextracting_or_resubmitting() -> None:
@@ -251,7 +292,14 @@ def test_sealed_reclaim_resumes_without_reextracting_or_resubmitting() -> None:
     )
 
     assert outcome.acknowledge is True
-    assert protocol.calls == ["claim", "resume", "authorise", "complete"]
+    assert protocol.calls == [
+        "claim",
+        "resume",
+        "renew",
+        "authorise",
+        "renew",
+        "complete",
+    ]
 
 
 def test_terminal_duplicate_is_acknowledged_without_repeating_work() -> None:
@@ -321,7 +369,14 @@ def test_dlq_reconciliation_resumes_sealed_authoritative_work() -> None:
     )
 
     assert outcome == type(outcome)(True, "indexed")
-    assert protocol.calls == ["claim", "resume", "authorise", "complete"]
+    assert protocol.calls == [
+        "claim",
+        "resume",
+        "renew",
+        "authorise",
+        "renew",
+        "complete",
+    ]
 
 
 def test_permanent_extraction_failure_is_reported_before_acknowledgement() -> None:

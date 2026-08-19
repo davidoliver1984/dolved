@@ -121,7 +121,7 @@ class AuthoriseIngestionPublication
             'expected_chunk_count', 'chunk_manifest_digest', 'expected_point_count',
             'point_manifest_digest', 'embedding_profile_fingerprint',
             'sparse_profile_fingerprint', 'embedding_space_generation_id',
-            'sparse_space_generation_id', 'workspace_corpus_generation_id',
+            'sparse_space_generation_id', 'workspace_corpus_generation_id', 'warnings',
         ])->all();
     }
 }

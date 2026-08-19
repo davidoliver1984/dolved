@@ -162,6 +162,7 @@ class IngestionOperationRequest extends FormRequest
                 'failure_code' => ['required', 'string', 'max:100', 'regex:/^[a-z0-9._-]+$/'],
                 'failure_message' => ['required', 'string', 'max:1000'],
             ],
+            'ingestion.attempt.cancel' => [],
             default => [],
         });
     }

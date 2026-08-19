@@ -122,6 +122,10 @@ class EndToEndIngestionOrchestrationTest extends TestCase
         $this->assertDatabaseCount('document_chunks', 1);
         $this->assertDatabaseCount('workspace_corpus_generation_chunks', 1);
         $this->assertDatabaseCount('ingestion_audit_events', 2);
+        $this->assertSame(
+            [['code' => 'images_not_extracted', 'message' => 'Images were not extracted.']],
+            $completed->publication_evidence['warnings'],
+        );
     }
 
     public function test_chunk_conflicts_and_stale_leases_fail_closed(): void
@@ -389,7 +393,10 @@ class EndToEndIngestionOrchestrationTest extends TestCase
             'embedding_profile_fingerprint' => $attempt->embeddingSpaceGeneration->embeddingProfile->fingerprint,
             'embedding_space_generation_id' => $attempt->embeddingSpaceGeneration->public_id,
             'workspace_corpus_generation_id' => $attempt->workspaceCorpusGeneration->public_id,
-            'warnings' => [],
+            'warnings' => [[
+                'code' => 'images_not_extracted',
+                'message' => 'Images were not extracted.',
+            ]],
         ];
     }
 
