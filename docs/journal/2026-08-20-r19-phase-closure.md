@@ -56,9 +56,11 @@ git history for each file.
 
 ## Evidence
 
-- `make format-check lint typecheck` clean across Laravel, Python and web
-  after the fixes above; `make aws-status` clean; `make ps` all services
-  healthy.
+- `make format-check lint` clean across Laravel, Python and web after the
+  fixes above. Web typechecking and the Phase-19 Python source/test scope are
+  clean; the full Python test typecheck continues to report the five
+  explicitly acknowledged pre-Phase-19 evaluation-test files above.
+  `make aws-status` is clean and `make ps` reports all services healthy.
 - Laravel: 303 passed, 2 skipped, 8 failed (pre-existing missing-fixture
   evaluation tests only, unrelated to Phase 19).
 - Python: 545 passed, 3 skipped, 2 failed (same missing-fixture cause);
