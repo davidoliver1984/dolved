@@ -112,8 +112,12 @@ def main() -> int:
         help="Reconcile at most one exhausted DLQ receive batch, then exit.",
     )
     arguments = parser.parse_args()
-    configure_structured_logging()
-    telemetry = configure_telemetry(get_settings())
+    settings = get_settings()
+    configure_structured_logging(
+        service_name=settings.service_name,
+        environment=settings.environment,
+    )
+    telemetry = configure_telemetry(settings)
     stop_event = threading.Event()
 
     def request_shutdown(
@@ -123,7 +127,10 @@ def main() -> int:
         del frame
         logger.info(
             "Ingestion worker shutdown requested.",
-            extra={"signal": signal_number},
+            extra={
+                "event_name": "ingestion.worker.shutdown_requested.v1",
+                "signal": signal_number,
+            },
         )
         stop_event.set()
 

@@ -92,6 +92,7 @@ class WorkspaceAdministrationController extends Controller
                 $delivery = 'sent';
             } catch (Throwable) {
                 Log::warning('Workspace invitation delivery was unavailable.', [
+                    'event_name' => 'workspace.invitation.delivery_unavailable.v1',
                     'workspace_id' => $workspace->public_id,
                     'invitation_id' => $result['invitation']->public_id,
                     'correlation_id' => $correlationId,

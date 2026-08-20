@@ -142,6 +142,7 @@ final class TelemetrySdkFactory
     private function reportSetupFailure(Throwable $exception): void
     {
         logger()->warning('OpenTelemetry SDK setup failed; using no-op telemetry.', [
+            'event_name' => 'telemetry.setup_failed.v1',
             'error_type' => $exception::class,
         ]);
     }

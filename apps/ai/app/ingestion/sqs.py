@@ -98,6 +98,7 @@ class SqsIngestionQueue:
                 logger.warning(
                     "Malformed SQS receive entry remains unacknowledged.",
                     extra={
+                        "event_name": "ingestion.queue.invalid_envelope.v1",
                         "sqs_message_id": (
                             message_id if isinstance(message_id, str) else None
                         ),

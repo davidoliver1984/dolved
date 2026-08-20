@@ -107,7 +107,10 @@ class TelemetryLifecycle:
             except Exception:  # noqa: BLE001 - telemetry is best effort.
                 logger.warning(
                     "OpenTelemetry shutdown failed.",
-                    extra={"telemetry_outcome": "shutdown_failed"},
+                    extra={
+                        "event_name": "telemetry.shutdown_failed.v1",
+                        "telemetry_outcome": "shutdown_failed",
+                    },
                 )
 
 
@@ -156,6 +159,7 @@ def configure_telemetry(settings: Settings) -> TelemetryLifecycle:
         logger.warning(
             "OpenTelemetry SDK setup failed; using no-op telemetry.",
             extra={
+                "event_name": "telemetry.setup_failed.v1",
                 "error_type": type(exception).__name__,
                 "telemetry_outcome": "setup_failed",
             },

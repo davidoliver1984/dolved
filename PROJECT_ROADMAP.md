@@ -762,9 +762,9 @@ Make failures, latency and cross-service behaviour diagnosable.
 ### Tasks
 
 - Standardise Structured Logging
-- Add Metrics
-- Add Distributed Tracing
-- Define Operational Alerts
+- Build Operational Metrics, Platform Operations Foundation and Dashboard
+- Complete Trace Coverage, Collector Sampling and Operational-Policy Reconciliation
+- Define SLOs, Alerts and Runbooks
 
 ### Deliverable
 
@@ -772,7 +772,7 @@ Observable platform.
 
 ---
 
-### Design constraint — Phase 20 should operationalise, not rebuild, observability
+### Accepted architecture — operationalise, do not rebuild, observability
 
 Recorded 2026-07-30, arising from Phase 12 (ADR-0012) and its OpenTelemetry
 observability foundation.
@@ -785,18 +785,21 @@ otherwise need to invent from scratch. This phase's Tasks list — in
 particular "Add Metrics" and "Add Distributed Tracing" — predates that
 decision and, read literally, now substantially duplicates it.
 
-When Phase 20 is eventually reviewed, before implementation begins, its
-scope should shift from *building* observability to *operationalising* it:
-assume the OpenTelemetry foundation from Phase 12 is already in place, and
-focus this phase on what that foundation does not itself provide —
-operational dashboards, alerting, SLOs, production diagnostics and
-runbooks. "Standardise Structured Logging" remains a distinct, legitimate
-concern of its own (logging is not something Phase 12 establishes), as does
-"Define Operational Alerts" (already an operational-layer concern, not a
-foundational one).
+Accepted 2026-08-20 through
+[ADR-0026](docs/adr/0026-operationalise-platform-observability-and-incident-response.md).
+Phase 20 assumes the OpenTelemetry foundation from Phase 12 is already in
+place. It adds the missing operational layer: a shared privacy-safe logging
+boundary; complete operational metrics and a separately-authorised platform
+operations surface; coherent cross-service traces with Collector-owned
+sampling and explicit desired-policy reconciliation; and calibrated SLOs,
+alerts and runbooks. Business audit, tenant usage and operational telemetry
+remain separate systems with separate authority and retention lifecycles.
 
-This is intentionally deferred rather than actioned now — no change to this
-phase's Tasks, Objectives or Deliverable has been made yet.
+**Stage 20.1 completed 2026-08-20:** Laravel, Python HTTP/worker processes and
+Next.js server code now emit one central, allowlisted JSON vocabulary. Stable
+event names and bounded trace/correlation identifiers remain useful while
+arbitrary context and exception messages are excluded, and formatter failures
+cannot fail ordinary application work. Stage 20.2 is next.
 
 ---
 

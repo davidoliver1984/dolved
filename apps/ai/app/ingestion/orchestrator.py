@@ -286,6 +286,7 @@ class IngestionOrchestrator:
             logger.exception(
                 "Ingestion orchestration remains retryable.",
                 extra={
+                    "event_name": "document.ingestion.retryable_failure.v1",
                     "event_id": context["event_id"],
                     "error_type": type(exception).__name__,
                 },

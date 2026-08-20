@@ -59,7 +59,10 @@ class IngestionWorker:
             try:
                 self.run_once()
             except Exception:
-                logger.exception("Ingestion queue polling failed.")
+                logger.exception(
+                    "Ingestion queue polling failed.",
+                    extra={"event_name": "ingestion.queue.poll_failed.v1"},
+                )
                 self._stop_event.wait(self._error_wait_seconds)
 
     def _handle(self, message: IngestionQueueMessage) -> None:
@@ -138,7 +141,11 @@ class IngestionWorker:
             except InvalidDocumentDeletionEvent:
                 logger.warning(
                     "Document deletion event is poison and remains unacknowledged.",
-                    extra={**context, "processing_outcome": "invalid_event"},
+                    extra={
+                        **context,
+                        "event_name": "document.deletion.invalid_event.v1",
+                        "processing_outcome": "invalid_event",
+                    },
                 )
                 return "invalid_event"
             if self._deletion_orchestrator is None:
@@ -155,7 +162,11 @@ class IngestionWorker:
         except InvalidIngestionEvent:
             logger.warning(
                 "Ingestion event is poison and remains unacknowledged.",
-                extra={**context, "processing_outcome": "invalid_event"},
+                extra={
+                    **context,
+                    "event_name": "document.ingestion.invalid_event.v1",
+                    "processing_outcome": "invalid_event",
+                },
             )
             return "invalid_event"
 
@@ -196,12 +207,20 @@ class IngestionWorker:
                 self._queue.acknowledge(message)
                 logger.info(
                     "Ingestion event reached an authoritative terminal outcome.",
-                    extra={**context, "processing_outcome": result.code},
+                    extra={
+                        **context,
+                        "event_name": "document.ingestion.terminal.v1",
+                        "processing_outcome": result.code,
+                    },
                 )
             else:
                 logger.warning(
                     "Ingestion event remains unacknowledged for recovery.",
-                    extra={**context, "processing_outcome": result.code},
+                    extra={
+                        **context,
+                        "event_name": "document.ingestion.recovery_pending.v1",
+                        "processing_outcome": result.code,
+                    },
                 )
             return result.code
 
@@ -214,13 +233,21 @@ class IngestionWorker:
             self._queue.acknowledge(message)
             logger.info(
                 "Ingestion event was durably claimed and acknowledged.",
-                extra={**context, "processing_outcome": disposition.value},
+                extra={
+                    **context,
+                    "event_name": "document.ingestion.claimed.v1",
+                    "processing_outcome": disposition.value,
+                },
             )
             return disposition.value
 
         logger.warning(
             "Ingestion event remains unacknowledged.",
-            extra={**context, "processing_outcome": disposition.value},
+            extra={
+                **context,
+                "event_name": "document.ingestion.unacknowledged.v1",
+                "processing_outcome": disposition.value,
+            },
         )
 
         return disposition.value

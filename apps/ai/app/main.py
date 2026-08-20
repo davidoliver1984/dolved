@@ -11,6 +11,7 @@ from app.conversation.routes import router as conversation_router
 from app.generation.routes import router as generation_router
 from app.retrieval.routes import router as retrieval_router
 from app.settings import get_settings
+from app.structured_logging import configure_structured_logging
 from app.telemetry import (
     configure_telemetry,
     metric_attributes,
@@ -21,7 +22,12 @@ from app.telemetry import (
 @asynccontextmanager
 async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     del application
-    lifecycle = configure_telemetry(get_settings())
+    settings = get_settings()
+    configure_structured_logging(
+        service_name=settings.service_name,
+        environment=settings.environment,
+    )
+    lifecycle = configure_telemetry(settings)
 
     try:
         yield

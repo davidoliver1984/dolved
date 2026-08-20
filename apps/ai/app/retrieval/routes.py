@@ -106,7 +106,10 @@ async def authenticate(request: Request, purpose: str, settings: Settings) -> by
     except RetrievalAuthenticationError as exception:
         logger.warning(
             "Retrieval caller authentication rejected.",
-            extra={"verification_outcome": exception.reason},
+            extra={
+                "event_name": "retrieval.authentication.rejected.v1",
+                "verification_outcome": exception.reason,
+            },
         )
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
@@ -145,6 +148,7 @@ async def plan_retrieval(
         logger.warning(
             "Retrieval planning failed.",
             extra={
+                "event_name": "retrieval.planning.failed.v1",
                 "failure_category": exception.category,
                 "provider_status": exception.provider_status,
                 "systemic": exception.systemic,
@@ -203,6 +207,7 @@ async def search_retrieval(
         logger.warning(
             "Scoped retrieval failed.",
             extra={
+                "event_name": "retrieval.execution.failed.v1",
                 "failure_stage": failure["stage"],
                 "failure_category": failure["category"],
                 "failure_provider": failure["provider"],
@@ -215,7 +220,10 @@ async def search_retrieval(
     except Exception as exception:
         logger.warning(
             "Scoped retrieval failed.",
-            extra={"error_type": type(exception).__name__},
+            extra={
+                "event_name": "retrieval.execution.failed.v1",
+                "error_type": type(exception).__name__,
+            },
         )
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -354,6 +362,7 @@ async def rerank_retrieval(
         logger.warning(
             "Reranking failed.",
             extra={
+                "event_name": "retrieval.reranking.failed.v1",
                 "failure_stage": "reranker",
                 "failure_category": category,
                 "failure_provider": incoming.profile.provider,
@@ -365,7 +374,11 @@ async def rerank_retrieval(
         ) from exception
     except Exception as exception:
         logger.warning(
-            "Reranking failed.", extra={"error_type": type(exception).__name__}
+            "Reranking failed.",
+            extra={
+                "event_name": "retrieval.reranking.failed.v1",
+                "error_type": type(exception).__name__,
+            },
         )
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -416,7 +429,10 @@ async def rebuild_corpus_batch(
         logger.warning(
             "Corpus rebuild batch failed: %s.",
             type(exception).__name__,
-            extra={"error_type": type(exception).__name__},
+            extra={
+                "event_name": "corpus.rebuild.failed.v1",
+                "error_type": type(exception).__name__,
+            },
         )
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE, "Corpus rebuild failed."
@@ -450,7 +466,10 @@ async def verify_corpus(
     except Exception as exception:
         logger.warning(
             "Corpus verification failed.",
-            extra={"error_type": type(exception).__name__},
+            extra={
+                "event_name": "corpus.verification.failed.v1",
+                "error_type": type(exception).__name__,
+            },
         )
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE, "Corpus verification failed."

@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R20",
-    "current_session": "R20-S01",
-    "next_action": "Begin R20-S01 — standardise structured logging on the completed administration platform.",
-    "completed_through": "R19-S03",
+    "current_session": "R20-S02",
+    "next_action": "Begin R20-S02 — build the separately authorised platform operations foundation, complete operational metrics and expose the bounded health dashboard.",
+    "completed_through": "R20-S01",
     "completed_phase_count": 20,
     "total_phase_count": 25
   },
@@ -3896,9 +3896,9 @@
           "id": "R20-S01",
           "guide_stage": "Stage 20.1 \u2014 Standardise Structured Logging",
           "title": "Standardise Structured Logging",
-          "guide_start_line": 13322,
-          "guide_end_line": 13361,
-          "status": "not_started",
+          "guide_start_line": 13324,
+          "guide_end_line": 13391,
+          "status": "completed",
           "objective": "Emit machine-readable, correlated logs from every service.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -3906,8 +3906,8 @@
             "phase": "Phase 20 \u2014 Observability and Operations",
             "stage": "Stage 20.1 \u2014 Standardise Structured Logging",
             "source_lines": {
-              "start": 13322,
-              "end": 13361
+              "start": 13324,
+              "end": 13391
             }
           },
           "workflow": [
@@ -3929,27 +3929,34 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r20-s01-standardise-structured-logging.md",
-            "status": "not_started"
+            "path_template": "docs/journal/2026-08-20-r20-s01-standardise-structured-logging.md",
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "ADR-0026 accepted and indexed as the Phase 20 observability and incident-response architecture",
+            "Central privacy-safe structured logging boundaries implemented for Laravel, Python HTTP/worker processes and Next.js server code",
+            "Provider-free privacy/failure-isolation tests passed: Laravel 3 tests / 11 assertions, Python 33 focused tests, web 17 files / 52 tests",
+            "Collectable Python suite: 548 passed, 3 skipped; Laravel suite: 306 passed, 2 skipped; remaining failures are pre-existing missing engineering-fixture evaluation tests",
+            "Ruff lint/format, Mypy, Pint, ESLint, TypeScript, JSON validation and git diff --check passed",
+            "docs/journal/2026-08-20-r20-s01-standardise-structured-logging.md"
+          ]
         },
         {
           "id": "R20-S02",
-          "guide_stage": "Stage 20.2 \u2014 Add Metrics",
-          "title": "Add Metrics",
-          "guide_start_line": 13363,
-          "guide_end_line": 13401,
+          "guide_stage": "Stage 20.2 \u2014 Operational Metrics, Platform Operations Foundation and Dashboard",
+          "title": "Build Operational Metrics, Platform Operations Foundation and Dashboard",
+          "guide_start_line": 13393,
+          "guide_end_line": 13433,
           "status": "not_started",
-          "objective": "Measure platform health, latency, throughput and failures.",
+          "objective": "Establish platform operations authority, complete operational metrics and expose a curated health dashboard.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 20 \u2014 Observability and Operations",
-            "stage": "Stage 20.2 \u2014 Add Metrics",
+            "stage": "Stage 20.2 \u2014 Operational Metrics, Platform Operations Foundation and Dashboard",
             "source_lines": {
-              "start": 13363,
-              "end": 13401
+              "start": 13393,
+              "end": 13433
             }
           },
           "workflow": [
@@ -3978,20 +3985,20 @@
         },
         {
           "id": "R20-S03",
-          "guide_stage": "Stage 20.3 \u2014 Add Distributed Tracing",
-          "title": "Add Distributed Tracing",
-          "guide_start_line": 13403,
-          "guide_end_line": 13431,
+          "guide_stage": "Stage 20.3 \u2014 Trace Coverage, Collector Sampling and Operational-Policy Reconciliation",
+          "title": "Complete Trace Coverage, Collector Sampling and Operational-Policy Reconciliation",
+          "guide_start_line": 13435,
+          "guide_end_line": 13475,
           "status": "not_started",
-          "objective": "Trace requests across Next.js, Laravel, Python, queues and external providers.",
+          "objective": "Complete cross-service traces, configure Collector-owned sampling and implement authenticated operational-policy reconciliation.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 20 \u2014 Observability and Operations",
-            "stage": "Stage 20.3 \u2014 Add Distributed Tracing",
+            "stage": "Stage 20.3 \u2014 Trace Coverage, Collector Sampling and Operational-Policy Reconciliation",
             "source_lines": {
-              "start": 13403,
-              "end": 13431
+              "start": 13435,
+              "end": 13475
             }
           },
           "workflow": [
@@ -4020,20 +4027,20 @@
         },
         {
           "id": "R20-S04",
-          "guide_stage": "Stage 20.4 \u2014 Define Operational Alerts",
-          "title": "Define Operational Alerts",
-          "guide_start_line": 13433,
-          "guide_end_line": 13469,
+          "guide_stage": "Stage 20.4 \u2014 Define SLOs, Alerts and Runbooks",
+          "title": "Define SLOs, Alerts and Runbooks",
+          "guide_start_line": 13477,
+          "guide_end_line": 13517,
           "status": "not_started",
-          "objective": "Document actionable alert conditions and runbooks.",
+          "objective": "Define calibrated SLIs/SLOs, actionable alerts and operational runbooks.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
             "phase": "Phase 20 \u2014 Observability and Operations",
-            "stage": "Stage 20.4 \u2014 Define Operational Alerts",
+            "stage": "Stage 20.4 \u2014 Define SLOs, Alerts and Runbooks",
             "source_lines": {
-              "start": 13433,
-              "end": 13469
+              "start": 13477,
+              "end": 13517
             }
           },
           "workflow": [

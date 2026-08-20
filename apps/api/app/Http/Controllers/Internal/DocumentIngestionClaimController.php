@@ -61,6 +61,7 @@ class DocumentIngestionClaimController extends Controller
         );
 
         Log::info('Document ingestion claim resolved.', [
+            'event_name' => 'document.ingestion.claim_resolved.v1',
             'event_id' => $event['event_id'],
             'correlation_id' => $event['correlation_id'],
             'workspace_id' => $event['workspace_id'],

@@ -13,6 +13,7 @@ import type {
 import { forwardedAuthCookieHeader } from "@/lib/auth-cookies";
 import type { DocumentUploadConfiguration } from "@/lib/document-upload";
 import { serverEnvironment } from "@/lib/env/server";
+import { structuredLog } from "@/lib/structured-log";
 
 async function serverFetch(path: string): Promise<Response> {
   const cookieHeader = await forwardedAuthCookieHeader();
@@ -25,10 +26,20 @@ async function serverFetch(path: string): Promise<Response> {
     headers.set("Cookie", cookieHeader);
   }
 
-  return fetch(`${serverEnvironment.API_INTERNAL_URL}${path}`, {
-    cache: "no-store",
-    headers,
-  });
+  try {
+    return await fetch(`${serverEnvironment.API_INTERNAL_URL}${path}`, {
+      cache: "no-store",
+      headers,
+    });
+  } catch (error) {
+    structuredLog(
+      "web.api.request_failed.v1",
+      "error",
+      { operation_kind: "api.request" },
+      error,
+    );
+    throw error;
+  }
 }
 
 export async function platformAccess(): Promise<Response> {

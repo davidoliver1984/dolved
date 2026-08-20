@@ -13307,15 +13307,17 @@ git commit -m "Add tenant usage visibility"
 
 ## Phase objective
 
-Make failures, latency and cross-service behaviour diagnosable.
+Operationalise ADR-0012's existing OpenTelemetry foundation so failures,
+latency and cross-service behaviour are diagnosable without creating a
+second telemetry system or weakening privacy, tenancy or application
+correctness.
 
-### Design constraint
+### Accepted architecture
 
-Review the "Phase 20 should operationalise, not rebuild, observability"
-design constraint recorded in `PROJECT_ROADMAP.md` before implementation
-begins. Stage 20.2 and Stage 20.3 in particular predate Phase 12's
-OpenTelemetry foundation (ADR-0012) and are expected to be rescoped before
-this phase starts, not implemented as currently written.
+Implement [ADR-0026](docs/adr/0026-operationalise-platform-observability-and-incident-response.md).
+ADR-0012's OpenTelemetry SDK and Collector boundary remains canonical.
+Business audit, tenant usage and operational telemetry remain distinct.
+Telemetry and logging failures must never fail ordinary requests or jobs.
 
 ---
 
@@ -13327,7 +13329,7 @@ Emit machine-readable, correlated logs from every service.
 
 ### Status
 
-Not yet executed.
+Completed 2026-08-20.
 
 ### Planned common fields
 
@@ -13335,23 +13337,51 @@ Not yet executed.
 * level;
 * service;
 * environment;
-* request identifier;
-* correlation identifier;
-* tenant identifier where safe;
-* user identifier where safe;
-* document identifier;
-* event name;
-* duration;
-* error type.
+* stable, versioned event name;
+* trace and span identifiers where available;
+* durable correlation and request identifiers where available;
+* bounded operation kind and outcome/failure class;
+* duration with an explicit unit;
+* allowlisted workspace/document/conversation/run identifiers where safe;
+* exception type and allowlisted frame metadata only.
 
 ### Acceptance criteria
 
 * Logs are structured consistently.
-* Secrets and source-document contents are not logged.
-* Request and correlation identifiers cross service boundaries.
-* Background jobs carry correlation context.
-* Errors include useful stack or exception context.
+* Laravel, Python HTTP/worker processes and Next.js server code use the
+  shared vocabulary through one central boundary per language.
+* Secrets, source-document content and arbitrary exception messages are
+  excluded centrally by allowlist, including exception/stack paths.
+* Errors retain exception type and bounded frame metadata without locals,
+  arguments or uncontrolled messages.
+* A formatter/handler failure cannot fail the observed request or job.
 * Logging configuration differs appropriately by environment.
+* Provider-free negative privacy tests cover ordinary fields and exceptions
+  in all three services.
+
+### Implementation evidence
+
+* Laravel, Python HTTP/worker processes and Next.js server code now emit a
+  shared allowlisted JSON vocabulary with stable event names, service and
+  environment identity, safe durable identifiers, and trace/span correlation
+  where an active context exists.
+* Central formatter boundaries discard arbitrary application fields,
+  exception messages, locals and arguments. Exceptions retain only their type
+  and bounded frame location; failure-isolated handlers prevent logging faults
+  from failing the observed request or job.
+* Laravel's stderr channel retains local debug visibility while production
+  remains information-level. Python HTTP and worker entry points install the
+  same privacy-safe formatter. Next.js server-side transport failures use its
+  matching structured boundary.
+* Focused privacy and failure-isolation verification passed in every service:
+  Laravel 3 tests / 11 assertions, Python 33 focused tests, and the complete
+  web suite of 17 files / 52 tests.
+* The collectable Python suite passed 548 tests with 3 skipped and the Laravel
+  suite passed 306 tests with 2 skipped. Their remaining two and eight failures
+  respectively are the pre-existing evaluation tests whose intentionally
+  absent `/evaluation/engineering/` fixtures are not part of this runtime.
+* Ruff lint/format, Mypy, Pint, ESLint, TypeScript, JSON validation and
+  `git diff --check` passed. No provider calls were made.
 
 ### Commit boundary
 
@@ -13360,81 +13390,96 @@ git commit -m "Standardise structured platform logging"
 
 ---
 
-## Stage 20.2 — Add Metrics
+## Stage 20.2 — Operational Metrics, Platform Operations Foundation and Dashboard
 
 ### Objective
 
-Measure platform health, latency, throughput and failures.
+Establish the separately-authorised platform operations plane, complete the
+operational metric surface and expose a curated, bounded health dashboard.
 
 ### Status
 
 Not yet executed.
 
-### Planned metrics
+### Planned scope
 
-* HTTP request count and latency;
-* queue depth and age;
-* ingestion duration;
-* extraction failures;
-* chunks per document;
-* embedding latency;
-* retrieval latency;
-* generation latency;
-* model token usage;
-* streaming completion and cancellation;
-* database and vector-store failures.
+* immutable user public identity, disable state and `ADMINISTRATOR` platform role;
+* live platform-administrator authorization, session invalidation and
+  last-active-administrator protection;
+* dedicated deployment credential and non-browser bootstrap/grant/revoke/
+  recovery command;
+* atomic platform command and audit records;
+* operational metric gap closure across API, ingestion, retrieval,
+  generation, conversation, deletion, providers and dependencies;
+* a predefined-query-only internal metrics reader;
+* a curated platform health dashboard with explicit unavailable/freshness
+  states and tenancy/platform-authorization negative tests.
 
 ### Acceptance criteria
 
-* Metrics have stable names.
-* Labels avoid unbounded cardinality.
-* Tenant identifiers are not used carelessly as metric labels.
-* Key pipeline stages are timed.
-* Error counts can be separated by class.
-* Local metric inspection is possible.
+* Platform authority is independent of every workspace role in both directions.
+* Bootstrap and role mutation are authenticated, idempotent and durably audited.
+* Operational metrics have stable names, explicit units and bounded labels;
+  workspace/user/document/run identifiers never become metric labels.
+* The browser cannot submit PromQL or any other backend query language.
+* Backend failures render explicitly unavailable and never affect ordinary use.
+* Stage 20.2 is independently complete before Stage 20.3 consumes its authority.
 
 ### Commit boundary
 
 git add apps infrastructure docs
-git commit -m "Add platform metrics"
+git commit -m "Build platform operations visibility"
 
 ---
 
-## Stage 20.3 — Add Distributed Tracing
+## Stage 20.3 — Trace Coverage, Collector Sampling and Operational-Policy Reconciliation
 
 ### Objective
 
-Trace requests across Next.js, Laravel, Python, queues and external providers.
+Complete cross-service trace coverage, add Collector-owned probabilistic
+sampling and implement the authenticated desired-policy reconciliation boundary.
 
 ### Status
 
 Not yet executed.
 
-### Planned technology
+### Planned scope
 
-OpenTelemetry or another explicitly documented standard.
+* Laravel-to-Python rc1 W3C trace propagation;
+* retry/deletion outbox trace propagation and missing first-instance spans;
+* trace-attribute allowlist reconciliation;
+* the pinned Collector's `probabilistic_sampler` processor with no competing
+  application-side ratio sampler;
+* versioned desired sampling/retention policy and required-target manifests;
+* append-only deployment attempts, authenticated acknowledgements and
+  compare-and-set derived status;
+* dedicated reconciliation HMAC credentials and protocol;
+* platform-admin policy/status UI and real local `ACTIVE` proof.
 
 ### Acceptance criteria
 
-* Trace context propagates over HTTP.
-* Trace context propagates through queue messages.
-* External provider calls create spans.
-* Sensitive prompt and document content is not captured by default.
-* Sampling strategy is configurable.
-* Local traces can be inspected.
+* One trace context propagates across HTTP, queues and external providers.
+* Sensitive content is absent and attributes remain allowlisted.
+* Sampling is enforced only by the Collector and is trace-ID consistent.
+* Desired policy is never presented as active without matching authenticated
+  per-setting/per-target evidence.
+* Stale, replayed, conflicting and superseded acknowledgements fail closed.
+* Local traces and reconciliation state are inspectable without affecting
+  ordinary application correctness.
 
 ### Commit boundary
 
 git add apps infrastructure docs
-git commit -m "Add distributed tracing"
+git commit -m "Complete trace and telemetry policy operations"
 
 ---
 
-## Stage 20.4 — Define Operational Alerts
+## Stage 20.4 — Define SLOs, Alerts and Runbooks
 
 ### Objective
 
-Document actionable alert conditions and runbooks.
+Define calibrated service-level indicators, actionable alert conditions and
+operational runbooks without treating controlled product outcomes as failures.
 
 ### Status
 
@@ -13460,11 +13505,14 @@ Not yet executed.
 * Runbooks exist.
 * Alerts avoid obvious noise.
 * Local or test alert verification is possible where practical.
+* SLI numerator/denominator rules reuse ADR-0023/ADR-0024 outcome semantics.
+* Main admin shows curated alert/SLO state while Grafana/Alertmanager retains
+  acknowledgement, silencing and deep-diagnostic ownership.
 
 ### Commit boundary
 
 git add docs infrastructure
-git commit -m "Document operational alerts and runbooks"
+git commit -m "Define operational SLOs alerts and runbooks"
 
 ---
 

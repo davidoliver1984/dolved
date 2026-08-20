@@ -159,6 +159,7 @@ class VoyageEmbedder:
                 logger.info(
                     "Embedding provider request completed.",
                     extra={
+                        "event_name": "embedding.provider.completed.v1",
                         "correlation_id": attributes["rag.correlation.id"],
                         "document_id": attributes["rag.document.id"],
                         "workspace_id": attributes["rag.workspace.id"],
@@ -225,6 +226,7 @@ class VoyageEmbedder:
                         logger.warning(
                             "Embedding provider rate limit response received.",
                             extra={
+                                "event_name": "embedding.provider.rate_limited.v1",
                                 "embedding_provider": request.profile.provider,
                                 "embedding_model": request.profile.model,
                                 "embedding_request_timestamp": self._now().isoformat(),

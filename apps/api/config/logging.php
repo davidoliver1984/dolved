@@ -1,7 +1,8 @@
 <?php
 
+use App\Logging\FailureIsolatedStreamHandler;
+use App\Logging\PrivacySafeJsonFormatter;
 use Monolog\Handler\NullHandler;
-use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 
@@ -96,12 +97,16 @@ return [
 
         'stderr' => [
             'driver' => 'monolog',
-            'level' => env('LOG_LEVEL', 'debug'),
-            'handler' => StreamHandler::class,
+            'level' => env('LOG_LEVEL', env('APP_ENV', 'production') === 'local' ? 'debug' : 'info'),
+            'handler' => FailureIsolatedStreamHandler::class,
             'handler_with' => [
                 'stream' => 'php://stderr',
             ],
-            'formatter' => env('LOG_STDERR_FORMATTER'),
+            'formatter' => PrivacySafeJsonFormatter::class,
+            'formatter_with' => [
+                'serviceName' => env('OTEL_SERVICE_NAME', 'rag-platform-api'),
+                'environment' => env('APP_ENV', 'production'),
+            ],
             'processors' => [PsrLogMessageProcessor::class],
         ],
 

@@ -242,6 +242,7 @@ class PublishIngestionOutbox
         ]);
 
         Log::info('Ingestion event published.', [
+            'event_name' => 'document.ingestion.published.v1',
             'event_id' => $event->event_id,
             'correlation_id' => $event->correlation_id,
             'workspace_id' => $event->workspace_public_id,
@@ -266,6 +267,7 @@ class PublishIngestionOutbox
         ]);
 
         Log::error('Ingestion event failed contract validation.', [
+            'event_name' => 'document.ingestion.contract_failed.v1',
             'event_id' => $event->event_id,
             'correlation_id' => $event->correlation_id,
             'workspace_id' => $event->workspace_public_id,
@@ -290,6 +292,7 @@ class PublishIngestionOutbox
         ]);
 
         Log::warning('Ingestion event publication will be retried.', [
+            'event_name' => 'document.ingestion.publication_retry.v1',
             'event_id' => $event->event_id,
             'correlation_id' => $event->correlation_id,
             'workspace_id' => $event->workspace_public_id,

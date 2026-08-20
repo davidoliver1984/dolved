@@ -37,6 +37,7 @@ class AuthenticateIngestionWorker
             );
 
             Log::warning('Ingestion worker authentication rejected.', [
+                'event_name' => 'ingestion.authentication.rejected.v1',
                 'key_id' => is_string($keyId)
                     && preg_match('/^[A-Za-z0-9._-]{1,64}$/', $keyId) === 1
                         ? $keyId
