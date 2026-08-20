@@ -484,7 +484,7 @@ Laravel follows the layered convention documented in `CONTRIBUTING.md`: thin con
 
 **Technical description**: `handle(): array{claimed,published,retryable,failed}`. `claimNextEvent()` uses `SELECT ... FOR UPDATE SKIP LOCKED` on PostgreSQL (falls back to plain `lockForUpdate()` otherwise) to safely claim one unpublished, unfailed, not-currently-leased `OutboxEvent`, respecting `next_attempt_at` for retry backoff and a claim-lease expiry so a crashed publisher's claim eventually becomes reclaimable. Re-validates the payload against the contract before publishing (a poison payload is marked `failed_at` permanently, not retried). On publish success, marks `published_at`; on transient failure, computes exponential backoff (`retryDelay`) and reschedules. Every attempt opens an OTel span parented from the event's own stored `traceparent`/`tracestate` (propagating the *original* HTTP request's trace, not the publisher's own), and records `rag.ingestion.outbox.publication.count`/`.duration` metrics through `TelemetryAttributeAllowlist`.
 
-**Relationships** — Called by: `PublishIngestionOutboxCommand`. Calls: `DocumentIngestionContractValidator`, `IngestionEventPublisher` (bound to `SqsIngestionEventPublisher`). Instrumented by: `maketime.laravel.ingestion-publisher` tracer/meter. Consumes: `OutboxEvent` rows. Tested by: `DocumentIngestionPublicationTest.php`.
+**Relationships** — Called by: `PublishIngestionOutboxCommand`. Calls: `DocumentIngestionContractValidator`, `IngestionEventPublisher` (bound to `SqsIngestionEventPublisher`). Instrumented by: `dolved.laravel.ingestion-publisher` tracer/meter. Consumes: `OutboxEvent` rows. Tested by: `DocumentIngestionPublicationTest.php`.
 
 **Status**: Implemented.
 
@@ -718,7 +718,7 @@ This service currently has two entrypoints sharing one codebase: `app/main.py` (
 
 **Responsibilities**: the only file that calls `boto3` SQS directly. `receive()` fetches up to `batch_size` messages, extracts `traceparent`/`tracestate` from SQS message attributes for trace continuation, and defensively drops (logs + skips, doesn't crash) any message missing a required field. `acknowledge()` deletes a message by receipt handle.
 
-**Relationships** — Called by: `IngestionWorker`. Instrumented by: `maketime.python.ingestion.sqs` tracer/meter. Tested by: `tests/test_ingestion_sqs.py`.
+**Relationships** — Called by: `IngestionWorker`. Instrumented by: `dolved.python.ingestion.sqs` tracer/meter. Tested by: `tests/test_ingestion_sqs.py`.
 
 **Status**: Implemented.
 
@@ -746,7 +746,7 @@ This service currently has two entrypoints sharing one codebase: `app/main.py` (
 
 **Technical description**: `claim()` signs the request via `IngestionWorkerSigner`, injects OTel context into headers, POSTs to `/api/internal/ingestion/events/{event_id}/claim`. `_disposition()` maps: 200 + `claimed`/`already_claimed` → ACKNOWLEDGE; 409 + `stale_event` → ACKNOWLEDGE (the event is legitimately obsolete, not an error); 401/403/429/5xx → RETRY; 404/409(other)/422 → POISON; anything else → RETRY (fail toward retry, not data loss).
 
-**Relationships** — Called by: `IngestionWorker._process_message`. Calls: Laravel `/api/internal/ingestion/events/{id}/claim`. Instrumented by: `maketime.python.ingestion.claim` tracer/meter. Tested by: `tests/test_ingestion_claim_client.py`.
+**Relationships** — Called by: `IngestionWorker._process_message`. Calls: Laravel `/api/internal/ingestion/events/{id}/claim`. Instrumented by: `dolved.python.ingestion.claim` tracer/meter. Tested by: `tests/test_ingestion_claim_client.py`.
 
 **Status**: Implemented.
 

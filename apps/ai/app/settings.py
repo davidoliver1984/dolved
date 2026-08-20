@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from functools import lru_cache
 
 from pydantic import AliasChoices, Field, SecretStr, model_validator
@@ -106,6 +108,12 @@ class Settings(BaseSettings):
     generation_max_attempts: int = Field(default=3, ge=1, le=10)
     generation_initial_backoff_seconds: float = Field(default=2.0, ge=0)
     generation_max_backoff_seconds: float = Field(default=30.0, ge=0)
+    generation_input_cost_per_million_tokens_usd: float = Field(default=0.25, ge=0)
+    generation_cached_input_cost_per_million_tokens_usd: float = Field(
+        default=0.025, ge=0
+    )
+    generation_output_cost_per_million_tokens_usd: float = Field(default=2.0, ge=0)
+    generation_pricing_snapshot: str = "openai-gpt-5-mini-pricing-2026-08-19"
     otel_exporter_otlp_endpoint: str = "http://otel-collector:4318"
     otel_exporter_otlp_protocol: str = "http/protobuf"
     otel_exporter_otlp_timeout: int = Field(default=250, ge=1)

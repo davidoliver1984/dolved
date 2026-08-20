@@ -46,14 +46,14 @@ class SqsIngestionQueue:
             "messaging.operation.type": "receive",
         }
         started_at = time.perf_counter()
-        meter = metrics.get_meter("maketime.python.ingestion.sqs")
+        meter = metrics.get_meter("dolved.python.ingestion.sqs")
         duration = meter.create_histogram(
             "messaging.client.operation.duration",
             unit="s",
             description="Duration of SQS receive operations.",
         )
 
-        with trace.get_tracer("maketime.python.ingestion.sqs").start_as_current_span(
+        with trace.get_tracer("dolved.python.ingestion.sqs").start_as_current_span(
             f"receive {self._queue_name}",
             kind=SpanKind.CLIENT,
             attributes=trace_attributes(attributes),

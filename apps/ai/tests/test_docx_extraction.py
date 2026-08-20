@@ -61,7 +61,7 @@ def test_body_content_preserves_order_context_metadata_and_offsets() -> None:
     assert document.extractor.parser_name == "python-docx"
     assert document.extractor.parser_version == "1.2.0"
     assert document.metadata.title == "Extraction fixture"
-    assert document.metadata.author == "MakeTime"
+    assert document.metadata.author == "Dolved"
     assert document.metadata.subject == "R10-S04"
     assert document.metadata.keywords == "rag,docx"
     assert document.metadata.creation_date == "2026-07-29T12:00:00+00:00"

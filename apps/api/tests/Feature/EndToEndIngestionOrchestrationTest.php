@@ -95,6 +95,21 @@ class EndToEndIngestionOrchestrationTest extends TestCase
             'configuration_fingerprint' => $chunk['configuration_fingerprint'],
         ]);
         $evidence = $this->evidence($attempt->fresh(), $chunk, $manifest);
+        $usage = [[
+            'stage' => 'ingestion_embedding',
+            'provider' => 'voyage',
+            'model' => 'voyage-4-large',
+            'execution' => 'provider_api',
+            'request_count' => 1,
+            'retry_count' => 0,
+            'input_tokens' => 40,
+            'cached_input_tokens' => null,
+            'output_tokens' => null,
+            'latency_ms' => 125,
+            'cost_usd' => 0.0000048,
+            'cost_basis' => 'estimated',
+            'pricing_snapshot' => 'voyage-pricing-test-v1',
+        ]];
         app(AuthoriseIngestionPublication::class)->handle($attempt->event_id, [...$context, ...$evidence]);
         $this->assertSame(
             WorkspaceCorpusGenerationStatus::Verifying,
@@ -104,11 +119,13 @@ class EndToEndIngestionOrchestrationTest extends TestCase
             ...$context,
             ...$evidence,
             'publication_verified' => true,
+            'usage' => $usage,
         ]);
         $duplicate = app(CompleteIngestionAttempt::class)->handle($attempt->event_id, [
             ...$context,
             ...$evidence,
             'publication_verified' => true,
+            'usage' => $usage,
         ]);
 
         $this->assertSame(IngestionAttemptStatus::Completed, $completed->status);
@@ -122,6 +139,16 @@ class EndToEndIngestionOrchestrationTest extends TestCase
         $this->assertDatabaseCount('document_chunks', 1);
         $this->assertDatabaseCount('workspace_corpus_generation_chunks', 1);
         $this->assertDatabaseCount('ingestion_audit_events', 2);
+        $this->assertDatabaseHas('workspace_usage_events', [
+            'workspace_id' => $attempt->workspace_id,
+            'scope_type' => 'ingestion_attempt',
+            'scope_public_id' => $attempt->event_id,
+            'operation_kind' => 'ingestion_embedding',
+            'input_tokens' => 40,
+            'cost_basis' => 'estimated',
+            'pricing_snapshot' => 'voyage-pricing-test-v1',
+        ]);
+        $this->assertDatabaseCount('workspace_usage_events', 1);
         $this->assertSame(
             [['code' => 'images_not_extracted', 'message' => 'Images were not extracted.']],
             $completed->publication_evidence['warnings'],

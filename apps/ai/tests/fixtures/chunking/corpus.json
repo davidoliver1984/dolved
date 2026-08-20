@@ -38,7 +38,7 @@
     "pdf": {
       "pages": 3,
       "paragraphs_per_page": 6,
-      "repeated_header": "MakeTime ingestion handbook",
+      "repeated_header": "Dolved ingestion handbook",
       "repeated_footer": "Internal evaluation copy",
       "body_template": "Page {page}, paragraph {paragraph}, explains why deterministic processing, explicit provenance, bounded retry behaviour, and immutable intermediate representations make an event-driven document pipeline inspectable and reproducible.",
       "expected": [

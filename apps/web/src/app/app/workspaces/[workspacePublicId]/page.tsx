@@ -4,8 +4,10 @@ import { DocumentAdministration } from "@/components/DocumentAdministration";
 import { ChatWorkspace } from "@/components/ChatWorkspace";
 import { WorkspaceSwitcher } from "@/components/WorkspaceSwitcher";
 import { WorkspaceAdministration } from "@/components/WorkspaceAdministration";
+import { WorkspaceUsage } from "@/components/WorkspaceUsage";
 import {
   initialWorkspaceAdministration,
+  initialWorkspaceUsage,
   userWorkspace,
   userWorkspaces,
   initialWorkspaceDocuments,
@@ -30,6 +32,9 @@ export default async function WorkspacePage({
   const administration = activeWorkspace.role === "member"
     ? null
     : await initialWorkspaceAdministration(workspacePublicId);
+  const usage = activeWorkspace.role === "member"
+    ? null
+    : await initialWorkspaceUsage(workspacePublicId);
 
   return (
     <div className="workspace-layout">
@@ -72,6 +77,7 @@ export default async function WorkspacePage({
           initialSnapshot={administration}
           workspaceId={activeWorkspace.public_id}
         />
+        {usage ? <WorkspaceUsage initialSnapshot={usage} workspaceId={activeWorkspace.public_id} /> : null}
       </div>
     </div>
   );

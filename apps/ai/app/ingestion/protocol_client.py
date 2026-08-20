@@ -124,6 +124,7 @@ class IngestionProtocolClient:
         *,
         failure_code: str,
         failure_message: str,
+        usage: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
         return self._operation(
             context,
@@ -133,14 +134,18 @@ class IngestionProtocolClient:
                 "classification": "permanent",
                 "failure_code": failure_code,
                 "failure_message": failure_message,
+                "usage": usage or [],
             },
         )
 
-    def cancel(self, context: dict[str, Any]) -> dict[str, Any]:
+    def cancel(
+        self, context: dict[str, Any], usage: list[dict[str, Any]] | None = None
+    ) -> dict[str, Any]:
         return self._operation(
             context,
             "cancel",
             "ingestion.attempt.cancel",
+            {"usage": usage or []},
         )
 
     def _operation(

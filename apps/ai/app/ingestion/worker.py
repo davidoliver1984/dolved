@@ -75,7 +75,7 @@ class IngestionWorker:
             "messaging.message.id": message.message_id,
             "messaging.message.delivery_count": message.receive_count,
         }
-        meter = metrics.get_meter("maketime.python.ingestion.worker")
+        meter = metrics.get_meter("dolved.python.ingestion.worker")
         processed_count = meter.create_counter(
             "rag.ingestion.message.count",
             unit="{message}",
@@ -89,7 +89,7 @@ class IngestionWorker:
         started_at = time.perf_counter()
         parent_context = extract(message.trace_context)
 
-        with trace.get_tracer("maketime.python.ingestion.worker").start_as_current_span(
+        with trace.get_tracer("dolved.python.ingestion.worker").start_as_current_span(
             f"process {message.destination_name}",
             context=parent_context,
             kind=SpanKind.CONSUMER,

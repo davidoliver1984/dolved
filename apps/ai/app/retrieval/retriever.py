@@ -184,7 +184,7 @@ class DenseRetriever:
                 workspace_corpus_generation_id=(request.workspace_corpus_generation_id),
                 document_ids=scope.eligible_document_ids,
             )
-            with trace.get_tracer("maketime.python.retrieval").start_as_current_span(
+            with trace.get_tracer("dolved.python.retrieval").start_as_current_span(
                 "search eligible vectors",
                 kind=SpanKind.INTERNAL,
                 attributes=trace_attributes(
@@ -253,7 +253,7 @@ class DenseRetriever:
                     )
                 )
                 continue
-            with trace.get_tracer("maketime.python.retrieval").start_as_current_span(
+            with trace.get_tracer("dolved.python.retrieval").start_as_current_span(
                 "search eligible sparse vectors",
                 kind=SpanKind.INTERNAL,
                 attributes=trace_attributes(
@@ -304,7 +304,7 @@ class DenseRetriever:
                 self._candidate(hit, rank, scope.side, "sparse")
                 for rank, hit in enumerate(sparse_hits, start=1)
             )
-            with trace.get_tracer("maketime.python.retrieval").start_as_current_span(
+            with trace.get_tracer("dolved.python.retrieval").start_as_current_span(
                 "fuse retrieval candidates",
                 kind=SpanKind.INTERNAL,
                 attributes=trace_attributes(

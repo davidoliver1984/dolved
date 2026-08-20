@@ -9,11 +9,12 @@ use App\Enums\GenerationRunFailureCode;
 use App\Enums\GenerationRunStatus;
 use App\Models\GenerationRun;
 use App\Services\Conversation\ChatDeliveryEventRecorder;
+use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
 
 final readonly class ReconcileStaleGenerationRuns
 {
-    public function __construct(private ChatDeliveryEventRecorder $events) {}
+    public function __construct(private ChatDeliveryEventRecorder $events, private RecordWorkspaceUsage $usage) {}
 
     public function handle(): int
     {
@@ -43,6 +44,7 @@ final readonly class ReconcileStaleGenerationRuns
                             'completed_at' => now(),
                         ]);
                     }
+                    $this->usage->activity($run->workspace_id, 'run_outcome', $run->public_id, $run->status->value);
                     $reconciled++;
 
                     return $run;

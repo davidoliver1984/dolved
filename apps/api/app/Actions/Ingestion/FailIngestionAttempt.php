@@ -9,6 +9,7 @@ use App\Enums\IngestionAttemptStatus;
 use App\Exceptions\IngestionAttemptException;
 use App\Models\IngestionEventClaim;
 use App\Services\Ingestion\IngestionAttemptAuthorizer;
+use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
 
 class FailIngestionAttempt
@@ -16,6 +17,7 @@ class FailIngestionAttempt
     public function __construct(
         private readonly IngestionAttemptAuthorizer $authorizer,
         private readonly RecordIngestionAudit $audit,
+        private readonly RecordWorkspaceUsage $usage,
     ) {}
 
     /** @param array<string, mixed> $payload */
@@ -51,6 +53,7 @@ class FailIngestionAttempt
                 'failure_code' => $payload['failure_code'],
                 'failure_message' => $payload['failure_message'],
             ])->save();
+            $this->usage->usage($attempt->workspace_id, 'ingestion_attempt', $attempt->event_id, $payload['usage'] ?? []);
             $this->audit->handle($attempt, 'processing_failed', 'failed');
 
             return $attempt;

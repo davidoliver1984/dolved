@@ -240,6 +240,10 @@ class OpenAIGenerator:
         max_attempts: int = 3,
         initial_backoff_seconds: float = 2,
         max_backoff_seconds: float = 30,
+        input_cost_per_million_tokens_usd: float = 0.25,
+        cached_input_cost_per_million_tokens_usd: float = 0.025,
+        output_cost_per_million_tokens_usd: float = 2.0,
+        pricing_snapshot: str = "openai-gpt-5-mini-pricing-2026-08-19",
         client: Any | None = None,
         sleep: Callable[[float], None] = time.sleep,
         jitter: Callable[[], float] = random.random,
@@ -258,6 +262,10 @@ class OpenAIGenerator:
             api_key=api_key, timeout=timeout_seconds, max_retries=0
         )
         self._max_attempts = max_attempts
+        self._input_cost_per_million = input_cost_per_million_tokens_usd
+        self._cached_input_cost_per_million = cached_input_cost_per_million_tokens_usd
+        self._output_cost_per_million = output_cost_per_million_tokens_usd
+        self._pricing_snapshot = pricing_snapshot
         self._initial_backoff_seconds = initial_backoff_seconds
         self._max_backoff_seconds = max_backoff_seconds
         self._sleep = sleep
@@ -432,6 +440,8 @@ class OpenAIGenerator:
         input_details = getattr(usage, "input_tokens_details", None)
         provider_input = getattr(usage, "input_tokens", None)
         provider_output = getattr(usage, "output_tokens", None)
+        cached_input = getattr(input_details, "cached_tokens", None)
+        cost = self._estimated_cost(provider_input, cached_input, provider_output)
         return GenerationResult(
             outcome=GenerationOutcome(output.outcome),
             answer_parts=tuple(
@@ -444,6 +454,7 @@ class OpenAIGenerator:
                 "stage": "generation",
                 "provider": self.profile.provider,
                 "model": self.profile.model,
+                "execution": "provider_api",
                 "prompt_version": self.profile.prompt_version,
                 "contract_version": self.profile.contract_version,
                 "adapter_version": self.profile.adapter_version,
@@ -454,14 +465,35 @@ class OpenAIGenerator:
                 "retry_count": attempt - 1,
                 "measured_input_tokens": measured_input_tokens,
                 "input_tokens": provider_input,
-                "cached_input_tokens": getattr(input_details, "cached_tokens", None),
+                "cached_input_tokens": cached_input,
                 "output_tokens": provider_output,
                 "latency_ms": (self._monotonic() - started) * 1000,
-                "cost_usd": None,
-                "cost_basis": "unavailable",
-                "pricing_snapshot": None,
+                "cost_usd": cost,
+                "cost_basis": "estimated" if cost is not None else "unavailable",
+                "pricing_snapshot": self._pricing_snapshot
+                if cost is not None
+                else None,
             },
         )
+
+    def _estimated_cost(
+        self,
+        input_tokens: int | None,
+        cached_input_tokens: int | None,
+        output_tokens: int | None,
+    ) -> float | None:
+        if input_tokens is None or output_tokens is None:
+            return None
+        cached = cached_input_tokens or 0
+        if cached < 0 or cached > input_tokens:
+            return None
+        uncached = input_tokens - cached
+        value = (
+            uncached * self._input_cost_per_million
+            + cached * self._cached_input_cost_per_million
+            + output_tokens * self._output_cost_per_million
+        ) / 1_000_000
+        return round(value, 8)
 
     def _retry_delay(self, exception: Exception, attempt: int) -> float:
         response = getattr(exception, "response", None)

@@ -287,7 +287,7 @@ def test_structural_expectations_hold_for_headings_pages_and_tables() -> None:
     table_result = BaselineStructuralChunker().chunk(cases["table"])
 
     assert all(
-        element.text not in {"MakeTime ingestion handbook", "Internal evaluation copy"}
+        element.text not in {"Dolved ingestion handbook", "Internal evaluation copy"}
         for element in pdf.elements
     )
     assert [element.kind for element in docx.elements] == [

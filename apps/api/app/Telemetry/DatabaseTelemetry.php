@@ -24,9 +24,9 @@ final class DatabaseTelemetry
         MeterProviderInterface $meterProvider,
         private readonly TelemetryAttributeAllowlist $allowlist,
     ) {
-        $this->tracer = $tracerProvider->getTracer('maketime.laravel.database');
+        $this->tracer = $tracerProvider->getTracer('dolved.laravel.database');
         $this->duration = $meterProvider
-            ->getMeter('maketime.laravel.database')
+            ->getMeter('dolved.laravel.database')
             ->createHistogram(
                 'db.client.operation.duration',
                 's',

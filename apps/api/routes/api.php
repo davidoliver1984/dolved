@@ -11,6 +11,7 @@ use App\Http\Controllers\Internal\IngestionOperationController;
 use App\Http\Controllers\RetrievalController;
 use App\Http\Controllers\WorkspaceAdministrationController;
 use App\Http\Controllers\WorkspaceController;
+use App\Http\Controllers\WorkspaceUsageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -23,7 +24,7 @@ Route::prefix('auth')->group(function (): void {
     Route::post('/login', [
         AuthenticatedSessionController::class,
         'store',
-    ])->middleware(['guest:web', 'throttle:login'])->name('login.store');
+    ])->middleware(['api.guest', 'throttle:login'])->name('login.store');
 
     Route::post('/forgot-password', [
         PasswordResetLinkController::class,
@@ -39,7 +40,7 @@ Route::prefix('auth')->group(function (): void {
         RegisteredUserController::class,
         'store',
     ])->middleware([
-        'guest:web',
+        'api.guest',
         'registration.open',
         'throttle:registration',
     ])->name('register.store');
@@ -103,6 +104,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
     Route::get('/workspaces/{workspacePublicId}', [WorkspaceController::class, 'show']);
     Route::get('/workspaces/{workspacePublicId}/members', [WorkspaceAdministrationController::class, 'members']);
     Route::get('/workspaces/{workspacePublicId}/invitations', [WorkspaceAdministrationController::class, 'invitations']);
+    Route::get('/workspaces/{workspacePublicId}/usage', [WorkspaceUsageController::class, 'show']);
     Route::post('/workspaces/{workspacePublicId}/invitations', [WorkspaceAdministrationController::class, 'issue']);
     Route::delete('/workspaces/{workspacePublicId}/invitations/{invitationPublicId}', [WorkspaceAdministrationController::class, 'revoke']);
     Route::patch('/workspaces/{workspacePublicId}/memberships/{membershipPublicId}/role', [WorkspaceAdministrationController::class, 'changeRole']);

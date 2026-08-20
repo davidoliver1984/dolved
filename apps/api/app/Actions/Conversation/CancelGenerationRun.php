@@ -9,11 +9,12 @@ use App\Enums\GenerationRunStatus;
 use App\Exceptions\ConversationException;
 use App\Models\GenerationRun;
 use App\Services\Conversation\ChatDeliveryEventRecorder;
+use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
 
 final readonly class CancelGenerationRun
 {
-    public function __construct(private ChatDeliveryEventRecorder $events) {}
+    public function __construct(private ChatDeliveryEventRecorder $events, private RecordWorkspaceUsage $usage) {}
 
     public function handle(GenerationRun $run): GenerationRun
     {
@@ -32,6 +33,7 @@ final readonly class CancelGenerationRun
                     'cancellation_acknowledged_at' => now(),
                     'completed_at' => now(),
                 ]);
+                $this->usage->activity($locked->workspace_id, 'run_outcome', $locked->public_id, GenerationRunStatus::Cancelled->value);
             } else {
                 $locked->update([
                     'status' => GenerationRunStatus::CancellationRequested,

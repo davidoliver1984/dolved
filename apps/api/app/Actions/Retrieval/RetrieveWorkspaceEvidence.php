@@ -168,8 +168,10 @@ final readonly class RetrieveWorkspaceEvidence
         ?RetrievalPlan $planOverride = null,
     ): RetrievalResult {
         $currentStage = 'transport_orchestration';
+        $usage = [];
         try {
             $plan = $planOverride ?? $this->client->plan($authorised->workspace, $question, $evaluatedAt);
+            $usage[] = $plan->classifierUsage->toArray();
             $observe?->__invoke('plan', [
                 'query' => $plan->query,
                 'temporal_mode' => $plan->temporalMode->value,
@@ -198,6 +200,7 @@ final readonly class RetrieveWorkspaceEvidence
                     resolvedTemporalAuthority: $this->resolvedTemporalAuthority($plan, $eligible, $evaluatedAt),
                     resolvedApplicabilityLocation: ['resolved_location_public_id' => $eligible->resolvedLocationPublicId],
                     lineage: ['planner' => $plan->classifierLineage->toArray()],
+                    usage: $usage,
                 );
             }
             $corpus = $authorised->activeCorpusGeneration;
@@ -207,6 +210,7 @@ final readonly class RetrieveWorkspaceEvidence
                     resolvedTemporalAuthority: $this->resolvedTemporalAuthority($plan, $eligible, $evaluatedAt),
                     resolvedApplicabilityLocation: ['resolved_location_public_id' => $eligible->resolvedLocationPublicId],
                     lineage: ['planner' => $plan->classifierLineage->toArray()],
+                    usage: $usage,
                 );
             }
             $policy = $denseOnly || $corpus->sparse_space_generation_id === null
@@ -223,6 +227,7 @@ final readonly class RetrieveWorkspaceEvidence
                 $denseOnly,
                 $observe !== null,
             );
+            $usage = [...$usage, ...$search->usage];
             $diagnostics = $observe === null
                 ? []
                 : $this->hydrateDiagnostics(
@@ -239,7 +244,7 @@ final readonly class RetrieveWorkspaceEvidence
             ]);
             $candidates = $search->candidates;
             if ($candidates === []) {
-                return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates);
+                return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates, usage: $usage);
             }
             if ($policy !== null) {
                 $this->policies->assertSearchLineage($policy, $search->lineage);
@@ -264,10 +269,10 @@ final readonly class RetrieveWorkspaceEvidence
             $observe?->__invoke('hydrated', $hydrated);
 
             if ($hydrated === []) {
-                return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates);
+                return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates, usage: $usage);
             }
             if ($policy === null) {
-                return $this->evidenceFoundResult($hydrated, $plan, $freshEligible, $evaluatedAt, $search->lineage);
+                return $this->evidenceFoundResult($hydrated, $plan, $freshEligible, $evaluatedAt, $search->lineage, $usage);
             }
 
             $currentStage = 'reranker';
@@ -277,6 +282,7 @@ final readonly class RetrieveWorkspaceEvidence
                 $hydrated,
                 $policy,
             );
+            $usage = [...$usage, ...$reranked['usage']];
             $observe?->__invoke('reranked', $reranked);
             $this->policies->assertRerankerLineage($policy, $reranked['profile']);
             $rerankedByChunk = collect($reranked['candidates'])->keyBy(
@@ -322,7 +328,7 @@ final readonly class RetrieveWorkspaceEvidence
             })->filter()->sortBy('rank')->values();
             $observe?->__invoke('threshold_qualified', $qualified->all());
             if ($qualified->isEmpty()) {
-                return new RetrievalResult(RetrievalOutcome::InsufficientEvidence);
+                return new RetrievalResult(RetrievalOutcome::InsufficientEvidence, usage: $usage);
             }
 
             $sides = array_keys($eligible->documentPublicIdsBySide);
@@ -331,7 +337,7 @@ final readonly class RetrieveWorkspaceEvidence
                     fn (array $candidate): bool => $candidate['side'] === $side
                 )
             )) {
-                return new RetrievalResult(RetrievalOutcome::ComparisonScopeIncomplete);
+                return new RetrievalResult(RetrievalOutcome::ComparisonScopeIncomplete, usage: $usage);
             }
             $accepted = $qualified->groupBy('side')->flatMap(
                 fn ($sideCandidates) => $sideCandidates->take($policy->final_evidence_k)
@@ -343,7 +349,7 @@ final readonly class RetrieveWorkspaceEvidence
                 'reranker_profile' => $reranked['profile'],
                 'evidence_threshold_policy_version' => $policy->version,
                 'evidence_threshold_policy_fingerprint' => $policy->fingerprint,
-            ]);
+            ], $usage);
         } catch (RetrievalException $exception) {
             $failure = $exception instanceof RetrievalExecutionException
                 ? $exception->observation->toArray()
@@ -369,6 +375,7 @@ final readonly class RetrieveWorkspaceEvidence
                     'planner' => isset($plan) ? $plan->classifierLineage->toArray() : null,
                     'failure' => $failure,
                 ],
+                usage: [...$usage, ...(is_array($failure['usage'] ?? null) ? $failure['usage'] : [])],
             );
         }
     }
@@ -380,6 +387,7 @@ final readonly class RetrieveWorkspaceEvidence
         EligibleRetrievalScope $eligible,
         CarbonImmutable $evaluatedAt,
         array $lineage,
+        array $usage,
     ): RetrievalResult {
         return new RetrievalResult(
             RetrievalOutcome::EvidenceFound,
@@ -392,6 +400,7 @@ final readonly class RetrieveWorkspaceEvidence
                 'planner' => $plan->classifierLineage->toArray(),
                 'retrieval' => $lineage,
             ],
+            usage: $usage,
         );
     }
 

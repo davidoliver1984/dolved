@@ -117,6 +117,38 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
+    public function test_authenticated_login_attempt_fails_with_json_instead_of_redirecting(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->postJson('/api/auth/login', [
+                'email' => $user->email,
+                'password' => self::VALID_PASSWORD,
+            ])
+            ->assertConflict()
+            ->assertJsonPath('message', 'You are already signed in.')
+            ->assertHeaderMissing('Location');
+    }
+
+    public function test_authenticated_registration_attempt_fails_with_json_without_creating_a_user(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->postJson('/api/auth/register', [
+                'name' => 'Another Account',
+                'email' => 'another@example.test',
+                'password' => self::VALID_PASSWORD,
+                'password_confirmation' => self::VALID_PASSWORD,
+            ])
+            ->assertConflict()
+            ->assertJsonPath('message', 'You are already signed in.')
+            ->assertHeaderMissing('Location');
+
+        $this->assertDatabaseMissing('users', ['email' => 'another@example.test']);
+    }
+
     public function test_login_failure_does_not_reveal_account_existence(): void
     {
         $response = $this->postJson('/api/auth/login', [
@@ -182,6 +214,32 @@ class AuthenticationTest extends TestCase
             ->get($url)
             ->assertRedirect('http://localhost:3000/verify-email/result?status=verified');
 
+        $this->assertNotNull($user->fresh()->email_verified_at);
+    }
+
+    public function test_signed_verification_link_preserves_an_authenticated_return_instead_of_rendering_a_json_401(): void
+    {
+        $user = User::factory()->unverified()->create([
+            'password' => Hash::make('ValidPassword1!'),
+        ]);
+        $url = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        );
+
+        $this->get($url)
+            ->assertRedirect('http://localhost:3000/login');
+
+        $login = $this->withHeader('Origin', 'http://localhost:3000')
+            ->postJson('/api/auth/login', [
+                'email' => $user->email,
+                'password' => 'ValidPassword1!',
+            ])->assertOk();
+
+        $this->assertSame($url, $login->json('data.redirect_to'));
+        $this->get($url)
+            ->assertRedirect('http://localhost:3000/verify-email/result?status=verified');
         $this->assertNotNull($user->fresh()->email_verified_at);
     }
 

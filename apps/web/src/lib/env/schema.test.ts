@@ -8,17 +8,17 @@ describe("environment validation", () => {
   it("normalises valid URLs", () => {
     expect(
       parseClientEnvironment({
-        NEXT_PUBLIC_API_URL: "https://api.maketime.ai/",
+        NEXT_PUBLIC_API_URL: "https://api.dolved.ai/",
       }),
-    ).toEqual({ NEXT_PUBLIC_API_URL: "https://api.maketime.ai" });
+    ).toEqual({ NEXT_PUBLIC_API_URL: "https://api.dolved.ai" });
     expect(
       parseServerEnvironment({
         API_INTERNAL_URL: "http://api:8000/",
-        FRONTEND_URL: "https://app.maketime.ai/",
+        FRONTEND_URL: "https://app.dolved.ai/",
       }),
     ).toEqual({
       API_INTERNAL_URL: "http://api:8000",
-      FRONTEND_URL: "https://app.maketime.ai",
+      FRONTEND_URL: "https://app.dolved.ai",
     });
   });
 

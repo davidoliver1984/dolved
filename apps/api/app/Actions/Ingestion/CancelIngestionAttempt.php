@@ -9,6 +9,7 @@ use App\Enums\IngestionAttemptStatus;
 use App\Exceptions\IngestionAttemptException;
 use App\Models\IngestionEventClaim;
 use App\Services\Ingestion\IngestionAttemptAuthorizer;
+use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
 
 class CancelIngestionAttempt
@@ -16,6 +17,7 @@ class CancelIngestionAttempt
     public function __construct(
         private readonly IngestionAttemptAuthorizer $authorizer,
         private readonly RecordIngestionAudit $audit,
+        private readonly RecordWorkspaceUsage $usage,
     ) {}
 
     public function handle(string $eventId, array $payload): IngestionEventClaim
@@ -46,6 +48,7 @@ class CancelIngestionAttempt
                 'cancelled_at' => now(),
                 'lease_expires_at' => now(),
             ])->save();
+            $this->usage->usage($attempt->workspace_id, 'ingestion_attempt', $attempt->event_id, $payload['usage'] ?? []);
             $this->audit->handle($attempt, 'processing_cancelled', 'cancelled');
 
             return $attempt;

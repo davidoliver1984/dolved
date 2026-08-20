@@ -34,8 +34,8 @@ final class TraceHttpRequests
         private readonly TelemetryAttributeAllowlist $allowlist,
         private readonly TelemetryLifecycle $lifecycle,
     ) {
-        $this->tracer = $tracerProvider->getTracer('maketime.laravel.http');
-        $meter = $meterProvider->getMeter('maketime.laravel.http');
+        $this->tracer = $tracerProvider->getTracer('dolved.laravel.http');
+        $meter = $meterProvider->getMeter('dolved.laravel.http');
         $this->requestCount = $meter->createCounter(
             'http.server.request.count',
             '{request}',

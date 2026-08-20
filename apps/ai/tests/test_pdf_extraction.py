@@ -55,7 +55,7 @@ def test_multi_page_text_preserves_context_metadata_provenance_and_offsets() -> 
             [PositionedText("Second page body", 72, 720)],
         ],
         title="Extraction fixture",
-        author="MakeTime",
+        author="Dolved",
         subject="R10-S03",
         keywords="rag,pdf",
     )
@@ -74,7 +74,7 @@ def test_multi_page_text_preserves_context_metadata_provenance_and_offsets() -> 
     assert document.extractor.parser_name == "pdfplumber"
     assert document.extractor.parser_version is not None
     assert document.metadata.title == "Extraction fixture"
-    assert document.metadata.author == "MakeTime"
+    assert document.metadata.author == "Dolved"
     assert document.metadata.subject == "R10-S03"
     assert document.metadata.keywords == "rag,pdf"
     assert PAGE_SEPARATOR in document.text

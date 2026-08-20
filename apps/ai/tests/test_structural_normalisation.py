@@ -79,7 +79,7 @@ def extracted_document(
         warnings=warnings,
         metadata=ExtractedDocumentMetadata(
             title="Normalisation fixture",
-            author="MakeTime",
+            author="Dolved",
         ),
     )
 

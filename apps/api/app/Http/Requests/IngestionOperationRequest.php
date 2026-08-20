@@ -26,7 +26,7 @@ class IngestionOperationRequest extends FormRequest
             'lease_token' => ['required', 'uuid'],
         ];
 
-        return array_merge($base, match ($this->route()?->getName()) {
+        $rules = array_merge($base, match ($this->route()?->getName()) {
             'ingestion.chunks.submit' => [
                 'chunks' => ['required', 'array', 'min:1', 'max:'.max(1, (int) config('ingestion.orchestration.chunk_batch_size'))],
                 'chunks.*.chunk_id' => ['required', 'uuid'],
@@ -165,6 +165,27 @@ class IngestionOperationRequest extends FormRequest
             'ingestion.attempt.cancel' => [],
             default => [],
         });
+
+        if (in_array($this->route()?->getName(), ['ingestion.publication.authorise', 'ingestion.complete', 'ingestion.fail', 'ingestion.attempt.cancel'], true)) {
+            $rules += [
+                'usage' => ['sometimes', 'array', 'max:100'],
+                'usage.*.stage' => ['required', 'string', 'max:80'],
+                'usage.*.provider' => ['required', 'string', 'max:120'],
+                'usage.*.model' => ['required', 'string', 'max:255'],
+                'usage.*.execution' => ['required', Rule::in(['provider_api', 'local'])],
+                'usage.*.request_count' => ['required', 'integer', 'min:0'],
+                'usage.*.retry_count' => ['required', 'integer', 'min:0'],
+                'usage.*.input_tokens' => ['nullable', 'integer', 'min:0'],
+                'usage.*.cached_input_tokens' => ['nullable', 'integer', 'min:0'],
+                'usage.*.output_tokens' => ['nullable', 'integer', 'min:0'],
+                'usage.*.latency_ms' => ['nullable', 'numeric', 'min:0'],
+                'usage.*.cost_usd' => ['nullable', 'numeric', 'min:0'],
+                'usage.*.cost_basis' => ['required', Rule::in(['provider_reported', 'estimated', 'unavailable', 'zero_cost_local'])],
+                'usage.*.pricing_snapshot' => ['nullable', 'string', 'max:255'],
+            ];
+        }
+
+        return $rules;
     }
 
     /** @return array<int, callable(Validator): void> */

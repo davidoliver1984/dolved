@@ -44,10 +44,10 @@ class PublishIngestionOutbox
         private readonly TelemetryLifecycle $telemetryLifecycle,
     ) {
         $this->tracer = $tracerProvider->getTracer(
-            'maketime.laravel.ingestion-publisher',
+            'dolved.laravel.ingestion-publisher',
         );
         $meter = $meterProvider->getMeter(
-            'maketime.laravel.ingestion-publisher',
+            'dolved.laravel.ingestion-publisher',
         );
         $this->publicationCount = $meter->createCounter(
             'rag.ingestion.outbox.publication.count',

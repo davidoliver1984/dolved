@@ -4206,19 +4206,19 @@ Sanctum's stateful SPA mode requires the web and API hosts to share one top-leve
 domain. The intended production hosts are:
 
 ```text
-https://app.maketime.ai
-https://api.maketime.ai
+https://app.dolved.ai
+https://api.dolved.ai
 ```
 
 The matching production settings are documented in `.env.example`:
 
 ```dotenv
-APP_URL=https://api.maketime.ai
-FRONTEND_URL=https://app.maketime.ai
-NEXT_PUBLIC_API_URL=https://api.maketime.ai
-CORS_ALLOWED_ORIGINS=https://app.maketime.ai
-SANCTUM_STATEFUL_DOMAINS=app.maketime.ai
-SESSION_DOMAIN=.maketime.ai
+APP_URL=https://api.dolved.ai
+FRONTEND_URL=https://app.dolved.ai
+NEXT_PUBLIC_API_URL=https://api.dolved.ai
+CORS_ALLOWED_ORIGINS=https://app.dolved.ai
+SANCTUM_STATEFUL_DOMAINS=app.dolved.ai
+SESSION_DOMAIN=.dolved.ai
 SESSION_SECURE_COOKIE=true
 ```
 
@@ -13015,7 +13015,7 @@ streaming; and strict terminal-result reconciliation. The apparent Python
 `except A, B:` syntax finding was verified as a false positive from using
 Python 3.13 rather than the repository's required Python 3.14 / PEP 758 syntax.
 
-The visual review also identified and removed unrelated legacy “Make Time”
+The visual review also identified and removed unrelated legacy product
 branding from the shared web shells. The committed regression test now binds
 the landing, authentication and authenticated application surfaces to the
 Dolved product identity. No conversation, retrieval or generation semantics
@@ -13232,7 +13232,9 @@ Expose document, storage, ingestion and model-usage information.
 
 ### Status
 
-Not yet executed.
+Implemented and verified in R19-S03. The workspace page exposes the initial
+owner/admin-only usage surface; a later UI-design phase may reorganise this
+surface without changing the usage ownership or aggregation contract.
 
 ### Planned metrics
 
@@ -13263,6 +13265,36 @@ remain unavailable rather than zero, and the surface is not billing-grade.
 * Users cannot infer another tenant’s activity.
 * Expensive aggregation is controlled.
 * Data freshness is visible.
+
+### Verified implementation
+
+Laravel now persists content-free, deletion-independent workspace activity and
+normalised usage observations. Current document, logical-source-byte and
+indexed-chunk gauges are calculated separately from bounded 7-day, 30-day and
+current-month activity. Ingestion, retrieval and generation boundaries record
+stage-aware request, retry, token, latency and cost lineage without storing
+source text, questions, answers or provider payloads. Provider-reported,
+estimated, unavailable and genuinely local zero-cost values remain distinct.
+
+The owner/admin-only workspace usage query is tenant-scoped, range-bounded and
+aggregated by operation, provider, model, cost basis and pricing snapshot.
+Ordinary members are denied the surface. The initial web presentation labels
+freshness, units and non-billing-grade estimates and keeps current gauges
+visually separate from historical interval activity.
+
+The live UI review also closed two adjacent product-boundary defects. Active
+Dolved surfaces, local mail identity, configuration examples and telemetry
+namespaces no longer inherit unrelated legacy product branding. Authentication
+entry points now preserve Laravel's signed verification flow, return typed JSON
+for already-authenticated API attempts and recover stale login/register pages
+without cross-origin HTML redirects. These corrections do not change retrieval,
+planner, threshold, calibration or benchmark behaviour.
+
+Verification covered focused and broad Laravel/Python suites, the complete web
+suite, a production web build, Pint, Ruff, Mypy, ESLint, TypeScript and
+`git diff --check`. Live browser checks exercised registration validation,
+verification return, signed-out login, authenticated stale-page handling,
+workspace loading and sign-out. No provider calls were made.
 
 ### Commit boundary
 

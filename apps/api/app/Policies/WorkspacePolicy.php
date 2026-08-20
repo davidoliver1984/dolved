@@ -18,6 +18,11 @@ class WorkspacePolicy
             ->exists();
     }
 
+    public function viewUsage(User $user, Workspace $workspace): bool
+    {
+        return $this->viewAdministration($user, $workspace);
+    }
+
     public function uploadDocuments(User $user, Workspace $workspace): bool
     {
         return $workspace->memberships()

@@ -266,7 +266,7 @@ async def rerank_retrieval(
             status.HTTP_422_UNPROCESSABLE_CONTENT, "Reranking bounds exceeded."
         )
     try:
-        with trace.get_tracer("maketime.python.retrieval").start_as_current_span(
+        with trace.get_tracer("dolved.python.retrieval").start_as_current_span(
             "rerank eligible candidates",
             kind=SpanKind.INTERNAL,
             attributes=trace_attributes(

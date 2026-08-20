@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { apiFetch, firstError, User } from "@/lib/api";
+import { apiFetch, ApiError, firstError, User } from "@/lib/api";
 
 type Mode = "login" | "register" | "forgot" | "reset";
 
@@ -60,7 +60,10 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
     const body = Object.fromEntries(form.entries());
 
     try {
-      await apiFetch<{ data?: { user: User }; message?: string }>(
+      const response = await apiFetch<{
+        data?: { user: User; redirect_to?: string | null };
+        message?: string;
+      }>(
         copy.endpoint,
         {
           method: "POST",
@@ -76,11 +79,21 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
         router.push("/verify-email");
       } else if (mode === "reset") {
         router.push("/login?reset=complete");
+      } else if (mode === "login" && response.data?.redirect_to) {
+        window.location.assign(response.data.redirect_to);
       } else {
         router.push("/app");
       }
     } catch (caught) {
-      setError(firstError(caught));
+      if (
+        caught instanceof ApiError &&
+        caught.status === 409 &&
+        (mode === "login" || mode === "register")
+      ) {
+        router.push("/app");
+      } else {
+        setError(firstError(caught));
+      }
     } finally {
       setPending(false);
     }

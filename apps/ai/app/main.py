@@ -48,8 +48,8 @@ async def trace_http_request(
     method = request.method.upper()
     route_template = "unmatched"
     status_code = 500
-    tracer = trace.get_tracer("maketime.python.http")
-    meter = metrics.get_meter("maketime.python.http")
+    tracer = trace.get_tracer("dolved.python.http")
+    meter = metrics.get_meter("dolved.python.http")
     request_count = meter.create_counter(
         "http.server.request.count",
         unit="{request}",

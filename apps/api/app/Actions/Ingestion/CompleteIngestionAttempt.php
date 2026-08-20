@@ -11,6 +11,7 @@ use App\Exceptions\IngestionAttemptException;
 use App\Models\IngestionEventClaim;
 use App\Models\WorkspaceCorpusGenerationChunk;
 use App\Services\Ingestion\IngestionAttemptAuthorizer;
+use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
 
 class CompleteIngestionAttempt
@@ -18,6 +19,7 @@ class CompleteIngestionAttempt
     public function __construct(
         private readonly IngestionAttemptAuthorizer $authorizer,
         private readonly RecordIngestionAudit $audit,
+        private readonly RecordWorkspaceUsage $usage,
     ) {}
 
     /** @param array<string, mixed> $payload */
@@ -85,6 +87,7 @@ class CompleteIngestionAttempt
                 'status' => IngestionAttemptStatus::Completed,
                 'completed_at' => now(),
             ])->save();
+            $this->usage->usage($attempt->workspace_id, 'ingestion_attempt', $attempt->event_id, $payload['usage'] ?? []);
             $this->audit->handle($attempt, 'publication_completed', 'indexed');
 
             return $attempt;

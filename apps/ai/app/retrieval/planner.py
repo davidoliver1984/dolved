@@ -226,7 +226,7 @@ class StructuredChatRetrievalPlanner:
     ) -> PlanningResult:
         started = time.perf_counter()
         schema = _provider_plan_schema()
-        with trace.get_tracer("maketime.python.retrieval").start_as_current_span(
+        with trace.get_tracer("dolved.python.retrieval").start_as_current_span(
             "plan retrieval intent",
             kind=SpanKind.CLIENT,
             attributes=trace_attributes(

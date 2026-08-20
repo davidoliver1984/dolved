@@ -42,6 +42,54 @@ describe("apiFetch", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it("reports an unreachable API without collapsing it to a generic error", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new TypeError("fetch failed"));
+
+    await expect(
+      apiFetch("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ email: "david@example.test" }),
+      }),
+    ).rejects.toMatchObject({
+      message: "Dolved could not reach the API. Please try again.",
+      status: 0,
+    });
+  });
+
+  it("reports redirected session responses explicitly", async () => {
+    document.cookie = "XSRF-TOKEN=signed%3Dtoken; Path=/";
+    vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce({
+        redirected: true,
+        status: 200,
+      } as Response);
+
+    await expect(
+      apiFetch("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ email: "david@example.test" }),
+      }),
+    ).rejects.toMatchObject({
+      message: "Your session changed. Refresh the page and try again.",
+      status: 200,
+    });
+  });
+
+  it("reports non-JSON API responses explicitly", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response("<html>not JSON</html>", {
+        status: 502,
+        headers: { "Content-Type": "text/html" },
+      }),
+    );
+
+    await expect(apiFetch("/api/auth/user")).rejects.toMatchObject({
+      message: "Dolved received an unexpected response. Please try again.",
+      status: 502,
+    });
+  });
+
   it("prefers useful validation errors returned by Laravel", () => {
     const error = new ApiError("Invalid input.", 422, {
       email: ["Enter a valid email address."],

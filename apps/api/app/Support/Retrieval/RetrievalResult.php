@@ -9,7 +9,7 @@ use App\Enums\RetrievalOutcome;
 
 final readonly class RetrievalResult
 {
-    /** @param list<array<string, mixed>> $candidates @param array<string, mixed> $resolvedTemporalAuthority @param array<string, mixed> $resolvedApplicabilityLocation @param array<string, mixed> $lineage */
+    /** @param list<array<string, mixed>> $candidates @param array<string, mixed> $resolvedTemporalAuthority @param array<string, mixed> $resolvedApplicabilityLocation @param array<string, mixed> $lineage @param list<array<string, mixed>> $usage */
     public function __construct(
         public RetrievalOutcome $outcome,
         public array $candidates = [],
@@ -18,6 +18,7 @@ final readonly class RetrievalResult
         public array $resolvedTemporalAuthority = [],
         public array $resolvedApplicabilityLocation = [],
         public array $lineage = [],
+        public array $usage = [],
     ) {}
 
     /** @return array<string, mixed> */
@@ -31,6 +32,7 @@ final readonly class RetrievalResult
             'resolved_temporal_authority' => $this->resolvedTemporalAuthority,
             'resolved_applicability_location' => $this->resolvedApplicabilityLocation,
             'lineage' => $this->lineage,
+            'usage' => $this->usage,
         ];
     }
 }

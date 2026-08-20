@@ -10,7 +10,7 @@ def representative_docx() -> bytes:
     document = Document()
     properties = document.core_properties
     properties.title = "Extraction fixture"
-    properties.author = "MakeTime"
+    properties.author = "Dolved"
     properties.subject = "R10-S04"
     properties.keywords = "rag,docx"
     properties.created = datetime(2026, 7, 29, 12, 0, tzinfo=UTC)

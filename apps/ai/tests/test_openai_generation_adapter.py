@@ -431,6 +431,9 @@ def test_strict_outputs_map_to_provider_neutral_contract(
     assert result.usage["cached_input_tokens"] == 12
     assert result.usage["output_tokens"] == 45
     assert result.usage["retry_count"] == 0
+    assert result.usage["cost_basis"] == "estimated"
+    assert result.usage["pricing_snapshot"] == "openai-gpt-5-mini-pricing-2026-08-19"
+    assert result.usage["cost_usd"] == 0.00016755
 
 
 def test_quarantine_duration_is_a_permanent_qualified_regression_fixture() -> None:

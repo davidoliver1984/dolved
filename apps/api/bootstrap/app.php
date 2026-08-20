@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AuthenticateIngestionWorker;
 use App\Http\Middleware\CanonicalizeEmail;
+use App\Http\Middleware\RequireGuestApiSession;
 use App\Http\Middleware\RequireOpenRegistration;
 use App\Http\Middleware\TraceHttpRequests;
 use Illuminate\Foundation\Application;
@@ -29,12 +30,14 @@ return Application::configure(basePath: dirname(__DIR__))
             fn () => rtrim(config('app.frontend_url'), '/').'/login'
         );
         $middleware->alias([
+            'api.guest' => RequireGuestApiSession::class,
             'ingestion.worker' => AuthenticateIngestionWorker::class,
             'registration.open' => RequireOpenRegistration::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*'),
+            fn (Request $request) => $request->is('api/*')
+                && ! $request->routeIs('verification.verify'),
         );
     })->create();

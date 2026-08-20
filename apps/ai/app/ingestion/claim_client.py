@@ -53,7 +53,7 @@ class IngestionClaimClient:
             "rag.event.id": event_id,
         }
         started_at = time.perf_counter()
-        meter = metrics.get_meter("maketime.python.ingestion.claim")
+        meter = metrics.get_meter("dolved.python.ingestion.claim")
         request_count = meter.create_counter(
             "rag.ingestion.claim.request.count",
             unit="{request}",
@@ -65,7 +65,7 @@ class IngestionClaimClient:
             description="Duration of Laravel ingestion claim requests.",
         )
 
-        with trace.get_tracer("maketime.python.ingestion.claim").start_as_current_span(
+        with trace.get_tracer("dolved.python.ingestion.claim").start_as_current_span(
             "POST /api/internal/ingestion/events/{event}/claim",
             kind=SpanKind.CLIENT,
             attributes=trace_attributes(attributes),

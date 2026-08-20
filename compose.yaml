@@ -40,7 +40,7 @@ services:
     ports:
       - "${API_PORT:-8000}:8000"
     environment:
-      APP_NAME: Make Time
+      APP_NAME: Dolved
       APP_ENV: ${APP_ENV:-local}
       APP_DEBUG: ${APP_DEBUG:-true}
       APP_URL: ${APP_URL:-http://localhost:8000}
@@ -128,8 +128,8 @@ services:
       MAIL_MAILER: smtp
       MAIL_HOST: mailpit
       MAIL_PORT: 1025
-      MAIL_FROM_ADDRESS: hello@maketime.ai
-      MAIL_FROM_NAME: Make Time
+      MAIL_FROM_ADDRESS: hello@dolved.ai
+      MAIL_FROM_NAME: Dolved
     volumes:
       - ./apps/api:/app
       - ./contracts:/contracts:ro
@@ -164,7 +164,7 @@ services:
     init: true
     command: php artisan ingestion:publish
     environment:
-      APP_NAME: Make Time
+      APP_NAME: Dolved
       APP_ENV: ${APP_ENV:-local}
       APP_DEBUG: ${APP_DEBUG:-true}
       LOG_CHANNEL: stderr
@@ -212,7 +212,7 @@ services:
     init: true
     command: php artisan queue:work conversation --queue=conversation-generation,document-administration --tries=1 --timeout=900 --sleep=1
     environment:
-      APP_NAME: Make Time
+      APP_NAME: Dolved
       APP_ENV: ${APP_ENV:-local}
       APP_DEBUG: ${APP_DEBUG:-true}
       LOG_CHANNEL: stderr

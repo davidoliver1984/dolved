@@ -48,6 +48,32 @@ export type WorkspaceAdministrationSnapshot = {
   invitations: WorkspaceInvitation[];
 };
 
+export type WorkspaceUsageSnapshot = {
+  range: { key: "7d" | "30d" | "month"; start: string; end: string; semantics: string };
+  as_of: string;
+  gauges: { active_documents: number; logical_source_bytes: number; indexed_chunks: number };
+  historical: {
+    ingestion_failures: number;
+    activity: Array<{ event_kind: string; outcome: string | null; aggregate_count: number | string }>;
+    usage: Array<{
+      operation_kind: string;
+      provider: string;
+      model: string;
+      cost_basis: "provider_reported" | "estimated" | "unavailable" | "zero_cost_local";
+      pricing_snapshot: string | null;
+      request_count: number | string;
+      retry_count: number | string;
+      input_tokens: number | string | null;
+      cached_input_tokens: number | string | null;
+      output_tokens: number | string | null;
+      latency_ms: number | string | null;
+      cost_usd: number | string | null;
+      observation_count: number | string;
+    }>;
+  };
+  labels: { logical_source_bytes: string; cost: string };
+};
+
 export type AdminDocument = {
   public_id: string;
   source_filename: string;
@@ -120,6 +146,13 @@ export function workspaceInvitations(
   workspacePublicId: string,
 ): Promise<WorkspaceAdministrationPage<WorkspaceInvitation>> {
   return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/invitations`);
+}
+
+export function workspaceUsage(
+  workspacePublicId: string,
+  range: "7d" | "30d" | "month" = "30d",
+): Promise<{ data: WorkspaceUsageSnapshot }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/usage?range=${range}`);
 }
 
 export function issueWorkspaceInvitation(
@@ -242,10 +275,20 @@ export async function apiFetch<T>(
   }
 
   if (isUnsafe(method)) {
-    await fetch(`${clientEnvironment.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
-      credentials: "include",
-      headers: { Accept: "application/json" },
-    });
+    try {
+      await fetch(
+        `${clientEnvironment.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`,
+        {
+          credentials: "include",
+          headers: { Accept: "application/json" },
+        },
+      );
+    } catch {
+      throw new ApiError(
+        "Dolved could not reach the API. Please try again.",
+        0,
+      );
+    }
 
     const token = cookieValue("XSRF-TOKEN");
 
@@ -254,16 +297,40 @@ export async function apiFetch<T>(
     }
   }
 
-  const response = await fetch(
-    `${clientEnvironment.NEXT_PUBLIC_API_URL}${path}`,
-    {
-      ...init,
-      credentials: "include",
-      headers,
-    },
-  );
+  let response: Response;
 
-  const payload = response.status === 204 ? null : await response.json();
+  try {
+    response = await fetch(
+      `${clientEnvironment.NEXT_PUBLIC_API_URL}${path}`,
+      {
+        ...init,
+        credentials: "include",
+        headers,
+      },
+    );
+  } catch {
+    throw new ApiError("Dolved could not reach the API. Please try again.", 0);
+  }
+
+  if (response.redirected) {
+    throw new ApiError(
+      "Your session changed. Refresh the page and try again.",
+      response.status,
+    );
+  }
+
+  let payload = null;
+
+  if (response.status !== 204) {
+    try {
+      payload = await response.json();
+    } catch {
+      throw new ApiError(
+        "Dolved received an unexpected response. Please try again.",
+        response.status,
+      );
+    }
+  }
 
   if (!response.ok) {
     throw new ApiError(

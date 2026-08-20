@@ -8,6 +8,7 @@ import type {
   WorkspaceAdministrationSnapshot,
   WorkspaceInvitation,
   WorkspaceMembership,
+  WorkspaceUsageSnapshot,
 } from "@/lib/api";
 import { forwardedAuthCookieHeader } from "@/lib/auth-cookies";
 import type { DocumentUploadConfiguration } from "@/lib/document-upload";
@@ -131,4 +132,17 @@ export async function initialWorkspaceAdministration(
   const invitations = (await invitationsResponse.json()) as WorkspaceAdministrationPage<WorkspaceInvitation>;
 
   return { memberships: memberships.data, invitations: invitations.data };
+}
+
+export async function initialWorkspaceUsage(
+  workspacePublicId: string,
+): Promise<WorkspaceUsageSnapshot> {
+  const response = await serverFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/usage?range=30d`,
+  );
+  if (!response.ok) {
+    throw new Error("Workspace usage is unavailable.");
+  }
+  const payload = (await response.json()) as { data: WorkspaceUsageSnapshot };
+  return payload.data;
 }

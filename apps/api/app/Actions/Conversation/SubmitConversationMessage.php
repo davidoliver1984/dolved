@@ -13,11 +13,14 @@ use App\Models\Conversation;
 use App\Models\GenerationRun;
 use App\Models\Message;
 use App\Models\User;
+use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 final readonly class SubmitConversationMessage
 {
+    public function __construct(private RecordWorkspaceUsage $usage) {}
+
     public function handle(Conversation $conversation, User $user, string $text, string $idempotencyKey): GenerationRun
     {
         [$run, $created] = DB::transaction(function () use ($conversation, $user, $text, $idempotencyKey): array {
@@ -52,6 +55,7 @@ final readonly class SubmitConversationMessage
                 'in_reply_to_message_id' => null,
                 'submission_idempotency_key' => $idempotencyKey,
             ]);
+            $this->usage->activity($locked->workspace_id, 'user_submission', $message->public_id);
             if ($ordinal === 1) {
                 $locked->update(['title' => $this->title($text)]);
             }

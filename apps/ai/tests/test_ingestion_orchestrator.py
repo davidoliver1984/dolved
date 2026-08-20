@@ -3,6 +3,7 @@ import time
 from typing import Any
 from uuid import UUID
 
+from app.embedding.errors import EmbeddingDimensionMismatchError
 from app.embedding.models import (
     EmbeddedVector,
     EmbeddingProfile,
@@ -70,6 +71,7 @@ class FakeProtocol:
         self.resume_chunks = resume_chunks or []
         self.calls: list[str] = []
         self.evidence: dict[str, Any] | None = None
+        self.failure_usage: list[dict[str, Any]] | None = None
 
     def claim(self, **_: Any) -> ClaimGrant:
         self.calls.append("claim")
@@ -106,8 +108,9 @@ class FakeProtocol:
         assert evidence == self.evidence
         return {"outcome": "indexed"}
 
-    def fail(self, _: dict[str, Any], **__: Any) -> dict[str, Any]:
+    def fail(self, _: dict[str, Any], **values: Any) -> dict[str, Any]:
         self.calls.append("fail")
+        self.failure_usage = values.get("usage")
         return {"outcome": "failed"}
 
 
@@ -134,6 +137,15 @@ class FakeEmbedder:
                 for item in request.items
             ),
             provider_input_tokens=5,
+        )
+
+
+class FailingEmbedder:
+    def embed(self, _: Any) -> EmbeddingResult:
+        raise EmbeddingDimensionMismatchError(
+            "The provider returned an incompatible vector.",
+            attempts=2,
+            total_retry_delay_seconds=1.5,
         )
 
 
@@ -230,6 +242,24 @@ def test_normal_path_seals_authorises_publishes_verifies_and_completes() -> None
         "authorise",
         "renew",
         "complete",
+    ]
+    assert protocol.evidence is not None
+    assert protocol.evidence["usage"] == [
+        {
+            "stage": "ingestion_embedding",
+            "provider": "voyage",
+            "model": "voyage-4-large",
+            "execution": "provider_api",
+            "request_count": 1,
+            "retry_count": 0,
+            "input_tokens": 5,
+            "cached_input_tokens": None,
+            "output_tokens": None,
+            "latency_ms": 0,
+            "cost_usd": None,
+            "cost_basis": "unavailable",
+            "pricing_snapshot": None,
+        }
     ]
     assert all(
         point.publication_status is VectorPublicationStatus.PUBLISHED
@@ -393,6 +423,39 @@ def test_permanent_extraction_failure_is_reported_before_acknowledgement() -> No
 
     assert outcome == type(outcome)(True, "failed")
     assert protocol.calls == ["claim", "fail"]
+
+
+def test_permanent_embedding_failure_reports_typed_usage_before_acknowledgement() -> (
+    None
+):
+    content = b"Canonical text for ingestion.\n"
+    protocol = FakeProtocol(grant())
+    flow = orchestrator(protocol, FakeVectorStore(), content)
+    flow._embedder = FailingEmbedder()  # type: ignore[assignment]
+
+    outcome = flow.process(
+        event={**EVENT, "byte_size": len(content)}, raw_body="{}", message=message()
+    )
+
+    assert outcome == type(outcome)(True, "failed")
+    assert protocol.calls == ["claim", "submit", "seal", "fail"]
+    assert protocol.failure_usage == [
+        {
+            "stage": "ingestion_embedding",
+            "provider": "voyage",
+            "model": "voyage-4-large",
+            "execution": "provider_api",
+            "request_count": 2,
+            "retry_count": 1,
+            "input_tokens": None,
+            "cached_input_tokens": None,
+            "output_tokens": None,
+            "latency_ms": 1500,
+            "cost_usd": None,
+            "cost_basis": "unavailable",
+            "pricing_snapshot": None,
+        }
+    ]
 
 
 def test_heartbeat_revokes_authority_when_either_coordinated_half_fails() -> None:

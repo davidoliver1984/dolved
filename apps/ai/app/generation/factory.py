@@ -23,4 +23,8 @@ def build_generator(settings: Settings) -> Generator:
         max_attempts=settings.generation_max_attempts,
         initial_backoff_seconds=settings.generation_initial_backoff_seconds,
         max_backoff_seconds=settings.generation_max_backoff_seconds,
+        input_cost_per_million_tokens_usd=settings.generation_input_cost_per_million_tokens_usd,
+        cached_input_cost_per_million_tokens_usd=settings.generation_cached_input_cost_per_million_tokens_usd,
+        output_cost_per_million_tokens_usd=settings.generation_output_cost_per_million_tokens_usd,
+        pricing_snapshot=settings.generation_pricing_snapshot,
     )

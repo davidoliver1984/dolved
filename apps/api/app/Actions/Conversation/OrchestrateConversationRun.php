@@ -40,6 +40,7 @@ use App\Support\Generation\GenerationRequest;
 use App\Support\Generation\PreparedGroundedAnswer;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\RetrievalResult;
+use App\Support\Usage\RecordWorkspaceUsage;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -57,6 +58,7 @@ final readonly class OrchestrateConversationRun
         private GenerationProfileFactory $profiles,
         private PersistGeneratedAnswer $persistence,
         private ChatDeliveryEventRecorder $events,
+        private RecordWorkspaceUsage $usageRecorder,
     ) {}
 
     public function handle(int $runId): void
@@ -196,6 +198,16 @@ final readonly class OrchestrateConversationRun
                 'resolved_query_digest' => $result->resolvedQuery === null ? null : hash('sha256', $result->resolvedQuery),
                 'usage' => ['contextualisation' => $result->usage],
             ]);
+            if (is_array($result->usage) && $result->usage !== []) {
+                $this->usageRecorder->usage($run->workspace_id, 'generation_run', $run->public_id, [
+                    $this->normalisedUsage(
+                        $result->usage,
+                        'contextualisation',
+                        (string) config('conversation.contextualiser.provider'),
+                        (string) config('conversation.contextualiser.model'),
+                    ),
+                ]);
+            }
         });
     }
 
@@ -218,6 +230,7 @@ final readonly class OrchestrateConversationRun
                 'rendered_text' => $question,
             ]);
             $locked->update(['status' => GenerationRunStatus::ClarificationRequired, 'assistant_message_id' => $message->id, 'completed_at' => now()]);
+            $this->usageRecorder->activity($locked->workspace_id, 'run_outcome', $locked->public_id, GenerationRunStatus::ClarificationRequired->value);
             $this->events->record($locked, ChatStreamEventType::ClarificationRequired, ['message_id' => $message->public_id, 'text' => $question]);
         });
     }
@@ -245,6 +258,9 @@ final readonly class OrchestrateConversationRun
                 'correlation_id' => $run->correlation_id,
             ]);
             $run->update(['retrieval_outcome' => $result->outcome]);
+            if ($result->usage !== []) {
+                $this->usageRecorder->usage($run->workspace_id, 'generation_run', $run->public_id, $result->usage);
+            }
 
             return $snapshot;
         });
@@ -285,6 +301,7 @@ final readonly class OrchestrateConversationRun
                 'rendered_text' => $rendered['text'],
             ]);
             $locked->update(['status' => $terminal, 'assistant_message_id' => $message->id, 'completed_at' => now()]);
+            $this->usageRecorder->activity($locked->workspace_id, 'run_outcome', $locked->public_id, $terminal->value);
             $type = $terminal === GenerationRunStatus::ClarificationRequired ? ChatStreamEventType::ClarificationRequired : ChatStreamEventType::AnswerCompleted;
             $this->events->record($locked, $type, ['message_id' => $message->public_id, 'kind' => $rendered['kind']->value, 'text' => $rendered['text']]);
         });
@@ -318,6 +335,13 @@ final readonly class OrchestrateConversationRun
                 'usage' => [...($locked->usage ?? []), 'generation' => $answer->usage],
                 'completed_at' => now(),
             ]);
+            $generationUsage = $answer->usage;
+            if (is_array($generationUsage) && $generationUsage !== []) {
+                $this->usageRecorder->usage($locked->workspace_id, 'generation_run', $locked->public_id, [
+                    $this->normalisedUsage($generationUsage, 'generation', $answer->provider, $answer->model),
+                ]);
+            }
+            $this->usageRecorder->activity($locked->workspace_id, 'run_outcome', $locked->public_id, GenerationRunStatus::Completed->value);
             $this->events->record($locked, ChatStreamEventType::AnswerCompleted, [
                 'message_id' => $message->public_id,
                 'answer_id' => $answer->public_id,
@@ -362,6 +386,7 @@ final readonly class OrchestrateConversationRun
             $locked = GenerationRun::query()->lockForUpdate()->findOrFail($run->id);
             if ($locked->status === GenerationRunStatus::CancellationRequested) {
                 $locked->update(['status' => GenerationRunStatus::Cancelled, 'cancellation_acknowledged_at' => now(), 'completed_at' => now()]);
+                $this->usageRecorder->activity($locked->workspace_id, 'run_outcome', $locked->public_id, GenerationRunStatus::Cancelled->value);
 
                 return false;
             }
@@ -388,6 +413,7 @@ final readonly class OrchestrateConversationRun
         $conversation = Conversation::query()->lockForUpdate()->findOrFail($run->conversation_id);
         if ($locked->status === GenerationRunStatus::CancellationRequested || in_array($conversation->status->value, ['deleting', 'deleted'], true)) {
             $locked->update(['status' => GenerationRunStatus::Cancelled, 'cancellation_acknowledged_at' => now(), 'completed_at' => now()]);
+            $this->usageRecorder->activity($locked->workspace_id, 'run_outcome', $locked->public_id, GenerationRunStatus::Cancelled->value);
             $this->events->record($locked, ChatStreamEventType::RunCancelled, []);
 
             return null;
@@ -409,10 +435,12 @@ final readonly class OrchestrateConversationRun
             }
             if ($run->status === GenerationRunStatus::CancellationRequested) {
                 $run->update(['status' => GenerationRunStatus::Cancelled, 'cancellation_acknowledged_at' => now(), 'completed_at' => now()]);
+                $this->usageRecorder->activity($run->workspace_id, 'run_outcome', $run->public_id, GenerationRunStatus::Cancelled->value);
 
                 return $run;
             }
             $run->update(['status' => GenerationRunStatus::Failed, 'failure_code' => $code, 'usage' => $usage ?? $run->usage, 'completed_at' => now()]);
+            $this->usageRecorder->activity($run->workspace_id, 'run_outcome', $run->public_id, GenerationRunStatus::Failed->value);
 
             return $run;
         });
@@ -447,6 +475,29 @@ final readonly class OrchestrateConversationRun
     private function citationReference(GenerationRun $run, string $evidenceId): string
     {
         return 'cite_'.substr(hash_hmac('sha256', $run->public_id.'|'.$evidenceId, (string) config('app.key')), 0, 24);
+    }
+
+    /** @param array<string, mixed> $usage @return array<string, mixed> */
+    private function normalisedUsage(array $usage, string $stage, string $provider, string $model): array
+    {
+        $deterministic = in_array(strtolower((string) ($usage['execution'] ?? '')), ['deterministic', 'local'], true);
+
+        return [
+            ...$usage,
+            'stage' => $stage,
+            'provider' => $deterministic ? 'application' : $provider,
+            'model' => $deterministic ? 'deterministic' : $model,
+            'execution' => $deterministic ? 'local' : 'provider_api',
+            'request_count' => (int) ($usage['request_count'] ?? 1),
+            'retry_count' => (int) ($usage['retry_count'] ?? max(0, ((int) ($usage['request_count'] ?? 1)) - 1)),
+            'input_tokens' => $usage['input_tokens'] ?? null,
+            'cached_input_tokens' => $usage['cached_input_tokens'] ?? null,
+            'output_tokens' => $usage['output_tokens'] ?? null,
+            'latency_ms' => $usage['latency_ms'] ?? 0,
+            'cost_basis' => $usage['cost_basis'] ?? ($deterministic ? 'zero_cost_local' : 'unavailable'),
+            'cost_usd' => $usage['cost_usd'] ?? ($deterministic ? 0 : null),
+            'pricing_snapshot' => $usage['pricing_snapshot'] ?? null,
+        ];
     }
 
     /** @return list<GenerationRunStatus> */

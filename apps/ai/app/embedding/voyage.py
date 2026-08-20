@@ -99,7 +99,7 @@ class VoyageEmbedder:
             "rag.embedding.profile_fingerprint": request.profile.fingerprint(),
             "rag.embedding.purpose": request.purpose.value,
         }
-        meter = metrics.get_meter("maketime.python.embedding")
+        meter = metrics.get_meter("dolved.python.embedding")
         request_count = meter.create_counter(
             "rag.embedding.request.count",
             unit="{request}",
@@ -112,7 +112,7 @@ class VoyageEmbedder:
         )
         started_at = time.perf_counter()
 
-        with trace.get_tracer("maketime.python.embedding").start_as_current_span(
+        with trace.get_tracer("dolved.python.embedding").start_as_current_span(
             "generate embeddings",
             kind=SpanKind.CLIENT,
             attributes=trace_attributes(attributes),

@@ -383,7 +383,7 @@ The three longer-lived record types have different jobs:
 - A session journal in `docs/journal/` is a factual, reflective account of the work,
   lessons and next steps.
 - An ADR in `docs/adr/` records a durable decision, alternatives and consequences.
-- A MakeTime note is a separately edited public learning article. It may draw on a
+- A Dolved note is a separately edited public learning article. It may draw on a
   journal, but is not an engineering record and is not required for every session.
 
 ## Quality and verification

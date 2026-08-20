@@ -128,6 +128,7 @@ class IngestionOrchestrator:
         grant: ClaimGrant,
         context: dict[str, Any],
     ) -> ProcessingOutcome:
+        usage: list[dict[str, Any]] = []
         heartbeat = CoordinatedHeartbeat(
             interval_seconds=self._heartbeat_seconds,
             renew_lease=lambda: self._protocol.renew(context),
@@ -146,7 +147,7 @@ class IngestionOrchestrator:
                     )
                 heartbeat.assert_healthy()
                 evidence = self._embed_persist_verify(
-                    event, context, grant, chunks, warnings, heartbeat
+                    event, context, grant, chunks, warnings, heartbeat, usage
                 )
                 self._protocol.authorise_publication(context, evidence)
                 self._protocol.renew(context)
@@ -178,7 +179,7 @@ class IngestionOrchestrator:
                 and exception.cause.code == "document_deleting"
             ):
                 try:
-                    self._protocol.cancel(context)
+                    self._protocol.cancel(context, usage)
                 except Exception:  # noqa: BLE001 -- unconfirmed cancellation must retry
                     return ProcessingOutcome(False, "cancellation_unconfirmed")
                 return ProcessingOutcome(True, "cancelled")
@@ -186,7 +187,7 @@ class IngestionOrchestrator:
         except IngestionProtocolError as exception:
             if exception.code == "document_deleting":
                 try:
-                    self._protocol.cancel(context)
+                    self._protocol.cancel(context, usage)
                 except Exception:  # noqa: BLE001 -- unconfirmed cancellation must retry
                     return ProcessingOutcome(False, "cancellation_unconfirmed")
                 return ProcessingOutcome(True, "cancelled")
@@ -197,6 +198,7 @@ class IngestionOrchestrator:
                 exception.code,
                 str(exception),
                 exception.kind is ExtractionFailureKind.PERMANENT,
+                usage,
             )
         except UnrepresentableContentError as exception:
             return self._processing_failure(
@@ -204,8 +206,26 @@ class IngestionOrchestrator:
                 "chunking.unrepresentable_content",
                 str(exception),
                 True,
+                usage,
             )
         except EmbeddingError as exception:
+            usage.append(
+                {
+                    "stage": "ingestion_embedding",
+                    "provider": self._embedding_profile.provider,
+                    "model": self._embedding_profile.model,
+                    "execution": "provider_api",
+                    "request_count": exception.attempts,
+                    "retry_count": max(0, exception.attempts - 1),
+                    "input_tokens": None,
+                    "cached_input_tokens": None,
+                    "output_tokens": None,
+                    "latency_ms": exception.total_retry_delay_seconds * 1000,
+                    "cost_usd": None,
+                    "cost_basis": "unavailable",
+                    "pricing_snapshot": None,
+                }
+            )
             return self._processing_failure(
                 context,
                 f"embedding.{exception.code}",
@@ -218,13 +238,41 @@ class IngestionOrchestrator:
                         EmbeddingDimensionMismatchError,
                     ),
                 ),
+                usage,
             )
         except SparseEncodingError as exception:
+            sparse_profile = self._sparse_profile(grant)
+            usage.append(
+                {
+                    "stage": "ingestion_sparse_encoding",
+                    "provider": (
+                        sparse_profile.provider
+                        if sparse_profile is not None
+                        else "local"
+                    ),
+                    "model": (
+                        sparse_profile.model
+                        if sparse_profile is not None
+                        else "unavailable"
+                    ),
+                    "execution": "local",
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": None,
+                    "cached_input_tokens": None,
+                    "output_tokens": None,
+                    "latency_ms": None,
+                    "cost_usd": 0,
+                    "cost_basis": "zero_cost_local",
+                    "pricing_snapshot": None,
+                }
+            )
             return self._processing_failure(
                 context,
                 f"sparse.{exception.code}",
                 str(exception),
                 not exception.retryable,
+                usage,
             )
         except VectorStoreError as exception:
             return self._processing_failure(
@@ -232,6 +280,7 @@ class IngestionOrchestrator:
                 f"vector.{exception.code}",
                 str(exception),
                 False,
+                usage,
             )
         except Exception as exception:
             logger.exception(
@@ -361,6 +410,7 @@ class IngestionOrchestrator:
         chunks: list[dict[str, Any]],
         warnings: list[dict[str, str]],
         heartbeat: CoordinatedHeartbeat,
+        usage: list[dict[str, Any]],
     ) -> dict[str, Any]:
         profile = self._embedding_profile
         if profile.fingerprint() != grant.vector_space["embedding_profile_fingerprint"]:  # type: ignore[index]
@@ -388,6 +438,27 @@ class IngestionOrchestrator:
                     ),
                 )
             )
+            usage.append(
+                {
+                    "stage": "ingestion_embedding",
+                    "provider": result.profile.provider,
+                    "model": result.profile.model,
+                    "execution": "provider_api",
+                    "request_count": result.provider_attempt_count,
+                    "retry_count": result.provider_retry_count,
+                    "input_tokens": result.provider_input_tokens,
+                    "cached_input_tokens": None,
+                    "output_tokens": None,
+                    "latency_ms": result.provider_retry_elapsed_seconds * 1000,
+                    "cost_usd": result.estimated_cost_usd,
+                    "cost_basis": (
+                        "estimated"
+                        if result.estimated_cost_usd is not None
+                        else "unavailable"
+                    ),
+                    "pricing_snapshot": result.pricing_snapshot,
+                }
+            )
             embeddings.extend(result.embeddings)
             if sparse_profile is not None:
                 assert self._sparse_encoder is not None
@@ -405,6 +476,23 @@ class IngestionOrchestrator:
                             for chunk in batch
                         ),
                     )
+                )
+                usage.append(
+                    {
+                        "stage": "ingestion_sparse_encoding",
+                        "provider": sparse_result.profile.provider,
+                        "model": sparse_result.profile.model,
+                        "execution": "local",
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "input_tokens": None,
+                        "cached_input_tokens": None,
+                        "output_tokens": None,
+                        "latency_ms": None,
+                        "cost_usd": 0,
+                        "cost_basis": "zero_cost_local",
+                        "pricing_snapshot": None,
+                    }
                 )
                 sparse_embeddings.extend(sparse_result.encodings)
         vector_space = self._vector_space(grant)
@@ -460,6 +548,7 @@ class IngestionOrchestrator:
             ),
             "workspace_corpus_generation_id": grant.workspace_corpus_generation_id,
             "warnings": warnings,
+            "usage": usage,
         }
 
     def _point_identities(
@@ -563,13 +652,21 @@ class IngestionOrchestrator:
         self._vector_store.delete(provisional)
 
     def _processing_failure(
-        self, context: dict[str, Any], code: str, message: str, permanent: bool
+        self,
+        context: dict[str, Any],
+        code: str,
+        message: str,
+        permanent: bool,
+        usage: list[dict[str, Any]] | None = None,
     ) -> ProcessingOutcome:
         if not permanent:
             return ProcessingOutcome(False, code)
         try:
             self._protocol.fail(
-                context, failure_code=code, failure_message=message[:1000]
+                context,
+                failure_code=code,
+                failure_message=message[:1000],
+                usage=usage,
             )
         except Exception:  # noqa: BLE001 -- an unconfirmed terminal callback is retryable
             return ProcessingOutcome(False, "failure_report_unconfirmed")
