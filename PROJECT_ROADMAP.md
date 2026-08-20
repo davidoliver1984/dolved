@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 13 of 23 (Embeddings) |
+| Project status | In Progress — Phase 20 of 25 (Observability and Operations) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -800,7 +800,33 @@ phase's Tasks, Objectives or Deliverable has been made yet.
 
 ---
 
-## Phase 21 — Testing and Quality Strategy
+## Phase 21 — Product Experience and Interface Design
+
+### Objectives
+
+Give the product's chat, document and administration surfaces one coherent,
+accessible, production-quality interface built on a shared design system,
+with particular emphasis on the administration surface Phase 19 built
+without a design pass — but not limited to it, since redesigning only
+administration would make it read as a different application from chat,
+documents and the shared shell.
+
+### Tasks
+
+- Define the Product Design System
+- Design the Administration Experience
+- Implement Complete Interface States
+- Visual and Usability Acceptance
+
+### Deliverable
+
+A product-wide, accessible design system applied consistently across chat,
+documents and administration, with an explicit visual and usability
+acceptance gate.
+
+---
+
+## Phase 22 — Testing and Quality Strategy
 
 ### Objectives
 
@@ -821,7 +847,7 @@ Comprehensive test suite.
 
 ---
 
-## Phase 22 — CI/CD and Production Readiness
+## Phase 23 — CI/CD and Production Readiness
 
 ### Objectives
 
@@ -846,7 +872,7 @@ Production-ready platform.
 
 ---
 
-## Phase 23 — Documentation and Demonstration Readiness
+## Phase 24 — Documentation and Demonstration Readiness
 
 ### Objectives
 

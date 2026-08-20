@@ -13468,7 +13468,196 @@ git commit -m "Document operational alerts and runbooks"
 
 ---
 
-# Phase 21 — Testing and Quality Strategy
+# Phase 21 — Product Experience and Interface Design
+
+## Phase objective
+
+Give the product's chat, document and administration surfaces one coherent,
+accessible, production-quality interface built on a shared design system,
+rather than treating visual design as incidental polish layered onto
+individual pages after the fact.
+
+### Scope note
+
+This phase is product-wide, not administration-only. Phase 19 delivered
+administration functionality without a design pass; without a shared design
+system applied consistently across chat, documents, the shared shell and
+administration, a redesigned administration surface would read as a
+different application from the rest of the product. Administration receives
+particular emphasis in Stage 21.2 because it introduces the platform's first
+real information-architecture and destructive-action surfaces, but the
+design system itself (Stage 21.1) and the interface-state work (Stage 21.3)
+apply everywhere.
+
+---
+
+## Stage 21.1 — Define the Product Design System
+
+### Objective
+
+Establish one shared design system — typography, spacing, colour,
+components, navigation and responsive rules — that the whole product draws
+from, while preserving the established Dolved identity.
+
+### Status
+
+Not yet executed.
+
+### Planned scope
+
+* typography scale and usage rules;
+* spacing and layout grid;
+* colour palette, including light/dark and status/semantic colours;
+* a shared component library (buttons, forms, tables, dialogs, badges,
+  navigation);
+* a consistent navigation and information-shell pattern across chat,
+  documents and administration;
+* responsive breakpoints and behaviour;
+* an accessibility baseline (target conformance level, keyboard-focus and
+  contrast rules) that every later stage is built against.
+
+### Acceptance criteria
+
+* The design system is documented and has a single source of truth.
+* Existing Dolved branding and identity are preserved, not replaced.
+* Components have defined states (default, hover, focus, disabled, loading,
+  error) rather than being designed only for the success case.
+* Navigation and layout are consistent across chat, documents and
+  administration.
+* The accessibility baseline is explicit and testable, not aspirational.
+* The system is usable by later stages without further architectural
+  negotiation.
+
+### Commit boundary
+
+git add apps/web docs
+git commit -m "Define the product design system"
+
+---
+
+## Stage 21.2 — Design the Administration Experience
+
+### Objective
+
+Design clear document, membership and usage information architecture for
+the administration surface Phase 19 built, grounded in ADR-0025's actual
+owner/admin/member capability model.
+
+### Status
+
+Not yet executed.
+
+### Planned scope
+
+* document, membership and usage information architecture and navigation;
+* visible, unambiguous owner/admin/member capability boundaries in the
+  interface itself, not only enforced server-side;
+* confirmation flows for destructive operations (document deletion, member
+  removal, ownership transfer);
+* retry, deletion and invitation flow design, including their failure,
+  in-progress and already-resolved states.
+
+### Acceptance criteria
+
+* Information architecture reflects ADR-0025's actual capability matrix,
+  not an assumed or simplified one.
+* A member without a capability cannot be misled into believing they have
+  it by the interface.
+* Every destructive operation requires an explicit, unambiguous
+  confirmation step.
+* Retry, deletion and invitation flows have designed states for their
+  in-progress, failed and already-resolved outcomes, not only their
+  success path.
+* The administration design is visually and structurally consistent with
+  the Stage 21.1 design system, not a separate visual language.
+
+### Commit boundary
+
+git add apps/web docs
+git commit -m "Design the administration experience"
+
+---
+
+## Stage 21.3 — Implement Complete Interface States
+
+### Objective
+
+Implement every interface state the product's real behaviour can produce,
+across chat, documents and administration, not only the success path.
+
+### Status
+
+Not yet executed.
+
+### Planned states
+
+* loading;
+* empty;
+* success;
+* partial data;
+* unavailable usage/cost figures;
+* failed ingestion;
+* deleting (in-progress, asynchronous);
+* permission loss (mid-session revocation);
+* expired invitations.
+
+### Acceptance criteria
+
+* Every state above is implemented, not just visually mocked.
+* States are responsive across representative desktop and mobile sizes.
+* Interactive elements are keyboard-operable and have visible focus states.
+* No interface surface silently shows nothing when data is unavailable,
+  loading or partial.
+* Error and unavailable states explain what happened without exposing
+  internal detail.
+
+### Commit boundary
+
+git add apps/web
+git commit -m "Implement complete interface states"
+
+---
+
+## Stage 21.4 — Visual and Usability Acceptance
+
+### Objective
+
+Validate the redesigned interface against real application behaviour and
+data before accepting this phase, closing the explicit design acceptance
+gate this phase exists to provide.
+
+### Status
+
+Not yet executed.
+
+### Planned verification
+
+* review against real application data, not static mockups;
+* screenshots captured at representative desktop and mobile sizes;
+* accessibility checks against the Stage 21.1 baseline;
+* regression tests for shared UI components;
+* a live walkthrough of chat, documents and administration together, to
+  confirm they read as one product.
+
+### Acceptance criteria
+
+* Screenshots exist for representative desktop and mobile sizes across
+  chat, documents and administration.
+* Accessibility checks pass against the documented baseline.
+* Shared UI components have regression test coverage.
+* The review is conducted against a running application with real data,
+  not isolated mockups.
+* No page reads as visually or structurally inconsistent with the rest of
+  the product.
+
+### Commit boundary
+
+git add apps/web docs
+git commit -m "Complete visual and usability acceptance for product experience"
+
+---
+
+# Phase 22 — Testing and Quality Strategy
 
 ## Phase objective
 
@@ -13476,7 +13665,7 @@ Create a layered test strategy that catches regressions without requiring every 
 
 ---
 
-## Stage 21.1 — Establish Test Taxonomy
+## Stage 22.1 — Establish Test Taxonomy
 
 ### Objective
 
@@ -13517,7 +13706,7 @@ git commit -m "Document platform testing strategy"
 
 ---
 
-## Stage 21.2 — Add Contract Tests
+## Stage 22.2 — Add Contract Tests
 
 ### Objective
 
@@ -13544,7 +13733,7 @@ git commit -m "Add shared contract tests"
 
 ---
 
-## Stage 21.3 — Add End-to-End Ingestion Tests
+## Stage 22.3 — Add End-to-End Ingestion Tests
 
 ### Objective
 
@@ -13576,7 +13765,7 @@ git commit -m "Add end-to-end ingestion tests"
 
 ---
 
-## Stage 21.4 — Add End-to-End Chat Tests
+## Stage 22.4 — Add End-to-End Chat Tests
 
 ### Objective
 
@@ -13604,7 +13793,7 @@ git commit -m "Add end-to-end RAG chat tests"
 
 ---
 
-## Stage 21.5 — Add Security-Focused Tests
+## Stage 22.5 — Add Security-Focused Tests
 
 ### Objective
 
@@ -13644,7 +13833,7 @@ git commit -m "Add security regression tests"
 
 ---
 
-# Phase 22 — CI/CD and Production Readiness
+# Phase 23 — CI/CD and Production Readiness
 
 ## Phase objective
 
@@ -13652,7 +13841,7 @@ Make the platform reproducibly testable, buildable, deployable and operable outs
 
 ---
 
-## Stage 22.1 — Add Continuous Integration
+## Stage 23.1 — Add Continuous Integration
 
 ### Objective
 
@@ -13692,7 +13881,7 @@ git commit -m "Add continuous integration pipeline"
 
 ---
 
-## Stage 22.2 — Create Production Container Builds
+## Stage 23.2 — Create Production Container Builds
 
 ### Objective
 
@@ -13733,7 +13922,7 @@ git commit -m "Add production container builds"
 
 ---
 
-## Stage 22.3 — Add Infrastructure as Code
+## Stage 23.3 — Add Infrastructure as Code
 
 ### Objective
 
@@ -13783,7 +13972,7 @@ git commit -m "Define production infrastructure"
 
 ---
 
-## Stage 22.4 — Configure Secrets and Environment Management
+## Stage 23.4 — Configure Secrets and Environment Management
 
 ### Objective
 
@@ -13820,7 +14009,7 @@ git commit -m "Harden environment and secret management"
 
 ---
 
-## Stage 22.5 — Add Database Backup and Recovery
+## Stage 23.5 — Add Database Backup and Recovery
 
 ### Objective
 
@@ -13847,7 +14036,7 @@ git commit -m "Add database backup and recovery plan"
 
 ---
 
-## Stage 22.6 — Define Vector Index Recovery
+## Stage 23.6 — Define Vector Index Recovery
 
 ### Objective
 
@@ -13884,7 +14073,7 @@ git commit -m "Define vector index recovery"
 
 ---
 
-## Stage 22.7 — Perform Security Hardening
+## Stage 23.7 — Perform Security Hardening
 
 ### Objective
 
@@ -13934,7 +14123,7 @@ git commit -m "Harden platform security"
 
 ---
 
-## Stage 22.8 — Create Staging Deployment
+## Stage 23.8 — Create Staging Deployment
 
 ### Objective
 
@@ -13962,7 +14151,7 @@ To be defined based on the deployment platform.
 
 ---
 
-## Stage 22.9 — Production Readiness Review
+## Stage 23.9 — Production Readiness Review
 
 ### Objective
 
@@ -14010,7 +14199,7 @@ git commit -m "Complete production readiness review"
 
 ---
 
-# Phase 23 — Documentation and Demonstration Readiness
+# Phase 24 — Documentation and Demonstration Readiness
 
 ## Phase objective
 
@@ -14018,7 +14207,7 @@ Document the platform clearly and provide a reproducible way to demonstrate its 
 
 ---
 
-## Stage 23.1 — Write Architecture Documentation
+## Stage 24.1 — Write Architecture Documentation
 
 ### Objective
 
@@ -14056,7 +14245,7 @@ git commit -m "Document platform architecture"
 
 ---
 
-## Stage 23.2 — Create Demonstration Dataset and Scenario
+## Stage 24.2 — Create Demonstration Dataset and Scenario
 
 ### Objective
 
@@ -14083,7 +14272,7 @@ git commit -m "Add repeatable platform demonstration"
 
 ---
 
-## Stage 23.3 — Finalise Repository README
+## Stage 24.3 — Finalise Repository README
 
 ### Objective
 
