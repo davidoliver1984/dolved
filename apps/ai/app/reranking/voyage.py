@@ -4,6 +4,8 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 
 import httpx
+from opentelemetry import trace
+from opentelemetry.trace import SpanKind, Status, StatusCode
 from pydantic import SecretStr
 
 from app.operational_metrics import record_dependency
@@ -25,6 +27,7 @@ from app.reranking.errors import (
     RerankingError,
 )
 from app.reranking.models import RerankedCandidate, RerankRequest, RerankResult
+from app.telemetry import trace_attributes
 
 
 class VoyageReranker:
@@ -77,6 +80,46 @@ class VoyageReranker:
                 "reranker profile is incompatible with Voyage"
             )
         started = self._monotonic()
+        tracer = trace.get_tracer("dolved.python.reranking")
+        with tracer.start_as_current_span(
+            "reranking.provider.call",
+            kind=SpanKind.CLIENT,
+            attributes=trace_attributes(
+                {
+                    "gen_ai.operation.name": "rerank",
+                    "gen_ai.provider.name": "voyage",
+                    "gen_ai.request.model": request.profile.model,
+                    "rag.operation.stage": "reranking_provider",
+                    "rag.retrieval.reranker.candidate_count": len(request.candidates),
+                }
+            ),
+            record_exception=False,
+            set_status_on_exception=False,
+        ) as span:
+            try:
+                result = self._rerank(request, started)
+                span.set_attributes(
+                    trace_attributes(
+                        {
+                            "rag.operation.outcome": "completed",
+                            "rag.retrieval.reranker.retry_count": result.provider_retry_count,
+                        }
+                    )
+                )
+                return result
+            except Exception as exception:
+                span.set_attributes(
+                    trace_attributes(
+                        {
+                            "rag.operation.outcome": "failed",
+                            "error.type": type(exception).__name__,
+                        }
+                    )
+                )
+                span.set_status(Status(StatusCode.ERROR))
+                raise
+
+    def _rerank(self, request: RerankRequest, started: float) -> RerankResult:
         results: list[RerankedCandidate] = []
         total_tokens = 0
         total_attempts = 0

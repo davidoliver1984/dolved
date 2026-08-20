@@ -10,17 +10,17 @@ use App\Models\Document;
 use App\Models\OutboxEvent;
 use App\Services\Ingestion\DocumentIngestionContractValidator;
 use App\Support\Ingestion\DocumentIngestionRequestedPayload;
+use App\Telemetry\TraceContextHeaders;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use OpenTelemetry\API\Trace\Propagation\TraceContextPropagator;
-use Throwable;
 
 class RequestDocumentIngestion
 {
     public function __construct(
         private readonly DocumentIngestionRequestedPayload $payloads,
         private readonly DocumentIngestionContractValidator $validator,
+        private readonly TraceContextHeaders $traceContext,
     ) {}
 
     public function handle(
@@ -61,7 +61,7 @@ class RequestDocumentIngestion
 
             $this->validator->validate($payload);
 
-            $traceContext = $this->currentTraceContext();
+            $traceContext = $this->traceContext->current();
 
             $lockedDocument->status = DocumentStatus::Queued;
             $lockedDocument->save();
@@ -81,26 +81,5 @@ class RequestDocumentIngestion
 
             return $lockedDocument->refresh();
         });
-    }
-
-    /**
-     * @return array{traceparent?: string, tracestate?: string}
-     */
-    private function currentTraceContext(): array
-    {
-        $carrier = [];
-
-        try {
-            TraceContextPropagator::getInstance()->inject($carrier);
-        } catch (Throwable) {
-            // Durable ingestion must succeed when telemetry is unavailable.
-            return [];
-        }
-
-        return array_filter(
-            $carrier,
-            static fn (mixed $value): bool => is_string($value)
-                && $value !== '',
-        );
     }
 }

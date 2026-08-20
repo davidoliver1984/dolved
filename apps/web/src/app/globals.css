@@ -72,10 +72,58 @@
   color: var(--muted-foreground, #62716c);
 }
 
+.operations-policy {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
+  margin-top: 2rem;
+  padding: 1.5rem;
+}
+
+.operations-policy h2 {
+  margin: 0.35rem 0 1rem;
+}
+
+.operations-policy ul {
+  list-style: none;
+  margin-top: 1rem;
+}
+
+.operations-policy li,
+.operations-policy label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.75rem;
+}
+
+.operations-policy small {
+  color: var(--muted);
+}
+
+.operations-policy input {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  font: inherit;
+  padding: 0.65rem;
+}
+
+.operations-policy button {
+  margin-top: 1rem;
+}
+
 @media (max-width: 720px) {
   .operations-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .operations-policy {
+    grid-template-columns: 1fr;
   }
 }
 

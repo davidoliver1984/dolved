@@ -42,6 +42,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use OpenTelemetry\API\Trace\Span;
+use OpenTelemetry\API\Trace\SpanContext;
+use OpenTelemetry\API\Trace\TraceFlags;
 use Tests\TestCase;
 
 class SemanticRetrievalTest extends TestCase
@@ -775,6 +778,37 @@ class SemanticRetrievalTest extends TestCase
 
         $this->assertSame(RetrievalTemporalMode::Current, $plan->temporalMode);
         $this->assertCount(2, array_unique($requestIds));
+    }
+
+    public function test_laravel_to_python_calls_propagate_the_active_w3c_trace_context(): void
+    {
+        $workspace = Workspace::factory()->create();
+        $traceId = '1234567890abcdef1234567890abcdef';
+        $spanId = '1234567890abcdef';
+        $context = Span::wrap(SpanContext::create(
+            $traceId,
+            $spanId,
+            TraceFlags::SAMPLED,
+        ))->activate();
+        Http::fake(function (Request $request) {
+            $this->assertSame(
+                '00-1234567890abcdef1234567890abcdef-1234567890abcdef-01',
+                $request->header('traceparent')[0] ?? null,
+            );
+
+            return Http::response($this->planResponse($request->data()));
+        });
+
+        try {
+            app(RetrievalClient::class)->plan(
+                $workspace,
+                'Current?',
+                CarbonImmutable::parse('2026-08-07T12:00:00Z'),
+            );
+        } finally {
+            $context->detach();
+        }
+        Http::assertSentCount(1);
     }
 
     public function test_semantic_planner_failure_is_typed_and_is_not_retried_to_success(): void

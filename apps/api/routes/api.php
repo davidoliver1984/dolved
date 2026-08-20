@@ -8,6 +8,7 @@ use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\Internal\DocumentDeletionOperationController;
 use App\Http\Controllers\Internal\DocumentIngestionClaimController;
 use App\Http\Controllers\Internal\IngestionOperationController;
+use App\Http\Controllers\Internal\ObservabilityReconciliationController;
 use App\Http\Controllers\PlatformOperationsController;
 use App\Http\Controllers\RetrievalController;
 use App\Http\Controllers\WorkspaceAdministrationController;
@@ -75,7 +76,14 @@ Route::prefix('/platform/operations')->middleware([
 ])->group(function (): void {
     Route::get('/access', [PlatformOperationsController::class, 'access']);
     Route::get('/health', [PlatformOperationsController::class, 'health']);
+    Route::get('/policy', [PlatformOperationsController::class, 'policy']);
+    Route::post('/policy', [PlatformOperationsController::class, 'storePolicy']);
 });
+
+Route::post('/internal/observability/reconciliation/plan', [ObservabilityReconciliationController::class, 'plan'])
+    ->middleware('observability.reconciler:observability.policy.plan.read');
+Route::post('/internal/observability/reconciliation/acknowledgements', [ObservabilityReconciliationController::class, 'acknowledge'])
+    ->middleware('observability.reconciler:observability.policy.reconcile');
 
 Route::post(
     '/internal/ingestion/events/{eventId}/claim',

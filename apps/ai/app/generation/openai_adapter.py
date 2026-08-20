@@ -10,6 +10,8 @@ from typing import Any, Literal, cast
 
 import openai
 import tiktoken
+from opentelemetry import trace
+from opentelemetry.trace import SpanKind, Status, StatusCode
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from app.generation.errors import (
@@ -28,6 +30,7 @@ from app.generation.models import (
 )
 from app.generation.prompt import PROMPT_VERSION, SYSTEM_PROMPT
 from app.operational_metrics import record_dependency
+from app.telemetry import trace_attributes
 
 PROVIDER = "openai"
 MODEL = "gpt-5-mini"
@@ -275,6 +278,40 @@ class OpenAIGenerator:
         self._meter = OpenAITokenMeter(self.profile.model)
 
     def generate(self, request: GenerationRequest) -> GenerationResult:
+        tracer = trace.get_tracer("dolved.python.generation")
+        with tracer.start_as_current_span(
+            "generation.provider.call",
+            kind=SpanKind.CLIENT,
+            attributes=trace_attributes(
+                {
+                    "gen_ai.operation.name": "generate",
+                    "gen_ai.provider.name": self.profile.provider,
+                    "gen_ai.request.model": self.profile.model,
+                    "rag.operation.stage": "generation_provider",
+                }
+            ),
+            record_exception=False,
+            set_status_on_exception=False,
+        ) as span:
+            try:
+                result = self._generate(request)
+                span.set_attributes(
+                    trace_attributes({"rag.operation.outcome": "completed"})
+                )
+                return result
+            except Exception as exception:
+                span.set_attributes(
+                    trace_attributes(
+                        {
+                            "rag.operation.outcome": "failed",
+                            "error.type": type(exception).__name__,
+                        }
+                    )
+                )
+                span.set_status(Status(StatusCode.ERROR))
+                raise
+
+    def _generate(self, request: GenerationRequest) -> GenerationResult:
         rendered = render_openai_request(request, self.profile)
         measured_input_tokens = self._meter.measure(rendered)
         proposed = measured_input_tokens + self.profile.max_output_tokens
@@ -346,6 +383,39 @@ class OpenAIGenerator:
 
     def stream(self, request: GenerationRequest) -> Iterator[GenerationStreamEvent]:
         """Emit only structurally complete answer parts, followed by one terminal event."""
+        tracer = trace.get_tracer("dolved.python.generation")
+        with tracer.start_as_current_span(
+            "generation.provider.stream",
+            kind=SpanKind.CLIENT,
+            attributes=trace_attributes(
+                {
+                    "gen_ai.operation.name": "stream",
+                    "gen_ai.provider.name": self.profile.provider,
+                    "gen_ai.request.model": self.profile.model,
+                    "rag.operation.stage": "generation_provider",
+                }
+            ),
+            record_exception=False,
+            set_status_on_exception=False,
+        ) as span:
+            try:
+                yield from self._stream(request)
+                span.set_attributes(
+                    trace_attributes({"rag.operation.outcome": "completed"})
+                )
+            except Exception as exception:
+                span.set_attributes(
+                    trace_attributes(
+                        {
+                            "rag.operation.outcome": "failed",
+                            "error.type": type(exception).__name__,
+                        }
+                    )
+                )
+                span.set_status(Status(StatusCode.ERROR))
+                raise
+
+    def _stream(self, request: GenerationRequest) -> Iterator[GenerationStreamEvent]:
         rendered = render_openai_request(request, self.profile)
         measured_input_tokens = self._meter.measure(rendered)
         proposed = measured_input_tokens + self.profile.max_output_tokens

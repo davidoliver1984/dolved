@@ -51,8 +51,13 @@ TRACE_ATTRIBUTE_ALLOWLIST = frozenset(
         "rag.dependency.kind",
         "rag.retrieval.candidate_count",
         "rag.retrieval.eligible_scope_size",
+        "rag.retrieval.fusion.candidate_count",
+        "rag.retrieval.fusion.rrf_k",
         "rag.retrieval.method",
+        "rag.retrieval.reranker.candidate_count",
+        "rag.retrieval.reranker.retry_count",
         "rag.retrieval.side",
+        "rag.retrieval.sparse_candidate_count",
         "rag.retrieval.temporal_mode",
         "rag.workspace.id",
     }
@@ -79,7 +84,10 @@ METRIC_ATTRIBUTE_ALLOWLIST = frozenset(
         "rag.failure.category",
         "rag.dependency.kind",
         "rag.retrieval.method",
+        "rag.retrieval.fusion.candidate_count",
+        "rag.retrieval.reranker.candidate_count",
         "rag.retrieval.side",
+        "rag.retrieval.sparse_candidate_count",
     }
 )
 

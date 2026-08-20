@@ -13473,7 +13473,7 @@ sampling and implement the authenticated desired-policy reconciliation boundary.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-20.
 
 ### Planned scope
 
@@ -13498,6 +13498,48 @@ Not yet executed.
 * Stale, replayed, conflicting and superseded acknowledgements fail closed.
 * Local traces and reconciliation state are inspectable without affecting
   ordinary application correctness.
+
+### Implemented result
+
+* Laravel injects the active W3C `traceparent`/`tracestate` into all
+  synchronous rc1 calls to Python. Retry and deletion outbox events retain the
+  originating context, queued generation restores its parent, and previously
+  missing administration, contextualisation, generation, reranking and
+  deletion spans use the shared privacy allowlists.
+* The pinned OpenTelemetry Collector owns the only ratio sampler. Its traces
+  pipeline uses the trace-ID-consistent `probabilistic_sampler`; Laravel and
+  Python remain AlwaysOn/default so competing application sampling cannot
+  create partial service traces.
+* Operational policy is immutable and versioned. A required-target manifest
+  expands each setting into independently derived `PENDING`, `ACTIVE` or
+  `FAILED` targets; append-only deployment attempts and a current-attempt
+  pointer prevent stale or superseded acknowledgements changing current
+  state. Desired state is never represented as applied state.
+* The `or1` reconciliation protocol uses dedicated rotatable HMAC credentials,
+  timestamp and nonce replay protection, bounded bodies, purpose/path/plan/
+  attempt binding, generic rejection responses and privacy-safe logs. The
+  platform operations page shows aggregate and per-target state and only
+  records desired policy; the reconciler independently verifies effective
+  Collector configuration before acknowledging it.
+* A real local reconciliation moved the Collector sampling target to `ACTIVE`;
+  the other four settings remained truthfully `PENDING` because their targets
+  had not acknowledged them. A real Tempo trace joined Laravel API, outbox
+  publisher and Python worker spans under one trace ID while synthetic content
+  and entity metric labels remained absent.
+
+### Verification evidence
+
+* Focused Laravel acceptance: 57 tests / 338 assertions.
+* Web: 19 files / 58 tests; ESLint and TypeScript passed.
+* Python provider/trace focus: 54 tests; Ruff lint/format and focused Mypy over
+  142 source files passed. The collectable provider-free suite passed 549
+  tests with 3 skipped; its two remaining failures require the intentionally
+  absent engineering expectations fixture.
+* Laravel passed 320 tests with 2 skipped; its eight remaining failures require
+  the intentionally absent engineering corpus fixture.
+* PostgreSQL migration SQL preflight and local migration, Pint, pinned
+  Collector `validate`, JSON validation and `git diff --check` passed. No
+  provider calls were made.
 
 ### Commit boundary
 

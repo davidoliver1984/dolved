@@ -26,7 +26,41 @@ export type PlatformOperationsSnapshot = {
   freshness: "current" | "unavailable";
   metrics: Record<string, OperationalMetric>;
   grafana_url: string;
+  operational_policy: OperationalPolicy | null;
 };
+
+export type OperationalPolicyTarget = {
+  target: string;
+  plan_id: string;
+  expected_digest: string;
+  current_attempt_id: string | null;
+  status: "ACTIVE" | "PENDING" | "FAILED";
+  reconciled_at: string | null;
+};
+
+export type OperationalPolicy = {
+  public_id: string;
+  environment: string;
+  version: number;
+  manifest_version: string;
+  manifest_digest: string;
+  active_settings: number;
+  total_settings: number;
+  fully_active: boolean;
+  settings: Array<{
+    setting_key: string;
+    desired_value: number;
+    status: "ACTIVE" | "PENDING" | "FAILED";
+    targets: OperationalPolicyTarget[];
+  }>;
+};
+
+export function createOperationalPolicy(values: Record<string, number>): Promise<{ data: { policy: unknown } }> {
+  return apiFetch("/api/platform/operations/policy", {
+    method: "POST",
+    body: JSON.stringify(values),
+  });
+}
 
 export type Workspace = {
   public_id: string;

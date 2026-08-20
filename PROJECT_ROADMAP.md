@@ -808,7 +808,18 @@ atomic audit history and last-administrator protection, and are checked live.
 Bounded operational metrics now cover the core application, provider,
 dependency and queue surfaces. A curated server-rendered health dashboard uses
 only fixed backend queries, filters response labels and reports unavailable
-signals truthfully without affecting ordinary use. Stage 20.3 is next.
+signals truthfully without affecting ordinary use.
+
+**Stage 20.3 completed 2026-08-20:** One W3C trace context now crosses
+Laravel-to-Python rc1 calls, retry/deletion outbox work and queued generation,
+with missing provider and administration spans constrained by shared privacy
+allowlists. The Collector is the sole probabilistic sampling owner.
+Operational settings are immutable desired-policy versions whose status is
+derived only from authenticated, append-only, per-target reconciliation
+evidence; stale, conflicting and replayed acknowledgements fail closed. A
+real local Collector target reached `ACTIVE` and a Tempo trace joined Laravel,
+publisher and Python worker spans without exposing the synthetic privacy
+marker. Stage 20.4 is next and requires architecture review.
 
 ---
 

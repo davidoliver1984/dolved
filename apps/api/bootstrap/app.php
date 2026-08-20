@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AuthenticateIngestionWorker;
+use App\Http\Middleware\AuthenticateObservabilityReconciler;
 use App\Http\Middleware\CanonicalizeEmail;
 use App\Http\Middleware\RequireEnabledAccount;
 use App\Http\Middleware\RequireGuestApiSession;
@@ -34,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.guest' => RequireGuestApiSession::class,
             'account.enabled' => RequireEnabledAccount::class,
             'ingestion.worker' => AuthenticateIngestionWorker::class,
+            'observability.reconciler' => AuthenticateObservabilityReconciler::class,
             'registration.open' => RequireOpenRegistration::class,
         ]);
     })

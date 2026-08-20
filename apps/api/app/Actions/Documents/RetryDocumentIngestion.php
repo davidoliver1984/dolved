@@ -13,6 +13,8 @@ use App\Models\OutboxEvent;
 use App\Models\User;
 use App\Services\Ingestion\DocumentIngestionContractValidator;
 use App\Support\Ingestion\DocumentIngestionRequestedPayload;
+use App\Telemetry\OperationTracer;
+use App\Telemetry\TraceContextHeaders;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -22,6 +24,8 @@ class RetryDocumentIngestion
     public function __construct(
         private readonly DocumentIngestionRequestedPayload $payloads,
         private readonly DocumentIngestionContractValidator $validator,
+        private readonly TraceContextHeaders $traceContext,
+        private readonly OperationTracer $tracer,
     ) {}
 
     public function handle(
@@ -30,7 +34,11 @@ class RetryDocumentIngestion
         string $idempotencyKey,
         string $correlationId,
     ): DocumentIngestionRetry {
-        return DB::transaction(function () use ($document, $actor, $idempotencyKey, $correlationId): DocumentIngestionRetry {
+        return $this->tracer->run('document.ingestion.retry', [
+            'rag.correlation.id' => $correlationId,
+            'rag.document.id' => $document->public_id,
+            'rag.operation.stage' => 'ingestion_retry',
+        ], fn (): DocumentIngestionRetry => DB::transaction(function () use ($document, $actor, $idempotencyKey, $correlationId): DocumentIngestionRetry {
             $locked = Document::query()
                 ->with('workspace')
                 ->whereKey($document->getKey())
@@ -54,6 +62,7 @@ class RetryDocumentIngestion
             $occurredAt = CarbonImmutable::now();
             $payload = $this->payloads->build($locked, $eventId, $correlationId, $occurredAt);
             $this->validator->validate($payload);
+            $traceContext = $this->traceContext->current();
 
             $retry = DocumentIngestionRetry::query()->create([
                 'workspace_id' => $locked->workspace_id,
@@ -71,6 +80,8 @@ class RetryDocumentIngestion
                 'workspace_public_id' => $locked->workspace->public_id,
                 'document_public_id' => $locked->public_id,
                 'correlation_id' => $correlationId,
+                'traceparent' => $traceContext['traceparent'] ?? null,
+                'tracestate' => $traceContext['tracestate'] ?? null,
                 'payload' => $payload,
                 'occurred_at' => $occurredAt,
             ]);
@@ -88,6 +99,6 @@ class RetryDocumentIngestion
             ]);
 
             return $retry->load('document');
-        });
+        }));
     }
 }

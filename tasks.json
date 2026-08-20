@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R20",
-    "current_session": "R20-S03",
-    "next_action": "Begin R20-S03 — complete cross-service trace coverage, Collector-owned sampling and authenticated operational-policy reconciliation.",
-    "completed_through": "R20-S02",
+    "current_session": "R20-S04",
+    "next_action": "Begin R20-S04 architecture review — define calibrated SLIs/SLOs, actionable alerts and operational runbooks.",
+    "completed_through": "R20-S03",
     "completed_phase_count": 20,
     "total_phase_count": 25
   },
@@ -3999,7 +3999,7 @@
           "title": "Complete Trace Coverage, Collector Sampling and Operational-Policy Reconciliation",
           "guide_start_line": 13467,
           "guide_end_line": 13507,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Complete cross-service traces, configure Collector-owned sampling and implement authenticated operational-policy reconciliation.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -4030,10 +4030,24 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r20-s03-add-distributed-tracing.md",
-            "status": "not_started"
+            "path_template": "docs/journal/2026-08-20-r20-s03-add-distributed-tracing.md",
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "W3C trace context now crosses Laravel-to-Python rc1 calls, retry/deletion outbox work and queued generation",
+            "Missing administration, contextualisation, generation, reranking and deletion spans use bounded privacy allowlists",
+            "Pinned Collector is the sole trace-ID-consistent probabilistic sampling owner; application SDKs remain AlwaysOn/default",
+            "Immutable desired-policy versions expand through a versioned required-target manifest into independently derived per-target state",
+            "Dedicated or1 HMAC plan/acknowledgement protocol rejects stale, replayed, conflicting, cross-target and superseded evidence",
+            "Append-only deployment attempts and current-attempt compare-and-set semantics prevent desired state self-declaring ACTIVE",
+            "Platform operations UI exposes desired, aggregate and per-target reconciliation state",
+            "Real local Collector reconciliation reached ACTIVE for sampling while four unreconciled settings remained PENDING",
+            "Real Tempo trace joined Laravel API, publisher and Python worker with synthetic content and entity metric labels absent",
+            "Focused verification: Laravel 57 tests / 338 assertions, Python 54 tests, web 19 files / 58 tests",
+            "Collectable Python suite: 549 passed, 3 skipped; Laravel suite: 320 passed, 2 skipped; remaining failures are known physically absent engineering-fixture tests",
+            "PostgreSQL migration preflight/local migration, Collector validation, Ruff lint/format, focused Mypy, Pint, ESLint, TypeScript, JSON validation and git diff --check passed",
+            "docs/journal/2026-08-20-r20-s03-add-distributed-tracing.md"
+          ]
         },
         {
           "id": "R20-S04",

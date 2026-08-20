@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+final class ObservabilityReconciliationNonce extends Model
+{
+    protected $guarded = [];
+
+    protected function casts(): array
+    {
+        return ['expires_at' => 'immutable_datetime'];
+    }
+}

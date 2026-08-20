@@ -5,6 +5,8 @@ import time
 from typing import Any
 
 import httpx
+from opentelemetry import trace
+from opentelemetry.trace import SpanKind, Status, StatusCode
 from pydantic import SecretStr
 
 from app.conversation.models import (
@@ -12,6 +14,7 @@ from app.conversation.models import (
     ContextualisationResult,
     InterpretationMetadata,
 )
+from app.telemetry import trace_attributes
 
 
 class ContextualisationError(RuntimeError):
@@ -84,6 +87,42 @@ class OpenAIQueryContextualizer:
                 usage={"execution": "deterministic", "request_count": 0},
             )
         started = time.perf_counter()
+        tracer = trace.get_tracer("dolved.python.conversation")
+        with tracer.start_as_current_span(
+            "conversation.contextualize.provider",
+            kind=SpanKind.CLIENT,
+            attributes=trace_attributes(
+                {
+                    "gen_ai.operation.name": "contextualize",
+                    "gen_ai.provider.name": "openai",
+                    "gen_ai.request.model": self._model,
+                    "rag.operation.stage": "contextualisation_provider",
+                }
+            ),
+            record_exception=False,
+            set_status_on_exception=False,
+        ) as span:
+            try:
+                result = self._contextualize_provider(request, started)
+                span.set_attributes(
+                    trace_attributes({"rag.operation.outcome": "completed"})
+                )
+                return result
+            except Exception as exception:
+                span.set_attributes(
+                    trace_attributes(
+                        {
+                            "rag.operation.outcome": "failed",
+                            "error.type": type(exception).__name__,
+                        }
+                    )
+                )
+                span.set_status(Status(StatusCode.ERROR))
+                raise
+
+    def _contextualize_provider(
+        self, request: ContextualisationRequest, started: float
+    ) -> ContextualisationResult:
         last_error: Exception | None = None
         for attempt in range(1, self._max_attempts + 1):
             try:

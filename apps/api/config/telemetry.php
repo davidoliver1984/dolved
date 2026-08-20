@@ -44,6 +44,11 @@ return [
         'rag.operation.outcome',
         'rag.failure.category',
         'rag.dependency.kind',
+        'rag.retrieval.fusion.candidate_count',
+        'rag.retrieval.fusion.rrf_k',
+        'rag.retrieval.reranker.candidate_count',
+        'rag.retrieval.reranker.retry_count',
+        'rag.retrieval.sparse_candidate_count',
         'rag.workspace.id',
     ],
     'metric_attributes' => [
@@ -60,5 +65,8 @@ return [
         'rag.operation.outcome',
         'rag.failure.category',
         'rag.dependency.kind',
+        'rag.retrieval.fusion.candidate_count',
+        'rag.retrieval.reranker.candidate_count',
+        'rag.retrieval.sparse_candidate_count',
     ],
 ];

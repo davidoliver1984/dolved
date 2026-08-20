@@ -11,12 +11,16 @@ use App\Exceptions\GenerationStreamException;
 use App\Models\Workspace;
 use App\Services\Retrieval\RetrievalCallSigner;
 use App\Support\Generation\GenerationRequest;
+use App\Telemetry\TraceContextHeaders;
 use Illuminate\Support\Facades\Http;
 use JsonException;
 
 final readonly class GenerationClient
 {
-    public function __construct(private RetrievalCallSigner $signer) {}
+    public function __construct(
+        private RetrievalCallSigner $signer,
+        private TraceContextHeaders $traceContext,
+    ) {}
 
     /** @return array<string, mixed> */
     public function generate(Workspace $workspace, GenerationRequest $request): array
@@ -27,7 +31,8 @@ final readonly class GenerationClient
             throw new GenerationException('The generation request could not be encoded.', 0, $exception);
         }
         $path = '/api/internal/retrieval/generation/answer';
-        $headers = $this->signer->headers('POST', $path, $body, (string) $workspace->public_id, 'generation.answer', $request->requestId);
+        $headers = $this->signer->headers('POST', $path, $body, (string) $workspace->public_id, 'generation.answer', $request->requestId)
+            + $this->traceContext->current();
         $response = Http::timeout((float) config('retrieval.timeout_seconds'))->withHeaders($headers)->withBody($body, 'application/json')->post(rtrim((string) config('retrieval.ai_url'), '/').$path);
         if (! $response->successful() || $response->json('request_id') !== $request->requestId) {
             throw new GenerationException('The generation service call failed.');
@@ -77,7 +82,8 @@ final readonly class GenerationClient
             throw new GenerationStreamException('The generation stream request could not be encoded.', 0, $exception);
         }
         $path = '/api/internal/retrieval/generation/stream';
-        $headers = $this->signer->headers('POST', $path, $body, (string) $workspace->public_id, 'generation.stream', $request->requestId);
+        $headers = $this->signer->headers('POST', $path, $body, (string) $workspace->public_id, 'generation.stream', $request->requestId)
+            + $this->traceContext->current();
         $response = Http::timeout((float) config('retrieval.timeout_seconds'))
             ->withOptions(['stream' => true])
             ->withHeaders($headers)

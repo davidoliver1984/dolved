@@ -1,9 +1,12 @@
 from dataclasses import dataclass
 from typing import Any, Protocol
 
+from opentelemetry import trace
+from opentelemetry.trace import Status, StatusCode
 from pydantic import ValidationError
 
 from app.deletion.client import DeletionGrant
+from app.telemetry import trace_attributes
 from app.vector_store.errors import (
     VectorStoreError,
     VectorStoreUnavailableError,
@@ -50,6 +53,44 @@ class DocumentDeletionOrchestrator:
         self._vector_store = vector_store
 
     def process(self, *, event: dict[str, Any], raw_body: str) -> DeletionResult:
+        tracer = trace.get_tracer("dolved.python.deletion")
+        with tracer.start_as_current_span(
+            "document.deletion.orchestrate",
+            attributes=trace_attributes(
+                {
+                    "rag.correlation.id": event.get("correlation_id"),
+                    "rag.document.id": event.get("document_id"),
+                    "rag.event.id": event.get("event_id"),
+                    "rag.operation.stage": "document_deletion",
+                }
+            ),
+            record_exception=False,
+            set_status_on_exception=False,
+        ) as span:
+            try:
+                result = self._process(event=event, raw_body=raw_body)
+                span.set_attributes(
+                    trace_attributes(
+                        {
+                            "rag.operation.outcome": result.code,
+                            "rag.processing.outcome": result.code,
+                        }
+                    )
+                )
+                return result
+            except Exception as exception:
+                span.set_attributes(
+                    trace_attributes(
+                        {
+                            "rag.operation.outcome": "failed",
+                            "error.type": type(exception).__name__,
+                        }
+                    )
+                )
+                span.set_status(Status(StatusCode.ERROR))
+                raise
+
+    def _process(self, *, event: dict[str, Any], raw_body: str) -> DeletionResult:
         grant = self._client.claim(event_id=str(event["event_id"]), raw_body=raw_body)
         if grant.outcome == "already_completed":
             return DeletionResult(True, "already_completed")

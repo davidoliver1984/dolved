@@ -19,6 +19,7 @@ use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\RetrievalFailureObservation;
 use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\RetrievalSearchResult;
+use App\Telemetry\TraceContextHeaders;
 use Carbon\CarbonImmutable;
 use GuzzleHttp\Psr7\Response as PsrResponse;
 use Illuminate\Http\Client\ConnectionException;
@@ -30,7 +31,10 @@ use JsonException;
 
 final readonly class RetrievalClient
 {
-    public function __construct(private RetrievalCallSigner $signer) {}
+    public function __construct(
+        private RetrievalCallSigner $signer,
+        private TraceContextHeaders $traceContext,
+    ) {}
 
     public function plan(
         Workspace $workspace,
@@ -387,7 +391,7 @@ final readonly class RetrievalClient
                 (string) $workspace->public_id,
                 $purpose,
                 $requestId,
-            );
+            ) + $this->traceContext->current();
             try {
                 $response = Http::timeout((float) config('retrieval.timeout_seconds'))
                     ->withHeaders($headers)

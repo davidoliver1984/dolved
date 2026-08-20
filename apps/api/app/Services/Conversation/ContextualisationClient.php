@@ -9,13 +9,17 @@ use App\Models\Workspace;
 use App\Services\Retrieval\RetrievalCallSigner;
 use App\Support\Conversation\ContextualisationRequest;
 use App\Support\Conversation\ContextualisationResult;
+use App\Telemetry\TraceContextHeaders;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 use JsonException;
 
 final readonly class ContextualisationClient
 {
-    public function __construct(private RetrievalCallSigner $signer) {}
+    public function __construct(
+        private RetrievalCallSigner $signer,
+        private TraceContextHeaders $traceContext,
+    ) {}
 
     public function contextualise(Workspace $workspace, ContextualisationRequest $request): ContextualisationResult
     {
@@ -25,7 +29,8 @@ final readonly class ContextualisationClient
             throw new GenerationException('The contextualisation request could not be encoded.', 0, $exception);
         }
         $path = '/api/internal/retrieval/conversation/contextualize';
-        $headers = $this->signer->headers('POST', $path, $body, (string) $workspace->public_id, 'conversation.contextualize', $request->requestId);
+        $headers = $this->signer->headers('POST', $path, $body, (string) $workspace->public_id, 'conversation.contextualize', $request->requestId)
+            + $this->traceContext->current();
         $response = Http::timeout((float) config('retrieval.timeout_seconds'))
             ->withHeaders($headers)
             ->withBody($body, 'application/json')

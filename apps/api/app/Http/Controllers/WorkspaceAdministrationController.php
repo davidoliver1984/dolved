@@ -25,6 +25,7 @@ use App\Notifications\WorkspaceInvitationNotification;
 use App\Queries\Workspaces\FindWorkspaceForUser;
 use App\Support\CorrelationId;
 use App\Support\Workspaces\RecordWorkspaceAdministrationAudit;
+use App\Telemetry\OperationTracer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -35,7 +36,10 @@ use Throwable;
 
 class WorkspaceAdministrationController extends Controller
 {
-    public function __construct(private readonly RecordWorkspaceAdministrationAudit $audit) {}
+    public function __construct(
+        private readonly RecordWorkspaceAdministrationAudit $audit,
+        private readonly OperationTracer $tracer,
+    ) {}
 
     public function members(Request $request, string $workspacePublicId, FindWorkspaceForUser $workspaces): AnonymousResourceCollection
     {
@@ -87,8 +91,11 @@ class WorkspaceAdministrationController extends Controller
         if ($result['invitation'] !== null && $result['token'] !== null) {
             $link = config('workspace_administration.frontend_url').'/invitations/'.rawurlencode($result['token']);
             try {
-                Notification::route('mail', $result['invitation']->invited_email)
-                    ->notify(new WorkspaceInvitationNotification($result['invitation'], $result['token']));
+                $this->tracer->run('workspace.invitation.deliver', [
+                    'rag.correlation.id' => $correlationId,
+                    'rag.operation.stage' => 'invitation_delivery',
+                ], fn () => Notification::route('mail', $result['invitation']->invited_email)
+                    ->notify(new WorkspaceInvitationNotification($result['invitation'], $result['token'])));
                 $delivery = 'sent';
             } catch (Throwable) {
                 Log::warning('Workspace invitation delivery was unavailable.', [
@@ -260,7 +267,10 @@ class WorkspaceAdministrationController extends Controller
         callable $operation,
     ): mixed {
         try {
-            return $operation();
+            return $this->tracer->run('workspace.administration.'.$command, [
+                'rag.correlation.id' => $correlationId,
+                'rag.operation.stage' => 'workspace_administration',
+            ], $operation);
         } catch (WorkspaceAdministrationException $exception) {
             $this->audit->record(
                 $workspace,

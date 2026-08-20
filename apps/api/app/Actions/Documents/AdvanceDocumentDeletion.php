@@ -11,16 +11,24 @@ use App\Models\IngestionEventClaim;
 use App\Models\OutboxEvent;
 use App\Models\WorkspaceCorpusGeneration;
 use App\Support\Documents\DocumentDeletionRequestedPayload;
+use App\Telemetry\OperationTracer;
+use App\Telemetry\TraceContextHeaders;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
 class AdvanceDocumentDeletion
 {
-    public function __construct(private readonly DocumentDeletionRequestedPayload $payloads) {}
+    public function __construct(
+        private readonly DocumentDeletionRequestedPayload $payloads,
+        private readonly TraceContextHeaders $traceContext,
+        private readonly OperationTracer $tracer,
+    ) {}
 
     public function handle(int $operationId): bool
     {
-        return DB::transaction(function () use ($operationId): bool {
+        return $this->tracer->run('document.deletion.dispatch', [
+            'rag.operation.stage' => 'document_deletion',
+        ], fn (): bool => DB::transaction(function () use ($operationId): bool {
             $operation = DocumentDeletionOperation::query()
                 ->with('document.workspace')
                 ->whereKey($operationId)
@@ -40,6 +48,7 @@ class AdvanceDocumentDeletion
             ])->save();
             $occurredAt = CarbonImmutable::now();
             $payload = $this->payloads->build($operation->refresh(), $occurredAt);
+            $traceContext = $this->traceContext->current();
             OutboxEvent::query()->firstOrCreate(
                 ['event_id' => $operation->public_id],
                 [
@@ -48,13 +57,15 @@ class AdvanceDocumentDeletion
                     'workspace_public_id' => $operation->document->workspace->public_id,
                     'document_public_id' => $operation->document->public_id,
                     'correlation_id' => $operation->correlation_id,
+                    'traceparent' => $traceContext['traceparent'] ?? null,
+                    'tracestate' => $traceContext['tracestate'] ?? null,
                     'payload' => $payload,
                     'occurred_at' => $occurredAt,
                 ],
             );
 
             return true;
-        });
+        }));
     }
 
     private function isQuiescent(DocumentDeletionOperation $operation): bool

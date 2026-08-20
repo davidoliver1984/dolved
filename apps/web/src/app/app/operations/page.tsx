@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { platformOperations } from "@/lib/server-api";
+import { OperationalPolicyPanel } from "@/components/OperationalPolicyPanel";
 
 export const metadata: Metadata = {
   title: "Platform health — Dolved",
@@ -73,6 +74,7 @@ export default async function PlatformOperationsPage() {
           </article>
         ))}
       </div>
+      <OperationalPolicyPanel policy={result.data.operational_policy ?? null} />
     </section>
   );
 }

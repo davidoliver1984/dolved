@@ -191,7 +191,7 @@ done
 for span_name in \
     'messaging.publish document.ingestion.requested' \
     'process rag-platform-ingestion-local' \
-    'POST /api/internal/ingestion/events/{event}/claim'; do
+    'POST /api/internal/ingestion/events/{eventId}/claim'; do
     if [[ "$trace_json" != *"$span_name"* ]]; then
         printf 'Trace %s is missing span %s.\n' "$trace_id" "$span_name" >&2
         exit 1
