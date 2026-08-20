@@ -3,6 +3,8 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+from pydantic import SecretStr
+
 from app.evaluation.thin_historical_reference_classifier import (
     HistoricalClassifierCallResult,
     HistoricalReferenceClassification,
@@ -13,7 +15,6 @@ from app.evaluation.thin_historical_reference_experiment import (
     build_historical_reference_projection,
     run_historical_reference_experiment,
 )
-from pydantic import SecretStr
 
 BENCHMARK = Path("/evaluation/benchmarks/dolved-care-engineering/v2")
 

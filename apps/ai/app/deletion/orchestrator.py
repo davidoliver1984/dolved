@@ -1,15 +1,39 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Protocol
 
 from pydantic import ValidationError
 
-from app.deletion.client import DocumentDeletionClient
+from app.deletion.client import DeletionGrant
 from app.vector_store.errors import (
     VectorStoreError,
     VectorStoreUnavailableError,
 )
-from app.vector_store.models import VectorScope
-from app.vector_store.protocol import VectorStore
+from app.vector_store.models import VectorScope, VectorSpace
+
+
+class DeletionReportingClient(Protocol):
+    def claim(self, *, event_id: str, raw_body: str) -> DeletionGrant: ...
+
+    def complete(
+        self, context: dict[str, Any], scopes: list[dict[str, Any]]
+    ) -> None: ...
+
+    def fail(
+        self,
+        context: dict[str, Any],
+        *,
+        classification: str,
+        failure_code: str,
+        failure_message: str,
+    ) -> None: ...
+
+
+class VectorCleanupStore(Protocol):
+    def collection_exists(self, vector_space: VectorSpace) -> bool: ...
+
+    def delete(self, scope: VectorScope) -> None: ...
+
+    def count(self, scope: VectorScope) -> int: ...
 
 
 @dataclass(frozen=True)
@@ -20,7 +44,7 @@ class DeletionResult:
 
 class DocumentDeletionOrchestrator:
     def __init__(
-        self, *, client: DocumentDeletionClient, vector_store: VectorStore
+        self, *, client: DeletionReportingClient, vector_store: VectorCleanupStore
     ) -> None:
         self._client = client
         self._vector_store = vector_store

@@ -3,6 +3,8 @@ from datetime import date
 from pathlib import Path
 
 import httpx
+from pydantic import SecretStr
+
 from app.evaluation.thin_classifier_experiment import (
     EXPERIMENT_ID,
     build_expectation_projection,
@@ -13,7 +15,6 @@ from app.evaluation.thin_intent_classifier import (
     TemporalIntent,
     ThinIntentClassification,
 )
-from pydantic import SecretStr
 
 BENCHMARK = Path("/evaluation/benchmarks/dolved-care-engineering/v2")
 

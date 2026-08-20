@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R19",
-    "current_session": "R19-GATE",
-    "next_action": "Review the completed Phase 19 administration boundary against ADR-0025 and close the R19 acceptance gate if the evidence is accepted.",
+    "current_phase": "R20",
+    "current_session": "R20-S01",
+    "next_action": "Begin R20-S01 — standardise structured logging on the completed administration platform.",
     "completed_through": "R19-S03",
-    "completed_phase_count": 19,
+    "completed_phase_count": 20,
     "total_phase_count": 24
   },
   "phases": [
@@ -3815,7 +3815,7 @@
           "guide_stage": "Stage 19.3 \u2014 Add Usage Visibility",
           "title": "Add Usage Visibility",
           "guide_start_line": 13227,
-          "guide_end_line": 13271,
+          "guide_end_line": 13304,
           "status": "completed",
           "objective": "Expose document, storage, ingestion and model-usage information.",
           "session_mode": "implementation",
@@ -3825,7 +3825,7 @@
             "stage": "Stage 19.3 \u2014 Add Usage Visibility",
             "source_lines": {
               "start": 13227,
-              "end": 13271
+              "end": 13304
             }
           },
           "workflow": [
@@ -3861,13 +3861,13 @@
           ]
         }
       ],
-      "guide_end_line": 13238,
-      "status": "in_progress",
+      "guide_end_line": 13304,
+      "status": "completed",
       "objective": "Provide operational visibility and safe tenant-level controls.",
       "gate": {
         "id": "R19-GATE",
         "title": "Administration Acceptance Gate",
-        "status": "in_progress",
+        "status": "completed",
         "requirements": [
           "Implement and verify all Phase 19 sessions against accepted ADR-0025.",
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
@@ -3876,7 +3876,14 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-19 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "ADR-0025 remains the accepted Phase 19 administration and tenant control-plane architecture",
+          "Full repository-boundary sweep (make format-check lint typecheck test ps, make aws-status, make ps) found and fixed four genuine Phase 19 gaps: an over-broad DocumentDeletionOrchestrator type dependency narrowed to two purpose-built Protocols, a missing whole-repository mount that had prevented Stage 19.3's own branding regression test from running in its container, a stale build-cache artefact, and lint-blocking pre-existing debt",
+          "Laravel: 303 passed, 2 skipped, 8 failed (pre-existing missing-fixture evaluation tests unrelated to Phase 19)",
+          "Python: 545 passed, 3 skipped, 2 failed (same pre-existing missing-fixture cause); 2 unrelated pre-existing collection errors excluded",
+          "Web: 16 test files and 49 tests passed, including the repository-wide branding regression test",
+          "docs/journal/2026-08-20-r19-phase-closure.md"
+        ]
       }
     },
     {

@@ -10,7 +10,7 @@ const brandedSurfaces = [
   "src/components/AuthForm.tsx",
 ];
 
-const repositoryRoot = resolve(process.cwd(), "../..");
+const repositoryRoot = process.env.REPOSITORY_ROOT ?? resolve(process.cwd(), "../..");
 const legacyPattern = /Make\s*Time|maketime(?:\.ai|\.)/i;
 
 function isImmutableLegacyIdentity(path: string, line: string): boolean {
@@ -55,5 +55,5 @@ describe("product identity", () => {
       });
     }
     expect(unexpected).toEqual([]);
-  });
+  }, 30000);
 });

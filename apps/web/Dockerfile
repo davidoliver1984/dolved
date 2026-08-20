@@ -10,6 +10,7 @@ RUN npm ci \
 
 FROM dependencies AS development
 ENV NODE_ENV=development
+RUN apk add --no-cache git
 COPY --chown=node:node . .
 RUN mkdir -p .next \
     && chown -R node:node .next

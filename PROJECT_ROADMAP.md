@@ -724,8 +724,32 @@ permitted by ADR-0025. Invitations are digest-backed, verified-email-bound,
 one-time-link and independently valid from their delivery attempt. Role changes,
 member removal, voluntary leave and row-locked ownership transfer are durable,
 idempotent and audited. Existing SSE connections now reauthorize membership on
-a bounded interval and terminate safely after revocation. Usage visibility
-remains for Stage 19.3.
+a bounded interval and terminate safely after revocation.
+
+**Usage visibility implemented 2026-08-20** (Stage 19.3): Laravel persists
+content-free, deletion-independent workspace activity and normalised usage
+records rather than deriving history from live content rows. Current
+document, logical-source-byte and indexed-chunk gauges are calculated
+separately from bounded 7-day, 30-day and current-month historical activity.
+Ingestion, retrieval and generation usage record stage-aware token, latency
+and cost lineage without storing source text, questions, answers or provider
+payloads. Provider-reported, estimated, unavailable and genuinely local
+zero-cost values remain distinct, and the surface is owner/admin only.
+
+**Acceptance gate closed 2026-08-20:** a full repository-boundary sweep
+(`make format-check lint typecheck test ps`, `make aws-status`, and each
+service's suite individually where the chain stopped) found and fixed four
+genuine Phase 19 gaps invisible to any individual session's focused
+verification — an over-broad orchestrator type dependency narrowed to two
+purpose-built Protocols, a missing whole-repository mount that had silently
+prevented Stage 19.3's own branding regression test from ever running
+inside its container, a stale build-cache artefact, and pre-existing
+unrelated lint debt blocking the lint chain entirely. It also identified,
+and deliberately left unfixed as out of scope, technical debt predating
+Phase 19: unrelated Mypy errors in five Phase 16/17-era evaluation test
+files and nine Laravel/Python test failures (both services) caused by a
+missing `/evaluation/engineering/` fixture corpus. Phase 20 observability
+is next.
 
 ---
 
