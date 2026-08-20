@@ -14,6 +14,7 @@ use App\Models\Workspace;
 use App\Models\WorkspaceMembership;
 use App\Services\Ingestion\SqsIngestionEventPublisher;
 use App\Telemetry\DatabaseTelemetry;
+use App\Telemetry\OperationalTelemetry;
 use App\Telemetry\TelemetryAttributeAllowlist;
 use App\Telemetry\TelemetryLifecycle;
 use App\Telemetry\TelemetrySdkFactory;
@@ -328,6 +329,37 @@ class TelemetryTest extends TestCase
         ], $allowlist->metric($attributes));
     }
 
+    public function test_operational_metrics_use_bounded_labels_without_entity_identity(): void
+    {
+        [, $metricExporter, $tracerProvider, $meterProvider] = $this->installInMemoryTelemetry();
+        $this->app->forgetInstance(OperationalTelemetry::class);
+        $telemetry = app(OperationalTelemetry::class);
+
+        $telemetry->operation('generation_run', 'completed', 0.25);
+        $telemetry->dependency('database', true, 0.01);
+        $telemetry->queue('durable_outbox', 3, 4.5);
+        $telemetry->stuck('ingestion', 2);
+        $meterProvider->forceFlush();
+
+        $metrics = $metricExporter->collect();
+        $this->assertEqualsCanonicalizing([
+            'rag.operation.count',
+            'rag.operation.duration',
+            'rag.dependency.available',
+            'rag.dependency.duration',
+            'rag.queue.depth',
+            'rag.queue.oldest_message_age',
+            'rag.stuck_operation.count',
+        ], array_column($metrics, 'name'));
+        $serialized = serialize($metrics);
+        $this->assertStringNotContainsString('workspace', $serialized);
+        $this->assertStringNotContainsString('document-id', $serialized);
+        $this->assertStringNotContainsString('user-id', $serialized);
+
+        $tracerProvider->shutdown();
+        $meterProvider->shutdown();
+    }
+
     public function test_resource_attributes_use_an_explicit_privacy_allowlist(): void
     {
         config(['telemetry.service_name' => 'rag-platform-api']);
@@ -412,6 +444,7 @@ class TelemetryTest extends TestCase
             $meterProvider,
         );
         $this->app->forgetInstance(DatabaseTelemetry::class);
+        $this->app->forgetInstance(OperationalTelemetry::class);
         $this->app->forgetInstance(TraceHttpRequests::class);
 
         return [

@@ -8,6 +8,7 @@ use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\Internal\DocumentDeletionOperationController;
 use App\Http\Controllers\Internal\DocumentIngestionClaimController;
 use App\Http\Controllers\Internal\IngestionOperationController;
+use App\Http\Controllers\PlatformOperationsController;
 use App\Http\Controllers\RetrievalController;
 use App\Http\Controllers\WorkspaceAdministrationController;
 use App\Http\Controllers\WorkspaceController;
@@ -45,7 +46,7 @@ Route::prefix('auth')->group(function (): void {
         'throttle:registration',
     ])->name('register.store');
 
-    Route::middleware('auth:sanctum')->group(function (): void {
+    Route::middleware(['auth:sanctum', 'account.enabled'])->group(function (): void {
         Route::get('/user', function (Request $request) {
             return response()->json(['data' => ['user' => $request->user()]]);
         });
@@ -64,7 +65,17 @@ Route::prefix('auth')->group(function (): void {
 
 Route::get('/platform/status', function () {
     return response()->json(['data' => ['status' => 'available']]);
-})->middleware(['auth:sanctum', 'verified']);
+})->middleware(['auth:sanctum', 'account.enabled', 'verified']);
+
+Route::prefix('/platform/operations')->middleware([
+    'auth:sanctum',
+    'account.enabled',
+    'verified',
+    'can:access-platform-operations',
+])->group(function (): void {
+    Route::get('/access', [PlatformOperationsController::class, 'access']);
+    Route::get('/health', [PlatformOperationsController::class, 'health']);
+});
 
 Route::post(
     '/internal/ingestion/events/{eventId}/claim',
@@ -99,7 +110,7 @@ Route::prefix('/internal/document-deletions/{eventId}')->group(function (): void
         ->middleware('ingestion.worker:document.deletion.fail')->name('document.deletion.fail');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function (): void {
+Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(function (): void {
     Route::get('/workspaces', [WorkspaceController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}', [WorkspaceController::class, 'show']);
     Route::get('/workspaces/{workspacePublicId}/members', [WorkspaceAdministrationController::class, 'members']);

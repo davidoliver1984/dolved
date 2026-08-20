@@ -799,7 +799,16 @@ remain separate systems with separate authority and retention lifecycles.
 Next.js server code now emit one central, allowlisted JSON vocabulary. Stable
 event names and bounded trace/correlation identifiers remain useful while
 arbitrary context and exception messages are excluded, and formatter failures
-cannot fail ordinary application work. Stage 20.2 is next.
+cannot fail ordinary application work.
+
+**Stage 20.2 completed 2026-08-20:** Dolved now has a separately authorised
+platform-operations plane. Platform administrators are independent of tenant
+roles, are granted only through an authenticated non-browser command with
+atomic audit history and last-administrator protection, and are checked live.
+Bounded operational metrics now cover the core application, provider,
+dependency and queue surfaces. A curated server-rendered health dashboard uses
+only fixed backend queries, filters response labels and reports unavailable
+signals truthfully without affecting ordinary use. Stage 20.3 is next.
 
 ---
 

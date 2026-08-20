@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AuthenticateIngestionWorker;
 use App\Http\Middleware\CanonicalizeEmail;
+use App\Http\Middleware\RequireEnabledAccount;
 use App\Http\Middleware\RequireGuestApiSession;
 use App\Http\Middleware\RequireOpenRegistration;
 use App\Http\Middleware\TraceHttpRequests;
@@ -31,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
         );
         $middleware->alias([
             'api.guest' => RequireGuestApiSession::class,
+            'account.enabled' => RequireEnabledAccount::class,
             'ingestion.worker' => AuthenticateIngestionWorker::class,
             'registration.open' => RequireOpenRegistration::class,
         ]);

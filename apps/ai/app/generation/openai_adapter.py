@@ -27,6 +27,7 @@ from app.generation.models import (
     GenerationStreamEvent,
 )
 from app.generation.prompt import PROMPT_VERSION, SYSTEM_PROMPT
+from app.operational_metrics import record_dependency
 
 PROVIDER = "openai"
 MODEL = "gpt-5-mini"
@@ -321,7 +322,13 @@ class OpenAIGenerator:
                         attempt,
                         started,
                     )
-                    return result.validate_against(request)
+                    validated = result.validate_against(request)
+                    record_dependency(
+                        "generation_provider",
+                        True,
+                        self._monotonic() - started,
+                    )
+                    return validated
                 except ValidationError, ValueError:
                     self._fail("contract_validation_failure", started, attempt, None)
             except GenerationProviderFailure:
@@ -411,6 +418,11 @@ class OpenAIGenerator:
                 ]
                 if candidates != completed_parts:
                     self._fail("contract_validation_failure", started, attempt, None)
+                record_dependency(
+                    "generation_provider",
+                    True,
+                    self._monotonic() - started,
+                )
                 yield GenerationStreamEvent(
                     request_id=request.request_id,
                     sequence=sequence,
@@ -544,6 +556,12 @@ class OpenAIGenerator:
         attempt: int,
         status: int | None,
     ) -> None:
+        elapsed = self._monotonic() - started
+        record_dependency(
+            "generation_provider",
+            False,
+            elapsed,
+        )
         raise GenerationProviderFailure(
             GenerationProviderError(
                 category=category,
@@ -551,7 +569,7 @@ class OpenAIGenerator:
                 model=self.profile.model,
                 http_status=status,
                 attempt_count=attempt,
-                latency_ms=(self._monotonic() - started) * 1000,
+                latency_ms=elapsed * 1000,
             )
         )
 

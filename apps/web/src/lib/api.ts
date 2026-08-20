@@ -9,6 +9,25 @@ export type User = {
 
 export type WorkspaceRole = "owner" | "admin" | "member";
 
+export type OperationalMetricValue = {
+  labels: Record<string, string>;
+  value: number | null;
+};
+
+export type OperationalMetric = {
+  status: "available" | "unavailable";
+  values: OperationalMetricValue[];
+};
+
+export type PlatformOperationsSnapshot = {
+  status: "available" | "partial" | "unavailable";
+  health_status: "healthy" | "degraded" | "unknown";
+  as_of: string;
+  freshness: "current" | "unavailable";
+  metrics: Record<string, OperationalMetric>;
+  grafana_url: string;
+};
+
 export type Workspace = {
   public_id: string;
   name: string;

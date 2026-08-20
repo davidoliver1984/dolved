@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R20",
-    "current_session": "R20-S02",
-    "next_action": "Begin R20-S02 — build the separately authorised platform operations foundation, complete operational metrics and expose the bounded health dashboard.",
-    "completed_through": "R20-S01",
+    "current_session": "R20-S03",
+    "next_action": "Begin R20-S03 — complete cross-service trace coverage, Collector-owned sampling and authenticated operational-policy reconciliation.",
+    "completed_through": "R20-S02",
     "completed_phase_count": 20,
     "total_phase_count": 25
   },
@@ -3946,8 +3946,8 @@
           "guide_stage": "Stage 20.2 \u2014 Operational Metrics, Platform Operations Foundation and Dashboard",
           "title": "Build Operational Metrics, Platform Operations Foundation and Dashboard",
           "guide_start_line": 13393,
-          "guide_end_line": 13433,
-          "status": "not_started",
+          "guide_end_line": 13465,
+          "status": "completed",
           "objective": "Establish platform operations authority, complete operational metrics and expose a curated health dashboard.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -3956,7 +3956,7 @@
             "stage": "Stage 20.2 \u2014 Operational Metrics, Platform Operations Foundation and Dashboard",
             "source_lines": {
               "start": 13393,
-              "end": 13433
+              "end": 13465
             }
           },
           "workflow": [
@@ -3978,17 +3978,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r20-s02-add-metrics.md",
-            "status": "not_started"
+            "path_template": "docs/journal/2026-08-20-r20-s02-build-platform-operations-visibility.md",
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Independent live platform-administrator Gate, immutable user public identity, disable state and session invalidation implemented",
+            "Versioned deployment credential and non-browser bootstrap/grant/revoke/recovery command use atomic idempotent command/audit records and last-active-administrator protection",
+            "Bounded operational metrics cover application stages, providers, dependencies, queue/outbox health and stuck operations without entity labels",
+            "Predefined-query-only metrics reader filters backend labels, caps results and represents unavailable data without fabricating zero",
+            "Server-rendered curated platform health dashboard is platform-authorised and links separately to Grafana",
+            "Focused verification: Laravel 16 tests / 136 assertions, Python 53 tests, web 18 files / 56 tests",
+            "Collectable Python suite: 549 passed, 3 skipped; Laravel suite: 314 passed, 2 skipped; remaining failures are known physically absent engineering-fixture tests",
+            "PostgreSQL migration preflight, Ruff lint/format, Mypy, Pint, ESLint, TypeScript, JSON validation and git diff --check passed",
+            "docs/journal/2026-08-20-r20-s02-build-platform-operations-visibility.md"
+          ]
         },
         {
           "id": "R20-S03",
           "guide_stage": "Stage 20.3 \u2014 Trace Coverage, Collector Sampling and Operational-Policy Reconciliation",
           "title": "Complete Trace Coverage, Collector Sampling and Operational-Policy Reconciliation",
-          "guide_start_line": 13435,
-          "guide_end_line": 13475,
+          "guide_start_line": 13467,
+          "guide_end_line": 13507,
           "status": "not_started",
           "objective": "Complete cross-service traces, configure Collector-owned sampling and implement authenticated operational-policy reconciliation.",
           "session_mode": "implementation",
@@ -3997,8 +4007,8 @@
             "phase": "Phase 20 \u2014 Observability and Operations",
             "stage": "Stage 20.3 \u2014 Trace Coverage, Collector Sampling and Operational-Policy Reconciliation",
             "source_lines": {
-              "start": 13435,
-              "end": 13475
+              "start": 13467,
+              "end": 13507
             }
           },
           "workflow": [
@@ -4029,8 +4039,8 @@
           "id": "R20-S04",
           "guide_stage": "Stage 20.4 \u2014 Define SLOs, Alerts and Runbooks",
           "title": "Define SLOs, Alerts and Runbooks",
-          "guide_start_line": 13477,
-          "guide_end_line": 13517,
+          "guide_start_line": 13509,
+          "guide_end_line": 13549,
           "status": "not_started",
           "objective": "Define calibrated SLIs/SLOs, actionable alerts and operational runbooks.",
           "session_mode": "architecture",
@@ -4039,8 +4049,8 @@
             "phase": "Phase 20 \u2014 Observability and Operations",
             "stage": "Stage 20.4 \u2014 Define SLOs, Alerts and Runbooks",
             "source_lines": {
-              "start": 13477,
-              "end": 13517
+              "start": 13509,
+              "end": 13549
             }
           },
           "workflow": [

@@ -9,6 +9,7 @@ from opentelemetry.trace import SpanKind, Status, StatusCode
 
 from app.conversation.routes import router as conversation_router
 from app.generation.routes import router as generation_router
+from app.operational_metrics import record_route_operation
 from app.retrieval.routes import router as retrieval_router
 from app.settings import get_settings
 from app.structured_logging import configure_structured_logging
@@ -120,6 +121,11 @@ async def trace_http_request(
             )
             request_count.add(1, attributes)
             request_duration.record(time.perf_counter() - started_at, attributes)
+            record_route_operation(
+                route_template,
+                status_code,
+                time.perf_counter() - started_at,
+            )
 
 
 @app.get("/health", tags=["health"])

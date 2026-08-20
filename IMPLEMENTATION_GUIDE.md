@@ -13399,7 +13399,7 @@ operational metric surface and expose a curated, bounded health dashboard.
 
 ### Status
 
-Not yet executed.
+Completed 2026-08-20.
 
 ### Planned scope
 
@@ -13424,6 +13424,38 @@ Not yet executed.
 * The browser cannot submit PromQL or any other backend query language.
 * Backend failures render explicitly unavailable and never affect ordinary use.
 * Stage 20.2 is independently complete before Stage 20.3 consumes its authority.
+
+### Implementation evidence
+
+* Users now have an immutable public identity, optional disable state and one
+  nullable platform role (`ADMINISTRATOR`). A live Gate keeps this authority
+  independent of workspace membership in both directions, and disabling or
+  deleting a user invalidates database sessions.
+* A dedicated versioned deployment credential authenticates the non-browser
+  bootstrap/grant/revoke/recovery command. Idempotent command records, role
+  mutation and content-free audit events commit atomically, with locked
+  last-active-administrator protection and no browser self-promotion path.
+* Laravel and Python now emit bounded operation, dependency, queue-age/depth
+  and stuck-operation metrics across ingestion, retrieval, reranking,
+  generation, conversation delivery and deletion. First accepted answer-part
+  latency is measured from existing generation-run state. No tenant or entity
+  identity is a metric label, and telemetry remains failure-isolated.
+* Laravel's operational reader owns nine fixed, bounded Prometheus queries,
+  filters backend labels and caps result sets. The browser cannot supply a
+  backend query. Metrics failures and missing observations are represented as
+  unavailable rather than zero.
+* The server-rendered `/app/operations` dashboard is discoverable only by a
+  live platform administrator. It provides the curated health view and a
+  separate link to the local specialist Grafana console without embedding it.
+* Provider-free focused verification passed: Laravel 16 tests / 136
+  assertions, Python 53 retrieval/provider/metrics tests, and the complete web
+  suite of 18 files / 56 tests. The collectable Python suite passed 549 tests
+  with 3 skipped; Laravel passed 314 tests with 2 skipped. Their remaining two
+  and eight failures are the known evaluation tests whose isolated
+  `/evaluation/engineering/` inputs are physically absent.
+* PostgreSQL migration SQL preflight, Ruff lint/format, Mypy, Pint, ESLint,
+  TypeScript, JSON validation and `git diff --check` passed. No provider calls
+  were made.
 
 ### Commit boundary
 

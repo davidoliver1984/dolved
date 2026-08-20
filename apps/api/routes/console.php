@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Conversation\ReconcileStaleGenerationRuns;
+use App\Actions\Telemetry\RecordOperationalSnapshot;
 use App\Actions\Workspaces\ExpireWorkspaceInvitations;
 use App\Models\ChatDeliveryEvent;
 use Illuminate\Foundation\Inspiring;
@@ -29,3 +30,10 @@ Artisan::command('workspace-invitations:expire', function (ExpireWorkspaceInvita
 })->purpose('Materialise expired workspace invitation state and audit its transition');
 
 Schedule::command('workspace-invitations:expire')->everyMinute()->withoutOverlapping();
+
+Artisan::command('observability:record-operational-snapshot', function (RecordOperationalSnapshot $record): void {
+    $record->handle();
+    $this->info('Recorded the bounded operational snapshot.');
+})->purpose('Record bounded operational queue, dependency and stuck-operation gauges');
+
+Schedule::command('observability:record-operational-snapshot')->everyMinute()->withoutOverlapping();

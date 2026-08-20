@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/LogoutButton";
-import { currentUser, platformAccess } from "@/lib/server-api";
+import {
+  currentUser,
+  hasPlatformOperationsAccess,
+  platformAccess,
+} from "@/lib/server-api";
 
 export const metadata: Metadata = {
   title: "Workspace",
@@ -30,6 +35,7 @@ export default async function AuthenticatedApplicationLayout({
   if (!user) {
     redirect("/login");
   }
+  const canOperatePlatform = await hasPlatformOperationsAccess();
 
   return (
     <main className="workspace-shell">
@@ -38,6 +44,7 @@ export default async function AuthenticatedApplicationLayout({
           Dolved<span>.</span>
         </span>
         <div className="account-nav">
+          {canOperatePlatform ? <Link href="/app/operations">Platform health</Link> : null}
           <span>{user.email}</span>
           <LogoutButton />
         </div>

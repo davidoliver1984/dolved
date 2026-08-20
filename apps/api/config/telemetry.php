@@ -40,6 +40,10 @@ return [
         'rag.document.id',
         'rag.event.id',
         'rag.outbox.outcome',
+        'rag.operation.stage',
+        'rag.operation.outcome',
+        'rag.failure.category',
+        'rag.dependency.kind',
         'rag.workspace.id',
     ],
     'metric_attributes' => [
@@ -52,5 +56,9 @@ return [
         'messaging.operation.type',
         'messaging.system',
         'rag.outbox.outcome',
+        'rag.operation.stage',
+        'rag.operation.outcome',
+        'rag.failure.category',
+        'rag.dependency.kind',
     ],
 ];

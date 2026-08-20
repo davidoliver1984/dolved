@@ -11,7 +11,9 @@ vi.mock("@/lib/auth-cookies", () => ({
 
 import {
   currentUser,
+  hasPlatformOperationsAccess,
   platformAccess,
+  platformOperations,
   userWorkspace,
   userWorkspaces,
   workspaceUploadConfiguration,
@@ -59,6 +61,37 @@ describe("server-side Laravel API functions", () => {
       await expect(platformAccess()).resolves.toMatchObject({ status });
     },
   );
+
+  it("fails platform-operation discovery soft and preserves bounded access states", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 403 }));
+    fetchMock.mockRejectedValueOnce(new TypeError("backend unavailable"));
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 403 }));
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 503 }));
+
+    await expect(hasPlatformOperationsAccess()).resolves.toBe(false);
+    await expect(hasPlatformOperationsAccess()).resolves.toBe(false);
+    await expect(platformOperations()).resolves.toEqual({ status: "forbidden" });
+    await expect(platformOperations()).resolves.toEqual({ status: "unavailable" });
+  });
+
+  it("loads only the server-owned platform health endpoint", async () => {
+    const snapshot = {
+      status: "available",
+      health_status: "healthy",
+      as_of: "2026-08-20T12:00:00Z",
+      freshness: "current",
+      metrics: {},
+      grafana_url: "http://127.0.0.1:3001",
+    };
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      Response.json({ data: snapshot }),
+    );
+
+    await expect(platformOperations()).resolves.toEqual({ status: "ok", data: snapshot });
+    expect(String(fetchMock.mock.calls[0][0])).toMatch(/\/api\/platform\/operations\/health$/);
+    expect(String(fetchMock.mock.calls[0][0])).not.toContain("query=");
+  });
 
   it("forwards only allowlisted cookies with the required server request options", async () => {
     const fetchMock = vi

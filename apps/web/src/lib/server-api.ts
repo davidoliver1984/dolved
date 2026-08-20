@@ -2,6 +2,7 @@ import "server-only";
 
 import type {
   DocumentPage,
+  PlatformOperationsSnapshot,
   User,
   Workspace,
   WorkspaceAdministrationPage,
@@ -44,6 +45,35 @@ async function serverFetch(path: string): Promise<Response> {
 
 export async function platformAccess(): Promise<Response> {
   return serverFetch("/api/platform/status");
+}
+
+export async function hasPlatformOperationsAccess(): Promise<boolean> {
+  try {
+    const response = await serverFetch("/api/platform/operations/access");
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function platformOperations(): Promise<
+  | { status: "ok"; data: PlatformOperationsSnapshot }
+  | { status: "unauthorized" }
+  | { status: "forbidden" }
+  | { status: "unavailable" }
+> {
+  try {
+    const response = await serverFetch("/api/platform/operations/health");
+    if (response.status === 401) return { status: "unauthorized" };
+    if (response.status === 403) return { status: "forbidden" };
+    if (!response.ok) return { status: "unavailable" };
+    const payload = (await response.json()) as {
+      data: PlatformOperationsSnapshot;
+    };
+    return { status: "ok", data: payload.data };
+  } catch {
+    return { status: "unavailable" };
+  }
 }
 
 export async function currentUser(): Promise<User | null> {

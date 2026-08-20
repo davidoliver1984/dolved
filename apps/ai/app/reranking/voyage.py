@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 import httpx
 from pydantic import SecretStr
 
+from app.operational_metrics import record_dependency
 from app.provider_retry import (
     ProviderCooldown,
     ProviderRetryDelay,
@@ -75,6 +76,7 @@ class VoyageReranker:
             raise RerankerConfigurationError(
                 "reranker profile is incompatible with Voyage"
             )
+        started = self._monotonic()
         results: list[RerankedCandidate] = []
         total_tokens = 0
         total_attempts = 0
@@ -114,6 +116,11 @@ class VoyageReranker:
                     exception.first_provider_attempt_at = (
                         first_provider_attempt_at.isoformat()
                     )
+                record_dependency(
+                    "reranking_provider",
+                    False,
+                    self._monotonic() - started,
+                )
                 raise
             results.extend(side_result.candidates)
             total_tokens += side_result.provider_input_tokens or 0
@@ -126,7 +133,7 @@ class VoyageReranker:
                 first_provider_attempt_at or side_result.first_provider_attempt_at
             )
             final_provider_success_at = side_result.final_provider_success_at
-        return RerankResult(
+        result = RerankResult(
             request_id=request.request_id,
             profile=request.profile,
             candidates=tuple(results),
@@ -139,6 +146,12 @@ class VoyageReranker:
             final_provider_success_at=final_provider_success_at,
             provider_retry_elapsed_seconds=total_retry_elapsed_seconds,
         )
+        record_dependency(
+            "reranking_provider",
+            True,
+            self._monotonic() - started,
+        )
+        return result
 
     def _rerank_one(self, request: RerankRequest) -> RerankResult:
         last_error: RerankingError | None = None

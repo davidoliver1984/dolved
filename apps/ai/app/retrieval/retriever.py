@@ -9,6 +9,7 @@ from opentelemetry.trace import SpanKind
 from app.embedding.errors import EmbeddingError
 from app.embedding.models import EmbeddingInput, EmbeddingPurpose, EmbeddingRequest
 from app.embedding.protocol import Embedder
+from app.operational_metrics import record_dependency
 from app.retrieval.failures import (
     RetrievalExecutionError,
     RetrievalFailureCategory,
@@ -80,6 +81,12 @@ class DenseRetriever:
                 )
             )
         except Exception as exception:
+            if request.embedding_profile.provider != "deterministic":
+                record_dependency(
+                    "embedding_provider",
+                    False,
+                    time.perf_counter() - embedding_started,
+                )
             raise self._failure(
                 exception,
                 stage=RetrievalFailureStage.DENSE_EMBEDDING,
@@ -94,6 +101,12 @@ class DenseRetriever:
                 request_attempted=not isinstance(exception, ValueError),
             ) from exception
         embedding_latency_ms = (time.perf_counter() - embedding_started) * 1000
+        if request.embedding_profile.provider != "deterministic":
+            record_dependency(
+                "embedding_provider",
+                True,
+                embedding_latency_ms / 1000,
+            )
         if embedded.profile_fingerprint != request.embedding_profile_fingerprint:
             compatibility_error = ValueError(
                 "query embedding profile is incompatible with the corpus"
@@ -212,6 +225,11 @@ class DenseRetriever:
                         )
                     )
                 except Exception as exception:
+                    record_dependency(
+                        "vector_store",
+                        False,
+                        time.perf_counter() - search_started,
+                    )
                     raise self._failure(
                         exception,
                         stage=RetrievalFailureStage.QDRANT_DENSE_SEARCH,
@@ -227,7 +245,9 @@ class DenseRetriever:
                         ),
                         candidate_lineage_produced=bool(candidates),
                     ) from exception
-                dense_search_latency_ms += (time.perf_counter() - search_started) * 1000
+                dense_elapsed = time.perf_counter() - search_started
+                record_dependency("vector_store", True, dense_elapsed)
+                dense_search_latency_ms += dense_elapsed * 1000
                 span.set_attributes(
                     trace_attributes({"rag.retrieval.candidate_count": len(hits)})
                 )
@@ -277,6 +297,11 @@ class DenseRetriever:
                         )
                     )
                 except Exception as exception:
+                    record_dependency(
+                        "vector_store",
+                        False,
+                        time.perf_counter() - sparse_search_started,
+                    )
                     raise self._failure(
                         exception,
                         stage=RetrievalFailureStage.QDRANT_SPARSE_SEARCH,
@@ -292,9 +317,9 @@ class DenseRetriever:
                         ),
                         candidate_lineage_produced=bool(candidates or dense_candidates),
                     ) from exception
-                sparse_search_latency_ms += (
-                    time.perf_counter() - sparse_search_started
-                ) * 1000
+                sparse_elapsed = time.perf_counter() - sparse_search_started
+                record_dependency("vector_store", True, sparse_elapsed)
+                sparse_search_latency_ms += sparse_elapsed * 1000
                 sparse_span.set_attributes(
                     trace_attributes(
                         {"rag.retrieval.sparse_candidate_count": len(sparse_hits)}

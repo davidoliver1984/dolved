@@ -3,9 +3,14 @@
 namespace App\Providers;
 
 use App\Contracts\Ingestion\IngestionEventPublisher;
+use App\Contracts\Platform\OperationalMetricsReader;
+use App\Models\User;
+use App\Observers\UserAccessObserver;
 use App\Services\Ingestion\SqsIngestionEventPublisher;
+use App\Services\Platform\PrometheusOperationalMetricsReader;
 use App\Support\CanonicalEmail;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -20,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
             IngestionEventPublisher::class,
             SqsIngestionEventPublisher::class,
         );
+        $this->app->bind(
+            OperationalMetricsReader::class,
+            PrometheusOperationalMetricsReader::class,
+        );
     }
 
     /**
@@ -27,6 +36,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        User::observe(UserAccessObserver::class);
+        Gate::define(
+            'access-platform-operations',
+            fn (User $user): bool => $user->hasPlatformAdministratorAccess(),
+        );
+
         Password::defaults(fn () => Password::min(12)
             ->mixedCase()
             ->numbers()
