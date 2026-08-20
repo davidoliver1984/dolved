@@ -107,6 +107,8 @@ services:
       OPERATIONAL_METRICS_TIMEOUT_SECONDS: ${OPERATIONAL_METRICS_TIMEOUT_SECONDS:-1}
       OPERATIONAL_METRICS_CACHE_SECONDS: ${OPERATIONAL_METRICS_CACHE_SECONDS:-10}
       OPERATIONAL_GRAFANA_URL: ${OPERATIONAL_GRAFANA_URL:-http://127.0.0.1:3001}
+      OPERATIONAL_ALERTMANAGER_URL: ${OPERATIONAL_ALERTMANAGER_URL:-http://alertmanager:9093}
+      OPERATIONAL_ALERTMANAGER_PUBLIC_URL: ${OPERATIONAL_ALERTMANAGER_PUBLIC_URL:-http://127.0.0.1:9093}
       INGESTION_PROCESSING_LEASE_SECONDS: ${INGESTION_PROCESSING_LEASE_SECONDS:-120}
       INGESTION_CHUNK_BATCH_SIZE: ${INGESTION_CHUNK_BATCH_SIZE:-50}
       INGESTION_CHUNK_BODY_BYTES: ${INGESTION_CHUNK_BODY_BYTES:-1048576}
@@ -534,6 +536,11 @@ services:
       GF_AUTH_DISABLE_LOGIN_FORM: "true"
     volumes:
       - telemetry_data:/data
+      - ./infrastructure/observability/prometheus.yaml:/otel-lgtm/prometheus.yaml:ro
+      - ./infrastructure/observability/rules:/etc/dolved-observability/rules:ro
+    depends_on:
+      alertmanager:
+        condition: service_healthy
     healthcheck:
       test:
         - CMD
@@ -547,6 +554,29 @@ services:
       retries: 20
       start_period: 20s
     stop_grace_period: 20s
+
+  alertmanager:
+    image: prom/alertmanager:v0.33.1
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yaml
+      - --storage.path=/alertmanager
+    volumes:
+      - ./infrastructure/observability/alertmanager.yaml:/etc/alertmanager/alertmanager.yaml:ro
+      - alertmanager_data:/alertmanager
+    ports:
+      - "127.0.0.1:${ALERTMANAGER_PORT:-9093}:9093"
+    healthcheck:
+      test:
+        - CMD
+        - /bin/amtool
+        - --alertmanager.url=http://127.0.0.1:9093
+        - config
+        - show
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    stop_grace_period: 15s
 
   otel-collector:
     image: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.153.0
@@ -577,6 +607,7 @@ services:
     stop_grace_period: 15s
 
 volumes:
+  alertmanager_data:
   web_node_modules:
   web_next:
   api_vendor:

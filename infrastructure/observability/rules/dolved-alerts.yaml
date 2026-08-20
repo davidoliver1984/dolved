@@ -1,0 +1,150 @@
+---
+groups:
+  - name: dolved-slo-recording
+    interval: 30s
+    rules:
+      - record: dolved:slo:api_eligible_requests:rate5m
+        expr: sum(rate(http_server_request_count_total{http_route=~"/api/(auth/(user|logout|email/verification-notification)|platform/.*|workspaces.*|workspace-invitations/accept)",http_response_status_code!~"4.."}[5m]))
+      - record: dolved:slo:api_technical_failures:rate5m
+        expr: sum(rate(http_server_request_count_total{http_route=~"/api/(auth/(user|logout|email/verification-notification)|platform/.*|workspaces.*|workspace-invitations/accept)",http_response_status_code=~"5.."}[5m]))
+      - record: dolved:slo:api_technical_availability:ratio5m
+        expr: 1 - (dolved:slo:api_technical_failures:rate5m / clamp_min(dolved:slo:api_eligible_requests:rate5m, 0.000001))
+      - record: dolved:slo:conversation_eligible_terminal:rate5m
+        expr: sum(rate(rag_operation_count_total{rag_operation_stage="generation_run",rag_operation_outcome=~"completed|retrieval_no_answer|clarification_required|failed"}[5m]))
+      - record: dolved:slo:conversation_technical_failures:rate5m
+        expr: sum(rate(rag_operation_count_total{rag_operation_stage="generation_run",rag_operation_outcome="failed"}[5m]))
+      - record: dolved:slo:conversation_technical_success:ratio5m
+        expr: 1 - (dolved:slo:conversation_technical_failures:rate5m / clamp_min(dolved:slo:conversation_eligible_terminal:rate5m, 0.000001))
+
+  - name: dolved-operational-alerts
+    interval: 30s
+    rules:
+      - alert: DolvedApiTechnicalErrorRateHigh
+        expr: dolved:slo:api_eligible_requests:rate5m > 0.01 and dolved:slo:api_technical_availability:ratio5m < 0.95
+        for: 10m
+        labels:
+          severity: urgent
+          subsystem: api
+          owner: platform-operator
+        annotations:
+          summary: API technical errors are affecting user requests
+          impact: Authenticated Dolved operations may fail or be unavailable.
+          response: Same-day best-effort investigation; check recent deployments, dependencies and correlated traces.
+          runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolvedapitechnicalerrorratehigh
+
+      - alert: DolvedConversationTechnicalSuccessSloBreach
+        expr: dolved:slo:conversation_eligible_terminal:rate5m > 0 and dolved:slo:conversation_technical_success:ratio5m < 0.99
+        for: 15m
+        labels:
+          severity: urgent
+          subsystem: conversation
+          owner: platform-operator
+        annotations:
+          summary: Conversation runs are ending in genuine technical failure
+          impact: Users may not receive a controlled or completed answer outcome.
+          response: Inspect failure categories and traces; controlled no-answer and clarification outcomes are not failures.
+          runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolvedconversationtechnicalsuccessslobreach
+
+      - alert: DolvedQueueBacklogGrowing
+        expr: rag_queue_depth > 100
+        for: 15m
+        labels:
+          severity: warning
+          subsystem: queue
+          owner: platform-operator
+        annotations:
+          summary: A Dolved work queue has a sustained backlog
+          impact: Ingestion or asynchronous work may complete later than expected.
+          response: Check worker health, oldest-message age and dependency availability before changing concurrency.
+          runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolvedqueuebackloggrowing
+
+      - alert: DolvedQueueOldestMessageStale
+        expr: rag_queue_oldest_message_age_seconds > 300
+        for: 10m
+        labels:
+          severity: urgent
+          subsystem: queue
+          owner: platform-operator
+        annotations:
+          summary: Queued work is not progressing within the expected lease window
+          impact: User-visible asynchronous work may be stuck.
+          response: Inspect worker leases, redelivery, queue depth and dependency health.
+          runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolvedqueueoldestmessagestale
+
+      - alert: DolvedDeadLetterMessagesPresent
+        expr: rag_queue_depth{messaging_destination_name=~".*dlq.*"} > 0
+        for: 1m
+        labels:
+          severity: urgent
+          subsystem: ingestion
+          owner: platform-operator
+        annotations:
+          summary: Dead-lettered ingestion work requires investigation
+          impact: One or more documents cannot complete through the normal ingestion path.
+          response: Inspect typed failure lineage and recover only through the normal worker path.
+          runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolveddeadlettermessagespresent
+
+      - alert: DolvedIngestionFailureSpike
+        expr: sum(rate(rag_operation_count_total{rag_operation_stage="ingestion",rag_operation_outcome="failed"}[10m])) / clamp_min(sum(rate(rag_operation_count_total{rag_operation_stage="ingestion",rag_operation_outcome=~"completed|failed"}[10m])), 0.000001) > 0.10
+        for: 15m
+        labels:
+          severity: warning
+          subsystem: ingestion
+          owner: platform-operator
+        annotations:
+          summary: Ingestion failures exceed the provisional operational threshold
+          impact: Newly submitted documents may fail to become searchable.
+          response: Group typed failures by category and stop recovery on non-transient correctness failures.
+          runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolvedingestionfailurespike
+
+      - alert: DolvedStuckOperation
+        expr: rag_stuck_operation_count > 0
+        for: 10m
+        labels:
+          severity: urgent
+          subsystem: operations
+          owner: platform-operator
+        annotations:
+          summary: A durable operation remains beyond its bounded progress window
+          impact: Ingestion, generation or deletion may not reach a truthful terminal state.
+          response: Identify the bounded stage, inspect its lease/state machine and do not mark it complete manually.
+          runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolvedstuckoperation
+
+      - alert: DolvedDependencyUnavailable
+        expr: rag_dependency_available < 1
+        for: 5m
+        labels:
+          severity: urgent
+          subsystem: dependency
+          owner: platform-operator
+        annotations:
+          summary: A required Dolved dependency is persistently unavailable
+          impact: Requests using the affected dependency may fail or remain incomplete.
+          response: Verify the named dependency independently, then inspect recent errors and correlated traces.
+          runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolveddependencyunavailable
+
+      - alert: DolvedProviderRateLimitingSustained
+        expr: sum by (rag_operation_stage) (rate(rag_operation_count_total{rag_failure_category="rate_limited"}[10m])) > 0
+        for: 10m
+        labels:
+          severity: warning
+          subsystem: provider
+          owner: platform-operator
+        annotations:
+          summary: Provider rate limiting is sustained beyond bounded retry recovery
+          impact: Retrieval or generation latency may increase and operations may exhaust their retry budget.
+          response: Inspect provider attempts, cooldown sources and terminal failures; do not increase retries during diagnosis.
+          runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolvedproviderratelimitingsustained
+
+      - alert: DolvedOperationLatencyHigh
+        expr: histogram_quantile(0.95, sum by (le, rag_operation_stage) (rate(rag_operation_duration_seconds_bucket[10m]))) > 5
+        for: 15m
+        labels:
+          severity: warning
+          subsystem: latency
+          owner: platform-operator
+        annotations:
+          summary: Operation latency exceeds the current provisional slow-operation threshold
+          impact: Users may experience delayed ingestion, retrieval or answer completion.
+          response: Inspect the affected stage and dependency timings; this is not a final production latency SLO.
+          runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolvedoperationlatencyhigh

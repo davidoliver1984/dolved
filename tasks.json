@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R20",
-    "current_session": "R20-S04",
-    "next_action": "Begin R20-S04 architecture review — define calibrated SLIs/SLOs, actionable alerts and operational runbooks.",
-    "completed_through": "R20-S03",
+    "current_session": "R20-GATE",
+    "next_action": "Run the Phase 20 observability and operations acceptance gate.",
+    "completed_through": "R20-S04",
     "completed_phase_count": 20,
     "total_phase_count": 25
   },
@@ -4055,7 +4055,7 @@
           "title": "Define SLOs, Alerts and Runbooks",
           "guide_start_line": 13509,
           "guide_end_line": 13549,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Define calibrated SLIs/SLOs, actionable alerts and operational runbooks.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
@@ -4086,14 +4086,23 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r20-s04-define-operational-alerts.md",
-            "status": "not_started"
+            "path_template": "docs/journal/2026-08-20-r20-s04-define-operational-alerts.md",
+            "status": "completed"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "ADR-0026 architecture implemented without creating a second alert-state system",
+            "Provisional 99 percent API and conversation SLOs preserve ADR-0024 controlled-outcome semantics and never fabricate a perfect empty score",
+            "Repository-owned Prometheus config loads six recording rules and ten operational alert rules",
+            "Pinned Alertmanager v0.33.1 owns firing state, grouping, inhibition, acknowledgement and silencing",
+            "Every enabled alert has bounded severity, subsystem, owner, impact, response expectation and runbook lineage",
+            "Platform operations exposes allowlisted read-only SLO and active-alert summaries with specialist deep links",
+            "Prometheus rule simulation, live rule health, Alertmanager config/readiness, Laravel 8 tests / 64 assertions and web 2 files / 5 tests passed",
+            "docs/journal/2026-08-20-r20-s04-define-operational-alerts.md"
+          ]
         }
       ],
       "guide_end_line": 13469,
-      "status": "not_started",
+      "status": "in_progress",
       "objective": "Make failures, latency and cross-service behaviour diagnosable.",
       "gate": {
         "id": "R20-GATE",

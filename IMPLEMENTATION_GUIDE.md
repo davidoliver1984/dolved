@@ -13557,7 +13557,7 @@ operational runbooks without treating controlled product outcomes as failures.
 
 ### Status
 
-Not yet executed.
+Completed 2026-08-20.
 
 ### Planned alerts
 
@@ -13583,9 +13583,63 @@ Not yet executed.
 * Main admin shows curated alert/SLO state while Grafana/Alertmanager retains
   acknowledgement, silencing and deep-diagnostic ownership.
 
+### Architecture reconciliation
+
+Accepted ADR-0026 already supplies the durable architecture required by this
+architecture-mode stage, so no new ADR was needed. The implementation uses
+Prometheus recording/alert rules as the SLI and alert source, a separately
+pinned Alertmanager with a no-delivery local receiver seam, and bounded
+read-only summaries in Dolved. Alertmanager remains the only alert-state,
+grouping, acknowledgement and silence owner.
+
+The provisional 99.0% rolling-28-day API and conversation objectives are
+labelled `PROVISIONAL_UNMEASURED`. Empty or unreachable time series report
+`No representative data` or `Unavailable`, never a perfect score. Conversation
+technical success reuses ADR-0024 exactly: `completed`,
+`retrieval_no_answer` and `clarification_required` are successes; `failed` is
+failure; `cancelled` is excluded. Final latency SLOs, multi-window burn alerts,
+telemetry-absence paging and capacity alerts remain explicitly deferred until
+representative production/environment signals exist.
+
+### Implemented boundary
+
+* Repository-owned Prometheus configuration loads six SLO recording rules and
+  ten bounded operational alerts into the pinned LGTM Prometheus.
+* Pinned Alertmanager `v0.33.1` provides a local inspection UI/API and a
+  configurable future receiver boundary without contacting a person locally.
+* Alert rules carry severity, subsystem, operator ownership, impact, response
+  expectation and a stable runbook link. Urgent and warning inhibition prevents
+  duplicate lower-severity noise.
+* The platform operations adapter performs only predefined PromQL, caps results
+  and active alerts, allowlists alert fields and rejects arbitrary specialist
+  labels/annotations from the curated surface.
+* The platform operations page shows provisional SLO status and active alerts,
+  with separate Grafana and Alertmanager links; it implements no alert mutation.
+* Runbooks preserve normal state machines and bounded provider retry policy and
+  prohibit manual completion or correctness tuning during incident response.
+
+### Verification evidence
+
+* Pinned Prometheus `promtool` validated one config and 16 rules; provider-free
+  rule simulations passed for controlled outcomes, sustained technical failure
+  and isolated rate limiting.
+* Pinned Alertmanager `amtool` validated the receiver/inhibition config; the
+  live local service reached `ready` on `v0.33.1` and Prometheus reported all 16
+  loaded rules healthy.
+* Focused Laravel platform operations: 8 tests / 64 assertions.
+* Focused web operations/alert governance: 2 files / 5 tests; the full web
+  suite passed 20 files / 61 tests; ESLint and TypeScript passed.
+* The Laravel suite passed 322 tests with 2 skipped; its 8 remaining failures
+  require the intentionally absent `/evaluation/engineering/corpus.json`
+  fixture and are unrelated to this stage.
+* The live Laravel reader returned two SLOs, available Alertmanager state and
+  zero active alerts without fabricating a healthy SLO value.
+* Pint, Compose validation, JSON validation and `git diff --check` passed. No
+  provider calls were made.
+
 ### Commit boundary
 
-git add docs infrastructure
+git add .env.example compose.yaml apps/api apps/web infrastructure/observability docs/operations docs/journal/2026-08-20-r20-s04-define-operational-alerts.md tasks.json PROJECT_ROADMAP.md IMPLEMENTATION_GUIDE.md
 git commit -m "Define operational SLOs alerts and runbooks"
 
 ---

@@ -21,6 +21,11 @@ const LABELS: Record<string, string> = {
   stuck_operations: "Stuck operations",
 };
 
+const SLO_LABELS: Record<string, string> = {
+  authenticated_api_technical_availability: "Authenticated API technical availability",
+  conversation_technical_success: "Conversation technical success",
+};
+
 function valueLabel(name: string, value: number | null): string {
   if (value === null) return "Unavailable";
   if (name.includes("seconds")) return `${value.toFixed(3)} s`;
@@ -52,6 +57,54 @@ export default async function PlatformOperationsPage() {
         </div>
         <Link href={result.data.grafana_url} target="_blank" rel="noreferrer" className="secondary-action">Open specialist console</Link>
       </header>
+
+      <section aria-labelledby="slo-heading">
+        <div className="operations-section-heading">
+          <div>
+            <p className="eyebrow">Provisional objectives</p>
+            <h2 id="slo-heading">Service-level status</h2>
+          </div>
+          <p>Rolling 28-day technical signals. These objectives are provisional and unmeasured until representative traffic exists.</p>
+        </div>
+        {(result.data.slos?.length ?? 0) === 0 ? (
+          <p className="operations-notice">SLO evidence is unavailable. No compliance conclusion can be drawn.</p>
+        ) : <div className="operations-grid">
+          {result.data.slos.map((slo) => (
+            <article className="operations-card" key={slo.id}>
+              <p className="operations-card-label">{SLO_LABELS[slo.id] ?? slo.id}</p>
+              <strong>{slo.value === null ? "No representative data" : `${(slo.value * 100).toFixed(2)}%`}</strong>
+              <small>Objective {(slo.objective * 100).toFixed(1)}% · {slo.window_days} days · {slo.compliant === null ? "not assessed" : slo.compliant ? "within objective" : "outside objective"}</small>
+            </article>
+          ))}
+        </div>}
+      </section>
+
+      <section aria-labelledby="alert-heading">
+        <div className="operations-section-heading">
+          <div>
+            <p className="eyebrow">Actionable signals</p>
+            <h2 id="alert-heading">Active alerts</h2>
+          </div>
+          {result.data.alertmanager_url ? <Link href={result.data.alertmanager_url} target="_blank" rel="noreferrer" className="secondary-action">Open alert console</Link> : null}
+        </div>
+        {!result.data.alerts || result.data.alerts.status === "unavailable" ? (
+          <p className="operations-notice">Alert state is unavailable. Do not infer that no alerts are active.</p>
+        ) : (result.data.alerts?.values.length ?? 0) === 0 ? (
+          <p className="operations-notice">No active operational alerts.</p>
+        ) : (
+          <div className="operations-grid">
+            {result.data.alerts.values.map((alert, index) => (
+              <article className="operations-card" key={`${alert.name}-${index}`}>
+                <p className="operations-card-label">{alert.severity} · {alert.subsystem}</p>
+                <strong>{alert.name}</strong>
+                <p>{alert.impact}</p>
+                {alert.started_at ? <small>Active since <time dateTime={alert.started_at}>{new Date(alert.started_at).toLocaleString()}</time></small> : null}
+                {alert.runbook_url ? <Link href={alert.runbook_url} target="_blank" rel="noreferrer">Open runbook</Link> : null}
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
 
       <div className="operations-grid">
         {Object.entries(result.data.metrics).map(([name, metric]) => (

@@ -141,7 +141,7 @@ final class PlatformOperationsTest extends TestCase
 
     public function test_metrics_reader_uses_only_predefined_queries_and_fails_soft_without_fabricating_zero(): void
     {
-        Cache::forget('platform:operational-metrics:v1');
+        Cache::forget('platform:operational-metrics:v2');
         config(['platform.metrics.base_url' => 'http://metrics.test', 'platform.metrics.cache_seconds' => 1]);
         $queries = [];
         $failureMode = false;
@@ -171,7 +171,7 @@ final class PlatformOperationsTest extends TestCase
         $this->assertCount(50, $response['metrics']['operation_rate']['values']);
         $this->assertStringNotContainsString('must-not-cross-the-adapter', json_encode($response, JSON_THROW_ON_ERROR));
 
-        Cache::forget('platform:operational-metrics:v1');
+        Cache::forget('platform:operational-metrics:v2');
         $failureMode = true;
         $snapshot = app(PrometheusOperationalMetricsReader::class)->snapshot();
         $this->assertSame('unavailable', $snapshot['status']);
@@ -194,5 +194,53 @@ final class PlatformOperationsTest extends TestCase
         ])->assertCreated();
 
         $this->assertNull(User::query()->where('email', 'new-user@example.test')->sole()->platform_role);
+    }
+
+    public function test_slo_and_alert_adapter_preserve_controlled_outcomes_and_filter_specialist_payloads(): void
+    {
+        Cache::forget('platform:operational-metrics:v2');
+        config([
+            'platform.metrics.base_url' => 'http://metrics.test',
+            'platform.metrics.alertmanager_url' => 'http://alerts.test',
+            'platform.metrics.alertmanager_public_url' => 'http://127.0.0.1:9093',
+        ]);
+        $queries = [];
+        Http::fake(function ($request) use (&$queries) {
+            if (str_starts_with($request->url(), 'http://alerts.test')) {
+                return Http::response([[
+                    'labels' => [
+                        'alertname' => 'DolvedDependencyUnavailable',
+                        'severity' => 'urgent',
+                        'subsystem' => 'dependency',
+                        'workspace_id' => 'must-not-cross',
+                    ],
+                    'annotations' => [
+                        'impact' => 'A dependency is unavailable.',
+                        'runbook_url' => 'https://example.test/runbook',
+                        'raw_payload' => 'must-not-cross',
+                    ],
+                    'status' => ['state' => 'active'],
+                    'startsAt' => '2026-08-20T12:00:00Z',
+                ]]);
+            }
+            $queries[] = (string) ($request->data()['query'] ?? '');
+
+            return Http::response(['status' => 'success', 'data' => ['result' => [[
+                'metric' => [], 'value' => [time(), '0.995'],
+            ]]]]);
+        });
+
+        $snapshot = app(PrometheusOperationalMetricsReader::class)->snapshot();
+
+        $this->assertCount(2, $snapshot['slos']);
+        $this->assertTrue($snapshot['slos'][0]['compliant']);
+        $this->assertSame('available', $snapshot['alerts']['status']);
+        $this->assertSame('DolvedDependencyUnavailable', $snapshot['alerts']['values'][0]['name']);
+        $serialized = json_encode($snapshot, JSON_THROW_ON_ERROR);
+        $this->assertStringNotContainsString('must-not-cross', $serialized);
+        $conversationQuery = implode(' ', array_filter($queries, fn (string $query): bool => str_contains($query, 'generation_run')));
+        $this->assertStringContainsString('retrieval_no_answer', $conversationQuery);
+        $this->assertStringContainsString('clarification_required', $conversationQuery);
+        $this->assertStringNotContainsString('cancelled', $conversationQuery);
     }
 }

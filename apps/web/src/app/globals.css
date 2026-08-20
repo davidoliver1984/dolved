@@ -35,6 +35,35 @@
   gap: 1rem;
 }
 
+.operations-page > section {
+  margin: 2rem 0;
+}
+
+.operations-section-heading {
+  align-items: end;
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.operations-section-heading h2 {
+  margin: 0.25rem 0 0;
+}
+
+.operations-section-heading > p {
+  color: var(--muted);
+  max-width: 560px;
+}
+
+.operations-notice {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  color: var(--muted);
+  padding: 1.25rem;
+}
+
 .operations-card {
   min-height: 170px;
   padding: 1.5rem;

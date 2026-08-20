@@ -1,0 +1,27 @@
+{
+  "policy_id": "dolved-operational-slo-v1",
+  "status": "PROVISIONAL_UNMEASURED",
+  "window_days": 28,
+  "objectives": [
+    {
+      "id": "authenticated_api_technical_availability",
+      "objective": 0.99,
+      "numerator": "eligible HTTP responses excluding 5xx",
+      "denominator": "HTTP responses eligible for the technical-availability SLI; expected rejections are excluded",
+      "limitations": "HTTP status alone cannot prove whether a 4xx was a correct rejection, so 4xx responses are excluded from this provisional operational SLI and remain subject to product-correctness review."
+    },
+    {
+      "id": "conversation_technical_success",
+      "objective": 0.99,
+      "numerator": "completed + retrieval_no_answer + clarification_required",
+      "denominator": "completed + retrieval_no_answer + clarification_required + failed",
+      "excluded": [
+        "cancelled"
+      ]
+    }
+  ],
+  "latency_objectives": {
+    "status": "CALIBRATION_REQUIRED",
+    "reason": "No production traffic distribution exists from which to set a truthful latency SLO."
+  }
+}

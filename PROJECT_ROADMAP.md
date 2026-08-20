@@ -819,7 +819,18 @@ derived only from authenticated, append-only, per-target reconciliation
 evidence; stale, conflicting and replayed acknowledgements fail closed. A
 real local Collector target reached `ACTIVE` and a Tempo trace joined Laravel,
 publisher and Python worker spans without exposing the synthetic privacy
-marker. Stage 20.4 is next and requires architecture review.
+marker.
+
+**Stage 20.4 completed 2026-08-20:** Prometheus now evaluates repository-owned
+SLI recording and operational alert rules, with Alertmanager owning firing
+state, grouping, acknowledgement and silencing. Dolved exposes only bounded,
+read-only SLO and active-alert summaries to platform administrators and links
+to specialist consoles for diagnosis. The provisional 99% objectives reuse
+ADR-0024 terminal-outcome semantics, report missing evidence truthfully and do
+not claim calibrated production latency. Every enabled alert has impact,
+severity, response expectations and a runbook; capacity, telemetry-absence,
+multi-window burn and final latency alerts remain deferred until production
+signals can justify them.
 
 ---
 

@@ -22,6 +22,8 @@ return [
         'timeout_seconds' => max(0.1, (float) env('OPERATIONAL_METRICS_TIMEOUT_SECONDS', 1.0)),
         'cache_seconds' => max(1, (int) env('OPERATIONAL_METRICS_CACHE_SECONDS', 10)),
         'grafana_url' => env('OPERATIONAL_GRAFANA_URL', 'http://127.0.0.1:3001'),
+        'alertmanager_url' => env('OPERATIONAL_ALERTMANAGER_URL', 'http://alertmanager:9093'),
+        'alertmanager_public_url' => env('OPERATIONAL_ALERTMANAGER_PUBLIC_URL', 'http://127.0.0.1:9093'),
     ],
     'reconciliation' => [
         'environment' => env('OBSERVABILITY_RECONCILIATION_ENVIRONMENT', env('APP_ENV', 'local')),

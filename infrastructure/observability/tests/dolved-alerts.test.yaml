@@ -1,0 +1,54 @@
+---
+rule_files:
+  - ../rules/dolved-alerts.yaml
+
+evaluation_interval: 1m
+
+tests:
+  - name: controlled conversation outcomes do not page
+    interval: 1m
+    input_series:
+      - series: rag_operation_count_total{rag_operation_stage="generation_run",rag_operation_outcome="completed"}
+        values: 0+10x30
+      - series: rag_operation_count_total{rag_operation_stage="generation_run",rag_operation_outcome="retrieval_no_answer"}
+        values: 0+2x30
+      - series: rag_operation_count_total{rag_operation_stage="generation_run",rag_operation_outcome="clarification_required"}
+        values: 0+1x30
+      - series: rag_operation_count_total{rag_operation_stage="generation_run",rag_operation_outcome="cancelled"}
+        values: 0+5x30
+    alert_rule_test:
+      - eval_time: 20m
+        alertname: DolvedConversationTechnicalSuccessSloBreach
+        exp_alerts: []
+
+  - name: sustained technical conversation failures page
+    interval: 1m
+    input_series:
+      - series: rag_operation_count_total{rag_operation_stage="generation_run",rag_operation_outcome="completed"}
+        values: 0+10x40
+      - series: rag_operation_count_total{rag_operation_stage="generation_run",rag_operation_outcome="failed"}
+        values: 0+2x40
+    alert_rule_test:
+      - eval_time: 25m
+        alertname: DolvedConversationTechnicalSuccessSloBreach
+        exp_alerts:
+          - exp_labels:
+              alertname: DolvedConversationTechnicalSuccessSloBreach
+              owner: platform-operator
+              severity: urgent
+              subsystem: conversation
+            exp_annotations:
+              summary: Conversation runs are ending in genuine technical failure
+              impact: Users may not receive a controlled or completed answer outcome.
+              response: Inspect failure categories and traces; controlled no-answer and clarification outcomes are not failures.
+              runbook_url: https://github.com/davidoliver1984/dolved/blob/main/docs/operations/alert-runbooks.md#dolvedconversationtechnicalsuccessslobreach
+
+  - name: isolated provider rate limit does not page before duration
+    interval: 1m
+    input_series:
+      - series: rag_operation_count_total{rag_operation_stage="generation_provider",rag_failure_category="rate_limited"}
+        values: 0 1 1 1 1 1 1 1 1 1 1 1
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: DolvedProviderRateLimitingSustained
+        exp_alerts: []

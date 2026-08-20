@@ -49,4 +49,46 @@ describe("PlatformOperationsPage", () => {
     expect(screen.getByRole("heading", { name: "Health data is unavailable." })).toBeTruthy();
     expect(screen.getByText(/Ordinary Dolved use is unaffected/)).toBeTruthy();
   });
+
+  it("renders curated SLO and alert state with specialist links", async () => {
+    platformOperationsMock.mockResolvedValue({
+      status: "ok",
+      data: {
+        status: "available",
+        health_status: "degraded",
+        as_of: "2026-08-20T12:00:00Z",
+        freshness: "current",
+        grafana_url: "http://127.0.0.1:3001",
+        alertmanager_url: "http://127.0.0.1:9093",
+        metrics: {},
+        slos: [{
+          id: "conversation_technical_success",
+          objective: 0.99,
+          window_days: 28,
+          status: "available",
+          value: 0.98,
+          compliant: false,
+        }],
+        alerts: {
+          status: "available",
+          values: [{
+            name: "DolvedConversationTechnicalSuccessSloBreach",
+            severity: "urgent",
+            subsystem: "conversation",
+            state: "active",
+            started_at: "2026-08-20T11:00:00Z",
+            impact: "Users may not receive a valid terminal outcome.",
+            runbook_url: "https://example.test/runbook",
+          }],
+        },
+      },
+    });
+
+    render(await PlatformOperationsPage());
+
+    expect(screen.getByText("98.00%")).toBeTruthy();
+    expect(screen.getByText(/outside objective/)).toBeTruthy();
+    expect(screen.getByText("DolvedConversationTechnicalSuccessSloBreach")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Open alert console" }).getAttribute("href")).toBe("http://127.0.0.1:9093");
+  });
 });

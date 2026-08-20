@@ -25,7 +25,28 @@ export type PlatformOperationsSnapshot = {
   as_of: string;
   freshness: "current" | "unavailable";
   metrics: Record<string, OperationalMetric>;
+  slos: Array<{
+    id: string;
+    objective: number;
+    window_days: number;
+    status: "available" | "no_data" | "unavailable";
+    value: number | null;
+    compliant: boolean | null;
+  }>;
+  alerts: {
+    status: "available" | "unavailable";
+    values: Array<{
+      name: string;
+      severity: "warning" | "urgent";
+      subsystem: string;
+      state: string;
+      started_at: string;
+      impact: string;
+      runbook_url: string;
+    }>;
+  };
   grafana_url: string;
+  alertmanager_url: string;
   operational_policy: OperationalPolicy | null;
 };
 
