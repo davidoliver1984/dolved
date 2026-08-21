@@ -76,11 +76,22 @@ export type OperationalPolicy = {
   }>;
 };
 
-export function createOperationalPolicy(values: Record<string, number>): Promise<{ data: { policy: unknown } }> {
-  return apiFetch("/api/platform/operations/policy", {
-    method: "POST",
-    body: JSON.stringify(values),
-  });
+export async function createOperationalPolicy(values: Record<string, number>): Promise<
+  | { status: "ok"; data: { policy: unknown } }
+  | { status: "concealed" }
+> {
+  try {
+    const response = await apiFetch<{ data: { policy: unknown } }>(
+      "/api/platform/operations/policy",
+      { method: "POST", body: JSON.stringify(values) },
+    );
+    return { status: "ok", data: response.data };
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return { status: "concealed" };
+    }
+    throw error;
+  }
 }
 
 export type Workspace = {

@@ -9,6 +9,9 @@ use App\Actions\Conversation\OrchestrateConversationRun;
 use App\Actions\Conversation\ReconcileStaleGenerationRuns;
 use App\Actions\Conversation\SubmitConversationMessage;
 use App\Enums\ChatStreamEventType;
+use App\Enums\ConversationStatus;
+use App\Enums\DocumentStatus;
+use App\Enums\GenerationRunFailureCode;
 use App\Enums\GenerationRunStatus;
 use App\Enums\MessageKind;
 use App\Enums\MessageRole;
@@ -66,11 +69,48 @@ class ConversationOrchestrationTest extends TestCase
         $this->assertDatabaseCount('generation_runs', 1);
         Queue::assertPushed(ExecuteGenerationRun::class, 1);
 
-        $foreign = Workspace::factory()->withOwner()->create();
+        $foreign = Workspace::factory()->withOwner($user)->create();
         $this->postJson(
             "/api/workspaces/{$foreign->public_id}/conversations/{$conversationId}/messages",
             ['message' => 'Cross workspace', 'idempotency_key' => (string) Str::uuid()],
         )->assertNotFound();
+        $this->getJson(
+            "/api/workspaces/{$foreign->public_id}/conversations/{$conversationId}",
+        )->assertNotFound();
+        $this->getJson(
+            "/api/workspaces/{$workspace->public_id}/conversations/".(string) Str::uuid(),
+        )->assertNotFound();
+
+        Conversation::query()->where('public_id', $conversationId)->update([
+            'status' => ConversationStatus::Deleted->value,
+        ]);
+        $this->getJson(
+            "/api/workspaces/{$workspace->public_id}/conversations/{$conversationId}",
+        )->assertNotFound();
+    }
+
+    public function test_failed_run_reports_when_provisional_content_was_retracted(): void
+    {
+        Queue::fake();
+        [$run, $conversation] = $this->runFixture();
+        app(ChatDeliveryEventRecorder::class)->record(
+            $run,
+            ChatStreamEventType::AnswerPartAcceptedForDisplay,
+            ['text' => 'Provisional text', 'citations' => []],
+            true,
+        );
+        $run->update([
+            'status' => GenerationRunStatus::Failed,
+            'failure_code' => GenerationRunFailureCode::StreamProtocolFailure,
+            'completed_at' => now(),
+        ]);
+
+        $this->actingAs($run->userMessage->createdBy)
+            ->getJson("/api/workspaces/{$conversation->workspace->public_id}/conversations/{$conversation->public_id}")
+            ->assertOk()
+            ->assertJsonPath('data.runs.0.status', 'failed')
+            ->assertJsonPath('data.runs.0.failure_code', 'stream_protocol_failure')
+            ->assertJsonPath('data.runs.0.provisional_content_retracted', true);
     }
 
     public function test_queued_cancellation_is_terminal_and_retry_is_idempotent(): void
@@ -178,6 +218,9 @@ class ConversationOrchestrationTest extends TestCase
         $document = Document::factory()->indexed()->approved()->create([
             'workspace_id' => $workspace->id,
             'created_by_user_id' => $user->id,
+            'source_filename' => 'policies/Medication procedure.pdf',
+            'media_type' => 'application/pdf',
+            'size_bytes' => 4096,
             'effective_from' => '2026-01-01 00:00:00',
             'approved_at' => '2026-01-02 00:00:00',
         ]);
@@ -281,6 +324,33 @@ class ConversationOrchestrationTest extends TestCase
             ->assertJsonPath('data.runs.0.answer.outcome', 'answered')
             ->assertJsonPath('data.runs.0.answer.parts.0.text', 'It requires a documented safety check.')
             ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.document_id', $document->public_id)
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.display_name', 'Medication procedure.pdf')
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.type_label', 'PDF document')
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.size_bytes', 4096)
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.source_state', 'available')
+            ->assertJsonPath(
+                'data.runs.0.answer.parts.0.citations.0.source_route',
+                "/app/workspaces/{$workspace->public_id}/documents/{$document->public_id}",
+            )
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.cited_text', $chunk->text)
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.source_provenance', $chunk->provenance);
+
+        DB::table('documents')->where('id', $document->id)->update(['media_type' => 'application/octet-stream']);
+        $this->actingAs($user)
+            ->getJson("/api/workspaces/{$workspace->public_id}/conversations/{$conversation->public_id}")
+            ->assertOk()
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.document_id', null)
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.source_state', 'unavailable')
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.source_route', null);
+
+        DB::table('documents')->where('id', $document->id)->update(['media_type' => 'application/pdf']);
+        $document->forceFill(['status' => DocumentStatus::Deleted])->save();
+        $this->actingAs($user)
+            ->getJson("/api/workspaces/{$workspace->public_id}/conversations/{$conversation->public_id}")
+            ->assertOk()
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.document_id', null)
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.source_state', 'removed')
+            ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.source_route', null)
             ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.cited_text', $chunk->text)
             ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.source_provenance', $chunk->provenance);
         Http::assertSentCount(4);

@@ -6,11 +6,15 @@ import {
   ChevronLeft,
   ChevronRight,
   FileText,
+  Gauge,
+  BellRing,
+  LineChart,
   MailPlus,
   Menu,
   MessageSquarePlus,
   Settings2,
   ShieldCheck,
+  SlidersHorizontal,
   Users,
   X,
 } from "lucide-react";
@@ -65,6 +69,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
     [workspaceId, workspaces],
   );
   const isAdministration = pathname.includes("/administration");
+  const isPlatformOperations = pathname.startsWith("/app/platform/operations");
   const workspaceHome = `/app/workspaces/${workspaceId}`;
   const closeMobileNavigation = () => setMobileOpen(false);
   const sidebarLabel = (label: string) => (
@@ -101,7 +106,18 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
     </>
   ) : null;
 
-  const contextual = workspaceId ? (
+  const contextual = isPlatformOperations ? (
+    <div className={cn("min-h-0 flex-1 overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
+      <p className="px-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-faint">Platform operations</p>
+      <nav aria-label="Platform operations" className="mt-2 grid gap-1">
+        <Link aria-current={pathname === "/app/platform/operations" ? "page" : undefined} className={activeClass(pathname === "/app/platform/operations")} href="/app/platform/operations" onClick={closeMobileNavigation}><Gauge aria-hidden="true" className="size-4" /><span>Overview</span></Link>
+        <Link aria-current={pathname.endsWith("/alerts") ? "page" : undefined} className={activeClass(pathname.endsWith("/alerts"))} href="/app/platform/operations/alerts" onClick={closeMobileNavigation}><BellRing aria-hidden="true" className="size-4" /><span>Active alerts</span></Link>
+        <Link aria-current={pathname.endsWith("/telemetry") ? "page" : undefined} className={activeClass(pathname.endsWith("/telemetry"))} href="/app/platform/operations/telemetry" onClick={closeMobileNavigation}><LineChart aria-hidden="true" className="size-4" /><span>Global telemetry</span></Link>
+        <Link aria-current={pathname.endsWith("/policy") ? "page" : undefined} className={activeClass(pathname.endsWith("/policy"))} href="/app/platform/operations/policy" onClick={closeMobileNavigation}><SlidersHorizontal aria-hidden="true" className="size-4" /><span>Operational policy</span></Link>
+        <Link className="mt-2 px-3 py-2 text-sm text-foreground-muted underline-offset-4 hover:text-foreground hover:underline" href="/app" onClick={closeMobileNavigation}>Back to chat</Link>
+      </nav>
+    </div>
+  ) : workspaceId ? (
     <div className={cn("min-h-0 flex-1 overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
       <p className="px-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-faint">
         {isAdministration ? "Administration" : "Recent"}

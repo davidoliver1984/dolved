@@ -107,4 +107,27 @@ describe("R21 semantic token contract", () => {
       expect(source, file).not.toMatch(legacyToken);
     }
   });
+
+  it("rejects withdrawn identity tokens and raw colours across production UI", () => {
+    const sourceRoot = resolve(process.cwd(), "src");
+    const files = readdirSync(sourceRoot, { recursive: true })
+      .map(String)
+      .filter((file) => /\.(?:css|ts|tsx)$/.test(file))
+      .filter((file) => !/\.test\.(?:ts|tsx)$/.test(file))
+      .filter((file) => file !== "app/globals.css")
+      .map((file) => resolve(sourceRoot, file));
+    const withdrawnToken = /--(?:ink|muted|paper|card|line|accent|accent-dark|forest|mint)(?=\s*:)|var\(--(?:ink|muted|paper|card|line|accent|accent-dark|forest|mint)\)/;
+    const rawColour = /#[0-9a-f]{3,8}|(?:rgb|hsl)a?\(/i;
+    const withdrawnIdentityColours = /#(?:fff5f1|b83b21|8e2d18|ffe0d8|e2e3e0|4d5752|fff0ea|f8ddd4|79260e|f0ede3|83ab98|a9aaa1|e6e3d8|989b91|d89986)\b/i;
+
+    for (const file of files) {
+      const source = readFileSync(file, "utf8");
+      expect(source, file).not.toMatch(withdrawnToken);
+      expect(source, file).not.toMatch(rawColour);
+      expect(source, file).not.toMatch(withdrawnIdentityColours);
+    }
+
+    expect(css).not.toMatch(withdrawnToken);
+    expect(css).not.toMatch(withdrawnIdentityColours);
+  });
 });

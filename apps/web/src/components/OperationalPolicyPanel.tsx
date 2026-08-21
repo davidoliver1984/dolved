@@ -1,6 +1,7 @@
 "use client";
 
 import { Save } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -76,6 +77,7 @@ function tone(status: "ACTIVE" | "PENDING" | "FAILED"): StatusTone {
 }
 
 export function OperationalPolicyPanel({ policy }: Readonly<{ policy: OperationalPolicy | null }>) {
+  const router = useRouter();
   const [message, setMessage] = useState<{ text: string; tone: "success" | "destructive" } | null>(null);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -85,7 +87,12 @@ export function OperationalPolicyPanel({ policy }: Readonly<{ policy: Operationa
       Object.keys(DEFAULTS).map((key) => [key, Number(form.get(key))]),
     );
     try {
-      await createOperationalPolicy(values);
+      const result = await createOperationalPolicy(values);
+      if (result.status === "concealed") {
+        setMessage(null);
+        router.refresh();
+        return;
+      }
       setMessage({
         text: "Desired policy saved. It remains pending until authenticated target reconciliation completes.",
         tone: "success",

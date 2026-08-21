@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { apiFetch, ApiError, firstError } from "@/lib/api";
+import { apiFetch, ApiError, createOperationalPolicy, firstError } from "@/lib/api";
 
 describe("apiFetch", () => {
   afterEach(() => {
@@ -88,6 +88,15 @@ describe("apiFetch", () => {
       message: "Dolved received an unexpected response. Please try again.",
       status: 502,
     });
+  });
+
+  it("maps concealed operational-policy authority loss to a typed result", async () => {
+    document.cookie = "XSRF-TOKEN=signed%3Dtoken; Path=/";
+    vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce(Response.json({ message: "Not Found" }, { status: 404 }));
+
+    await expect(createOperationalPolicy({ trace_sampling_percentage: 10 })).resolves.toEqual({ status: "concealed" });
   });
 
   it("prefers useful validation errors returned by Laravel", () => {

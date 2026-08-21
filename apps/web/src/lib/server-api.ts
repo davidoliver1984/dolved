@@ -1,6 +1,7 @@
 import "server-only";
 
 import type {
+  AdminDocument,
   DocumentPage,
   PlatformOperationsSnapshot,
   User,
@@ -11,6 +12,7 @@ import type {
   WorkspaceMembership,
   WorkspaceUsageSnapshot,
 } from "@/lib/api";
+import type { Conversation } from "@/lib/conversations";
 import { forwardedAuthCookieHeader } from "@/lib/auth-cookies";
 import type { DocumentUploadConfiguration } from "@/lib/document-upload";
 import { serverEnvironment } from "@/lib/env/server";
@@ -59,13 +61,13 @@ export async function hasPlatformOperationsAccess(): Promise<boolean> {
 export async function platformOperations(): Promise<
   | { status: "ok"; data: PlatformOperationsSnapshot }
   | { status: "unauthorized" }
-  | { status: "forbidden" }
+  | { status: "concealed" }
   | { status: "unavailable" }
 > {
   try {
     const response = await serverFetch("/api/platform/operations/health");
     if (response.status === 401) return { status: "unauthorized" };
-    if (response.status === 403) return { status: "forbidden" };
+    if (response.status === 404) return { status: "concealed" };
     if (!response.ok) return { status: "unavailable" };
     const payload = (await response.json()) as {
       data: PlatformOperationsSnapshot;
@@ -156,6 +158,32 @@ export async function initialWorkspaceDocuments(
     throw new Error("The workspace document list is unavailable.");
   }
   return (await response.json()) as DocumentPage;
+}
+
+export async function initialWorkspaceDocument(
+  workspacePublicId: string,
+  documentPublicId: string,
+): Promise<AdminDocument | null> {
+  const response = await serverFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/documents/${encodeURIComponent(documentPublicId)}`,
+  );
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error("The workspace document is unavailable.");
+  const payload = (await response.json()) as { data: AdminDocument };
+  return payload.data;
+}
+
+export async function initialConversation(
+  workspacePublicId: string,
+  conversationPublicId: string,
+): Promise<Conversation | null> {
+  const response = await serverFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/conversations/${encodeURIComponent(conversationPublicId)}`,
+  );
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error("The conversation is unavailable.");
+  const payload = (await response.json()) as { data: Conversation };
+  return payload.data;
 }
 
 export async function initialWorkspaceAdministration(

@@ -3,15 +3,15 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { apiFetch } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export function LogoutButton({ className }: Readonly<{ className?: string }>) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
   return (
-    <button
-      className={cn("text-button", className)}
+    <Button
+      className={className}
       disabled={pending}
       onClick={async () => {
         setPending(true);
@@ -20,8 +20,9 @@ export function LogoutButton({ className }: Readonly<{ className?: string }>) {
         router.refresh();
       }}
       type="button"
+      variant="ghost"
     >
       {pending ? "Signing out…" : "Sign out"}
-    </button>
+    </Button>
   );
 }

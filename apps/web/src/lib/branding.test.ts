@@ -5,9 +5,12 @@ import { describe, expect, it } from "vitest";
 
 const properNameSurfaces = [
   "src/app/layout.tsx",
-  "src/app/page.tsx",
 ];
-const sharedBrandingConsumers = ["src/components/AuthForm.tsx"];
+const sharedBrandingConsumers = [
+  "src/app/page.tsx",
+  "src/components/AuthForm.tsx",
+  "src/components/InvitationAcceptance.tsx",
+];
 const wordmarkSurface = "src/components/Wordmark.tsx";
 
 const repositoryRoot = process.env.REPOSITORY_ROOT ?? resolve(process.cwd(), "../..");

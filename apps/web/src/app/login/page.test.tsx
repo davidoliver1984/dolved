@@ -26,12 +26,29 @@ describe("LoginPage", () => {
     expect(redirectMock).not.toHaveBeenCalled();
   });
 
-  it("renders contextual platform copy only for the allowlisted platform return path", async () => {
+  it.each([
+    "/app/platform/operations",
+    "/app/platform/operations/alerts",
+    "/app/platform/operations/telemetry",
+    "/app/platform/operations/policy",
+  ] as const)("renders contextual platform copy for allowlisted return path %s", async (next) => {
     currentUserMock.mockResolvedValue(null);
 
-    const page = await LoginPage({ searchParams: Promise.resolve({ next: "/app/platform/operations" }) });
+    const page = await LoginPage({ searchParams: Promise.resolve({ next }) });
 
-    expect(page.props).toEqual({ context: "platform", mode: "login", returnTo: "/app/platform/operations" });
+    expect(page.props).toEqual({ context: "platform", mode: "login", returnTo: next });
+  });
+
+  it.each([
+    "/app/platform/operations/anything-else",
+    "https://evil.example/app/platform/operations",
+    "//evil.example/app/platform/operations",
+    "/app/platform/operations?section=alerts",
+    "/app/platform/operations#alerts",
+  ])("rejects unsafe or unlisted return value %s", async (next) => {
+    currentUserMock.mockResolvedValue(null);
+    const page = await LoginPage({ searchParams: Promise.resolve({ next }) });
+    expect(page.props).toEqual({ mode: "login" });
   });
 
   it("returns an unverified signed-in account to verification", async () => {

@@ -116,7 +116,9 @@ class ConversationController extends Controller
             'generationRuns.userMessage',
             'generationRuns.assistantMessage',
             'generationRuns.retryOf',
+            'generationRuns.deliveryEvents',
             'generationRuns.generatedAnswer.answerParts.evidenceSnapshots.document',
+            'workspace',
         ]);
     }
 }

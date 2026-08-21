@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Notice } from "@/components/ui/notice";
 import { apiFetch, firstError } from "@/lib/api";
 
 export function ResendVerificationButton() {
@@ -9,8 +11,8 @@ export function ResendVerificationButton() {
 
   return (
     <>
-      <button
-        className="primary-button"
+      <Button
+        className="w-fit"
         disabled={pending}
         onClick={async () => {
           setPending(true);
@@ -30,11 +32,11 @@ export function ResendVerificationButton() {
         type="button"
       >
         {pending ? "Sending…" : "Resend verification email"}
-      </button>
+      </Button>
       {status && (
-        <p className="form-alert success" role="status">
+        <Notice tone="info">
           {status}
-        </p>
+        </Notice>
       )}
     </>
   );

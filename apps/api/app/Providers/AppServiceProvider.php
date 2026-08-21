@@ -9,6 +9,7 @@ use App\Observers\UserAccessObserver;
 use App\Services\Ingestion\SqsIngestionEventPublisher;
 use App\Services\Platform\PrometheusOperationalMetricsReader;
 use App\Support\CanonicalEmail;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -39,7 +40,9 @@ class AppServiceProvider extends ServiceProvider
         User::observe(UserAccessObserver::class);
         Gate::define(
             'access-platform-operations',
-            fn (User $user): bool => $user->hasPlatformAdministratorAccess(),
+            fn (User $user): Response => $user->hasPlatformAdministratorAccess()
+                ? Response::allow()
+                : Response::denyAsNotFound('Not Found'),
         );
 
         Password::defaults(fn () => Password::min(12)

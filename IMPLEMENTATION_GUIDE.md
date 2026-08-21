@@ -13978,7 +13978,41 @@ Operational policy destinations inside the shared adaptive shell.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-21.
+
+### Delivered implementation
+
+* split Platform Operations into independently addressable Overview, Active
+  alerts, Global telemetry and Operational policy routes inside the shared
+  adaptive shell;
+* added route-derived platform contextual navigation on desktop and mobile,
+  retaining one stable capability-gated primary destination;
+* corrected the platform-administrator gate to conceal denial as `404`, added
+  an exact four-route safe-login-return allowlist and made every owning route
+  map concealed results through its shared `notFound()` presentation;
+* preserved ADR-0026 operational ownership while keeping the overview concise
+  and moving complete alert, telemetry and policy information to their owning
+  routes;
+* made policy mutation fail closed when platform authority is lost after page
+  load, without retry-to-success or permission disclosure;
+* completed the final ADR-0027 conformance work: live product surfaces consume
+  semantic tokens; Laravel owns the safe citation/source presentation; document
+  and conversation deep links are server-authorised and tenant-safe; typed
+  timeout, retraction and ordinary failures remain distinct; and chat uses one
+  deliberately bounded live-status region rather than announcing transcript
+  mutations.
+
+### Verification evidence
+
+The exact closure tree passed 115 web tests, 332 Laravel tests with 2 skipped
+and 1,634 assertions, and 562 Python tests with 4 skipped. ESLint, TypeScript,
+the production Next.js build, Pint, Ruff format/lint, Mypy, the pinned Collector
+configuration guard and `git diff --check` all passed. Focused route, citation,
+concealment, theme/token and accessibility regressions passed. Direct visual
+review covered all four Platform Operations routes, both themes, desktop and a
+390-pixel mobile viewport; no horizontal overflow remained and mobile route
+selection dismissed the drawer. An independent final review found no new
+regressions or accepted-ADR deviations.
 
 ### Planned scope
 
@@ -14018,6 +14052,18 @@ Not yet executed.
 
 git add apps/api apps/web docs tasks.json IMPLEMENTATION_GUIDE.md PROJECT_ROADMAP.md
 git commit -m "Split platform operations into routed sections"
+
+---
+
+## Phase 21 acceptance gate
+
+Closed on 2026-08-21. The shared product language now applies across public,
+authentication, chat, document, workspace-administration and platform-
+operations surfaces. ADR-0027's citation, route-ownership, typed-state and
+accessibility requirements and ADR-0028's Platform Operations route split were
+verified against the running application and complete repository suite. No
+retrieval, planner, threshold, calibration, benchmark or provider behaviour
+changed during closure.
 
 ---
 

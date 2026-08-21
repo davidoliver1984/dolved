@@ -40,13 +40,16 @@ final class PlatformOperationsTest extends TestCase
             }
         });
 
-        $this->actingAs($owner)->getJson('/api/platform/operations/access')->assertForbidden();
+        $this->actingAs($owner)->getJson('/api/platform/operations/access')
+            ->assertNotFound()
+            ->assertJsonPath('message', 'Not Found')
+            ->assertJsonMissingPath('errors');
         $this->actingAs($platformAdministrator)->getJson('/api/platform/operations/access')
             ->assertOk()->assertJsonPath('data.access', 'administrator');
         $this->actingAs($platformAdministrator)->getJson('/api/workspaces')->assertOk()->assertJsonCount(0, 'data');
 
         DB::table('users')->where('id', $platformAdministrator->id)->update(['platform_role' => null]);
-        $this->actingAs($platformAdministrator)->getJson('/api/platform/operations/access')->assertForbidden();
+        $this->actingAs($platformAdministrator)->getJson('/api/platform/operations/access')->assertNotFound();
     }
 
     public function test_platform_role_mutation_is_atomic_idempotent_audited_and_protects_the_final_administrator(): void

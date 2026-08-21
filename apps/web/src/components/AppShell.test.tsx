@@ -94,6 +94,22 @@ describe("AppShell", () => {
     expect(screen.getByRole("link", { name: "Platform operations" }).getAttribute("href")).toBe("/app/platform/operations");
   });
 
+  it("renders route-backed platform context with exactly one contextual destination active", () => {
+    pathnameState.value = "/app/platform/operations/telemetry";
+    render(
+      <AppShell canOperatePlatform user={user} workspaces={[]}>
+        <p>Telemetry content</p>
+      </AppShell>,
+    );
+
+    expect(screen.getByRole("link", { name: "Platform operations" }).getAttribute("aria-current")).toBe("page");
+    expect(screen.getByRole("link", { name: "Overview" }).getAttribute("aria-current")).toBeNull();
+    expect(screen.getByRole("link", { name: "Active alerts" }).getAttribute("href")).toBe("/app/platform/operations/alerts");
+    expect(screen.getByRole("link", { name: "Global telemetry" }).getAttribute("aria-current")).toBe("page");
+    expect(screen.getByRole("link", { name: "Operational policy" }).getAttribute("href")).toBe("/app/platform/operations/policy");
+    expect(screen.getByRole("link", { name: "Back to chat" }).getAttribute("href")).toBe("/app");
+  });
+
   it("offers sign out from the named account menu", async () => {
     const interaction = userEvent.setup();
     render(

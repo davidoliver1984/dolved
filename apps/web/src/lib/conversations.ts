@@ -19,6 +19,7 @@ export type ConversationRun = {
   failure_code: string | null;
   delivery_mode: string;
   retryable: boolean;
+  provisional_content_retracted: boolean;
   answer?: GroundedAnswer | null;
   created_at: string;
   completed_at: string | null;
@@ -27,8 +28,14 @@ export type ConversationRun = {
 export type GroundedCitation = {
   id: string;
   document_id: string | null;
+  display_name: string;
+  type_label: string;
+  size_bytes: number | null;
+  source_state: "available" | "removed" | "unavailable";
+  source_route: string | null;
   cited_text: string;
   source_provenance: unknown[];
+  provenance_label: string;
 };
 
 export type GroundedAnswerPart = {

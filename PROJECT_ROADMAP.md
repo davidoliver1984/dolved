@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 21 of 25 (Product Experience and Interface Design) |
+| Project status | In Progress — Phase 22 of 25 (Testing and Quality Strategy) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -879,6 +879,15 @@ tokens and contrast guards now underpin one adaptive route-backed shell. The
 development/test-only component reference was visually accepted in both themes;
 Stage 21.2 can now apply this shared language to administration without
 inventing a separate interface system.
+
+**Phase 21 completed 2026-08-21:** the design system is now applied across
+public, authentication, chat, documents, workspace administration and Platform
+Operations. The final gate completed ADR-0027's safe citation/source contract,
+tenant-safe deep-link concealment, typed timeout/retraction states and bounded
+streaming announcements, then implemented ADR-0028's four route-backed Platform
+Operations sections. Independent review and the complete repository suite found
+no remaining conformance blocker. Phase 22 can now define the platform-wide
+testing taxonomy against a stable product interface.
 
 ### Deliverable
 

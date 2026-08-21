@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R21",
-    "current_session": "R21-S05",
-    "next_action": "Implement R21-S05 — split Platform Operations into route-backed sections under accepted ADR-0028.",
-    "completed_through": "R20-GATE",
-    "completed_phase_count": 21,
+    "current_phase": "R22",
+    "current_session": "R22-S01",
+    "next_action": "Begin R22-S01 — establish the platform test taxonomy.",
+    "completed_through": "R21-GATE",
+    "completed_phase_count": 22,
     "total_phase_count": 25
   },
   "phases": [
@@ -4340,7 +4340,7 @@
           "title": "Split Platform Operations into Route-Backed Sections",
           "guide_start_line": 13971,
           "guide_end_line": 14020,
-          "status": "in_progress",
+          "status": "completed",
           "objective": "Implement accepted ADR-0028 by separating Platform Operations into route-backed Overview, Active alerts, Global telemetry and Operational policy destinations without changing operational semantics or authority ownership.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -4373,18 +4373,26 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r21-s05-split-platform-operations-into-route-backed-sections.md",
-            "status": "not_started"
+            "status": "completed",
+            "actual_path": "docs/journal/2026-08-21-r21-s05-split-platform-operations-into-route-backed-sections.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Accepted ADR-0028 implemented as four independently addressable Platform Operations routes with route-derived contextual navigation",
+            "Platform authorization now conceals denial as 404, login return uses an exact four-route allowlist and policy mutation fails closed after authority loss",
+            "ADR-0027 conformance completed across legacy identity migration, Laravel-owned citation presentation, document source routing, conversation concealment, typed failure states and one bounded chat live region",
+            "Desktop and 390px mobile review passed in light and dark themes without horizontal overflow; mobile navigation closes after route selection",
+            "Full acceptance passed: web 115 tests; Laravel 332 passed / 2 skipped / 1634 assertions; Python 562 passed / 4 skipped; format, lint, type, build, telemetry and git diff checks clean",
+            "docs/journal/2026-08-21-r21-s05-split-platform-operations-into-route-backed-sections.md"
+          ]
         }
       ],
       "guide_end_line": 14022,
-      "status": "in_progress",
+      "status": "completed",
       "objective": "Give the product's chat, document and administration surfaces one coherent, accessible, production-quality interface built on a shared design system.",
       "gate": {
         "id": "R21-GATE",
         "title": "Product Experience and Interface Design Acceptance Gate",
-        "status": "not_started",
+        "status": "completed",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
@@ -4392,7 +4400,14 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-21 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "Independent final review found no new regressions and confirmed accepted ADR-0027 and ADR-0028 conformance",
+          "All five reported ADR-0027 gaps were corrected without changing retrieval, planner, threshold, calibration or benchmark behavior",
+          "All four Platform Operations routes, contextual navigation, concealment, safe return and authority-loss boundaries were verified",
+          "Full acceptance passed: web 115 tests; Laravel 332 passed / 2 skipped / 1634 assertions; Python 562 passed / 4 skipped; format, lint, type, production build, telemetry and git diff checks clean",
+          "Representative desktop/mobile and light/dark visual review passed with no horizontal overflow",
+          "docs/journal/2026-08-21-r21-s05-split-platform-operations-into-route-backed-sections.md"
+        ]
       }
     },
     {

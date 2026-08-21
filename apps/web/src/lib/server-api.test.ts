@@ -12,6 +12,8 @@ vi.mock("@/lib/auth-cookies", () => ({
 import {
   currentUser,
   hasPlatformOperationsAccess,
+  initialConversation,
+  initialWorkspaceDocument,
   platformAccess,
   platformOperations,
   userWorkspace,
@@ -64,14 +66,14 @@ describe("server-side Laravel API functions", () => {
 
   it("fails platform-operation discovery soft and preserves bounded access states", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch");
-    fetchMock.mockResolvedValueOnce(new Response(null, { status: 403 }));
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 404 }));
     fetchMock.mockRejectedValueOnce(new TypeError("backend unavailable"));
-    fetchMock.mockResolvedValueOnce(new Response(null, { status: 403 }));
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 404 }));
     fetchMock.mockResolvedValueOnce(new Response(null, { status: 503 }));
 
     await expect(hasPlatformOperationsAccess()).resolves.toBe(false);
     await expect(hasPlatformOperationsAccess()).resolves.toBe(false);
-    await expect(platformOperations()).resolves.toEqual({ status: "forbidden" });
+    await expect(platformOperations()).resolves.toEqual({ status: "concealed" });
     await expect(platformOperations()).resolves.toEqual({ status: "unavailable" });
   });
 
@@ -193,5 +195,51 @@ describe("server-side Laravel API functions", () => {
     await expect(
       workspaceUploadConfiguration(workspace.public_id),
     ).rejects.toThrow("Document upload configuration is unavailable.");
+  });
+
+  it("loads a conversation by encoded workspace and conversation identity and maps concealment to null", async () => {
+    const conversation = {
+      id: "conversation-1",
+      title: "Current policy",
+      status: "active",
+      created_at: "2026-08-21T10:00:00Z",
+      updated_at: "2026-08-21T10:00:00Z",
+      messages: [],
+      runs: [],
+    };
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+    fetchMock.mockResolvedValueOnce(Response.json({ data: conversation }));
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 404 }));
+
+    await expect(initialConversation("workspace/one", "conversation one")).resolves.toEqual(conversation);
+    expect(String(fetchMock.mock.calls[0][0])).toMatch(
+      /\/api\/workspaces\/workspace%2Fone\/conversations\/conversation%20one$/,
+    );
+    await expect(initialConversation("workspace", "concealed")).resolves.toBeNull();
+  });
+
+  it("loads an authorised live document and maps removed or concealed documents to null", async () => {
+    const document = {
+      public_id: "document-1",
+      source_filename: "Medication procedure.pdf",
+      media_type: "application/pdf",
+      size_bytes: 2048,
+      status: "indexed",
+      governance_status: "approved",
+      failure_category: null,
+      failure_message: null,
+      extraction_warnings: [],
+      capabilities: { retry: false, delete: true },
+      created_at: "2026-08-21T10:00:00Z",
+    };
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+    fetchMock.mockResolvedValueOnce(Response.json({ data: document }));
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 404 }));
+
+    await expect(initialWorkspaceDocument("workspace/one", "document one")).resolves.toEqual(document);
+    expect(String(fetchMock.mock.calls[0][0])).toMatch(
+      /\/api\/workspaces\/workspace%2Fone\/documents\/document%20one$/,
+    );
+    await expect(initialWorkspaceDocument("workspace", "removed")).resolves.toBeNull();
   });
 });

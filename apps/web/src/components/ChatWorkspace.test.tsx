@@ -19,6 +19,7 @@ afterEach(cleanup);
 
 function services() {
   let receive: ((event: ChatStreamEvent) => void) | undefined;
+  let disconnect: ((event: Event) => void) | undefined;
   const completed: Conversation = {
     ...emptyConversation,
     title: "Medication policy",
@@ -52,6 +53,7 @@ function services() {
         failure_code: null,
         delivery_mode: "streaming_parts",
         retryable: false,
+        provisional_content_retracted: false,
         answer: {
           id: "answer-1",
           outcome: "answered",
@@ -65,8 +67,14 @@ function services() {
                 {
                   id: "snapshot-1",
                   document_id: "document-1",
+                  display_name: "Medication procedure.pdf",
+                  type_label: "PDF document",
+                  size_bytes: 2048,
+                  source_state: "available",
+                  source_route: "/app/workspaces/workspace-1/documents/document-1",
                   cited_text: "The current procedure requires a safety check.",
                   source_provenance: [{ kind: "text", line_start: 4 }],
+                  provenance_label: "Text source · line 4",
                 },
               ],
             },
@@ -95,8 +103,10 @@ function services() {
           _conversation: string,
           _run: string,
           next: (event: ChatStreamEvent) => void,
+          fail: (event: Event) => void,
         ) => {
           receive = next;
+          disconnect = fail;
           return vi.fn();
         },
       ),
@@ -104,6 +114,9 @@ function services() {
     completed,
     emit(event: ChatStreamEvent) {
       receive?.(event);
+    },
+    disconnect() {
+      disconnect?.(new Event("error"));
     },
   };
 }
@@ -156,8 +169,8 @@ describe("ChatWorkspace", () => {
     });
 
     expect(await screen.findByText("Use the current procedure.")).not.toBeNull();
-    await user.click(screen.getByText("1 citation"));
-    expect(screen.getByText("cite_final")).not.toBeNull();
+    await user.click(await screen.findByRole("button", { name: "[1], show source evidence" }));
+    expect(await screen.findByText("Medication procedure.pdf")).not.toBeNull();
   });
 
   it("keeps prior messages visible when a later request fails", async () => {
@@ -211,13 +224,13 @@ describe("ChatWorkspace", () => {
       />,
     );
 
-    await user.click(await screen.findByText("1 citation"));
-    expect(screen.getByText("Document document-1")).not.toBeNull();
+    await user.click(await screen.findByRole("button", { name: "[1], show source evidence" }));
+    expect(screen.getByText("Medication procedure.pdf")).not.toBeNull();
     expect(
       screen.getByText("The current procedure requires a safety check."),
     ).not.toBeNull();
-    await user.click(screen.getByText("Source location"));
-    expect(screen.getByText(/line_start/)).not.toBeNull();
+    expect(screen.getByText("Text source · line 4")).not.toBeNull();
+    expect(screen.getByRole("link", { name: "View source" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/documents/document-1");
   });
 
   it("fails closed when workspace authorization is revoked mid-stream", async () => {
@@ -236,5 +249,58 @@ describe("ChatWorkspace", () => {
     expect(screen.getByText(/No further answer content will be shown/)).not.toBeNull();
     expect(screen.getByLabelText("Ask a question").hasAttribute("disabled")).toBe(true);
     expect(screen.getByRole("button", { name: "Send" }).hasAttribute("disabled")).toBe(true);
+  });
+
+  it.each([
+    ["internal_failure", false, "Answer could not be completed"],
+    ["run_timeout", false, "Answer attempt timed out"],
+    ["stream_protocol_failure", true, "Provisional answer retracted"],
+  ])("renders the typed %s terminal presentation", async (failureCode, retracted, heading) => {
+    const harness = services();
+    harness.api.list.mockResolvedValue([{ ...emptyConversation, title: "Failed answer" }]);
+    harness.api.get.mockResolvedValue({
+      ...emptyConversation,
+      messages: [{ id: "question", ordinal: 1, role: "user", kind: null, text: "Question", in_reply_to_message_id: null, created_at: "2026-08-18T12:00:00Z" }],
+      runs: [{
+        id: `run-${failureCode}`,
+        user_message_id: "question",
+        assistant_message_id: null,
+        retry_of_run_id: null,
+        status: "failed",
+        failure_code: failureCode,
+        delivery_mode: "streaming_parts",
+        retryable: true,
+        provisional_content_retracted: retracted,
+        answer: null,
+        created_at: "2026-08-18T12:00:00Z",
+        completed_at: "2026-08-18T12:01:00Z",
+      }],
+    });
+
+    render(<ChatWorkspace services={harness.api} workspaceId="workspace-1" workspaceName="Alderbridge" />);
+
+    expect(await screen.findByText(heading)).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Retry answer" })).not.toBeNull();
+    if (retracted) expect(screen.getByText(/provisional content was removed/i)).not.toBeNull();
+  });
+
+  it("uses one bounded live region while keeping the transcript navigable", async () => {
+    const harness = services();
+    const user = userEvent.setup();
+    render(<ChatWorkspace services={harness.api} workspaceId="workspace-1" workspaceName="Alderbridge" />);
+
+    const transcript = (await screen.findByText("What do you need to know?")).closest("div[aria-busy]");
+    expect(transcript?.hasAttribute("aria-live")).toBe(false);
+    expect(screen.getAllByRole("status")).toHaveLength(1);
+
+    await user.type(screen.getByLabelText("Ask a question"), "Question");
+    await user.click(screen.getByRole("button", { name: "Send" }));
+    await waitFor(() => expect(harness.api.send).toHaveBeenCalledOnce());
+    harness.emit({ sequence: 1, type: "run_progress", provisional: false, payload: { stage: "retrieving" } });
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("Finding eligible evidence…"));
+
+    harness.disconnect();
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("Live updates interrupted. Reconnecting."));
+    expect(await screen.findByText(/live update connection was interrupted/i)).not.toBeNull();
   });
 });

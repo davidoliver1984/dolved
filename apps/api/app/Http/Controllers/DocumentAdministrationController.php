@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Documents\RequestDocumentDeletion;
 use App\Actions\Documents\RetryDocumentIngestion;
+use App\Enums\DocumentStatus;
 use App\Http\Requests\DeleteDocumentRequest;
 use App\Http\Requests\ListDocumentsRequest;
 use App\Http\Requests\RetryDocumentIngestionRequest;
@@ -59,6 +60,10 @@ class DocumentAdministrationController extends Controller
         $user = $request->user();
         $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
         $document = $documents->handle($workspace, $documentPublicId);
+        abort_if(
+            in_array($document->status, [DocumentStatus::Deleting, DocumentStatus::Deleted], true),
+            404,
+        );
         Gate::authorize('view', $document);
 
         return new DocumentAdministrationResource($document->load(['createdBy', 'latestIngestionAttempt', 'deletionOperation']));

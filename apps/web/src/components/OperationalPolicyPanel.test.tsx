@@ -1,16 +1,17 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { createPolicy } = vi.hoisted(() => ({ createPolicy: vi.fn() }));
+const { createPolicy, refresh } = vi.hoisted(() => ({ createPolicy: vi.fn(), refresh: vi.fn() }));
 vi.mock("@/lib/api", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api")>()),
   createOperationalPolicy: createPolicy,
 }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 
 import { OperationalPolicyPanel } from "@/components/OperationalPolicyPanel";
 
 describe("OperationalPolicyPanel", () => {
-  beforeEach(() => createPolicy.mockReset());
+  beforeEach(() => { createPolicy.mockReset(); refresh.mockReset(); });
   afterEach(cleanup);
 
   it("shows per-setting and per-target state without collapsing partial application", () => {
@@ -31,11 +32,21 @@ describe("OperationalPolicyPanel", () => {
   });
 
   it("labels a saved value as desired until authenticated reconciliation", async () => {
-    createPolicy.mockResolvedValue({ data: { policy: {} } });
+    createPolicy.mockResolvedValue({ status: "ok", data: { policy: {} } });
     render(<OperationalPolicyPanel policy={null} />);
     fireEvent.submit(screen.getByRole("button", { name: "Save desired policy" }).closest("form")!);
 
     await waitFor(() => expect(createPolicy).toHaveBeenCalledOnce());
     expect(screen.getByText(/remains pending/)).toBeTruthy();
+  });
+
+  it("refreshes without a retry message when authority is concealed during save", async () => {
+    createPolicy.mockResolvedValue({ status: "concealed" });
+    render(<OperationalPolicyPanel policy={null} />);
+    fireEvent.submit(screen.getByRole("button", { name: "Save desired policy" }).closest("form")!);
+
+    await waitFor(() => expect(refresh).toHaveBeenCalledOnce());
+    expect(screen.queryByText(/failed|forbidden|permission/i)).toBeNull();
+    expect(createPolicy).toHaveBeenCalledOnce();
   });
 });

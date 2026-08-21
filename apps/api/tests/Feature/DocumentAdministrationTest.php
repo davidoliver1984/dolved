@@ -64,6 +64,23 @@ class DocumentAdministrationTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_document_detail_conceals_deleted_sources_but_keeps_live_sources_available(): void
+    {
+        $user = User::factory()->create();
+        $workspace = Workspace::factory()->create();
+        WorkspaceMembership::factory()->for($workspace)->for($user)->member()->create();
+        $document = Document::factory()->for($workspace)->indexed()->create();
+        $path = "/api/workspaces/{$workspace->public_id}/documents/{$document->public_id}";
+
+        $this->actingAs($user)->getJson($path)
+            ->assertOk()
+            ->assertJsonPath('data.public_id', $document->public_id)
+            ->assertJsonMissing(['storage_key' => $document->storage_key]);
+
+        $document->forceFill(['status' => DocumentStatus::Deleted])->save();
+        $this->actingAs($user)->getJson($path)->assertNotFound();
+    }
+
     public function test_retry_is_owner_only_and_idempotent_per_document_key(): void
     {
         $owner = User::factory()->create();

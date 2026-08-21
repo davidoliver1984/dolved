@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { Inbox } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { userWorkspaces } from "@/lib/server-api";
 
 export default async function WorkspacePage() {
@@ -10,23 +12,16 @@ export default async function WorkspacePage() {
 
   return (
     <>
-      <section className="workspace-welcome">
-        <p className="eyebrow">No workspace assigned</p>
-        <h1>Your account is ready.</h1>
-        <p>
+      <section>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">No workspace assigned</p>
+        <h1 className="mt-2 text-3xl font-semibold">Your account is ready.</h1>
+        <p className="mt-3 max-w-2xl text-foreground-muted">
           Your account is ready, but it has not yet been assigned to a
           workspace. A platform administrator can add your membership.
         </p>
       </section>
 
-      <section className="empty-workspace">
-        <div className="empty-mark">M</div>
-        <h2>No workspace access yet.</h2>
-        <p>
-          Workspace creation and membership management are
-          administrator-controlled.
-        </p>
-      </section>
+      <EmptyState className="mt-8" description="Workspace creation and membership management are administrator-controlled." icon={Inbox} title="No workspace access yet." />
     </>
   );
 }
