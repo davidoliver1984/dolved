@@ -4129,14 +4129,14 @@
       "id": "R21",
       "guide_phase": "Phase 21 \u2014 Product Experience and Interface Design",
       "title": "Product Experience and Interface Design",
-      "guide_start_line": 13471,
+      "guide_start_line": 13680,
       "sessions": [
         {
           "id": "R21-S01",
           "guide_stage": "Stage 21.1 \u2014 Define the Product Design System",
           "title": "Define the Product Design System",
-          "guide_start_line": 13494,
-          "guide_end_line": 13536,
+          "guide_start_line": 13703,
+          "guide_end_line": 13757,
           "status": "not_started",
           "objective": "Establish one shared design system \u2014 typography, spacing, colour, components, navigation and responsive rules \u2014 that the whole product draws from, while preserving the established Dolved identity.",
           "session_mode": "implementation",
@@ -4145,8 +4145,8 @@
             "phase": "Phase 21 \u2014 Product Experience and Interface Design",
             "stage": "Stage 21.1 \u2014 Define the Product Design System",
             "source_lines": {
-              "start": 13494,
-              "end": 13536
+              "start": 13703,
+              "end": 13757
             }
           },
           "workflow": [
@@ -4165,7 +4165,7 @@
             "Mark the session complete and advance current_session."
           ],
           "requires_architecture_review": true,
-          "requires_adr": false,
+          "requires_adr": true,
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r21-s01-define-the-product-design-system.md",
@@ -4177,8 +4177,8 @@
           "id": "R21-S02",
           "guide_stage": "Stage 21.2 \u2014 Design the Administration Experience",
           "title": "Design the Administration Experience",
-          "guide_start_line": 13538,
-          "guide_end_line": 13579,
+          "guide_start_line": 13759,
+          "guide_end_line": 13800,
           "status": "not_started",
           "objective": "Design clear document, membership and usage information architecture for the administration surface Phase 19 built, grounded in ADR-0025's actual owner/admin/member capability model.",
           "session_mode": "implementation",
@@ -4187,8 +4187,8 @@
             "phase": "Phase 21 \u2014 Product Experience and Interface Design",
             "stage": "Stage 21.2 \u2014 Design the Administration Experience",
             "source_lines": {
-              "start": 13538,
-              "end": 13579
+              "start": 13759,
+              "end": 13800
             }
           },
           "workflow": [
@@ -4219,8 +4219,8 @@
           "id": "R21-S03",
           "guide_stage": "Stage 21.3 \u2014 Implement Complete Interface States",
           "title": "Implement Complete Interface States",
-          "guide_start_line": 13581,
-          "guide_end_line": 13619,
+          "guide_start_line": 13802,
+          "guide_end_line": 13840,
           "status": "not_started",
           "objective": "Implement every interface state the product's real behaviour can produce, across chat, documents and administration, not only the success path.",
           "session_mode": "implementation",
@@ -4229,8 +4229,8 @@
             "phase": "Phase 21 \u2014 Product Experience and Interface Design",
             "stage": "Stage 21.3 \u2014 Implement Complete Interface States",
             "source_lines": {
-              "start": 13581,
-              "end": 13619
+              "start": 13802,
+              "end": 13840
             }
           },
           "workflow": [
@@ -4261,8 +4261,8 @@
           "id": "R21-S04",
           "guide_stage": "Stage 21.4 \u2014 Visual and Usability Acceptance",
           "title": "Visual and Usability Acceptance",
-          "guide_start_line": 13621,
-          "guide_end_line": 13658,
+          "guide_start_line": 13842,
+          "guide_end_line": 13879,
           "status": "not_started",
           "objective": "Validate the redesigned interface against real application behaviour and data before accepting this phase, closing the explicit design acceptance gate this phase exists to provide.",
           "session_mode": "implementation",
@@ -4271,8 +4271,8 @@
             "phase": "Phase 21 \u2014 Product Experience and Interface Design",
             "stage": "Stage 21.4 \u2014 Visual and Usability Acceptance",
             "source_lines": {
-              "start": 13621,
-              "end": 13658
+              "start": 13842,
+              "end": 13879
             }
           },
           "workflow": [

@@ -856,6 +856,12 @@ without a design pass — but not limited to it, since redesigning only
 administration would make it read as a different application from chat,
 documents and the shared shell.
 
+ADR-0027 is the accepted architecture boundary: one adaptive, route-backed
+shell; repository-owned design tokens and components; dark-default explicit
+theming; a WCAG 2.2 AA baseline; and a bounded Laravel-owned citation/source
+presentation contract. The accepted route tree includes durable conversation
+URLs, workspace administration sections and `/app/platform/operations`.
+
 ### Tasks
 
 - Define the Product Design System

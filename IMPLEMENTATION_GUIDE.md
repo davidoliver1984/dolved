@@ -13714,6 +13714,12 @@ Not yet executed.
 
 ### Planned scope
 
+ADR-0027 is the accepted architecture boundary for this stage. In addition to
+the design-system primitives below, Stage 21.1 establishes its route-backed
+adaptive shell and development/test-only component-reference route. The
+bounded citation presentation-contract extension and authorised document
+detail route are implemented later in Stage 21.3.
+
 * typography scale and usage rules;
 * spacing and layout grid;
 * colour palette, including light/dark and status/semantic colours;
@@ -13724,6 +13730,9 @@ Not yet executed.
 * responsive breakpoints and behaviour;
 * an accessibility baseline (target conformance level, keyboard-focus and
   contrast rules) that every later stage is built against.
+* the accepted route hierarchy, including canonical conversation URLs,
+  workspace administration routes and `/app/platform/operations`;
+* a development/test-only component-reference route for visual review.
 
 ### Acceptance criteria
 
@@ -13736,6 +13745,9 @@ Not yet executed.
 * The accessibility baseline is explicit and testable, not aspirational.
 * The system is usable by later stages without further architectural
   negotiation.
+* Route identity, conversation selection and active navigation follow
+  ADR-0027 rather than client-only selection state.
+* The component-reference surface is absent from production builds.
 
 ### Commit boundary
 
