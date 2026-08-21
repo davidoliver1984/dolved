@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Notice } from "@/components/ui/notice";
 import { acceptWorkspaceInvitation, firstError } from "@/lib/api";
 
 export function InvitationAcceptance({ token }: Readonly<{ token: string }>) {
@@ -27,10 +29,10 @@ export function InvitationAcceptance({ token }: Readonly<{ token: string }>) {
           <h1 id="invitation-heading">Join this workspace</h1>
           <p>Accept using the signed-in account whose verified email address received the invitation.</p>
         </div>
-        {error ? <p className="form-error" role="alert">{error}</p> : null}
-        <button className="primary-button" disabled={busy} onClick={() => void accept()} type="button">
+        {error ? <Notice tone="destructive"><strong>Invitation could not be accepted</strong><p className="mt-1">{error}</p><p className="mt-2 text-xs">The invitation may be expired, revoked, already resolved, or intended for a different verified account.</p></Notice> : null}
+        <Button disabled={busy} onClick={() => void accept()} type="button">
           {busy ? "Checking invitation…" : "Accept invitation"}
-        </button>
+        </Button>
       </section>
       <aside className="auth-story" aria-label="Invitation security">
         <p className="eyebrow">Verified access</p>

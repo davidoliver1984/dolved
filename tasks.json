@@ -39,8 +39,8 @@
   },
   "progress": {
     "current_phase": "R21",
-    "current_session": "R21-S03",
-    "next_action": "Begin R21-S03 — implement complete interface states.",
+    "current_session": "R21-S04",
+    "next_action": "Begin R21-S04 — run visual and usability acceptance.",
     "completed_through": "R20-GATE",
     "completed_phase_count": 21,
     "total_phase_count": 25
@@ -4240,7 +4240,7 @@
           "title": "Implement Complete Interface States",
           "guide_start_line": 13830,
           "guide_end_line": 13866,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Implement every interface state the product's real behaviour can produce, across chat, documents and administration, not only the success path.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -4272,9 +4272,18 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r21-s03-implement-complete-interface-states.md",
-            "status": "not_started"
+            "status": "completed",
+            "actual_path": "docs/journal/2026-08-21-r21-s03-implement-complete-interface-states.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Chat implements loading, empty, streaming, grounded success, controlled outcome, failure, cancellation and retry states",
+            "Mid-session permission loss clears provisional content and permanently disables the mounted composer",
+            "Document upload implements waiting, transfer, verification, completion, independent failure and retry states",
+            "Invitation acceptance explains expired, revoked, resolved and wrong-account failures safely",
+            "Administration retains explicit failed ingestion, asynchronous deletion, empty, partial and unavailable usage states",
+            "Web verification passed 24 files / 73 tests plus ESLint, TypeScript, production build and git diff check",
+            "docs/journal/2026-08-21-r21-s03-implement-complete-interface-states.md"
+          ]
         },
         {
           "id": "R21-S04",

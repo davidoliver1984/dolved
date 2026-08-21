@@ -1,5 +1,6 @@
 "use client";
 
+import { Inbox, RefreshCw, Send, X } from "lucide-react";
 import {
   type FormEvent,
   type KeyboardEvent,
@@ -9,6 +10,15 @@ import {
   useState,
 } from "react";
 import { firstError } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { CitationChip } from "@/components/ui/citation-chip";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Notice } from "@/components/ui/notice";
+import { Skeleton } from "@/components/ui/skeleton";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { StreamingStatus } from "@/components/ui/streaming-status";
+import { Textarea } from "@/components/ui/textarea";
 import {
   type ChatStreamEvent,
   subscribeToGenerationRun,
@@ -105,6 +115,7 @@ export function ChatWorkspace({
   const [progress, setProgress] = useState<string | null>(null);
   const [provisionalParts, setProvisionalParts] = useState<AnswerPart[]>([]);
   const [completedParts, setCompletedParts] = useState<Record<string, AnswerPart[]>>({});
+  const [accessRevoked, setAccessRevoked] = useState(false);
   const unsubscribe = useRef<null | (() => void)>(null);
   const transcript = useRef<HTMLDivElement>(null);
 
@@ -202,10 +213,12 @@ export function ChatWorkspace({
               setError(firstError(caught)),
             );
           } else if (event.type === "run_cancelled") {
+            setError("Answer generation was cancelled. Your question remains in the conversation.");
             void finishRun(conversationId).catch((caught) =>
               setError(firstError(caught)),
             );
           } else if (event.type === "authorization_revoked") {
+            setAccessRevoked(true);
             setBusy(false);
             setProgress(null);
             setProvisionalParts([]);
@@ -238,7 +251,7 @@ export function ChatWorkspace({
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     const message = draft.trim();
-    if (!message || busy) return;
+    if (!message || busy || accessRevoked) return;
     setBusy(true);
     setError(null);
     setProgress("Sending your question…");
@@ -314,7 +327,7 @@ export function ChatWorkspace({
   );
 
   return (
-    <section className={showConversationNavigation ? "chat-workspace" : "chat-workspace chat-workspace-routed"} aria-labelledby="chat-heading">
+    <section className={showConversationNavigation ? "grid min-h-[42rem] overflow-hidden rounded-xl border border-border bg-card lg:grid-cols-[18rem_1fr]" : "grid min-h-[42rem]"} aria-labelledby="chat-heading">
       {showConversationNavigation ? <aside className="conversation-sidebar" aria-label="Conversations">
         <div className="conversation-sidebar-heading">
           <div>
@@ -345,16 +358,12 @@ export function ChatWorkspace({
         </nav>
       </aside> : null}
 
-      <div className="chat-panel">
+      <div className="grid min-h-0 grid-rows-[auto_1fr_auto_auto] gap-4">
         {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">Ask {workspaceName}</h1><p className="mt-2 text-sm text-foreground-muted">Answers use only evidence eligible for this workspace and question.</p></header> : null}
-        <div aria-busy={loading} aria-live="polite" className="chat-transcript" ref={transcript}>
-          {loading ? <p className="chat-placeholder">Loading conversation…</p> : null}
+        <div aria-busy={loading} aria-live="polite" className="grid min-h-96 content-start gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 sm:p-6" ref={transcript}>
+          {loading ? <div aria-label="Loading conversation" className="grid gap-4"><Skeleton className="h-20 w-3/4" /><Skeleton className="ml-auto h-16 w-2/3" /><Skeleton className="h-28 w-4/5" /></div> : null}
           {!loading && !(active?.messages?.length) ? (
-            <div className="chat-empty">
-              <span aria-hidden="true">?</span>
-              <h3>What do you need to know?</h3>
-              <p>Answers are grounded in eligible workspace evidence and include inspectable citation references.</p>
-            </div>
+            <EmptyState description="Answers use eligible workspace evidence and keep their citation references close." icon={Inbox} title="What do you need to know?" />
           ) : null}
           {active?.messages?.map((message) => {
             const run = runsByMessage.get(message.id);
@@ -362,24 +371,24 @@ export function ChatWorkspace({
               ? completedParts[run.id] ?? run.answer?.parts
               : undefined;
             return (
-              <article className={`chat-message ${message.role}`} key={message.id}>
-                <p className="message-role">{message.role === "user" ? "You" : "Dolved"}</p>
+              <Card className={message.role === "user" ? "ml-auto w-fit max-w-[85%] border-brand/30 bg-brand/10 p-4" : "max-w-[92%] p-4"} key={message.id}>
+                <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : "Dolved"}</p>{run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
                 {parts?.length ? parts.map((part, index) => (
                   <div className="answer-part" key={part.id ?? `${message.id}-${index}`}>
                     <p>{part.text}</p>
                     {part.citations.length ? (
-                      <details className="citations">
-                        <summary>{part.citations.length} {part.citations.length === 1 ? "citation" : "citations"}</summary>
-                        <ol>
+                      <details className="mt-3 rounded-lg border border-border bg-surface-raised p-3">
+                        <summary className="cursor-pointer text-sm font-semibold text-brand">{part.citations.length} {part.citations.length === 1 ? "citation" : "citations"}</summary>
+                        <ol className="mt-3 grid gap-3">
                           {part.citations.map((citation, citationIndex) => (
                             <li key={citation.id ?? citation.reference ?? citationIndex}>
-                              <code>{citation.provisional_reference ?? citation.reference ?? citation.id}</code>
-                              {citation.document_id ? <span>Document {citation.document_id}</span> : null}
-                              {citation.cited_text ? <blockquote>{citation.cited_text}</blockquote> : null}
+                              <CitationChip label={citation.provisional_reference ?? citation.reference ?? citation.id ?? `Citation ${citationIndex + 1}`} provisional={!citation.id} />
+                              {citation.document_id ? <span className="ml-2 text-xs text-foreground-muted">Document {citation.document_id}</span> : null}
+                              {citation.cited_text ? <blockquote className="mt-2 border-l-2 border-brand pl-3 text-sm text-foreground-muted">{citation.cited_text}</blockquote> : null}
                               {citation.source_provenance?.length ? (
                                 <details>
                                   <summary>Source location</summary>
-                                  <pre>{JSON.stringify(citation.source_provenance, null, 2)}</pre>
+                                  <pre className="mt-2 overflow-x-auto rounded bg-background p-2 text-xs">{JSON.stringify(citation.source_provenance, null, 2)}</pre>
                                 </details>
                               ) : null}
                             </li>
@@ -388,29 +397,29 @@ export function ChatWorkspace({
                       </details>
                     ) : null}
                   </div>
-                )) : <p>{message.text}</p>}
-              </article>
+                )) : <p className="leading-7">{message.text}</p>}
+                {run?.answer?.insufficiency_reason ? <Notice className="mt-3" tone="warning">{run.answer.insufficiency_reason}</Notice> : null}
+                {run?.answer?.unsupported_aspects.length ? <p className="mt-3 text-sm text-foreground-muted">Not established by the available evidence: {run.answer.unsupported_aspects.join(", ")}</p> : null}
+              </Card>
             );
           })}
           {provisionalParts.length ? (
-            <article className="chat-message assistant provisional">
-              <p className="message-role">Dolved · streaming</p>
+            <Card className="max-w-[92%] border-dashed p-4">
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">Dolved · streaming</p>
               {provisionalParts.map((part, index) => <p key={index}>{part.text}</p>)}
-            </article>
+            </Card>
           ) : null}
-          {progress ? <p className="chat-progress" role="status"><span aria-hidden="true" />{progress}</p> : null}
+          {progress ? <StreamingStatus label={progress} /> : null}
         </div>
 
-        {error ? <div className="form-alert error chat-alert" role="alert">{error}</div> : null}
+        {error ? <Notice tone={accessRevoked ? "warning" : "destructive"}>{accessRevoked ? <div><strong>Workspace access ended</strong><p className="mt-1">{error}</p></div> : error}</Notice> : null}
         {failedRuns.map((run) => (
-          <button className="text-button retry-button" disabled={busy} key={run.id} onClick={() => void retry(run.id)} type="button">
-            Retry failed answer
-          </button>
+          <Button className="w-fit" disabled={busy || accessRevoked} key={run.id} onClick={() => void retry(run.id)} type="button" variant="outline"><RefreshCw />Retry failed answer</Button>
         ))}
-        <form className="chat-composer" onSubmit={submit}>
-          <label htmlFor="chat-question">Ask a question</label>
-          <textarea
-            disabled={busy}
+        <form className="grid gap-3 rounded-xl border border-border bg-card p-4" onSubmit={submit}>
+          <label className="text-sm font-semibold" htmlFor="chat-question">Ask a question</label>
+          <Textarea
+            disabled={busy || accessRevoked}
             id="chat-question"
             maxLength={8000}
             onChange={(event) => setDraft(event.target.value)}
@@ -419,12 +428,12 @@ export function ChatWorkspace({
             rows={3}
             value={draft}
           />
-          <div className="composer-actions">
-            <small>Enter to send · Shift+Enter for a new line</small>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <small className="text-foreground-muted">{accessRevoked ? "You no longer have access to send messages." : "Enter to send · Shift+Enter for a new line"}</small>
             {busy && active?.runs?.some((run) => !run.completed_at) ? (
-              <button className="text-button" onClick={() => void cancel()} type="button">Cancel</button>
+              <Button onClick={() => void cancel()} type="button" variant="ghost"><X />Cancel</Button>
             ) : null}
-            <button className="primary-button" disabled={busy || !draft.trim()} type="submit">Send</button>
+            <Button disabled={busy || accessRevoked || !draft.trim()} type="submit"><Send />Send</Button>
           </div>
         </form>
       </div>

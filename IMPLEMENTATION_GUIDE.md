@@ -13856,7 +13856,27 @@ across chat, documents and administration, not only the success path.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-21.
+
+Implementation evidence:
+
+* routed chat now renders explicit loading skeletons, empty guidance, grounded
+  success, provisional streaming, controlled/insufficient outcomes, cancelled
+  and retryable failures using the shared component language;
+* mid-stream authorization loss clears provisional output, explains that
+  workspace access ended and permanently disables the composer for that
+  mounted session;
+* durable grounded answers display outcome, unsupported-aspect and
+  insufficiency information without hiding prior conversation content;
+* multi-document upload exposes waiting, initialising, transferring,
+  verifying, completed and independently retryable failed files with accessible
+  progress state;
+* invitation acceptance gives a bounded safe explanation for expired, revoked,
+  already-resolved and wrong-account outcomes without exposing internals;
+* administration's failed ingestion, asynchronous deletion, empty, partial and
+  unavailable usage states remain implemented through the R21-S02 surfaces;
+* web verification passed 24 test files / 73 tests, ESLint, TypeScript, the
+  production build and `git diff --check`.
 
 ### Planned states
 

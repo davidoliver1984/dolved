@@ -219,4 +219,22 @@ describe("ChatWorkspace", () => {
     await user.click(screen.getByText("Source location"));
     expect(screen.getByText(/line_start/)).not.toBeNull();
   });
+
+  it("fails closed when workspace authorization is revoked mid-stream", async () => {
+    const harness = services();
+    const user = userEvent.setup();
+    render(<ChatWorkspace services={harness.api} workspaceId="workspace-1" workspaceName="Alderbridge" />);
+
+    const composer = await screen.findByLabelText("Ask a question");
+    await user.type(composer, "Can I still see this?");
+    await user.click(screen.getByRole("button", { name: "Send" }));
+    await waitFor(() => expect(harness.api.send).toHaveBeenCalledOnce());
+
+    harness.emit({ sequence: 1, type: "authorization_revoked", provisional: false, payload: {} });
+
+    expect(await screen.findByText("Workspace access ended")).not.toBeNull();
+    expect(screen.getByText(/No further answer content will be shown/)).not.toBeNull();
+    expect(screen.getByLabelText("Ask a question").hasAttribute("disabled")).toBe(true);
+    expect(screen.getByRole("button", { name: "Send" }).hasAttribute("disabled")).toBe(true);
+  });
 });

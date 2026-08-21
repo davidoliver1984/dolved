@@ -1,5 +1,6 @@
 "use client";
 
+import { FileUp, RefreshCw, Trash2, UploadCloud } from "lucide-react";
 import {
   type ChangeEvent,
   type DragEvent,
@@ -17,6 +18,11 @@ import {
   uploadToPresignedUrl,
   validateDocumentFile,
 } from "@/lib/document-upload";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Notice } from "@/components/ui/notice";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
+import { cn } from "@/lib/utils";
 
 type UploadState =
   | "waiting"
@@ -62,6 +68,13 @@ function stateLabel(state: UploadState): string {
     complete: "Complete",
     failed: "Failed",
   }[state];
+}
+
+function stateTone(state: UploadState): StatusTone {
+  if (state === "complete") return "success";
+  if (state === "failed") return "destructive";
+  if (state === "waiting") return "unavailable";
+  return "pending";
 }
 
 export function DocumentUploadPanel({
@@ -237,18 +250,16 @@ export function DocumentUploadPanel({
   const waitingCount = items.filter((item) => item.state === "waiting").length;
 
   return (
-    <section className="document-upload-panel" aria-labelledby="upload-heading">
-      <div className="upload-heading">
+    <Card aria-labelledby="upload-heading">
+      <CardHeader className="gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="eyebrow">Documents</p>
-          <h2 id="upload-heading">Add source material</h2>
-          <p>
+          <CardTitle className="flex items-center gap-2" id="upload-heading"><FileUp className="size-5 text-brand" />Add source material</CardTitle>
+          <CardDescription className="mt-2 max-w-2xl">
             Choose several supported documents. Each upload is verified
             independently before it becomes available for processing.
-          </p>
+          </CardDescription>
         </div>
-        <button
-          className="primary-button"
+        <Button
           disabled={batchRunning || waitingCount === 0}
           onClick={startWaitingUploads}
           type="button"
@@ -258,17 +269,17 @@ export function DocumentUploadPanel({
             : waitingCount > 0
               ? `Upload ${waitingCount} file${waitingCount === 1 ? "" : "s"}`
               : "Upload files"}
-        </button>
-      </div>
+        </Button>
+      </CardHeader>
 
+      <CardContent className="grid gap-5">
       <div
-        className="document-dropzone"
+        className="grid min-h-48 place-items-center rounded-xl border border-dashed border-border bg-surface p-6 text-center"
         onDragOver={(event) => event.preventDefault()}
         onDrop={handleDrop}
       >
-        <strong>Drop documents here</strong>
-        <span>or</span>
-        <label className="secondary-button" htmlFor="document-files">
+        <div className="grid justify-items-center gap-3"><span className="grid size-12 place-items-center rounded-full bg-surface-raised text-brand"><UploadCloud /></span><strong>Drop documents here</strong><span className="text-sm text-foreground-muted">or</span>
+        <label className={cn(buttonVariants({ variant: "secondary" }), "cursor-pointer")} htmlFor="document-files">
           Choose files
         </label>
         <input
@@ -278,46 +289,41 @@ export function DocumentUploadPanel({
           onChange={handleSelection}
           type="file"
         />
-        <small>
+        <small className="text-foreground-muted">
           PDF, DOCX, DOC, RTF, TXT or Markdown · up to{" "}
           {Math.floor(configuration.max_upload_bytes / 1024 / 1024)}{" "}
           MB each
-        </small>
+        </small></div>
       </div>
 
       {selectionErrors.length > 0 ? (
-        <div className="form-alert error" role="alert">
+        <Notice tone="destructive">
           {selectionErrors.map((error) => (
             <p key={error}>{error}</p>
           ))}
-        </div>
+        </Notice>
       ) : null}
 
       {items.length > 0 ? (
         <>
-          <div className="batch-progress">
-            <span>Batch progress</span>
-            <strong>{overallProgress}%</strong>
-            <progress max="100" value={overallProgress}>
+          <div className="grid gap-2"><div className="flex items-center justify-between text-sm"><span>Batch progress</span><strong>{overallProgress}%</strong></div>
+            <progress className="h-2 w-full accent-brand" max="100" value={overallProgress}>
               {overallProgress}%
             </progress>
           </div>
 
-          <ul className="upload-queue" aria-label="Document upload queue">
+          <ul className="grid gap-3" aria-label="Document upload queue">
             {items.map((item) => (
-              <li className={`upload-item ${item.state}`} key={item.id}>
-                <div className="upload-item-title">
+              <li className="rounded-lg border border-border bg-surface p-4" key={item.id}>
+                <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <strong>{item.file.name}</strong>
-                    <small>
-                      {(item.file.size / 1024).toFixed(1)} KB ·{" "}
-                      {stateLabel(item.state)}
-                    </small>
+                    <p className="mt-1 text-sm text-foreground-muted">{(item.file.size / 1024).toFixed(1)} KB</p>
                   </div>
-                  <div className="upload-item-actions">
+                  <div className="flex items-center gap-2"><StatusBadge status={stateTone(item.state)}>{stateLabel(item.state)}</StatusBadge>
                     {item.state === "waiting" ? (
-                      <button
-                        className="text-button"
+                      <Button
+                        aria-label={`Remove ${item.file.name}`}
                         onClick={() =>
                           setItems((current) =>
                             current.filter(
@@ -325,20 +331,13 @@ export function DocumentUploadPanel({
                             ),
                           )
                         }
-                        type="button"
-                      >
-                        Remove
-                      </button>
+                        size="icon" type="button" variant="ghost"><Trash2 /></Button>
                     ) : null}
                     {item.state === "failed" ? (
-                      <button
-                        className="text-button"
+                      <Button
                         disabled={batchRunning}
                         onClick={() => retryItem(item)}
-                        type="button"
-                      >
-                        Retry
-                      </button>
+                        size="sm" type="button" variant="outline"><RefreshCw />Retry</Button>
                     ) : null}
                   </div>
                 </div>
@@ -347,26 +346,25 @@ export function DocumentUploadPanel({
                   aria-valuemax={100}
                   aria-valuemin={0}
                   aria-valuenow={item.progress}
-                  className="upload-progress"
+                  className="mt-3 h-2 overflow-hidden rounded-full bg-surface-raised"
                   role="progressbar"
                 >
-                  <span style={{ width: `${item.progress}%` }} />
+                  <span className="block h-full bg-brand transition-[width] motion-reduce:transition-none" style={{ width: `${item.progress}%` }} />
                 </div>
-                <p className="upload-status" aria-live="polite">
+                <p className="mt-2 text-sm text-foreground-muted" aria-live="polite">
                   {item.state === "verifying"
                     ? "Upload transferred. Laravel is verifying object storage."
                     : `${stateLabel(item.state)} · ${item.progress}%`}
                 </p>
                 {item.error ? (
-                  <p className="upload-error" role="alert">
-                    {item.error}
-                  </p>
+                  <Notice className="mt-3" tone="destructive">{item.error}</Notice>
                 ) : null}
               </li>
             ))}
           </ul>
         </>
       ) : null}
-    </section>
+      </CardContent>
+    </Card>
   );
 }
