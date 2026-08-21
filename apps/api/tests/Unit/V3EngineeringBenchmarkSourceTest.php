@@ -6,10 +6,13 @@ namespace Tests\Unit;
 
 use App\Support\Evaluation\Exp0008EngineeringBenchmark;
 use App\Support\Evaluation\Exp0008EngineeringBenchmarkSource;
+use Tests\Concerns\UsesCurrentV3EngineeringFixture;
 use Tests\TestCase;
 
 final class V3EngineeringBenchmarkSourceTest extends TestCase
 {
+    use UsesCurrentV3EngineeringFixture;
+
     public function test_provider_free_population_and_provisioning_lineage_load_fail_closed(): void
     {
         $source = app(Exp0008EngineeringBenchmarkSource::class)->load();

@@ -1,6 +1,7 @@
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from app.evaluation.rrf_sensitivity_experiment import run_rrf_sensitivity_experiment
 
@@ -12,16 +13,18 @@ SOURCE = Path(
 def test_replay_is_provider_free_deterministic_and_reproduces_control(
     tmp_path: Path,
 ) -> None:
-    arguments = {
-        "source_result_path": SOURCE / "result.json",
-        "source_observations_path": SOURCE / "application-observations.json",
-        "output_directory": tmp_path,
-        "repository_commit": "a" * 40,
-        "generated_at": datetime(2026, 8, 13, 12, tzinfo=UTC),
-    }
-    first = run_rrf_sensitivity_experiment(**arguments)
+    def run() -> dict[str, Any]:
+        return run_rrf_sensitivity_experiment(
+            source_result_path=SOURCE / "result.json",
+            source_observations_path=SOURCE / "application-observations.json",
+            output_directory=tmp_path,
+            repository_commit="a" * 40,
+            generated_at=datetime(2026, 8, 13, 12, tzinfo=UTC),
+        )
+
+    first = run()
     first_bytes = (tmp_path / "result.json").read_bytes()
-    second = run_rrf_sensitivity_experiment(**arguments)
+    second = run()
 
     assert first == second
     assert first_bytes == (tmp_path / "result.json").read_bytes()

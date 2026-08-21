@@ -9,6 +9,7 @@ from app.conversation.models import (
     ContextualisationRequest,
     ContextualisationResponse,
     ContextualisationResult,
+    InterpretationMetadata,
 )
 from app.embedding.models import V1_VOYAGE_PROFILE
 from app.reranking.models import RerankCandidate, RerankerProfile, RerankRequest
@@ -115,7 +116,7 @@ def test_python_request_models_match_shared_rc1_schemas() -> None:
             status="resolved",
             resolved_query=contextualisation.current_message,
             used_prior_context=False,
-            interpretation_metadata={"used_turn_ordinals": []},
+            interpretation_metadata=InterpretationMetadata(used_turn_ordinals=()),
             clarification_question=None,
             contextualiser_version="conversation-context-v1",
             usage={"execution": "deterministic", "request_count": 0},

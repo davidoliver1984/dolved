@@ -33,5 +33,6 @@
         <server name="TELESCOPE_ENABLED" value="false" force="true"/>
         <server name="NIGHTWATCH_ENABLED" value="false" force="true"/>
         <server name="OTEL_SDK_DISABLED" value="true" force="true"/>
+        <server name="V3_ENGINEERING_ROOT" value="/tmp/dolved-v3-engineering-test" force="true"/>
     </php>
 </phpunit>

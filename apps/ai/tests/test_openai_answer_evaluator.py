@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+from typing import Literal
 
 import pytest
 
@@ -19,7 +20,9 @@ from app.evaluation.openai_answer_evaluator import (
 )
 
 
-def request(*, outcome: str = "qualified") -> ModelAssistedEvaluationRequest:
+def request(
+    *, outcome: Literal["answered", "qualified", "insufficient_evidence"] = "qualified"
+) -> ModelAssistedEvaluationRequest:
     parts = (
         ModelAssistedAnswerPart(
             part_index=1,

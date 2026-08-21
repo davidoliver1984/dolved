@@ -8,10 +8,13 @@ use App\Support\Evaluation\Exp0007Definition;
 use App\Support\Evaluation\V3EngineeringBenchmark;
 use App\Support\Evaluation\V3EngineeringBenchmarkSource;
 use RuntimeException;
+use Tests\Concerns\UsesCurrentV3EngineeringFixture;
 use Tests\TestCase;
 
 final class Exp0007DefinitionTest extends TestCase
 {
+    use UsesCurrentV3EngineeringFixture;
+
     public function test_identity_population_planner_retrieval_and_generation_are_immutable(): void
     {
         $lineage = Exp0007Definition::lineage();

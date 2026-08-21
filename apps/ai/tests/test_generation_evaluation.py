@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -25,17 +26,22 @@ from app.evaluation.models import (
     ModelAssistedEvaluationRequest,
     ModelAssistedEvaluationResult,
     ModelAssistedMetric,
+    ModelAssistedMetricObservation,
     ModelAssistedStatus,
 )
 from app.generation.models import AnswerPart, GenerationOutcome, GenerationResult
 
-POPULATION = (
-    Path(__file__).parents[3]
-    / "docs/evaluation/generation/populations/grounded-generation-v1.json"
+POPULATION = Path(
+    os.environ.get(
+        "GENERATION_EVALUATION_POPULATION",
+        "/generation-evaluation/populations/grounded-generation-v1.json",
+    )
 )
-BASELINE_OBSERVATIONS = (
-    Path(__file__).parents[3]
-    / "docs/evaluation/runs/GEN-EXP-0001-grounded-generation-baseline/application-observations.json"
+BASELINE_OBSERVATIONS = Path(
+    os.environ.get(
+        "GENERATION_EVALUATION_BASELINE_OBSERVATIONS",
+        "/evaluation-runs/GEN-EXP-0001-grounded-generation-baseline/application-observations.json",
+    )
 )
 
 
@@ -292,11 +298,11 @@ async def test_failed_evaluator_does_not_shrink_answer_part_denominator() -> Non
                 evaluator_identity={"implementation": "failed-fake"},
                 failure_code="provider_failure",
                 metric_observations=tuple(
-                    {
-                        "metric": metric,
-                        "status": "FAILED",
-                        "failure_code": "provider_failure",
-                    }
+                    ModelAssistedMetricObservation(
+                        metric=metric,
+                        status=ModelAssistedStatus.FAILED,
+                        failure_code="provider_failure",
+                    )
                     for metric in evaluation.metrics
                 ),
             )

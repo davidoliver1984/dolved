@@ -4,7 +4,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import jsonschema
 import pytest
@@ -78,10 +78,14 @@ def independence(
     payload: dict[str, object] = base.model_dump(mode="json")
     payload.update(changes)
     payload["engineering_overlap_case_count"] = len(
-        payload["engineering_overlap_case_ids"]
+        cast(list[object], payload["engineering_overlap_case_ids"])
     )
-    payload["held_out_overlap_case_count"] = len(payload["held_out_overlap_case_ids"])
-    payload["split_semantic_cluster_count"] = len(payload["split_semantic_cluster_ids"])
+    payload["held_out_overlap_case_count"] = len(
+        cast(list[object], payload["held_out_overlap_case_ids"])
+    )
+    payload["split_semantic_cluster_count"] = len(
+        cast(list[object], payload["split_semantic_cluster_ids"])
+    )
     return PopulationIndependenceEvidence.model_validate(payload)
 
 
@@ -114,7 +118,7 @@ def compatible_snapshot() -> dict[str, Any]:
         "training",
         "visitors",
     ]
-    cases = []
+    cases: list[dict[str, Any]] = []
     for index in range(spec.preferred_case_count_minimum):
         outcome = outcomes[index] if index < len(outcomes) else "EVIDENCE_FOUND"
         cases.append(

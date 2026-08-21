@@ -1,4 +1,5 @@
 import json
+import os
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -15,6 +16,13 @@ from app.evaluation.application_benchmark import (
 )
 from app.evaluation.historical_result import load_comparison_result
 from app.evaluation.models import EvidenceUnit
+
+V3_ENGINEERING_ROOT = Path(
+    os.environ.get(
+        "V3_ENGINEERING_ROOT",
+        "/evaluation/engineering-populations/dolved-care-engineering/v3/v1",
+    )
+)
 
 
 def test_exp_0004_description_records_the_controlled_rrf_variable_truthfully() -> None:
@@ -113,7 +121,7 @@ def test_v3_planner_truth_fails_closed_on_missing_or_unexpected_identity(
 
 
 def test_real_v3_engineering_expectations_contract_is_schema_v1() -> None:
-    path = Path("/evaluation/engineering/expectations.json")
+    path = V3_ENGINEERING_ROOT / "expectations.json"
     payload = json.loads(path.read_text())
     identities = {
         (str(item["case_id"]), str(item["variant_id"]))
@@ -133,7 +141,7 @@ def test_real_v3_engineering_expectations_contract_is_schema_v1() -> None:
 def test_v3_expectations_fail_closed_on_population_or_schema_substitution(
     tmp_path: Path,
 ) -> None:
-    source = json.loads(Path("/evaluation/engineering/expectations.json").read_text())
+    source = json.loads((V3_ENGINEERING_ROOT / "expectations.json").read_text())
     identities = {
         (str(item["case_id"]), str(item["variant_id"]))
         for item in source["expectations"]

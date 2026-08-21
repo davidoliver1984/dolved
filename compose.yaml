@@ -359,6 +359,7 @@ services:
       - ./apps/ai:/app
       - ./contracts:/contracts:ro
       - ./tests/evaluation:/evaluation:ro
+      - ./docs/evaluation/generation:/generation-evaluation:ro
       - ./docs/evaluation/runs:/evaluation-runs
       - ./scripts:/workspace/scripts:ro
       - ai_venv:/app/.venv

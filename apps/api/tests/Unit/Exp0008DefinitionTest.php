@@ -8,10 +8,13 @@ use App\Support\Evaluation\Exp0008Definition;
 use App\Support\Evaluation\Exp0008EngineeringBenchmark;
 use App\Support\Evaluation\Exp0008EngineeringBenchmarkSource;
 use RuntimeException;
+use Tests\Concerns\UsesCurrentV3EngineeringFixture;
 use Tests\TestCase;
 
 final class Exp0008DefinitionTest extends TestCase
 {
+    use UsesCurrentV3EngineeringFixture;
+
     public function test_current_population_planner_retrieval_and_reused_generation_are_immutable(): void
     {
         $lineage = Exp0008Definition::lineage();
