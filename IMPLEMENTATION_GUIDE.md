@@ -13794,7 +13794,27 @@ owner/admin/member capability model.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-21.
+
+Implementation evidence:
+
+* the administration overview, people, invitations and usage destinations are
+  distinct route-backed sections inside the shared application shell;
+* membership actions render only from the server-provided ADR-0025 capability
+  object, with owner and administrator authority described explicitly;
+* document deletion, member removal, role changes, ownership transfer and
+  workspace departure use accessible confirmation dialogs rather than browser
+  prompts;
+* document retry/deletion, invitation validity and usage availability now have
+  explicit pending, failed, resolved and unavailable presentations;
+* the development/test-only `/design-system/administration` route presents the
+  complete administration component set with representative fixture state for
+  review (the authenticated application itself retains ADR-0027's adaptive
+  left-sidebar shell);
+* visual review accepted the information architecture, with destructive-button
+  padding retained as a final Stage 21.4 in-context tuning note;
+* web verification passed 24 test files / 72 tests, ESLint, TypeScript, the
+  production build and `git diff --check`.
 
 ### Planned scope
 

@@ -37,8 +37,8 @@ const snapshot: WorkspaceUsageSnapshot = {
 describe("WorkspaceUsage", () => {
   it("separates gauges from bounded historical usage and labels estimates", () => {
     render(<WorkspaceUsage initialSnapshot={snapshot} workspaceId="workspace" />);
-    expect(screen.getByText("Current gauges")).toBeTruthy();
-    expect(screen.getByText("Historical interval")).toBeTruthy();
+    expect(screen.getByText("Reporting period")).toBeTruthy();
+    expect(screen.getByText("Workspace activity")).toBeTruthy();
     expect(screen.getByText("12")).toBeTruthy();
     expect(screen.getAllByText(/estimated/).length).toBeGreaterThan(0);
     expect(screen.getByText(/not billing-grade/)).toBeTruthy();

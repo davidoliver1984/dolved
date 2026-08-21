@@ -1,208 +1,49 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- Radix Select trigger is nested in its visible label. */
 "use client";
 
+import { MailPlus, ShieldCheck, UserRound, UsersRound } from "lucide-react";
 import { type FormEvent, useState } from "react";
-import {
-  changeWorkspaceMemberRole,
-  firstError,
-  issueWorkspaceInvitation,
-  leaveWorkspace,
-  removeWorkspaceMember,
-  revokeWorkspaceInvitation,
-  transferWorkspaceOwnership,
-  workspaceInvitations,
-  workspaceMembers,
-  type WorkspaceAdministrationSnapshot,
-  type WorkspaceRole,
-} from "@/lib/api";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
+import { Notice } from "@/components/ui/notice";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
+import { changeWorkspaceMemberRole, firstError, issueWorkspaceInvitation, leaveWorkspace, removeWorkspaceMember, revokeWorkspaceInvitation, transferWorkspaceOwnership, workspaceInvitations, workspaceMembers, type WorkspaceAdministrationSnapshot, type WorkspaceInvitation, type WorkspaceMembership, type WorkspaceRole } from "@/lib/api";
 
-type Props = {
-  initialSnapshot: WorkspaceAdministrationSnapshot | null;
-  actorRole: WorkspaceRole;
-  workspaceId: string;
-};
+type Props = { initialSnapshot: WorkspaceAdministrationSnapshot; actorRole: WorkspaceRole; workspaceId: string; view: "people" | "invitations" };
+type PendingAction = { key: string; label: string } | null;
+function commandKey(): string { return crypto.randomUUID(); }
+function invitationTone(status: WorkspaceInvitation["status"]): StatusTone { return { pending: "pending", accepted: "success", revoked: "unavailable", expired: "warning" }[status] as StatusTone; }
 
-function commandKey(): string {
-  return crypto.randomUUID();
+function MemberActions({ actorRole, busy, membership, onAction, workspaceId }: Readonly<{ actorRole: WorkspaceRole; busy: boolean; membership: WorkspaceMembership; workspaceId: string; onAction: (key: string, label: string, action: () => Promise<unknown>, reload?: boolean) => void }>) {
+  const changingTo = membership.role === "admin" ? "member" : "admin";
+  return <div className="flex flex-wrap justify-end gap-2">
+    {membership.capabilities.change_role ? <AlertDialog><AlertDialogTrigger asChild><Button disabled={busy} size="sm" variant="outline">Make {changingTo}</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogTitle>Change {membership.user.name}&apos;s role?</AlertDialogTitle><AlertDialogDescription>{changingTo === "admin" ? "Administrators can manage documents and ordinary members, but cannot alter the owner or other administrators." : "Their administrative access will end immediately."}</AlertDialogDescription><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => onAction(membership.public_id, `Updating ${membership.user.name}`, () => changeWorkspaceMemberRole(workspaceId, membership.public_id, changingTo, commandKey()))}>Confirm role change</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog> : null}
+    {membership.capabilities.transfer_ownership ? <AlertDialog><AlertDialogTrigger asChild><Button disabled={busy} size="sm" variant="outline">Transfer ownership</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogTitle>Transfer ownership to {membership.user.name}?</AlertDialogTitle><AlertDialogDescription>You will become an administrator. Only the new owner can reverse this change or manage other administrators.</AlertDialogDescription><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => onAction(membership.public_id, `Transferring ownership to ${membership.user.name}`, () => transferWorkspaceOwnership(workspaceId, membership.public_id, commandKey()), true)}>Transfer ownership</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog> : null}
+    {membership.capabilities.remove ? <AlertDialog><AlertDialogTrigger asChild><Button disabled={busy} size="sm" variant="destructive">Remove</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogTitle>Remove {membership.user.name}?</AlertDialogTitle><AlertDialogDescription>They will immediately lose access to this workspace. Workspace documents and conversation history will remain.</AlertDialogDescription><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => onAction(membership.public_id, `Removing ${membership.user.name}`, () => removeWorkspaceMember(workspaceId, membership.public_id, commandKey()))}>Remove member</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog> : null}
+    {actorRole === "admin" && membership.role !== "member" ? <span className="self-center text-xs text-foreground-muted">Owner-managed</span> : null}
+  </div>;
 }
 
-export function WorkspaceAdministration({ initialSnapshot, actorRole, workspaceId }: Props) {
+export function WorkspaceAdministration({ initialSnapshot, actorRole, workspaceId, view }: Props) {
   const [snapshot, setSnapshot] = useState(initialSnapshot);
   const [email, setEmail] = useState("");
   const [invitedRole, setInvitedRole] = useState<"member" | "admin">("member");
   const [oneTimeLink, setOneTimeLink] = useState<string | null>(null);
   const [delivery, setDelivery] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState<PendingAction>(null);
   const [error, setError] = useState<string | null>(null);
+  const refresh = async () => { const [memberships, invitations] = await Promise.all([workspaceMembers(workspaceId), workspaceInvitations(workspaceId)]); setSnapshot({ memberships: memberships.data, invitations: invitations.data }); };
+  const act = async (key: string, label: string, operation: () => Promise<unknown>, reloadAfter = false) => { setPending({ key, label }); setError(null); try { await operation(); if (reloadAfter) { window.location.reload(); return; } await refresh(); } catch (caught) { setError(firstError(caught)); } finally { setPending(null); } };
+  const issue = async (event: FormEvent) => { event.preventDefault(); setPending({ key: "issue", label: "Issuing invitation" }); setError(null); setOneTimeLink(null); setDelivery(null); try { const response = await issueWorkspaceInvitation(workspaceId, email, invitedRole, commandKey()); setOneTimeLink(response.data.invitation_link); setDelivery(response.data.delivery_status); setEmail(""); await refresh(); } catch (caught) { setError(firstError(caught)); } finally { setPending(null); } };
 
-  const refresh = async () => {
-    const [memberships, invitations] = await Promise.all([
-      workspaceMembers(workspaceId),
-      workspaceInvitations(workspaceId),
-    ]);
-    setSnapshot({ memberships: memberships.data, invitations: invitations.data });
-  };
+  if (view === "invitations") return <div className="grid gap-6 xl:grid-cols-[minmax(18rem,0.75fr)_minmax(28rem,1.25fr)]">
+    <Card><CardHeader><CardTitle className="flex items-center gap-2"><MailPlus className="size-5 text-brand" />Issue an invitation</CardTitle><CardDescription>Invite by verified email. Access begins only after acceptance.</CardDescription></CardHeader><CardContent>{error ? <Notice className="mb-4" tone="destructive">{error}</Notice> : null}<form className="grid gap-4" onSubmit={issue}><label className="grid gap-2 text-sm font-semibold" htmlFor="invitation-email">Email address<Input id="invitation-email" onChange={(event) => setEmail(event.target.value)} required type="email" value={email} /></label><label className="grid gap-2 text-sm font-semibold">Role<Select disabled={actorRole !== "owner"} onValueChange={(value) => setInvitedRole(value as "member" | "admin")} value={invitedRole}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="member">Member</SelectItem>{actorRole === "owner" ? <SelectItem value="admin">Administrator</SelectItem> : null}</SelectContent></Select></label><p className="text-xs text-foreground-muted">{actorRole === "owner" ? "Owners may invite members or administrators." : "Administrators may invite ordinary members only."}</p><Button disabled={pending !== null} type="submit">{pending?.key === "issue" ? pending.label : "Issue invitation"}</Button></form>{oneTimeLink ? <Notice className="mt-5" tone="success"><strong>Copy this link now.</strong><p className="mt-1">It is returned once and cannot be redisplayed. Delivery status: {delivery ?? "unavailable"}.</p><code className="mt-3 block overflow-x-auto rounded-md bg-surface-raised p-3 text-xs">{oneTimeLink}</code><Button className="mt-3" onClick={() => void navigator.clipboard.writeText(oneTimeLink)} size="sm" type="button" variant="secondary">Copy invitation link</Button></Notice> : null}</CardContent></Card>
+    <Card><CardHeader><CardTitle>Invitation history</CardTitle><CardDescription>Validity and email delivery are separate. A pending invitation may still require its one-time link to be shared manually.</CardDescription></CardHeader><CardContent className="grid gap-3">{snapshot.invitations.length === 0 ? <EmptyState description="New invitation records will appear here." icon={MailPlus} title="No invitations yet" /> : snapshot.invitations.map((invitation) => <div className="flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:justify-between" key={invitation.public_id}><div><div className="flex flex-wrap items-center gap-2"><strong>{invitation.invited_email}</strong><StatusBadge status={invitationTone(invitation.status)}>{invitation.status}</StatusBadge></div><p className="mt-1 text-sm text-foreground-muted">{invitation.intended_role} · expires {new Date(invitation.expires_at).toLocaleString("en-GB")}</p></div>{invitation.capabilities.revoke ? <Button disabled={pending !== null} onClick={() => void act(invitation.public_id, `Revoking ${invitation.invited_email}`, () => revokeWorkspaceInvitation(workspaceId, invitation.public_id, commandKey()))} size="sm" variant="outline">{pending?.key === invitation.public_id ? pending.label : "Revoke"}</Button> : null}</div>)}</CardContent></Card>
+  </div>;
 
-  const act = async (operation: () => Promise<unknown>, reloadAfter = false) => {
-    setBusy(true);
-    setError(null);
-    try {
-      await operation();
-      if (reloadAfter) {
-        window.location.reload();
-        return;
-      }
-      await refresh();
-    } catch (caught) {
-      setError(firstError(caught));
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const issue = async (event: FormEvent) => {
-    event.preventDefault();
-    setBusy(true);
-    setError(null);
-    setOneTimeLink(null);
-    try {
-      const response = await issueWorkspaceInvitation(
-        workspaceId,
-        email,
-        invitedRole,
-        commandKey(),
-      );
-      setOneTimeLink(response.data.invitation_link);
-      setDelivery(response.data.delivery_status);
-      setEmail("");
-      await refresh();
-    } catch (caught) {
-      setError(firstError(caught));
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const leave = async () => {
-    if (!window.confirm("Leave this workspace? You will immediately lose access.")) return;
-    setBusy(true);
-    setError(null);
-    try {
-      await leaveWorkspace(workspaceId);
-      window.location.assign("/app");
-    } catch (caught) {
-      setError(firstError(caught));
-      setBusy(false);
-    }
-  };
-
-  return (
-    <details className="document-tools" open={actorRole !== "member"}>
-      <summary>Workspace members</summary>
-      <section aria-labelledby="workspace-members-heading">
-        <h2 id="workspace-members-heading">Membership administration</h2>
-        <p className="scope-note">
-          Membership changes take effect immediately. Workspace content remains with the workspace.
-        </p>
-        {error ? <p className="form-error" role="alert">{error}</p> : null}
-
-        {snapshot ? (
-          <>
-            <form onSubmit={issue}>
-              <label htmlFor="invitation-email">Invite by verified email</label>
-              <input
-                id="invitation-email"
-                onChange={(event) => setEmail(event.target.value)}
-                required
-                type="email"
-                value={email}
-              />
-              <label htmlFor="invitation-role">Role</label>
-              <select
-                disabled={actorRole !== "owner"}
-                id="invitation-role"
-                onChange={(event) => setInvitedRole(event.target.value as "member" | "admin")}
-                value={invitedRole}
-              >
-                <option value="member">Member</option>
-                {actorRole === "owner" ? <option value="admin">Administrator</option> : null}
-              </select>
-              <button className="primary-button compact" disabled={busy} type="submit">Issue invitation</button>
-            </form>
-
-            {oneTimeLink ? (
-              <div className="status-panel" role="status">
-                <strong>Copy this invitation link now.</strong>
-                <p>This link is returned only once. Email delivery: {delivery}.</p>
-                <code>{oneTimeLink}</code>
-                <button className="secondary-button compact" onClick={() => void navigator.clipboard.writeText(oneTimeLink)} type="button">Copy link</button>
-              </div>
-            ) : null}
-
-            <h3>Members</h3>
-            <ul className="administration-list">
-              {snapshot.memberships.map((membership) => (
-                <li key={membership.public_id}>
-                  <div><strong>{membership.user.name}</strong><br /><small>{membership.user.email} · {membership.role}</small></div>
-                  <div>
-                    {membership.capabilities.change_role ? (
-                      <button
-                        className="secondary-button compact"
-                        disabled={busy}
-                        onClick={() => void act(() => changeWorkspaceMemberRole(workspaceId, membership.public_id, membership.role === "admin" ? "member" : "admin", commandKey()))}
-                        type="button"
-                      >
-                        {membership.role === "admin" ? "Make member" : "Make admin"}
-                      </button>
-                    ) : null}
-                    {membership.capabilities.transfer_ownership ? (
-                      <button
-                        className="secondary-button compact"
-                        disabled={busy}
-                        onClick={() => window.confirm(`Transfer ownership to ${membership.user.name}?`) && void act(() => transferWorkspaceOwnership(workspaceId, membership.public_id, commandKey()), true)}
-                        type="button"
-                      >Transfer ownership</button>
-                    ) : null}
-                    {membership.capabilities.remove ? (
-                      <button
-                        className="secondary-button compact"
-                        disabled={busy}
-                        onClick={() => window.confirm(`Remove ${membership.user.name}?`) && void act(() => removeWorkspaceMember(workspaceId, membership.public_id, commandKey()))}
-                        type="button"
-                      >Remove</button>
-                    ) : null}
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            <h3>Invitations</h3>
-            <ul className="administration-list">
-              {snapshot.invitations.length === 0 ? <li>No invitations yet.</li> : null}
-              {snapshot.invitations.map((invitation) => (
-                <li key={invitation.public_id}>
-                  <div><strong>{invitation.invited_email}</strong><br /><small>{invitation.intended_role} · {invitation.status}</small></div>
-                  {invitation.capabilities.revoke ? (
-                    <button
-                      className="secondary-button compact"
-                      disabled={busy}
-                      onClick={() => void act(() => revokeWorkspaceInvitation(workspaceId, invitation.public_id, commandKey()))}
-                      type="button"
-                    >Revoke</button>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <p>Only workspace owners and administrators can view the member directory.</p>
-        )}
-
-        {actorRole === "owner" ? (
-          <p>Transfer ownership before leaving this workspace.</p>
-        ) : (
-          <button className="secondary-button" disabled={busy} onClick={() => void leave()} type="button">Leave workspace</button>
-        )}
-      </section>
-    </details>
-  );
+  return <div className="grid gap-6">{error ? <Notice tone="destructive">{error}</Notice> : null}<Notice tone="info"><div><strong>{actorRole === "owner" ? "Owner access" : "Administrator access"}</strong><p className="mt-1">{actorRole === "owner" ? "You can manage every role and transfer workspace ownership." : "You can manage ordinary members. Owner and administrator accounts remain owner-managed."}</p></div></Notice><Card><CardHeader><CardTitle className="flex items-center gap-2"><UsersRound className="size-5 text-brand" />Workspace members</CardTitle><CardDescription>{snapshot.memberships.length} people currently have access.</CardDescription></CardHeader><CardContent className="grid gap-3">{snapshot.memberships.map((membership) => <div className="grid gap-4 rounded-lg border border-border p-4 md:grid-cols-[1fr_auto] md:items-center" key={membership.public_id}><div className="flex items-center gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-raised"><UserRound className="size-5" /></span><div><div className="flex flex-wrap items-center gap-2"><strong>{membership.user.name}</strong>{membership.role === "owner" ? <ShieldCheck className="size-4 text-brand" aria-label="Workspace owner" /> : null}<StatusBadge status={membership.role === "owner" ? "success" : membership.role === "admin" ? "info" : "unavailable"}>{membership.role}</StatusBadge></div><p className="text-sm text-foreground-muted">{membership.user.email}</p></div></div><MemberActions actorRole={actorRole} busy={pending !== null} membership={membership} onAction={(key, label, action, reload) => void act(key, label, action, reload)} workspaceId={workspaceId} /></div>)}</CardContent></Card>{actorRole === "owner" ? <Notice tone="warning">Transfer ownership before leaving this workspace.</Notice> : <AlertDialog><AlertDialogTrigger asChild><Button className="w-fit" variant="outline">Leave workspace</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogTitle>Leave this workspace?</AlertDialogTitle><AlertDialogDescription>You will immediately lose access. Workspace documents and conversation history will remain.</AlertDialogDescription><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void act("leave", "Leaving workspace", () => leaveWorkspace(workspaceId), true)}>Leave workspace</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>}</div>;
 }

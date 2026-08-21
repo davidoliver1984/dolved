@@ -1,206 +1,39 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- Radix Select trigger is nested in its visible label. */
 "use client";
 
-import { FormEvent, useCallback, useState } from "react";
-import {
-  type AdminDocument,
-  type DocumentPage,
-  deleteWorkspaceDocument,
-  firstError,
-  retryWorkspaceDocument,
-  workspaceDocuments,
-} from "@/lib/api";
+import { FileSearch, RefreshCw, Trash2 } from "lucide-react";
+import { type FormEvent, useCallback, useState } from "react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
+import { Notice } from "@/components/ui/notice";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
+import { type AdminDocument, type DocumentPage, deleteWorkspaceDocument, firstError, retryWorkspaceDocument, workspaceDocuments } from "@/lib/api";
 
-function bytes(value: number): string {
-  if (value < 1024) return `${value} B`;
-  if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
-  return `${(value / (1024 * 1024)).toFixed(1)} MB`;
-}
+function bytes(value: number): string { if (value < 1024) return `${value} B`; if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`; return `${(value / (1024 * 1024)).toFixed(1)} MB`; }
+function statusTone(status: string): StatusTone { if (status === "indexed") return "success"; if (status === "failed") return "destructive"; if (["deleting", "processing", "queued", "uploading"].includes(status)) return "pending"; if (status === "deleted") return "unavailable"; return "info"; }
 
-export function DocumentAdministration({
-  workspacePublicId,
-  initialPage,
-}: Readonly<{
-  workspacePublicId: string;
-  initialPage: DocumentPage;
-}>) {
+export function DocumentAdministration({ workspacePublicId, initialPage }: Readonly<{ workspacePublicId: string; initialPage: DocumentPage }>) {
   const [documents, setDocuments] = useState<AdminDocument[]>(initialPage.data);
   const [pageMeta, setPageMeta] = useState(initialPage.meta);
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("");
-  const [notice, setNotice] = useState<string | null>(null);
+  const [status, setStatus] = useState("all");
+  const [notice, setNotice] = useState<{ tone: "success" | "destructive"; message: string } | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const load = useCallback(async (requestedPage = 1) => { setLoading(true); try { const query = new URLSearchParams(); if (search) query.set("search", search); if (status !== "all") query.set("status", status); query.set("page", String(requestedPage)); query.set("per_page", String(pageMeta.per_page)); const page = await workspaceDocuments(workspacePublicId, query.toString()); setDocuments(page.data); setPageMeta(page.meta); setNotice(null); } catch (error) { setNotice({ tone: "destructive", message: firstError(error) }); } finally { setLoading(false); } }, [pageMeta.per_page, search, status, workspacePublicId]);
+  async function submitFilters(event: FormEvent) { event.preventDefault(); await load(1); }
+  async function retry(document: AdminDocument) { setBusy(document.public_id); try { await retryWorkspaceDocument(workspacePublicId, document.public_id, crypto.randomUUID()); setNotice({ tone: "success", message: "Retry accepted. The document is queued for ingestion." }); await load(); } catch (error) { setNotice({ tone: "destructive", message: firstError(error) }); } finally { setBusy(null); } }
+  async function remove(document: AdminDocument) { setBusy(document.public_id); try { await deleteWorkspaceDocument(workspacePublicId, document.public_id); setNotice({ tone: "success", message: "Deletion accepted. Cleanup will continue asynchronously." }); await load(); } catch (error) { setNotice({ tone: "destructive", message: firstError(error) }); } finally { setBusy(null); } }
 
-  const load = useCallback(async (requestedPage = 1) => {
-    setLoading(true);
-    try {
-      const query = new URLSearchParams();
-      if (search) query.set("search", search);
-      if (status) query.set("status", status);
-      query.set("page", String(requestedPage));
-      query.set("per_page", String(pageMeta.per_page));
-      const page = await workspaceDocuments(workspacePublicId, query.toString());
-      setDocuments(page.data);
-      setPageMeta(page.meta);
-      setNotice(null);
-    } catch (error) {
-      setNotice(firstError(error));
-    } finally {
-      setLoading(false);
-    }
-  }, [pageMeta.per_page, search, status, workspacePublicId]);
-
-  async function submitFilters(event: FormEvent) {
-    event.preventDefault();
-    await load(1);
-  }
-
-  async function retry(document: AdminDocument) {
-    setBusy(document.public_id);
-    try {
-      await retryWorkspaceDocument(
-        workspacePublicId,
-        document.public_id,
-        crypto.randomUUID(),
-      );
-      setNotice("Retry accepted. The document is queued for ingestion.");
-      await load();
-    } catch (error) {
-      setNotice(firstError(error));
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  async function remove(document: AdminDocument) {
-    if (
-      !window.confirm(
-        "Remove this document from the knowledge base? Passages already cited in conversations will remain with those conversations.",
-      )
-    ) {
-      return;
-    }
-    setBusy(document.public_id);
-    try {
-      await deleteWorkspaceDocument(workspacePublicId, document.public_id);
-      setNotice("Deletion accepted. Cleanup will continue asynchronously.");
-      await load();
-    } catch (error) {
-      setNotice(firstError(error));
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  return (
-    <section className="document-administration" aria-labelledby="documents-heading">
-      <div className="document-admin-heading">
-        <div>
-          <p className="eyebrow">Knowledge base</p>
-          <h2 id="documents-heading">Documents</h2>
-        </div>
-        <form className="document-filters" onSubmit={submitFilters}>
-          <label>
-            <span>Search</span>
-            <input
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Filename"
-              value={search}
-            />
-          </label>
-          <label>
-            <span>Status</span>
-            <select onChange={(event) => setStatus(event.target.value)} value={status}>
-              <option value="">All</option>
-              {[
-                "uploading",
-                "uploaded",
-                "queued",
-                "processing",
-                "indexed",
-                "failed",
-                "deleting",
-                "deleted",
-              ].map((value) => (
-                <option key={value} value={value}>{value}</option>
-              ))}
-            </select>
-          </label>
-          <button className="secondary-button" type="submit">Filter</button>
-        </form>
-      </div>
-
-      {notice ? <p className="document-notice" role="status">{notice}</p> : null}
-      {loading ? <p className="document-empty">Loading authoritative document state…</p> : null}
-      {!loading && documents.length === 0 ? (
-        <p className="document-empty">No documents match these filters.</p>
-      ) : null}
-      <div className="document-list">
-        {documents.map((document) => (
-          <article className="document-card" key={document.public_id}>
-            <div className="document-card-title">
-              <div>
-                <h3>{document.source_filename}</h3>
-                <p>{document.media_type} · {bytes(document.size_bytes)}</p>
-              </div>
-              <span className={`document-status status-${document.status}`}>
-                {document.status}
-              </span>
-            </div>
-            <dl className="document-metadata">
-              <div><dt>Governance</dt><dd>{document.governance_status}</dd></div>
-              <div><dt>Added by</dt><dd>{document.created_by?.name ?? "Unavailable"}</dd></div>
-              <div><dt>Created</dt><dd>{new Date(document.created_at).toLocaleString()}</dd></div>
-            </dl>
-            {document.failure_message ? (
-              <p className="document-failure"><strong>{document.failure_category}</strong> — {document.failure_message}</p>
-            ) : null}
-            {document.deletion?.stuck ? (
-              <p className="document-failure">
-                <strong>Deletion needs attention</strong>
-                {document.deletion.failure_code ? ` — ${document.deletion.failure_code}` : " — cleanup has not completed."}
-              </p>
-            ) : null}
-            {document.extraction_warnings.length > 0 ? (
-              <details className="document-warnings">
-                <summary>{document.extraction_warnings.length} extraction warning(s)</summary>
-                <ul>{document.extraction_warnings.map((warning) => (
-                  <li key={`${warning.code}-${warning.message}`}><strong>{warning.code}</strong>: {warning.message}</li>
-                ))}</ul>
-              </details>
-            ) : null}
-            <div className="document-actions">
-              {document.capabilities.retry ? (
-                <button className="secondary-button" disabled={busy === document.public_id} onClick={() => void retry(document)} type="button">Retry ingestion</button>
-              ) : null}
-              {document.capabilities.delete ? (
-                <button className="danger-button" disabled={busy === document.public_id} onClick={() => void remove(document)} type="button">Delete document</button>
-              ) : null}
-            </div>
-          </article>
-        ))}
-      </div>
-      {pageMeta.last_page > 1 ? (
-        <nav className="document-pagination" aria-label="Document pages">
-          <button
-            className="secondary-button"
-            disabled={loading || pageMeta.current_page <= 1}
-            onClick={() => void load(pageMeta.current_page - 1)}
-            type="button"
-          >
-            Previous
-          </button>
-          <span>Page {pageMeta.current_page} of {pageMeta.last_page}</span>
-          <button
-            className="secondary-button"
-            disabled={loading || pageMeta.current_page >= pageMeta.last_page}
-            onClick={() => void load(pageMeta.current_page + 1)}
-            type="button"
-          >
-            Next
-          </button>
-        </nav>
-      ) : null}
-    </section>
-  );
+  return <section aria-labelledby="documents-heading" className="grid gap-5">
+    <Card><CardHeader><CardTitle id="documents-heading">Document library</CardTitle><CardDescription>{pageMeta.total} sources in this workspace. Retry and delete controls appear only when the server authorises them.</CardDescription></CardHeader><CardContent><form className="grid gap-4 md:grid-cols-[minmax(14rem,1fr)_14rem_auto] md:items-end" onSubmit={submitFilters}><label className="grid gap-2 text-sm font-semibold" htmlFor="document-search">Search<Input id="document-search" onChange={(event) => setSearch(event.target.value)} placeholder="Filename" value={search} /></label><label className="grid gap-2 text-sm font-semibold">Status<Select onValueChange={setStatus} value={status}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All statuses</SelectItem>{["uploading", "uploaded", "queued", "processing", "indexed", "failed", "deleting", "deleted"].map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></label><Button disabled={loading} type="submit" variant="secondary">{loading ? "Filtering…" : "Apply filters"}</Button></form></CardContent></Card>
+    {notice ? <Notice tone={notice.tone}>{notice.message}</Notice> : null}
+    {!loading && documents.length === 0 ? <EmptyState description="Try changing the search or status filter." icon={FileSearch} title="No matching documents" /> : null}
+    <div className="grid gap-4">{documents.map((document) => <Card key={document.public_id}><CardHeader className="gap-3 md:flex-row md:items-start md:justify-between"><div><CardTitle>{document.source_filename}</CardTitle><CardDescription>{document.media_type} · {bytes(document.size_bytes)}</CardDescription></div><StatusBadge status={statusTone(document.status)}>{document.status}</StatusBadge></CardHeader><CardContent className="grid gap-4"><dl className="grid gap-3 text-sm sm:grid-cols-3"><div><dt className="text-foreground-muted">Governance</dt><dd className="mt-1 font-medium">{document.governance_status}</dd></div><div><dt className="text-foreground-muted">Added by</dt><dd className="mt-1 font-medium">{document.created_by?.name ?? "Unavailable"}</dd></div><div><dt className="text-foreground-muted">Created</dt><dd className="mt-1 font-medium">{new Date(document.created_at).toLocaleString("en-GB")}</dd></div></dl>{document.failure_message ? <Notice tone="destructive"><strong>{document.failure_category}</strong><p>{document.failure_message}</p></Notice> : null}{document.deletion?.stuck ? <Notice tone="warning"><strong>Deletion needs attention</strong><p>{document.deletion.failure_code ?? "Cleanup has not completed."}</p></Notice> : null}{document.extraction_warnings.length > 0 ? <details className="rounded-lg border border-border p-4"><summary className="cursor-pointer font-semibold">{document.extraction_warnings.length} extraction warning(s)</summary><ul className="mt-3 grid gap-2 text-sm text-foreground-muted">{document.extraction_warnings.map((warning) => <li key={`${warning.code}-${warning.message}`}><strong className="text-foreground">{warning.code}</strong>: {warning.message}</li>)}</ul></details> : null}<div className="flex flex-wrap gap-2">{document.capabilities.retry ? <Button disabled={busy === document.public_id} onClick={() => void retry(document)} size="sm" type="button" variant="secondary"><RefreshCw />{busy === document.public_id ? "Working…" : "Retry ingestion"}</Button> : null}{document.capabilities.delete ? <AlertDialog><AlertDialogTrigger asChild><Button disabled={busy === document.public_id} size="sm" variant="destructive"><Trash2 />Delete document</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogTitle>Delete {document.source_filename}?</AlertDialogTitle><AlertDialogDescription>The source will be removed from the knowledge base asynchronously. Passages already cited in completed conversations remain preserved with those conversations.</AlertDialogDescription><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => void remove(document)}>Delete document</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog> : null}</div></CardContent></Card>)}</div>
+    {pageMeta.last_page > 1 ? <nav aria-label="Document pages" className="flex items-center justify-between gap-4"><Button disabled={loading || pageMeta.current_page <= 1} onClick={() => void load(pageMeta.current_page - 1)} variant="outline">Previous</Button><span className="text-sm text-foreground-muted">Page {pageMeta.current_page} of {pageMeta.last_page}</span><Button disabled={loading || pageMeta.current_page >= pageMeta.last_page} onClick={() => void load(pageMeta.current_page + 1)} variant="outline">Next</Button></nav> : null}
+  </section>;
 }

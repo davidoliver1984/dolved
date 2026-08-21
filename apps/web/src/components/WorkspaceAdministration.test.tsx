@@ -37,21 +37,19 @@ const snapshot: WorkspaceAdministrationSnapshot = {
 
 describe("WorkspaceAdministration", () => {
   it("renders only server-authorized owner controls", () => {
-    render(<WorkspaceAdministration actorRole="owner" initialSnapshot={snapshot} workspaceId="workspace" />);
+    render(<WorkspaceAdministration actorRole="owner" initialSnapshot={snapshot} view="people" workspaceId="workspace" />);
 
-    expect(screen.getByRole("option", { name: "Administrator" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Make admin" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Transfer ownership" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Remove" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Revoke" })).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Leave workspace" })).toBeNull();
   });
 
-  it("does not expose the directory or invitation controls to ordinary members", () => {
-    render(<WorkspaceAdministration actorRole="member" initialSnapshot={null} workspaceId="workspace" />);
-
-    expect(screen.getByText(/Only workspace owners and administrators/)).toBeTruthy();
-    expect(screen.queryByLabelText("Invite by verified email")).toBeNull();
-    expect(screen.getByRole("button", { name: "Leave workspace" })).toBeTruthy();
+  it("separates invitation administration and preserves one-time-link semantics", () => {
+    render(<WorkspaceAdministration actorRole="owner" initialSnapshot={snapshot} view="invitations" workspaceId="workspace" />);
+    expect(screen.getByRole("button", { name: "Issue invitation" })).toBeTruthy();
+    expect(screen.getByText(/Validity and email delivery are separate/)).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Revoke" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Remove" })).toBeNull();
   });
 });
