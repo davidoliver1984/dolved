@@ -12,7 +12,7 @@ TAIL ?= 100
 	format format-web format-api format-ai \
 	format-check format-check-web format-check-api format-check-ai \
 	typecheck typecheck-web typecheck-ai \
-	test test-web test-api test-ai \
+	test test-web test-api test-ai test-telemetry \
 	bootstrap migrate seed reset clean \
 	aws-provision aws-status qdrant-status publish-ingestion consume-ingestion \
 	telemetry-smoke telemetry-verify telemetry-outage \
@@ -85,6 +85,7 @@ help:
 		'  make test-web        Run Next.js unit tests' \
 		'  make test-api        Run Laravel tests' \
 		'  make test-ai         Run Python tests' \
+		'  make test-telemetry  Verify the pinned Collector sampling component and configuration' \
 		'' \
 		'Maintenance and shells' \
 		'  make clean           Clear generated caches without deleting data' \
@@ -153,7 +154,7 @@ typecheck-web:
 typecheck-ai:
 	$(EXEC) ai uv run mypy app tests
 
-test: test-web test-api test-ai
+test: test-web test-api test-ai test-telemetry
 
 test-web:
 	$(EXEC) web npm test
@@ -163,6 +164,9 @@ test-api:
 
 test-ai:
 	$(EXEC) ai uv run pytest
+
+test-telemetry:
+	./scripts/telemetry/test_collector_configuration.sh
 
 bootstrap:
 	@test -f .env || { cp .env.example .env; printf '%s\n' 'Created .env from .env.example'; }

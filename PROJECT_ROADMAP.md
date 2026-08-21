@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 20 of 25 (Observability and Operations) |
+| Project status | In Progress — Phase 21 of 25 (Product Experience and Interface Design) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -832,6 +832,17 @@ severity, response expectations and a runbook; capacity, telemetry-absence,
 multi-window burn and final latency alerts remain deferred until production
 signals can justify them.
 
+**Acceptance gate closed 2026-08-21:** an independent review confirmed all
+nine ADR-0026 implementation areas. A standing `make test` guard now proves
+the pinned Collector retains its probabilistic-sampling processor and validates
+the committed pipeline, and ADR-0026 now contains a dated factual clarification
+of the existing three credential families without changing any trust boundary.
+The verification debt recorded at the Phase 19 gate was cleared separately in
+commit `fb294ed`. The final full repository chain passed with Laravel 330
+passed / 2 skipped / 1,606 assertions and Python 562 passed / 4 skipped;
+formatting, lint, Mypy, TypeScript, container health and local AWS checks were
+all clean. Phase 21 product experience and interface design is next.
+
 ---
 
 ## Phase 21 — Product Experience and Interface Design
@@ -985,8 +996,9 @@ A phase is complete only when:
 | Retrieval | ⬜ Not Started |
 | Grounded Generation | ⬜ Not Started |
 | Conversation and Streaming | ⬜ Not Started |
-| Administration | 🟨 In Progress |
-| Observability and Operations | ⬜ Not Started |
+| Administration | ✅ Complete |
+| Observability and Operations | ✅ Complete |
+| Product Experience and Interface Design | 🟨 In Progress |
 | Testing and Quality Strategy | ⬜ Not Started |
 | CI/CD and Production Readiness | ⬜ Not Started |
 | Documentation and Demonstration Readiness | ⬜ Not Started |

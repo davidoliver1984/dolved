@@ -758,6 +758,17 @@ boundary, not an inferred one.**
   deployment credential** — never an unauthenticated database edit, and
   never a different, weaker recovery path than ordinary provisioning uses.
 
+**Post-acceptance factual clarification — 2026-08-21.** The four-family
+statement above inaccurately described the repository identity that existed
+when this ADR was accepted. There are three credential families in this
+scope: the ingestion-worker HMAC family, which intentionally authenticates
+both ingestion and document-deletion operations using distinct signed purpose
+values; the observability-reconciliation HMAC family; and the
+platform-administration bootstrap credential. This clarification corrects the
+recorded implementation fact only. It does not authorise reuse across the
+observability or platform-administration trust boundaries and does not change
+the accepted architecture.
+
 **Credential rotation and versioning**, at the architectural level: each
 credential is identified by a key identifier and version, mirroring the
 multi-key registry pattern this codebase's ingestion-worker HMAC

@@ -13644,6 +13644,39 @@ git commit -m "Define operational SLOs alerts and runbooks"
 
 ---
 
+## Phase 20 acceptance gate
+
+Completed 2026-08-21.
+
+An independent architecture review confirmed the implemented Phase 20
+boundary against all nine areas of Accepted ADR-0026. Seven areas were
+conformant without correction. The two bounded findings were closed before
+the gate:
+
+* `make test` now verifies that the actual pinned Collector image still ships
+  the `probabilistic_sampler` processor, validates the committed Collector
+  configuration, and checks that sampling precedes batching in the traces
+  pipeline;
+* ADR-0026 records a dated post-acceptance factual clarification that the
+  existing ingestion-worker credential family authenticates both ingestion
+  and deletion through distinct signed purposes. The observability
+  reconciliation and platform-administration credentials remain separate.
+
+The pre-Phase-20 verification debt recorded at the Phase 19 gate was also
+removed in focused commit `fb294ed`: full Mypy now passes, historical V3
+evaluation tests use explicit portable test fixtures without weakening
+lineage checks, and current versus superseded V3 experiment boundaries remain
+fail closed.
+
+Final repository acceptance passed `make format-check lint typecheck test ps`
+and `make aws-status`: Laravel 330 passed / 2 skipped / 1,606 assertions;
+Python 562 passed / 4 skipped; Ruff lint/format, Mypy over 211 source files,
+Pint, ESLint, TypeScript and the pinned-Collector configuration guard all
+passed; all required containers were healthy and local AWS resources
+reconciled. No provider calls or protected evaluation splits were used.
+
+---
+
 # Phase 21 — Product Experience and Interface Design
 
 ## Phase objective

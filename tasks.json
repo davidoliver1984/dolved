@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R20",
-    "current_session": "R20-GATE",
-    "next_action": "Run the Phase 20 observability and operations acceptance gate.",
-    "completed_through": "R20-S04",
-    "completed_phase_count": 20,
+    "current_phase": "R21",
+    "current_session": "R21-S01",
+    "next_action": "Begin R21-S01 — define the product design system.",
+    "completed_through": "R20-GATE",
+    "completed_phase_count": 21,
     "total_phase_count": 25
   },
   "phases": [
@@ -4102,12 +4102,12 @@
         }
       ],
       "guide_end_line": 13469,
-      "status": "in_progress",
+      "status": "completed",
       "objective": "Make failures, latency and cross-service behaviour diagnosable.",
       "gate": {
         "id": "R20-GATE",
         "title": "Observability and Operations Acceptance Gate",
-        "status": "not_started",
+        "status": "completed",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
@@ -4115,7 +4115,14 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-20 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "Independent implementation review confirmed all nine Accepted ADR-0026 areas, with seven conformant and two bounded gate findings corrected",
+          "Standing make test guard verifies the actual pinned Collector image includes probabilistic_sampler, validates the committed configuration and enforces sampling before batching",
+          "ADR-0026 records a dated post-acceptance factual clarification of the existing three credential families without changing trust boundaries",
+          "Pre-Phase-20 Mypy and missing-fixture verification debt was cleared separately in commit fb294ed without changing application or evaluation semantics",
+          "Full acceptance passed: Laravel 330 passed / 2 skipped / 1606 assertions; Python 562 passed / 4 skipped; Ruff, Mypy, Pint, ESLint, TypeScript, container health and local AWS checks clean",
+          "docs/journal/2026-08-21-r20-phase-closure.md"
+        ]
       }
     },
     {
