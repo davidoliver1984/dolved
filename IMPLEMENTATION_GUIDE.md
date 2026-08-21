@@ -13917,9 +13917,31 @@ gate this phase exists to provide.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-21.
 
-### Planned verification
+Implementation evidence:
+
+* the running application was reviewed with real workspace, document,
+  membership, invitation, usage and Platform Operations data across desktop
+  and mobile layouts in both themes;
+* navigation now closes after mobile selection, presents one unambiguous active
+  destination, preserves white foregrounds on brand surfaces and exposes sign
+  out from the named account menu;
+* invitation links wrap safely and provide a copy affordance, recent
+  conversations no longer overlap and destructive document/member actions use
+  a compact optical treatment without reducing their accessible target;
+* authentication branding and mail identity consistently use Dolved, verified
+  sign-in/registration flows expose safe actionable errors and the dedicated
+  Platform Operations login context remains bounded to its exact return route;
+* Platform Operations was reviewed and reorganised visually into legible
+  status, telemetry, alert and desired-policy regions without changing the
+  underlying ADR-0026 semantics;
+* server/client timestamp rendering is deterministic in UTC, preventing the
+  live document-list hydration failure discovered during acceptance;
+* shared component regression coverage, ESLint, TypeScript, the production
+  build and `git diff --check` passed at closure.
+
+### Verification performed
 
 * review against real application data, not static mockups;
 * screenshots captured at representative desktop and mobile sizes;
@@ -13943,6 +13965,59 @@ Not yet executed.
 
 git add apps/web docs
 git commit -m "Complete visual and usability acceptance for product experience"
+
+---
+
+## Stage 21.5 — Split Platform Operations into Route-Backed Sections
+
+### Objective
+
+Implement accepted ADR-0028 by separating the existing Platform Operations
+dashboard into route-backed Overview, Active alerts, Global telemetry and
+Operational policy destinations inside the shared adaptive shell.
+
+### Status
+
+Not yet executed.
+
+### Planned scope
+
+* retain one capability-gated `Platform operations` entry in the stable
+  primary navigation region;
+* add the four-entry Platform Operations contextual region and its mobile
+  drawer equivalent;
+* preserve `/app/platform/operations` as Overview and add `/alerts`,
+  `/telemetry` and `/policy` specialist routes;
+* redistribute the existing curated snapshot without changing telemetry,
+  alerting, SLO or policy semantics and without introducing another API;
+* correct the platform-operations gate to the ADR-0026-required concealed
+  `404` response for authenticated non-platform-administrators, scoped to
+  that gate only;
+* preserve framework-neutral typed data results, with each owning route
+  mapping `concealed` to its shared not-found presentation;
+* extend the login return target through an exact four-route allowlist only;
+* fail closed when platform authority is revoked between Policy page load and
+  mutation submission, with no retry-to-success or permission disclosure.
+
+### Acceptance criteria
+
+* All four destinations are independently addressable, refreshable and
+  selected from route-derived contextual navigation state.
+* Overview contains concise summaries and links rather than duplicating the
+  complete specialist interfaces.
+* Direct access, login return and mid-session authority loss preserve the
+  authorization and concealment boundary defined by ADR-0028.
+* Alerts, telemetry and policy retain their applicable empty, partial, stale,
+  unavailable and failure states without fabricating healthy or zero values.
+* Desktop/mobile navigation, keyboard operation, focus, themes and WCAG 2.2 AA
+  presentation pass the existing ADR-0027 acceptance baseline.
+* Laravel and web regression coverage proves the correction is limited to the
+  Platform Operations authority plane.
+
+### Commit boundary
+
+git add apps/api apps/web docs tasks.json IMPLEMENTATION_GUIDE.md PROJECT_ROADMAP.md
+git commit -m "Split platform operations into routed sections"
 
 ---
 

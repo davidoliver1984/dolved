@@ -319,6 +319,32 @@ progress {
   font: inherit;
 }
 
+/* Keep destructive actions easy to target while giving their red surface a
+   deliberately quieter, compact visual footprint. */
+button[data-slot="button"].h-10.min-h-10.bg-destructive {
+  background-color: transparent !important;
+  font-size: 0.8125rem;
+  height: 44px;
+  isolation: isolate;
+  min-height: 44px;
+  padding-block: 4px;
+  position: relative;
+}
+
+button[data-slot="button"].h-10.min-h-10.bg-destructive::before {
+  background: var(--status-destructive);
+  border-radius: var(--radius-md);
+  content: "";
+  inset: 4px 0;
+  position: absolute;
+  transition: background-color 160ms ease;
+  z-index: -1;
+}
+
+button[data-slot="button"].h-10.min-h-10.bg-destructive:hover::before {
+  background: color-mix(in oklab, var(--status-destructive) 90%, black);
+}
+
 .landing-shell,
 .workspace-shell {
   min-height: 100vh;

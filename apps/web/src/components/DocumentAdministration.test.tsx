@@ -43,7 +43,9 @@ describe("DocumentAdministration", () => {
     expect(screen.getByText(/The file could not be extracted/)).toBeTruthy();
     expect(screen.getByText(/1 extraction warning/)).toBeTruthy();
     expect(screen.getByRole("button", { name: "Retry ingestion" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Delete document" })).toBeTruthy();
+    const deleteDocument = screen.getByRole("button", { name: "Delete" });
+    expect(deleteDocument.className).toContain("h-10");
+    expect(deleteDocument.className).toContain("min-h-10");
   });
 
   it("does not render mutation controls when server capabilities deny them", () => {
@@ -58,6 +60,6 @@ describe("DocumentAdministration", () => {
     );
 
     expect(screen.queryByRole("button", { name: "Retry ingestion" })).toBeNull();
-    expect(screen.queryByRole("button", { name: "Delete document" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
   });
 });

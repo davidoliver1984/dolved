@@ -59,4 +59,18 @@ describe("AuthForm", () => {
       expect(screen.queryByRole("alert")).toBeNull();
     },
   );
+
+  it("uses platform-specific sign-in copy and returns to the allowlisted operations route", async () => {
+    apiFetchMock.mockResolvedValue({ data: { user: {} } });
+    render(<AuthForm context="platform" mode="login" returnTo="/app/platform/operations" />);
+
+    expect(screen.getByRole("heading", { name: "Platform Operations" })).toBeTruthy();
+    expect(screen.getByText(/OpenTelemetry health/)).toBeTruthy();
+    expect(screen.getByText(/without crossing tenant boundaries/)).toBeTruthy();
+    fireEvent.change(screen.getByLabelText("Email address"), { target: { value: "operator@example.test" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password" } });
+    fireEvent.submit(screen.getByRole("button", { name: "Sign in" }).closest("form")!);
+
+    await waitFor(() => expect(routerPushMock).toHaveBeenCalledWith("/app/platform/operations"));
+  });
 });

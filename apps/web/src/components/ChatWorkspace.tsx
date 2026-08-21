@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import { firstError } from "@/lib/api";
+import { formatDate } from "@/lib/date";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CitationChip } from "@/components/ui/citation-chip";
@@ -352,7 +353,7 @@ export function ChatWorkspace({
               type="button"
             >
               <strong>{conversation.title || "New conversation"}</strong>
-              <small>{new Date(conversation.updated_at).toLocaleDateString()}</small>
+              <small>{formatDate(conversation.updated_at)}</small>
             </button>
           ))}
         </nav>

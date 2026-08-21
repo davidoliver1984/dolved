@@ -26,6 +26,14 @@ describe("LoginPage", () => {
     expect(redirectMock).not.toHaveBeenCalled();
   });
 
+  it("renders contextual platform copy only for the allowlisted platform return path", async () => {
+    currentUserMock.mockResolvedValue(null);
+
+    const page = await LoginPage({ searchParams: Promise.resolve({ next: "/app/platform/operations" }) });
+
+    expect(page.props).toEqual({ context: "platform", mode: "login", returnTo: "/app/platform/operations" });
+  });
+
   it("returns an unverified signed-in account to verification", async () => {
     currentUserMock.mockResolvedValue({
       id: 18,

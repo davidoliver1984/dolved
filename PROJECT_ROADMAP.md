@@ -856,11 +856,14 @@ without a design pass — but not limited to it, since redesigning only
 administration would make it read as a different application from chat,
 documents and the shared shell.
 
-ADR-0027 is the accepted architecture boundary: one adaptive, route-backed
+ADR-0027 is the accepted product-wide architecture boundary: one adaptive, route-backed
 shell; repository-owned design tokens and components; dark-default explicit
 theming; a WCAG 2.2 AA baseline; and a bounded Laravel-owned citation/source
 presentation contract. The accepted route tree includes durable conversation
 URLs, workspace administration sections and `/app/platform/operations`.
+ADR-0028 narrowly extends that boundary for Platform Operations with four
+route-backed sections, a platform contextual-navigation region and the
+ADR-0026-conformant concealed authorization response.
 
 ### Tasks
 
@@ -868,6 +871,7 @@ URLs, workspace administration sections and `/app/platform/operations`.
 - Design the Administration Experience
 - Implement Complete Interface States
 - Visual and Usability Acceptance
+- Split Platform Operations into Route-Backed Sections
 
 **Design-system foundation completed 2026-08-21** (Stage 21.1): Tailwind v4,
 repository-owned shadcn/Radix primitives, explicit dark/light themes, semantic

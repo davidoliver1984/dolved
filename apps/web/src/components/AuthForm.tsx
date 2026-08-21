@@ -43,12 +43,14 @@ const content = {
 >;
 
 type Props = {
+  context?: "workspace" | "platform";
   mode: Mode;
   token?: string;
   email?: string;
+  returnTo?: "/app/platform/operations";
 };
 
-export function AuthForm({ mode, token, email: initialEmail }: Props) {
+export function AuthForm({ context = "workspace", mode, token, email: initialEmail, returnTo }: Props) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -87,7 +89,7 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
       } else if (mode === "login" && response.data?.redirect_to) {
         window.location.assign(response.data.redirect_to);
       } else {
-        router.push("/app");
+        router.push(returnTo ?? "/app");
       }
     } catch (caught) {
       if (
@@ -95,7 +97,7 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
         caught.status === 409 &&
         (mode === "login" || mode === "register")
       ) {
-        router.push("/app");
+        router.push(returnTo ?? "/app");
       } else {
         setError(firstError(caught));
       }
@@ -113,10 +115,12 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
         </div>
 
         <div className="auth-heading">
-          <p className="eyebrow">{copy.eyebrow}</p>
-          <h1>{copy.title}</h1>
+          <p className="eyebrow">{context === "platform" ? "Platform administration" : copy.eyebrow}</p>
+          <h1>{context === "platform" ? "Platform Operations" : copy.title}</h1>
           <p>
-            {mode === "register"
+            {context === "platform"
+              ? "Platform metrics, OpenTelemetry health, alerting and Grafana access."
+              : mode === "register"
               ? "One secure account for your documents, searches, and answers."
               : "Your workspace is protected by the Laravel API."}
           </p>
@@ -200,16 +204,18 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
         </nav>
       </section>
 
-      <aside className="auth-story" aria-label="Product introduction">
-        <p className="eyebrow">Grounded answers, less searching</p>
+      <aside className="auth-story" aria-label={context === "platform" ? "Platform operations introduction" : "Product introduction"}>
+        <p className="eyebrow">{context === "platform" ? "Operational clarity, bounded access" : "Grounded answers, less searching"}</p>
         <blockquote>
-          “Turn scattered source material into answers your team can trust.”
+          {context === "platform"
+            ? "“See platform health clearly, without crossing tenant boundaries.”"
+            : "“Turn scattered source material into answers your team can trust.”"}
         </blockquote>
         <div className="signal-card">
           <span className="signal-dot" />
           <div>
-            <strong>Source-aware by design</strong>
-            <p>Every answer keeps its evidence close.</p>
+            <strong>{context === "platform" ? "Global health, carefully scoped" : "Source-aware by design"}</strong>
+            <p>{context === "platform" ? "Curated operations data stays separate from tenant workspaces." : "Every answer keeps its evidence close."}</p>
           </div>
         </div>
       </aside>

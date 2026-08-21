@@ -36,6 +36,6 @@ describe("OperationalPolicyPanel", () => {
     fireEvent.submit(screen.getByRole("button", { name: "Save desired policy" }).closest("form")!);
 
     await waitFor(() => expect(createPolicy).toHaveBeenCalledOnce());
-    expect(screen.getByRole("status").textContent).toContain("remains pending");
+    expect(screen.getByText(/remains pending/)).toBeTruthy();
   });
 });

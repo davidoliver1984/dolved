@@ -16,7 +16,7 @@ export function Notice({ className, tone = "info", ...props }: HTMLAttributes<HT
   return (
     <div className={cn("flex gap-3 rounded-lg border p-4 text-sm", styles[tone], className)} data-slot="notice" role={tone === "destructive" ? "alert" : "status"} {...props}>
       <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
-      <div>{props.children}</div>
+      <div className="min-w-0 flex-1">{props.children}</div>
     </div>
   );
 }
