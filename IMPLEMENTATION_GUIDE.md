@@ -13710,7 +13710,7 @@ from, while preserving the established Dolved identity.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-21.
 
 ### Planned scope
 
@@ -13748,6 +13748,34 @@ detail route are implemented later in Stage 21.3.
 * Route identity, conversation selection and active navigation follow
   ADR-0027 rather than client-only selection state.
 * The component-reference surface is absent from production builds.
+
+### Delivered implementation
+
+* Installed Tailwind CSS v4, the repository-owned shadcn/Radix component
+  foundation, Lucide icons and explicit `next-themes` dark/light selection.
+* Added the two-layer semantic token contract, Source Sans 3 interface type,
+  Sora lowercase wordmark and provider-free completeness/contrast guards.
+* Added shared buttons, fields, cards, badges, status, notice, loading, empty,
+  dialog, menu, tabs, pagination, evidence and streaming-state primitives.
+* Consolidated authenticated navigation into one adaptive shell with a desktop
+  sidebar and mobile drawer, capability-gated destinations and route-backed
+  active state.
+* Added canonical conversation, document, workspace-administration and
+  platform-operations routes without changing their server-owned authority.
+* Added the development/test-only `/design-system` component reference. Human
+  visual review accepted its dark and light presentation after correcting the
+  legacy reset that had overridden utility spacing and the authentication
+  story panel's dark-theme contrast.
+
+### Verification evidence
+
+The complete web suite passed 24 files / 72 tests. ESLint, TypeScript, the
+production Next.js build, `git diff --check`, semantic token completeness,
+required foreground/background contrast pairs, route-backed navigation and
+authority-visibility tests all passed. The local web, API, AI, PostgreSQL and
+Qdrant services were healthy; the landing and reference surfaces returned HTTP
+200. No provider calls were made and no retrieval, planner, threshold,
+calibration or benchmark behavior changed.
 
 ### Commit boundary
 

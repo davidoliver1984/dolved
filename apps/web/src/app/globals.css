@@ -1,13 +1,143 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
 :root {
-  --ink: #17211d;
-  --muted: #607069;
-  --paper: #f6f3ea;
-  --card: #fffdf7;
-  --line: #d9d7cb;
-  --accent: #e8562a;
-  --accent-dark: #bd3e19;
-  --forest: #163b31;
-  --mint: #cce2d7;
+  color-scheme: light;
+
+  /* Layer 1: palette primitives. Components never consume these directly. */
+  --palette-slate-900: #1f2a35;
+  --palette-slate-700: #455766;
+  --palette-slate-500: #7f93a1;
+  --palette-slate-300: #c9d4dc;
+  --palette-slate-50: #f3f6f8;
+
+  /* Layer 2: semantic light-theme tokens. */
+  --background: var(--palette-slate-50);
+  --sidebar: #ffffff;
+  --surface: #ffffff;
+  --surface-raised: #e7edf1;
+  --surface-hover: #dce5eb;
+  --overlay: rgb(0 0 0 / 0.7);
+  --border: #b8c5ce;
+  --foreground: var(--palette-slate-900);
+  --foreground-muted: var(--palette-slate-700);
+  --foreground-subtle: #5f7280;
+  --foreground-faint: #6c7f8d;
+  --brand: #006c4d;
+  --brand-foreground: #ffffff;
+  --ring: #006c4d;
+  --status-success: #0b6b4f;
+  --status-success-foreground: #ffffff;
+  --status-warning: #8a4b00;
+  --status-warning-foreground: #ffffff;
+  --status-destructive: #b42318;
+  --status-destructive-foreground: #ffffff;
+  --status-info: #175cd3;
+  --status-info-foreground: #ffffff;
+  --status-pending: #6941c6;
+  --status-pending-foreground: #ffffff;
+  --status-unavailable: #475467;
+  --status-unavailable-foreground: #ffffff;
+  --radius: 0.75rem;
+
+  /* Temporary legacy aliases while existing surfaces migrate in R21-S02/S03. */
+  --ink: var(--foreground);
+  --muted: var(--foreground-muted);
+  --paper: var(--background);
+  --card: var(--surface);
+  --line: var(--border);
+  --accent: var(--brand);
+  --accent-dark: #005a40;
+  --forest: var(--foreground);
+  --mint: var(--surface-hover);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #000000;
+  --sidebar: #050607;
+  --surface: #101316;
+  --surface-raised: #15191d;
+  --surface-hover: #1c2227;
+  --overlay: rgb(0 0 0 / 0.7);
+  --border: #242b31;
+  --foreground: var(--palette-slate-50);
+  --foreground-muted: var(--palette-slate-300);
+  --foreground-subtle: #9eacb7;
+  --foreground-faint: var(--palette-slate-500);
+  --brand: #007a57;
+  --brand-foreground: #ffffff;
+  --ring: #2bbf92;
+  --status-success: #167a5c;
+  --status-success-foreground: #ffffff;
+  --status-warning: #9a5a0a;
+  --status-warning-foreground: #ffffff;
+  --status-destructive: #b9382e;
+  --status-destructive-foreground: #ffffff;
+  --status-info: #276bd2;
+  --status-info-foreground: #ffffff;
+  --status-pending: #7654c8;
+  --status-pending-foreground: #ffffff;
+  --status-unavailable: #536271;
+  --status-unavailable-foreground: #ffffff;
+  --accent-dark: #006549;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--ring);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--surface-raised);
+  --color-popover-foreground: var(--foreground);
+  --color-primary: var(--brand);
+  --color-primary-foreground: var(--brand-foreground);
+  --color-secondary: var(--surface-raised);
+  --color-secondary-foreground: var(--foreground);
+  --color-muted: var(--surface);
+  --color-muted-foreground: var(--foreground-muted);
+  --color-accent: var(--surface-hover);
+  --color-accent-foreground: var(--foreground);
+  --color-destructive: var(--status-destructive);
+  --color-destructive-foreground: var(--status-destructive-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--foreground);
+  --color-sidebar-primary: var(--brand);
+  --color-sidebar-primary-foreground: var(--brand-foreground);
+  --color-sidebar-accent: var(--surface-hover);
+  --color-sidebar-accent-foreground: var(--foreground);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--ring);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-hover: var(--surface-hover);
+  --color-overlay: var(--overlay);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+  --color-foreground-faint: var(--foreground-faint);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-status-success: var(--status-success);
+  --color-status-success-foreground: var(--status-success-foreground);
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-foreground: var(--status-warning-foreground);
+  --color-status-destructive: var(--status-destructive);
+  --color-status-destructive-foreground: var(--status-destructive-foreground);
+  --color-status-info: var(--status-info);
+  --color-status-info-foreground: var(--status-info-foreground);
+  --color-status-pending: var(--status-pending);
+  --color-status-pending-foreground: var(--status-pending-foreground);
+  --color-status-unavailable: var(--status-unavailable);
+  --color-status-unavailable-foreground: var(--status-unavailable-foreground);
+  --font-sans: var(--font-source-sans-3), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-wordmark), ui-sans-serif, sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 .operations-page {
@@ -156,22 +286,25 @@
   }
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 html,
 body {
   min-height: 100%;
 }
 
 body {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-source-sans-3), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--brand) 55%, transparent);
+}
+
+:focus-visible {
+  outline-color: var(--ring);
 }
 
 a {
@@ -499,12 +632,16 @@ progress {
 }
 
 .auth-story {
-  background: var(--forest);
-  color: white;
+  background: var(--brand);
+  color: var(--brand-foreground);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding: 5vw;
+}
+
+.auth-story .eyebrow {
+  color: var(--brand-foreground);
 }
 
 .auth-story blockquote {
@@ -517,21 +654,21 @@ progress {
 
 .signal-card {
   align-items: center;
-  border-top: 1px solid #ffffff42;
+  border-top: 1px solid color-mix(in srgb, var(--brand-foreground) 28%, transparent);
   display: flex;
   gap: 1rem;
   padding-top: 1.5rem;
 }
 
 .signal-card p {
-  color: #c7d5cf;
+  color: color-mix(in srgb, var(--brand-foreground) 78%, transparent);
   margin-top: 0.3rem;
 }
 
 .signal-dot {
-  background: var(--accent);
+  background: var(--brand-foreground);
   border-radius: 50%;
-  box-shadow: 0 0 0 7px #e8562a33;
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--brand-foreground) 24%, transparent);
   height: 12px;
   width: 12px;
 }
@@ -580,6 +717,10 @@ progress {
   grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
   min-height: 680px;
   overflow: hidden;
+}
+
+.chat-workspace-routed {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .conversation-sidebar {

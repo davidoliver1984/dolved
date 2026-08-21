@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LogoutButton } from "@/components/LogoutButton";
+import { AppShell } from "@/components/AppShell";
 import {
   currentUser,
   hasPlatformOperationsAccess,
   platformAccess,
+  userWorkspaces,
 } from "@/lib/server-api";
 
 export const metadata: Metadata = {
@@ -35,22 +35,14 @@ export default async function AuthenticatedApplicationLayout({
   if (!user) {
     redirect("/login");
   }
-  const canOperatePlatform = await hasPlatformOperationsAccess();
+  const [canOperatePlatform, workspaces] = await Promise.all([
+    hasPlatformOperationsAccess(),
+    userWorkspaces(),
+  ]);
 
   return (
-    <main className="workspace-shell">
-      <nav aria-label="Account" className="site-nav">
-        <span className="wordmark">
-          Dolved<span>.</span>
-        </span>
-        <div className="account-nav">
-          {canOperatePlatform ? <Link href="/app/operations">Platform health</Link> : null}
-          <span>{user.email}</span>
-          <LogoutButton />
-        </div>
-      </nav>
-
+    <AppShell canOperatePlatform={canOperatePlatform} user={user} workspaces={workspaces}>
       {children}
-    </main>
+    </AppShell>
   );
 }

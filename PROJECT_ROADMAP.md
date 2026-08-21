@@ -869,6 +869,13 @@ URLs, workspace administration sections and `/app/platform/operations`.
 - Implement Complete Interface States
 - Visual and Usability Acceptance
 
+**Design-system foundation completed 2026-08-21** (Stage 21.1): Tailwind v4,
+repository-owned shadcn/Radix primitives, explicit dark/light themes, semantic
+tokens and contrast guards now underpin one adaptive route-backed shell. The
+development/test-only component reference was visually accepted in both themes;
+Stage 21.2 can now apply this shared language to administration without
+inventing a separate interface system.
+
 ### Deliverable
 
 A product-wide, accessible design system applied consistently across chat,

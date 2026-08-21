@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Wordmark } from "@/components/Wordmark";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Notice } from "@/components/ui/notice";
 import { apiFetch, ApiError, firstError, User } from "@/lib/api";
 
 type Mode = "login" | "register" | "forgot" | "reset";
@@ -102,9 +107,10 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
   return (
     <main className="auth-shell">
       <section className="auth-panel">
-        <Link className="wordmark" href="/">
-          Dolved<span>.</span>
-        </Link>
+        <div className="flex items-center justify-between gap-4">
+          <Wordmark />
+          <ThemeToggle />
+        </div>
 
         <div className="auth-heading">
           <p className="eyebrow">{copy.eyebrow}</p>
@@ -118,15 +124,16 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
 
         <form className="auth-form" onSubmit={submit}>
           {mode === "register" && (
-            <label>
+            <label htmlFor="auth-name">
               Name
-              <input name="name" autoComplete="name" required />
+              <Input id="auth-name" name="name" autoComplete="name" required />
             </label>
           )}
 
-          <label>
+          <label htmlFor="auth-email">
             Email address
-            <input
+            <Input
+              id="auth-email"
               name="email"
               type="email"
               autoComplete="email"
@@ -137,9 +144,10 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
           </label>
 
           {(mode === "login" || mode === "register" || mode === "reset") && (
-            <label>
+            <label htmlFor="auth-password">
               Password
-              <input
+              <Input
+                id="auth-password"
                 name="password"
                 type="password"
                 autoComplete={
@@ -157,9 +165,10 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
                 Use 12+ characters with upper and lowercase letters, a number,
                 and a symbol.
               </p>
-              <label>
+              <label htmlFor="auth-password-confirmation">
                 Confirm password
-                <input
+                <Input
+                  id="auth-password-confirmation"
                   name="password_confirmation"
                   type="password"
                   autoComplete="new-password"
@@ -172,20 +181,12 @@ export function AuthForm({ mode, token, email: initialEmail }: Props) {
 
           {mode === "reset" && <input name="token" type="hidden" value={token} />}
 
-          {error && (
-            <p className="form-alert error" role="alert">
-              {error}
-            </p>
-          )}
-          {message && (
-            <p className="form-alert success" role="status">
-              {message}
-            </p>
-          )}
+          {error ? <Notice tone="destructive">{error}</Notice> : null}
+          {message ? <Notice tone="success">{message}</Notice> : null}
 
-          <button className="primary-button" disabled={pending} type="submit">
+          <Button disabled={pending} type="submit">
             {pending ? "Please wait…" : copy.submit}
-          </button>
+          </Button>
         </form>
 
         <nav className="auth-links" aria-label="Account links">

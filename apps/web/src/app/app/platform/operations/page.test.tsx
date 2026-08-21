@@ -9,7 +9,7 @@ const { platformOperationsMock, redirectMock } = vi.hoisted(() => ({
 vi.mock("@/lib/server-api", () => ({ platformOperations: platformOperationsMock }));
 vi.mock("next/navigation", () => ({ redirect: redirectMock }));
 
-import PlatformOperationsPage from "@/app/app/operations/page";
+import PlatformOperationsPage from "@/app/app/platform/operations/page";
 
 describe("PlatformOperationsPage", () => {
   beforeEach(() => {

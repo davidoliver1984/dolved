@@ -54,6 +54,9 @@ const defaultServices: ChatServices = {
 };
 
 type ChatWorkspaceProps = {
+  initialConversationId?: string | null;
+  onConversationCreated?: (conversationId: string) => void;
+  showConversationNavigation?: boolean;
   workspaceId: string;
   workspaceName: string;
   services?: ChatServices;
@@ -86,6 +89,9 @@ function eventParts(event: ChatStreamEvent): AnswerPart[] {
 }
 
 export function ChatWorkspace({
+  initialConversationId,
+  onConversationCreated,
+  showConversationNavigation = true,
   workspaceId,
   workspaceName,
   services = defaultServices,
@@ -130,8 +136,13 @@ export function ChatWorkspace({
       .then(async (items) => {
         if (current) {
           setConversations(items);
-          if (items[0]) {
-            setActive(await services.get(workspaceId, items[0].id));
+          const selectedId = initialConversationId === undefined
+            ? items[0]?.id
+            : initialConversationId;
+          if (selectedId) {
+            setActive(await services.get(workspaceId, selectedId));
+          } else {
+            setActive(null);
           }
         }
       })
@@ -141,7 +152,7 @@ export function ChatWorkspace({
       current = false;
       unsubscribe.current?.();
     };
-  }, [refreshList, services, workspaceId]);
+  }, [initialConversationId, refreshList, services, workspaceId]);
 
   useEffect(() => {
     if (transcript.current) {
@@ -237,6 +248,7 @@ export function ChatWorkspace({
       if (!conversation) {
         conversation = await services.create(workspaceId);
         setActive({ ...conversation, messages: [], runs: [] });
+        onConversationCreated?.(conversation.id);
       }
       const receipt = await services.send(
         workspaceId,
@@ -302,8 +314,8 @@ export function ChatWorkspace({
   );
 
   return (
-    <section className="chat-workspace" aria-labelledby="chat-heading">
-      <aside className="conversation-sidebar" aria-label="Conversations">
+    <section className={showConversationNavigation ? "chat-workspace" : "chat-workspace chat-workspace-routed"} aria-labelledby="chat-heading">
+      {showConversationNavigation ? <aside className="conversation-sidebar" aria-label="Conversations">
         <div className="conversation-sidebar-heading">
           <div>
             <p className="eyebrow">Grounded chat</p>
@@ -331,9 +343,10 @@ export function ChatWorkspace({
             </button>
           ))}
         </nav>
-      </aside>
+      </aside> : null}
 
       <div className="chat-panel">
+        {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">Ask {workspaceName}</h1><p className="mt-2 text-sm text-foreground-muted">Answers use only evidence eligible for this workspace and question.</p></header> : null}
         <div aria-busy={loading} aria-live="polite" className="chat-transcript" ref={transcript}>
           {loading ? <p className="chat-placeholder">Loading conversation…</p> : null}
           {!loading && !(active?.messages?.length) ? (
