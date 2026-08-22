@@ -21,7 +21,7 @@ from app.evaluation.models import (
     QuestionVariant,
     StrictModel,
 )
-from app.retrieval.models import RetrievalSide, SearchScope
+from app.retrieval.models import RetrievalPlan, RetrievalSide, SearchScope
 
 
 class DocumentBinding(StrictModel):
@@ -120,6 +120,8 @@ class CurrentRetrievalInputs:
     scopes: dict[tuple[str, str], tuple[SearchScope, ...]]
     eligibility_correct: dict[tuple[str, str], bool]
     expected_eligibility: dict[tuple[str, str], dict[str, Any]]
+    plan_questions: frozenset[str]
+    plan_catalogue_checksum: str
     lineage: dict[str, Any]
 
 
@@ -182,10 +184,19 @@ def load_current_retrieval_inputs(
         for case in corpus.cases
         for variant in case.variants
     }
-    plan_variants = {
-        (item["case_id"], item["variant_id"]): item["question"]
-        for item in plans.get("expectations", [])
-    }
+    plan_variants: dict[tuple[str, str], str] = {}
+    plan_questions: set[str] = set()
+    for item in plans.get("expectations", []):
+        identity = (item["case_id"], item["variant_id"])
+        question = item["question"]
+        if identity in plan_variants or question in plan_questions:
+            raise ValueError("authored plan identities and questions must be unique")
+        contract = dict(item["contract"])
+        if contract.pop("contract_version", None) != 2:
+            raise ValueError("authored plan contract version must be 2")
+        RetrievalPlan.model_validate({"retrieval_queries": [question], **contract})
+        plan_variants[identity] = question
+        plan_questions.add(question)
     entry_variants = {
         (item.case_id, item.variant_id): item.question_digest
         for item in artifact.entries
@@ -258,6 +269,8 @@ def load_current_retrieval_inputs(
             for item in artifact.entries
         },
         expected_eligibility=expected,
+        plan_questions=frozenset(plan_questions),
+        plan_catalogue_checksum=content_digest(plans),
         lineage={
             "planner": {
                 "provider": "deterministic",

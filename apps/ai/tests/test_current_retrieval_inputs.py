@@ -69,6 +69,29 @@ def test_source_population_is_independent_and_checksum_bound(tmp_path: Path) -> 
         _load(paths)
 
 
+def test_v2_authored_plan_contracts_are_validated_without_legacy_catalogue_adapter(
+    tmp_path: Path,
+) -> None:
+    paths = _fixture(tmp_path)
+    loaded = _load(paths)
+
+    assert loaded.plan_questions == frozenset({"What is the policy?"})
+    assert loaded.plan_catalogue_checksum == content_digest(
+        json.loads(paths["plans"].read_text())
+    )
+
+    plans = json.loads(paths["plans"].read_text())
+    plans["expectations"][0]["contract"]["temporal_mode"] = "not-a-mode"
+    paths["plans"].write_text(json.dumps(plans))
+    artifact = json.loads(paths["artifact"].read_text())
+    artifact["plan_catalogue"]["digest"] = content_digest(plans)
+    _redigest(artifact)
+    paths["artifact"].write_text(json.dumps(artifact))
+
+    with pytest.raises(ValueError):
+        _load(paths)
+
+
 def test_exact_run_digest_binds_commit_but_comparability_digest_does_not(
     tmp_path: Path,
 ) -> None:

@@ -39,7 +39,6 @@ from app.evaluation.models import (
     VariantObservation,
 )
 from app.evaluation.reporting import comparison_report, deterministic_candidate_report
-from app.retrieval.deterministic import CatalogueRetrievalPlanner
 from app.retrieval.models import HybridRetrievalConfiguration
 from app.settings import get_settings
 
@@ -202,16 +201,13 @@ def retrieval_current(args: argparse.Namespace) -> None:
     )
     corpus_data = inputs.corpus_data
     corpus = inputs.corpus
-    planner = CatalogueRetrievalPlanner(str(args.plan_catalogue))
     questions = {variant.question for case in corpus.cases for variant in case.variants}
-    if planner.questions != questions:
-        missing = sorted(questions - planner.questions)
-        unexpected = sorted(planner.questions - questions)
+    if inputs.plan_questions != questions:
+        missing = sorted(questions - inputs.plan_questions)
+        unexpected = sorted(inputs.plan_questions - questions)
         raise SystemExit(
             f"Authored plan catalogue identity mismatch; missing={missing}, unexpected={unexpected}"
         )
-    for question in sorted(questions):
-        planner.plan(question, evaluated_at="2000-01-01T00:00:00Z")
 
     result = evaluate_live_hybrid_retrieval(
         settings=settings,
@@ -232,7 +228,7 @@ def retrieval_current(args: argparse.Namespace) -> None:
         ),
         rerank_delay_seconds=0,
         text_capture_mode=EvaluationTextCaptureMode.BENCHMARK_TEXT,
-        plan_catalogue_checksum=planner.catalogue_checksum,
+        plan_catalogue_checksum=inputs.plan_catalogue_checksum,
         experiment_id_prefix="r22-s03-deterministic-current",
         evaluation_chunks=inputs.chunks,
         eligibility_scopes=inputs.scopes,
