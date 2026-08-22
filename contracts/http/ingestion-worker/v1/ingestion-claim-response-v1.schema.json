@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "data"
+  ],
+  "properties": {
+    "data": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "document_status",
+        "lease_token",
+        "lease_expires_at",
+        "embedding_space_generation_id",
+        "workspace_corpus_generation_id",
+        "vector_space",
+        "resume_sealed_attempt",
+        "reset_open_attempt"
+      ],
+      "properties": {
+        "outcome": {
+          "enum": [
+            "claimed",
+            "already_claimed",
+            "owned_by_another_worker",
+            "reclaimed",
+            "already_completed",
+            "permanently_failed",
+            "stale_event",
+            "ineligible_state"
+          ]
+        },
+        "document_status": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "enum": [
+                "uploading",
+                "uploaded",
+                "queued",
+                "processing",
+                "indexed",
+                "failed",
+                "deleting",
+                "deleted"
+              ]
+            }
+          ]
+        },
+        "lease_token": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "format": "uuid"
+            }
+          ]
+        },
+        "lease_expires_at": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "format": "date-time"
+            }
+          ]
+        },
+        "embedding_space_generation_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "format": "uuid"
+            }
+          ]
+        },
+        "workspace_corpus_generation_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "format": "uuid"
+            }
+          ]
+        },
+        "vector_space": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "collection_name",
+                "vector_name",
+                "dimensions",
+                "distance",
+                "embedding_profile_fingerprint",
+                "sparse"
+              ],
+              "properties": {
+                "collection_name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "vector_name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "dimensions": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "distance": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "embedding_profile_fingerprint": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "sparse": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "$schema": "https://json-schema.org/draft/2020-12/schema",
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "sparse_space_generation_id",
+                        "vector_name",
+                        "profile_fingerprint",
+                        "profile"
+                      ],
+                      "properties": {
+                        "sparse_space_generation_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "vector_name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "profile_fingerprint": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{64}$"
+                        },
+                        "profile": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "resume_sealed_attempt": {
+          "type": "boolean"
+        },
+        "reset_open_attempt": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "$id": "https://contracts.dolved.internal/http/ingestion-worker/v1/ingestion-claim-response-v1.schema.json",
+  "title": "Ingestion Claim Response (v1)"
+}

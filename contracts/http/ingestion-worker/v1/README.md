@@ -1,7 +1,17 @@
 # Ingestion worker HTTP contract — version 1
 
-ADR-0015 and ADR-0016 define eight purpose-scoped operations. Every request
-uses the six-field HMAC `v2` string-to-sign and carries `contract_version: 1`.
+ADR-0015 and ADR-0016 define nine purpose-scoped operations. Every callback
+request uses the six-field HMAC `v2` string-to-sign and carries
+`contract_version: 1`; the claim request is the unchanged
+`document.ingestion.requested` v1 event body.
+
+The eighteen `*-request-v1.schema.json` and `*-response-v1.schema.json`
+files are the shared wire contracts for those operations.
+`worker-operation-vectors.json` is the single cross-language fixture source:
+Laravel and Python validate every canonical request and response plus the same
+unsupported-version, unknown-field, missing-field and invalid-enum mutations.
+Version 1 is the only supported worker HTTP version; unsupported versions fail
+closed.
 
 The shared `canonicalisation.json` file is the language-neutral authority for
 chunk content, chunk manifest and point manifest digests. PHP and Python tests
@@ -19,6 +29,7 @@ The operations are:
 - `ingestion.publication.authorise`
 - `ingestion.complete`
 - `ingestion.fail`
+- `ingestion.attempt.cancel`
 
 All identifiers are canonical lowercase UUID strings. Chunk submission and
 resume are bounded and paginated. Chunk text, vectors, credentials and

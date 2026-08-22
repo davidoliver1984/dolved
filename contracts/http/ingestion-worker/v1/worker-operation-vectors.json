@@ -1,0 +1,699 @@
+{
+  "contract_version": 1,
+  "operations": [
+    {
+      "name": "ingestion-claim",
+      "purpose": "ingestion.claim",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/claim",
+      "request_schema": "ingestion-claim-request-v1.schema.json",
+      "response_schema": "ingestion-claim-response-v1.schema.json",
+      "request": {
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "event_type": "document.ingestion.requested",
+        "event_version": 1,
+        "occurred_at": "2026-08-22T12:00:00+00:00",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "storage_bucket": "documents",
+        "storage_key": "workspace/document.txt",
+        "media_type": "text/plain",
+        "byte_size": 22,
+        "correlation_id": "00000000-0000-0000-0000-000000000010"
+      },
+      "response": {
+        "data": {
+          "outcome": "claimed",
+          "document_status": "processing",
+          "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+          "lease_expires_at": "2026-08-22T12:05:00+00:00",
+          "embedding_space_generation_id": "00000000-0000-0000-0000-000000000001",
+          "workspace_corpus_generation_id": "00000000-0000-0000-0000-000000000002",
+          "vector_space": {
+            "collection_name": "dolved-vectors",
+            "vector_name": "dense",
+            "dimensions": 1024,
+            "distance": "cosine",
+            "embedding_profile_fingerprint": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "sparse": {
+              "sparse_space_generation_id": "00000000-0000-0000-0000-000000000009",
+              "vector_name": "sparse",
+              "profile_fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "profile": {
+                "provider": "local"
+              }
+            }
+          },
+          "resume_sealed_attempt": false,
+          "reset_open_attempt": false
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "event_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "target": "request",
+          "action": "remove",
+          "path": [
+            "event_id"
+          ]
+        },
+        {
+          "case": "invalid-enum",
+          "target": "response",
+          "action": "set",
+          "path": [
+            "data",
+            "outcome"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "name": "ingestion-lease-renew",
+      "purpose": "ingestion.lease.renew",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/lease/renew",
+      "request_schema": "ingestion-lease-renew-request-v1.schema.json",
+      "response_schema": "ingestion-lease-renew-response-v1.schema.json",
+      "request": {
+        "contract_version": 1,
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d"
+      },
+      "response": {
+        "data": {
+          "outcome": "renewed",
+          "lease_expires_at": "2026-08-22T12:05:00+00:00"
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "target": "request",
+          "action": "remove",
+          "path": [
+            "event_id"
+          ]
+        },
+        {
+          "case": "invalid-enum",
+          "target": "response",
+          "action": "set",
+          "path": [
+            "data",
+            "outcome"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "name": "ingestion-chunks-submit",
+      "purpose": "ingestion.chunks.submit",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/chunks",
+      "request_schema": "ingestion-chunks-submit-request-v1.schema.json",
+      "response_schema": "ingestion-chunks-submit-response-v1.schema.json",
+      "request": {
+        "contract_version": 1,
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+        "chunks": [
+          {
+            "chunk_id": "00000000-0000-0000-0000-000000000101",
+            "ordinal": 0,
+            "text": "Canonical policy text.",
+            "token_count": 4,
+            "strategy_name": "baseline-structural",
+            "strategy_version": "1",
+            "configuration": {
+              "target_tokens": 400
+            },
+            "configuration_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "provenance": [
+              {
+                "normalised_element_id": "00000000-0000-0000-0000-000000000111",
+                "source_element_ids": [
+                  "00000000-0000-0000-0000-000000000121"
+                ],
+                "source_locations": [
+                  {
+                    "kind": "text",
+                    "start_character": 0,
+                    "end_character": 22,
+                    "start_line": 1,
+                    "end_line": 1
+                  }
+                ],
+                "element_start_character": 0,
+                "element_end_character": 22,
+                "chunk_start_character": 0,
+                "chunk_end_character": 22,
+                "role": "primary"
+              }
+            ],
+            "content_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ]
+      },
+      "response": {
+        "data": {
+          "outcome": "accepted",
+          "persisted_chunk_count": 1
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "target": "request",
+          "action": "remove",
+          "path": [
+            "event_id"
+          ]
+        },
+        {
+          "case": "invalid-enum",
+          "target": "response",
+          "action": "set",
+          "path": [
+            "data",
+            "outcome"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "name": "ingestion-chunks-seal",
+      "purpose": "ingestion.chunks.seal",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/chunks/seal",
+      "request_schema": "ingestion-chunks-seal-request-v1.schema.json",
+      "response_schema": "ingestion-chunks-seal-response-v1.schema.json",
+      "request": {
+        "contract_version": 1,
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+        "expected_chunk_count": 1,
+        "chunk_manifest_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "configuration_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "response": {
+        "data": {
+          "outcome": "sealed",
+          "expected_chunk_count": 1,
+          "chunk_manifest_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "target": "request",
+          "action": "remove",
+          "path": [
+            "event_id"
+          ]
+        },
+        {
+          "case": "invalid-enum",
+          "target": "response",
+          "action": "set",
+          "path": [
+            "data",
+            "outcome"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "name": "ingestion-attempt-resume",
+      "purpose": "ingestion.attempt.resume",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/resume",
+      "request_schema": "ingestion-attempt-resume-request-v1.schema.json",
+      "response_schema": "ingestion-attempt-resume-response-v1.schema.json",
+      "request": {
+        "contract_version": 1,
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+        "cursor": 0,
+        "limit": 50
+      },
+      "response": {
+        "data": {
+          "status": "sealed",
+          "expected_chunk_count": 1,
+          "chunk_manifest_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "publication_evidence": null,
+          "chunks": [
+            {
+              "chunk_id": "00000000-0000-0000-0000-000000000101",
+              "ordinal": 0,
+              "text": "Canonical policy text.",
+              "token_count": 4,
+              "strategy_name": "baseline-structural",
+              "strategy_version": "1",
+              "configuration": {
+                "target_tokens": 400
+              },
+              "configuration_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "provenance": [
+                {
+                  "normalised_element_id": "00000000-0000-0000-0000-000000000111",
+                  "source_element_ids": [
+                    "00000000-0000-0000-0000-000000000121"
+                  ],
+                  "source_locations": [
+                    {
+                      "kind": "text",
+                      "start_character": 0,
+                      "end_character": 22,
+                      "start_line": 1,
+                      "end_line": 1
+                    }
+                  ],
+                  "element_start_character": 0,
+                  "element_end_character": 22,
+                  "chunk_start_character": 0,
+                  "chunk_end_character": 22,
+                  "role": "primary"
+                }
+              ],
+              "content_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            }
+          ],
+          "next_cursor": null
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "target": "request",
+          "action": "remove",
+          "path": [
+            "event_id"
+          ]
+        },
+        {
+          "case": "invalid-enum",
+          "target": "response",
+          "action": "set",
+          "path": [
+            "data",
+            "status"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "name": "ingestion-publication-authorise",
+      "purpose": "ingestion.publication.authorise",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/publication/authorise",
+      "request_schema": "ingestion-publication-authorise-request-v1.schema.json",
+      "response_schema": "ingestion-publication-authorise-response-v1.schema.json",
+      "request": {
+        "contract_version": 1,
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+        "expected_chunk_count": 1,
+        "chunk_manifest_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "point_manifest_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "expected_point_count": 1,
+        "point_ids": [
+          "00000000-0000-0000-0000-000000000006"
+        ],
+        "embedding_profile_fingerprint": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "sparse_profile_fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "embedding_space_generation_id": "00000000-0000-0000-0000-000000000001",
+        "sparse_space_generation_id": "00000000-0000-0000-0000-000000000009",
+        "workspace_corpus_generation_id": "00000000-0000-0000-0000-000000000002",
+        "warnings": [
+          {
+            "code": "images_not_extracted",
+            "message": "Images were not extracted."
+          }
+        ]
+      },
+      "response": {
+        "data": {
+          "outcome": "authorised",
+          "evidence": {
+            "expected_chunk_count": 1,
+            "chunk_manifest_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "point_manifest_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "expected_point_count": 1,
+            "point_ids": [
+              "00000000-0000-0000-0000-000000000006"
+            ],
+            "embedding_profile_fingerprint": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "sparse_profile_fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "embedding_space_generation_id": "00000000-0000-0000-0000-000000000001",
+            "sparse_space_generation_id": "00000000-0000-0000-0000-000000000009",
+            "workspace_corpus_generation_id": "00000000-0000-0000-0000-000000000002",
+            "warnings": [
+              {
+                "code": "images_not_extracted",
+                "message": "Images were not extracted."
+              }
+            ]
+          }
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "target": "request",
+          "action": "remove",
+          "path": [
+            "event_id"
+          ]
+        },
+        {
+          "case": "invalid-enum",
+          "target": "response",
+          "action": "set",
+          "path": [
+            "data",
+            "outcome"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "name": "ingestion-complete",
+      "purpose": "ingestion.complete",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/complete",
+      "request_schema": "ingestion-complete-request-v1.schema.json",
+      "response_schema": "ingestion-complete-response-v1.schema.json",
+      "request": {
+        "contract_version": 1,
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+        "expected_chunk_count": 1,
+        "chunk_manifest_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "point_manifest_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "expected_point_count": 1,
+        "point_ids": [
+          "00000000-0000-0000-0000-000000000006"
+        ],
+        "embedding_profile_fingerprint": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "sparse_profile_fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "embedding_space_generation_id": "00000000-0000-0000-0000-000000000001",
+        "sparse_space_generation_id": "00000000-0000-0000-0000-000000000009",
+        "workspace_corpus_generation_id": "00000000-0000-0000-0000-000000000002",
+        "warnings": [
+          {
+            "code": "images_not_extracted",
+            "message": "Images were not extracted."
+          }
+        ],
+        "publication_verified": true,
+        "usage": []
+      },
+      "response": {
+        "data": {
+          "outcome": "indexed",
+          "document_status": "indexed"
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "target": "request",
+          "action": "remove",
+          "path": [
+            "event_id"
+          ]
+        },
+        {
+          "case": "invalid-enum",
+          "target": "response",
+          "action": "set",
+          "path": [
+            "data",
+            "outcome"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "name": "ingestion-fail",
+      "purpose": "ingestion.fail",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/fail",
+      "request_schema": "ingestion-fail-request-v1.schema.json",
+      "response_schema": "ingestion-fail-response-v1.schema.json",
+      "request": {
+        "contract_version": 1,
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+        "classification": "permanent",
+        "failure_code": "extraction.invalid",
+        "failure_message": "Invalid source.",
+        "usage": []
+      },
+      "response": {
+        "data": {
+          "outcome": "failed",
+          "document_status": "failed"
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "target": "request",
+          "action": "remove",
+          "path": [
+            "event_id"
+          ]
+        },
+        {
+          "case": "invalid-enum",
+          "target": "response",
+          "action": "set",
+          "path": [
+            "data",
+            "outcome"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "name": "ingestion-attempt-cancel",
+      "purpose": "ingestion.attempt.cancel",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/cancel",
+      "request_schema": "ingestion-attempt-cancel-request-v1.schema.json",
+      "response_schema": "ingestion-attempt-cancel-response-v1.schema.json",
+      "request": {
+        "contract_version": 1,
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+        "usage": []
+      },
+      "response": {
+        "data": {
+          "outcome": "cancelled",
+          "attempt_status": "cancelled"
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "target": "request",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "target": "request",
+          "action": "remove",
+          "path": [
+            "event_id"
+          ]
+        },
+        {
+          "case": "invalid-enum",
+          "target": "response",
+          "action": "set",
+          "path": [
+            "data",
+            "outcome"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    }
+  ]
+}

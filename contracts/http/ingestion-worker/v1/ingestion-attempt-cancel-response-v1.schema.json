@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "data"
+  ],
+  "properties": {
+    "data": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "attempt_status"
+      ],
+      "properties": {
+        "outcome": {
+          "const": "cancelled"
+        },
+        "attempt_status": {
+          "enum": [
+            "cancelled"
+          ]
+        }
+      }
+    }
+  },
+  "$id": "https://contracts.dolved.internal/http/ingestion-worker/v1/ingestion-attempt-cancel-response-v1.schema.json",
+  "title": "Ingestion Attempt Cancel Response (v1)"
+}

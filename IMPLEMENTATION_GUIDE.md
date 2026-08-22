@@ -14151,7 +14151,7 @@ Verify that Laravel and Python agree on shared HTTP and event contracts.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-22.
 
 ### Acceptance criteria
 
@@ -14163,9 +14163,43 @@ Not yet executed.
 * Unsupported versions are tested.
 * Contract generation or duplication is controlled.
 
+### Delivered implementation
+
+* Added versioned request and response schemas for all nine ingestion-worker
+  operations and all three document-deletion-worker operations, with one
+  shared valid/invalid fixture inventory consumed independently by PHPUnit and
+  Pytest.
+* Added twelve shared HMAC signing vectors and proved that the real Python
+  signer and Laravel verifier agree on the complete signed operation surface.
+* Proved that the real Python ingestion and deletion clients emit the same
+  canonical request structures bound by the shared fixtures; claim fixtures
+  also remain valid against their authoritative event contracts.
+* Added one shared Retrieval rc1 fixture inventory covering every request and
+  response schema, including unknown fields, missing required fields, invalid
+  values and unsupported contract versions in both languages.
+* Added `make evaluation-policy-gate`, including non-zero process propagation
+  for an existing policy failure and version-aware loading of the immutable V1
+  promoted baseline through the existing comparison-only adapter.
+* Added `make evaluation-generation-verify`, which makes no provider or
+  evaluator calls and validates each historical generation run according to
+  its own checksum-declared inventory and schema version. It verifies
+  population and observation bindings and recomputes only deterministic
+  outcome, citation, over-refusal, overclaiming and leakage evidence.
+
+### Verification evidence
+
+The shared contract tests passed in PHPUnit (176 assertions) and Pytest. The
+full Laravel suite passed with 336 tests and 1,789 assertions (two intentional
+skips); the full Python suite passed with 570 tests (four skips); and the web
+suite passed with 115 tests. Both provider-free evaluation gates passed, while
+a temporary degraded retrieval candidate failed with a non-zero exit and
+`regression:recall_at_k`. All 35 affected JSON Schemas passed Draft 2020-12
+meta-validation. Pint, ESLint, Ruff lint/format, TypeScript, Mypy, the Collector
+configuration test and `git diff --check` passed. No provider calls were made.
+
 ### Commit boundary
 
-git add contracts apps/api apps/ai tests
+git add contracts apps/api apps/ai scripts makefile docs
 git commit -m "Add shared contract tests"
 
 ---

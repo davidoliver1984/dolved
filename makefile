@@ -16,7 +16,7 @@ TAIL ?= 100
 	bootstrap migrate seed reset clean \
 	aws-provision aws-status qdrant-status publish-ingestion consume-ingestion \
 	telemetry-smoke telemetry-verify telemetry-outage \
-	evaluation-run \
+	evaluation-run evaluation-policy-gate evaluation-generation-verify \
 	evaluation-benchmark-sync \
 	evaluation-benchmark-compile \
 	evaluation-exp-0003 \
@@ -54,6 +54,8 @@ help:
 		'  make telemetry-verify Verify cross-service trace, privacy and cardinality' \
 		'  make telemetry-outage Verify requests survive a Collector outage' \
 		'  make evaluation-run   Run the offline retrieval evaluation corpus' \
+		'  make evaluation-policy-gate  Enforce the historical retrieval policy without providers' \
+		'  make evaluation-generation-verify  Verify immutable generation evidence without providers' \
 		'  make evaluation-benchmark-sync  Synchronise authored Markdown paths into the benchmark catalogue' \
 		'  make evaluation-benchmark-compile  Validate and compile the engineering benchmark pilot' \
 		'  make evaluation-exp-0003  Run the post-reliability full V2 engineering baseline' \
@@ -296,6 +298,32 @@ evaluation-run:
 			--observations tests/evaluation/observations/$(EVALUATION_CORPUS_VERSION)/offline-baseline.json \
 			--repository-commit "$(shell git rev-parse HEAD)" \
 			--output /output/result.json
+
+evaluation-policy-gate: evaluation-run
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace" \
+		--volume "$(CURDIR)/apps/ai/app:/app/app:ro" \
+		--volume "/app/.venv" \
+		--volume "/tmp/rag-platform-evaluation:/output" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		ai python scripts/evaluation/run.py compare \
+			--candidate /output/result.json \
+			--baseline docs/evaluation/baselines/$(EVALUATION_CORPUS_VERSION)/experiment-result.json \
+			--promotion docs/evaluation/baselines/$(EVALUATION_CORPUS_VERSION)/baseline-promotion.json \
+			--policy tests/evaluation/policies/v1/policy.json \
+			--output /output/comparison-report.md
+
+evaluation-generation-verify:
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace:ro" \
+		--volume "$(CURDIR)/apps/ai/app:/app/app:ro" \
+		--volume "/app/.venv" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		ai python scripts/evaluation/verify_generation_evidence.py \
+			--generation-root docs/evaluation/generation \
+			--runs-root docs/evaluation/runs
 
 evaluation-live-hybrid:
 	@test "$${RUN_LIVE_HYBRID_EVALUATION:-}" = "1" || \

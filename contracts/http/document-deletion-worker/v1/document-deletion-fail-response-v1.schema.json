@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "data"
+  ],
+  "properties": {
+    "data": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "status"
+      ],
+      "properties": {
+        "outcome": {
+          "const": "recorded"
+        },
+        "status": {
+          "enum": [
+            "queued",
+            "failed"
+          ]
+        }
+      }
+    }
+  },
+  "$id": "https://contracts.dolved.internal/http/document-deletion-worker/v1/document-deletion-fail-response-v1.schema.json",
+  "title": "Document Deletion Fail Response (v1)"
+}

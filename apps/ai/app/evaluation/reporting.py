@@ -1,9 +1,12 @@
 """Stable human-readable experiment comparison reports."""
 
+from app.evaluation.historical_result import ComparisonResult
 from app.evaluation.models import ExperimentResult
 
 
-def comparison_report(candidate: ExperimentResult, baseline: ExperimentResult) -> str:
+def comparison_report(
+    candidate: ExperimentResult, baseline: ExperimentResult | ComparisonResult
+) -> str:
     candidate_metrics = candidate.aggregate.metrics
     baseline_metrics = baseline.aggregate.metrics
     if candidate_metrics is None or baseline_metrics is None:

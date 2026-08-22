@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
+from app.evaluation.historical_result import ComparisonResult
 from app.evaluation.models import (
     BaselinePromotion,
     ExperimentResult,
@@ -55,7 +56,7 @@ def verify_baseline_identity(
 
 def assess_gate(
     candidate: ExperimentResult,
-    baseline: ExperimentResult,
+    baseline: ExperimentResult | ComparisonResult,
     policy: QualityGatePolicy,
 ) -> tuple[bool, tuple[str, ...]]:
     failures = set(candidate.hard_failures)

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "event_id",
+    "workspace_id",
+    "document_id",
+    "lease_token",
+    "scopes"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": 1
+    },
+    "event_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "workspace_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "document_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "lease_token": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "scopes": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scope_index",
+          "outcome",
+          "remaining_point_count"
+        ],
+        "properties": {
+          "scope_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "outcome": {
+            "enum": [
+              "verified_clean",
+              "authoritative_not_found"
+            ]
+          },
+          "remaining_point_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  },
+  "$id": "https://contracts.dolved.internal/http/document-deletion-worker/v1/document-deletion-complete-request-v1.schema.json",
+  "title": "Document Deletion Complete Request (v1)"
+}

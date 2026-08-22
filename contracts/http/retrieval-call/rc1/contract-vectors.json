@@ -1,0 +1,695 @@
+{
+  "contract_version": 1,
+  "contracts": [
+    {
+      "schema": "plan-v1.schema.json",
+      "payload": {
+        "contract_version": 1,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "workspace_id": "22222222-2222-4222-8222-222222222222",
+        "question": "What is current?",
+        "evaluated_at": "2026-08-22T12:00:00+00:00"
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "question"
+          ],
+          "value": ""
+        }
+      ]
+    },
+    {
+      "schema": "plan-response-v2.schema.json",
+      "payload": {
+        "contract_version": 2,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "plan": {
+          "retrieval_queries": [
+            "What is current?"
+          ],
+          "temporal_mode": "current",
+          "explicit_date": null,
+          "temporal_reference": null,
+          "location_references": [],
+          "clarification_reason": null
+        },
+        "classifier_lineage": {
+          "provider": "deterministic",
+          "model": "fixed",
+          "contract_schema_version": "plan-response-v2",
+          "prompt_version": "fixed-v1",
+          "adapter_version": "fixed-v1",
+          "fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "usage": {
+          "stage": "planner",
+          "provider": "deterministic",
+          "model": "fixed",
+          "execution": "local",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": null,
+          "cached_input_tokens": null,
+          "output_tokens": null,
+          "latency_ms": 0,
+          "cost_basis": "zero_cost_local",
+          "cost_usd": 0,
+          "pricing_snapshot": null
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "plan",
+            "temporal_mode"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "schema": "search-v1.schema.json",
+      "payload": {
+        "contract_version": 1,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "workspace_id": "22222222-2222-4222-8222-222222222222",
+        "query": "What is current?",
+        "embedding_profile": {
+          "provider": "voyage",
+          "model": "voyage-4-large",
+          "dimensions": 1024,
+          "input_type": "document",
+          "normalisation": "none",
+          "truncation": false,
+          "adapter_version": "1"
+        },
+        "embedding_profile_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "vector_space": {
+          "collection_name": "dolved-vectors",
+          "embedding_space_generation_id": "99999999-9999-4999-8999-999999999999",
+          "profile_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "dimensions": 1024,
+          "distance": "cosine",
+          "vector_name": "dense",
+          "sparse": {
+            "sparse_space_generation_id": "88888888-8888-4888-8888-888888888888",
+            "profile_fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "vector_name": "sparse"
+          }
+        },
+        "workspace_corpus_generation_id": "77777777-7777-4777-8777-777777777777",
+        "candidate_k": 10,
+        "scopes": [
+          {
+            "side": "primary",
+            "eligible_document_ids": [
+              "33333333-3333-4333-8333-333333333333"
+            ]
+          }
+        ]
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "scopes",
+            0,
+            "side"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "schema": "conversation-contextualize-v1.schema.json",
+      "payload": {
+        "contract_version": 1,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "workspace_id": "22222222-2222-4222-8222-222222222222",
+        "current_message": "What about that procedure?",
+        "history": [
+          {
+            "user_message": "Which procedure applies?",
+            "assistant_message": "The current procedure applies.",
+            "assistant_kind": "grounded_answer",
+            "user_ordinal": 1,
+            "assistant_ordinal": 2
+          }
+        ],
+        "context_policy_version": "bounded-completed-turns-v1"
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "current_message"
+          ],
+          "value": ""
+        }
+      ]
+    },
+    {
+      "schema": "conversation-contextualize-response-v1.schema.json",
+      "payload": {
+        "contract_version": 1,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "result": {
+          "status": "resolved",
+          "resolved_query": "Which current procedure applies?",
+          "used_prior_context": true,
+          "interpretation_metadata": {
+            "used_turn_ordinals": [
+              1
+            ]
+          },
+          "clarification_question": null,
+          "contextualiser_version": "conversation-context-v1",
+          "usage": {
+            "execution": "provider_api",
+            "request_count": 1
+          }
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "result",
+            "status"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "schema": "rerank-v1.schema.json",
+      "payload": {
+        "contract_version": 1,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "workspace_id": "22222222-2222-4222-8222-222222222222",
+        "query": "What is current?",
+        "profile": {
+          "provider": "voyage",
+          "model": "rerank-2.5",
+          "adapter_version": "1",
+          "truncation": false
+        },
+        "candidates": [
+          {
+            "chunk_id": "55555555-5555-4555-8555-555555555555",
+            "document_id": "33333333-3333-4333-8333-333333333333",
+            "document_family_id": "44444444-4444-4444-8444-444444444444",
+            "version_position": 1,
+            "side": "primary",
+            "text": "Canonical policy text.",
+            "fused_score": 0.04,
+            "fused_rank": 1
+          }
+        ],
+        "top_k": 1
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "candidates",
+            0,
+            "side"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "schema": "corpus-rebuild-batch-v1.schema.json",
+      "payload": {
+        "contract_version": 1,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "workspace_id": "22222222-2222-4222-8222-222222222222",
+        "rebuild_event_id": "66666666-6666-4666-8666-666666666666",
+        "embedding_profile": {
+          "provider": "voyage",
+          "model": "voyage-4-large",
+          "dimensions": 1024,
+          "input_type": "document",
+          "normalisation": "none",
+          "truncation": false,
+          "adapter_version": "1"
+        },
+        "sparse_embedding_profile": {
+          "provider": "test",
+          "model": "sparse",
+          "tokenizer": "test",
+          "max_input_tokens": 100,
+          "adapter_version": "1"
+        },
+        "vector_space": {
+          "collection_name": "dolved-vectors",
+          "embedding_space_generation_id": "99999999-9999-4999-8999-999999999999",
+          "profile_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "dimensions": 1024,
+          "distance": "cosine",
+          "vector_name": "dense",
+          "sparse": {
+            "sparse_space_generation_id": "88888888-8888-4888-8888-888888888888",
+            "profile_fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "vector_name": "sparse"
+          }
+        },
+        "workspace_corpus_generation_id": "77777777-7777-4777-8777-777777777777",
+        "chunks": [
+          {
+            "chunk_id": "55555555-5555-4555-8555-555555555555",
+            "document_id": "33333333-3333-4333-8333-333333333333",
+            "text": "Canonical policy text."
+          }
+        ]
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "chunks",
+            0,
+            "text"
+          ],
+          "value": ""
+        }
+      ]
+    },
+    {
+      "schema": "corpus-verify-v1.schema.json",
+      "payload": {
+        "contract_version": 1,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "workspace_id": "22222222-2222-4222-8222-222222222222",
+        "vector_space": {
+          "collection_name": "dolved-vectors",
+          "embedding_space_generation_id": "99999999-9999-4999-8999-999999999999",
+          "profile_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "dimensions": 1024,
+          "distance": "cosine",
+          "vector_name": "dense",
+          "sparse": {
+            "sparse_space_generation_id": "88888888-8888-4888-8888-888888888888",
+            "profile_fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "vector_name": "sparse"
+          }
+        },
+        "workspace_corpus_generation_id": "77777777-7777-4777-8777-777777777777",
+        "points": [
+          {
+            "chunk_id": "55555555-5555-4555-8555-555555555555",
+            "document_id": "33333333-3333-4333-8333-333333333333",
+            "event_id": "66666666-6666-4666-8666-666666666666"
+          }
+        ]
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "points",
+            0,
+            "event_id"
+          ],
+          "value": "not-a-uuid"
+        }
+      ]
+    },
+    {
+      "schema": "generation-answer-v1.schema.json",
+      "payload": {
+        "contract_version": 1,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "workspace_id": "22222222-2222-4222-8222-222222222222",
+        "question": "What is the current procedure?",
+        "evidence": [
+          {
+            "evidence_id": "ev-01",
+            "text": "Canonical evidence.",
+            "document_chunk_id": 1,
+            "document_id": 2,
+            "ingestion_event_claim_id": 3,
+            "source_provenance": [
+              {
+                "kind": "text"
+              }
+            ],
+            "temporal_authority": {
+              "mode": "current"
+            },
+            "applicability_context": {
+              "scope": "universal"
+            },
+            "side": "primary"
+          }
+        ],
+        "constraints": {
+          "context_policy_version": "whole-evidence-v1",
+          "max_context_characters": 60000,
+          "required_sides": [
+            "primary"
+          ]
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "evidence",
+            0,
+            "side"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "schema": "generation-answer-response-v1.schema.json",
+      "payload": {
+        "contract_version": 1,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "status": "completed",
+        "result": {
+          "contract_version": 1,
+          "outcome": "answered",
+          "answer_parts": [
+            {
+              "text": "Grounded answer.",
+              "evidence_ids": [
+                "ev-01"
+              ]
+            }
+          ],
+          "unsupported_aspects": [],
+          "insufficiency_reason": null,
+          "usage": null
+        }
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "status"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    },
+    {
+      "schema": "generation-stream-event-v1.schema.json",
+      "payload": {
+        "contract_version": 1,
+        "request_id": "11111111-1111-4111-8111-111111111111",
+        "sequence": 1,
+        "event_type": "answer_part_candidate",
+        "candidate": {
+          "text": "Grounded answer.",
+          "evidence_ids": [
+            "ev-01"
+          ]
+        },
+        "result": null,
+        "error": null,
+        "failure": null
+      },
+      "invalid": [
+        {
+          "case": "unsupported-version",
+          "action": "set",
+          "path": [
+            "contract_version"
+          ],
+          "value": 999
+        },
+        {
+          "case": "unknown-field",
+          "action": "set",
+          "path": [
+            "unexpected"
+          ],
+          "value": true
+        },
+        {
+          "case": "missing-required-field",
+          "action": "remove",
+          "path": [
+            "request_id"
+          ]
+        },
+        {
+          "case": "invalid-value",
+          "action": "set",
+          "path": [
+            "event_type"
+          ],
+          "value": "unsupported"
+        }
+      ]
+    }
+  ]
+}

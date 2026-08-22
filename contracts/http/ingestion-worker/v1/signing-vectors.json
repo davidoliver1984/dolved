@@ -1,0 +1,127 @@
+{
+    "contract_version": 2,
+    "key_id": "local-v1",
+    "secret_base64": "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=",
+    "vectors": [
+        {
+            "name": "ingestion-claim",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/claim",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.claim",
+            "body": "{\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"event_type\":\"document.ingestion.requested\",\"event_version\":1,\"occurred_at\":\"2026-08-22T12:00:00+00:00\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"storage_bucket\":\"documents\",\"storage_key\":\"workspace/document.txt\",\"media_type\":\"text/plain\",\"byte_size\":22,\"correlation_id\":\"00000000-0000-0000-0000-000000000010\"}",
+            "signature": "v2=be2afbf28c73da53617b8851c1b5a62c648e4530b4828a065be65ad5a22078de"
+        },
+        {
+            "name": "ingestion-lease-renew",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/lease/renew",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.lease.renew",
+            "body": "{\"contract_version\":1,\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\"}",
+            "signature": "v2=2b363f2ef4b111cabe115cc244f61f98bc0e79875a2db7c324d9a8dee65204c1"
+        },
+        {
+            "name": "ingestion-chunks-submit",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/chunks",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.chunks.submit",
+            "body": "{\"contract_version\":1,\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"chunks\":[{\"chunk_id\":\"00000000-0000-0000-0000-000000000101\",\"ordinal\":0,\"text\":\"Canonical policy text.\",\"token_count\":4,\"strategy_name\":\"baseline-structural\",\"strategy_version\":\"1\",\"configuration\":{\"target_tokens\":400},\"configuration_fingerprint\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"provenance\":[{\"normalised_element_id\":\"00000000-0000-0000-0000-000000000111\",\"source_element_ids\":[\"00000000-0000-0000-0000-000000000121\"],\"source_locations\":[{\"kind\":\"text\",\"start_character\":0,\"end_character\":22,\"start_line\":1,\"end_line\":1}],\"element_start_character\":0,\"element_end_character\":22,\"chunk_start_character\":0,\"chunk_end_character\":22,\"role\":\"primary\"}],\"content_digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}]}",
+            "signature": "v2=8fe66c6937578099b2951c8526e7a1789de2071519475c2b776a8267ff993859"
+        },
+        {
+            "name": "ingestion-chunks-seal",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/chunks/seal",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.chunks.seal",
+            "body": "{\"contract_version\":1,\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"expected_chunk_count\":1,\"chunk_manifest_digest\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"configuration_fingerprint\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+            "signature": "v2=86ad8836c5ee50493e6d0b96d11287587a2ccb86564ae3d80181072a0ad5b716"
+        },
+        {
+            "name": "ingestion-attempt-resume",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/resume",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.attempt.resume",
+            "body": "{\"contract_version\":1,\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"cursor\":0,\"limit\":50}",
+            "signature": "v2=af6bf60706f90ab7c3fc340239252c2fdbb0722b9a8fc29b85c078cf7b150fe6"
+        },
+        {
+            "name": "ingestion-publication-authorise",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/publication/authorise",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.publication.authorise",
+            "body": "{\"contract_version\":1,\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"expected_chunk_count\":1,\"chunk_manifest_digest\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"point_manifest_digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"expected_point_count\":1,\"point_ids\":[\"00000000-0000-0000-0000-000000000006\"],\"embedding_profile_fingerprint\":\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"sparse_profile_fingerprint\":\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"embedding_space_generation_id\":\"00000000-0000-0000-0000-000000000001\",\"sparse_space_generation_id\":\"00000000-0000-0000-0000-000000000009\",\"workspace_corpus_generation_id\":\"00000000-0000-0000-0000-000000000002\",\"warnings\":[{\"code\":\"images_not_extracted\",\"message\":\"Images were not extracted.\"}]}",
+            "signature": "v2=6961a8020c3d0872d277a61b90f9567cef9a1e4b11e1f5a0476025d36a669d6a"
+        },
+        {
+            "name": "ingestion-complete",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/complete",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.complete",
+            "body": "{\"contract_version\":1,\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"expected_chunk_count\":1,\"chunk_manifest_digest\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"point_manifest_digest\":\"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\",\"expected_point_count\":1,\"point_ids\":[\"00000000-0000-0000-0000-000000000006\"],\"embedding_profile_fingerprint\":\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",\"sparse_profile_fingerprint\":\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"embedding_space_generation_id\":\"00000000-0000-0000-0000-000000000001\",\"sparse_space_generation_id\":\"00000000-0000-0000-0000-000000000009\",\"workspace_corpus_generation_id\":\"00000000-0000-0000-0000-000000000002\",\"warnings\":[{\"code\":\"images_not_extracted\",\"message\":\"Images were not extracted.\"}],\"publication_verified\":true,\"usage\":[]}",
+            "signature": "v2=1a306c9609cf88d2d35fa09927fef875bbc8b7966d38f0a53fb91d1995d0eb83"
+        },
+        {
+            "name": "ingestion-fail",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/fail",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.fail",
+            "body": "{\"contract_version\":1,\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"classification\":\"permanent\",\"failure_code\":\"extraction.invalid\",\"failure_message\":\"Invalid source.\",\"usage\":[]}",
+            "signature": "v2=994874ac8dcb4514d30264adf7b668dc9212c3616b8492665e07770899843ad1"
+        },
+        {
+            "name": "ingestion-attempt-cancel",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/cancel",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.attempt.cancel",
+            "body": "{\"contract_version\":1,\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"usage\":[]}",
+            "signature": "v2=1200e56a0ce39b923b43c71a6b5f99751e95e503ca8c16a5bbd83dbff461cf2f"
+        },
+        {
+            "name": "document-deletion-claim",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/document-deletions/a1111111-1111-4111-8111-111111111111/claim",
+            "event_id": "a1111111-1111-4111-8111-111111111111",
+            "purpose": "document.deletion.claim",
+            "body": "{\"event_id\":\"a1111111-1111-4111-8111-111111111111\",\"event_type\":\"document.deletion.requested\",\"event_version\":1,\"occurred_at\":\"2026-08-22T12:00:00+00:00\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"correlation_id\":\"00000000-0000-0000-0000-000000000010\",\"vector_scopes\":[{\"vector_space\":{\"collection_name\":\"dolved-vectors\",\"embedding_space_generation_id\":\"00000000-0000-0000-0000-000000000001\",\"profile_fingerprint\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"vector_name\":\"dense\",\"dimensions\":1024,\"distance\":\"cosine\",\"sparse\":null},\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"workspace_corpus_generation_id\":\"00000000-0000-0000-0000-000000000002\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\"}]}",
+            "signature": "v2=cc010fe91c13e1ea681a0f8908e94f91b0d77bd357386339bdfb987d600b8bd4"
+        },
+        {
+            "name": "document-deletion-complete",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/document-deletions/a1111111-1111-4111-8111-111111111111/complete",
+            "event_id": "a1111111-1111-4111-8111-111111111111",
+            "purpose": "document.deletion.complete",
+            "body": "{\"contract_version\":1,\"event_id\":\"a1111111-1111-4111-8111-111111111111\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"scopes\":[{\"scope_index\":0,\"outcome\":\"verified_clean\",\"remaining_point_count\":0}]}",
+            "signature": "v2=fcf8e8a1d8dd5289022b26ebea7b0ad4db1a1e72617594792598336fb5e3f656"
+        },
+        {
+            "name": "document-deletion-fail",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/document-deletions/a1111111-1111-4111-8111-111111111111/fail",
+            "event_id": "a1111111-1111-4111-8111-111111111111",
+            "purpose": "document.deletion.fail",
+            "body": "{\"contract_version\":1,\"event_id\":\"a1111111-1111-4111-8111-111111111111\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"classification\":\"retryable\",\"failure_code\":\"vector_store.unavailable\",\"failure_message\":\"Vector store unavailable.\"}",
+            "signature": "v2=94b189d80d1f2988ad57c2c0e8b416480c8673da8a75c5abfeaeb4d5a5d9370e"
+        }
+    ]
+}

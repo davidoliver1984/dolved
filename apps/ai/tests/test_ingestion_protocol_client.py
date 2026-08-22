@@ -50,6 +50,7 @@ def test_every_operation_has_an_independent_signed_purpose() -> None:
         failure_code="extraction.invalid",
         failure_message="Invalid source.",
     )
+    client.cancel(CONTEXT)
 
     assert [purpose for _, purpose in captured] == [
         "ingestion.claim",
@@ -60,6 +61,7 @@ def test_every_operation_has_an_independent_signed_purpose() -> None:
         "ingestion.publication.authorise",
         "ingestion.complete",
         "ingestion.fail",
+        "ingestion.attempt.cancel",
     ]
 
 

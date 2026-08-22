@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "data"
+  ],
+  "properties": {
+    "data": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "document_status"
+      ],
+      "properties": {
+        "outcome": {
+          "const": "indexed"
+        },
+        "document_status": {
+          "enum": [
+            "indexed",
+            "failed"
+          ]
+        }
+      }
+    }
+  },
+  "$id": "https://contracts.dolved.internal/http/ingestion-worker/v1/ingestion-complete-response-v1.schema.json",
+  "title": "Ingestion Complete Response (v1)"
+}

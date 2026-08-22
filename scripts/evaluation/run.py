@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -17,6 +18,7 @@ from app.evaluation.governance import (
     verify_baseline_identity,
 )
 from app.evaluation.harness import RetrievalEvaluationHarness
+from app.evaluation.historical_result import load_comparison_result
 from app.evaluation.live_hybrid_retrieval import evaluate_live_hybrid_retrieval
 from app.evaluation.model_assisted import (
     FakeModelAssistedEvaluator,
@@ -86,7 +88,7 @@ def run(args: argparse.Namespace) -> None:
 
 def compare(args: argparse.Namespace) -> None:
     candidate = ExperimentResult.model_validate(load_json(args.candidate))
-    baseline = ExperimentResult.model_validate(load_json(args.baseline))
+    baseline = load_comparison_result(load_json(args.baseline))
     promotion = BaselinePromotion.model_validate(load_json(args.promotion))
     policy = QualityGatePolicy.model_validate(load_json(args.policy))
     verify_baseline_identity(candidate, promotion)
@@ -97,6 +99,9 @@ def compare(args: argparse.Namespace) -> None:
         report += "\n" + "\n".join(f"- `{item}`" for item in failures) + "\n"
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(report)
+    if not passed:
+        print(f"Evaluation policy gate failed: {failures}", file=sys.stderr)
+        raise SystemExit(1)
 
 
 def promote(args: argparse.Namespace) -> None:

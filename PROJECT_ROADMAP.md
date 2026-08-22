@@ -921,6 +921,17 @@ required-versus-optional Phase 22 gate. Stage 22.2 can now add the missing
 cross-language contract schemas and verification without inventing another
 contract authority.
 
+**Shared contract verification completed 2026-08-22** (Stage 22.2): all
+twelve signed worker operations now have versioned request/response contracts,
+shared positive and negative fixtures, and cross-language signing proof. The
+Retrieval rc1 surface is exercised from one shared fixture inventory in both
+languages. Provider-free retrieval-policy and generation-evidence gates are
+now executable Make targets: historical V1 evidence remains immutable and is
+loaded through its accepted comparison adapter, while deterministic generation
+checks are reproduced without silently regenerating semantic model scores.
+Stage 22.3 can now build the isolated full-path ingestion E2E layer on these
+contract boundaries.
+
 ### Deliverable
 
 Comprehensive test suite.

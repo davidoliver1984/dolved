@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "data"
+  ],
+  "properties": {
+    "data": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "expected_chunk_count",
+        "chunk_manifest_digest"
+      ],
+      "properties": {
+        "outcome": {
+          "const": "sealed"
+        },
+        "expected_chunk_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "chunk_manifest_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  },
+  "$id": "https://contracts.dolved.internal/http/ingestion-worker/v1/ingestion-chunks-seal-response-v1.schema.json",
+  "title": "Ingestion Chunks Seal Response (v1)"
+}

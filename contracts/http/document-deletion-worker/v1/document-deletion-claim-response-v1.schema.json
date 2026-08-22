@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "data"
+  ],
+  "properties": {
+    "data": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "oneOf": [
+        {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "outcome",
+            "lease_token",
+            "lease_expires_at",
+            "vector_scopes"
+          ],
+          "properties": {
+            "outcome": {
+              "const": "claimed"
+            },
+            "lease_token": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "lease_expires_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "vector_scopes": {
+              "type": "array",
+              "maxItems": 100,
+              "items": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "vector_space",
+                  "workspace_id",
+                  "workspace_corpus_generation_id",
+                  "document_id"
+                ],
+                "properties": {
+                  "vector_space": {
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "collection_name",
+                      "embedding_space_generation_id",
+                      "profile_fingerprint",
+                      "vector_name",
+                      "dimensions",
+                      "distance",
+                      "sparse"
+                    ],
+                    "properties": {
+                      "collection_name": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "embedding_space_generation_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "profile_fingerprint": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "vector_name": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "dimensions": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "distance": {
+                        "const": "cosine"
+                      },
+                      "sparse": {
+                        "oneOf": [
+                          {
+                            "type": "null"
+                          },
+                          {
+                            "$schema": "https://json-schema.org/draft/2020-12/schema",
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                              "sparse_space_generation_id",
+                              "profile_fingerprint",
+                              "vector_name"
+                            ],
+                            "properties": {
+                              "sparse_space_generation_id": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "profile_fingerprint": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{64}$"
+                              },
+                              "vector_name": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "workspace_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "workspace_corpus_generation_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "document_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "outcome"
+          ],
+          "properties": {
+            "outcome": {
+              "const": "already_completed"
+            }
+          }
+        },
+        {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "outcome"
+          ],
+          "properties": {
+            "outcome": {
+              "const": "owned_by_another_worker"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$id": "https://contracts.dolved.internal/http/document-deletion-worker/v1/document-deletion-claim-response-v1.schema.json",
+  "title": "Document Deletion Claim Response (v1)"
+}

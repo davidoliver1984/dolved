@@ -11,6 +11,31 @@ use RuntimeException;
 
 final class RetrievalContractTest extends TestCase
 {
+    public function test_shared_rc1_valid_and_negative_fixtures_cover_every_schema(): void
+    {
+        $directory = '/contracts/http/retrieval-call/rc1';
+        $fixture = json_decode(
+            (string) file_get_contents($directory.'/contract-vectors.json'),
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        );
+        $schemaNames = array_map('basename', glob($directory.'/*.schema.json') ?: []);
+        $fixtureNames = array_column($fixture['contracts'], 'schema');
+        sort($schemaNames);
+        sort($fixtureNames);
+        $this->assertSame($schemaNames, $fixtureNames);
+
+        foreach ($fixture['contracts'] as $contract) {
+            $this->assertMatchesSchema($contract['schema'], $contract['payload']);
+            foreach ($contract['invalid'] as $mutation) {
+                $this->assertDoesNotMatchSchema(
+                    $contract['schema'],
+                    $this->mutate($contract['payload'], $mutation),
+                );
+            }
+        }
+    }
+
     public function test_laravel_request_shapes_match_shared_rc1_schemas(): void
     {
         $workspaceId = (string) Str::uuid();
@@ -308,5 +333,22 @@ final class RetrievalContractTest extends TestCase
         $object = json_decode(json_encode($payload, JSON_THROW_ON_ERROR), flags: JSON_THROW_ON_ERROR);
 
         $this->assertFalse((new Validator)->validate($object, $schema)->isValid());
+    }
+
+    /** @param array<string, mixed> $payload @param array<string, mixed> $mutation @return array<string, mixed> */
+    private function mutate(array $payload, array $mutation): array
+    {
+        $cursor = &$payload;
+        foreach (array_slice($mutation['path'], 0, -1) as $segment) {
+            $cursor = &$cursor[$segment];
+        }
+        $last = $mutation['path'][array_key_last($mutation['path'])];
+        if ($mutation['action'] === 'remove') {
+            unset($cursor[$last]);
+        } else {
+            $cursor[$last] = $mutation['value'];
+        }
+
+        return $payload;
     }
 }

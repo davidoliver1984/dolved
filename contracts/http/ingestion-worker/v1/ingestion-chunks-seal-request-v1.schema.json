@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "event_id",
+    "workspace_id",
+    "document_id",
+    "lease_token",
+    "expected_chunk_count",
+    "chunk_manifest_digest",
+    "configuration_fingerprint"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": 1
+    },
+    "event_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "workspace_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "document_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "lease_token": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "expected_chunk_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "chunk_manifest_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "configuration_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$id": "https://contracts.dolved.internal/http/ingestion-worker/v1/ingestion-chunks-seal-request-v1.schema.json",
+  "title": "Ingestion Chunks Seal Request (v1)"
+}

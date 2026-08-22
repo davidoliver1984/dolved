@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "event_id",
+    "workspace_id",
+    "document_id",
+    "lease_token",
+    "classification",
+    "failure_code",
+    "failure_message"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": 1
+    },
+    "event_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "workspace_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "document_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "lease_token": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "classification": {
+      "const": "permanent"
+    },
+    "failure_code": {
+      "type": "string",
+      "pattern": "^[a-z0-9._-]+$",
+      "maxLength": 100
+    },
+    "failure_message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "usage": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stage",
+          "provider",
+          "model",
+          "execution",
+          "request_count",
+          "retry_count",
+          "input_tokens",
+          "cached_input_tokens",
+          "output_tokens",
+          "latency_ms",
+          "cost_usd",
+          "cost_basis",
+          "pricing_snapshot"
+        ],
+        "properties": {
+          "stage": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "provider": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "model": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "execution": {
+            "enum": [
+              "provider_api",
+              "local"
+            ]
+          },
+          "request_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "retry_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "input_tokens": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "integer",
+                "minimum": 0
+              }
+            ]
+          },
+          "cached_input_tokens": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "integer",
+                "minimum": 0
+              }
+            ]
+          },
+          "output_tokens": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "integer",
+                "minimum": 0
+              }
+            ]
+          },
+          "latency_ms": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "number",
+                "minimum": 0
+              }
+            ]
+          },
+          "cost_usd": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "number",
+                "minimum": 0
+              }
+            ]
+          },
+          "cost_basis": {
+            "enum": [
+              "provider_reported",
+              "estimated",
+              "unavailable",
+              "zero_cost_local"
+            ]
+          },
+          "pricing_snapshot": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "maxLength": 255
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$id": "https://contracts.dolved.internal/http/ingestion-worker/v1/ingestion-fail-request-v1.schema.json",
+  "title": "Ingestion Fail Request (v1)"
+}

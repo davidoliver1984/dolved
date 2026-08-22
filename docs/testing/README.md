@@ -97,6 +97,22 @@ fabricated pass when credentials are absent. `make evaluation-live-hybrid` is
 expected once at the Phase 22 closure review when credentials and budget are
 available, but remains observational and non-gating.
 
+## Shared contract execution
+
+The nine ingestion-worker and three document-deletion-worker HTTP operations
+own versioned request/response schemas and shared fixtures under
+`contracts/http/`. PHPUnit and Pytest consume the same positive and negative
+vectors; neither language maintains a private copy of the other side's
+contract. The ingestion fixture set also owns all twelve canonical HMAC
+signing vectors. Retrieval rc1 follows the same rule with one fixture inventory
+covering every committed request and response schema.
+
+The generation integrity target is deliberately version-aware. It validates
+GEN-EXP-0001 against its historical V1 shape and native V2 runs against the
+current model, then recomputes deterministic evidence only. It never upgrades
+historical data in place, invokes a semantic evaluator, or treats unavailable
+semantic evidence as a newly reproduced score.
+
 ## Phase 23 handoff
 
 Phase 23 may map these categories onto CI tiers, but it must invoke the same
