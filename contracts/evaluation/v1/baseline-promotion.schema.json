@@ -7,6 +7,7 @@
     "schema_version": {"const": "v1"}, "experiment_id": {"type": "string"},
     "corpus_version": {"type": "string"}, "corpus_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "policy_version": {"type": "string"}, "policy_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "deterministic_profile_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
     "promoted_by": {"type": "string"}, "promoted_at": {"type": "string", "format": "date-time"}, "reason": {"type": "string", "minLength": 1}
   }
 }

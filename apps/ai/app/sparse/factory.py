@@ -1,10 +1,25 @@
 from app.settings import Settings
+from app.sparse.errors import SparseConfigurationError
+from app.sparse.fake import DeterministicSparseEncoder
 from app.sparse.fastembed_adapter import FastEmbedSparseEncoder
 from app.sparse.models import SparseEmbeddingProfile
 from app.sparse.protocol import SparseEncoder
 
 
 def sparse_embedding_profile(settings: Settings) -> SparseEmbeddingProfile:
+    if settings.sparse_embedding_provider == "deterministic":
+        return SparseEmbeddingProfile(
+            provider="deterministic",
+            model="sha256-sparse-v1",
+            tokenizer="sha256-bytes",
+            tokenizer_revision="1",
+            output_representation="sparse-index-weight",
+            max_input_tokens=settings.sparse_embedding_max_input_tokens,
+            document_input_type="document",
+            query_input_type="query",
+            model_revision="1",
+            adapter_version="deterministic-v1",
+        )
     return SparseEmbeddingProfile(
         provider="fastembed",
         model=settings.sparse_embedding_model,
@@ -20,6 +35,10 @@ def sparse_embedding_profile(settings: Settings) -> SparseEmbeddingProfile:
 
 
 def create_sparse_encoder(settings: Settings) -> SparseEncoder:
+    if settings.sparse_embedding_provider == "deterministic":
+        return DeterministicSparseEncoder()
+    if settings.sparse_embedding_provider != "fastembed":
+        raise SparseConfigurationError("unsupported sparse encoding provider")
     return FastEmbedSparseEncoder(
         model_name=settings.sparse_embedding_model,
         model_source_repository=settings.sparse_embedding_source_repository,

@@ -12,11 +12,12 @@ TAIL ?= 100
 	format format-web format-api format-ai \
 	format-check format-check-web format-check-api format-check-ai \
 	typecheck typecheck-web typecheck-ai \
-	test test-web test-api test-ai test-telemetry \
+	test test-web test-api test-ai test-telemetry test-e2e test-e2e-inspect test-e2e-clean test-splade-integration \
 	bootstrap migrate seed reset clean \
 	aws-provision aws-status qdrant-status publish-ingestion consume-ingestion \
 	telemetry-smoke telemetry-verify telemetry-outage \
 	evaluation-run evaluation-policy-gate evaluation-generation-verify \
+	evaluation-retrieval-current-candidate evaluation-retrieval-current \
 	evaluation-benchmark-sync \
 	evaluation-benchmark-compile \
 	evaluation-exp-0003 \
@@ -55,6 +56,8 @@ help:
 		'  make telemetry-outage Verify requests survive a Collector outage' \
 		'  make evaluation-run   Run the offline retrieval evaluation corpus' \
 		'  make evaluation-policy-gate  Enforce the historical retrieval policy without providers' \
+		'  make evaluation-retrieval-current  Run the current provider-free retrieval regression gate' \
+		'  make evaluation-retrieval-current-candidate  Generate a deterministic retrieval candidate for review' \
 		'  make evaluation-generation-verify  Verify immutable generation evidence without providers' \
 		'  make evaluation-benchmark-sync  Synchronise authored Markdown paths into the benchmark catalogue' \
 		'  make evaluation-benchmark-compile  Validate and compile the engineering benchmark pilot' \
@@ -88,6 +91,10 @@ help:
 		'  make test-api        Run Laravel tests' \
 		'  make test-ai         Run Python tests' \
 		'  make test-telemetry  Verify the pinned Collector sampling component and configuration' \
+		'  make test-e2e       Run the isolated deterministic ingestion journey' \
+		'  make test-e2e-inspect  Inspect a preserved failed dolved-e2e stack' \
+		'  make test-e2e-clean  Remove only the isolated dolved-e2e stack and volumes' \
+		'  make test-splade-integration  Prove the pinned real SPLADE model loads and encodes' \
 		'' \
 		'Maintenance and shells' \
 		'  make clean           Clear generated caches without deleting data' \
@@ -170,6 +177,18 @@ test-ai:
 test-telemetry:
 	./scripts/telemetry/test_collector_configuration.sh
 
+test-e2e:
+	./scripts/e2e/run.sh
+
+test-e2e-inspect:
+	./scripts/e2e/inspect.sh
+
+test-e2e-clean:
+	./scripts/e2e/clean.sh
+
+test-splade-integration:
+	$(EXEC) ai uv run pytest tests/integration/test_real_splade.py -q
+
 bootstrap:
 	@test -f .env || { cp .env.example .env; printf '%s\n' 'Created .env from .env.example'; }
 	$(COMPOSE) up --detach --build --wait --wait-timeout $(WAIT_TIMEOUT)
@@ -208,6 +227,8 @@ telemetry-outage:
 EVALUATION_CORPUS_VERSION ?= v2
 EVALUATION_BENCHMARK_VERSION ?= v2
 EVALUATION_CONTRACT_VERSION ?= v2
+E2E_COMPOSE := docker compose --env-file .env.e2e --project-name dolved-e2e --file compose.yaml --file compose.e2e.yaml
+EVALUATION_CURRENT_COMPOSE := docker compose --env-file .env.e2e --project-name dolved-evaluation-current --file compose.yaml --file compose.e2e.yaml
 
 evaluation-benchmark-sync:
 	$(COMPOSE) run --rm --no-deps \
@@ -313,6 +334,44 @@ evaluation-policy-gate: evaluation-run
 			--promotion docs/evaluation/baselines/$(EVALUATION_CORPUS_VERSION)/baseline-promotion.json \
 			--policy tests/evaluation/policies/v1/policy.json \
 			--output /output/comparison-report.md
+
+evaluation-retrieval-current-candidate:
+	@mkdir -p /tmp/rag-platform-evaluation-current
+	$(EVALUATION_CURRENT_COMPOSE) up --detach --wait --wait-timeout $(WAIT_TIMEOUT) qdrant
+	$(EVALUATION_CURRENT_COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR)/scripts/evaluation/run.py:/evaluation/run.py:ro" \
+		--volume "$(CURDIR)/tests/evaluation/corpus/v2/corpus.json:/evaluation/corpus.json:ro" \
+		--volume "$(CURDIR)/tests/evaluation/policies/v1/policy.json:/evaluation/policy.json:ro" \
+		--volume "$(CURDIR)/tests/evaluation/planner-expectations/deterministic-current-v1.json:/evaluation/plan-catalogue.json:ro" \
+		--volume "/tmp/rag-platform-evaluation-current:/output" \
+		--env ENVIRONMENT=evaluation-current \
+		--env PYTHONPATH=/app \
+		ai python /evaluation/run.py retrieval-current \
+			--corpus /evaluation/corpus.json \
+			--policy /evaluation/policy.json \
+			--plan-catalogue /evaluation/plan-catalogue.json \
+			--repository-commit "$(shell git rev-parse HEAD)" \
+			--output /output/current-run.json \
+			--candidate-output /output/experiment-result.json \
+			--report-output /output/candidate-report.md
+	$(EVALUATION_CURRENT_COMPOSE) down --volumes --remove-orphans
+
+evaluation-retrieval-current: evaluation-retrieval-current-candidate
+	$(EVALUATION_CURRENT_COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR)/scripts/evaluation/run.py:/evaluation/run.py:ro" \
+		--volume "$(CURDIR)/docs/evaluation/baselines/deterministic-v1:/baseline:ro" \
+		--volume "$(CURDIR)/tests/evaluation/policies/v1/policy.json:/evaluation/policy.json:ro" \
+		--volume "/tmp/rag-platform-evaluation-current:/output" \
+		--env ENVIRONMENT=evaluation-current \
+		--env PYTHONPATH=/app \
+		ai python /evaluation/run.py compare-deterministic \
+			--candidate /output/experiment-result.json \
+			--baseline /baseline/experiment-result.json \
+			--promotion /baseline/baseline-promotion.json \
+			--checksums /baseline/checksums.sha256 \
+			--policy /evaluation/policy.json \
+			--output /output/comparison-report.md
+	$(EVALUATION_CURRENT_COMPOSE) down --volumes --remove-orphans
 
 evaluation-generation-verify:
 	$(COMPOSE) run --rm --no-deps \

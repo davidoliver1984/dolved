@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "question": "What must staff do when a scheduled medicine dose is omitted?",
+      "plan": {
+        "retrieval_queries": [
+          "What must staff do when a scheduled medicine dose is omitted?"
+        ],
+        "temporal_mode": "current",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null
+      }
+    }
+  ]
+}

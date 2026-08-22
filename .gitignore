@@ -23,6 +23,9 @@ logs/
 # Node / Next.js
 apps/web/node_modules/
 apps/web/.next/
+tests/end-to-end/node_modules/
+tests/end-to-end/playwright-report/
+tests/end-to-end/test-results/
 apps/web/out/
 apps/web/coverage/
 apps/web/.env

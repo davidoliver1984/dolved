@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     voyage_api_key: SecretStr = SecretStr("")
     voyage_api_url: str = "https://api.voyageai.com/v1/embeddings"
     embedding_model: str = "voyage-4-large"
+    embedding_provider: str = "voyage"
     embedding_dimensions: int = Field(default=1024, gt=0)
     embedding_batch_size: int = Field(default=64, ge=1, le=1000)
     embedding_timeout_seconds: float = Field(default=10.0, gt=0)
@@ -57,6 +58,7 @@ class Settings(BaseSettings):
     retrieval_max_eligible_documents: int = Field(default=500, ge=1, le=5000)
     retrieval_candidate_k_max: int = Field(default=100, ge=1, le=1000)
     sparse_embedding_model: str = "prithivida/Splade_PP_en_v1"
+    sparse_embedding_provider: str = "fastembed"
     sparse_embedding_source_repository: str = "Qdrant/Splade_PP_en_v1"
     sparse_embedding_tokenizer: str = "bert-base-uncased"
     sparse_embedding_tokenizer_revision: str | None = None
@@ -66,6 +68,7 @@ class Settings(BaseSettings):
     sparse_embedding_batch_size: int = Field(default=64, ge=1, le=1000)
     voyage_rerank_api_url: str = "https://api.voyageai.com/v1/rerank"
     reranker_model: str = "rerank-2.5"
+    reranker_provider: str = "voyage"
     reranker_timeout_seconds: float = Field(default=10.0, gt=0)
     reranker_max_attempts: int = Field(default=3, ge=1, le=10)
     reranker_initial_backoff_seconds: float = Field(default=15.0, ge=0)
@@ -75,6 +78,7 @@ class Settings(BaseSettings):
     retrieval_planner_api_key: SecretStr = SecretStr("")
     retrieval_planner_provider: str = "openai"
     retrieval_planner_model: str = "gpt-5-mini"
+    retrieval_planner_catalogue_path: str = "/e2e-fixtures/v1/scenario-catalogue.json"
     retrieval_planner_timeout_seconds: float = Field(default=60.0, gt=0)
     contextualiser_api_url: str = "https://api.openai.com/v1/chat/completions"
     contextualiser_api_key: SecretStr = Field(
@@ -149,6 +153,21 @@ class Settings(BaseSettings):
         if self.generation_max_output_tokens >= self.generation_context_window_tokens:
             raise ValueError(
                 "generation output budget must fit within the context window"
+            )
+        deterministic = (
+            self.embedding_provider == "deterministic",
+            self.sparse_embedding_provider == "deterministic",
+            self.reranker_provider == "deterministic",
+            self.retrieval_planner_provider == "deterministic",
+        )
+        deterministic_environment = self.environment in {"e2e", "evaluation-current"}
+        if any(deterministic) and not deterministic_environment:
+            raise ValueError(
+                "deterministic retrieval providers require an approved isolated environment"
+            )
+        if self.environment == "e2e" and not all(deterministic):
+            raise ValueError(
+                "the E2E environment requires the complete deterministic profile"
             )
         return self
 

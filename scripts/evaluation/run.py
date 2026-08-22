@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import json
 import sys
 from datetime import UTC, datetime
@@ -16,6 +17,8 @@ from app.evaluation.governance import (
     promote_baseline,
     record_gate_decision,
     verify_baseline_identity,
+    verify_deterministic_profile_digest,
+    verify_promoted_deterministic_baseline,
 )
 from app.evaluation.harness import RetrievalEvaluationHarness
 from app.evaluation.historical_result import load_comparison_result
@@ -34,7 +37,8 @@ from app.evaluation.models import (
     QualityGatePolicy,
     VariantObservation,
 )
-from app.evaluation.reporting import comparison_report
+from app.evaluation.reporting import comparison_report, deterministic_candidate_report
+from app.retrieval.deterministic import CatalogueRetrievalPlanner
 from app.retrieval.models import HybridRetrievalConfiguration
 from app.settings import get_settings
 
@@ -157,6 +161,111 @@ def live_hybrid(args: argparse.Namespace) -> None:
     args.output.write_text(json.dumps(result.as_json(), indent=2) + "\n")
 
 
+def retrieval_current(args: argparse.Namespace) -> None:
+    settings = get_settings()
+    providers = {
+        settings.embedding_provider,
+        settings.sparse_embedding_provider,
+        settings.reranker_provider,
+        settings.retrieval_planner_provider,
+    }
+    if settings.environment not in {"e2e", "evaluation-current"} or providers != {
+        "deterministic"
+    }:
+        raise SystemExit(
+            "Current retrieval evaluation requires the complete isolated deterministic profile."
+        )
+    if any(
+        secret.get_secret_value().strip()
+        for secret in (
+            settings.voyage_api_key,
+            settings.retrieval_planner_api_key,
+            settings.contextualiser_api_key,
+            settings.generation_openai_api_key,
+        )
+    ):
+        raise SystemExit(
+            "Provider credentials must be absent from current retrieval evaluation."
+        )
+
+    corpus_data = load_json(args.corpus)
+    policy_data = load_json(args.policy)
+    corpus = EvaluationCorpus.model_validate(corpus_data)
+    planner = CatalogueRetrievalPlanner(str(args.plan_catalogue))
+    questions = {variant.question for case in corpus.cases for variant in case.variants}
+    if planner.questions != questions:
+        missing = sorted(questions - planner.questions)
+        unexpected = sorted(planner.questions - questions)
+        raise SystemExit(
+            f"Authored plan catalogue identity mismatch; missing={missing}, unexpected={unexpected}"
+        )
+    for question in sorted(questions):
+        planner.plan(question, evaluated_at="2000-01-01T00:00:00Z")
+
+    result = evaluate_live_hybrid_retrieval(
+        settings=settings,
+        corpus=corpus,
+        corpus_data=corpus_data,
+        quality_policy=QualityGatePolicy.model_validate(policy_data),
+        quality_policy_data=policy_data,
+        repository_revision=args.repository_commit,
+        evidence_threshold=0.337890625,
+        configuration=HybridRetrievalConfiguration(
+            version="deterministic-current-v1",
+            dense_candidate_k=40,
+            sparse_candidate_k=40,
+            fusion_candidate_k=15,
+            reranker_candidate_k=15,
+            final_evidence_k=5,
+            rrf_k=5,
+        ),
+        rerank_delay_seconds=0,
+        text_capture_mode=EvaluationTextCaptureMode.BENCHMARK_TEXT,
+        plan_catalogue_checksum=planner.catalogue_checksum,
+        experiment_id_prefix="r22-s03-deterministic-current",
+    )
+    verify_deterministic_profile_digest(result.hybrid)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(result.as_json(), indent=2) + "\n")
+    write_model(args.candidate_output, result.hybrid)
+    args.report_output.parent.mkdir(parents=True, exist_ok=True)
+    args.report_output.write_text(
+        deterministic_candidate_report(result.hybrid, operational=result.operational)
+    )
+
+
+def _verify_checksum_manifest(path: Path) -> None:
+    directory = path.parent
+    for line in path.read_text().splitlines():
+        expected, relative = line.split(maxsplit=1)
+        relative = relative.removeprefix("*")
+        target = directory / relative
+        actual = hashlib.sha256(target.read_bytes()).hexdigest()
+        if actual != expected:
+            raise ValueError(f"baseline checksum mismatch: {relative}")
+
+
+def compare_deterministic(args: argparse.Namespace) -> None:
+    _verify_checksum_manifest(args.checksums)
+    candidate = ExperimentResult.model_validate(load_json(args.candidate))
+    baseline = ExperimentResult.model_validate(load_json(args.baseline))
+    promotion = BaselinePromotion.model_validate(load_json(args.promotion))
+    policy = QualityGatePolicy.model_validate(load_json(args.policy))
+    verify_promoted_deterministic_baseline(baseline, promotion)
+    verify_deterministic_profile_digest(candidate)
+    verify_baseline_identity(candidate, promotion)
+    passed, failures = assess_gate(candidate, baseline, policy)
+    report = comparison_report(candidate, baseline)
+    report += f"\n## Gate assessment\n\nStatus: **{'PASS' if passed else 'FAIL'}**\n"
+    if failures:
+        report += "\n" + "\n".join(f"- `{item}`" for item in failures) + "\n"
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(report)
+    if not passed:
+        print(f"Deterministic retrieval gate failed: {failures}", file=sys.stderr)
+        raise SystemExit(1)
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser()
     commands = root.add_subparsers(required=True)
@@ -207,6 +316,23 @@ def parser() -> argparse.ArgumentParser:
         ),
     )
     live_parser.set_defaults(handler=live_hybrid)
+    current_parser = commands.add_parser("retrieval-current")
+    current_parser.add_argument("--corpus", type=Path, required=True)
+    current_parser.add_argument("--policy", type=Path, required=True)
+    current_parser.add_argument("--plan-catalogue", type=Path, required=True)
+    current_parser.add_argument("--output", type=Path, required=True)
+    current_parser.add_argument("--candidate-output", type=Path, required=True)
+    current_parser.add_argument("--report-output", type=Path, required=True)
+    current_parser.add_argument("--repository-commit", required=True)
+    current_parser.set_defaults(handler=retrieval_current)
+    deterministic_parser = commands.add_parser("compare-deterministic")
+    deterministic_parser.add_argument("--candidate", type=Path, required=True)
+    deterministic_parser.add_argument("--baseline", type=Path, required=True)
+    deterministic_parser.add_argument("--promotion", type=Path, required=True)
+    deterministic_parser.add_argument("--checksums", type=Path, required=True)
+    deterministic_parser.add_argument("--policy", type=Path, required=True)
+    deterministic_parser.add_argument("--output", type=Path, required=True)
+    deterministic_parser.set_defaults(handler=compare_deterministic)
     return root
 
 

@@ -1,4 +1,5 @@
 from app.embedding.errors import EmbeddingConfigurationError
+from app.embedding.fake import DeterministicFakeEmbedder
 from app.embedding.models import EmbeddingProfile, EmbeddingRequest, EmbeddingResult
 from app.embedding.protocol import Embedder
 from app.embedding.voyage import VoyageEmbedder
@@ -6,6 +7,19 @@ from app.settings import Settings
 
 
 def embedding_profile(settings: Settings) -> EmbeddingProfile:
+    if settings.embedding_provider == "deterministic":
+        return EmbeddingProfile(
+            provider="deterministic",
+            model="sha256-unit-vector-v1",
+            dimensions=settings.embedding_dimensions,
+            output_dtype="float",
+            document_input_type="document",
+            query_input_type="query",
+            normalisation="unit_length",
+            truncation=False,
+            model_revision="1",
+            adapter_version="deterministic-v1",
+        )
     return EmbeddingProfile(
         provider="voyage",
         model=settings.embedding_model,
@@ -21,6 +35,10 @@ def embedding_profile(settings: Settings) -> EmbeddingProfile:
 
 
 def create_embedder(settings: Settings) -> Embedder:
+    if settings.embedding_provider == "deterministic":
+        return DeterministicFakeEmbedder()
+    if settings.embedding_provider != "voyage":
+        raise EmbeddingConfigurationError("unsupported embedding provider")
     if not settings.voyage_api_key.get_secret_value().strip():
         raise EmbeddingConfigurationError(
             "VOYAGE_API_KEY is required to create the real embedding adapter"

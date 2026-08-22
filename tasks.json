@@ -40,7 +40,7 @@
   "progress": {
     "current_phase": "R22",
     "current_session": "R22-S03",
-    "next_action": "Begin R22-S03 — add end-to-end ingestion tests.",
+    "next_action": "Review and explicitly promote the first exact-commit deterministic retrieval baseline candidate for R22-S03.",
     "completed_through": "R22-S02",
     "completed_phase_count": 22,
     "total_phase_count": 25
@@ -4524,7 +4524,7 @@
           "title": "Add End-to-End Ingestion Tests",
           "guide_start_line": 14207,
           "guide_end_line": 14237,
-          "status": "not_started",
+          "status": "in_progress",
           "objective": "Test the complete document path from upload to searchable vectors.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -4556,7 +4556,8 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r22-s03-add-end-to-end-ingestion-tests.md",
-            "status": "not_started"
+            "status": "in_progress",
+            "actual_path": "docs/journal/2026-08-22-r22-s03-add-end-to-end-ingestion-tests.md"
           },
           "completion_evidence": []
         },

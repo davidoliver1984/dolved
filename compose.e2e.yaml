@@ -1,0 +1,144 @@
+services:
+  web:
+    ports: !override
+      - "127.0.0.1:${WEB_PORT}:3000"
+    environment:
+      FRONTEND_URL: ${FRONTEND_URL}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      REPOSITORY_ROOT: ""
+    volumes: !override
+      - ./apps/web:/app
+      - web_node_modules:/app/node_modules
+      - web_next:/app/.next
+
+  api:
+    ports: !override
+      - "127.0.0.1:${API_PORT}:8000"
+    environment:
+      APP_ENV: e2e
+      APP_DEBUG: "false"
+      APP_URL: ${APP_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      SANCTUM_STATEFUL_DOMAINS: ${SANCTUM_STATEFUL_DOMAINS}
+      SESSION_COOKIE: rag-platform-session
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      AWS_BUCKET: ${DOCUMENT_UPLOAD_BUCKET}
+      AWS_UPLOAD_ENDPOINT: http://localhost:${LOCALSTACK_PORT}
+      SQS_QUEUE: ${INGESTION_QUEUE}
+      E2E_RESOURCE_MARKER: ${E2E_RESOURCE_MARKER}
+      E2E_DATABASE_MARKER: ${E2E_DATABASE_MARKER}
+      E2E_ACCOUNT_PASSWORD: ${E2E_ACCOUNT_PASSWORD}
+      OTEL_SDK_DISABLED: "true"
+      RETRIEVAL_PLANNER_PROVIDER: deterministic
+    volumes: !override
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - api_vendor:/app/vendor
+
+  publisher:
+    environment:
+      APP_ENV: e2e
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      AWS_BUCKET: ${DOCUMENT_UPLOAD_BUCKET}
+      SQS_QUEUE: ${INGESTION_QUEUE}
+      OTEL_SDK_DISABLED: "true"
+    volumes: !override
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - api_vendor:/app/vendor
+
+  conversation-worker:
+    environment:
+      APP_ENV: e2e
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      OTEL_SDK_DISABLED: "true"
+    volumes: !override
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - api_vendor:/app/vendor
+
+  ai:
+    ports: !override
+      - "127.0.0.1:${AI_PORT}:8001"
+    environment:
+      ENVIRONMENT: e2e
+      SERVICE_NAME: dolved-e2e-ai
+      DOCUMENT_UPLOAD_BUCKET: ${DOCUMENT_UPLOAD_BUCKET}
+      INGESTION_QUEUE: ${INGESTION_QUEUE}
+      INGESTION_DLQ: ${INGESTION_DLQ}
+      EMBEDDING_PROVIDER: deterministic
+      EMBEDDING_MODEL: sha256-unit-vector-v1
+      SPARSE_EMBEDDING_PROVIDER: deterministic
+      SPARSE_EMBEDDING_MODEL: sha256-sparse-v1
+      RERANKER_PROVIDER: deterministic
+      RERANKER_MODEL: fused-order-v1
+      RETRIEVAL_PLANNER_PROVIDER: deterministic
+      RETRIEVAL_PLANNER_MODEL: catalogue-retrieval-planner
+      RETRIEVAL_PLANNER_CATALOGUE_PATH: /e2e-fixtures/v1/scenario-catalogue.json
+      RETRIEVAL_PLANNER_API_KEY: ""
+      CONTEXTUALISER_API_KEY: ""
+      GENERATION_OPENAI_API_KEY: ""
+      VOYAGE_API_KEY: ""
+      OTEL_SDK_DISABLED: "true"
+    volumes: !override
+      - ./apps/ai:/app
+      - ./contracts:/contracts:ro
+      - ./tests/end-to-end/fixtures:/e2e-fixtures:ro
+      - ai_venv:/app/.venv
+
+  worker:
+    environment:
+      ENVIRONMENT: e2e
+      SERVICE_NAME: dolved-e2e-ingestion-worker
+      INGESTION_QUEUE: ${INGESTION_QUEUE}
+      INGESTION_DLQ: ${INGESTION_DLQ}
+      EMBEDDING_PROVIDER: deterministic
+      EMBEDDING_MODEL: sha256-unit-vector-v1
+      SPARSE_EMBEDDING_PROVIDER: deterministic
+      SPARSE_EMBEDDING_MODEL: sha256-sparse-v1
+      RERANKER_PROVIDER: deterministic
+      RETRIEVAL_PLANNER_PROVIDER: deterministic
+      RETRIEVAL_PLANNER_MODEL: catalogue-retrieval-planner
+      RETRIEVAL_PLANNER_CATALOGUE_PATH: /e2e-fixtures/v1/scenario-catalogue.json
+      RETRIEVAL_PLANNER_API_KEY: ""
+      CONTEXTUALISER_API_KEY: ""
+      GENERATION_OPENAI_API_KEY: ""
+      VOYAGE_API_KEY: ""
+      OTEL_SDK_DISABLED: "true"
+    volumes: !override
+      - ./apps/ai:/app
+      - ./contracts:/contracts:ro
+      - ./tests/end-to-end/fixtures:/e2e-fixtures:ro
+      - ai_venv:/app/.venv
+
+  postgres:
+    ports: !override
+      - "127.0.0.1:${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  qdrant:
+    ports: !override
+      - "127.0.0.1:${QDRANT_HTTP_PORT}:6333"
+
+  localstack:
+    ports: !override
+      - "127.0.0.1:${LOCALSTACK_PORT}:4566"
+    environment:
+      DOCUMENT_UPLOAD_BUCKET: ${DOCUMENT_UPLOAD_BUCKET}
+      DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN: ${DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN}
+      INGESTION_QUEUE: ${INGESTION_QUEUE}
+      INGESTION_DLQ: ${INGESTION_DLQ}
+
+  mailpit:
+    ports: !override
+      - "127.0.0.1:${MAILPIT_WEB_PORT}:8025"

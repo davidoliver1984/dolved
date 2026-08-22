@@ -1,4 +1,5 @@
 from app.reranking.errors import RerankerConfigurationError
+from app.reranking.fake import DeterministicReranker
 from app.reranking.models import RerankerProfile, RerankRequest, RerankResult
 from app.reranking.protocol import Reranker
 from app.reranking.voyage import VoyageReranker
@@ -6,6 +7,13 @@ from app.settings import Settings
 
 
 def reranker_profile(settings: Settings) -> RerankerProfile:
+    if settings.reranker_provider == "deterministic":
+        return RerankerProfile(
+            provider="deterministic",
+            model="fused-order-v1",
+            adapter_version="deterministic-v1",
+            truncation=False,
+        )
     return RerankerProfile(
         provider="voyage",
         model=settings.reranker_model,
@@ -14,7 +22,13 @@ def reranker_profile(settings: Settings) -> RerankerProfile:
     )
 
 
-def create_reranker(settings: Settings) -> Reranker:
+def create_reranker(
+    settings: Settings, *, minimum_request_interval_seconds: float = 0
+) -> Reranker:
+    if settings.reranker_provider == "deterministic":
+        return DeterministicReranker()
+    if settings.reranker_provider != "voyage":
+        raise RerankerConfigurationError("unsupported reranker provider")
     if not settings.voyage_api_key.get_secret_value().strip():
         raise RerankerConfigurationError(
             "VOYAGE_API_KEY is required to create the real reranker"
@@ -27,6 +41,7 @@ def create_reranker(settings: Settings) -> Reranker:
         initial_backoff_seconds=settings.reranker_initial_backoff_seconds,
         max_backoff_seconds=settings.reranker_max_backoff_seconds,
         max_provider_cooldown_seconds=(settings.reranker_max_provider_cooldown_seconds),
+        minimum_request_interval_seconds=minimum_request_interval_seconds,
     )
 
 

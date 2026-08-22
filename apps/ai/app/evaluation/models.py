@@ -442,6 +442,10 @@ class ExperimentLineage(StrictModel):
     matching_algorithm: str
     planner: dict[str, Any]
     embedding_profile_fingerprint: str
+    sparse_profile_fingerprint: str | None = None
+    reranker_profile_fingerprint: str | None = None
+    plan_catalogue_checksum: str | None = None
+    deterministic_profile_digest: str | None = None
     chunking_configuration: dict[str, Any]
     retrieval_configuration: dict[str, Any]
     evaluator: dict[str, Any] | None = None
@@ -613,6 +617,7 @@ class BaselinePromotion(StrictModel):
     corpus_digest: str
     policy_version: str
     policy_digest: str
+    deterministic_profile_digest: str | None = None
     promoted_by: str
     promoted_at: datetime
     reason: Annotated[str, Field(min_length=1)]

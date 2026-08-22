@@ -1,0 +1,7 @@
+Representative E2E Medication Policy
+
+Current procedure
+
+When a scheduled medicine dose is omitted, staff must record the omission, assess immediate safety, and notify the responsible clinician before the end of the shift.
+
+This synthetic document is owned exclusively by the deterministic Level 1 product-journey test suite.

@@ -24,6 +24,7 @@ from app.retrieval.corpus_rebuild import (
     CorpusVerificationRequest,
     CorpusVerificationResult,
 )
+from app.retrieval.deterministic import CatalogueRetrievalPlanner
 from app.retrieval.failures import RetrievalExecutionError
 from app.retrieval.models import (
     OperationUsage,
@@ -47,6 +48,12 @@ logger = logging.getLogger("retrieval.http")
 
 def planner_dependency() -> RetrievalPlanner:
     settings = get_settings()
+    if settings.retrieval_planner_provider == "deterministic":
+        return CatalogueRetrievalPlanner(settings.retrieval_planner_catalogue_path)
+    if settings.retrieval_planner_provider != "openai":
+        raise RetrievalPlanningError(
+            "unsupported retrieval planner provider", systemic=True
+        )
     return StructuredChatRetrievalPlanner(
         api_url=settings.retrieval_planner_api_url,
         api_key=settings.retrieval_planner_api_key,

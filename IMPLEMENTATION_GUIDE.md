@@ -14212,11 +14212,53 @@ Test the complete document path from upload to searchable vectors.
 
 ### Status
 
-Not yet executed.
+Implementation verified; first exact-commit deterministic retrieval candidate
+awaiting human review and explicit baseline promotion.
 
 ### Planned location
 
 tests/end-to-end/
+
+### Implemented boundary
+
+* `compose.e2e.yaml`, `.env.e2e` and `scripts/e2e/` define a disposable
+  `dolved-e2e` project with no external-provider credentials and fail-closed
+  deterministic adapter selection.
+* The Playwright journey uses the real browser, Next.js, Laravel, PostgreSQL,
+  LocalStack S3/SQS, publisher, Python worker and Qdrant. It proves upload,
+  outbox publication, queue processing, real parsing/chunking, signed completion,
+  indexed status, retrievability, typed corrupt-document failure and cross-tenant
+  concealment.
+* Test-only Laravel commands bootstrap deterministic identities, approve the
+  uploaded fixture and provision the isolated deterministic dense/sparse
+  generation. They refuse to run outside the E2E environment and are covered by
+  provider-free tests.
+* Python settings and factories select deterministic embedding, sparse,
+  reranking and catalogue-planning adapters only for the approved isolated
+  environments. Unknown catalogue questions and incomplete/mixed profiles fail
+  closed.
+* `make test-splade-integration` independently loads the configured real SPLADE
+  model and performs bounded structural inference; the Playwright suite remains
+  deterministic and does not claim real-model quality.
+* `make evaluation-retrieval-current-candidate` executes the current retrieval
+  implementation against the engineering corpus with authored plans,
+  deterministic vectors/reranking and real Qdrant. It emits an explicitly
+  unpromoted human-readable report and binds the complete deterministic execution
+  profile. `make evaluation-retrieval-current` can compare only against a
+  checksum-valid, human-promoted deterministic baseline and cannot create or
+  refresh that baseline itself.
+
+### Verification evidence
+
+* Clean `make test-e2e`: 1 Playwright journey passed and the isolated stack and
+  volumes were removed after success.
+* `make test-splade-integration`: 1 passed using the real configured SPLADE
+  model.
+* Full suites: Laravel 345 passed / 2 skipped / 1,827 assertions; Python 578
+  passed / 4 skipped; web 115 passed.
+* Pint, Ruff lint/format, Mypy, ESLint, both TypeScript projects, shell syntax,
+  Compose configuration, JSON parsing and `git diff --check`: passed.
+* No OpenAI or Voyage calls were made.
 
 ### Acceptance criteria
 

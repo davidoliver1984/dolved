@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
+from app.evaluation.canonical import content_digest
 from app.evaluation.historical_result import ComparisonResult
 from app.evaluation.models import (
     BaselinePromotion,
@@ -12,6 +13,42 @@ from app.evaluation.models import (
     ManualGateRecord,
     QualityGatePolicy,
 )
+
+
+def deterministic_profile_manifest(experiment: ExperimentResult) -> dict[str, object]:
+    lineage = experiment.lineage
+    required = {
+        "embedding_profile_fingerprint": lineage.embedding_profile_fingerprint,
+        "sparse_profile_fingerprint": lineage.sparse_profile_fingerprint,
+        "reranker_profile_fingerprint": lineage.reranker_profile_fingerprint,
+        "plan_catalogue_checksum": lineage.plan_catalogue_checksum,
+    }
+    if any(value is None for value in required.values()):
+        raise ValueError("deterministic execution profile lineage is incomplete")
+    return {
+        **required,
+        "retrieval_configuration": lineage.retrieval_configuration,
+        "harness_version": lineage.harness_version,
+    }
+
+
+def verify_deterministic_profile_digest(experiment: ExperimentResult) -> None:
+    recorded = experiment.lineage.deterministic_profile_digest
+    if recorded is None:
+        raise ValueError("deterministic execution profile digest is unavailable")
+    if content_digest(deterministic_profile_manifest(experiment)) != recorded:
+        raise ValueError(
+            "deterministic execution profile digest does not match lineage"
+        )
+
+
+def verify_promoted_deterministic_baseline(
+    baseline: ExperimentResult, promotion: BaselinePromotion
+) -> None:
+    if baseline.experiment_id != promotion.experiment_id:
+        raise ValueError("promoted deterministic baseline experiment identity mismatch")
+    verify_deterministic_profile_digest(baseline)
+    verify_baseline_identity(baseline, promotion)
 
 
 def promote_baseline(
@@ -27,6 +64,7 @@ def promote_baseline(
         corpus_digest=experiment.lineage.corpus_digest,
         policy_version=experiment.lineage.policy_version,
         policy_digest=experiment.lineage.policy_digest,
+        deterministic_profile_digest=experiment.lineage.deterministic_profile_digest,
         promoted_by=promoted_by,
         promoted_at=promoted_at or datetime.now(UTC),
         reason=reason,
@@ -51,6 +89,14 @@ def verify_baseline_identity(
     if actual != expected:
         raise ValueError(
             "candidate corpus/policy identity does not match the accepted baseline"
+        )
+    if (
+        promotion.deterministic_profile_digest is not None
+        and candidate.lineage.deterministic_profile_digest
+        != promotion.deterministic_profile_digest
+    ):
+        raise ValueError(
+            "candidate deterministic execution profile does not match the accepted baseline"
         )
 
 

@@ -34,13 +34,8 @@ from app.evaluation.models import (
     RetrievedCandidate,
     VariantObservation,
 )
-from app.reranking.models import (
-    RerankCandidate,
-    RerankedCandidate,
-    RerankerProfile,
-    RerankRequest,
-)
-from app.reranking.voyage import VoyageReranker
+from app.reranking.factory import create_reranker, reranker_profile
+from app.reranking.models import RerankCandidate, RerankedCandidate, RerankRequest
 from app.retrieval.models import (
     HybridRetrievalConfiguration,
     RetrievalCandidate,
@@ -134,11 +129,14 @@ def evaluate_live_hybrid_retrieval(
     configuration: HybridRetrievalConfiguration,
     rerank_delay_seconds: float,
     text_capture_mode: EvaluationTextCaptureMode = EvaluationTextCaptureMode.DISABLED,
+    plan_catalogue_checksum: str | None = None,
+    experiment_id_prefix: str = "r16-s08-live",
 ) -> LiveHybridEvaluation:
     chunks = _evaluation_chunks(corpus)
     chunk_by_id = {chunk.chunk_id: chunk for chunk in chunks}
     profile = embedding_profile(settings)
     sparse_profile = sparse_embedding_profile(settings)
+    active_reranker_profile = reranker_profile(settings)
     workspace_id = _identity("workspace")
     corpus_generation_id = _identity("corpus-generation")
     embedding_generation_id = _identity("embedding-generation")
@@ -260,14 +258,8 @@ def evaluate_live_hybrid_retrieval(
         vector_store=vector_store,
         stage_observer=stage_snapshots.append,
     )
-    reranker = VoyageReranker(
-        api_key=settings.voyage_api_key,
-        api_url=settings.voyage_rerank_api_url,
-        timeout_seconds=settings.reranker_timeout_seconds,
-        max_attempts=settings.reranker_max_attempts,
-        initial_backoff_seconds=settings.reranker_initial_backoff_seconds,
-        max_backoff_seconds=settings.reranker_max_backoff_seconds,
-        minimum_request_interval_seconds=rerank_delay_seconds,
+    reranker = create_reranker(
+        settings, minimum_request_interval_seconds=rerank_delay_seconds
     )
     dense_observations: list[VariantObservation] = []
     hybrid_observations: list[VariantObservation] = []
@@ -371,12 +363,7 @@ def evaluate_live_hybrid_retrieval(
                         ),
                         workspace_id=workspace_id,
                         query=variant.question,
-                        profile=RerankerProfile(
-                            provider="voyage",
-                            model=settings.reranker_model,
-                            adapter_version="1",
-                            truncation=False,
-                        ),
+                        profile=active_reranker_profile,
                         candidates=tuple(
                             RerankCandidate(
                                 chunk_id=candidate.chunk_id,
@@ -477,10 +464,10 @@ def evaluate_live_hybrid_retrieval(
     finally:
         qdrant_client.delete_collection(vector_space.collection_name)
     policy_binding = {
-        "version": "r16-s08-experimental-v1",
-        "reranker_provider": "voyage",
-        "reranker_model": settings.reranker_model,
-        "reranker_adapter_version": "1",
+        "version": configuration.version,
+        "reranker_provider": active_reranker_profile.provider,
+        "reranker_model": active_reranker_profile.model,
+        "reranker_adapter_version": active_reranker_profile.adapter_version,
         "embedding_profile_fingerprint": profile.fingerprint(),
         "sparse_profile_fingerprint": sparse_profile.fingerprint(),
         "fusion_strategy": configuration.fusion_strategy,
@@ -497,7 +484,7 @@ def evaluate_live_hybrid_retrieval(
     }
     policy_binding["fingerprint"] = content_digest(policy_binding)
     dense_result = _evaluate(
-        experiment_id="r16-s08-live-dense",
+        experiment_id=f"{experiment_id_prefix}-dense",
         corpus=corpus,
         corpus_data=corpus_data,
         quality_policy=quality_policy,
@@ -507,9 +494,14 @@ def evaluate_live_hybrid_retrieval(
         profile_fingerprint=profile.fingerprint(),
         retrieval_configuration={"method": "live-dense", "candidate_k": 3},
         candidate_k=3,
+        sparse_profile_fingerprint=sparse_profile.fingerprint(),
+        reranker_profile_fingerprint=content_digest(
+            active_reranker_profile.model_dump(mode="json")
+        ),
+        plan_catalogue_checksum=plan_catalogue_checksum,
     )
     hybrid_result = _evaluate(
-        experiment_id="r16-s08-live-hybrid",
+        experiment_id=f"{experiment_id_prefix}-hybrid",
         corpus=corpus,
         corpus_data=corpus_data,
         quality_policy=quality_policy,
@@ -519,6 +511,11 @@ def evaluate_live_hybrid_retrieval(
         profile_fingerprint=profile.fingerprint(),
         retrieval_configuration=policy_binding,
         candidate_k=configuration.final_evidence_k,
+        sparse_profile_fingerprint=sparse_profile.fingerprint(),
+        reranker_profile_fingerprint=content_digest(
+            active_reranker_profile.model_dump(mode="json")
+        ),
+        plan_catalogue_checksum=plan_catalogue_checksum,
     )
     embedding_tokens = (document_embeddings.provider_input_tokens or 0) + (
         query_embeddings.provider_input_tokens or 0
@@ -531,9 +528,9 @@ def evaluate_live_hybrid_retrieval(
             "dense_embedding_provider": profile.model_dump(mode="json"),
             "sparse_provider": sparse_profile.model_dump(mode="json"),
             "reranker": {
-                "provider": "voyage",
-                "model": settings.reranker_model,
-                "adapter_version": "1",
+                "provider": active_reranker_profile.provider,
+                "model": active_reranker_profile.model,
+                "adapter_version": active_reranker_profile.adapter_version,
             },
             "document_count": len({chunk.document_id for chunk in chunks}),
             "chunk_count": len(chunks),
@@ -843,7 +840,18 @@ def _evaluate(
     profile_fingerprint: str,
     retrieval_configuration: dict[str, Any],
     candidate_k: int,
+    sparse_profile_fingerprint: str,
+    reranker_profile_fingerprint: str,
+    plan_catalogue_checksum: str | None,
 ) -> ExperimentResult:
+    deterministic_manifest = {
+        "embedding_profile_fingerprint": profile_fingerprint,
+        "sparse_profile_fingerprint": sparse_profile_fingerprint,
+        "reranker_profile_fingerprint": reranker_profile_fingerprint,
+        "plan_catalogue_checksum": plan_catalogue_checksum,
+        "retrieval_configuration": retrieval_configuration,
+        "harness_version": RetrievalEvaluationHarness.VERSION,
+    }
     return RetrievalEvaluationHarness().evaluate(
         experiment_id=experiment_id,
         corpus=corpus,
@@ -863,6 +871,14 @@ def _evaluate(
                 "model": "adr-0017-adr-0018-v1",
             },
             embedding_profile_fingerprint=profile_fingerprint,
+            sparse_profile_fingerprint=sparse_profile_fingerprint,
+            reranker_profile_fingerprint=reranker_profile_fingerprint,
+            plan_catalogue_checksum=plan_catalogue_checksum,
+            deterministic_profile_digest=(
+                content_digest(deterministic_manifest)
+                if plan_catalogue_checksum is not None
+                else None
+            ),
             chunking_configuration={
                 "strategy": "evidence-unit-source-anchored",
                 "version": "v1",
