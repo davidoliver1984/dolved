@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dolved.local/contracts/evaluation/v2/deterministic-eligibility-artifact.schema.json",
+  "title": "Deterministic current-retrieval eligibility artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_id",
+    "run_id",
+    "repository_commit",
+    "evaluated_at",
+    "workspace_public_id",
+    "plan_catalogue",
+    "eligibility_catalogue",
+    "resolver",
+    "documents",
+    "entries",
+    "probes",
+    "isolation",
+    "comparability_digest",
+    "artifact_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "v1"},
+    "contract_id": {"const": "deterministic-eligibility-v1"},
+    "run_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,127}$"},
+    "repository_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "evaluated_at": {"type": "string", "format": "date-time"},
+    "workspace_public_id": {"type": "string", "format": "uuid"},
+    "plan_catalogue": {"$ref": "#/$defs/binding"},
+    "eligibility_catalogue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "digest", "document_catalog_digest", "organisation_digest"],
+      "properties": {
+        "version": {"const": "dolved-care-engineering-v2"},
+        "digest": {"$ref": "#/$defs/sha256"},
+        "document_catalog_digest": {"$ref": "#/$defs/sha256"},
+        "organisation_digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "resolver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["implementation", "boundary", "source_digest", "configuration_digest"],
+      "properties": {
+        "implementation": {"const": "App\\Services\\Retrieval\\EligibilityResolver"},
+        "boundary": {"const": "evaluation:resolve-current-eligibility"},
+        "source_digest": {"$ref": "#/$defs/sha256"},
+        "configuration_digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "documents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evaluation_document_version_id", "public_document_id", "qdrant_document_id"],
+        "properties": {
+          "evaluation_document_version_id": {"$ref": "#/$defs/identifier"},
+          "public_document_id": {"type": "string", "format": "uuid"},
+          "qdrant_document_id": {"type": "string", "format": "uuid"}
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id", "variant_id", "question_digest", "outcome", "reason",
+          "clarification_source", "resolved_location_public_id", "document_public_ids_by_side"
+        ],
+        "properties": {
+          "case_id": {"$ref": "#/$defs/identifier"},
+          "variant_id": {"$ref": "#/$defs/identifier"},
+          "question_digest": {"$ref": "#/$defs/sha256"},
+          "outcome": {"enum": ["evidence_found", "no_eligible_evidence", "comparison_scope_incomplete", "clarification_required"]},
+          "reason": {"type": ["string", "null"]},
+          "clarification_source": {"type": ["string", "null"]},
+          "resolved_location_public_id": {"type": ["string", "null"], "format": "uuid"},
+          "document_public_ids_by_side": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "primary": {"$ref": "#/$defs/uuidList"},
+              "comparison": {"$ref": "#/$defs/uuidList"}
+            }
+          }
+        }
+      }
+    },
+    "probes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["no_active_corpus_generation"],
+      "properties": {
+        "no_active_corpus_generation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["resolver_executed", "outcome", "eligible_document_count"],
+          "properties": {
+            "resolver_executed": {"const": true},
+            "outcome": {"const": "no_eligible_evidence"},
+            "eligible_document_count": {"const": 0}
+          }
+        }
+      }
+    },
+    "isolation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["foreign_workspace_probe_executed", "cross_workspace_document_count_in_scopes"],
+      "properties": {
+        "foreign_workspace_probe_executed": {"const": true},
+        "cross_workspace_document_count_in_scopes": {"const": 0}
+      }
+    },
+    "comparability_digest": {"$ref": "#/$defs/sha256"},
+    "artifact_digest": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "identifier": {"type": "string", "pattern": "^[a-zA-Z0-9._:-]+$", "minLength": 1, "maxLength": 160},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "digest"],
+      "properties": {
+        "version": {"type": "string", "minLength": 1},
+        "digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "uuidList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "format": "uuid"}
+    }
+  }
+}

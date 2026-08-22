@@ -1,0 +1,29 @@
+services:
+  api:
+    environment:
+      EVALUATION_CURRENT_IDENTITY: dolved-evaluation-current
+    volumes: !override
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v2/document-catalog.json:/evaluation/document-catalog.json:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v2/organisation.json:/evaluation/organisation.json:ro
+      - ./tests/evaluation/planner-expectations/v2/engineering-expectations.json:/evaluation/plans.json:ro
+      - ./contracts/evaluation/v2/deterministic-eligibility-artifact.schema.json:/evaluation/eligibility-artifact.schema.json:ro
+      - api_vendor:/app/vendor
+
+  ai:
+    environment:
+      ENVIRONMENT: evaluation-current
+      RETRIEVAL_PLANNER_CATALOGUE_PATH: /evaluation/plans.json
+    volumes: !override
+      - ./apps/ai:/app
+      - ./contracts:/contracts:ro
+      - ./scripts/evaluation/run.py:/evaluation/run.py:ro
+      - ./tests/evaluation/engineering-snapshots/dolved-care-engineering/v2/corpus.json:/evaluation/corpus.json:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v2/document-catalog.json:/evaluation/document-catalog.json:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v2/organisation.json:/evaluation/organisation.json:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v2/compiled/checksums.json:/evaluation/source-checksums.json:ro
+      - ./tests/evaluation/benchmarks/dolved-care-engineering/v2/documents:/evaluation/source-root/documents:ro
+      - ./tests/evaluation/planner-expectations/v2/engineering-expectations.json:/evaluation/plans.json:ro
+      - ./tests/evaluation/policies/v1/policy.json:/evaluation/policy.json:ro
+      - ai_venv:/app/.venv

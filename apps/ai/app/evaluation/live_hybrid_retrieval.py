@@ -131,8 +131,26 @@ def evaluate_live_hybrid_retrieval(
     text_capture_mode: EvaluationTextCaptureMode = EvaluationTextCaptureMode.DISABLED,
     plan_catalogue_checksum: str | None = None,
     experiment_id_prefix: str = "r16-s08-live",
+    evaluation_chunks: tuple[EvaluationChunk, ...] | None = None,
+    eligibility_scopes: dict[tuple[str, str], tuple[SearchScope, ...]] | None = None,
+    eligibility_outcomes: dict[tuple[str, str], str] | None = None,
+    eligibility_correctness: dict[tuple[str, str], bool] | None = None,
+    current_lineage: dict[str, Any] | None = None,
 ) -> LiveHybridEvaluation:
-    chunks = _evaluation_chunks(corpus)
+    current_inputs = (
+        evaluation_chunks,
+        eligibility_scopes,
+        eligibility_outcomes,
+        eligibility_correctness,
+        current_lineage,
+    )
+    if any(item is not None for item in current_inputs) and not all(
+        item is not None for item in current_inputs
+    ):
+        raise ValueError(
+            "current-retrieval inputs must be supplied as one complete set"
+        )
+    chunks = evaluation_chunks or _evaluation_chunks(corpus)
     chunk_by_id = {chunk.chunk_id: chunk for chunk in chunks}
     profile = embedding_profile(settings)
     sparse_profile = sparse_embedding_profile(settings)
@@ -216,11 +234,14 @@ def evaluate_live_hybrid_retrieval(
             ),
         )
     )
+    all_variants = tuple(
+        (case, variant) for case in corpus.cases for variant in case.variants
+    )
     variants = tuple(
         (case, variant)
-        for case in corpus.cases
-        for variant in case.variants
-        if case.expected_outcome == "EVIDENCE_FOUND"
+        for case, variant in all_variants
+        if eligibility_outcomes is None
+        or eligibility_outcomes[(case.case_id, variant.variant_id)] == "evidence_found"
     )
     query_ids = {
         (case.case_id, variant.variant_id): _identity(
@@ -269,20 +290,55 @@ def evaluate_live_hybrid_retrieval(
     try:
         for case in corpus.cases:
             for variant in case.variants:
-                if case.expected_outcome != "EVIDENCE_FOUND":
+                identity = (case.case_id, variant.variant_id)
+                resolved_outcome = (
+                    eligibility_outcomes[identity]
+                    if eligibility_outcomes is not None
+                    else (
+                        "evidence_found"
+                        if case.expected_outcome == "EVIDENCE_FOUND"
+                        else "controlled"
+                    )
+                )
+                eligibility_correct = (
+                    eligibility_correctness[identity]
+                    if eligibility_correctness is not None
+                    else True
+                )
+                if resolved_outcome != "evidence_found":
+                    actual_outcome = {
+                        "no_eligible_evidence": "NO_ELIGIBLE_EVIDENCE",
+                        "comparison_scope_incomplete": "COMPARISON_SCOPE_INCOMPLETE",
+                        "clarification_required": "CLARIFICATION_REQUIRED",
+                        "controlled": case.expected_outcome,
+                    }[resolved_outcome]
+                    outcome_correct = actual_outcome == case.expected_outcome
                     controlled = VariantObservation(
                         case_id=case.case_id,
                         variant_id=variant.variant_id,
                         planner_correct=True,
-                        eligibility_correct=True,
-                        outcome_correct=True,
+                        eligibility_correct=eligibility_correct,
+                        outcome_correct=outcome_correct,
                         candidates=(),
+                        hard_failures=(
+                            ()
+                            if eligibility_correct and outcome_correct
+                            else ("eligibility_controlled_outcome_mismatch",)
+                        ),
                         **_variant_context(case, variant.question, text_capture_mode),
                     )
                     dense_observations.append(controlled)
                     hybrid_observations.append(controlled)
                     continue
-                scopes = _eligible_scopes(case, chunks)
+                scopes = (
+                    eligibility_scopes[identity]
+                    if eligibility_scopes is not None
+                    else _eligible_scopes(case, chunks)
+                )
+                if not scopes:
+                    raise ValueError(
+                        f"evidence-found eligibility scope is empty: {identity}"
+                    )
                 stage_snapshots.clear()
                 search_started = time.perf_counter()
                 response = retriever.search(
@@ -317,7 +373,7 @@ def evaluate_live_hybrid_retrieval(
                         case_id=case.case_id,
                         variant_id=variant.variant_id,
                         planner_correct=True,
-                        eligibility_correct=True,
+                        eligibility_correct=eligibility_correct,
                         outcome_correct=bool(dense_candidates),
                         candidates=tuple(
                             _retrieved(candidate, chunk_by_id[candidate.chunk_id])
@@ -427,7 +483,7 @@ def evaluate_live_hybrid_retrieval(
                         case_id=case.case_id,
                         variant_id=variant.variant_id,
                         planner_correct=True,
-                        eligibility_correct=True,
+                        eligibility_correct=eligibility_correct,
                         outcome_correct=outcome_correct,
                         candidates=accepted_candidates,
                         hard_failures=(
@@ -499,6 +555,7 @@ def evaluate_live_hybrid_retrieval(
             active_reranker_profile.model_dump(mode="json")
         ),
         plan_catalogue_checksum=plan_catalogue_checksum,
+        current_lineage=current_lineage,
     )
     hybrid_result = _evaluate(
         experiment_id=f"{experiment_id_prefix}-hybrid",
@@ -516,6 +573,7 @@ def evaluate_live_hybrid_retrieval(
             active_reranker_profile.model_dump(mode="json")
         ),
         plan_catalogue_checksum=plan_catalogue_checksum,
+        current_lineage=current_lineage,
     )
     embedding_tokens = (document_embeddings.provider_input_tokens or 0) + (
         query_embeddings.provider_input_tokens or 0
@@ -535,6 +593,7 @@ def evaluate_live_hybrid_retrieval(
             "document_count": len({chunk.document_id for chunk in chunks}),
             "chunk_count": len(chunks),
             "query_count": len(variants),
+            "variant_count": len(all_variants),
             "embedding_input_tokens": embedding_tokens,
             "embedding_estimated_cost_usd": (
                 embedding_tokens
@@ -549,8 +608,11 @@ def evaluate_live_hybrid_retrieval(
             "search_latency_ms": _latency_summary(search_latencies),
             "rerank_latency_ms": _latency_summary(rerank_latencies),
             "candidate_scope": (
-                "repository corpus with deterministic Laravel-eligibility fixture; "
-                "controlled non-search outcomes short-circuit before Qdrant"
+                "independent repository source documents constrained by the real "
+                "Laravel EligibilityResolver artifact; controlled resolver outcomes "
+                "are scored without Qdrant search"
+                if current_lineage is not None
+                else "legacy repository evaluation corpus"
             ),
         },
     )
@@ -843,14 +905,34 @@ def _evaluate(
     sparse_profile_fingerprint: str,
     reranker_profile_fingerprint: str,
     plan_catalogue_checksum: str | None,
+    current_lineage: dict[str, Any] | None,
 ) -> ExperimentResult:
+    chunking_configuration = {
+        "strategy": (
+            "source-document-whole"
+            if current_lineage is not None
+            else "evidence-unit-source-anchored"
+        ),
+        "version": "v1",
+    }
     deterministic_manifest = {
         "embedding_profile_fingerprint": profile_fingerprint,
         "sparse_profile_fingerprint": sparse_profile_fingerprint,
         "reranker_profile_fingerprint": reranker_profile_fingerprint,
         "plan_catalogue_checksum": plan_catalogue_checksum,
         "retrieval_configuration": retrieval_configuration,
+        "chunking_configuration": chunking_configuration,
         "harness_version": RetrievalEvaluationHarness.VERSION,
+        "planner": (
+            current_lineage["planner"]
+            if current_lineage is not None
+            else {"provider": "legacy-live", "model": "recorded-plan"}
+        ),
+        **{
+            key: value
+            for key, value in (current_lineage or {}).items()
+            if key != "eligibility_artifact_digest"
+        },
     }
     return RetrievalEvaluationHarness().evaluate(
         experiment_id=experiment_id,
@@ -866,23 +948,66 @@ def _evaluate(
             policy_digest=content_digest(quality_policy_data),
             harness_version=RetrievalEvaluationHarness.VERSION,
             matching_algorithm=corpus.matching_algorithm,
-            planner={
-                "provider": "recorded-eligibility-fixture",
-                "model": "adr-0017-adr-0018-v1",
-            },
+            planner=(
+                current_lineage["planner"]
+                if current_lineage is not None
+                else {"provider": "legacy-live", "model": "recorded-plan"}
+            ),
             embedding_profile_fingerprint=profile_fingerprint,
             sparse_profile_fingerprint=sparse_profile_fingerprint,
             reranker_profile_fingerprint=reranker_profile_fingerprint,
             plan_catalogue_checksum=plan_catalogue_checksum,
+            eligibility_artifact_contract=(
+                current_lineage.get("eligibility_artifact_contract")
+                if current_lineage is not None
+                else None
+            ),
+            eligibility_artifact_digest=(
+                current_lineage.get("eligibility_artifact_digest")
+                if current_lineage is not None
+                else None
+            ),
+            eligibility_comparability_digest=(
+                current_lineage.get("eligibility_comparability_digest")
+                if current_lineage is not None
+                else None
+            ),
+            eligibility_catalogue_version=(
+                current_lineage.get("eligibility_catalogue_version")
+                if current_lineage is not None
+                else None
+            ),
+            eligibility_catalogue_digest=(
+                current_lineage.get("eligibility_catalogue_digest")
+                if current_lineage is not None
+                else None
+            ),
+            eligibility_resolver_source_digest=(
+                current_lineage.get("eligibility_resolver_source_digest")
+                if current_lineage is not None
+                else None
+            ),
+            eligibility_configuration_digest=(
+                current_lineage.get("eligibility_configuration_digest")
+                if current_lineage is not None
+                else None
+            ),
+            eligibility_evaluated_at=(
+                current_lineage.get("eligibility_evaluated_at")
+                if current_lineage is not None
+                else None
+            ),
+            eligibility_document_mapping_digest=(
+                current_lineage.get("eligibility_document_mapping_digest")
+                if current_lineage is not None
+                else None
+            ),
             deterministic_profile_digest=(
                 content_digest(deterministic_manifest)
                 if plan_catalogue_checksum is not None
                 else None
             ),
-            chunking_configuration={
-                "strategy": "evidence-unit-source-anchored",
-                "version": "v1",
-            },
+            chunking_configuration=chunking_configuration,
             retrieval_configuration=retrieval_configuration,
         ),
     )

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
 from datetime import UTC, datetime
+from pathlib import Path, PurePosixPath
 
 from app.evaluation.canonical import content_digest
 from app.evaluation.historical_result import ComparisonResult
@@ -22,11 +24,26 @@ def deterministic_profile_manifest(experiment: ExperimentResult) -> dict[str, ob
         "sparse_profile_fingerprint": lineage.sparse_profile_fingerprint,
         "reranker_profile_fingerprint": lineage.reranker_profile_fingerprint,
         "plan_catalogue_checksum": lineage.plan_catalogue_checksum,
+        "eligibility_artifact_contract": lineage.eligibility_artifact_contract,
+        "eligibility_artifact_digest": lineage.eligibility_artifact_digest,
+        "eligibility_comparability_digest": lineage.eligibility_comparability_digest,
+        "eligibility_catalogue_version": lineage.eligibility_catalogue_version,
+        "eligibility_catalogue_digest": lineage.eligibility_catalogue_digest,
+        "eligibility_resolver_source_digest": lineage.eligibility_resolver_source_digest,
+        "eligibility_configuration_digest": lineage.eligibility_configuration_digest,
+        "eligibility_evaluated_at": lineage.eligibility_evaluated_at,
+        "eligibility_document_mapping_digest": lineage.eligibility_document_mapping_digest,
     }
     if any(value is None for value in required.values()):
         raise ValueError("deterministic execution profile lineage is incomplete")
     return {
-        **required,
+        **{
+            key: value
+            for key, value in required.items()
+            if key != "eligibility_artifact_digest"
+        },
+        "planner": lineage.planner,
+        "chunking_configuration": lineage.chunking_configuration,
         "retrieval_configuration": lineage.retrieval_configuration,
         "harness_version": lineage.harness_version,
     }
@@ -49,6 +66,43 @@ def verify_promoted_deterministic_baseline(
         raise ValueError("promoted deterministic baseline experiment identity mismatch")
     verify_deterministic_profile_digest(baseline)
     verify_baseline_identity(baseline, promotion)
+
+
+def verify_checksum_manifest(
+    path: Path, *, required: frozenset[str] = frozenset()
+) -> None:
+    """Verify a bounded baseline inventory without permitting path escape."""
+    directory = path.parent.resolve()
+    recorded: set[str] = set()
+    for line_number, line in enumerate(path.read_text().splitlines(), start=1):
+        if not line.strip():
+            continue
+        parts = line.split(maxsplit=1)
+        if len(parts) != 2:
+            raise ValueError(f"invalid checksum entry on line {line_number}")
+        expected, relative = parts
+        relative = relative.removeprefix("*")
+        relative_path = PurePosixPath(relative)
+        if (
+            len(expected) != 64
+            or any(character not in "0123456789abcdef" for character in expected)
+            or relative_path.is_absolute()
+            or ".." in relative_path.parts
+            or relative in recorded
+        ):
+            raise ValueError(f"invalid checksum entry: {relative}")
+        target = (directory / Path(*relative_path.parts)).resolve()
+        if target.parent != directory or not target.is_file():
+            raise ValueError(f"invalid baseline checksum target: {relative}")
+        actual = hashlib.sha256(target.read_bytes()).hexdigest()
+        if actual != expected:
+            raise ValueError(f"baseline checksum mismatch: {relative}")
+        recorded.add(relative)
+    missing = required - recorded
+    if missing:
+        raise ValueError(
+            "baseline checksum manifest is incomplete: " + ", ".join(sorted(missing))
+        )
 
 
 def promote_baseline(

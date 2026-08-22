@@ -1,4 +1,6 @@
+import hashlib
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
@@ -10,6 +12,7 @@ from app.evaluation.governance import (
     promote_baseline,
     record_gate_decision,
     verify_baseline_identity,
+    verify_checksum_manifest,
     verify_deterministic_profile_digest,
     verify_promoted_deterministic_baseline,
 )
@@ -74,6 +77,19 @@ def deterministic_experiment(experiment_id: str) -> ExperimentResult:
             "sparse_profile_fingerprint": "d" * 64,
             "reranker_profile_fingerprint": "e" * 64,
             "plan_catalogue_checksum": "f" * 64,
+            "eligibility_artifact_contract": "deterministic-eligibility-v1",
+            "eligibility_artifact_digest": "1" * 64,
+            "eligibility_comparability_digest": "6" * 64,
+            "eligibility_catalogue_version": "dolved-care-engineering-v2",
+            "eligibility_catalogue_digest": "2" * 64,
+            "eligibility_resolver_source_digest": "3" * 64,
+            "eligibility_configuration_digest": "4" * 64,
+            "eligibility_evaluated_at": "2026-08-01T12:00:00Z",
+            "eligibility_document_mapping_digest": "5" * 64,
+            "planner": {
+                "provider": "deterministic",
+                "model": "authored-engineering-plans-v2",
+            },
             "retrieval_configuration": {"rrf_k": 5},
         }
     )
@@ -135,6 +151,35 @@ def test_deterministic_promotion_binds_and_recomputes_execution_profile() -> Non
     with pytest.raises(ValueError, match="does not match lineage"):
         verify_deterministic_profile_digest(drifted)
 
+    eligibility_drift = baseline.model_copy(
+        update={
+            "lineage": baseline.lineage.model_copy(
+                update={"eligibility_catalogue_digest": "9" * 64}
+            )
+        }
+    )
+    with pytest.raises(ValueError, match="does not match lineage"):
+        verify_deterministic_profile_digest(eligibility_drift)
+
+    exact_run_artifact_drift = baseline.model_copy(
+        update={
+            "lineage": baseline.lineage.model_copy(
+                update={"eligibility_artifact_digest": "8" * 64}
+            )
+        }
+    )
+    verify_deterministic_profile_digest(exact_run_artifact_drift)
+
+    comparability_drift = baseline.model_copy(
+        update={
+            "lineage": baseline.lineage.model_copy(
+                update={"eligibility_comparability_digest": "7" * 64}
+            )
+        }
+    )
+    with pytest.raises(ValueError, match="does not match lineage"):
+        verify_deterministic_profile_digest(comparability_drift)
+
 
 def test_native_historical_promotion_remains_compatible_without_profile_digest() -> (
     None
@@ -185,3 +230,32 @@ def test_deterministic_candidate_report_is_explicitly_unpromoted() -> None:
     assert "CANDIDATE — NOT PROMOTED" in report
     assert "External provider calls: 0" in report
     assert "Human review and an explicit promotion record are required" in report
+
+
+def test_checksum_manifest_requires_promotion_and_result(tmp_path: Path) -> None:
+    result = tmp_path / "experiment-result.json"
+    result.write_text("result")
+    manifest = tmp_path / "checksums.sha256"
+    manifest.write_text(
+        f"{hashlib.sha256(result.read_bytes()).hexdigest()}  {result.name}\n"
+    )
+
+    with pytest.raises(ValueError, match="manifest is incomplete"):
+        verify_checksum_manifest(
+            manifest,
+            required=frozenset({"experiment-result.json", "baseline-promotion.json"}),
+        )
+
+
+def test_checksum_manifest_rejects_path_escape_and_duplicates(tmp_path: Path) -> None:
+    result = tmp_path / "experiment-result.json"
+    result.write_text("result")
+    digest = hashlib.sha256(result.read_bytes()).hexdigest()
+    manifest = tmp_path / "checksums.sha256"
+    manifest.write_text(f"{digest}  ../experiment-result.json\n")
+    with pytest.raises(ValueError, match="invalid checksum entry"):
+        verify_checksum_manifest(manifest)
+
+    manifest.write_text(f"{digest}  {result.name}\n{digest}  {result.name}\n")
+    with pytest.raises(ValueError, match="invalid checksum entry"):
+        verify_checksum_manifest(manifest)

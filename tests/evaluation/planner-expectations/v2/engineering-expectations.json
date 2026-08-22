@@ -958,7 +958,9 @@
         "clarification_reason": null,
         "contract_version": 2,
         "explicit_date": null,
-        "location_references": null,
+        "location_references": [
+          "there"
+        ],
         "temporal_mode": "current",
         "temporal_reference": null
       },
@@ -1709,7 +1711,7 @@
       "variant_id": "direct"
     }
   ],
-  "expectations_digest": "bbb21cafa235ca5b46d10f02bd109205f82f1262013560a91ef70f695c0e7de9",
+  "expectations_digest": "9a301a9be26e2b0fec7c7d497db8e59b63a5ab55f339336b395c01e9e0a2235f",
   "protected_splits_accessed": false,
   "reconciled_temporal_reference_count": 14,
   "schema_version": "v2",

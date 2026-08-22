@@ -228,7 +228,7 @@ EVALUATION_CORPUS_VERSION ?= v2
 EVALUATION_BENCHMARK_VERSION ?= v2
 EVALUATION_CONTRACT_VERSION ?= v2
 E2E_COMPOSE := docker compose --env-file .env.e2e --project-name dolved-e2e --file compose.yaml --file compose.e2e.yaml
-EVALUATION_CURRENT_COMPOSE := docker compose --env-file .env.e2e --project-name dolved-evaluation-current --file compose.yaml --file compose.e2e.yaml
+EVALUATION_CURRENT_COMPOSE := docker compose --env-file .env.e2e --project-name dolved-evaluation-current --file compose.yaml --file compose.e2e.yaml --file compose.evaluation-current.yaml
 
 evaluation-benchmark-sync:
 	$(COMPOSE) run --rm --no-deps \
@@ -336,25 +336,7 @@ evaluation-policy-gate: evaluation-run
 			--output /output/comparison-report.md
 
 evaluation-retrieval-current-candidate:
-	@mkdir -p /tmp/rag-platform-evaluation-current
-	$(EVALUATION_CURRENT_COMPOSE) up --detach --wait --wait-timeout $(WAIT_TIMEOUT) qdrant
-	$(EVALUATION_CURRENT_COMPOSE) run --rm --no-deps \
-		--volume "$(CURDIR)/scripts/evaluation/run.py:/evaluation/run.py:ro" \
-		--volume "$(CURDIR)/tests/evaluation/corpus/v2/corpus.json:/evaluation/corpus.json:ro" \
-		--volume "$(CURDIR)/tests/evaluation/policies/v1/policy.json:/evaluation/policy.json:ro" \
-		--volume "$(CURDIR)/tests/evaluation/planner-expectations/deterministic-current-v1.json:/evaluation/plan-catalogue.json:ro" \
-		--volume "/tmp/rag-platform-evaluation-current:/output" \
-		--env ENVIRONMENT=evaluation-current \
-		--env PYTHONPATH=/app \
-		ai python /evaluation/run.py retrieval-current \
-			--corpus /evaluation/corpus.json \
-			--policy /evaluation/policy.json \
-			--plan-catalogue /evaluation/plan-catalogue.json \
-			--repository-commit "$(shell git rev-parse HEAD)" \
-			--output /output/current-run.json \
-			--candidate-output /output/experiment-result.json \
-			--report-output /output/candidate-report.md
-	$(EVALUATION_CURRENT_COMPOSE) down --volumes --remove-orphans
+	./scripts/evaluation/run_current_retrieval.sh
 
 evaluation-retrieval-current: evaluation-retrieval-current-candidate
 	$(EVALUATION_CURRENT_COMPOSE) run --rm --no-deps \

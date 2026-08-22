@@ -26,22 +26,44 @@ The heavyweight sparse-model boundary is kept honest by a separate
 and performs bounded inference. The Playwright journey substitutes that model for
 speed and determinism and therefore makes no claim about sparse-model quality.
 
-The current retrieval gate now executes the current implementation from the
-authored-plan boundary through deterministic dense/sparse encoding, real Qdrant,
-RRF and deterministic reranking. Its execution profile binds the three adapter
-fingerprints, authored-plan catalogue checksum, retrieval configuration and
-harness version. Candidate output includes a report marked **CANDIDATE — NOT
-PROMOTED**. Comparison fails closed unless the baseline result, promotion record,
-profile digest and checksum manifest all agree; no command can promote or refresh
-its own baseline.
+The first current-retrieval implementation was rejected during its read-only
+conformance audit. It derived eligibility scopes and searchable chunks from
+expected EvidenceUnits, bypassed Laravel's real eligibility resolver, treated
+controlled outcomes as automatically correct, and used a smaller generic
+population. Its 23-case / 25-variant output is therefore diagnostic history only
+and is not eligible for promotion.
+
+The corrected current retrieval gate uses the approved 42-case / 126-variant
+engineering snapshot and the independent 93-version document catalogue. A
+private Laravel command, guarded to the disposable evaluation environment,
+persists the real organisation, aliases, document families, authority windows,
+applicability and active generations. It then invokes the production
+`BuildAuthorisedKnowledgeScope` and `EligibilityResolver` for every authored
+plan at the fixed evaluation clock. The typed Laravel-to-Python artefact records
+all 126 resolver outcomes plus explicit isolation probes. Python builds search
+chunks only from independently checksummed source documents and uses expected
+EvidenceUnits only after retrieval for scoring.
+
+The deterministic profile binds the population, planner catalogue, independent
+source catalogue, chunking and retrieval configuration, eligibility mapping,
+resolver source/configuration, fixed time, adapter fingerprints and harness
+version. The full artefact digest preserves exact repository lineage; a separate
+semantic comparability digest excludes repository identity in accordance with
+the accepted comparison policy. Candidate output remains marked **CANDIDATE —
+NOT PROMOTED**. Comparison fails closed unless the baseline result, promotion
+record, profile digest and complete checksum manifest all agree; no command can
+promote or refresh its own baseline.
 
 ## Verification
 
 - Clean `make test-e2e`: 1 Playwright journey passed in the isolated stack; the
   stack and volumes were removed after success.
 - `make test-splade-integration`: 1 passed using the real configured SPLADE model.
-- Laravel: 345 passed, 2 skipped, 1,827 assertions.
-- Python: 578 passed, 4 skipped.
+- Focused real-eligibility boundary: 5 Laravel tests, 23 assertions.
+- Disposable Laravel-to-Python diagnostic: 42 cases, 126 variants, 93
+  independent source chunks and 126 real resolver outcomes accounted for.
+- Laravel: 350 passed, 2 skipped, 1,850 assertions.
+- Python: 588 passed, 4 skipped.
 - Web: 115 passed.
 - Pint, Ruff lint/format, Mypy, ESLint, web and E2E TypeScript checks: passed.
 - Shell syntax, Compose configuration, JSON parsing and `git diff --check`:

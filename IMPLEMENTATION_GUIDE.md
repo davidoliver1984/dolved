@@ -14241,12 +14241,22 @@ tests/end-to-end/
   model and performs bounded structural inference; the Playwright suite remains
   deterministic and does not claim real-model quality.
 * `make evaluation-retrieval-current-candidate` executes the current retrieval
-  implementation against the engineering corpus with authored plans,
-  deterministic vectors/reranking and real Qdrant. It emits an explicitly
-  unpromoted human-readable report and binds the complete deterministic execution
-  profile. `make evaluation-retrieval-current` can compare only against a
-  checksum-valid, human-promoted deterministic baseline and cannot create or
-  refresh that baseline itself.
+  implementation against the approved 42-case / 126-variant engineering
+  snapshot and the independent 93-version source catalogue. A private,
+  environment-guarded Laravel command first persists the real organisation,
+  document, authority and applicability state and invokes the production
+  `EligibilityResolver` for every authored plan. Its typed artefact is then
+  consumed by Python for deterministic dense/sparse encoding, real Qdrant, RRF
+  and deterministic reranking. Expected EvidenceUnits are used only after
+  retrieval for scoring; they never create search inputs or eligibility scopes.
+* The exact-run eligibility artefact digest records the repository commit while
+  a separate semantic comparability digest binds resolver source/configuration,
+  population mappings, fixed time and resolved outcomes into the deterministic
+  profile without making repository identity a comparison variable. Candidate
+  output is explicitly marked **CANDIDATE — NOT PROMOTED**.
+  `make evaluation-retrieval-current` can compare only against a checksum-valid,
+  human-promoted deterministic baseline and cannot create or refresh that
+  baseline itself.
 
 ### Verification evidence
 
@@ -14254,7 +14264,10 @@ tests/end-to-end/
   volumes were removed after success.
 * `make test-splade-integration`: 1 passed using the real configured SPLADE
   model.
-* Full suites: Laravel 345 passed / 2 skipped / 1,827 assertions; Python 578
+* Focused real-eligibility boundary: 5 Laravel tests / 23 assertions passed;
+  the disposable cross-language diagnostic accounted for 42 cases, 126
+  variants, 93 independent source chunks and 126 resolver outcomes.
+* Full suites: Laravel 350 passed / 2 skipped / 1,850 assertions; Python 588
   passed / 4 skipped; web 115 passed.
 * Pint, Ruff lint/format, Mypy, ESLint, both TypeScript projects, shell syntax,
   Compose configuration, JSON parsing and `git diff --check`: passed.

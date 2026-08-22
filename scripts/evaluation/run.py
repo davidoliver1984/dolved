@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import hashlib
 import json
 import sys
 from datetime import UTC, datetime
@@ -12,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from app.evaluation.canonical import content_digest
+from app.evaluation.current_retrieval import load_current_retrieval_inputs
 from app.evaluation.governance import (
     assess_gate,
     promote_baseline,
@@ -19,6 +19,7 @@ from app.evaluation.governance import (
     verify_baseline_identity,
     verify_deterministic_profile_digest,
     verify_promoted_deterministic_baseline,
+    verify_checksum_manifest,
 )
 from app.evaluation.harness import RetrievalEvaluationHarness
 from app.evaluation.historical_result import load_comparison_result
@@ -188,9 +189,19 @@ def retrieval_current(args: argparse.Namespace) -> None:
             "Provider credentials must be absent from current retrieval evaluation."
         )
 
-    corpus_data = load_json(args.corpus)
     policy_data = load_json(args.policy)
-    corpus = EvaluationCorpus.model_validate(corpus_data)
+    inputs = load_current_retrieval_inputs(
+        snapshot_path=args.corpus,
+        document_catalog_path=args.document_catalog,
+        organisation_path=args.organisation,
+        source_root=args.source_root,
+        checksums_path=args.source_checksums,
+        plan_catalogue_path=args.plan_catalogue,
+        eligibility_artifact_path=args.eligibility_artifact,
+        repository_commit=args.repository_commit,
+    )
+    corpus_data = inputs.corpus_data
+    corpus = inputs.corpus
     planner = CatalogueRetrievalPlanner(str(args.plan_catalogue))
     questions = {variant.question for case in corpus.cases for variant in case.variants}
     if planner.questions != questions:
@@ -223,6 +234,13 @@ def retrieval_current(args: argparse.Namespace) -> None:
         text_capture_mode=EvaluationTextCaptureMode.BENCHMARK_TEXT,
         plan_catalogue_checksum=planner.catalogue_checksum,
         experiment_id_prefix="r22-s03-deterministic-current",
+        evaluation_chunks=inputs.chunks,
+        eligibility_scopes=inputs.scopes,
+        eligibility_outcomes={
+            identity: entry.outcome for identity, entry in inputs.resolutions.items()
+        },
+        eligibility_correctness=inputs.eligibility_correct,
+        current_lineage=inputs.lineage,
     )
     verify_deterministic_profile_digest(result.hybrid)
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -234,19 +252,11 @@ def retrieval_current(args: argparse.Namespace) -> None:
     )
 
 
-def _verify_checksum_manifest(path: Path) -> None:
-    directory = path.parent
-    for line in path.read_text().splitlines():
-        expected, relative = line.split(maxsplit=1)
-        relative = relative.removeprefix("*")
-        target = directory / relative
-        actual = hashlib.sha256(target.read_bytes()).hexdigest()
-        if actual != expected:
-            raise ValueError(f"baseline checksum mismatch: {relative}")
-
-
 def compare_deterministic(args: argparse.Namespace) -> None:
-    _verify_checksum_manifest(args.checksums)
+    verify_checksum_manifest(
+        args.checksums,
+        required=frozenset({"experiment-result.json", "baseline-promotion.json"}),
+    )
     candidate = ExperimentResult.model_validate(load_json(args.candidate))
     baseline = ExperimentResult.model_validate(load_json(args.baseline))
     promotion = BaselinePromotion.model_validate(load_json(args.promotion))
@@ -320,6 +330,11 @@ def parser() -> argparse.ArgumentParser:
     current_parser.add_argument("--corpus", type=Path, required=True)
     current_parser.add_argument("--policy", type=Path, required=True)
     current_parser.add_argument("--plan-catalogue", type=Path, required=True)
+    current_parser.add_argument("--document-catalog", type=Path, required=True)
+    current_parser.add_argument("--organisation", type=Path, required=True)
+    current_parser.add_argument("--source-root", type=Path, required=True)
+    current_parser.add_argument("--source-checksums", type=Path, required=True)
+    current_parser.add_argument("--eligibility-artifact", type=Path, required=True)
     current_parser.add_argument("--output", type=Path, required=True)
     current_parser.add_argument("--candidate-output", type=Path, required=True)
     current_parser.add_argument("--report-output", type=Path, required=True)

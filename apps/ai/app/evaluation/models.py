@@ -445,6 +445,15 @@ class ExperimentLineage(StrictModel):
     sparse_profile_fingerprint: str | None = None
     reranker_profile_fingerprint: str | None = None
     plan_catalogue_checksum: str | None = None
+    eligibility_artifact_contract: str | None = None
+    eligibility_artifact_digest: str | None = None
+    eligibility_comparability_digest: str | None = None
+    eligibility_catalogue_version: str | None = None
+    eligibility_catalogue_digest: str | None = None
+    eligibility_resolver_source_digest: str | None = None
+    eligibility_configuration_digest: str | None = None
+    eligibility_evaluated_at: str | None = None
+    eligibility_document_mapping_digest: str | None = None
     deterministic_profile_digest: str | None = None
     chunking_configuration: dict[str, Any]
     retrieval_configuration: dict[str, Any]
