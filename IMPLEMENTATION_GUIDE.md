@@ -14083,7 +14083,7 @@ Document which behaviours belong in unit, integration, contract, feature and end
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-22.
 
 ### Planned categories
 
@@ -14108,6 +14108,33 @@ Not yet executed.
 * Expensive tests are separated from fast feedback.
 * Test data strategy is documented.
 * CI stages can map to the taxonomy.
+
+### Delivered implementation
+
+* Accepted ADR-0029 as the platform-wide testing and contract-verification
+  boundary after implementation-readiness review against the actual runners,
+  adapters, baselines, contracts and Compose mounts.
+* Published `docs/testing/README.md` as the operational reference for the
+  fifteen test categories, test-data ownership, cleanup, failure evidence,
+  flake/timeout/quarantine rules and the Phase 23 CI handoff.
+* Separated provider-free historical policy enforcement, deterministic
+  current-pipeline regression, generation-evidence integrity and optional
+  live quality evidence without allowing one category to overclaim another.
+* Recorded the isolated `dolved-e2e` identity, compact Level-1 fixture corpus,
+  physical mount exclusion and deterministic provider/heavyweight-model
+  boundary that later E2E stages must implement fail closed.
+* Renamed the existing Laravel feature test from
+  `EndToEndIngestionOrchestrationTest` to
+  `IngestionOrchestrationFeatureTest`; only the filename and PHP class name
+  changed, preserving every assertion and runtime behaviour.
+
+### Verification evidence
+
+The renamed Laravel feature test passed unchanged. PHP formatting, JSON
+validation, documentation/reference checks and `git diff --check` passed. The
+accepted ADR remains documentation/architecture only: no provider call, runtime
+dependency, application behaviour, retrieval configuration, threshold,
+calibration population, benchmark or held-out content changed.
 
 ### Commit boundary
 

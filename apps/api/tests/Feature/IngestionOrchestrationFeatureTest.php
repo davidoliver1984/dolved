@@ -36,7 +36,7 @@ use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
-class EndToEndIngestionOrchestrationTest extends TestCase
+class IngestionOrchestrationFeatureTest extends TestCase
 {
     use RefreshDatabase;
 

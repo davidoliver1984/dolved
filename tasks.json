@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R22",
-    "current_session": "R22-S01",
-    "next_action": "Begin R22-S01 — establish the platform test taxonomy.",
-    "completed_through": "R21-GATE",
+    "current_session": "R22-S02",
+    "next_action": "Begin R22-S02 — add shared contract tests.",
+    "completed_through": "R22-S01",
     "completed_phase_count": 22,
     "total_phase_count": 25
   },
@@ -4414,15 +4414,15 @@
       "id": "R22",
       "guide_phase": "Phase 22 \u2014 Testing and Quality Strategy",
       "title": "Testing and Quality Strategy",
-      "guide_start_line": 13660,
+      "guide_start_line": 14070,
       "sessions": [
         {
           "id": "R22-S01",
           "guide_stage": "Stage 22.1 \u2014 Establish Test Taxonomy",
           "title": "Establish Test Taxonomy",
-          "guide_start_line": 13668,
-          "guide_end_line": 13707,
-          "status": "not_started",
+          "guide_start_line": 14078,
+          "guide_end_line": 14144,
+          "status": "completed",
           "objective": "Document which behaviours belong in unit, integration, contract, feature and end-to-end tests.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -4430,8 +4430,8 @@
             "phase": "Phase 22 \u2014 Testing and Quality Strategy",
             "stage": "Stage 22.1 \u2014 Establish Test Taxonomy",
             "source_lines": {
-              "start": 13668,
-              "end": 13707
+              "start": 14078,
+              "end": 14144
             }
           },
           "workflow": [
@@ -4454,16 +4454,25 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r22-s01-establish-test-taxonomy.md",
-            "status": "not_started"
+            "status": "completed",
+            "actual_path": "docs/journal/2026-08-22-r22-s01-establish-test-taxonomy.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Accepted ADR-0029 after implementation-readiness review and excluded repository_commit from deterministic comparability while retaining it as provenance",
+            "Published docs/testing/README.md as the operational reference for fifteen test categories, test-data ownership, isolation, cleanup, evidence and quarantine rules",
+            "Separated provider-free historical policy gates, current deterministic quality regression, generation-evidence integrity and optional live quality evidence",
+            "Defined the isolated dolved-e2e identity, compact Level-1 fixtures and physical protected-input exclusion required for later full-platform tests",
+            "Renamed the mechanically scoped Laravel ingestion feature test without changing its assertions or runtime behaviour",
+            "Focused Laravel test, PHP formatting, JSON validation, documentation/reference checks and git diff check passed",
+            "docs/journal/2026-08-22-r22-s01-establish-test-taxonomy.md"
+          ]
         },
         {
           "id": "R22-S02",
           "guide_stage": "Stage 22.2 \u2014 Add Contract Tests",
           "title": "Add Contract Tests",
-          "guide_start_line": 13709,
-          "guide_end_line": 13734,
+          "guide_start_line": 14146,
+          "guide_end_line": 14171,
           "status": "not_started",
           "objective": "Verify that Laravel and Python agree on shared HTTP and event contracts.",
           "session_mode": "architecture",
@@ -4472,8 +4481,8 @@
             "phase": "Phase 22 \u2014 Testing and Quality Strategy",
             "stage": "Stage 22.2 \u2014 Add Contract Tests",
             "source_lines": {
-              "start": 13709,
-              "end": 13734
+              "start": 14146,
+              "end": 14171
             }
           },
           "workflow": [
@@ -4504,8 +4513,8 @@
           "id": "R22-S03",
           "guide_stage": "Stage 22.3 \u2014 Add End-to-End Ingestion Tests",
           "title": "Add End-to-End Ingestion Tests",
-          "guide_start_line": 13736,
-          "guide_end_line": 13766,
+          "guide_start_line": 14173,
+          "guide_end_line": 14203,
           "status": "not_started",
           "objective": "Test the complete document path from upload to searchable vectors.",
           "session_mode": "implementation",
@@ -4514,8 +4523,8 @@
             "phase": "Phase 22 \u2014 Testing and Quality Strategy",
             "stage": "Stage 22.3 \u2014 Add End-to-End Ingestion Tests",
             "source_lines": {
-              "start": 13736,
-              "end": 13766
+              "start": 14173,
+              "end": 14203
             }
           },
           "workflow": [
@@ -4546,8 +4555,8 @@
           "id": "R22-S04",
           "guide_stage": "Stage 22.4 \u2014 Add End-to-End Chat Tests",
           "title": "Add End-to-End Chat Tests",
-          "guide_start_line": 13768,
-          "guide_end_line": 13794,
+          "guide_start_line": 14205,
+          "guide_end_line": 14231,
           "status": "not_started",
           "objective": "Test authenticated, tenant-safe retrieval and grounded answer generation.",
           "session_mode": "implementation",
@@ -4556,8 +4565,8 @@
             "phase": "Phase 22 \u2014 Testing and Quality Strategy",
             "stage": "Stage 22.4 \u2014 Add End-to-End Chat Tests",
             "source_lines": {
-              "start": 13768,
-              "end": 13794
+              "start": 14205,
+              "end": 14231
             }
           },
           "workflow": [
@@ -4588,8 +4597,8 @@
           "id": "R22-S05",
           "guide_stage": "Stage 22.5 \u2014 Add Security-Focused Tests",
           "title": "Add Security-Focused Tests",
-          "guide_start_line": 13796,
-          "guide_end_line": 13834,
+          "guide_start_line": 14233,
+          "guide_end_line": 14271,
           "status": "not_started",
           "objective": "Automate checks for the platform\u2019s most important security boundaries.",
           "session_mode": "implementation",
@@ -4598,8 +4607,8 @@
             "phase": "Phase 22 \u2014 Testing and Quality Strategy",
             "stage": "Stage 22.5 \u2014 Add Security-Focused Tests",
             "source_lines": {
-              "start": 13796,
-              "end": 13834
+              "start": 14233,
+              "end": 14271
             }
           },
           "workflow": [
@@ -4627,8 +4636,8 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 13834,
-      "status": "not_started",
+      "guide_end_line": 14271,
+      "status": "in_progress",
       "objective": "Create a layered test strategy that catches regressions without requiring every check to be an expensive end-to-end test.",
       "gate": {
         "id": "R22-GATE",

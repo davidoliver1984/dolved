@@ -912,6 +912,15 @@ every check to be an expensive end-to-end test.
 - Add End-to-End Chat Tests
 - Add Security-Focused Tests
 
+**Testing taxonomy completed 2026-08-22** (Stage 22.1): accepted ADR-0029
+now defines fifteen truthful test categories, the shared-schema contract
+boundary, isolated deterministic E2E topology and separate historical,
+current-orchestration and live-quality evaluation evidence. The operational
+reference records fixture ownership, cleanup, flake/quarantine policy and the
+required-versus-optional Phase 22 gate. Stage 22.2 can now add the missing
+cross-language contract schemas and verification without inventing another
+contract authority.
+
 ### Deliverable
 
 Comprehensive test suite.
