@@ -115,6 +115,9 @@ def test_deterministic_dense_and_sparse_adapters_preserve_lexical_signal() -> No
         str(item.source_id): set(item.vector.indices) for item in sparse.encodings
     }
     query_indices = indices["55555555-5555-4555-8555-555555555551"]
+    assert (
+        max(index for values in indices.values() for index in values) <= (1 << 32) - 1
+    )
     assert len(query_indices & indices["55555555-5555-4555-8555-555555555552"]) == 4
     assert len(query_indices & indices["55555555-5555-4555-8555-555555555553"]) == 1
 

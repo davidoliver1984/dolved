@@ -13,7 +13,7 @@ from app.sparse.models import (
     SparseVector,
 )
 
-_TIE_BREAK_INDEX = 1 << 32
+_TIE_BREAK_INDEX = (1 << 32) - 1
 _TIE_BREAK_WEIGHT = 0.001
 
 
@@ -25,8 +25,9 @@ class DeterministicSparseEncoder:
             for token, count in deterministic_token_counts(
                 item.text, limit=request.profile.max_input_tokens
             ).items():
-                index = int.from_bytes(
-                    hashlib.sha256(token.encode()).digest()[:4], "big"
+                index = (
+                    int.from_bytes(hashlib.sha256(token.encode()).digest()[:4], "big")
+                    % _TIE_BREAK_INDEX
                 )
                 weighted[index] = weighted.get(index, 0.0) + 1.0 + math.log(count)
             weighted[_TIE_BREAK_INDEX] = _TIE_BREAK_WEIGHT * (
