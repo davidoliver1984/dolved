@@ -198,6 +198,8 @@ test("completes the deterministic ingestion, retrieval, streaming answer and iso
   streamRequests = 0;
   await page.getByLabel("Ask a question").fill("What exact time limit applies?");
   await page.getByRole("button", { name: "Send" }).click();
+  await expect(page.locator("span").filter({ hasText: /^Understanding your question…$/ }))
+    .toBeVisible({ timeout: 15_000 });
   await expect(page.locator("p", {
     hasText: /^The retrieved evidence does not establish an exact time limit for recording the omission\.$/,
   })).toBeVisible({ timeout: 90_000 });

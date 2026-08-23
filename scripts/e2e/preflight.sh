@@ -65,4 +65,9 @@ if ! jq -e '.services.api.environment.CONVERSATION_SSE_EVENT_LIMIT_PER_CONNECTIO
   fail "the E2E API does not enforce deterministic one-event SSE connections"
 fi
 
+if ! jq -e '.services.api.environment.CONVERSATION_SSE_EVENT_LIMIT_DISCONNECT_DELAY_MICROSECONDS == "500000"' \
+  <<<"$rendered" >/dev/null; then
+  fail "the E2E API does not preserve an observable progress state before reconnect"
+fi
+
 printf 'E2E preflight passed for isolated project dolved-e2e.\n'

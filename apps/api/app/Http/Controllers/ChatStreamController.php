@@ -31,8 +31,9 @@ class ChatStreamController extends Controller
             ->firstOrFail();
         $after = max(0, (int) $request->header('Last-Event-ID', '0'));
         $eventLimit = max(0, (int) config('conversation.sse_event_limit_per_connection'));
+        $eventLimitDisconnectDelay = max(0, (int) config('conversation.sse_event_limit_disconnect_delay_microseconds'));
 
-        return response()->stream(function () use ($run, $after, $eventLimit, $user, $workspace): void {
+        return response()->stream(function () use ($run, $after, $eventLimit, $eventLimitDisconnectDelay, $user, $workspace): void {
             $cursor = $after;
             $delivered = 0;
             $deadline = microtime(true) + (float) config('conversation.sse_connection_seconds');
@@ -85,6 +86,9 @@ class ChatStreamController extends Controller
                     }
                     if ($eventLimit > 0 && $delivered >= $eventLimit) {
                         $this->flush();
+                        if ($eventLimitDisconnectDelay > 0) {
+                            usleep($eventLimitDisconnectDelay);
+                        }
 
                         return;
                     }
