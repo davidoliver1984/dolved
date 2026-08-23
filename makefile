@@ -351,6 +351,8 @@ evaluation-retrieval-current: evaluation-retrieval-current-candidate
 			--baseline /baseline/experiment-result.json \
 			--promotion /baseline/baseline-promotion.json \
 			--checksums /baseline/checksums.sha256 \
+			--baseline-eligibility-artifact /baseline/eligibility-artifact.json \
+			--candidate-eligibility-artifact /output/eligibility-artifact.json \
 			--policy /evaluation/policy.json \
 			--output /output/comparison-report.md
 	$(EVALUATION_CURRENT_COMPOSE) down --volumes --remove-orphans

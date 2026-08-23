@@ -141,11 +141,7 @@ def load_current_retrieval_inputs(
     organisation = _object(organisation_path)
     checksums = _object(checksums_path)
     plans = _object(plan_catalogue_path)
-    artifact_data = _object(eligibility_artifact_path)
-    artifact = EligibilityArtifact.model_validate(artifact_data)
-
-    _verify_artifact_digest(artifact_data)
-    _verify_comparability_digest(artifact_data)
+    artifact = load_verified_eligibility_artifact(eligibility_artifact_path)
     if artifact.repository_commit != repository_commit:
         raise ValueError("eligibility artifact repository revision mismatch")
     if artifact.plan_catalogue.digest != content_digest(plans):
@@ -288,6 +284,15 @@ def load_current_retrieval_inputs(
             "eligibility_document_mapping_digest": mapping_digest,
         },
     )
+
+
+def load_verified_eligibility_artifact(path: Path) -> EligibilityArtifact:
+    """Load an eligibility artefact only after both internal digests validate."""
+    artifact_data = _object(path)
+    artifact = EligibilityArtifact.model_validate(artifact_data)
+    _verify_artifact_digest(artifact_data)
+    _verify_comparability_digest(artifact_data)
+    return artifact
 
 
 def scopes_for(

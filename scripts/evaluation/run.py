@@ -11,15 +11,20 @@ from pathlib import Path
 from typing import Any
 
 from app.evaluation.canonical import content_digest
-from app.evaluation.current_retrieval import load_current_retrieval_inputs
+from app.evaluation.current_retrieval import (
+    load_current_retrieval_inputs,
+    load_verified_eligibility_artifact,
+)
 from app.evaluation.governance import (
+    assess_deterministic_gate,
     assess_gate,
     promote_baseline,
     record_gate_decision,
     verify_baseline_identity,
+    verify_checksum_manifest,
+    verify_cross_workspace_isolation,
     verify_deterministic_profile_digest,
     verify_promoted_deterministic_baseline,
-    verify_checksum_manifest,
 )
 from app.evaluation.harness import RetrievalEvaluationHarness
 from app.evaluation.historical_result import load_comparison_result
@@ -251,16 +256,31 @@ def retrieval_current(args: argparse.Namespace) -> None:
 def compare_deterministic(args: argparse.Namespace) -> None:
     verify_checksum_manifest(
         args.checksums,
-        required=frozenset({"experiment-result.json", "baseline-promotion.json"}),
+        required=frozenset(
+            {
+                "experiment-result.json",
+                "baseline-promotion.json",
+                "eligibility-artifact.json",
+            }
+        ),
     )
     candidate = ExperimentResult.model_validate(load_json(args.candidate))
     baseline = ExperimentResult.model_validate(load_json(args.baseline))
     promotion = BaselinePromotion.model_validate(load_json(args.promotion))
     policy = QualityGatePolicy.model_validate(load_json(args.policy))
+    baseline_artifact = load_verified_eligibility_artifact(
+        args.baseline_eligibility_artifact
+    )
+    candidate_artifact = load_verified_eligibility_artifact(
+        args.candidate_eligibility_artifact
+    )
     verify_promoted_deterministic_baseline(baseline, promotion)
+    verify_cross_workspace_isolation(baseline, baseline_artifact)
     verify_deterministic_profile_digest(candidate)
     verify_baseline_identity(candidate, promotion)
-    passed, failures = assess_gate(candidate, baseline, policy)
+    passed, failures = assess_deterministic_gate(
+        candidate, baseline, policy, candidate_artifact
+    )
     report = comparison_report(candidate, baseline)
     report += f"\n## Gate assessment\n\nStatus: **{'PASS' if passed else 'FAIL'}**\n"
     if failures:
@@ -341,6 +361,12 @@ def parser() -> argparse.ArgumentParser:
     deterministic_parser.add_argument("--baseline", type=Path, required=True)
     deterministic_parser.add_argument("--promotion", type=Path, required=True)
     deterministic_parser.add_argument("--checksums", type=Path, required=True)
+    deterministic_parser.add_argument(
+        "--baseline-eligibility-artifact", type=Path, required=True
+    )
+    deterministic_parser.add_argument(
+        "--candidate-eligibility-artifact", type=Path, required=True
+    )
     deterministic_parser.add_argument("--policy", type=Path, required=True)
     deterministic_parser.add_argument("--output", type=Path, required=True)
     deterministic_parser.set_defaults(handler=compare_deterministic)

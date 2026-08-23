@@ -8,6 +8,7 @@ use App\Enums\EmbeddingSpaceGenerationStatus;
 use App\Models\EmbeddingSpaceGeneration;
 use App\Models\SparseEmbeddingProfile;
 use App\Models\SparseSpaceGeneration;
+use App\Support\E2e\DeterministicRetrievalProfile;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -20,18 +21,15 @@ class ProvisionSparseSpaceCommand extends Command
 
     protected $description = 'Idempotently provision the accepted V1 SPLADE sparse space';
 
-    public function handle(): int
+    public function handle(DeterministicRetrievalProfile $deterministicProfile): int
     {
         $embeddingSpacePublicId = (string) $this->argument('embedding-space');
         $e2e = app()->environment('e2e');
+        $e2eProfile = $e2e ? $deterministicProfile->load()['sparse'] : null;
         $profileIdentity = $e2e ? [
-            'fingerprint' => '182c7de0eb1db3e92830e3bab40bc45a113fa3c20866c0d3257a88d58b5c018f',
-            'provider' => 'deterministic',
-            'model' => 'sha256-sparse-v1',
-            'tokenizer' => 'sha256-bytes',
-            'tokenizer_revision' => '1',
-            'model_revision' => '1',
-            'adapter_version' => 'deterministic-v1',
+            ...$e2eProfile['profile'],
+            'fingerprint' => $e2eProfile['fingerprint'],
+            ...$e2eProfile['space'],
         ] : [
             'fingerprint' => 'e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d',
             'provider' => 'fastembed',
@@ -55,10 +53,10 @@ class ProvisionSparseSpaceCommand extends Command
                         'model' => $profileIdentity['model'],
                         'tokenizer' => $profileIdentity['tokenizer'],
                         'tokenizer_revision' => $profileIdentity['tokenizer_revision'],
-                        'output_representation' => 'sparse-index-weight',
-                        'max_input_tokens' => 512,
-                        'document_input_type' => 'document',
-                        'query_input_type' => 'query',
+                        'output_representation' => $profileIdentity['output_representation'] ?? 'sparse-index-weight',
+                        'max_input_tokens' => $profileIdentity['max_input_tokens'] ?? 512,
+                        'document_input_type' => $profileIdentity['document_input_type'] ?? 'document',
+                        'query_input_type' => $profileIdentity['query_input_type'] ?? 'query',
                         'model_revision' => $profileIdentity['model_revision'],
                         'adapter_version' => $profileIdentity['adapter_version'],
                     ],
@@ -67,7 +65,7 @@ class ProvisionSparseSpaceCommand extends Command
                     [
                         'sparse_embedding_profile_id' => $profile->id,
                         'embedding_space_generation_id' => $dense->id,
-                        'vector_name' => 'sparse',
+                        'vector_name' => $profileIdentity['vector_name'] ?? 'sparse',
                     ],
                     [
                         'public_id' => (string) Str::uuid(),

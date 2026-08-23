@@ -211,6 +211,8 @@ def test_result_and_governance_records_validate_against_shared_schemas() -> None
                 corpus_digest="a" * 64,
                 policy_version="1",
                 policy_digest="b" * 64,
+                repository_commit="a" * 40,
+                semantic_comparison_digest="c" * 64,
                 promoted_by="David Oliver",
                 promoted_at=now,
                 reason="Reviewed initial baseline",

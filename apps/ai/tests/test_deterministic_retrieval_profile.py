@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -51,6 +52,55 @@ def test_complete_e2e_profile_selects_only_deterministic_adapters() -> None:
     assert embedding_profile(configured).model == "token-hash-unit-vector-v3"
     assert sparse_embedding_profile(configured).model == "token-hash-sparse-v4"
     assert reranker_profile(configured).model == "token-overlap-v2"
+
+
+def test_shared_e2e_profile_matches_python_fingerprints_and_space() -> None:
+    fixture = json.loads(
+        Path("/contracts/testing/deterministic-retrieval-profile-v1.json").read_text()
+    )
+    configured = settings()
+    dense = embedding_profile(configured)
+    sparse = sparse_embedding_profile(configured)
+
+    assert dense.model_dump(mode="json") == fixture["dense"]["profile"]
+    assert dense.fingerprint() == fixture["dense"]["fingerprint"]
+    assert fixture["dense"]["space"] == {
+        "collection_name": "dolved-e2e-vectors-v1",
+        "vector_name": "dense",
+        "dimensions": dense.dimensions,
+        "distance": "cosine",
+    }
+    assert sparse.model_dump(mode="json") == fixture["sparse"]["profile"]
+    assert sparse.fingerprint() == fixture["sparse"]["fingerprint"]
+    assert fixture["sparse"]["space"] == {"vector_name": "sparse"}
+
+
+@pytest.mark.parametrize(
+    ("capability", "field", "replacement"),
+    [
+        ("dense", "provider", "voyage"),
+        ("dense", "model", "token-hash-unit-vector-v1"),
+        ("dense", "dimensions", 64),
+        ("dense", "adapter_version", "deterministic-v1"),
+        ("sparse", "model", "token-hash-sparse-v1"),
+    ],
+)
+def test_shared_profile_identity_changes_fail_fingerprint_equality(
+    capability: str, field: str, replacement: object
+) -> None:
+    fixture = json.loads(
+        Path("/contracts/testing/deterministic-retrieval-profile-v1.json").read_text()
+    )
+    profile = dict(fixture[capability]["profile"])
+    profile[field] = replacement
+    canonical = json.dumps(
+        profile, ensure_ascii=False, separators=(",", ":"), sort_keys=True
+    )
+
+    assert (
+        hashlib.sha256(canonical.encode()).hexdigest()
+        != fixture[capability]["fingerprint"]
+    )
 
 
 def test_deterministic_dense_and_sparse_adapters_preserve_lexical_signal() -> None:

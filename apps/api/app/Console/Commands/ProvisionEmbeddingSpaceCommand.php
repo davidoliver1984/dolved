@@ -7,6 +7,7 @@ namespace App\Console\Commands;
 use App\Enums\EmbeddingSpaceGenerationStatus;
 use App\Models\EmbeddingProfile;
 use App\Models\EmbeddingSpaceGeneration;
+use App\Support\E2e\DeterministicRetrievalProfile;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -18,16 +19,14 @@ class ProvisionEmbeddingSpaceCommand extends Command
 
     protected $description = 'Idempotently provision the accepted V1 embedding space';
 
-    public function handle(): int
+    public function handle(DeterministicRetrievalProfile $deterministicProfile): int
     {
         $e2e = app()->environment('e2e');
+        $e2eProfile = $e2e ? $deterministicProfile->load()['dense'] : null;
         $profileIdentity = $e2e ? [
-            'fingerprint' => '84dea8351d3ef9effa980965b2e47eaee27a37a4f6e5324f12c2f606625da059',
-            'provider' => 'deterministic',
-            'model' => 'sha256-unit-vector-v1',
-            'model_revision' => '1',
-            'adapter_version' => 'deterministic-v1',
-            'collection_name' => 'dolved-e2e-vectors-v1',
+            ...$e2eProfile['profile'],
+            'fingerprint' => $e2eProfile['fingerprint'],
+            ...$e2eProfile['space'],
         ] : [
             'fingerprint' => 'ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c',
             'provider' => 'voyage',
@@ -43,12 +42,12 @@ class ProvisionEmbeddingSpaceCommand extends Command
                     'public_id' => (string) Str::uuid(),
                     'provider' => $profileIdentity['provider'],
                     'model' => $profileIdentity['model'],
-                    'dimensions' => 1024,
-                    'output_dtype' => 'float',
-                    'document_input_type' => 'document',
-                    'query_input_type' => 'query',
-                    'normalisation' => 'unit_length',
-                    'truncation' => false,
+                    'dimensions' => $profileIdentity['dimensions'] ?? 1024,
+                    'output_dtype' => $profileIdentity['output_dtype'] ?? 'float',
+                    'document_input_type' => $profileIdentity['document_input_type'] ?? 'document',
+                    'query_input_type' => $profileIdentity['query_input_type'] ?? 'query',
+                    'normalisation' => $profileIdentity['normalisation'] ?? 'unit_length',
+                    'truncation' => $profileIdentity['truncation'] ?? false,
                     'model_revision' => $profileIdentity['model_revision'],
                     'adapter_version' => $profileIdentity['adapter_version'],
                 ],
@@ -58,9 +57,9 @@ class ProvisionEmbeddingSpaceCommand extends Command
                 [
                     'public_id' => (string) Str::uuid(),
                     'embedding_profile_id' => $profile->id,
-                    'vector_name' => 'dense',
-                    'dimensions' => 1024,
-                    'distance' => 'cosine',
+                    'vector_name' => $profileIdentity['vector_name'] ?? 'dense',
+                    'dimensions' => $profileIdentity['dimensions'] ?? 1024,
+                    'distance' => $profileIdentity['distance'] ?? 'cosine',
                     'status' => EmbeddingSpaceGenerationStatus::Available,
                     'available_at' => now(),
                 ],

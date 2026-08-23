@@ -627,6 +627,8 @@ class BaselinePromotion(StrictModel):
     policy_version: str
     policy_digest: str
     deterministic_profile_digest: str | None = None
+    repository_commit: str | None = None
+    semantic_comparison_digest: str | None = None
     promoted_by: str
     promoted_at: datetime
     reason: Annotated[str, Field(min_length=1)]

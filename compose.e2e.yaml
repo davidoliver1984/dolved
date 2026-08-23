@@ -31,8 +31,10 @@ services:
       E2E_RESOURCE_MARKER: ${E2E_RESOURCE_MARKER}
       E2E_DATABASE_MARKER: ${E2E_DATABASE_MARKER}
       E2E_ACCOUNT_PASSWORD: ${E2E_ACCOUNT_PASSWORD}
+      E2E_DETERMINISTIC_RETRIEVAL_PROFILE_PATH: /contracts/testing/deterministic-retrieval-profile-v1.json
       OTEL_SDK_DISABLED: "true"
       RETRIEVAL_PLANNER_PROVIDER: deterministic
+      RETRIEVAL_PLANNER_MODEL: catalogue-retrieval-planner
     volumes: !override
       - ./apps/api:/app
       - ./contracts:/contracts:ro
@@ -104,6 +106,7 @@ services:
       SPARSE_EMBEDDING_PROVIDER: deterministic
       SPARSE_EMBEDDING_MODEL: token-hash-sparse-v4
       RERANKER_PROVIDER: deterministic
+      RERANKER_MODEL: token-overlap-v2
       RETRIEVAL_PLANNER_PROVIDER: deterministic
       RETRIEVAL_PLANNER_MODEL: catalogue-retrieval-planner
       RETRIEVAL_PLANNER_CATALOGUE_PATH: /e2e-fixtures/v1/scenario-catalogue.json

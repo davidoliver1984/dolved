@@ -14212,8 +14212,10 @@ Test the complete document path from upload to searchable vectors.
 
 ### Status
 
-Implementation verified; first exact-commit deterministic retrieval candidate
-awaiting human review and explicit baseline promotion.
+Complete. The first exact-commit deterministic orchestration-regression
+baseline was explicitly reviewed, promoted and verified provider-free, and the
+isolated ingestion acceptance journey passes with its current deterministic
+profile lineage.
 
 ### Planned location
 
@@ -14267,11 +14269,33 @@ tests/end-to-end/
 * Focused real-eligibility boundary: 5 Laravel tests / 23 assertions passed;
   the disposable cross-language diagnostic accounted for 42 cases, 126
   variants, 93 independent source chunks and 126 resolver outcomes.
-* Full suites: Laravel 350 passed / 2 skipped / 1,850 assertions; Python 588
-  passed / 4 skipped; web 115 passed.
+* Full final suites: Laravel 351 passed / 2 skipped / 1,868 assertions; Python
+  provider-free 601 passed / 14 integration tests deselected; web 115 passed.
 * Pint, Ruff lint/format, Mypy, ESLint, both TypeScript projects, shell syntax,
   Compose configuration, JSON parsing and `git diff --check`: passed.
 * No OpenAI or Voyage calls were made.
+* The exact reviewed 42-case / 126-variant candidate at commit
+  `89d407612623acf08bef99d7871fad16a2f1984e` was promoted byte-for-byte as
+  `deterministic-v1`; its semantic comparison digest is
+  `714a1211558dadf1f7d11483356e3c47c58cdd5e382727b1443cafd3c67bb803`.
+* The deterministic comparison gate passed with the checksum-valid Laravel
+  foreign-workspace isolation probe. The approved ADR-0029 clarification
+  substitutes that bound non-metric proof only for `cross-workspace`; all other
+  load-bearing slices now enforce their configured metric tolerances.
+* Governance tamper tests fail closed for baseline, promotion, candidate,
+  execution profile and isolation-artefact drift. The final focused governance,
+  schema and input suite passed (42), and the promoted comparison gate passed
+  again with zero metric deltas and no absolute failures.
+* The initial clean E2E rerun correctly failed closed because Laravel still
+  provisioned historical deterministic dense v1 and sparse v1 profiles while
+  Python executed dense v3 and sparse v4. A shared versioned E2E profile vector
+  now binds the independently calculated PHP/Python fingerprints and Qdrant
+  configuration without changing production profiles or mismatch validation.
+* The subsequent single clean Playwright run passed: the representative
+  document reached `INDEXED`, the corrupt document reached `FAILED`, expected
+  evidence was retrieved, foreign-workspace access returned 404, and the
+  disposable stack and volumes were removed. Provider credentials were absent
+  and external provider calls remained zero.
 
 ### Acceptance criteria
 

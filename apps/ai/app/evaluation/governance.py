@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 
 from app.evaluation.canonical import content_digest
+from app.evaluation.current_retrieval import EligibilityArtifact
 from app.evaluation.historical_result import ComparisonResult
 from app.evaluation.models import (
     BaselinePromotion,
@@ -15,6 +17,42 @@ from app.evaluation.models import (
     ManualGateRecord,
     QualityGatePolicy,
 )
+
+SEMANTIC_COMPARISON_EXCLUDED_FIELDS = frozenset(
+    {
+        "executed_at",
+        "operational",
+        "latency_ms",
+        "dense_score",
+        "sparse_score",
+        "fused_score",
+        "reranker_score",
+    }
+)
+
+
+def _semantic_comparison_value(value: object) -> object:
+    if isinstance(value, dict):
+        return {
+            key: _semantic_comparison_value(item)
+            for key, item in value.items()
+            if key not in SEMANTIC_COMPARISON_EXCLUDED_FIELDS
+        }
+    if isinstance(value, list):
+        return [_semantic_comparison_value(item) for item in value]
+    return value
+
+
+def semantic_comparison_digest(experiment: ExperimentResult) -> str:
+    """Hash stable deterministic semantics using the reviewed comparison rules."""
+    semantic = _semantic_comparison_value(experiment.model_dump(mode="json"))
+    payload = (
+        json.dumps(
+            semantic, ensure_ascii=False, allow_nan=False, indent=2, sort_keys=True
+        )
+        + "\n"
+    ).encode()
+    return hashlib.sha256(payload).hexdigest()
 
 
 def deterministic_profile_manifest(experiment: ExperimentResult) -> dict[str, object]:
@@ -66,6 +104,52 @@ def verify_promoted_deterministic_baseline(
         raise ValueError("promoted deterministic baseline experiment identity mismatch")
     verify_deterministic_profile_digest(baseline)
     verify_baseline_identity(baseline, promotion)
+    if (
+        promotion.repository_commit is not None
+        and baseline.lineage.repository_commit != promotion.repository_commit
+    ):
+        raise ValueError("promoted deterministic baseline repository identity mismatch")
+    if (
+        promotion.semantic_comparison_digest is not None
+        and semantic_comparison_digest(baseline) != promotion.semantic_comparison_digest
+    ):
+        raise ValueError("promoted deterministic baseline semantic digest mismatch")
+
+
+def verify_cross_workspace_isolation(
+    experiment: ExperimentResult, artifact: EligibilityArtifact
+) -> None:
+    """Bind the Laravel isolation probe to the deterministic result lineage."""
+    lineage = experiment.lineage
+    mapping_digest = content_digest(
+        [item.model_dump(mode="json") for item in artifact.documents]
+    )
+    expected = (
+        artifact.contract_id,
+        artifact.artifact_digest,
+        artifact.comparability_digest,
+        artifact.eligibility_catalogue.version,
+        artifact.eligibility_catalogue.digest,
+        artifact.resolver.source_digest,
+        artifact.resolver.configuration_digest,
+        artifact.evaluated_at,
+        mapping_digest,
+        artifact.repository_commit,
+    )
+    actual = (
+        lineage.eligibility_artifact_contract,
+        lineage.eligibility_artifact_digest,
+        lineage.eligibility_comparability_digest,
+        lineage.eligibility_catalogue_version,
+        lineage.eligibility_catalogue_digest,
+        lineage.eligibility_resolver_source_digest,
+        lineage.eligibility_configuration_digest,
+        lineage.eligibility_evaluated_at,
+        lineage.eligibility_document_mapping_digest,
+        lineage.repository_commit,
+    )
+    if actual != expected:
+        raise ValueError("cross-workspace probe does not match deterministic profile")
 
 
 def verify_checksum_manifest(
@@ -119,6 +203,12 @@ def promote_baseline(
         policy_version=experiment.lineage.policy_version,
         policy_digest=experiment.lineage.policy_digest,
         deterministic_profile_digest=experiment.lineage.deterministic_profile_digest,
+        repository_commit=experiment.lineage.repository_commit,
+        semantic_comparison_digest=(
+            semantic_comparison_digest(experiment)
+            if experiment.lineage.deterministic_profile_digest is not None
+            else None
+        ),
         promoted_by=promoted_by,
         promoted_at=promoted_at or datetime.now(UTC),
         reason=reason,
@@ -173,7 +263,40 @@ def assess_gate(
     for slice_name in policy.load_bearing_slices:
         if slice_name not in candidate.slices:
             failures.add(f"missing_slice:{slice_name}")
+            continue
+        if slice_name not in baseline.slices:
+            failures.add(f"missing_baseline_slice:{slice_name}")
+            continue
+        candidate_metrics = candidate.slices[slice_name].metrics
+        baseline_metrics = baseline.slices[slice_name].metrics
+        if candidate_metrics is None or baseline_metrics is None:
+            if candidate_metrics is not baseline_metrics:
+                failures.add(f"slice_metrics_mismatch:{slice_name}")
+            continue
+        for metric, tolerance in policy.allowed_regressions.items():
+            before = getattr(baseline_metrics, metric)
+            after = getattr(candidate_metrics, metric)
+            if after < before - tolerance:
+                failures.add(f"slice_regression:{slice_name}:{metric}")
     return not failures, tuple(sorted(failures))
+
+
+def assess_deterministic_gate(
+    candidate: ExperimentResult,
+    baseline: ExperimentResult,
+    policy: QualityGatePolicy,
+    artifact: EligibilityArtifact,
+) -> tuple[bool, tuple[str, ...]]:
+    """Assess deterministic metrics with the approved bound isolation proof."""
+    verify_cross_workspace_isolation(candidate, artifact)
+    metric_policy = policy.model_copy(
+        update={
+            "load_bearing_slices": tuple(
+                name for name in policy.load_bearing_slices if name != "cross-workspace"
+            )
+        }
+    )
+    return assess_gate(candidate, baseline, metric_policy)
 
 
 def record_gate_decision(

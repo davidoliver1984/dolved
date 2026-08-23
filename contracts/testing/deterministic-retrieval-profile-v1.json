@@ -1,0 +1,43 @@
+{
+  "contract_id": "dolved-e2e-deterministic-retrieval-profile",
+  "schema_version": 1,
+  "dense": {
+    "profile": {
+      "provider": "deterministic",
+      "model": "token-hash-unit-vector-v3",
+      "dimensions": 1024,
+      "output_dtype": "float",
+      "document_input_type": "document",
+      "query_input_type": "query",
+      "normalisation": "unit_length",
+      "truncation": false,
+      "model_revision": "3",
+      "adapter_version": "deterministic-v3"
+    },
+    "fingerprint": "d5a56dffa5539ac2c7b1582fcdcc0658855399532e9484868fd2f7c97e1b8218",
+    "space": {
+      "collection_name": "dolved-e2e-vectors-v1",
+      "vector_name": "dense",
+      "dimensions": 1024,
+      "distance": "cosine"
+    }
+  },
+  "sparse": {
+    "profile": {
+      "provider": "deterministic",
+      "model": "token-hash-sparse-v4",
+      "tokenizer": "lowercase-alphanumeric-v1",
+      "tokenizer_revision": "1",
+      "output_representation": "sparse-index-weight",
+      "max_input_tokens": 512,
+      "document_input_type": "document",
+      "query_input_type": "query",
+      "model_revision": "4",
+      "adapter_version": "deterministic-v4"
+    },
+    "fingerprint": "d4f361438791330c05d1e8125fc4f16df00280de1db9cbb8f8fb0325c756b9d7",
+    "space": {
+      "vector_name": "sparse"
+    }
+  }
+}

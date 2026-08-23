@@ -8,6 +8,31 @@ Accepted
 
 2026-08-22
 
+## Post-acceptance deterministic-gate compatibility clarification
+
+**Approved 2026-08-23, after review of the first exact-commit deterministic
+current-retrieval candidate.** For this deterministic gate only,
+`cross-workspace` is a non-metric security requirement rather than a
+retrieval-quality metric slice. It is satisfied only by the validated Laravel
+foreign-workspace isolation probe when the probe executed, returned zero
+foreign documents in eligible scopes, and its complete eligibility artefact
+identity is bound to the candidate's deterministic execution profile.
+
+The gate validates the artefact's checksum and internal artefact/comparability
+digests, then binds its catalogue, resolver, configuration, evaluation time,
+document mapping and repository lineage to the result. A missing, malformed,
+unexecuted, non-zero, unbound or tampered probe fails closed. The substitution
+does not apply to `CURRENT`, `COMPARE`, `applicability`, `adversarial` or any
+future slice, and `cross_workspace_evidence` and `unauthorised_evidence` remain
+absolute failures regardless of probe success.
+
+The remaining load-bearing slices are genuinely metric-bearing. The gate
+therefore requires their presence and applies every configured regression
+tolerance to each slice's metrics, in addition to the existing aggregate
+comparison. This clarification changes neither the policy/corpus identities nor
+the reviewed candidate; it records the narrowly approved compatibility meaning
+needed to apply the Accepted ADR to its deterministic eligibility boundary.
+
 ## Relationship to prior ADRs
 
 ### Consumes, does not redefine, every product decision this ADR tests against

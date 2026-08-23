@@ -1,0 +1,14 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "r22-s03-deterministic-current-hybrid",
+  "corpus_version": "2",
+  "corpus_digest": "5aaa01f8924ef5bc2e1886bef922c7ff86d6181bb18b2eb72e730ed3c3c0b8dd",
+  "policy_version": "1",
+  "policy_digest": "f362010a8cc5239e8ce36759b5fa8eee2d3b5d22b69717ec8a2c199acb80b83f",
+  "deterministic_profile_digest": "33450c7c9f80f741e9465c2aa8e83c7dad65e2bfb7806c3d6390df46f5f1e0c0",
+  "repository_commit": "89d407612623acf08bef99d7871fad16a2f1984e",
+  "semantic_comparison_digest": "714a1211558dadf1f7d11483356e3c47c58cdd5e382727b1443cafd3c67bb803",
+  "promoted_by": "David Oliver",
+  "promoted_at": "2026-08-23T08:11:13.751212Z",
+  "reason": "Approved first ADR-0029 deterministic current-pipeline orchestration-regression baseline after exact-candidate review; provider-free only and makes no live-provider retrieval-quality claim."
+}

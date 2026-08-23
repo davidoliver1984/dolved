@@ -1,0 +1,9 @@
+{
+  "schema_version": "v1",
+  "experiment_id": "r22-s03-deterministic-current-hybrid",
+  "decision": "ACCEPTED",
+  "reviewer": "David Oliver",
+  "decided_at": "2026-08-23T08:11:15.490917Z",
+  "reason": "Explicitly accepted the exact R22-S03 candidate at repository commit 89d407612623acf08bef99d7871fad16a2f1984e as the first deterministic orchestration-regression baseline; this is not live-provider quality evidence.",
+  "waiver_expires_at": null
+}

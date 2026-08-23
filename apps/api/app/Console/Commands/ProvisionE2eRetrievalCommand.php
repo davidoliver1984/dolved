@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Models\EmbeddingSpaceGeneration;
+use App\Support\E2e\DeterministicRetrievalProfile;
 use Illuminate\Console\Command;
 
 class ProvisionE2eRetrievalCommand extends Command
@@ -13,7 +14,7 @@ class ProvisionE2eRetrievalCommand extends Command
 
     protected $description = 'Provision the deterministic E2E dense and sparse retrieval profile';
 
-    public function handle(): int
+    public function handle(DeterministicRetrievalProfile $deterministicProfile): int
     {
         $this->assertE2eIdentity();
 
@@ -21,8 +22,12 @@ class ProvisionE2eRetrievalCommand extends Command
             return self::FAILURE;
         }
 
+        $collectionName = $deterministicProfile->load()['dense']['space']['collection_name'];
+        if (! is_string($collectionName)) {
+            throw new \RuntimeException('The E2E dense collection identity is invalid.');
+        }
         $dense = EmbeddingSpaceGeneration::query()
-            ->where('collection_name', 'dolved-e2e-vectors-v1')
+            ->where('collection_name', $collectionName)
             ->firstOrFail();
 
         if ($this->callSilently('retrieval:provision-sparse-space', [
