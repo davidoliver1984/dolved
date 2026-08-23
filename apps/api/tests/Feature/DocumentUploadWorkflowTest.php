@@ -6,6 +6,7 @@ namespace Tests\Feature;
 
 use App\Enums\DocumentStatus;
 use App\Enums\WorkspaceRole;
+use App\Exceptions\DocumentUploadException;
 use App\Models\Document;
 use App\Models\User;
 use App\Models\Workspace;
@@ -172,6 +173,46 @@ class DocumentUploadWorkflowTest extends TestCase
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['size_bytes']);
 
+        $this->assertDatabaseCount('documents', 0);
+    }
+
+    public function test_initialisation_rejects_malicious_or_ambiguous_filenames(): void
+    {
+        [$user, $workspace] = $this->memberWorkspace();
+        $url = $this->initialiseUrl($workspace);
+
+        foreach ([
+            '../policy.pdf',
+            '..\\policy.pdf',
+            "policy\u{202E}fdp.exe.pdf",
+            "policy\0.pdf",
+        ] as $filename) {
+            $this->actingAs($user)
+                ->postJson($url, $this->metadata(['filename' => $filename]))
+                ->assertUnprocessable()
+                ->assertJsonValidationErrors('filename');
+        }
+
+        $this->assertDatabaseCount('documents', 0);
+    }
+
+    public function test_storage_failure_is_generic_and_does_not_leak_internals(): void
+    {
+        [$user, $workspace] = $this->memberWorkspace();
+        $storage = $this->mock(DocumentObjectStorage::class);
+        $storage->shouldReceive('createUploadRequest')
+            ->once()
+            ->andThrow(DocumentUploadException::storageUnavailable());
+
+        $response = $this->actingAs($user)
+            ->postJson($this->initialiseUrl($workspace), $this->metadata())
+            ->assertServiceUnavailable()
+            ->assertExactJson([
+                'message' => 'Object storage is temporarily unavailable.',
+            ]);
+
+        $this->assertStringNotContainsString('storage_key', $response->getContent());
+        $this->assertStringNotContainsString('trace', $response->getContent());
         $this->assertDatabaseCount('documents', 0);
     }
 

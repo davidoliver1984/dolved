@@ -88,12 +88,16 @@ class SqsIngestionQueue:
             receipt_handle = raw_message.get("ReceiptHandle")
             message_id = raw_message.get("MessageId")
             attributes = raw_message.get("Attributes", {})
-            receive_count = attributes.get("ApproximateReceiveCount", "1")
+            raw_receive_count = attributes.get("ApproximateReceiveCount", "1")
             message_attributes = raw_message.get("MessageAttributes", {})
+            receive_count = _parse_receive_count(raw_receive_count)
 
-            if not all(
-                isinstance(value, str)
-                for value in (body, receipt_handle, message_id, receive_count)
+            if (
+                not all(
+                    isinstance(value, str)
+                    for value in (body, receipt_handle, message_id)
+                )
+                or receive_count is None
             ):
                 logger.warning(
                     "Malformed SQS receive entry remains unacknowledged.",
@@ -112,7 +116,7 @@ class SqsIngestionQueue:
                     body=body,
                     receipt_handle=receipt_handle,
                     message_id=message_id,
-                    receive_count=int(receive_count),
+                    receive_count=receive_count,
                     trace_context=self._trace_context(message_attributes),
                     destination_name=self._queue_name,
                 )
@@ -161,3 +165,19 @@ class SqsIngestionQueue:
                 context[name] = value
 
         return context
+
+
+def _parse_receive_count(value: object) -> int | None:
+    if (
+        not isinstance(value, str)
+        or not value
+        or len(value) > 10
+        or not value.isascii()
+        or not value.isdecimal()
+    ):
+        return None
+    try:
+        parsed = int(value)
+    except ValueError, OverflowError:
+        return None
+    return parsed if parsed > 0 else None

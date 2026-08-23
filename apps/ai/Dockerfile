@@ -29,7 +29,7 @@ ENV FASTEMBED_CACHE_PATH=/opt/fastembed-cache
 ENV PATH="/app/.venv/bin:${PATH}"
 
 RUN apt-get update \
-    && apt-get install --yes --no-install-recommends build-essential libgomp1 \
+    && apt-get install --yes --no-install-recommends build-essential git libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd --gid 10001 app \

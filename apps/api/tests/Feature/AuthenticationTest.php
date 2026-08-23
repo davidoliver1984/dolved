@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
@@ -161,6 +162,26 @@ class AuthenticationTest extends TestCase
             ->assertJsonValidationErrors('email');
 
         $this->assertStringNotContainsString('missing@example.com', $response->getContent());
+    }
+
+    public function test_login_rate_limit_is_keyed_by_canonical_email_and_ip(): void
+    {
+        RateLimiter::clear('limited@example.com|127.0.0.1');
+
+        foreach (range(1, 5) as $attempt) {
+            $email = $attempt % 2 === 0
+                ? ' LIMITED@EXAMPLE.COM '
+                : 'limited@example.com';
+            $this->postJson('/api/auth/login', [
+                'email' => $email,
+                'password' => self::VALID_PASSWORD,
+            ])->assertUnprocessable();
+        }
+
+        $this->postJson('/api/auth/login', [
+            'email' => 'limited@example.com',
+            'password' => self::VALID_PASSWORD,
+        ])->assertTooManyRequests();
     }
 
     public function test_unverified_user_can_read_identity_and_logout_but_not_use_platform(): void

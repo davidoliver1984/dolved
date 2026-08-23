@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R22",
-    "current_session": "R22-S05",
-    "next_action": "Implement R22-S05 security-focused tests without beginning the Phase 22 gate.",
-    "completed_through": "R22-S04",
+    "current_session": "R22-GATE",
+    "next_action": "Review the completed Phase 22 evidence and run the Testing and Quality Strategy acceptance gate.",
+    "completed_through": "R22-S05",
     "completed_phase_count": 22,
     "total_phase_count": 25
   },
@@ -4617,7 +4617,7 @@
           "title": "Add Security-Focused Tests",
           "guide_start_line": 14267,
           "guide_end_line": 14305,
-          "status": "not_started",
+          "status": "completed",
           "objective": "Automate checks for the platform\u2019s most important security boundaries.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
@@ -4649,9 +4649,17 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r22-s05-add-security-focused-tests.md",
-            "status": "not_started"
+            "status": "completed",
+            "actual_path": "docs/journal/2026-08-23-r22-s05-add-security-focused-tests.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Added provider-free security regressions for tenant isolation, upload abuse, storage privacy, authentication throttling, queue-envelope tampering and generation authority boundaries",
+            "Malformed SQS receive counts now fail closed without crashing polling or acknowledging hostile messages",
+            "Optional prompt-injection measurement is exact-commit and clean-worktree bound with six maximum attempts and a retry-aware 18,432-token ceiling",
+            "Documented the structural provider-free proof boundary separately from optional real-model prompt-injection measurement",
+            "Full Laravel, Python and web suites plus format, lint, type, generation-evidence, JSON and diff gates passed with zero provider calls",
+            "docs/journal/2026-08-23-r22-s05-add-security-focused-tests.md"
+          ]
         }
       ],
       "guide_end_line": 14305,

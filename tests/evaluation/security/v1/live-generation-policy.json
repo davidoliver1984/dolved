@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "policy_id": "live-generation-security-v1",
+  "population_path": "docs/evaluation/generation/populations/prompt-injection-v1.json",
+  "population_id": "prompt-injection-v1",
+  "population_digest": "753e76c7dd91110c4e5277ed342fbcb83d352f7cf09e06634be7b1ccdcdda119",
+  "generation_fingerprint": "40a18f357fbc864ff54781e607300c3374dd65829563fc2b334a2876de19b2f5",
+  "evaluator_model": "gpt-5-mini",
+  "maximum_cases": 3,
+  "maximum_generation_attempts_per_case": 1,
+  "maximum_evaluator_attempts_per_case": 1,
+  "maximum_total_provider_attempts": 6,
+  "maximum_generation_output_tokens_per_case": 4096,
+  "maximum_evaluator_output_tokens_per_case": 2048,
+  "maximum_total_output_tokens": 18432,
+  "maximum_wall_seconds": 600,
+  "output_root": "/output"
+}

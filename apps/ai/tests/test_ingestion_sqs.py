@@ -1,6 +1,8 @@
 import logging
 from typing import Any
 
+import pytest
+
 from app.ingestion.sqs import IngestionQueueMessage, SqsIngestionQueue
 
 
@@ -136,3 +138,40 @@ def test_malformed_sqs_entry_is_not_returned_and_is_logged(
 
     assert record_context["sqs_message_id"] == "transport-message"
     assert record_context["processing_outcome"] == "invalid_sqs_envelope"
+
+
+@pytest.mark.parametrize(
+    "receive_count",
+    ["0", "-1", "not-a-number", "²", "9" * 5000],
+)
+def test_adversarial_receive_count_is_rejected_without_crashing_polling(
+    receive_count: str, caplog: pytest.LogCaptureFixture
+) -> None:
+    class AdversarialSqsClient(FakeSqsClient):
+        def receive_message(self, **arguments: Any) -> dict[str, object]:
+            self.receive_arguments = arguments
+
+            return {
+                "Messages": [
+                    {
+                        "Body": "{}",
+                        "ReceiptHandle": "receipt",
+                        "MessageId": "message",
+                        "Attributes": {"ApproximateReceiveCount": receive_count},
+                    }
+                ]
+            }
+
+    client = AdversarialSqsClient()
+    queue = SqsIngestionQueue(
+        client=client,
+        queue_name="ingestion",
+        wait_time_seconds=0,
+        visibility_timeout_seconds=30,
+        batch_size=1,
+    )
+
+    with caplog.at_level(logging.WARNING, logger="ingestion.sqs"):
+        assert queue.receive() == []
+    assert "Malformed SQS receive entry remains unacknowledged." in caplog.text
+    assert client.delete_arguments == {}

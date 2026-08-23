@@ -14384,7 +14384,42 @@ Automate checks for the platform’s most important security boundaries.
 
 ### Status
 
-Not yet executed.
+Completed on 23 August 2026.
+
+### Delivered
+
+* Extended Laravel security regressions for cross-tenant concealment,
+  authentication throttling, hostile upload names, unsupported/oversized
+  uploads, presigned-upload constraints and privacy-safe storage failures.
+* Hardened SQS receive-count parsing so malformed, non-ASCII, non-positive or
+  excessively long values remain unacknowledged without crashing polling.
+* Added a three-case prompt-injection population and an optional, explicit
+  live-measurement wrapper. Provider-free tests prove structural evidence and
+  authority boundaries only; they do not claim model resistance or universal
+  prompt-injection immunity.
+* Bound that wrapper to an exact clean Git worktree, repository-owned policy
+  and population, immutable experiment identity, generation fingerprint and
+  retry-aware attempt/output ceilings before credentials can be inspected or
+  a provider subprocess launched.
+* Limited the optional live measurement to three cases, one generation and
+  one evaluator attempt per case: six provider attempts and 18,432 maximum
+  output tokens in total.
+* Added a configurable evaluator output ceiling and generation attempt
+  override to the existing evaluation runner so the declared live-policy
+  bounds reach the actual adapters.
+
+### Verification
+
+* Focused SQS, live-wrapper, generation-adapter and generation-evaluation
+  tests: 53 passed.
+* Full Laravel suite: 357 passed, 2 skipped, 1,906 assertions.
+* Full Python suite: 629 passed, 4 skipped.
+* Full web suite: 115 passed.
+* Pint, Ruff lint/format, ESLint, TypeScript and MyPy passed.
+* Generation-evidence verification passed for 26 cases and 18 artefacts with
+  zero provider calls.
+* JSON parsing and `git diff --check` passed. No live provider command was
+  invoked.
 
 ### Planned coverage
 

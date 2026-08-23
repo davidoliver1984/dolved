@@ -107,6 +107,7 @@ async def test_complete_qualified_representation_is_structured_and_versioned() -
     }
     rendered = responses.calls[0]["input"]
     assert isinstance(rendered, str)
+    assert responses.calls[0]["max_output_tokens"] == 2048
     assert EVALUATOR_REPRESENTATION_VERSION in rendered
     assert '"unsupported_aspects":["authorising role"]' in rendered
     assert '"evidence_ids":["ev-01"]' in rendered

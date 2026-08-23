@@ -41,8 +41,12 @@ def parse_args() -> argparse.Namespace:
         "--experiment-id",
         default="GEN-EXP-0001-grounded-generation-baseline",
     )
+    parser.add_argument("--generation-max-attempts", type=int)
     parser.add_argument("--evaluator-model", default="gpt-5-mini")
+    parser.add_argument("--evaluator-max-attempts", type=int, default=2)
+    parser.add_argument("--evaluator-max-output-tokens", type=int, default=2048)
     parser.add_argument("--repository-commit", required=True)
+    parser.add_argument("--evaluation-harness-committed", action="store_true")
     return parser.parse_args()
 
 
@@ -73,6 +77,12 @@ async def main() -> None:
         raise SystemExit(f"refusing to overwrite existing run: {output}")
     population = load_generation_population(population_path)
     settings = Settings()
+    if args.generation_max_attempts is not None:
+        if args.generation_max_attempts < 1:
+            raise SystemExit("generation attempts must be positive")
+        settings = settings.model_copy(
+            update={"generation_max_attempts": args.generation_max_attempts}
+        )
     profile = OpenAIGenerationProfile(
         provider=settings.generation_provider,
         model=settings.generation_model,
@@ -92,6 +102,8 @@ async def main() -> None:
     evaluator = OpenAIAnswerEvaluator(
         api_key=api_key,
         model=args.evaluator_model,
+        max_attempts=args.evaluator_max_attempts,
+        max_output_tokens=args.evaluator_max_output_tokens,
     )
     generation_lineage: dict[str, Any] = {
         **profile.fingerprint_input(),
@@ -116,7 +128,7 @@ async def main() -> None:
         "repository_commit": args.repository_commit,
         "evaluation_harness_version": GENERATION_EVALUATION_HARNESS_VERSION,
         "evaluation_harness_digest": harness_digest(root),
-        "evaluation_harness_uncommitted": True,
+        "evaluation_harness_uncommitted": not args.evaluation_harness_committed,
         "population_id": population.population_id,
         "population_digest": population.digest(),
         "generation_lineage": generation_lineage,

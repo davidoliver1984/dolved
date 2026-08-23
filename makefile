@@ -16,7 +16,7 @@ TAIL ?= 100
 	bootstrap migrate seed reset clean \
 	aws-provision aws-status qdrant-status publish-ingestion consume-ingestion \
 	telemetry-smoke telemetry-verify telemetry-outage \
-	evaluation-run evaluation-policy-gate evaluation-generation-verify \
+	evaluation-run evaluation-policy-gate evaluation-generation-verify evaluation-generation-live \
 	evaluation-retrieval-current-candidate evaluation-retrieval-current \
 	evaluation-benchmark-sync \
 	evaluation-benchmark-compile \
@@ -59,6 +59,7 @@ help:
 		'  make evaluation-retrieval-current  Run the current provider-free retrieval regression gate' \
 		'  make evaluation-retrieval-current-candidate  Generate a deterministic retrieval candidate for review' \
 		'  make evaluation-generation-verify  Verify immutable generation evidence without providers' \
+		'  make evaluation-generation-live  Run the bounded opt-in live prompt-injection evaluation' \
 		'  make evaluation-benchmark-sync  Synchronise authored Markdown paths into the benchmark catalogue' \
 		'  make evaluation-benchmark-compile  Validate and compile the engineering benchmark pilot' \
 		'  make evaluation-exp-0003  Run the post-reliability full V2 engineering baseline' \
@@ -367,6 +368,26 @@ evaluation-generation-verify:
 		ai python scripts/evaluation/verify_generation_evidence.py \
 			--generation-root docs/evaluation/generation \
 			--runs-root docs/evaluation/runs
+
+evaluation-generation-live:
+	@test "$${RUN_LIVE_GENERATION_EVALUATION:-}" = "1" || \
+		{ printf '%s\n' 'Set RUN_LIVE_GENERATION_EVALUATION=1 to permit paid live-provider calls.'; exit 1; }
+	@test -n "$${GENERATION_LIVE_EXPERIMENT_ID:-}" || \
+		{ printf '%s\n' 'GENERATION_LIVE_EXPERIMENT_ID is required and must be a new immutable run identity.'; exit 1; }
+	@test -z "$$(git status --porcelain --untracked-files=no)" || \
+		{ printf '%s\n' 'The tracked worktree must be clean before live generation evaluation.'; exit 1; }
+	@mkdir -p /tmp/rag-platform-generation-live
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace:ro" \
+		--volume "/tmp/rag-platform-generation-live:/output" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		--env RUN_LIVE_GENERATION_EVALUATION=1 \
+		ai python scripts/evaluation/run_generation_live.py \
+			--policy tests/evaluation/security/v1/live-generation-policy.json \
+			--repository-root /workspace \
+			--repository-commit "$$(git rev-parse HEAD)" \
+			--experiment-id "$${GENERATION_LIVE_EXPERIMENT_ID}"
 
 evaluation-live-hybrid:
 	@test "$${RUN_LIVE_HYBRID_EVALUATION:-}" = "1" || \

@@ -32,7 +32,8 @@ class InitializeDocumentUploadRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[^\x00-\x1F\x7F]+$/u',
+                'regex:/^[^\p{C}]+$/u',
+                'not_regex:/[\\/\\\\]/u',
             ],
             'size_bytes' => [
                 'required',

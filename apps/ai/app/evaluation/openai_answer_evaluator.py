@@ -71,6 +71,7 @@ class OpenAIAnswerEvaluator:
         api_key: str,
         model: str = "gpt-5-mini",
         max_attempts: int = 2,
+        max_output_tokens: int = 2048,
         timeout_seconds: float = 120,
         client: Any | None = None,
     ) -> None:
@@ -78,11 +79,14 @@ class OpenAIAnswerEvaluator:
             raise ValueError("answer evaluator API key is required")
         if max_attempts < 1:
             raise ValueError("answer evaluator attempts must be positive")
+        if max_output_tokens < 1:
+            raise ValueError("answer evaluator output tokens must be positive")
         self._client = client or openai.AsyncOpenAI(
             api_key=api_key, max_retries=0, timeout=timeout_seconds
         )
         self._model = model
         self._max_attempts = max_attempts
+        self._max_output_tokens = max_output_tokens
         self._identity = {
             "implementation": EVALUATOR_IMPLEMENTATION,
             "version": EVALUATOR_VERSION,
@@ -127,6 +131,7 @@ class OpenAIAnswerEvaluator:
                     input=rendered,
                     text_format=AnswerEvaluationOutput,
                     reasoning={"effort": "low"},
+                    max_output_tokens=self._max_output_tokens,
                     store=False,
                     truncation="disabled",
                 )
