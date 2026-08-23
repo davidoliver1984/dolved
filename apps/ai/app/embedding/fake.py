@@ -1,13 +1,20 @@
 import hashlib
 import math
+from uuid import UUID
 
 from app.embedding.errors import EmbeddingError
 from app.embedding.models import (
     EmbeddedVector,
+    EmbeddingPurpose,
     EmbeddingRequest,
     EmbeddingResult,
 )
-from app.retrieval.deterministic_text import deterministic_token_counts
+from app.retrieval.deterministic_text import (
+    deterministic_identity_tie_break,
+    deterministic_token_counts,
+)
+
+_TIE_BREAK_WEIGHT = 0.001
 
 
 class DeterministicFakeEmbedder:
@@ -27,8 +34,10 @@ class DeterministicFakeEmbedder:
             EmbeddedVector(
                 source_id=item.source_id,
                 values=self._vector(
+                    source_id=item.source_id,
                     text=item.text,
                     dimensions=request.profile.dimensions,
+                    purpose=request.purpose,
                 ),
                 dimensions=request.profile.dimensions,
             )
@@ -42,11 +51,26 @@ class DeterministicFakeEmbedder:
         )
 
     @staticmethod
-    def _vector(*, text: str, dimensions: int) -> tuple[float, ...]:
+    def _vector(
+        *,
+        source_id: UUID,
+        text: str,
+        dimensions: int,
+        purpose: EmbeddingPurpose,
+    ) -> tuple[float, ...]:
         values = [0.0] * dimensions
+        token_dimensions = max(1, dimensions - 1)
         for token, count in deterministic_token_counts(text).items():
             digest = hashlib.sha256(token.encode()).digest()
-            index = int.from_bytes(digest[:8], "big") % dimensions
+            index = 1 + (int.from_bytes(digest[:8], "big") % token_dimensions)
+            if dimensions == 1:
+                index = 0
             values[index] += 1.0 + math.log(count)
+        if dimensions > 1:
+            values[0] = _TIE_BREAK_WEIGHT * (
+                deterministic_identity_tie_break(source_id)
+                if purpose is EmbeddingPurpose.DOCUMENT
+                else 1.0
+            )
         magnitude = math.sqrt(sum(value * value for value in values))
         return tuple(value / magnitude for value in values)

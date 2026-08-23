@@ -10,15 +10,15 @@ def embedding_profile(settings: Settings) -> EmbeddingProfile:
     if settings.embedding_provider == "deterministic":
         return EmbeddingProfile(
             provider="deterministic",
-            model="token-hash-unit-vector-v2",
+            model="token-hash-unit-vector-v3",
             dimensions=settings.embedding_dimensions,
             output_dtype="float",
             document_input_type="document",
             query_input_type="query",
             normalisation="unit_length",
             truncation=False,
-            model_revision="2",
-            adapter_version="deterministic-v2",
+            model_revision="3",
+            adapter_version="deterministic-v3",
         )
     return EmbeddingProfile(
         provider="voyage",

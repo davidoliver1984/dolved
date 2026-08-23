@@ -17,6 +17,7 @@ from app.settings import Settings
 from app.sparse.factory import create_sparse_encoder, sparse_embedding_profile
 from app.sparse.fake import DeterministicSparseEncoder
 from app.sparse.models import (
+    SparseEncodedVector,
     SparseEncodingInput,
     SparseEncodingPurpose,
     SparseEncodingRequest,
@@ -47,8 +48,8 @@ def test_complete_e2e_profile_selects_only_deterministic_adapters() -> None:
     assert embedding_profile(configured).provider == "deterministic"
     assert sparse_embedding_profile(configured).provider == "deterministic"
     assert reranker_profile(configured).provider == "deterministic"
-    assert embedding_profile(configured).model == "token-hash-unit-vector-v2"
-    assert sparse_embedding_profile(configured).model == "token-hash-sparse-v2"
+    assert embedding_profile(configured).model == "token-hash-unit-vector-v3"
+    assert sparse_embedding_profile(configured).model == "token-hash-sparse-v3"
     assert reranker_profile(configured).model == "token-overlap-v2"
 
 
@@ -114,8 +115,87 @@ def test_deterministic_dense_and_sparse_adapters_preserve_lexical_signal() -> No
         str(item.source_id): set(item.vector.indices) for item in sparse.encodings
     }
     query_indices = indices["55555555-5555-4555-8555-555555555551"]
-    assert len(query_indices & indices["55555555-5555-4555-8555-555555555552"]) == 3
-    assert query_indices.isdisjoint(indices["55555555-5555-4555-8555-555555555553"])
+    assert len(query_indices & indices["55555555-5555-4555-8555-555555555552"]) == 4
+    assert len(query_indices & indices["55555555-5555-4555-8555-555555555553"]) == 1
+
+
+def test_deterministic_adapters_break_equal_lexical_scores_by_stable_identity() -> None:
+    configured = settings(embedding_dimensions=64)
+    dense_profile = embedding_profile(configured)
+    query_id = UUID("11111111-1111-4111-8111-111111111111")
+    lower_id = UUID("22222222-2222-4222-8222-222222222221")
+    higher_id = UUID("eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee1")
+    embedder = DeterministicFakeEmbedder()
+    query = (
+        embedder.embed(
+            EmbeddingRequest(
+                correlation_id=query_id,
+                workspace_id=query_id,
+                purpose=EmbeddingPurpose.QUERY,
+                profile=dense_profile,
+                items=(EmbeddingInput(source_id=query_id, text="zebra"),),
+            )
+        )
+        .embeddings[0]
+        .values
+    )
+    documents = embedder.embed(
+        EmbeddingRequest(
+            correlation_id=query_id,
+            workspace_id=query_id,
+            purpose=EmbeddingPurpose.DOCUMENT,
+            profile=dense_profile,
+            items=(
+                EmbeddingInput(source_id=lower_id, text="quartz"),
+                EmbeddingInput(source_id=higher_id, text="flamingo"),
+            ),
+        )
+    ).embeddings
+
+    def dot(left: tuple[float, ...], right: tuple[float, ...]) -> float:
+        return sum(a * b for a, b in zip(left, right, strict=True))
+
+    assert dot(query, documents[0].values) < dot(query, documents[1].values)
+
+    sparse_profile = sparse_embedding_profile(configured)
+    sparse_encoder = DeterministicSparseEncoder()
+    sparse_query = (
+        sparse_encoder.encode(
+            SparseEncodingRequest(
+                correlation_id=query_id,
+                workspace_id=query_id,
+                profile=sparse_profile,
+                purpose=SparseEncodingPurpose.QUERY,
+                items=(SparseEncodingInput(source_id=query_id, text="zebra"),),
+            )
+        )
+        .encodings[0]
+        .vector
+    )
+    sparse_documents = sparse_encoder.encode(
+        SparseEncodingRequest(
+            correlation_id=query_id,
+            workspace_id=query_id,
+            profile=sparse_profile,
+            purpose=SparseEncodingPurpose.DOCUMENT,
+            items=(
+                SparseEncodingInput(source_id=lower_id, text="quartz"),
+                SparseEncodingInput(source_id=higher_id, text="flamingo"),
+            ),
+        )
+    ).encodings
+
+    query_values = dict(zip(sparse_query.indices, sparse_query.values, strict=True))
+
+    def sparse_dot(document: SparseEncodedVector) -> float:
+        return sum(
+            query_values.get(index, 0.0) * value
+            for index, value in zip(
+                document.vector.indices, document.vector.values, strict=True
+            )
+        )
+
+    assert sparse_dot(sparse_documents[0]) < sparse_dot(sparse_documents[1])
 
 
 def test_e2e_profile_rejects_any_live_adapter() -> None:

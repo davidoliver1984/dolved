@@ -1,13 +1,20 @@
 import hashlib
 import math
 
-from app.retrieval.deterministic_text import deterministic_token_counts
+from app.retrieval.deterministic_text import (
+    deterministic_identity_tie_break,
+    deterministic_token_counts,
+)
 from app.sparse.models import (
     SparseEncodedVector,
+    SparseEncodingPurpose,
     SparseEncodingRequest,
     SparseEncodingResult,
     SparseVector,
 )
+
+_TIE_BREAK_INDEX = 1 << 32
+_TIE_BREAK_WEIGHT = 0.001
 
 
 class DeterministicSparseEncoder:
@@ -22,6 +29,11 @@ class DeterministicSparseEncoder:
                     hashlib.sha256(token.encode()).digest()[:4], "big"
                 )
                 weighted[index] = weighted.get(index, 0.0) + 1.0 + math.log(count)
+            weighted[_TIE_BREAK_INDEX] = _TIE_BREAK_WEIGHT * (
+                deterministic_identity_tie_break(item.source_id)
+                if request.purpose is SparseEncodingPurpose.DOCUMENT
+                else 1.0
+            )
             indices = tuple(sorted(weighted))
             values = tuple(weighted[index] for index in indices)
             encoded.append(

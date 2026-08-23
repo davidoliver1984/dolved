@@ -1,5 +1,6 @@
 import re
 from collections import Counter
+from uuid import UUID
 
 _TOKEN = re.compile(r"[a-z0-9]+")
 _STOP_WORDS = frozenset(
@@ -51,3 +52,9 @@ def deterministic_token_counts(text: str, *, limit: int | None = None) -> Counte
     if not tokens:
         tokens = (text.casefold().strip(),)
     return Counter(tokens)
+
+
+def deterministic_identity_tie_break(source_id: UUID) -> float:
+    """Return a stable non-zero scalar used only to order equal lexical scores."""
+
+    return 1.0 + (source_id.int / ((1 << 128) - 1))
