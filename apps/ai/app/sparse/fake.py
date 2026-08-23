@@ -14,7 +14,7 @@ from app.sparse.models import (
 )
 
 _TIE_BREAK_INDEX = (1 << 32) - 1
-_TIE_BREAK_WEIGHT = 0.001
+_TIE_BREAK_WEIGHT = 0.1
 
 
 class DeterministicSparseEncoder:

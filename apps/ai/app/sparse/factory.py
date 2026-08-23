@@ -10,15 +10,15 @@ def sparse_embedding_profile(settings: Settings) -> SparseEmbeddingProfile:
     if settings.sparse_embedding_provider == "deterministic":
         return SparseEmbeddingProfile(
             provider="deterministic",
-            model="token-hash-sparse-v3",
+            model="token-hash-sparse-v4",
             tokenizer="lowercase-alphanumeric-v1",
             tokenizer_revision="1",
             output_representation="sparse-index-weight",
             max_input_tokens=settings.sparse_embedding_max_input_tokens,
             document_input_type="document",
             query_input_type="query",
-            model_revision="3",
-            adapter_version="deterministic-v3",
+            model_revision="4",
+            adapter_version="deterministic-v4",
         )
     return SparseEmbeddingProfile(
         provider="fastembed",

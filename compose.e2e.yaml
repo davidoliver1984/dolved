@@ -76,7 +76,7 @@ services:
       EMBEDDING_PROVIDER: deterministic
       EMBEDDING_MODEL: token-hash-unit-vector-v3
       SPARSE_EMBEDDING_PROVIDER: deterministic
-      SPARSE_EMBEDDING_MODEL: token-hash-sparse-v3
+      SPARSE_EMBEDDING_MODEL: token-hash-sparse-v4
       RERANKER_PROVIDER: deterministic
       RERANKER_MODEL: token-overlap-v2
       RETRIEVAL_PLANNER_PROVIDER: deterministic
@@ -102,7 +102,7 @@ services:
       EMBEDDING_PROVIDER: deterministic
       EMBEDDING_MODEL: token-hash-unit-vector-v3
       SPARSE_EMBEDDING_PROVIDER: deterministic
-      SPARSE_EMBEDDING_MODEL: token-hash-sparse-v3
+      SPARSE_EMBEDDING_MODEL: token-hash-sparse-v4
       RERANKER_PROVIDER: deterministic
       RETRIEVAL_PLANNER_PROVIDER: deterministic
       RETRIEVAL_PLANNER_MODEL: catalogue-retrieval-planner

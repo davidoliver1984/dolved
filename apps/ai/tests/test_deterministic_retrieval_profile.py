@@ -49,7 +49,7 @@ def test_complete_e2e_profile_selects_only_deterministic_adapters() -> None:
     assert sparse_embedding_profile(configured).provider == "deterministic"
     assert reranker_profile(configured).provider == "deterministic"
     assert embedding_profile(configured).model == "token-hash-unit-vector-v3"
-    assert sparse_embedding_profile(configured).model == "token-hash-sparse-v3"
+    assert sparse_embedding_profile(configured).model == "token-hash-sparse-v4"
     assert reranker_profile(configured).model == "token-overlap-v2"
 
 
