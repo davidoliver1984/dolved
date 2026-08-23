@@ -77,7 +77,7 @@ def test_deterministic_fake_preserves_order_and_returns_unit_vectors() -> None:
     )
 
 
-def test_fake_output_changes_with_purpose() -> None:
+def test_fake_output_preserves_one_lexical_space_across_purposes() -> None:
     source_id = UUID("00000000-0000-0000-0000-000000000001")
     correlation_id = uuid4()
     workspace_id = uuid4()
@@ -103,7 +103,7 @@ def test_fake_output_changes_with_purpose() -> None:
         )
     )
 
-    assert document.embeddings[0].values != query.embeddings[0].values
+    assert document.embeddings[0].values == query.embeddings[0].values
 
 
 def test_fake_can_raise_an_injected_typed_failure() -> None:

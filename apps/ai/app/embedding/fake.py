@@ -1,6 +1,5 @@
 import hashlib
 import math
-from collections.abc import Iterable
 
 from app.embedding.errors import EmbeddingError
 from app.embedding.models import (
@@ -8,6 +7,7 @@ from app.embedding.models import (
     EmbeddingRequest,
     EmbeddingResult,
 )
+from app.retrieval.deterministic_text import deterministic_token_counts
 
 
 class DeterministicFakeEmbedder:
@@ -27,10 +27,7 @@ class DeterministicFakeEmbedder:
             EmbeddedVector(
                 source_id=item.source_id,
                 values=self._vector(
-                    seed=(
-                        f"{request.profile.fingerprint()}\x00"
-                        f"{request.purpose.value}\x00{item.text}"
-                    ).encode(),
+                    text=item.text,
                     dimensions=request.profile.dimensions,
                 ),
                 dimensions=request.profile.dimensions,
@@ -45,23 +42,11 @@ class DeterministicFakeEmbedder:
         )
 
     @staticmethod
-    def _vector(*, seed: bytes, dimensions: int) -> tuple[float, ...]:
-        values = tuple(
-            ((byte / 255.0) * 2.0) - 1.0
-            for byte in DeterministicFakeEmbedder._bytes(seed, dimensions)
-        )
+    def _vector(*, text: str, dimensions: int) -> tuple[float, ...]:
+        values = [0.0] * dimensions
+        for token, count in deterministic_token_counts(text).items():
+            digest = hashlib.sha256(token.encode()).digest()
+            index = int.from_bytes(digest[:8], "big") % dimensions
+            values[index] += 1.0 + math.log(count)
         magnitude = math.sqrt(sum(value * value for value in values))
         return tuple(value / magnitude for value in values)
-
-    @staticmethod
-    def _bytes(seed: bytes, count: int) -> Iterable[int]:
-        generated = 0
-        counter = 0
-        while generated < count:
-            digest = hashlib.sha256(seed + counter.to_bytes(8, "big")).digest()
-            for byte in digest:
-                if generated == count:
-                    return
-                generated += 1
-                yield byte
-            counter += 1

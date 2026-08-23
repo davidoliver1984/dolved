@@ -74,11 +74,11 @@ services:
       INGESTION_QUEUE: ${INGESTION_QUEUE}
       INGESTION_DLQ: ${INGESTION_DLQ}
       EMBEDDING_PROVIDER: deterministic
-      EMBEDDING_MODEL: sha256-unit-vector-v1
+      EMBEDDING_MODEL: token-hash-unit-vector-v2
       SPARSE_EMBEDDING_PROVIDER: deterministic
-      SPARSE_EMBEDDING_MODEL: sha256-sparse-v1
+      SPARSE_EMBEDDING_MODEL: token-hash-sparse-v2
       RERANKER_PROVIDER: deterministic
-      RERANKER_MODEL: fused-order-v1
+      RERANKER_MODEL: token-overlap-v2
       RETRIEVAL_PLANNER_PROVIDER: deterministic
       RETRIEVAL_PLANNER_MODEL: catalogue-retrieval-planner
       RETRIEVAL_PLANNER_CATALOGUE_PATH: /e2e-fixtures/v1/scenario-catalogue.json
@@ -100,9 +100,9 @@ services:
       INGESTION_QUEUE: ${INGESTION_QUEUE}
       INGESTION_DLQ: ${INGESTION_DLQ}
       EMBEDDING_PROVIDER: deterministic
-      EMBEDDING_MODEL: sha256-unit-vector-v1
+      EMBEDDING_MODEL: token-hash-unit-vector-v2
       SPARSE_EMBEDDING_PROVIDER: deterministic
-      SPARSE_EMBEDDING_MODEL: sha256-sparse-v1
+      SPARSE_EMBEDDING_MODEL: token-hash-sparse-v2
       RERANKER_PROVIDER: deterministic
       RETRIEVAL_PLANNER_PROVIDER: deterministic
       RETRIEVAL_PLANNER_MODEL: catalogue-retrieval-planner

@@ -10,8 +10,8 @@ def reranker_profile(settings: Settings) -> RerankerProfile:
     if settings.reranker_provider == "deterministic":
         return RerankerProfile(
             provider="deterministic",
-            model="fused-order-v1",
-            adapter_version="deterministic-v1",
+            model="token-overlap-v2",
+            adapter_version="deterministic-v2",
             truncation=False,
         )
     return RerankerProfile(

@@ -35,6 +35,14 @@ final class CurrentRetrievalEligibilityArtifactTest extends TestCase
         $this->assertNotNull($entries['location']['resolved_location_public_id']);
         $this->assertSame('clarification_required', $entries['unknown']['outcome']);
         $this->assertSame('unresolved_location_reference', $entries['unknown']['reason']);
+        $this->assertSame('evidence_found', $entries['coventry']['outcome']);
+        $this->assertSame('evidence_found', $entries['midlands']['outcome']);
+        $this->assertSame('evidence_found', $entries['bristol-hierarchy']['outcome']);
+        $this->assertSame('evidence_found', $entries['meadow-hierarchy']['outcome']);
+        $this->assertSame(
+            $entries['coventry']['resolved_location_public_id'],
+            $entries['coventry-hierarchy']['resolved_location_public_id'],
+        );
         $this->assertSame('no_eligible_evidence', $artifact['probes']['no_active_corpus_generation']['outcome']);
         $this->assertSame(0, $artifact['isolation']['cross_workspace_document_count_in_scopes']);
         $this->assertSame('App\\Services\\Retrieval\\EligibilityResolver', $artifact['resolver']['implementation']);
@@ -103,7 +111,7 @@ final class CurrentRetrievalEligibilityArtifactTest extends TestCase
             $directory.'/organisation.json',
             $directory.'/plans.json',
             '/contracts/evaluation/v2/deterministic-eligibility-artifact.schema.json',
-            5,
+            10,
         );
     }
 
@@ -143,8 +151,18 @@ final class CurrentRetrievalEligibilityArtifactTest extends TestCase
                 ['location_id' => 'location.region', 'name' => 'Region', 'kind' => 'REGION', 'parent_location_id' => null],
                 ['location_id' => 'location.site', 'name' => 'Site', 'kind' => 'SITE', 'parent_location_id' => 'location.region'],
                 ['location_id' => 'location.other', 'name' => 'Other', 'kind' => 'REGION', 'parent_location_id' => null],
+                ['location_id' => 'location.region.midlands', 'name' => 'Midlands Region', 'kind' => 'REGION', 'parent_location_id' => null],
+                ['location_id' => 'location.willow-bank', 'name' => 'Willow Bank Community Service', 'kind' => 'SERVICE', 'parent_location_id' => 'location.region.midlands'],
+                ['location_id' => 'location.region.south-west', 'name' => 'South West Region', 'kind' => 'REGION', 'parent_location_id' => null],
+                ['location_id' => 'location.bristol', 'name' => 'Bristol', 'kind' => 'CITY', 'parent_location_id' => 'location.region.south-west'],
+                ['location_id' => 'location.meadow-court', 'name' => 'Meadow Court', 'kind' => 'SITE', 'parent_location_id' => 'location.region.south-west'],
             ],
-            'aliases' => [['alias' => 'site alias', 'location_ids' => ['location.site']]],
+            'aliases' => [
+                ['alias' => 'site alias', 'location_ids' => ['location.site']],
+                ['alias' => 'Coventry', 'location_ids' => ['location.willow-bank']],
+                ['alias' => 'Midlands', 'location_ids' => ['location.region.midlands']],
+                ['alias' => 'South West', 'location_ids' => ['location.region.south-west']],
+            ],
         ];
     }
 
@@ -163,6 +181,11 @@ final class CurrentRetrievalEligibilityArtifactTest extends TestCase
                 ['case_id' => 'case.at-date', 'variant_id' => 'valid-at-date', 'question' => 'At 15 June 2024?', 'contract' => $contract('valid_at_date', date: '2024-06-15')],
                 ['case_id' => 'case.location', 'variant_id' => 'location', 'question' => 'At site?', 'contract' => $contract('current', locations: ['site alias'])],
                 ['case_id' => 'case.unknown', 'variant_id' => 'unknown', 'question' => 'There?', 'contract' => $contract('current', locations: ['there'])],
+                ['case_id' => 'case.coventry', 'variant_id' => 'coventry', 'question' => 'At Coventry?', 'contract' => $contract('current', locations: ['Coventry'])],
+                ['case_id' => 'case.midlands', 'variant_id' => 'midlands', 'question' => 'In the Midlands?', 'contract' => $contract('current', locations: ['Midlands'])],
+                ['case_id' => 'case.coventry-hierarchy', 'variant_id' => 'coventry-hierarchy', 'question' => 'At Coventry in the Midlands?', 'contract' => $contract('current', locations: ['Coventry', 'Midlands'])],
+                ['case_id' => 'case.bristol', 'variant_id' => 'bristol-hierarchy', 'question' => 'At Bristol in the South West?', 'contract' => $contract('current', locations: ['South West', 'Bristol'])],
+                ['case_id' => 'case.meadow', 'variant_id' => 'meadow-hierarchy', 'question' => 'At Meadow Court in the South West?', 'contract' => $contract('current', locations: ['South West', 'Meadow Court'])],
             ],
         ];
     }

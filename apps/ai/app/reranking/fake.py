@@ -1,8 +1,17 @@
 from app.reranking.models import RerankedCandidate, RerankRequest, RerankResult
+from app.retrieval.deterministic_text import deterministic_tokens
 
 
 class DeterministicReranker:
     def rerank(self, request: RerankRequest) -> RerankResult:
+        query_tokens = set(deterministic_tokens(request.query))
+
+        def relevance(candidate) -> float:  # type: ignore[no-untyped-def]
+            candidate_tokens = set(deterministic_tokens(candidate.text))
+            if not query_tokens:
+                return 0.0
+            return len(query_tokens & candidate_tokens) / len(query_tokens)
+
         ordered = tuple(
             candidate
             for side in sorted(
@@ -16,7 +25,8 @@ class DeterministicReranker:
                     if candidate.side is side
                 ),
                 key=lambda candidate: (
-                    -candidate.fused_score,
+                    -relevance(candidate),
+                    candidate.fused_rank,
                     str(candidate.chunk_id),
                 ),
             )[: request.top_k]

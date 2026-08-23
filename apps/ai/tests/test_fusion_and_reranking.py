@@ -108,7 +108,11 @@ def rerank_request(*, top_k: int = 2) -> RerankRequest:
             document_family_id=uuid4(),
             version_position=index,
             side=RetrievalSide.PRIMARY,
-            text=f"canonical text {index}",
+            text=(
+                "General policy administration."
+                if index == 1
+                else "The incident policy applies to missed reporting deadlines."
+            ),
             fused_score=score,
             fused_rank=index,
         )
@@ -137,6 +141,7 @@ def test_deterministic_reranker_is_offline_stable_and_bounded() -> None:
 
     assert first == second
     assert first.candidates[0].chunk_id == request.candidates[1].chunk_id
+    assert first.candidates[0].score > 0
     assert first.profile == request.profile
 
 

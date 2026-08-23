@@ -1,0 +1,248 @@
+{
+  "aliases": [
+    {
+      "alias": "HQ",
+      "location_ids": [
+        "location.central-support-office"
+      ]
+    },
+    {
+      "alias": "head office",
+      "location_ids": [
+        "location.central-support-office"
+      ]
+    },
+    {
+      "alias": "Manchester home",
+      "location_ids": [
+        "location.riverside-house"
+      ]
+    },
+    {
+      "alias": "Preston home",
+      "location_ids": [
+        "location.moorland-view"
+      ]
+    },
+    {
+      "alias": "Birmingham home",
+      "location_ids": [
+        "location.oakfield-lodge"
+      ]
+    },
+    {
+      "alias": "Coventry community team",
+      "location_ids": [
+        "location.willow-bank"
+      ]
+    },
+    {
+      "alias": "Coventry",
+      "location_ids": [
+        "location.willow-bank"
+      ]
+    },
+    {
+      "alias": "Midlands",
+      "location_ids": [
+        "location.region.midlands"
+      ]
+    },
+    {
+      "alias": "Bristol home",
+      "location_ids": [
+        "location.harbour-view"
+      ]
+    },
+    {
+      "alias": "Bristol",
+      "location_ids": [
+        "location.harbour-view"
+      ]
+    },
+    {
+      "alias": "Exeter home",
+      "location_ids": [
+        "location.meadow-court"
+      ]
+    },
+    {
+      "alias": "South West",
+      "location_ids": [
+        "location.region.south-west"
+      ]
+    },
+    {
+      "alias": "the home",
+      "location_ids": [
+        "location.riverside-house",
+        "location.moorland-view",
+        "location.oakfield-lodge",
+        "location.harbour-view",
+        "location.meadow-court"
+      ]
+    }
+  ],
+  "benchmark_id": "dolved-care-engineering",
+  "evaluation_clock": "2026-08-01T12:00:00Z",
+  "locations": [
+    {
+      "kind": "REGION",
+      "location_id": "location.region.north-west",
+      "name": "North West Region",
+      "parent_location_id": null
+    },
+    {
+      "kind": "CARE_HOME",
+      "location_id": "location.riverside-house",
+      "name": "Riverside House",
+      "parent_location_id": "location.region.north-west"
+    },
+    {
+      "kind": "CARE_HOME",
+      "location_id": "location.moorland-view",
+      "name": "Moorland View",
+      "parent_location_id": "location.region.north-west"
+    },
+    {
+      "kind": "REGION",
+      "location_id": "location.region.midlands",
+      "name": "Midlands Region",
+      "parent_location_id": null
+    },
+    {
+      "kind": "CARE_HOME",
+      "location_id": "location.oakfield-lodge",
+      "name": "Oakfield Lodge",
+      "parent_location_id": "location.region.midlands"
+    },
+    {
+      "kind": "COMMUNITY_SERVICE",
+      "location_id": "location.willow-bank",
+      "name": "Willow Bank Community Service",
+      "parent_location_id": "location.region.midlands"
+    },
+    {
+      "kind": "REGION",
+      "location_id": "location.region.south-west",
+      "name": "South West Region",
+      "parent_location_id": null
+    },
+    {
+      "kind": "CARE_HOME",
+      "location_id": "location.harbour-view",
+      "name": "Harbour View",
+      "parent_location_id": "location.region.south-west"
+    },
+    {
+      "kind": "CARE_HOME",
+      "location_id": "location.meadow-court",
+      "name": "Meadow Court",
+      "parent_location_id": "location.region.south-west"
+    },
+    {
+      "kind": "OFFICE",
+      "location_id": "location.central-support-office",
+      "name": "Central Support Office",
+      "parent_location_id": null
+    }
+  ],
+  "organisation": {
+    "description": "A deliberately fictional medium-sized UK provider of residential and community care employing approximately 900 people.",
+    "fictional": true,
+    "name": "Alderbridge Care Group",
+    "organisation_id": "org.alderbridge-care-group"
+  },
+  "schema_version": "v2",
+  "terminology": [
+    {
+      "aliases": [
+        "medication chart",
+        "drug chart"
+      ],
+      "meaning": "Medication Administration Record",
+      "term": "MAR"
+    },
+    {
+      "aliases": [
+        "when required medicine",
+        "as needed medicine"
+      ],
+      "meaning": "Medication prescribed to be given when required",
+      "term": "PRN"
+    },
+    {
+      "aliases": [
+        "capacity assessment"
+      ],
+      "meaning": "Mental Capacity Act",
+      "term": "MCA"
+    },
+    {
+      "aliases": [
+        "liberty safeguards"
+      ],
+      "meaning": "Deprivation of Liberty Safeguards",
+      "term": "DoLS"
+    },
+    {
+      "aliases": [
+        "protective equipment"
+      ],
+      "meaning": "Personal protective equipment",
+      "term": "PPE"
+    },
+    {
+      "aliases": [
+        "hazardous substances"
+      ],
+      "meaning": "Control of Substances Hazardous to Health",
+      "term": "COSHH"
+    },
+    {
+      "aliases": [
+        "reportable incident"
+      ],
+      "meaning": "Reporting of Injuries, Diseases and Dangerous Occurrences Regulations",
+      "term": "RIDDOR"
+    },
+    {
+      "aliases": [
+        "criminal record check"
+      ],
+      "meaning": "Disclosure and Barring Service",
+      "term": "DBS"
+    },
+    {
+      "aliases": [
+        "data access request"
+      ],
+      "meaning": "Subject access request",
+      "term": "SAR"
+    },
+    {
+      "aliases": [
+        "infection control"
+      ],
+      "meaning": "Infection prevention and control",
+      "term": "IPC"
+    },
+    {
+      "aliases": [
+        "home manager",
+        "service manager"
+      ],
+      "meaning": "The person registered to manage a regulated care service",
+      "term": "registered manager"
+    },
+    {
+      "aliases": [
+        "resident",
+        "service user",
+        "client"
+      ],
+      "meaning": "A person receiving care or support from Alderbridge",
+      "term": "person supported"
+    }
+  ]
+}

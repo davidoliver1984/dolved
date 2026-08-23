@@ -1,0 +1,46 @@
+{
+  "artefacts": {
+    "corpus_digest": "13632b68b8a228a938ef61dd97f770586967ccd13bfc1b224137c534c17a6554",
+    "organisation_sha256": "22ef7ed70a550592698fc51ef1600587acb12aeb7c8f9fe788ceabefe09ef098",
+    "plans_digest": "cebc67cd571f19e67d0964d9ba09c6485db24abc7a14e3f2050157a531673a02",
+    "source_checksums_digest": "0fe26832f3bccb5facd56c1bb45a94a5aeb31615ae6c70d355104825b8b4f3a2"
+  },
+  "case_count": 42,
+  "fixture_id": "dolved-current-retrieval",
+  "fixture_version": "1",
+  "lineage_digest": "27560e1d2eaa3daa7aac55b39d301392661188c7b016dcf952e00dabf0b6314a",
+  "parent_benchmark": {
+    "digest": "aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d",
+    "evaluation_clock": "2026-08-01T12:00:00+00:00",
+    "id": "dolved-care-engineering",
+    "version": "v2"
+  },
+  "protected_splits_accessed": false,
+  "reconciliation": {
+    "digest": "2df24604c153795e9a31cdb45658654d802411cb561eec46db156328038083e7",
+    "entries": [
+      {
+        "case_id": "health-safety.moving-handling.compare",
+        "question_digest": "6a0f7ae19e06564cb7655ad43ad3757a40ec06787c3138013f0e5c32812072f5",
+        "reviewed_v3_case_id": "v3.health.compare.moving-handling-staffing",
+        "reviewed_v3_variant_id": "colloquial",
+        "variant_id": "colloquial"
+      },
+      {
+        "case_id": "medication.controlled-drugs.valid-at-date",
+        "question_digest": "2d27903194527a84cf71cf9c70837ee20d2c194350cdc6b95a6ef90d3bc54b34",
+        "reviewed_v3_case_id": "v3.medication.historical.controlled-drugs-v1",
+        "reviewed_v3_variant_id": "precision",
+        "variant_id": "contrast"
+      }
+    ],
+    "id": "current-retrieval-v1-review-reconciliation",
+    "organisation_sha256": "9bcfefa56b05d0e0eadadcd3b4c1dbc1e0e2d6b05d7f086b8e4098c6289fae09",
+    "organisation_source": "benchmark-v3-reviewed-catalogue",
+    "parent_plan_catalogue_digest": "9a301a9be26e2b0fec7c7d497db8e59b63a5ab55f339336b395c01e9e0a2235f",
+    "parent_snapshot_digest": "8f67bb00ad22fe8f74ecdc834f66f22a00bf97bffe409d6857ce44fc0a0a5de5",
+    "version": "1"
+  },
+  "schema_version": "v1",
+  "variant_count": 126
+}
