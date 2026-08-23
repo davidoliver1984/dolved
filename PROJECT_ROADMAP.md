@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 22 of 25 (Testing and Quality Strategy) |
+| Project status | In Progress — Phase 23 of 25 (CI/CD and Production Readiness) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -947,6 +947,19 @@ navigation, persistence, controlled insufficiency and native SSE replay. A
 foreign workspace cannot retrieve the evidence or open the conversation or
 source route. All provider-facing components are deterministic and fail closed;
 no external provider call or protected evaluation input is involved.
+
+**Security regression verification completed 2026-08-23** (Stage 22.5):
+provider-free checks now cover the highest-value tenant, upload, storage,
+authentication, queue-envelope and generation-authority boundaries. The
+optional bounded live prompt-injection evaluator remains explicitly separate
+from deterministic proof and was not invoked at closure.
+
+**Phase 22 completed 2026-08-23**: the full fast tier, cross-language
+contracts, isolated browser journey, real-SPLADE integration and all three
+required provider-free evaluation gates passed. The browser journey now
+asserts visible progress before forced SSE reconnection and terminal grounded
+completion. Optional live-provider evaluation remains non-gating and no live
+provider calls were made during closure.
 
 ### Deliverable
 

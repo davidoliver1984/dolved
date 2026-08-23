@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R22",
-    "current_session": "R22-GATE",
-    "next_action": "Review the completed Phase 22 evidence and run the Testing and Quality Strategy acceptance gate.",
-    "completed_through": "R22-S05",
-    "completed_phase_count": 22,
+    "current_phase": "R23",
+    "current_session": "R23-S01",
+    "next_action": "Begin R23-S01 — add continuous integration for the accepted test taxonomy and gates.",
+    "completed_through": "R22-GATE",
+    "completed_phase_count": 23,
     "total_phase_count": 25
   },
   "phases": [
@@ -4663,12 +4663,12 @@
         }
       ],
       "guide_end_line": 14305,
-      "status": "in_progress",
+      "status": "completed",
       "objective": "Create a layered test strategy that catches regressions without requiring every check to be an expensive end-to-end test.",
       "gate": {
         "id": "R22-GATE",
         "title": "Testing and Quality Strategy Acceptance Gate",
-        "status": "not_started",
+        "status": "completed",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
@@ -4676,7 +4676,14 @@
           "Commit the completed phase.",
           "Create annotated Git tag phase-22 where required by the guide."
         ],
-        "completion_evidence": []
+        "completion_evidence": [
+          "Independent review found no blocking Phase 22 regression and identified only the missing browser-level progress-state assertion",
+          "The isolated chat journey now visibly asserts Understanding your question… before forced disconnect, native reconnection, durable replay and terminal completion",
+          "Full fast tier passed: web 115; Laravel 357 passed / 2 skipped / 1906 assertions; Python 629 passed / 4 skipped; format, lint, type and Collector checks clean",
+          "Clean provider-free Playwright E2E passed and removed its isolated containers and volumes",
+          "Mandatory real-SPLADE integration and all three provider-free evaluation gates passed with zero provider calls",
+          "docs/journal/2026-08-23-r22-phase-closure.md"
+        ]
       }
     },
     {

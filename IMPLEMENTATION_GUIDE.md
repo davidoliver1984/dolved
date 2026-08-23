@@ -14348,7 +14348,10 @@ Completed on 2026-08-23.
 ### Verification evidence
 
 * Clean `make test-e2e`: the single full-path Playwright journey passed in
-  38.3 seconds and the isolated containers and volumes were removed.
+  39.6 seconds and the isolated containers and volumes were removed.
+* The journey visibly asserted `Understanding your question…` from the
+  durable `run_progress` event before its E2E-only forced disconnect, then
+  proved native reconnection, `Last-Event-ID` replay and terminal completion.
 * The journey exercised real Next.js, Laravel, PostgreSQL, LocalStack S3/SQS,
   publisher, Python workers and Qdrant while all provider-facing adapters were
   deterministic and external provider credentials and calls remained absent.
@@ -14448,6 +14451,39 @@ Completed on 23 August 2026.
 
 git add tests apps
 git commit -m "Add security regression tests"
+
+---
+
+## Phase 22 acceptance gate
+
+### Status
+
+Completed on 2026-08-23.
+
+### Verified final state
+
+* The full fast tier passed: web 115 tests; Laravel 357 passed, 2 skipped and
+  1,906 assertions; Python 629 passed and 4 skipped; Pint, Ruff lint/format,
+  ESLint, TypeScript, Mypy and Collector configuration validation were clean.
+* The isolated provider-free Playwright journey passed and removed all of its
+  containers and volumes. It now proves the visible progress presentation
+  before native SSE reconnection as well as final grounded completion.
+* The mandatory real-SPLADE integration check passed with one bounded model
+  load and inference.
+* All three required provider-free evaluation gates passed:
+  `make evaluation-policy-gate`, `make evaluation-retrieval-current` and
+  `make evaluation-generation-verify`. Generation verification accounted for
+  26 cases and 18 checksum-bound artefacts with zero provider calls.
+* ADR-0029 and the ADR index remain current. The deterministic retrieval
+  baseline remains an orchestration-regression baseline only and makes no
+  live-provider quality claim.
+* The optional live retrieval and generation evaluations were not invoked;
+  they remain non-gating evidence for controlled future execution.
+
+### Gate outcome
+
+Phase 22 is accepted. The repository is ready to begin R23-S01 without
+changing retrieval, generation, threshold, calibration or benchmark policy.
 
 ---
 
