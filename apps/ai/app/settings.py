@@ -89,6 +89,7 @@ class Settings(BaseSettings):
     )
     contextualiser_provider: str = "openai"
     contextualiser_model: str = "gpt-5-mini"
+    contextualiser_catalogue_path: str = "/e2e-fixtures/v1/scenario-catalogue.json"
     contextualiser_contract_version: str = "conversation-contextualisation-v1"
     contextualiser_prompt_version: str = "conversation-contextualisation-v1"
     contextualiser_adapter_version: str = "structured-chat-v1"
@@ -102,6 +103,7 @@ class Settings(BaseSettings):
     )
     generation_provider: str = "openai"
     generation_model: str = "gpt-5-mini"
+    generation_scenario_catalogue_path: str = "/e2e-fixtures/v1/scenario-catalogue.json"
     generation_prompt_version: str = "grounded-generation-v2"
     generation_contract_version: str = "generation-result-v1"
     generation_adapter_version: str = "openai-responses-v1"
@@ -159,6 +161,8 @@ class Settings(BaseSettings):
             self.sparse_embedding_provider == "deterministic",
             self.reranker_provider == "deterministic",
             self.retrieval_planner_provider == "deterministic",
+            self.contextualiser_provider == "deterministic",
+            self.generation_provider == "deterministic",
         )
         deterministic_environment = self.environment in {"e2e", "evaluation-current"}
         if any(deterministic) and not deterministic_environment:
@@ -167,7 +171,7 @@ class Settings(BaseSettings):
             )
         if self.environment == "e2e" and not all(deterministic):
             raise ValueError(
-                "the E2E environment requires the complete deterministic profile"
+                "the E2E environment requires the complete deterministic retrieval and chat profile"
             )
         return self
 

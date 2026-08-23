@@ -382,6 +382,28 @@ class ConversationOrchestrationTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_e2e_event_limit_closes_after_one_durable_event_for_native_reconnect(): void
+    {
+        Queue::fake();
+        config()->set('conversation.sse_event_limit_per_connection', 1);
+        [$run, $conversation] = $this->runFixture();
+        $recorder = app(ChatDeliveryEventRecorder::class);
+        $recorder->record($run, ChatStreamEventType::RunProgress, ['stage' => 'retrieving']);
+        $recorder->record($run, ChatStreamEventType::RunFailed, ['failure_code' => 'internal_failure']);
+        $path = "/api/workspaces/{$conversation->workspace->public_id}/conversations/{$conversation->public_id}/runs/{$run->public_id}/events";
+
+        $first = $this->actingAs($run->userMessage->createdBy)->get($path)->streamedContent();
+        $this->assertStringContainsString("id: 1\nevent: run_progress", $first);
+        $this->assertStringNotContainsString('id: 2', $first);
+
+        $second = $this->actingAs($run->userMessage->createdBy)
+            ->withHeader('Last-Event-ID', '1')
+            ->get($path)
+            ->streamedContent();
+        $this->assertStringNotContainsString('id: 1', $second);
+        $this->assertStringContainsString("id: 2\nevent: run_failed", $second);
+    }
+
     public function test_open_sse_stream_terminates_before_delivering_more_events_after_membership_revocation(): void
     {
         Queue::fake();

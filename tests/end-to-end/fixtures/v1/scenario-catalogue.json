@@ -12,6 +12,55 @@
         "temporal_reference": null,
         "location_references": [],
         "clarification_reason": null
+      },
+      "contextualisation_inputs": [
+        {
+          "message": "What must staff do when a scheduled medicine dose is omitted?",
+          "result": {
+            "status": "resolved",
+            "resolved_query": "What must staff do when a scheduled medicine dose is omitted?",
+            "used_prior_context": false,
+            "used_turn_ordinals": [],
+            "clarification_question": null
+          }
+        }
+      ],
+      "generation": {
+        "outcome": "answered",
+        "text": "Staff must record the omission, assess immediate safety, and notify the responsible clinician before the end of the shift.",
+        "unsupported_aspects": []
+      }
+    },
+    {
+      "question": "What exact time limit does the policy establish for recording an omitted dose?",
+      "plan": {
+        "retrieval_queries": [
+          "What exact time limit does the policy establish for recording an omitted dose?"
+        ],
+        "temporal_mode": "current",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "location_references": [],
+        "clarification_reason": null
+      },
+      "contextualisation_inputs": [
+        {
+          "message": "What exact time limit applies?",
+          "result": {
+            "status": "resolved",
+            "resolved_query": "What exact time limit does the policy establish for recording an omitted dose?",
+            "used_prior_context": true,
+            "used_turn_ordinals": [1],
+            "clarification_question": null
+          }
+        }
+      ],
+      "generation": {
+        "outcome": "insufficient_evidence",
+        "unsupported_aspects": [
+          "an exact recording time limit"
+        ],
+        "insufficiency_reason": "The retrieved evidence does not establish an exact time limit for recording the omission."
       }
     }
   ]

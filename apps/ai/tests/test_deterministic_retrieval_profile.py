@@ -32,6 +32,8 @@ def settings(**values: object) -> Settings:
         "sparse_embedding_provider": "deterministic",
         "reranker_provider": "deterministic",
         "retrieval_planner_provider": "deterministic",
+        "contextualiser_provider": "deterministic",
+        "generation_provider": "deterministic",
         "voyage_api_key": "",
         "retrieval_planner_api_key": "",
         "contextualiser_api_key": "",
@@ -252,8 +254,13 @@ def test_deterministic_adapters_break_equal_lexical_scores_by_stable_identity() 
 
 
 def test_e2e_profile_rejects_any_live_adapter() -> None:
-    with pytest.raises(ValidationError, match="complete deterministic profile"):
+    with pytest.raises(ValidationError, match="complete deterministic"):
         settings(embedding_provider="voyage")
+
+
+def test_e2e_profile_rejects_live_chat_adapter() -> None:
+    with pytest.raises(ValidationError, match="complete deterministic"):
+        settings(generation_provider="openai")
 
 
 def test_deterministic_provider_is_rejected_outside_approved_isolation() -> None:

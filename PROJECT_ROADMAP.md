@@ -932,6 +932,22 @@ checks are reproduced without silently regenerating semantic model scores.
 Stage 22.3 can now build the isolated full-path ingestion E2E layer on these
 contract boundaries.
 
+**Deterministic ingestion regression completed 2026-08-22** (Stage 22.3): the
+isolated browser journey now proves upload, real queue processing, parsing,
+chunking, deterministic dense/sparse materialisation, Qdrant retrieval,
+observable corruption failure and tenant concealment. Its independently
+reviewed 42-case / 126-variant current-retrieval result is promoted only as a
+deterministic orchestration-regression baseline, not as live-provider quality
+evidence.
+
+**End-to-end chat verification completed 2026-08-23** (Stage 22.4): the same
+disposable environment now crosses authenticated conversation creation,
+contextualisation, planning, retrieval, grounded generation, citations, source
+navigation, persistence, controlled insufficiency and native SSE replay. A
+foreign workspace cannot retrieve the evidence or open the conversation or
+source route. All provider-facing components are deterministic and fail closed;
+no external provider call or protected evaluation input is involved.
+
 ### Deliverable
 
 Comprehensive test suite.

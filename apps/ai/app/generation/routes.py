@@ -40,7 +40,10 @@ class UnconfiguredGenerator:
 
 def generator_dependency() -> Generator:
     settings = get_settings()
-    if not settings.generation_openai_api_key.get_secret_value().strip():
+    if (
+        settings.generation_provider == "openai"
+        and not settings.generation_openai_api_key.get_secret_value().strip()
+    ):
         return UnconfiguredGenerator()
     try:
         return build_generator(settings)

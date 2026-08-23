@@ -50,4 +50,19 @@ if jq -e '
   fail "provider credentials are present in the rendered E2E services"
 fi
 
+if ! jq -e '
+  [.services.api, .services["conversation-worker"], .services.ai, .services.worker]
+  | map(.environment)
+  | all(.[];
+      .CONTEXTUALISER_PROVIDER == "deterministic"
+      and .GENERATION_PROVIDER == "deterministic")
+' <<<"$rendered" >/dev/null; then
+  fail "rendered E2E services do not share the deterministic chat profile"
+fi
+
+if ! jq -e '.services.api.environment.CONVERSATION_SSE_EVENT_LIMIT_PER_CONNECTION == "1"' \
+  <<<"$rendered" >/dev/null; then
+  fail "the E2E API does not enforce deterministic one-event SSE connections"
+fi
+
 printf 'E2E preflight passed for isolated project dolved-e2e.\n'

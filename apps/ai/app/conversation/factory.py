@@ -1,9 +1,12 @@
+from app.conversation.deterministic import CatalogueQueryContextualizer
 from app.conversation.openai_adapter import OpenAIQueryContextualizer
 from app.conversation.protocol import QueryContextualizer
 from app.settings import Settings
 
 
 def build_contextualizer(settings: Settings) -> QueryContextualizer:
+    if settings.contextualiser_provider == "deterministic":
+        return CatalogueQueryContextualizer(settings.contextualiser_catalogue_path)
     if settings.contextualiser_provider != "openai":
         raise ValueError("unsupported contextualiser provider")
     return OpenAIQueryContextualizer(

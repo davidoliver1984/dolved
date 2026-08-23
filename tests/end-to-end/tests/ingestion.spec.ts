@@ -111,7 +111,7 @@ async function requestIngestion(
   expect(response.status()).toBe(202);
 }
 
-test("uploads, ingests and retrieves evidence while failures and tenant isolation remain observable", async ({ browser }) => {
+test("completes the deterministic ingestion, retrieval, streaming answer and isolation journey", async ({ browser }) => {
   test.skip(!password, "The committed E2E password variable is required.");
   const primary = bootstrap("ingestion-primary");
   const secondary = bootstrap("ingestion-secondary");
@@ -168,6 +168,45 @@ test("uploads, ingests and retrieves evidence while failures and tenant isolatio
     }),
   ]));
 
+  let streamRequests = 0;
+  page.on("request", (request) => {
+    if (/\/api\/workspaces\/[^/]+\/conversations\/[^/]+\/runs\/[^/]+\/events$/.test(
+      new URL(request.url()).pathname,
+    )) streamRequests += 1;
+  });
+  await page.goto(`/app/workspaces/${primary.workspace_public_id}`);
+  await page.getByLabel("Ask a question").fill(question);
+  await page.getByRole("button", { name: "Send" }).click();
+  const groundedAnswer = "Staff must record the omission, assess immediate safety, and notify the responsible clinician before the end of the shift.";
+  await expect(page.getByText(groundedAnswer, { exact: true })).toBeVisible({ timeout: 90_000 });
+  await expect(page).toHaveURL(/\/conversations\/[^/]+$/);
+  const conversationUrl = new URL(page.url()).pathname;
+  const conversationId = conversationUrl.split("/").at(-1);
+  expect(conversationId).toBeTruthy();
+
+  await page.getByRole("button", { name: "[1], show source evidence" }).click();
+  await expect(page.getByRole("heading", { level: 3, name: "representative-policy.txt" })).toBeVisible();
+  const sourceLink = page.getByRole("link", { name: "View source" });
+  const sourceUrl = await sourceLink.getAttribute("href");
+  expect(sourceUrl).toBe(`/app/workspaces/${primary.workspace_public_id}/documents/${representative!.public_id}`);
+  await sourceLink.click();
+  await expect(page).toHaveURL(sourceUrl!);
+  await expect(page.getByRole("heading", { level: 1, name: "representative-policy.txt" })).toBeVisible();
+
+  await page.goto(conversationUrl);
+  await expect(page.getByText(groundedAnswer, { exact: true })).toBeVisible();
+  streamRequests = 0;
+  await page.getByLabel("Ask a question").fill("What exact time limit applies?");
+  await page.getByRole("button", { name: "Send" }).click();
+  await expect(page.locator("p", {
+    hasText: /^The retrieved evidence does not establish an exact time limit for recording the omission\.$/,
+  })).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByText(
+    "Not established by the available evidence: an exact recording time limit",
+    { exact: true },
+  )).toBeVisible();
+  await expect.poll(() => streamRequests, { timeout: 15_000 }).toBeGreaterThanOrEqual(2);
+
   const secondaryContext = await browser.newContext();
   const secondaryPage = await login(secondaryContext, secondary);
   const concealed = await secondaryPage.request.post(
@@ -175,6 +214,25 @@ test("uploads, ingests and retrieves evidence while failures and tenant isolatio
     { data: { question, candidate_k: 10 }, headers: await authHeaders(secondaryContext) },
   );
   expect(concealed.status()).toBe(404);
+
+  const concealedConversation = await secondaryPage.request.get(
+    `${apiBaseUrl}/api/workspaces/${primary.workspace_public_id}/conversations/${conversationId}`,
+    { headers: await authHeaders(secondaryContext) },
+  );
+  expect(concealedConversation.status()).toBe(404);
+  const concealedDocument = await secondaryPage.request.get(
+    `${apiBaseUrl}/api/workspaces/${primary.workspace_public_id}/documents/${representative!.public_id}`,
+    { headers: await authHeaders(secondaryContext) },
+  );
+  expect(concealedDocument.status()).toBe(404);
+  const concealedConversationPage = await secondaryPage.goto(conversationUrl);
+  expect(concealedConversationPage?.status()).not.toBe(403);
+  await expect(secondaryPage.getByRole("heading", { name: "Workspace not found." })).toBeVisible();
+  await expect(secondaryPage.getByText(groundedAnswer, { exact: true })).toHaveCount(0);
+  const concealedSourcePage = await secondaryPage.goto(sourceUrl!);
+  expect(concealedSourcePage?.status()).not.toBe(403);
+  await expect(secondaryPage.getByRole("heading", { name: "Workspace not found." })).toBeVisible();
+  await expect(secondaryPage.getByRole("heading", { level: 1, name: "representative-policy.txt" })).toHaveCount(0);
 
   await primaryContext.close();
   await secondaryContext.close();

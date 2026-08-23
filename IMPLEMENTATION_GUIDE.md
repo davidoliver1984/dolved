@@ -14323,7 +14323,40 @@ Test authenticated, tenant-safe retrieval and grounded answer generation.
 
 ### Status
 
-Not yet executed.
+Completed on 2026-08-23.
+
+### Delivered implementation
+
+* Extended the isolated `dolved-e2e` profile with deterministic,
+  catalogue-bound contextualisation and grounded-generation adapters. The
+  complete six-adapter tuple is mandatory, unknown inputs fail closed and the
+  preflight proves that OpenAI and Voyage credentials are absent.
+* Extended the compact E2E catalogue with an answered question and a genuine
+  follow-up insufficiency case. Contextualisation preserves conversation
+  history while generation can cite only the evidence handles supplied by
+  Laravel.
+* Expanded the existing Playwright journey through authenticated chat,
+  deterministic retrieval, grounded generation, citation expansion, the real
+  document source route, persisted reload and a controlled
+  `insufficient_evidence` outcome.
+* Added direct API and browser deep-link checks proving that a foreign tenant
+  receives concealment for retrieval, conversations and cited documents.
+* Added an E2E-only, default-off SSE connection event limit so the browser test
+  exercises genuine native reconnection and durable `Last-Event-ID` replay on
+  an established conversation. Production streaming behaviour is unchanged.
+
+### Verification evidence
+
+* Clean `make test-e2e`: the single full-path Playwright journey passed in
+  38.3 seconds and the isolated containers and volumes were removed.
+* The journey exercised real Next.js, Laravel, PostgreSQL, LocalStack S3/SQS,
+  publisher, Python workers and Qdrant while all provider-facing adapters were
+  deterministic and external provider credentials and calls remained absent.
+* Focused deterministic chat/profile tests passed (17), and focused Laravel
+  SSE replay tests passed (2 tests / 14 assertions).
+* The final repository format, lint, type, unit, feature, contract and
+  provider-free evaluation gates passed; shell, JSON and diff validation were
+  clean.
 
 ### Acceptance criteria
 

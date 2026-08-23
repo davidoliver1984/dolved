@@ -30,9 +30,11 @@ class ChatStreamController extends Controller
             ->where('public_id', $runPublicId)
             ->firstOrFail();
         $after = max(0, (int) $request->header('Last-Event-ID', '0'));
+        $eventLimit = max(0, (int) config('conversation.sse_event_limit_per_connection'));
 
-        return response()->stream(function () use ($run, $after, $user, $workspace): void {
+        return response()->stream(function () use ($run, $after, $eventLimit, $user, $workspace): void {
             $cursor = $after;
+            $delivered = 0;
             $deadline = microtime(true) + (float) config('conversation.sse_connection_seconds');
             $reauthoriseAt = 0.0;
             do {
@@ -75,7 +77,13 @@ class ChatStreamController extends Controller
                     echo "event: {$event->event_type->value}\n";
                     echo "data: {$data}\n\n";
                     $cursor = $event->sequence;
+                    $delivered++;
                     if ($event->event_type->isTerminal()) {
+                        $this->flush();
+
+                        return;
+                    }
+                    if ($eventLimit > 0 && $delivered >= $eventLimit) {
                         $this->flush();
 
                         return;

@@ -6,7 +6,7 @@ cd "$repository_root"
 
 ./scripts/e2e/preflight.sh
 compose=(docker compose --env-file .env.e2e -p dolved-e2e -f compose.yaml -f compose.e2e.yaml)
-services=(postgres qdrant localstack mailpit ai api publisher worker web)
+services=(postgres qdrant localstack mailpit ai api publisher worker conversation-worker web)
 
 "${compose[@]}" up --detach --build --wait --wait-timeout "${WAIT_TIMEOUT:-180}" "${services[@]}"
 "${compose[@]}" exec -T api php artisan migrate --force
@@ -23,7 +23,7 @@ set -e
 
 if [[ "$status" -ne 0 ]]; then
   mkdir -p tests/end-to-end/test-results
-  "${compose[@]}" logs --no-color web api ai worker publisher postgres qdrant localstack \
+  "${compose[@]}" logs --no-color web api ai worker publisher conversation-worker postgres qdrant localstack \
     > tests/end-to-end/test-results/services.log 2>&1 || true
   printf 'E2E failed; dolved-e2e is preserved. Use make test-e2e-inspect or make test-e2e-clean.\n' >&2
   exit "$status"

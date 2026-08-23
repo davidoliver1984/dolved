@@ -15,6 +15,7 @@ return [
     'delivery_event_retention_seconds' => (int) env('CONVERSATION_DELIVERY_EVENT_RETENTION_SECONDS', 86_400),
     'sse_connection_seconds' => (int) env('CONVERSATION_SSE_CONNECTION_SECONDS', 25),
     'sse_poll_microseconds' => (int) env('CONVERSATION_SSE_POLL_MICROSECONDS', 100_000),
+    'sse_event_limit_per_connection' => (int) env('CONVERSATION_SSE_EVENT_LIMIT_PER_CONNECTION', 0),
     'contextualiser' => [
         'provider' => env('CONTEXTUALISER_PROVIDER', 'openai'),
         'model' => env('CONTEXTUALISER_MODEL', 'gpt-5-mini'),

@@ -1,9 +1,14 @@
+from app.generation.fake import CatalogueDeterministicGenerator
 from app.generation.openai_adapter import OpenAIGenerationProfile, OpenAIGenerator
 from app.generation.protocol import Generator
 from app.settings import Settings
 
 
 def build_generator(settings: Settings) -> Generator:
+    if settings.generation_provider == "deterministic":
+        return CatalogueDeterministicGenerator(
+            settings.generation_scenario_catalogue_path
+        )
     if settings.generation_provider != "openai":
         raise ValueError("unsupported generation provider")
     profile = OpenAIGenerationProfile(
