@@ -14545,6 +14545,14 @@ no incomplete browser route was exposed.
 Implement ADR-0032's canonical artifact schema, identities and cross-language
 digest fixtures.
 
+Completed 2026-08-29: the ownership-free `DocumentExtractionArtifact` V1
+schema now represents the complete normalised-document field set, while shared
+PHP/Python RFC 8785 fixtures bind canonical UUID, Unicode, null/absence,
+source-location, table, unknown-element and full-precision number behaviour.
+The complete artefact, ordered projection manifest and warning manifest each
+have independently verified SHA-256 identities. No upload, persistence,
+projection publication or delivery behavior was introduced in this stage.
+
 ## Stage 23.3b — Upload authorisation and worker acknowledgement
 
 Implement bounded upload acknowledgement and orphan recovery without moving

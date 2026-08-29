@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dolved.local/contracts/documents/extraction-artifact/v1/document-extraction-artifact-v1.schema.json",
+  "title": "DocumentExtractionArtifact V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "source_extractor",
+    "normaliser",
+    "source_media_type",
+    "source_byte_size",
+    "text",
+    "elements",
+    "extraction_warnings",
+    "changes",
+    "metadata"
+  ],
+  "properties": {
+    "contract_version": { "const": "document-extraction-artifact-v1" },
+    "source_extractor": { "$ref": "#/$defs/extractorIdentity" },
+    "normaliser": { "$ref": "#/$defs/normaliserIdentity" },
+    "source_media_type": { "type": "string", "minLength": 1 },
+    "source_byte_size": { "type": "integer", "minimum": 1 },
+    "text": { "type": "string" },
+    "elements": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/element" }
+    },
+    "extraction_warnings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/warning" }
+    },
+    "changes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/change" }
+    },
+    "metadata": { "$ref": "#/$defs/metadata" }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "extractorIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "parser_name": { "type": "string", "minLength": 1 },
+        "parser_version": { "type": "string", "minLength": 1 }
+      },
+      "dependentRequired": {
+        "parser_name": ["parser_version"],
+        "parser_version": ["parser_name"]
+      }
+    },
+    "normaliserIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "textLocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "start_character", "end_character", "start_line", "end_line"],
+      "properties": {
+        "kind": { "const": "text" },
+        "start_character": { "type": "integer", "minimum": 0 },
+        "end_character": { "type": "integer", "minimum": 0 },
+        "start_line": { "type": "integer", "minimum": 1 },
+        "end_line": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "pdfLocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "page_number", "page_width", "page_height", "x0", "top", "x1", "bottom", "rotation_degrees", "has_distinct_crop_box", "start_character", "end_character"],
+      "properties": {
+        "kind": { "const": "pdf" },
+        "page_number": { "type": "integer", "minimum": 1 },
+        "page_width": { "type": "number", "exclusiveMinimum": 0 },
+        "page_height": { "type": "number", "exclusiveMinimum": 0 },
+        "x0": { "type": "number" },
+        "top": { "type": "number" },
+        "x1": { "type": "number" },
+        "bottom": { "type": "number" },
+        "rotation_degrees": { "enum": [0, 90, 180, 270] },
+        "has_distinct_crop_box": { "type": "boolean" },
+        "start_character": { "type": ["integer", "null"], "minimum": 0 },
+        "end_character": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    },
+    "docxLocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "body_block_index", "table_row_index", "table_column_index", "start_character", "end_character"],
+      "properties": {
+        "kind": { "const": "docx" },
+        "body_block_index": { "type": "integer", "minimum": 0 },
+        "table_row_index": { "type": ["integer", "null"], "minimum": 0 },
+        "table_column_index": { "type": ["integer", "null"], "minimum": 0 },
+        "start_character": { "type": ["integer", "null"], "minimum": 0 },
+        "end_character": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    },
+    "sourceLocation": {
+      "oneOf": [
+        { "$ref": "#/$defs/textLocation" },
+        { "$ref": "#/$defs/pdfLocation" },
+        { "$ref": "#/$defs/docxLocation" }
+      ]
+    },
+    "tableCell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["row_index", "column_index", "text", "source_location"],
+      "properties": {
+        "row_index": { "type": "integer", "minimum": 0 },
+        "column_index": { "type": "integer", "minimum": 0 },
+        "text": { "type": "string" },
+        "source_location": {
+          "oneOf": [
+            { "$ref": "#/$defs/sourceLocation" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "tableRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "cells"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "cells": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/tableCell" }
+        }
+      }
+    },
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "ordinal", "kind", "text", "source_element_ids", "source_locations", "start_character", "end_character", "confidence"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" },
+        "ordinal": { "type": "integer", "minimum": 0 },
+        "kind": { "enum": ["paragraph", "heading", "table", "unknown"] },
+        "text": { "type": "string" },
+        "source_element_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/uuid" }
+        },
+        "source_locations": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/sourceLocation" }
+        },
+        "start_character": { "type": "integer", "minimum": 0 },
+        "end_character": { "type": "integer", "minimum": 0 },
+        "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "level": { "type": "integer", "minimum": 1, "maximum": 9 },
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/tableRow" }
+        },
+        "original_kind": { "type": "string", "minLength": 1 },
+        "preserved_payload_json": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "heading" } } },
+          "then": { "required": ["level"], "not": { "anyOf": [{ "required": ["rows"] }, { "required": ["original_kind"] }, { "required": ["preserved_payload_json"] }] } }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "table" } } },
+          "then": { "required": ["rows"], "not": { "anyOf": [{ "required": ["level"] }, { "required": ["original_kind"] }, { "required": ["preserved_payload_json"] }] } }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "unknown" } } },
+          "then": { "required": ["original_kind", "preserved_payload_json"], "not": { "anyOf": [{ "required": ["level"] }, { "required": ["rows"] }] } }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "paragraph" } } },
+          "then": { "not": { "anyOf": [{ "required": ["level"] }, { "required": ["rows"] }, { "required": ["original_kind"] }, { "required": ["preserved_payload_json"] }] } }
+        }
+      ]
+    },
+    "warning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "element_id": { "$ref": "#/$defs/uuid" },
+        "source_location": { "$ref": "#/$defs/sourceLocation" }
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "source_element_ids"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "source_element_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/uuid" }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "author", "subject", "keywords", "creator", "producer", "creation_date", "modification_date"],
+      "properties": {
+        "title": { "type": ["string", "null"] },
+        "author": { "type": ["string", "null"] },
+        "subject": { "type": ["string", "null"] },
+        "keywords": { "type": ["string", "null"] },
+        "creator": { "type": ["string", "null"] },
+        "producer": { "type": ["string", "null"] },
+        "creation_date": { "type": ["string", "null"] },
+        "modification_date": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

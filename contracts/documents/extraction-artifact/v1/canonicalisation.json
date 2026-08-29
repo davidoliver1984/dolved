@@ -1,0 +1,23 @@
+{
+  "contract_version": "document-extraction-artifact-canonicalisation-v1",
+  "algorithm": "RFC 8785",
+  "digest": "SHA-256",
+  "uuid_form": "lowercase-hyphenated-rfc4122",
+  "unicode_rule": "preserve-code-points-then-encode-valid-utf8",
+  "ownership_fields_excluded": [
+    "workspace_id",
+    "document_id",
+    "document_family_id",
+    "storage_key"
+  ],
+  "projection_manifest": {
+    "source": "elements",
+    "ordering": ["ordinal", "id"],
+    "shape": "complete-canonical-element"
+  },
+  "warning_manifest": {
+    "source": "extraction_warnings",
+    "ordering": "artifact-order",
+    "shape": "complete-canonical-warning"
+  }
+}

@@ -1,0 +1,204 @@
+{
+  "artifact": {
+    "contract_version": "document-extraction-artifact-v1",
+    "source_extractor": {
+      "name": "fixture-extractor",
+      "version": "1.2.3",
+      "parser_name": "fixture-parser",
+      "parser_version": "4.5.6"
+    },
+    "normaliser": {
+      "name": "structural-normaliser",
+      "version": "2.0.0"
+    },
+    "source_media_type": "application/pdf",
+    "source_byte_size": 428,
+    "text": "Café\nCafé\nSafety 🧭",
+    "elements": [
+      {
+        "id": "AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAA1",
+        "ordinal": 0,
+        "kind": "heading",
+        "text": "Café",
+        "source_element_ids": ["BBBBBBBB-BBBB-4BBB-8BBB-BBBBBBBBBBB1"],
+        "source_locations": [
+          {
+            "kind": "text",
+            "start_character": 0,
+            "end_character": 4,
+            "start_line": 1,
+            "end_line": 1
+          }
+        ],
+        "start_character": 0,
+        "end_character": 4,
+        "confidence": 1,
+        "level": 1
+      },
+      {
+        "id": "AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAA2",
+        "ordinal": 1,
+        "kind": "paragraph",
+        "text": "Café",
+        "source_element_ids": ["BBBBBBBB-BBBB-4BBB-8BBB-BBBBBBBBBBB2"],
+        "source_locations": [
+          {
+            "kind": "pdf",
+            "page_number": 2,
+            "page_width": 612.5,
+            "page_height": 792,
+            "x0": 12.25,
+            "top": 20,
+            "x1": 250.75,
+            "bottom": 44.5,
+            "rotation_degrees": 0,
+            "has_distinct_crop_box": false,
+            "start_character": null,
+            "end_character": null
+          }
+        ],
+        "start_character": 5,
+        "end_character": 10,
+        "confidence": 0
+      },
+      {
+        "id": "AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAA3",
+        "ordinal": 2,
+        "kind": "table",
+        "text": "Safety 🧭",
+        "source_element_ids": ["BBBBBBBB-BBBB-4BBB-8BBB-BBBBBBBBBBB3"],
+        "source_locations": [
+          {
+            "kind": "docx",
+            "body_block_index": 3,
+            "table_row_index": 0,
+            "table_column_index": 0,
+            "start_character": 0,
+            "end_character": 6
+          }
+        ],
+        "start_character": 11,
+        "end_character": 19,
+        "confidence": null,
+        "rows": [
+          {
+            "index": 0,
+            "cells": [
+              {
+                "row_index": 0,
+                "column_index": 0,
+                "text": "Safety",
+                "source_location": {
+                  "kind": "docx",
+                  "body_block_index": 3,
+                  "table_row_index": 0,
+                  "table_column_index": 0,
+                  "start_character": 0,
+                  "end_character": 6
+                }
+              },
+              {
+                "row_index": 0,
+                "column_index": 1,
+                "text": "🧭",
+                "source_location": null
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "cells": [
+              {
+                "row_index": 1,
+                "column_index": 0,
+                "text": "A",
+                "source_location": null
+              },
+              {
+                "row_index": 1,
+                "column_index": 1,
+                "text": "B",
+                "source_location": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAA4",
+        "ordinal": 3,
+        "kind": "unknown",
+        "text": "",
+        "source_element_ids": ["BBBBBBBB-BBBB-4BBB-8BBB-BBBBBBBBBBB4"],
+        "source_locations": [
+          {
+            "kind": "docx",
+            "body_block_index": 4,
+            "table_row_index": null,
+            "table_column_index": null,
+            "start_character": null,
+            "end_character": null
+          }
+        ],
+        "start_character": 19,
+        "end_character": 19,
+        "confidence": null,
+        "original_kind": "drawing",
+        "preserved_payload_json": "{\"label\":\"plan 🧭\",\"z\":1}"
+      }
+    ],
+    "extraction_warnings": [
+      {
+        "code": "layout_approximation",
+        "message": "Layout was approximated.",
+        "element_id": "AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAA3",
+        "source_location": {
+          "kind": "pdf",
+          "page_number": 2,
+          "page_width": 612.5,
+          "page_height": 792,
+          "x0": 12.25,
+          "top": 20,
+          "x1": 250.75,
+          "bottom": 44.5,
+          "rotation_degrees": 0,
+          "has_distinct_crop_box": false,
+          "start_character": null,
+          "end_character": null
+        }
+      }
+    ],
+    "changes": [
+      {
+        "code": "whitespace_collapsed",
+        "message": "Repeated spacing was collapsed.",
+        "source_element_ids": ["BBBBBBBB-BBBB-4BBB-8BBB-BBBBBBBBBBB2"]
+      }
+    ],
+    "metadata": {
+      "title": "Safety 🧭",
+      "author": "Dolvé Care",
+      "subject": null,
+      "keywords": "safety, policy",
+      "creator": "Fixture Suite",
+      "producer": null,
+      "creation_date": "2026-08-29",
+      "modification_date": null
+    }
+  },
+  "unicode_distinct_pair": ["Café", "Café"],
+  "number_vectors": [
+    { "value": 1e+30, "canonical": "{\"value\":1e+30}" },
+    { "value": 0.000001, "canonical": "{\"value\":0.000001}" },
+    { "value": 0.00000123456789, "canonical": "{\"value\":0.00000123456789}" },
+    { "value": 1e-7, "canonical": "{\"value\":1e-7}" },
+    { "value": 333333333.3333333, "canonical": "{\"value\":333333333.3333333}" },
+    { "value": 1.23456789, "canonical": "{\"value\":1.23456789}" },
+    { "value": -0.0, "canonical": "{\"value\":0}" }
+  ],
+  "expected": {
+    "artifact_sha256": "66331fd2d7370c349e885814750a08490ce83c7eb133f276af3d8e0cf4884c4a",
+    "projection_manifest_sha256": "b36efce16b72c4d599e098ac1187e1945adbbd1365f1972b63902cccb304b7dd",
+    "warning_manifest_sha256": "29eb3d5cfd4c65bee1853fa8893351d0ee6132759f0fb6646118cb6aecf8a4ef"
+  }
+}
