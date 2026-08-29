@@ -9,7 +9,7 @@
     "data": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["outcome", "authorisation_id", "object_key", "lease_generation", "contract_version", "max_bytes", "upload"],
+      "required": ["outcome", "authorisation_id", "object_key", "lease_generation", "contract_version", "max_bytes", "max_elements", "max_element_text_bytes", "max_warnings", "supported_contract_versions", "upload"],
       "properties": {
         "outcome": { "enum": ["authorised", "already_verified"] },
         "authorisation_id": { "type": "string", "format": "uuid" },
@@ -17,6 +17,15 @@
         "lease_generation": { "type": "integer", "minimum": 1 },
         "contract_version": { "const": "document-extraction-artifact-v1" },
         "max_bytes": { "type": "integer", "minimum": 1 },
+        "max_elements": { "type": "integer", "minimum": 1 },
+        "max_element_text_bytes": { "type": "integer", "minimum": 1 },
+        "max_warnings": { "type": "integer", "minimum": 0 },
+        "supported_contract_versions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "const": "document-extraction-artifact-v1" }
+        },
         "upload": {
           "type": ["object", "null"],
           "additionalProperties": false,

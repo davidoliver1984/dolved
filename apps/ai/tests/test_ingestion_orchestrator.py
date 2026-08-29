@@ -71,14 +71,17 @@ class FakeProtocol:
         claim_grant: ClaimGrant,
         resume_chunks: list[dict[str, Any]] | None = None,
         artifact_authorisation_outcome: str = "authorised",
+        artifact_limits: dict[str, Any] | None = None,
     ) -> None:
         self.claim_grant = claim_grant
         self.resume_chunks = resume_chunks or []
         self.calls: list[str] = []
         self.evidence: dict[str, Any] | None = None
         self.failure_usage: list[dict[str, Any]] | None = None
+        self.failure_code: str | None = None
         self.artifact_acknowledgement: dict[str, Any] | None = None
         self.artifact_authorisation_outcome = artifact_authorisation_outcome
+        self.artifact_limits = artifact_limits or {}
 
     def claim(self, **_: Any) -> ClaimGrant:
         self.calls.append("claim")
@@ -95,6 +98,10 @@ class FakeProtocol:
             "authorisation_id": "00000000-0000-0000-0000-000000000099",
             "contract_version": "document-extraction-artifact-v1",
             "max_bytes": 1_000_000,
+            "max_elements": 100_000,
+            "max_element_text_bytes": 1_048_576,
+            "max_warnings": 10_000,
+            "supported_contract_versions": ["document-extraction-artifact-v1"],
             "upload": None
             if self.artifact_authorisation_outcome == "already_verified"
             else {
@@ -102,6 +109,7 @@ class FakeProtocol:
                 "method": "PUT",
                 "headers": {"If-None-Match": "*"},
             },
+            **self.artifact_limits,
         }
 
     def acknowledge_extraction_artifact(
@@ -140,6 +148,7 @@ class FakeProtocol:
 
     def fail(self, _: dict[str, Any], **values: Any) -> dict[str, Any]:
         self.calls.append("fail")
+        self.failure_code = values.get("failure_code")
         self.failure_usage = values.get("usage")
         return {"outcome": "failed"}
 
@@ -253,6 +262,9 @@ def orchestrator(
     vectors: FakeVectorStore,
     content: bytes,
     artifact_uploader: FakeArtifactUploader | None = None,
+    *,
+    processing_timeout_seconds: float = 300.0,
+    monotonic: Any = time.monotonic,
 ) -> IngestionOrchestrator:
     return IngestionOrchestrator(
         protocol=protocol,  # type: ignore[arg-type]
@@ -264,6 +276,8 @@ def orchestrator(
         heartbeat_seconds=60,
         embedding_batch_size=10,
         artifact_uploader=artifact_uploader,
+        processing_timeout_seconds=processing_timeout_seconds,
+        monotonic=monotonic,
     )
 
 
@@ -503,6 +517,49 @@ def test_permanent_extraction_failure_is_reported_before_acknowledgement() -> No
 
     assert outcome == type(outcome)(True, "failed")
     assert protocol.calls == ["claim", "fail"]
+
+
+def test_processing_timeout_remains_typed_and_retryable_without_terminal_failure() -> (
+    None
+):
+    content = b"Canonical text for ingestion.\n"
+    protocol = FakeProtocol(grant())
+    readings = iter((0.0, 0.0, 301.0))
+
+    outcome = orchestrator(
+        protocol,
+        FakeVectorStore(),
+        content,
+        processing_timeout_seconds=300.0,
+        monotonic=lambda: next(readings),
+    ).process(
+        event={**EVENT, "byte_size": len(content)},
+        raw_body="{}",
+        message=message(),
+    )
+
+    assert outcome == type(outcome)(False, "ingestion.processing_timeout")
+    assert protocol.calls == ["claim", "submit", "seal"]
+
+
+def test_artifact_limit_violation_is_reported_as_typed_terminal_failure() -> None:
+    content = b"Canonical text for ingestion.\n"
+    protocol = FakeProtocol(grant(), artifact_limits={"max_bytes": 0})
+
+    outcome = orchestrator(
+        protocol,
+        FakeVectorStore(),
+        content,
+        artifact_uploader=FakeArtifactUploader(),
+    ).process(
+        event={**EVENT, "byte_size": len(content)},
+        raw_body="{}",
+        message=message(),
+    )
+
+    assert outcome == type(outcome)(True, "failed")
+    assert protocol.failure_code == "extraction_artifact_too_large"
+    assert protocol.calls == ["claim", "authorise_artifact", "fail"]
 
 
 def test_permanent_embedding_failure_reports_typed_usage_before_acknowledgement() -> (

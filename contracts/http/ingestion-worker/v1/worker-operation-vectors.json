@@ -167,6 +167,10 @@
           "lease_generation": 1,
           "contract_version": "document-extraction-artifact-v1",
           "max_bytes": 52428800,
+          "max_elements": 100000,
+          "max_element_text_bytes": 1048576,
+          "max_warnings": 10000,
+          "supported_contract_versions": ["document-extraction-artifact-v1"],
           "upload": {
             "url": "https://objects.example/exact-artifact",
             "method": "PUT",

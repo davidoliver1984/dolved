@@ -991,6 +991,12 @@ Deletion must retain a tested no-op export-hold seam at the reserved
 `documents.id` coordination point. ADR-0037 alone will define the eventual
 export/interchange contract; no export behavior is part of this phase.
 
+**Structured-extraction foundation verified 2026-08-29**: R23-S03a–S03e are
+complete with cross-language digests, bounded artifact/projection processing,
+atomic publication, tenant-authorised source/extracted-text delivery and
+provider-free acceptance measurements. R23-S02b may now implement clone
+orchestration against that verified identity.
+
 ### Deliverable
 
 Verified metadata, governance and structured-content foundations for the

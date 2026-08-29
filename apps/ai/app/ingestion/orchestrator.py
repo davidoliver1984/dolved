@@ -1,4 +1,6 @@
 import logging
+import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, Protocol
 from uuid import UUID
@@ -38,10 +40,12 @@ from app.ingestion.protocol_client import (
 )
 from app.ingestion.sqs import IngestionQueueMessage, SqsIngestionQueue
 from app.normalisation.artifact import (
+    ExtractionArtifactLimitError,
     artifact_digest,
     canonical_artifact_bytes,
     document_extraction_artifact,
     projection_manifest_digest,
+    validate_artifact_limits,
     warning_manifest_digest,
 )
 from app.normalisation.structural import StructuralNormaliser
@@ -81,6 +85,10 @@ class ProcessingOutcome:
     code: str
 
 
+class IngestionProcessingTimeout(RuntimeError):
+    pass
+
+
 class IngestionOrchestrator:
     def __init__(
         self,
@@ -97,6 +105,8 @@ class IngestionOrchestrator:
         chunk_batch_size: int = 50,
         resume_page_size: int = 50,
         artifact_uploader: ArtifactUploader | None = None,
+        processing_timeout_seconds: float = 300.0,
+        monotonic: Callable[[], float] = time.monotonic,
     ) -> None:
         self._protocol = protocol
         self._object_store = object_store
@@ -110,6 +120,8 @@ class IngestionOrchestrator:
         self._chunk_batch_size = chunk_batch_size
         self._resume_page_size = resume_page_size
         self._artifact_uploader = artifact_uploader
+        self._processing_timeout_seconds = processing_timeout_seconds
+        self._monotonic = monotonic
 
     def process(
         self,
@@ -139,6 +151,7 @@ class IngestionOrchestrator:
         context: dict[str, Any],
     ) -> ProcessingOutcome:
         usage: list[dict[str, Any]] = []
+        deadline = self._monotonic() + self._processing_timeout_seconds
         heartbeat = CoordinatedHeartbeat(
             interval_seconds=self._heartbeat_seconds,
             renew_lease=lambda: self._protocol.renew(context),
@@ -146,6 +159,7 @@ class IngestionOrchestrator:
         )
         try:
             with heartbeat:
+                self._assert_processing_deadline(deadline)
                 if grant.reset_open_attempt:
                     self._cleanup_provisional(context, grant)
                 if grant.resume_sealed_attempt:
@@ -155,10 +169,12 @@ class IngestionOrchestrator:
                     chunks, warnings = self._extract_submit_and_seal(
                         event, context, heartbeat
                     )
+                self._assert_processing_deadline(deadline)
                 heartbeat.assert_healthy()
                 evidence = self._embed_persist_verify(
                     event, context, grant, chunks, warnings, heartbeat, usage
                 )
+                self._assert_processing_deadline(deadline)
                 self._protocol.authorise_publication(context, evidence)
                 self._protocol.renew(context)
                 heartbeat.assert_healthy()
@@ -284,10 +300,26 @@ class IngestionOrchestrator:
                 not exception.retryable,
                 usage,
             )
+        except ExtractionArtifactLimitError as exception:
+            return self._processing_failure(
+                context,
+                exception.code,
+                str(exception),
+                True,
+                usage,
+            )
         except VectorStoreError as exception:
             return self._processing_failure(
                 context,
                 f"vector.{exception.code}",
+                str(exception),
+                False,
+                usage,
+            )
+        except IngestionProcessingTimeout as exception:
+            return self._processing_failure(
+                context,
+                "ingestion.processing_timeout",
                 str(exception),
                 False,
                 usage,
@@ -335,6 +367,12 @@ class IngestionOrchestrator:
         except Exception:  # noqa: BLE001 -- an unconfirmed terminal callback is retryable
             return ProcessingOutcome(False, "reconciliation_failed")
         return ProcessingOutcome(True, "delivery_exhausted")
+
+    def _assert_processing_deadline(self, deadline: float) -> None:
+        if self._monotonic() > deadline:
+            raise IngestionProcessingTimeout(
+                "The ingestion attempt exceeded its configured processing timeout."
+            )
 
     @staticmethod
     def _context(event: dict[str, Any], grant: ClaimGrant) -> dict[str, Any]:
@@ -417,8 +455,7 @@ class IngestionOrchestrator:
         artifact = document_extraction_artifact(normalised)
         content = canonical_artifact_bytes(artifact)
         grant = self._protocol.authorise_extraction_artifact(context)
-        if len(content) > int(grant["max_bytes"]):
-            raise RuntimeError("extraction_artifact_too_large")
+        validate_artifact_limits(artifact, content, grant)
         if grant["outcome"] == "authorised":
             upload = grant["upload"]
             heartbeat.assert_healthy()

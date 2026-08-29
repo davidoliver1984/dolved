@@ -16,9 +16,11 @@ use App\Models\IngestionEventClaim;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceMembership;
+use App\Services\Documents\DocumentObjectStorage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Mockery;
 use Tests\TestCase;
 
 final class DocumentContentDeliveryTest extends TestCase
@@ -38,6 +40,10 @@ final class DocumentContentDeliveryTest extends TestCase
             ->assertHeader('Content-Type', 'application/pdf')
             ->assertHeader('X-Content-Type-Options', 'nosniff');
         $this->assertSame('0123456789', $full->streamedContent());
+        $this->actingAs($user)->head($path)
+            ->assertOk()
+            ->assertHeader('Content-Length', '10')
+            ->assertContent('');
         $partial = $this->actingAs($user)->withHeader('Range', 'bytes=2-5')->get($path)
             ->assertStatus(206)
             ->assertHeader('Content-Range', 'bytes 2-5/10')
@@ -48,10 +54,62 @@ final class DocumentContentDeliveryTest extends TestCase
             ->assertHeader('Content-Range', 'bytes 7-9/10')
             ->assertHeader('Content-Length', '3')
             ->assertContent('');
+        $open = $this->actingAs($user)->withHeaders([
+            'Range' => 'bytes=7-',
+            'If-Range' => '"ignored-validator"',
+        ])->get($path)->assertStatus(206)
+            ->assertHeader('Content-Range', 'bytes 7-9/10');
+        $this->assertSame('789', $open->streamedContent());
         $this->actingAs($user)->withHeader('Range', 'bytes=20-')->getJson($path)
             ->assertStatus(416)
             ->assertHeader('Content-Range', 'bytes */10')
             ->assertHeader('Accept-Ranges', 'bytes');
+        $this->actingAs($user)->withHeader('Range', 'bytes=20-')->head($path)
+            ->assertStatus(416)
+            ->assertHeader('Content-Range', 'bytes */10')
+            ->assertContent('');
+    }
+
+    public function test_source_stream_is_closed_after_delivery(): void
+    {
+        [$user, $workspace, $document] = $this->memberDocument('policy.pdf', 'application/pdf', 'source');
+        $stream = fopen('php://temp', 'w+b');
+        fwrite($stream, 'source');
+        rewind($stream);
+        $storage = Mockery::mock(DocumentObjectStorage::class);
+        $sameDocument = Mockery::on(fn (Document $actual): bool => $actual->is($document));
+        $storage->shouldReceive('metadata')->once()->with($sameDocument)->andReturn([
+            'size_bytes' => 6,
+            'content_type' => 'application/pdf',
+        ]);
+        $storage->shouldReceive('readStream')->once()->with($sameDocument)->andReturn($stream);
+        $this->app->instance(DocumentObjectStorage::class, $storage);
+
+        $response = $this->actingAs($user)->get(
+            "/api/workspaces/{$workspace->public_id}/documents/{$document->public_id}/source",
+        )->assertOk();
+
+        $this->assertSame('source', $response->streamedContent());
+        $this->assertFalse(is_resource($stream));
+    }
+
+    public function test_zero_length_source_fails_closed_for_get_and_head(): void
+    {
+        [$user, $workspace, $document] = $this->memberDocument('empty.pdf', 'application/pdf', 'placeholder');
+        $storage = Mockery::mock(DocumentObjectStorage::class);
+        $storage->shouldReceive('metadata')->twice()->with(
+            Mockery::on(fn (Document $actual): bool => $actual->is($document)),
+        )->andReturn([
+            'size_bytes' => 0,
+            'content_type' => 'application/pdf',
+        ]);
+        $this->app->instance(DocumentObjectStorage::class, $storage);
+        $path = "/api/workspaces/{$workspace->public_id}/documents/{$document->public_id}/source";
+
+        $this->actingAs($user)->withHeader('Range', 'bytes=0-')->getJson($path)
+            ->assertStatus(416)->assertHeader('Content-Range', 'bytes */0');
+        $this->actingAs($user)->withHeader('Range', 'bytes=0-')->head($path)
+            ->assertStatus(416)->assertHeader('Content-Range', 'bytes */0')->assertContent('');
     }
 
     public function test_source_delivery_conceals_other_tenants_before_storage_metadata_is_disclosed(): void

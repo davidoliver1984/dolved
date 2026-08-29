@@ -27,6 +27,15 @@ final class BuildAndPublishExtractionProjection
 
     public function handle(DocumentExtractionArtifact $artifact): DocumentExtractionProjectionGeneration
     {
+        if (! in_array($artifact->contract_version, config('ingestion.orchestration.extraction_artifact_contract_versions'), true)) {
+            throw IngestionAttemptException::invalid('extraction_artifact_contract_unsupported', 'The extraction artifact contract version is unsupported.', 422);
+        }
+        if ($artifact->element_count > max(1, (int) config('ingestion.orchestration.extraction_artifact_max_elements'))) {
+            throw IngestionAttemptException::invalid('extraction_artifact_element_limit_exceeded', 'The extraction artifact contains too many elements.', 422);
+        }
+        if ($artifact->warning_count > max(0, (int) config('ingestion.orchestration.extraction_artifact_max_warnings'))) {
+            throw IngestionAttemptException::invalid('extraction_artifact_warning_limit_exceeded', 'The extraction artifact contains too many warnings.', 422);
+        }
         $current = DocumentExtractionProjectionGeneration::query()
             ->where('document_extraction_artifact_id', $artifact->id)
             ->where('status', ExtractionProjectionStatus::Published)
@@ -77,8 +86,10 @@ final class BuildAndPublishExtractionProjection
     private function build(DocumentExtractionProjectionGeneration $generation, DocumentExtractionArtifact $artifact): void
     {
         $batchSize = max(1, (int) config('ingestion.orchestration.extraction_projection_batch_size'));
+        $deadline = hrtime(true) + max(1, (int) config('ingestion.orchestration.extraction_projection_timeout_seconds')) * 1_000_000_000;
         $batch = [];
         foreach ($this->reader->elements($artifact->object_key) as $index => $element) {
+            $this->assertWithinDeadline($deadline);
             $this->assertElement($element, $index);
             $batch[] = [
                 'projection_generation_id' => $generation->id,
@@ -103,6 +114,7 @@ final class BuildAndPublishExtractionProjection
 
         $batch = [];
         foreach ($this->reader->warnings($artifact->object_key) as $ordinal => $warning) {
+            $this->assertWithinDeadline($deadline);
             $batch[] = [
                 'projection_generation_id' => $generation->id,
                 'ordinal' => $ordinal,
@@ -210,6 +222,16 @@ final class BuildAndPublishExtractionProjection
             || ! in_array($element['kind'] ?? null, ['paragraph', 'heading', 'table', 'unknown'], true)
             || ! is_string($element['text'] ?? null)) {
             throw new InvalidArgumentException("Extraction artifact element {$index} is invalid.");
+        }
+        if (strlen($element['text']) > max(1, (int) config('ingestion.orchestration.extraction_artifact_max_element_text_bytes'))) {
+            throw IngestionAttemptException::invalid('extraction_artifact_element_text_limit_exceeded', 'An extraction artifact element exceeds the configured text limit.', 422);
+        }
+    }
+
+    private function assertWithinDeadline(int $deadline): void
+    {
+        if (hrtime(true) > $deadline) {
+            throw IngestionAttemptException::invalid('extraction_projection_timeout', 'The extraction projection exceeded its configured processing timeout.', 422);
         }
     }
 

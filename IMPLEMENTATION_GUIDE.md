@@ -14610,6 +14610,18 @@ sanitised range and byte count.
 Run ADR-0032's provider-free cross-language, tenancy, digest, recovery and
 delivery tests. Clone work remains blocked until this stage is accepted.
 
+Completed 2026-08-29: canonical extraction and projection limits are now
+explicitly bound and independently enforced across Python and Laravel,
+processing and projection deadlines fail with typed outcomes, document
+deletion reconciles source/artifact/projection storage and database lineage,
+and the complete GET/HEAD/range matrix is provider-free regression covered.
+Measured PDF, DOCX and 100,000-element text fixtures remained within the
+accepted 50 MiB artifact, 100,000-element and 300-second processing/projection
+envelopes. The evidence is recorded in
+`docs/journal/2026-08-29-r23-s03e-structured-extraction-acceptance.md`; no
+providers were called. Clone orchestration may now consume the verified
+ADR-0032 identity.
+
 ## Stage 23.2b — Clone contract and orchestration
 
 Implement ADR-0031 clone compatibility and reuse only now that ADR-0032's

@@ -10,6 +10,14 @@ from app.normalisation.models import NormalisedDocument
 CONTRACT_VERSION = "document-extraction-artifact-v1"
 
 
+class ExtractionArtifactLimitError(RuntimeError):
+    """A typed, fail-closed artifact boundary violation."""
+
+    def __init__(self, code: str) -> None:
+        self.code = code
+        super().__init__(code)
+
+
 def _json_value(value: Any) -> Any:
     if isinstance(value, UUID):
         return str(value)
@@ -106,3 +114,37 @@ def warning_manifest(artifact: Mapping[str, Any]) -> list[dict[str, Any]]:
 
 def warning_manifest_digest(artifact: Mapping[str, Any]) -> str:
     return hashlib.sha256(rfc8785.dumps(warning_manifest(artifact))).hexdigest()
+
+
+def validate_artifact_limits(
+    artifact: Mapping[str, Any],
+    content: bytes,
+    limits: Mapping[str, Any],
+) -> None:
+    versions = limits.get("supported_contract_versions")
+    if not isinstance(versions, Sequence) or isinstance(versions, (str, bytes)):
+        raise ExtractionArtifactLimitError("extraction_artifact_policy_invalid")
+    if artifact.get("contract_version") not in versions:
+        raise ExtractionArtifactLimitError("extraction_artifact_contract_unsupported")
+    if len(content) > int(limits["max_bytes"]):
+        raise ExtractionArtifactLimitError("extraction_artifact_too_large")
+
+    elements = artifact.get("elements")
+    warnings = artifact.get("extraction_warnings")
+    if not isinstance(elements, Sequence) or isinstance(elements, (str, bytes)):
+        raise ExtractionArtifactLimitError("extraction_artifact_invalid")
+    if not isinstance(warnings, Sequence) or isinstance(warnings, (str, bytes)):
+        raise ExtractionArtifactLimitError("extraction_artifact_invalid")
+    if len(elements) > int(limits["max_elements"]):
+        raise ExtractionArtifactLimitError("extraction_artifact_element_limit_exceeded")
+    if len(warnings) > int(limits["max_warnings"]):
+        raise ExtractionArtifactLimitError("extraction_artifact_warning_limit_exceeded")
+
+    maximum_text_bytes = int(limits["max_element_text_bytes"])
+    for element in elements:
+        if not isinstance(element, Mapping) or not isinstance(element.get("text"), str):
+            raise ExtractionArtifactLimitError("extraction_artifact_invalid")
+        if len(element["text"].encode("utf-8")) > maximum_text_bytes:
+            raise ExtractionArtifactLimitError(
+                "extraction_artifact_element_text_limit_exceeded"
+            )

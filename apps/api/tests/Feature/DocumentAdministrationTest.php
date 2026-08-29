@@ -12,8 +12,16 @@ use App\Actions\Ingestion\PublishIngestionOutbox;
 use App\Contracts\Ingestion\IngestionEventPublisher;
 use App\Enums\DocumentDeletionStatus;
 use App\Enums\DocumentStatus;
+use App\Enums\ExtractionProjectionStatus;
+use App\Enums\ExtractionUploadStatus;
+use App\Enums\IngestionAttemptStatus;
 use App\Jobs\AdvanceDocumentDeletion as AdvanceDocumentDeletionJob;
 use App\Models\Document;
+use App\Models\DocumentExtractionArtifact;
+use App\Models\DocumentExtractionProjectionElement;
+use App\Models\DocumentExtractionProjectionGeneration;
+use App\Models\DocumentExtractionProjectionWarning;
+use App\Models\DocumentExtractionUploadAuthorisation;
 use App\Models\DocumentIngestionRetry;
 use App\Models\IngestionEventClaim;
 use App\Models\OutboxEvent;
@@ -222,11 +230,56 @@ class DocumentAdministrationTest extends TestCase
         Queue::fake();
         Storage::fake('document-administration-test');
         config()->set('documents.storage_disk', 'document-administration-test');
+        config()->set('ingestion.orchestration.extraction_artifact_disk', 'document-administration-test');
         $owner = User::factory()->create();
         $workspace = Workspace::factory()->create();
         WorkspaceMembership::factory()->for($workspace)->for($owner)->owner()->create();
         $document = Document::factory()->for($workspace)->indexed()->create();
         Storage::disk('document-administration-test')->put($document->storage_key, 'content');
+        $attempt = IngestionEventClaim::factory()->for($document)->create([
+            'status' => IngestionAttemptStatus::Completed,
+            'completed_at' => now(),
+        ]);
+        $artifactKey = $document->storage_key.'.extraction.json';
+        Storage::disk('document-administration-test')->put($artifactKey, '{}');
+        $upload = DocumentExtractionUploadAuthorisation::query()->create([
+            'public_id' => (string) Str::uuid(), 'workspace_id' => $workspace->id,
+            'document_id' => $document->id, 'ingestion_event_claim_id' => $attempt->id,
+            'object_key' => $artifactKey, 'lease_generation' => 1, 'expires_at' => now()->addMinute(),
+            'status' => ExtractionUploadStatus::Verified, 'artifact_sha256' => str_repeat('a', 64),
+            'size_bytes' => 2, 'projection_manifest_digest' => str_repeat('b', 64),
+            'warning_manifest_digest' => str_repeat('c', 64), 'element_count' => 1,
+            'warning_count' => 1, 'verified_at' => now(),
+        ]);
+        $artifact = DocumentExtractionArtifact::query()->create([
+            'public_id' => (string) Str::uuid(), 'workspace_id' => $workspace->id,
+            'document_id' => $document->id, 'upload_authorisation_id' => $upload->id,
+            'object_key' => $artifactKey, 'contract_version' => 'document-extraction-artifact-v1',
+            'artifact_sha256' => str_repeat('a', 64), 'size_bytes' => 2,
+            'projection_manifest_digest' => str_repeat('b', 64),
+            'warning_manifest_digest' => str_repeat('c', 64), 'element_count' => 1,
+            'warning_count' => 1, 'verified_at' => now(), 'published_at' => now(),
+        ]);
+        $generation = DocumentExtractionProjectionGeneration::query()->create([
+            'public_id' => (string) Str::uuid(), 'workspace_id' => $workspace->id,
+            'document_id' => $document->id, 'document_extraction_artifact_id' => $artifact->id,
+            'status' => ExtractionProjectionStatus::Published, 'expected_element_count' => 1,
+            'expected_warning_count' => 1, 'expected_projection_manifest_digest' => str_repeat('b', 64),
+            'expected_warning_manifest_digest' => str_repeat('c', 64),
+            'verified_projection_manifest_digest' => str_repeat('b', 64),
+            'verified_warning_manifest_digest' => str_repeat('c', 64),
+            'verified_at' => now(), 'published_at' => now(),
+        ]);
+        DocumentExtractionProjectionElement::query()->create([
+            'projection_generation_id' => $generation->id, 'workspace_id' => $workspace->id,
+            'document_id' => $document->id, 'element_id' => (string) Str::uuid(), 'ordinal' => 0,
+            'kind' => 'paragraph', 'text' => 'content', 'payload' => ['text' => 'content'],
+        ]);
+        DocumentExtractionProjectionWarning::query()->create([
+            'projection_generation_id' => $generation->id, 'ordinal' => 0,
+            'payload' => ['code' => 'fixture', 'message' => 'fixture'],
+        ]);
+        $document->forceFill(['active_extraction_projection_generation_id' => $generation->id])->save();
         $this->actingAs($owner)->deleteJson(
             "/api/workspaces/{$workspace->public_id}/documents/{$document->public_id}",
         )->assertAccepted();
@@ -244,6 +297,11 @@ class DocumentAdministrationTest extends TestCase
         ]);
 
         Storage::disk('document-administration-test')->assertMissing($document->storage_key);
+        Storage::disk('document-administration-test')->assertMissing($artifactKey);
+        $this->assertDatabaseMissing('document_extraction_artifacts', ['id' => $artifact->id]);
+        $this->assertDatabaseMissing('document_extraction_projection_generations', ['id' => $generation->id]);
+        $this->assertDatabaseMissing('document_extraction_projection_elements', ['projection_generation_id' => $generation->id]);
+        $this->assertDatabaseMissing('document_extraction_projection_warnings', ['projection_generation_id' => $generation->id]);
         $this->assertSame(DocumentStatus::Deleted, $document->fresh()->status);
         $this->assertSame(DocumentDeletionStatus::Completed, $operation->fresh()->status);
     }

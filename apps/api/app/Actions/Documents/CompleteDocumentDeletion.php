@@ -8,13 +8,18 @@ use App\Enums\DocumentDeletionStatus;
 use App\Enums\DocumentStatus;
 use App\Exceptions\DocumentAdministrationException;
 use App\Models\DocumentDeletionOperation;
+use App\Models\DocumentExtractionArtifact;
 use App\Models\IngestionAuditEvent;
 use App\Services\Documents\DocumentObjectStorage;
+use App\Services\Documents\ExtractionArtifactObjectStorage;
 use Illuminate\Support\Facades\DB;
 
 class CompleteDocumentDeletion
 {
-    public function __construct(private readonly DocumentObjectStorage $storage) {}
+    public function __construct(
+        private readonly DocumentObjectStorage $storage,
+        private readonly ExtractionArtifactObjectStorage $artifactStorage,
+    ) {}
 
     public function handle(string $eventId, array $payload): DocumentDeletionOperation
     {
@@ -33,6 +38,10 @@ class CompleteDocumentDeletion
         }
 
         $this->storage->delete($operation->document);
+        DocumentExtractionArtifact::query()
+            ->where('document_id', $operation->document_id)
+            ->pluck('object_key')
+            ->each(fn (string $objectKey) => $this->artifactStorage->deleteExact($objectKey));
 
         return DB::transaction(function () use ($operation, $payload): DocumentDeletionOperation {
             $locked = DocumentDeletionOperation::query()->with('document')->whereKey($operation->id)->lockForUpdate()->firstOrFail();
@@ -43,6 +52,9 @@ class CompleteDocumentDeletion
             $chunkIds = $locked->document->chunks()->pluck('id');
             DB::table('workspace_corpus_generation_chunks')->whereIn('document_chunk_id', $chunkIds)->delete();
             $locked->document->chunks()->delete();
+            $locked->document->forceFill(['active_extraction_projection_generation_id' => null])->save();
+            $locked->document->extractionProjectionGenerations()->delete();
+            DocumentExtractionArtifact::query()->where('document_id', $locked->document_id)->delete();
             $locked->document->forceFill([
                 'status' => DocumentStatus::Deleted,
                 'failure_category' => null,
@@ -54,6 +66,8 @@ class CompleteDocumentDeletion
                     ...($locked->cleanup_evidence ?? []),
                     'scopes' => $payload['scopes'],
                     'object_removed' => true,
+                    'extraction_artifacts_removed' => true,
+                    'extraction_projections_removed' => true,
                     'chunks_removed' => true,
                 ],
                 'lease_token_hash' => null,

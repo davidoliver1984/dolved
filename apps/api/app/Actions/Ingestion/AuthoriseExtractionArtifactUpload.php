@@ -67,6 +67,10 @@ class AuthoriseExtractionArtifactUpload
                 'lease_generation' => $record->lease_generation,
                 'contract_version' => $record->contract_version,
                 'max_bytes' => max(1, (int) config('ingestion.orchestration.extraction_artifact_max_bytes')),
+                'max_elements' => max(1, (int) config('ingestion.orchestration.extraction_artifact_max_elements')),
+                'max_element_text_bytes' => max(1, (int) config('ingestion.orchestration.extraction_artifact_max_element_text_bytes')),
+                'max_warnings' => max(0, (int) config('ingestion.orchestration.extraction_artifact_max_warnings')),
+                'supported_contract_versions' => config('ingestion.orchestration.extraction_artifact_contract_versions'),
                 'upload' => null,
             ];
         }
@@ -78,6 +82,10 @@ class AuthoriseExtractionArtifactUpload
             'lease_generation' => $record->lease_generation,
             'contract_version' => $record->contract_version,
             'max_bytes' => max(1, (int) config('ingestion.orchestration.extraction_artifact_max_bytes')),
+            'max_elements' => max(1, (int) config('ingestion.orchestration.extraction_artifact_max_elements')),
+            'max_element_text_bytes' => max(1, (int) config('ingestion.orchestration.extraction_artifact_max_element_text_bytes')),
+            'max_warnings' => max(0, (int) config('ingestion.orchestration.extraction_artifact_max_warnings')),
+            'supported_contract_versions' => config('ingestion.orchestration.extraction_artifact_contract_versions'),
             'upload' => $this->storage->createUploadRequest($record->object_key, CarbonImmutable::instance($record->expires_at)),
         ];
     }

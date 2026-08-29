@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     ingestion_resume_page_size: int = Field(default=50, ge=1, le=100)
     ingestion_worker_api_url: str = "http://api:8000"
     ingestion_worker_api_timeout_seconds: float = Field(default=10.0, gt=0)
+    ingestion_processing_timeout_seconds: float = Field(default=300.0, gt=0)
     ingestion_worker_callback_max_attempts: int = Field(default=3, ge=1, le=10)
     ingestion_worker_callback_backoff_seconds: float = Field(default=0.25, ge=0)
     ingestion_worker_hmac_key_id: str = "local-v1"

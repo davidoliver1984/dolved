@@ -82,6 +82,7 @@ def build_worker(
         artifact_uploader=HttpxArtifactUploader(
             timeout_seconds=settings.ingestion_worker_api_timeout_seconds,
         ),
+        processing_timeout_seconds=settings.ingestion_processing_timeout_seconds,
     )
     deletion_orchestrator = DocumentDeletionOrchestrator(
         client=DocumentDeletionClient(

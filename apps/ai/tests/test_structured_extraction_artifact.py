@@ -1,5 +1,6 @@
 import json
 import math
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 from uuid import UUID
@@ -10,10 +11,12 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 from app.extraction.models import ExtractedDocumentMetadata, ExtractorIdentity
 from app.normalisation.artifact import (
+    ExtractionArtifactLimitError,
     artifact_digest,
     canonical_artifact_bytes,
     document_extraction_artifact,
     projection_manifest_digest,
+    validate_artifact_limits,
     warning_manifest_digest,
 )
 from app.normalisation.models import NormalisedDocument, NormaliserIdentity
@@ -112,3 +115,40 @@ def test_builder_excludes_ownership_and_preserves_nullable_metadata() -> None:
         "creation_date": None,
         "modification_date": None,
     }
+
+
+@pytest.mark.parametrize(
+    ("mutation", "limit_overrides", "expected_code"),
+    [
+        (None, {"max_bytes": 1}, "extraction_artifact_too_large"),
+        ("elements", {"max_elements": 0}, "extraction_artifact_element_limit_exceeded"),
+        (
+            "text",
+            {"max_element_text_bytes": 1},
+            "extraction_artifact_element_text_limit_exceeded",
+        ),
+        ("warnings", {"max_warnings": 0}, "extraction_artifact_warning_limit_exceeded"),
+        ("version", {}, "extraction_artifact_contract_unsupported"),
+    ],
+)
+def test_every_artifact_cap_fails_closed_with_a_typed_code(
+    mutation: str | None,
+    limit_overrides: dict[str, int],
+    expected_code: str,
+) -> None:
+    artifact = deepcopy(_vectors()["artifact"])
+    if mutation == "version":
+        artifact["contract_version"] = "document-extraction-artifact-v2"
+    limits: dict[str, Any] = {
+        "max_bytes": 52_428_800,
+        "max_elements": 100_000,
+        "max_element_text_bytes": 1_048_576,
+        "max_warnings": 10_000,
+        "supported_contract_versions": ["document-extraction-artifact-v1"],
+        **limit_overrides,
+    }
+
+    with pytest.raises(ExtractionArtifactLimitError) as captured:
+        validate_artifact_limits(artifact, canonical_artifact_bytes(artifact), limits)
+
+    assert captured.value.code == expected_code
