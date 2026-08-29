@@ -14558,6 +14558,19 @@ projection publication or delivery behavior was introduced in this stage.
 Implement bounded upload acknowledgement and orphan recovery without moving
 source-delivery authority into Python.
 
+Completed 2026-08-29: each extraction-artifact upload is now bound to one
+durable workspace/document/ingestion-claim identity, current lease generation,
+purpose, contract version, expiry and exact conditional-create object key.
+Python constructs and uploads the canonical ADR-0032 artifact to only that
+authorised request; Laravel independently streams the stored object to verify
+its SHA-256, byte size and contract version before recording one immutable
+artifact acknowledgement. Stale generations, incomplete writes and conflicting
+acknowledgements fail closed. A scheduled, database-led bounded sweep protects
+live leases and published artifacts, deletes exact orphan keys only, persists
+bounded retry exhaustion and exposes stuck cleanup through the existing
+low-cardinality operational metric. Projection publication and browser source
+delivery remain deferred to R23-S03c and R23-S03d respectively.
+
 ## Stage 23.3c — Atomic projection publication
 
 Implement generation/build binding and atomic current-projection publication.

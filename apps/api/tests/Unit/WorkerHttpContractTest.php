@@ -13,6 +13,8 @@ final class WorkerHttpContractTest extends TestCase
     private const array EXPECTED_OPERATIONS = [
         'ingestion.claim',
         'ingestion.lease.renew',
+        'ingestion.extraction-artifact.authorise',
+        'ingestion.extraction-artifact.acknowledge',
         'ingestion.chunks.submit',
         'ingestion.chunks.seal',
         'ingestion.attempt.resume',

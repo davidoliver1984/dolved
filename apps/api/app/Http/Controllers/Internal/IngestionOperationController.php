@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Internal;
 
+use App\Actions\Ingestion\AcknowledgeExtractionArtifactUpload;
+use App\Actions\Ingestion\AuthoriseExtractionArtifactUpload;
 use App\Actions\Ingestion\AuthoriseIngestionPublication;
 use App\Actions\Ingestion\CancelIngestionAttempt;
 use App\Actions\Ingestion\CompleteIngestionAttempt;
@@ -18,6 +20,23 @@ use Illuminate\Http\JsonResponse;
 
 class IngestionOperationController extends Controller
 {
+    public function authoriseExtractionUpload(IngestionOperationRequest $request, string $eventId, AuthoriseExtractionArtifactUpload $action): JsonResponse
+    {
+        return response()->json(['data' => $action->handle($eventId, $request->validated())]);
+    }
+
+    public function acknowledgeExtractionUpload(IngestionOperationRequest $request, string $eventId, AcknowledgeExtractionArtifactUpload $action): JsonResponse
+    {
+        $artifact = $action->handle($eventId, $request->validated());
+
+        return response()->json(['data' => [
+            'outcome' => 'verified',
+            'artifact_id' => $artifact->public_id,
+            'artifact_sha256' => $artifact->artifact_sha256,
+            'size_bytes' => $artifact->size_bytes,
+        ]]);
+    }
+
     public function renew(IngestionOperationRequest $request, string $eventId, RenewIngestionLease $action): JsonResponse
     {
         $attempt = $action->handle($eventId, $request->validated());

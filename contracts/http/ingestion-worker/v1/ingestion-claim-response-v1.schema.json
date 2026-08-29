@@ -15,6 +15,7 @@
         "document_status",
         "lease_token",
         "lease_expires_at",
+        "lease_generation",
         "embedding_space_generation_id",
         "workspace_corpus_generation_id",
         "vector_space",
@@ -73,6 +74,12 @@
               "type": "string",
               "format": "date-time"
             }
+          ]
+        },
+        "lease_generation": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "integer", "minimum": 1 }
           ]
         },
         "embedding_space_generation_id": {

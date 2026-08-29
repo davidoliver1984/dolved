@@ -24,6 +24,26 @@
             "signature": "v2=2b363f2ef4b111cabe115cc244f61f98bc0e79875a2db7c324d9a8dee65204c1"
         },
         {
+            "name": "ingestion-extraction-artifact-authorise",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/extraction-artifact/authorise",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.extraction-artifact.authorise",
+            "body": "{\"contract_version\":1,\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"lease_generation\":1}",
+            "signature": "v2=238c0052699934e037ebb80272670dd43fbff435fc35eff59162950e162e178c"
+        },
+        {
+            "name": "ingestion-extraction-artifact-acknowledge",
+            "timestamp": 1785326400,
+            "method": "POST",
+            "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/extraction-artifact/acknowledge",
+            "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+            "purpose": "ingestion.extraction-artifact.acknowledge",
+            "body": "{\"contract_version\":1,\"event_id\":\"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41\",\"workspace_id\":\"b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10\",\"document_id\":\"d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62\",\"lease_token\":\"c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d\",\"lease_generation\":1,\"authorisation_id\":\"00000000-0000-0000-0000-000000000099\",\"artifact_contract_version\":\"document-extraction-artifact-v1\",\"artifact_sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"size_bytes\":123,\"projection_manifest_digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"warning_manifest_digest\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"element_count\":2,\"warning_count\":1,\"storage_version_id\":\"version-1\",\"storage_etag\":\"etag-1\"}",
+            "signature": "v2=51d861e1b332293130acd9e469a34151e540372d498296a138bcd7bd1b90ecfe"
+        },
+        {
             "name": "ingestion-chunks-submit",
             "timestamp": 1785326400,
             "method": "POST",

@@ -18,6 +18,8 @@ CONTRACT_DIRECTORIES = (
 EXPECTED_OPERATIONS = {
     "ingestion.claim",
     "ingestion.lease.renew",
+    "ingestion.extraction-artifact.authorise",
+    "ingestion.extraction-artifact.acknowledge",
     "ingestion.chunks.submit",
     "ingestion.chunks.seal",
     "ingestion.attempt.resume",
@@ -174,7 +176,20 @@ def test_python_clients_emit_the_shared_canonical_request_shapes() -> None:
         key: by_name["ingestion-lease-renew"]["request"][key]
         for key in ("event_id", "workspace_id", "document_id", "lease_token")
     }
+    context["lease_generation"] = by_name["ingestion-extraction-artifact-authorise"][
+        "request"
+    ]["lease_generation"]
     ingestion.renew(context)
+    ingestion.authorise_extraction_artifact(context)
+    acknowledgement = by_name["ingestion-extraction-artifact-acknowledge"]["request"]
+    ingestion.acknowledge_extraction_artifact(
+        context,
+        {
+            key: value
+            for key, value in acknowledgement.items()
+            if key not in {*context, "contract_version", "lease_generation"}
+        },
+    )
     ingestion.submit_chunks(
         context,
         by_name["ingestion-chunks-submit"]["request"]["chunks"],

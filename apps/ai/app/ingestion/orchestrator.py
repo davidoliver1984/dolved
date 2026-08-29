@@ -24,6 +24,7 @@ from app.extraction.errors import ExtractionFailure, ExtractionFailureKind
 from app.extraction.models import ExtractionContext
 from app.extraction.pdf.factory import create_pdf_extractor
 from app.extraction.plain_text import PlainTextExtractor
+from app.ingestion.artifact_upload import ArtifactUploader
 from app.ingestion.canonicalisation import (
     chunk_content_digest,
     chunk_manifest_digest,
@@ -36,6 +37,13 @@ from app.ingestion.protocol_client import (
     IngestionProtocolError,
 )
 from app.ingestion.sqs import IngestionQueueMessage, SqsIngestionQueue
+from app.normalisation.artifact import (
+    artifact_digest,
+    canonical_artifact_bytes,
+    document_extraction_artifact,
+    projection_manifest_digest,
+    warning_manifest_digest,
+)
 from app.normalisation.structural import StructuralNormaliser
 from app.sparse.errors import SparseEncodingError
 from app.sparse.models import (
@@ -88,6 +96,7 @@ class IngestionOrchestrator:
         embedding_batch_size: int,
         chunk_batch_size: int = 50,
         resume_page_size: int = 50,
+        artifact_uploader: ArtifactUploader | None = None,
     ) -> None:
         self._protocol = protocol
         self._object_store = object_store
@@ -100,6 +109,7 @@ class IngestionOrchestrator:
         self._embedding_batch_size = embedding_batch_size
         self._chunk_batch_size = chunk_batch_size
         self._resume_page_size = resume_page_size
+        self._artifact_uploader = artifact_uploader
 
     def process(
         self,
@@ -333,6 +343,7 @@ class IngestionOrchestrator:
             "workspace_id": str(event["workspace_id"]),
             "document_id": str(event["document_id"]),
             "lease_token": grant.lease_token,
+            "lease_generation": grant.lease_generation,
         }
 
     def _extract_submit_and_seal(
@@ -351,6 +362,8 @@ class IngestionOrchestrator:
             source, context=extraction_context
         )
         normalised = StructuralNormaliser().normalise(extracted)
+        if self._artifact_uploader is not None:
+            self._upload_extraction_artifact(context, normalised, heartbeat)
         result = BaselineStructuralChunker().chunk(normalised)
         chunks = []
         for chunk in result.chunks:
@@ -389,6 +402,47 @@ class IngestionOrchestrator:
             for warning in (*extracted.warnings, *result.warnings)
         ][:20]
         return chunks, warnings
+
+    def _upload_extraction_artifact(
+        self,
+        context: dict[str, Any],
+        normalised: Any,
+        heartbeat: CoordinatedHeartbeat,
+    ) -> None:
+        if context.get("lease_generation") is None:
+            raise RuntimeError("lease_generation_missing")
+        uploader = self._artifact_uploader
+        if uploader is None:
+            raise RuntimeError("artifact_uploader_missing")
+        artifact = document_extraction_artifact(normalised)
+        content = canonical_artifact_bytes(artifact)
+        grant = self._protocol.authorise_extraction_artifact(context)
+        upload = grant["upload"]
+        if len(content) > int(grant["max_bytes"]):
+            raise RuntimeError("extraction_artifact_too_large")
+        heartbeat.assert_healthy()
+        result = uploader.upload(
+            url=str(upload["url"]),
+            method=str(upload["method"]),
+            headers={str(key): str(value) for key, value in upload["headers"].items()},
+            content=content,
+        )
+        heartbeat.assert_healthy()
+        self._protocol.acknowledge_extraction_artifact(
+            context,
+            {
+                "authorisation_id": grant["authorisation_id"],
+                "artifact_contract_version": grant["contract_version"],
+                "artifact_sha256": artifact_digest(artifact),
+                "size_bytes": len(content),
+                "projection_manifest_digest": projection_manifest_digest(artifact),
+                "warning_manifest_digest": warning_manifest_digest(artifact),
+                "element_count": len(artifact["elements"]),
+                "warning_count": len(artifact["extraction_warnings"]),
+                "storage_etag": result.storage_etag,
+                "storage_version_id": result.storage_version_id,
+            },
+        )
 
     def _resume_chunks(self, context: dict[str, Any]) -> list[dict[str, Any]]:
         cursor = 0

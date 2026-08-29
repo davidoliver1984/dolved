@@ -122,4 +122,10 @@ class IngestionEventClaim extends Model
     {
         return $this->hasMany(DocumentChunk::class);
     }
+
+    /** @return HasMany<DocumentExtractionUploadAuthorisation, $this> */
+    public function extractionUploadAuthorisations(): HasMany
+    {
+        return $this->hasMany(DocumentExtractionUploadAuthorisation::class);
+    }
 }

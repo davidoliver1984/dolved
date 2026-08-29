@@ -76,6 +76,7 @@ class DocumentIngestionClaimController extends Controller
                 'document_status' => $result->documentStatus?->value,
                 'lease_token' => $result->leaseToken,
                 'lease_expires_at' => $result->leaseExpiresAt,
+                'lease_generation' => $result->leaseGeneration,
                 'embedding_space_generation_id' => $result->embeddingSpaceGenerationId,
                 'workspace_corpus_generation_id' => $result->workspaceCorpusGenerationId,
                 'vector_space' => $result->collectionName === null ? null : [

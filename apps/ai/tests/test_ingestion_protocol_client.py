@@ -12,6 +12,7 @@ CONTEXT = {
     "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
     "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
     "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+    "lease_generation": 1,
 }
 
 
@@ -40,6 +41,15 @@ def test_every_operation_has_an_independent_signed_purpose() -> None:
     )
     client.claim(raw_body=json.dumps({"event_id": EVENT_ID}), event_id=EVENT_ID)
     client.renew(CONTEXT)
+    client.authorise_extraction_artifact(CONTEXT)
+    client.acknowledge_extraction_artifact(
+        CONTEXT,
+        {
+            "authorisation_id": EVENT_ID,
+            "artifact_contract_version": "document-extraction-artifact-v1",
+            "artifact_sha256": "a" * 64,
+        },
+    )
     client.submit_chunks(CONTEXT, [{"chunk_id": EVENT_ID}])
     client.seal(CONTEXT, {"expected_chunk_count": 1})
     client.resume(CONTEXT)
@@ -55,6 +65,8 @@ def test_every_operation_has_an_independent_signed_purpose() -> None:
     assert [purpose for _, purpose in captured] == [
         "ingestion.claim",
         "ingestion.lease.renew",
+        "ingestion.extraction-artifact.authorise",
+        "ingestion.extraction-artifact.acknowledge",
         "ingestion.chunks.submit",
         "ingestion.chunks.seal",
         "ingestion.attempt.resume",

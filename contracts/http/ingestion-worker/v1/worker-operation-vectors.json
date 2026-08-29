@@ -26,6 +26,7 @@
           "document_status": "processing",
           "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
           "lease_expires_at": "2026-08-22T12:05:00+00:00",
+          "lease_generation": 1,
           "embedding_space_generation_id": "00000000-0000-0000-0000-000000000001",
           "workspace_corpus_generation_id": "00000000-0000-0000-0000-000000000002",
           "vector_space": {
@@ -142,6 +143,82 @@
           ],
           "value": "unsupported"
         }
+      ]
+    },
+    {
+      "name": "ingestion-extraction-artifact-authorise",
+      "purpose": "ingestion.extraction-artifact.authorise",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/extraction-artifact/authorise",
+      "request_schema": "ingestion-extraction-artifact-authorise-request-v1.schema.json",
+      "response_schema": "ingestion-extraction-artifact-authorise-response-v1.schema.json",
+      "request": {
+        "contract_version": 1,
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+        "lease_generation": 1
+      },
+      "response": {
+        "data": {
+          "outcome": "authorised",
+          "authorisation_id": "00000000-0000-0000-0000-000000000099",
+          "object_key": "workspaces/b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10/documents/d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62/extraction-artifacts/00000000-0000-0000-0000-000000000099.json",
+          "lease_generation": 1,
+          "contract_version": "document-extraction-artifact-v1",
+          "max_bytes": 52428800,
+          "upload": {
+            "url": "https://objects.example/exact-artifact",
+            "method": "PUT",
+            "headers": {"If-None-Match": "*", "Content-Type": "application/json"},
+            "expires_at": "2026-08-22T12:05:00+00:00"
+          }
+        }
+      },
+      "invalid": [
+        {"case": "unsupported-version", "target": "request", "action": "set", "path": ["contract_version"], "value": 999},
+        {"case": "unknown-field", "target": "request", "action": "set", "path": ["unexpected"], "value": true},
+        {"case": "missing-lease-generation", "target": "request", "action": "remove", "path": ["lease_generation"]},
+        {"case": "overwrite-not-conditional", "target": "response", "action": "set", "path": ["data", "upload", "headers", "If-None-Match"], "value": "present"}
+      ]
+    },
+    {
+      "name": "ingestion-extraction-artifact-acknowledge",
+      "purpose": "ingestion.extraction-artifact.acknowledge",
+      "path": "/api/internal/ingestion/events/5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41/extraction-artifact/acknowledge",
+      "request_schema": "ingestion-extraction-artifact-acknowledge-request-v1.schema.json",
+      "response_schema": "ingestion-extraction-artifact-acknowledge-response-v1.schema.json",
+      "request": {
+        "contract_version": 1,
+        "event_id": "5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41",
+        "workspace_id": "b3f2a6d4-8e4b-4b0a-9d3f-6c2e1a7d9f10",
+        "document_id": "d4c9e2b7-1a6f-4e3d-8b2c-9f0e5a3d7c62",
+        "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
+        "lease_generation": 1,
+        "authorisation_id": "00000000-0000-0000-0000-000000000099",
+        "artifact_contract_version": "document-extraction-artifact-v1",
+        "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size_bytes": 123,
+        "projection_manifest_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "warning_manifest_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "element_count": 2,
+        "warning_count": 1,
+        "storage_version_id": "version-1",
+        "storage_etag": "etag-1"
+      },
+      "response": {
+        "data": {
+          "outcome": "verified",
+          "artifact_id": "00000000-0000-0000-0000-000000000098",
+          "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size_bytes": 123
+        }
+      },
+      "invalid": [
+        {"case": "unsupported-version", "target": "request", "action": "set", "path": ["contract_version"], "value": 999},
+        {"case": "unknown-field", "target": "request", "action": "set", "path": ["unexpected"], "value": true},
+        {"case": "invalid-digest", "target": "request", "action": "set", "path": ["artifact_sha256"], "value": "not-a-digest"},
+        {"case": "invalid-outcome", "target": "response", "action": "set", "path": ["data", "outcome"], "value": "accepted"}
       ]
     },
     {

@@ -24,6 +24,7 @@ class ClaimGrant:
     document_status: str
     lease_token: str | None = None
     lease_expires_at: str | None = None
+    lease_generation: int | None = None
     embedding_space_generation_id: str | None = None
     workspace_corpus_generation_id: str | None = None
     vector_space: dict[str, Any] | None = None
@@ -75,6 +76,24 @@ class IngestionProtocolClient:
 
     def renew(self, context: dict[str, Any]) -> dict[str, Any]:
         return self._operation(context, "lease/renew", "ingestion.lease.renew")
+
+    def authorise_extraction_artifact(self, context: dict[str, Any]) -> dict[str, Any]:
+        return self._operation(
+            context,
+            "extraction-artifact/authorise",
+            "ingestion.extraction-artifact.authorise",
+            {"lease_generation": context["lease_generation"]},
+        )
+
+    def acknowledge_extraction_artifact(
+        self, context: dict[str, Any], evidence: dict[str, Any]
+    ) -> dict[str, Any]:
+        return self._operation(
+            context,
+            "extraction-artifact/acknowledge",
+            "ingestion.extraction-artifact.acknowledge",
+            {"lease_generation": context["lease_generation"], **evidence},
+        )
 
     def submit_chunks(
         self, context: dict[str, Any], chunks: list[dict[str, Any]]

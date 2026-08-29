@@ -45,5 +45,11 @@ return [
         'chunk_batch_size' => (int) env('INGESTION_CHUNK_BATCH_SIZE', 50),
         'chunk_body_bytes' => (int) env('INGESTION_CHUNK_BODY_BYTES', 1048576),
         'resume_page_size' => (int) env('INGESTION_RESUME_PAGE_SIZE', 50),
+        'extraction_artifact_disk' => env('EXTRACTION_ARTIFACT_DISK', env('DOCUMENT_STORAGE_DISK', 's3')),
+        'extraction_artifact_upload_disk' => env('EXTRACTION_ARTIFACT_UPLOAD_DISK', env('DOCUMENT_UPLOAD_DISK', 's3_uploads')),
+        'extraction_artifact_max_bytes' => (int) env('EXTRACTION_ARTIFACT_MAX_BYTES', 52428800),
+        'extraction_artifact_upload_seconds' => (int) env('EXTRACTION_ARTIFACT_UPLOAD_SECONDS', 300),
+        'extraction_cleanup_batch_size' => (int) env('EXTRACTION_CLEANUP_BATCH_SIZE', 50),
+        'extraction_cleanup_max_attempts' => (int) env('EXTRACTION_CLEANUP_MAX_ATTEMPTS', 3),
     ],
 ];

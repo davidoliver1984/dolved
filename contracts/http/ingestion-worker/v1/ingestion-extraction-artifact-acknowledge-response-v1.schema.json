@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.dolved.internal/http/ingestion-worker/v1/ingestion-extraction-artifact-acknowledge-response-v1.schema.json",
+  "title": "Extraction Artifact Acknowledge Response (v1)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["data"],
+  "properties": {
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "artifact_id", "artifact_sha256", "size_bytes"],
+      "properties": {
+        "outcome": { "const": "verified" },
+        "artifact_id": { "type": "string", "format": "uuid" },
+        "artifact_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "size_bytes": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

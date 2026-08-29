@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Actions\Ingestion;
 
 use App\Enums\DocumentStatus;
+use App\Enums\ExtractionUploadCleanupState;
+use App\Enums\ExtractionUploadStatus;
 use App\Enums\IngestionAttemptStatus;
 use App\Exceptions\IngestionAttemptException;
+use App\Models\DocumentExtractionUploadAuthorisation;
 use App\Models\IngestionEventClaim;
 use App\Services\Ingestion\IngestionAttemptAuthorizer;
 use App\Support\Usage\RecordWorkspaceUsage;
@@ -48,6 +51,14 @@ class CancelIngestionAttempt
                 'cancelled_at' => now(),
                 'lease_expires_at' => now(),
             ])->save();
+            DocumentExtractionUploadAuthorisation::query()
+                ->where('ingestion_event_claim_id', $attempt->id)
+                ->where('status', ExtractionUploadStatus::Authorised->value)
+                ->update([
+                    'status' => ExtractionUploadStatus::Cancelled->value,
+                    'cleanup_state' => ExtractionUploadCleanupState::Eligible->value,
+                    'updated_at' => now(),
+                ]);
             $this->usage->usage($attempt->workspace_id, 'ingestion_attempt', $attempt->event_id, $payload['usage'] ?? []);
             $this->audit->handle($attempt, 'processing_cancelled', 'cancelled');
 

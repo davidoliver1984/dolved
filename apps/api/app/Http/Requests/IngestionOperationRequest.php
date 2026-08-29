@@ -27,6 +27,22 @@ class IngestionOperationRequest extends FormRequest
         ];
 
         $rules = array_merge($base, match ($this->route()?->getName()) {
+            'ingestion.extraction-artifact.authorise' => [
+                'lease_generation' => ['required', 'integer', 'min:1'],
+            ],
+            'ingestion.extraction-artifact.acknowledge' => [
+                'lease_generation' => ['required', 'integer', 'min:1'],
+                'authorisation_id' => ['required', 'uuid'],
+                'artifact_contract_version' => ['required', Rule::in(['document-extraction-artifact-v1'])],
+                'artifact_sha256' => ['required', 'regex:/^[0-9a-f]{64}$/'],
+                'size_bytes' => ['required', 'integer', 'min:1', 'max:'.max(1, (int) config('ingestion.orchestration.extraction_artifact_max_bytes'))],
+                'projection_manifest_digest' => ['required', 'regex:/^[0-9a-f]{64}$/'],
+                'warning_manifest_digest' => ['required', 'regex:/^[0-9a-f]{64}$/'],
+                'element_count' => ['required', 'integer', 'min:0'],
+                'warning_count' => ['required', 'integer', 'min:0'],
+                'storage_version_id' => ['nullable', 'string', 'max:1024'],
+                'storage_etag' => ['nullable', 'string', 'max:1024'],
+            ],
             'ingestion.chunks.submit' => [
                 'chunks' => ['required', 'array', 'min:1', 'max:'.max(1, (int) config('ingestion.orchestration.chunk_batch_size'))],
                 'chunks.*.chunk_id' => ['required', 'uuid'],

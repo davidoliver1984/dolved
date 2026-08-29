@@ -14,6 +14,7 @@ final readonly class IngestionClaimResult
         public ?DocumentStatus $documentStatus,
         public ?string $leaseToken = null,
         public ?string $leaseExpiresAt = null,
+        public ?int $leaseGeneration = null,
         public ?string $embeddingSpaceGenerationId = null,
         public ?string $workspaceCorpusGenerationId = null,
         public ?string $collectionName = null,

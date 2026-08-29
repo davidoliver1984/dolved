@@ -11,6 +11,7 @@ from app.embedding.models import (
 )
 from app.extraction.models import ExtractionWarning
 from app.extraction.plain_text import PlainTextExtractor
+from app.ingestion.artifact_upload import ArtifactUploadResult
 from app.ingestion.canonicalisation import chunk_content_digest
 from app.ingestion.heartbeat import CoordinatedHeartbeat, HeartbeatLost
 from app.ingestion.orchestrator import IngestionOrchestrator
@@ -50,6 +51,7 @@ def grant(**changes: Any) -> ClaimGrant:
         "document_status": "processing",
         "lease_token": "c9a7b8d0-2e1f-4a3b-9c8d-7e6f5a4b3c2d",
         "lease_expires_at": "2026-08-06T12:02:00Z",
+        "lease_generation": 1,
         "embedding_space_generation_id": "00000000-0000-0000-0000-000000000001",
         "workspace_corpus_generation_id": "00000000-0000-0000-0000-000000000002",
         "vector_space": {
@@ -72,6 +74,7 @@ class FakeProtocol:
         self.calls: list[str] = []
         self.evidence: dict[str, Any] | None = None
         self.failure_usage: list[dict[str, Any]] | None = None
+        self.artifact_acknowledgement: dict[str, Any] | None = None
 
     def claim(self, **_: Any) -> ClaimGrant:
         self.calls.append("claim")
@@ -80,6 +83,26 @@ class FakeProtocol:
     def renew(self, _: dict[str, Any]) -> dict[str, Any]:
         self.calls.append("renew")
         return {"outcome": "renewed"}
+
+    def authorise_extraction_artifact(self, _: dict[str, Any]) -> dict[str, Any]:
+        self.calls.append("authorise_artifact")
+        return {
+            "authorisation_id": "00000000-0000-0000-0000-000000000099",
+            "contract_version": "document-extraction-artifact-v1",
+            "max_bytes": 1_000_000,
+            "upload": {
+                "url": "https://objects.example/artifact",
+                "method": "PUT",
+                "headers": {"If-None-Match": "*"},
+            },
+        }
+
+    def acknowledge_extraction_artifact(
+        self, _: dict[str, Any], evidence: dict[str, Any]
+    ) -> dict[str, Any]:
+        self.calls.append("acknowledge_artifact")
+        self.artifact_acknowledgement = evidence
+        return {"outcome": "verified"}
 
     def submit_chunks(
         self, _: dict[str, Any], chunks: list[dict[str, Any]]
@@ -203,12 +226,26 @@ class FakeQueue:
         self.visibility_extensions += 1
 
 
+class FakeArtifactUploader:
+    def __init__(self) -> None:
+        self.content: bytes | None = None
+
+    def upload(self, **values: Any) -> ArtifactUploadResult:
+        assert values["method"] == "PUT"
+        assert values["headers"]["If-None-Match"] == "*"
+        self.content = values["content"]
+        return ArtifactUploadResult('"etag"', "version-1")
+
+
 def message() -> IngestionQueueMessage:
     return IngestionQueueMessage("{}", "receipt", "transport", 1)
 
 
 def orchestrator(
-    protocol: FakeProtocol, vectors: FakeVectorStore, content: bytes
+    protocol: FakeProtocol,
+    vectors: FakeVectorStore,
+    content: bytes,
+    artifact_uploader: FakeArtifactUploader | None = None,
 ) -> IngestionOrchestrator:
     return IngestionOrchestrator(
         protocol=protocol,  # type: ignore[arg-type]
@@ -219,7 +256,26 @@ def orchestrator(
         queue=FakeQueue(),  # type: ignore[arg-type]
         heartbeat_seconds=60,
         embedding_batch_size=10,
+        artifact_uploader=artifact_uploader,
     )
+
+
+def test_canonical_artifact_is_uploaded_once_and_acknowledged_before_chunks() -> None:
+    content = b"Canonical text for ingestion.\n"
+    event = {**EVENT, "byte_size": len(content)}
+    protocol = FakeProtocol(grant())
+    uploader = FakeArtifactUploader()
+
+    outcome = orchestrator(
+        protocol, FakeVectorStore(), content, artifact_uploader=uploader
+    ).process(event=event, raw_body="{}", message=message())
+
+    assert outcome.acknowledge is True
+    assert uploader.content is not None
+    assert protocol.calls.index("acknowledge_artifact") < protocol.calls.index("submit")
+    assert protocol.artifact_acknowledgement is not None
+    assert protocol.artifact_acknowledgement["size_bytes"] == len(uploader.content)
+    assert protocol.artifact_acknowledgement["storage_version_id"] == "version-1"
 
 
 def test_normal_path_seals_authorises_publishes_verifies_and_completes() -> None:

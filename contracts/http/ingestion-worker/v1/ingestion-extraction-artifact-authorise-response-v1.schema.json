@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.dolved.internal/http/ingestion-worker/v1/ingestion-extraction-artifact-authorise-response-v1.schema.json",
+  "title": "Extraction Artifact Upload Authorise Response (v1)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["data"],
+  "properties": {
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "authorisation_id", "object_key", "lease_generation", "contract_version", "max_bytes", "upload"],
+      "properties": {
+        "outcome": { "const": "authorised" },
+        "authorisation_id": { "type": "string", "format": "uuid" },
+        "object_key": { "type": "string", "minLength": 1 },
+        "lease_generation": { "type": "integer", "minimum": 1 },
+        "contract_version": { "const": "document-extraction-artifact-v1" },
+        "max_bytes": { "type": "integer", "minimum": 1 },
+        "upload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["url", "method", "headers", "expires_at"],
+          "properties": {
+            "url": { "type": "string", "format": "uri" },
+            "method": { "const": "PUT" },
+            "headers": {
+              "type": "object",
+              "required": ["If-None-Match", "Content-Type"],
+              "properties": {
+                "If-None-Match": { "const": "*" },
+                "Content-Type": { "const": "application/json" }
+              },
+              "additionalProperties": { "type": "string" }
+            },
+            "expires_at": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    }
+  }
+}

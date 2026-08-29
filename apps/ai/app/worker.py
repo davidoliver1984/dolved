@@ -9,6 +9,7 @@ import boto3  # type: ignore[import-untyped]
 from app.deletion.client import DocumentDeletionClient
 from app.deletion.orchestrator import DocumentDeletionOrchestrator
 from app.embedding.factory import create_deferred_embedder, embedding_profile
+from app.ingestion.artifact_upload import HttpxArtifactUploader
 from app.ingestion.claim_client import IngestionClaimClient
 from app.ingestion.orchestrator import IngestionOrchestrator
 from app.ingestion.protocol_client import IngestionProtocolClient
@@ -78,6 +79,9 @@ def build_worker(
         embedding_batch_size=settings.embedding_batch_size,
         chunk_batch_size=settings.ingestion_chunk_batch_size,
         resume_page_size=settings.ingestion_resume_page_size,
+        artifact_uploader=HttpxArtifactUploader(
+            timeout_seconds=settings.ingestion_worker_api_timeout_seconds,
+        ),
     )
     deletion_orchestrator = DocumentDeletionOrchestrator(
         client=DocumentDeletionClient(

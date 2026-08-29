@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Actions\Telemetry;
 
 use App\Enums\DocumentDeletionStatus;
+use App\Enums\ExtractionUploadCleanupState;
 use App\Enums\IngestionAttemptStatus;
 use App\Models\DocumentDeletionOperation;
+use App\Models\DocumentExtractionUploadAuthorisation;
 use App\Models\IngestionEventClaim;
 use App\Models\OutboxEvent;
 use App\Telemetry\OperationalTelemetry;
@@ -58,6 +60,14 @@ final class RecordOperationalSnapshot
         $this->telemetry->stuck('document_deletion', DocumentDeletionOperation::query()
             ->whereNotIn('status', [DocumentDeletionStatus::Completed->value])
             ->where('updated_at', '<', now()->subMinutes(5))->count());
+        $this->telemetry->stuck('extraction_artifact_cleanup', DocumentExtractionUploadAuthorisation::query()
+            ->where(function ($query): void {
+                $query->where('cleanup_state', ExtractionUploadCleanupState::Failed->value)
+                    ->orWhere(function ($claimed): void {
+                        $claimed->where('cleanup_state', ExtractionUploadCleanupState::Claimed->value)
+                            ->where('cleanup_claimed_at', '<', now()->subMinutes(5));
+                    });
+            })->count());
     }
 
     private function elapsed(int $started): float

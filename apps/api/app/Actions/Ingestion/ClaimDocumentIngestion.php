@@ -6,12 +6,15 @@ namespace App\Actions\Ingestion;
 
 use App\Enums\DocumentStatus;
 use App\Enums\EmbeddingSpaceGenerationStatus;
+use App\Enums\ExtractionUploadCleanupState;
+use App\Enums\ExtractionUploadStatus;
 use App\Enums\IngestionAttemptStatus;
 use App\Enums\IngestionClaimOutcome;
 use App\Enums\WorkspaceCorpusGenerationStatus;
 use App\Exceptions\IngestionAttemptException;
 use App\Exceptions\IngestionClaimException;
 use App\Models\Document;
+use App\Models\DocumentExtractionUploadAuthorisation;
 use App\Models\EmbeddingSpaceGeneration;
 use App\Models\IngestionEventClaim;
 use App\Models\WorkspaceCorpusGeneration;
@@ -75,6 +78,15 @@ class ClaimDocumentIngestion
                     $attempt->publication_authorised_at = null;
                 }
                 $token = $this->issueLease($attempt);
+                DocumentExtractionUploadAuthorisation::query()
+                    ->where('ingestion_event_claim_id', $attempt->id)
+                    ->where('lease_generation', $attempt->lease_generation)
+                    ->where('status', ExtractionUploadStatus::Authorised->value)
+                    ->update([
+                        'status' => ExtractionUploadStatus::Cancelled->value,
+                        'cleanup_state' => ExtractionUploadCleanupState::Eligible->value,
+                        'updated_at' => now(),
+                    ]);
                 $attempt->lease_generation++;
                 $attempt->save();
 
@@ -111,6 +123,7 @@ class ClaimDocumentIngestion
                 'workspace_corpus_generation_id' => $corpus->id,
                 'status' => IngestionAttemptStatus::Open,
                 'lease_token_hash' => hash('sha256', $token),
+                'lease_generation' => 1,
                 'lease_expires_at' => now()->addSeconds($this->leaseSeconds()),
             ]);
             $document->status = DocumentStatus::Processing;
@@ -202,6 +215,7 @@ class ClaimDocumentIngestion
             documentStatus: DocumentStatus::Processing,
             leaseToken: $token,
             leaseExpiresAt: $attempt->lease_expires_at?->toIso8601String(),
+            leaseGeneration: $attempt->lease_generation,
             embeddingSpaceGenerationId: $embedding->public_id,
             workspaceCorpusGenerationId: $corpus->public_id,
             collectionName: $embedding->collection_name,

@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R23",
-    "current_session": "R23-S03b",
-    "next_action": "Begin R23-S03b — implement ADR-0032 lease-bound upload authorisation, acknowledgement and orphan recovery.",
-    "completed_through": "R23-S03a",
+    "current_session": "R23-S03c",
+    "next_action": "Begin R23-S03c — implement ADR-0032 generation-bound atomic projection publication.",
+    "completed_through": "R23-S03b",
     "completed_phase_count": 23,
     "total_phase_count": 30
   },
@@ -4707,7 +4707,7 @@
         {"id": "R23-S01d", "guide_stage": "Stage 23.1d — Metadata acceptance tests", "title": "Verify Metadata Foundation", "status": "completed", "objective": "Complete ADR-0030 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S01c"]},
         {"id": "R23-S02a", "guide_stage": "Stage 23.2a — Version-governance API foundation", "title": "Build Version-Governance API Foundation", "status": "completed", "objective": "Implement ADR-0031 routes, policies and resources that do not consume structured extraction.", "session_mode": "implementation", "depends_on": ["R23-S01d"]},
         {"id": "R23-S03a", "guide_stage": "Stage 23.3a — Structured extraction schema and digests", "title": "Build Structured Extraction Schema", "status": "completed", "objective": "Implement ADR-0032 canonical artifact identities and digests.", "session_mode": "implementation", "depends_on": ["R23-S02a"]},
-        {"id": "R23-S03b", "guide_stage": "Stage 23.3b — Upload authorisation and worker acknowledgement", "title": "Authorise Extraction Uploads", "status": "not_started", "objective": "Implement upload acknowledgement and orphan recovery.", "session_mode": "implementation", "depends_on": ["R23-S03a"]},
+        {"id": "R23-S03b", "guide_stage": "Stage 23.3b — Upload authorisation and worker acknowledgement", "title": "Authorise Extraction Uploads", "status": "completed", "objective": "Implement upload acknowledgement and orphan recovery.", "session_mode": "implementation", "depends_on": ["R23-S03a"]},
         {"id": "R23-S03c", "guide_stage": "Stage 23.3c — Atomic projection publication", "title": "Publish Extraction Projections", "status": "not_started", "objective": "Implement atomic current structured-extraction projection publication.", "session_mode": "implementation", "depends_on": ["R23-S03b"]},
         {"id": "R23-S03d", "guide_stage": "Stage 23.3d — Source and extracted-text delivery", "title": "Deliver Sources and Extracted Text", "status": "not_started", "objective": "Implement tenant-authorised source and extracted-text delivery.", "session_mode": "implementation", "depends_on": ["R23-S03c"]},
         {"id": "R23-S03e", "guide_stage": "Stage 23.3e — Structured extraction acceptance evidence", "title": "Verify Structured Extraction", "status": "not_started", "objective": "Complete ADR-0032 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S03d"]},

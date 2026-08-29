@@ -93,6 +93,10 @@ Route::post(
 )->middleware('ingestion.worker:ingestion.claim')->name('ingestion.claim');
 
 Route::prefix('/internal/ingestion/events/{eventId}')->group(function (): void {
+    Route::post('/extraction-artifact/authorise', [IngestionOperationController::class, 'authoriseExtractionUpload'])
+        ->middleware('ingestion.worker:ingestion.extraction-artifact.authorise')->name('ingestion.extraction-artifact.authorise');
+    Route::post('/extraction-artifact/acknowledge', [IngestionOperationController::class, 'acknowledgeExtractionArtifactUpload'])
+        ->middleware('ingestion.worker:ingestion.extraction-artifact.acknowledge')->name('ingestion.extraction-artifact.acknowledge');
     Route::post('/lease/renew', [IngestionOperationController::class, 'renew'])
         ->middleware('ingestion.worker:ingestion.lease.renew')->name('ingestion.lease.renew');
     Route::post('/chunks', [IngestionOperationController::class, 'submit'])
