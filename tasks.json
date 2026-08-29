@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R23",
-    "current_session": "R23-S02d",
-    "next_action": "Begin R23-S02d — run the complete provider-free ADR-0031 version-governance acceptance matrix.",
-    "completed_through": "R23-S02c",
-    "completed_phase_count": 23,
+    "current_phase": "R24",
+    "current_session": "R24-S01",
+    "next_action": "Begin R24-S01 — build the ADR-0033 contextual knowledge-library navigation shell and stop at the mandatory visual-review boundary.",
+    "completed_through": "R23-GATE",
+    "completed_phase_count": 24,
     "total_phase_count": 30
   },
   "phases": [
@@ -4692,7 +4692,7 @@
       "title": "Document Metadata, Governance and Structured Content",
       "guide_start_line": 14490,
       "guide_end_line": 14583,
-      "status": "in_progress",
+      "status": "completed",
       "objective": "Implement ADR-0030 through ADR-0032 in their binding metadata, governance and structured-extraction dependency order.",
       "accepted_adrs": ["ADR-0030", "ADR-0031", "ADR-0032"],
       "workflow": [
@@ -4713,9 +4713,15 @@
         {"id": "R23-S03e", "guide_stage": "Stage 23.3e — Structured extraction acceptance evidence", "title": "Verify Structured Extraction", "status": "completed", "objective": "Complete ADR-0032 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S03d"]},
         {"id": "R23-S02b", "guide_stage": "Stage 23.2b — Clone contract and orchestration", "title": "Build Clone Orchestration", "status": "completed", "objective": "Implement ADR-0031 clone compatibility against verified ADR-0032 identity.", "session_mode": "implementation", "depends_on": ["R23-S03e"]},
         {"id": "R23-S02c", "guide_stage": "Stage 23.2c — Family deletion and tombstones", "title": "Build Family Deletion", "status": "completed", "objective": "Implement deletion and tombstones with the tested no-op ADR-0037 export-hold seam.", "session_mode": "implementation", "depends_on": ["R23-S02b"], "export_boundary": "No ADR-0037 behavior; retain only the tested no-op export-hold seam."},
-        {"id": "R23-S02d", "guide_stage": "Stage 23.2d — Version-governance acceptance tests", "title": "Verify Version Governance", "status": "in_progress", "objective": "Complete ADR-0031 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S02c"]}
+        {"id": "R23-S02d", "guide_stage": "Stage 23.2d — Version-governance acceptance tests", "title": "Verify Version Governance", "status": "completed", "objective": "Complete ADR-0031 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S02c"]}
       ],
-      "gate": {"id": "R23-GATE", "title": "Document Metadata, Governance and Structured Content Acceptance Gate", "status": "not_started", "completion_evidence": []}
+      "gate": {"id": "R23-GATE", "title": "Document Metadata, Governance and Structured Content Acceptance Gate", "status": "completed", "completion_evidence": [
+        "ADR-0030 metadata, taxonomy, checksum, tenancy and mutation acceptance completed provider-free",
+        "ADR-0032 canonical extraction, atomic projection and source-delivery acceptance completed provider-free",
+        "ADR-0031 concealment, idempotency, clone, cleanup, deletion, tombstone and no-op export-hold acceptance completed provider-free",
+        "Full closure suites passed: Laravel 433 passed / 3 skipped / 2344 assertions; Python 649 passed / 4 skipped; formatting, lint and type checks clean",
+        "docs/journal/2026-08-29-r23-s02d-version-governance-acceptance.md"
+      ]}
     },
     {
       "id": "R24",

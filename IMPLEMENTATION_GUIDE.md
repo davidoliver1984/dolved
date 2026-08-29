@@ -14682,11 +14682,35 @@ providers were called.
 Run the full ADR-0031 concealment, idempotency, concurrency, clone, cleanup,
 tombstone and no-op export-hold seam matrix.
 
+Completed 2026-08-29: the complete provider-free ADR-0031 matrix now covers
+tenant concealment, durable command idempotency, lineage revalidation,
+target-owned clone evidence, pipeline and active-generation drift, atomic
+six-layer publication, cleanup-before-fallback, origin-separated callbacks and
+usage, family preview/confirm staleness, truthful draft handling, tombstone
+convergence and the no-op export-hold seam. The acceptance fixture exposed one
+real defect: cloned chunks supplied a deterministic public identity, but the
+model's mass-assignment boundary discarded it. `public_id` is now admitted at
+creation while the existing whole-row immutability guard continues to reject
+every later mutation.
+
+Provider-free verification passed with 433 Laravel tests (3 skipped, 2,344
+assertions) and 649 Python tests (4 skipped). Pint, Ruff formatting/lint,
+ESLint, TypeScript and Mypy were clean. Evidence is recorded in
+`docs/journal/2026-08-29-r23-s02d-version-governance-acceptance.md`; no
+providers were called.
+
 ## Phase 23 gate
 
 The sequence is binding: S01a–d, S02a, S03a–e, then S02b–d. Update the guide
 with actual evidence, journal each bounded session and commit each verified
 boundary before advancing.
+
+Phase 23 completed 2026-08-29. ADR-0030 metadata and checksum ownership,
+ADR-0032 structured extraction and delivery, and ADR-0031 version governance,
+clone reuse and deletion/tombstone behavior are implemented and accepted by
+their provider-free matrices. Retrieval, planner, generation, calibration,
+threshold and benchmark behavior remained unchanged. R24-S01 is the next
+session and retains its mandatory visual-review boundary.
 
 ---
 

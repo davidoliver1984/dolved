@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
 #[Fillable([
+    'public_id',
     'workspace_id',
     'document_id',
     'ingestion_event_claim_id',

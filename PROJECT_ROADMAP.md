@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 23 of 30 (Document Metadata, Governance and Structured Content) |
+| Project status | In Progress — Phase 24 of 30 (Knowledge Library Product Interface) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -996,6 +996,14 @@ complete with cross-language digests, bounded artifact/projection processing,
 atomic publication, tenant-authorised source/extracted-text delivery and
 provider-free acceptance measurements. R23-S02b may now implement clone
 orchestration against that verified identity.
+
+**Phase 23 completed 2026-08-29**: ADR-0030 metadata, ADR-0032 structured
+extraction and ADR-0031 version governance now pass the complete provider-free
+acceptance matrix. Clone publication and fallback cleanup are target-lineage
+bound, family deletion converges through existing child deletion, and the
+reserved export-hold boundary remains a tested no-op seam. No providers were
+called and no retrieval, generation, calibration, threshold or benchmark
+policy changed.
 
 ### Deliverable
 
