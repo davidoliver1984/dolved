@@ -52,7 +52,8 @@ class DocumentObjectStorage
         ];
     }
 
-    public function objectSize(Document $document): ?int
+    /** @return null|array{size_bytes: int, sha256: string} */
+    public function streamedIdentity(Document $document): ?array
     {
         try {
             $disk = $this->filesystems->disk(
@@ -63,7 +64,36 @@ class DocumentObjectStorage
                 return null;
             }
 
-            return $disk->size($document->storage_key);
+            $stream = $disk->readStream($document->storage_key);
+
+            if (! is_resource($stream)) {
+                throw DocumentUploadException::storageUnavailable();
+            }
+
+            $hash = hash_init('sha256');
+            $sizeBytes = 0;
+
+            try {
+                while (! feof($stream)) {
+                    $chunk = fread($stream, 1024 * 1024);
+
+                    if ($chunk === false) {
+                        throw DocumentUploadException::storageUnavailable();
+                    }
+
+                    $sizeBytes += strlen($chunk);
+                    hash_update($hash, $chunk);
+                }
+            } finally {
+                fclose($stream);
+            }
+
+            return [
+                'size_bytes' => $sizeBytes,
+                'sha256' => hash_final($hash),
+            ];
+        } catch (DocumentUploadException $exception) {
+            throw $exception;
         } catch (Throwable $exception) {
             report($exception);
 

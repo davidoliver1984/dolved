@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Documents;
 
+use App\Enums\ChecksumVerificationStatus;
 use App\Enums\DocumentStatus;
 use App\Exceptions\DocumentUploadException;
 use App\Models\Document;
@@ -26,17 +27,17 @@ class CompleteDocumentUpload
             throw DocumentUploadException::invalidState();
         }
 
-        $objectSize = $this->storage->objectSize($document);
+        $identity = $this->storage->streamedIdentity($document);
 
-        if ($objectSize === null) {
+        if ($identity === null) {
             throw DocumentUploadException::missingObject();
         }
 
-        if ($objectSize !== $document->size_bytes) {
+        if ($identity['size_bytes'] !== $document->size_bytes) {
             throw DocumentUploadException::sizeMismatch();
         }
 
-        return DB::transaction(function () use ($document): Document {
+        return DB::transaction(function () use ($document, $identity): Document {
             $lockedDocument = Document::query()
                 ->whereKey($document->getKey())
                 ->lockForUpdate()
@@ -50,6 +51,9 @@ class CompleteDocumentUpload
                 throw DocumentUploadException::invalidState();
             }
 
+            $lockedDocument->source_checksum_sha256 = $identity['sha256'];
+            $lockedDocument->checksum_verification_status = ChecksumVerificationStatus::Verified;
+            $lockedDocument->checksum_unavailable_reason = null;
             $lockedDocument->status = DocumentStatus::Uploaded;
             $lockedDocument->save();
 

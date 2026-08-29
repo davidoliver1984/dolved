@@ -54,6 +54,8 @@ class DocumentUploadController extends Controller
             $request->string('media_type')->value(),
             $request->integer('size_bytes'),
             $request->extension(),
+            $request->string('publisher_label')->value() ?: null,
+            $request->string('source_url')->value() ?: null,
         );
 
         return response()->json([

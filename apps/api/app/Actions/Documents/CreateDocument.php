@@ -11,6 +11,7 @@ use App\Models\DocumentFamily;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Support\Documents\CreateApplicabilitySnapshot;
+use App\Support\Documents\SafeDocumentSourceUrl;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -26,9 +27,13 @@ class CreateDocument
         string $mediaType,
         int $sizeBytes,
         ?string $extension = null,
+        ?string $publisherLabel = null,
+        ?string $sourceUrl = null,
     ): Document {
         $sourceFilename = trim($sourceFilename);
         $mediaType = trim($mediaType);
+        $publisherLabel = $publisherLabel === null ? null : trim($publisherLabel);
+        $sourceUrl = $sourceUrl === null ? null : trim($sourceUrl);
 
         if ($sourceFilename === '') {
             throw new InvalidArgumentException('A source filename is required.');
@@ -43,13 +48,24 @@ class CreateDocument
         }
 
         if (
+            $publisherLabel !== null
+            && (mb_strlen($publisherLabel) > 255 || preg_match('/\p{C}/u', $publisherLabel) === 1)
+        ) {
+            throw new InvalidArgumentException('The publisher label is invalid.');
+        }
+
+        if ($sourceUrl !== null && ! SafeDocumentSourceUrl::accepts($sourceUrl)) {
+            throw new InvalidArgumentException('The source URL is invalid.');
+        }
+
+        if (
             $extension !== null
             && preg_match('/^[a-z0-9]+$/', $extension) !== 1
         ) {
             throw new InvalidArgumentException('The storage extension is invalid.');
         }
 
-        return DB::transaction(function () use ($workspace, $creator, $sourceFilename, $mediaType, $sizeBytes, $extension): Document {
+        return DB::transaction(function () use ($workspace, $creator, $sourceFilename, $mediaType, $sizeBytes, $extension, $publisherLabel, $sourceUrl): Document {
             $family = new DocumentFamily([
                 'name' => $sourceFilename,
                 'owner_user_id' => $creator->id,
@@ -61,6 +77,8 @@ class CreateDocument
             $publicId = (string) Str::uuid();
             $document = new Document([
                 'source_filename' => $sourceFilename,
+                'publisher_label' => $publisherLabel,
+                'source_url' => $sourceUrl,
                 'media_type' => $mediaType,
                 'size_bytes' => $sizeBytes,
             ]);
@@ -78,7 +96,7 @@ class CreateDocument
             $defaults = $family->defaultApplicabilityLocations()->get()->all();
             $this->createApplicabilitySnapshot->create($document, $defaults);
 
-            return $document->load(['workspace', 'createdBy', 'family', 'applicabilitySnapshot.locations']);
+            return $document->refresh()->load(['workspace', 'createdBy', 'family', 'applicabilitySnapshot.locations']);
         });
     }
 }

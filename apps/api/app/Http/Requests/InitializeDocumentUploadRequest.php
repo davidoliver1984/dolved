@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Support\Documents\SafeDocumentSourceUrl;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -46,6 +47,17 @@ class InitializeDocumentUploadRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::in($mimeTypes),
+            ],
+            'publisher_label' => ['nullable', 'string', 'max:255', 'regex:/^[^\p{C}]+$/u'],
+            'source_url' => [
+                'nullable',
+                'string',
+                'max:2048',
+                function (string $attribute, mixed $value, Closure $fail): void {
+                    if (! is_string($value) || ! SafeDocumentSourceUrl::accepts($value)) {
+                        $fail('The source URL must be an absolute HTTPS URL without credentials, query parameters, or a fragment.');
+                    }
+                },
             ],
         ];
     }

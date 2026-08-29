@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Enums\ChecksumVerificationStatus;
 use App\Enums\DocumentStatus;
 use App\Enums\WorkspaceRole;
 use App\Exceptions\DocumentUploadException;
@@ -14,6 +15,7 @@ use App\Models\WorkspaceMembership;
 use App\Services\Documents\DocumentObjectStorage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class DocumentUploadWorkflowTest extends TestCase
@@ -250,10 +252,13 @@ class DocumentUploadWorkflowTest extends TestCase
             ->for($user, 'createdBy')
             ->create(['size_bytes' => 42_000]);
         $storage = $this->mock(DocumentObjectStorage::class);
-        $storage->shouldReceive('objectSize')
+        $storage->shouldReceive('streamedIdentity')
             ->once()
             ->withArgs(fn (Document $candidate): bool => $candidate->is($document))
-            ->andReturn(42_000);
+            ->andReturn([
+                'size_bytes' => 42_000,
+                'sha256' => str_repeat('a', 64),
+            ]);
         Queue::fake();
 
         $this->actingAs($user)
@@ -269,7 +274,61 @@ class DocumentUploadWorkflowTest extends TestCase
             DocumentStatus::Uploaded,
             $document->refresh()->status,
         );
+        $this->assertSame(str_repeat('a', 64), $document->source_checksum_sha256);
+        $this->assertSame('verified', $document->checksum_verification_status->value);
         Queue::assertNothingPushed();
+    }
+
+    public function test_completion_streams_the_retained_object_and_records_its_sha256(): void
+    {
+        [$user, $workspace] = $this->memberWorkspace();
+        Storage::fake('document-source-test');
+        config()->set('documents.storage_disk', 'document-source-test');
+        $bytes = str_repeat('bounded-source-content', 100_000);
+        $document = Document::factory()
+            ->for($workspace)
+            ->for($user, 'createdBy')
+            ->create(['size_bytes' => strlen($bytes)]);
+        Storage::disk('document-source-test')->put($document->storage_key, $bytes);
+
+        $this->actingAs($user)
+            ->postJson($this->completionUrl($workspace, $document))
+            ->assertOk();
+
+        $document->refresh();
+        $this->assertSame(ChecksumVerificationStatus::Verified, $document->checksum_verification_status);
+        $this->assertSame(hash('sha256', $bytes), $document->source_checksum_sha256);
+        $this->assertSame(DocumentStatus::Uploaded, $document->status);
+    }
+
+    public function test_initialisation_accepts_safe_source_metadata_and_rejects_unsafe_urls(): void
+    {
+        [$user, $workspace] = $this->memberWorkspace();
+        $storage = $this->mock(DocumentObjectStorage::class);
+        $storage->shouldReceive('createUploadRequest')->once()->andReturn($this->signedUpload());
+
+        $this->actingAs($user)
+            ->postJson($this->initialiseUrl($workspace), $this->metadata([
+                'publisher_label' => 'NHS England',
+                'source_url' => 'https://www.england.nhs.uk/policy',
+            ]))
+            ->assertCreated()
+            ->assertJsonPath('data.document.publisher_label', 'NHS England')
+            ->assertJsonPath('data.document.source_url', 'https://www.england.nhs.uk/policy');
+
+        foreach ([
+            'http://example.test/policy',
+            'https://user@example.test/policy',
+            'https://example.test/policy?secret=value',
+            'https://example.test/policy#section',
+            'workspaces/internal/documents/source',
+            'https://storage.example.test/workspaces/internal/documents/source.pdf',
+        ] as $sourceUrl) {
+            $this->actingAs($user)
+                ->postJson($this->initialiseUrl($workspace), $this->metadata(['source_url' => $sourceUrl]))
+                ->assertUnprocessable()
+                ->assertJsonValidationErrors('source_url');
+        }
     }
 
     public function test_completion_rejects_missing_object_without_advancing_state(): void
@@ -280,7 +339,7 @@ class DocumentUploadWorkflowTest extends TestCase
             ->for($user, 'createdBy')
             ->create();
         $storage = $this->mock(DocumentObjectStorage::class);
-        $storage->shouldReceive('objectSize')->once()->andReturn(null);
+        $storage->shouldReceive('streamedIdentity')->once()->andReturn(null);
 
         $this->actingAs($user)
             ->postJson($this->completionUrl($workspace, $document))
@@ -304,7 +363,10 @@ class DocumentUploadWorkflowTest extends TestCase
             ->for($user, 'createdBy')
             ->create(['size_bytes' => 42_000]);
         $storage = $this->mock(DocumentObjectStorage::class);
-        $storage->shouldReceive('objectSize')->once()->andReturn(41_999);
+        $storage->shouldReceive('streamedIdentity')->once()->andReturn([
+            'size_bytes' => 41_999,
+            'sha256' => str_repeat('b', 64),
+        ]);
 
         $this->actingAs($user)
             ->postJson($this->completionUrl($workspace, $document))
@@ -329,7 +391,7 @@ class DocumentUploadWorkflowTest extends TestCase
             ->indexed()
             ->create();
         $storage = $this->mock(DocumentObjectStorage::class);
-        $storage->shouldNotReceive('objectSize');
+        $storage->shouldNotReceive('streamedIdentity');
 
         $this->actingAs($user)
             ->postJson($this->completionUrl($workspace, $document))
@@ -350,7 +412,7 @@ class DocumentUploadWorkflowTest extends TestCase
             ->uploaded()
             ->create();
         $storage = $this->mock(DocumentObjectStorage::class);
-        $storage->shouldNotReceive('objectSize');
+        $storage->shouldNotReceive('streamedIdentity');
 
         $this->actingAs($user)
             ->postJson($this->completionUrl($workspace, $document))
@@ -369,7 +431,7 @@ class DocumentUploadWorkflowTest extends TestCase
         $otherWorkspace = Workspace::factory()->withOwner()->create();
         $document = Document::factory()->for($otherWorkspace)->create();
         $storage = $this->mock(DocumentObjectStorage::class);
-        $storage->shouldNotReceive('objectSize');
+        $storage->shouldNotReceive('streamedIdentity');
 
         $this->actingAs($user)
             ->postJson($this->completionUrl($workspace, $document))

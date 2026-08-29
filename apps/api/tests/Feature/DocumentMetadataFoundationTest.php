@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Actions\Documents\CreateDocument;
+use App\Actions\Documents\CreateDocumentVersion;
 use App\Enums\ChecksumVerificationStatus;
 use App\Enums\DocumentCategoryStatus;
 use App\Enums\DocumentGovernanceActorType;
@@ -146,6 +147,29 @@ class DocumentMetadataFoundationTest extends TestCase
 
         $this->expectException(LogicException::class);
         $document->save();
+    }
+
+    public function test_new_version_defaults_source_metadata_from_its_immediate_predecessor(): void
+    {
+        $workspace = Workspace::factory()->create();
+        $creator = User::factory()->create();
+        $predecessor = Document::factory()->for($workspace)->for($creator, 'createdBy')->create([
+            'publisher_label' => 'NHS England',
+            'source_url' => 'https://www.england.nhs.uk/policy',
+            'effective_from' => now()->subYear(),
+        ]);
+
+        $successor = app(CreateDocumentVersion::class)->handle(
+            $predecessor,
+            $creator,
+            'Updated policy.pdf',
+            'application/pdf',
+            2_048,
+            now(),
+        );
+
+        $this->assertSame($predecessor->publisher_label, $successor->publisher_label);
+        $this->assertSame($predecessor->source_url, $successor->source_url);
     }
 
     public function test_version_governance_audit_records_family_and_actor_shape(): void

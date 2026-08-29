@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R23",
-    "current_session": "R23-S01b",
-    "next_action": "Begin R23-S01b — implement ADR-0030 metadata policies, actions and API resources without changing authority semantics.",
-    "completed_through": "R23-S01a",
+    "current_session": "R23-S01c",
+    "next_action": "Begin R23-S01c — run the bounded, resumable ADR-0030 metadata and checksum backfill without changing authority semantics.",
+    "completed_through": "R23-S01b",
     "completed_phase_count": 23,
     "total_phase_count": 30
   },
@@ -4702,7 +4702,7 @@
       ],
       "sessions": [
         {"id": "R23-S01a", "guide_stage": "Stage 23.1a — Metadata migration and domain model", "title": "Build Metadata Migration and Domain Model", "status": "completed", "objective": "Implement ADR-0030 categories, tags, family metadata, ownership and source-checksum constraints.", "session_mode": "implementation", "depends_on": []},
-        {"id": "R23-S01b", "guide_stage": "Stage 23.1b — Metadata policies, actions and API resources", "title": "Add Metadata Policies and APIs", "status": "not_started", "objective": "Implement authorised metadata reads and mutations without changing authority semantics.", "session_mode": "implementation", "depends_on": ["R23-S01a"]},
+        {"id": "R23-S01b", "guide_stage": "Stage 23.1b — Metadata policies, actions and API resources", "title": "Add Metadata Policies and APIs", "status": "completed", "objective": "Implement authorised metadata reads and mutations without changing authority semantics.", "session_mode": "implementation", "depends_on": ["R23-S01a"]},
         {"id": "R23-S01c", "guide_stage": "Stage 23.1c — Metadata backfill", "title": "Backfill Metadata", "status": "not_started", "objective": "Run the resumable ADR-0030 legacy metadata and checksum backfill.", "session_mode": "implementation", "depends_on": ["R23-S01b"]},
         {"id": "R23-S01d", "guide_stage": "Stage 23.1d — Metadata acceptance tests", "title": "Verify Metadata Foundation", "status": "not_started", "objective": "Complete ADR-0030 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S01c"]},
         {"id": "R23-S02a", "guide_stage": "Stage 23.2a — Version-governance API foundation", "title": "Build Version-Governance API Foundation", "status": "not_started", "objective": "Implement ADR-0031 routes, policies and resources that do not consume structured extraction.", "session_mode": "implementation", "depends_on": ["R23-S01d"]},

@@ -35,6 +35,8 @@ class InitializeDocumentUpload
         string $mediaType,
         int $sizeBytes,
         string $extension,
+        ?string $publisherLabel = null,
+        ?string $sourceUrl = null,
     ): array {
         return DB::transaction(function () use (
             $workspace,
@@ -43,6 +45,8 @@ class InitializeDocumentUpload
             $mediaType,
             $sizeBytes,
             $extension,
+            $publisherLabel,
+            $sourceUrl,
         ): array {
             $document = $this->createDocument->handle(
                 $workspace,
@@ -51,6 +55,8 @@ class InitializeDocumentUpload
                 $mediaType,
                 $sizeBytes,
                 $extension,
+                $publisherLabel,
+                $sourceUrl,
             );
 
             return [

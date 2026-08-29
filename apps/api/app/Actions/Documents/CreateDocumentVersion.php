@@ -49,6 +49,8 @@ final readonly class CreateDocumentVersion
             $publicId = (string) Str::uuid();
             $document = new Document([
                 'source_filename' => trim($sourceFilename),
+                'publisher_label' => $locked->publisher_label,
+                'source_url' => $locked->source_url,
                 'media_type' => trim($mediaType),
                 'size_bytes' => $sizeBytes,
             ]);

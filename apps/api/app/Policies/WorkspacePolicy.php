@@ -29,4 +29,14 @@ class WorkspacePolicy
             ->whereBelongsTo($user)
             ->exists();
     }
+
+    public function viewDocumentMetadata(User $user, Workspace $workspace): bool
+    {
+        return $this->uploadDocuments($user, $workspace);
+    }
+
+    public function manageDocumentMetadata(User $user, Workspace $workspace): bool
+    {
+        return $this->viewAdministration($user, $workspace);
+    }
 }
