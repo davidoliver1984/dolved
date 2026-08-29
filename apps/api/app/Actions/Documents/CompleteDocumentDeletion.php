@@ -7,6 +7,8 @@ namespace App\Actions\Documents;
 use App\Enums\DocumentDeletionStatus;
 use App\Enums\DocumentStatus;
 use App\Exceptions\DocumentAdministrationException;
+use App\Models\DocumentContentCloneManifest;
+use App\Models\DocumentContentCloneOperation;
 use App\Models\DocumentDeletionOperation;
 use App\Models\DocumentExtractionArtifact;
 use App\Models\IngestionAuditEvent;
@@ -42,8 +44,18 @@ class CompleteDocumentDeletion
             ->where('document_id', $operation->document_id)
             ->pluck('object_key')
             ->each(fn (string $objectKey) => $this->artifactStorage->deleteExact($objectKey));
+        $cloneManifestIds = DocumentContentCloneManifest::query()
+            ->whereIn('document_content_clone_operation_id', DocumentContentCloneOperation::query()
+                ->where('target_document_id', $operation->document_id)
+                ->select('id'))
+            ->where('cleanup_state', '!=', 'deleted')
+            ->pluck('id');
+        DocumentContentCloneManifest::query()
+            ->whereIn('id', $cloneManifestIds)
+            ->pluck('object_key')
+            ->each(fn (string $objectKey) => $this->artifactStorage->deleteManifestExact($objectKey));
 
-        return DB::transaction(function () use ($operation, $payload): DocumentDeletionOperation {
+        $completed = DB::transaction(function () use ($operation, $payload, $cloneManifestIds): DocumentDeletionOperation {
             $locked = DocumentDeletionOperation::query()->with('document')->whereKey($operation->id)->lockForUpdate()->firstOrFail();
             if ($locked->status === DocumentDeletionStatus::Completed) {
                 return $locked;
@@ -55,6 +67,11 @@ class CompleteDocumentDeletion
             $locked->document->forceFill(['active_extraction_projection_generation_id' => null])->save();
             $locked->document->extractionProjectionGenerations()->delete();
             DocumentExtractionArtifact::query()->where('document_id', $locked->document_id)->delete();
+            DocumentContentCloneManifest::query()->whereIn('id', $cloneManifestIds)->update([
+                'cleanup_state' => 'deleted',
+                'cleanup_last_attempted_at' => now(),
+                'cleanup_error_code' => null,
+            ]);
             $locked->document->forceFill([
                 'status' => DocumentStatus::Deleted,
                 'failure_category' => null,
@@ -68,7 +85,11 @@ class CompleteDocumentDeletion
                     'object_removed' => true,
                     'extraction_artifacts_removed' => true,
                     'extraction_projections_removed' => true,
+                    'extraction_warnings_removed' => true,
                     'chunks_removed' => true,
+                    'dense_and_sparse_points_removed' => true,
+                    'corpus_assignments_removed' => true,
+                    'clone_manifest_objects_removed' => true,
                 ],
                 'lease_token_hash' => null,
                 'lease_expires_at' => null,
@@ -86,6 +107,12 @@ class CompleteDocumentDeletion
 
             return $locked;
         });
+
+        if ($completed->document_family_deletion_operation_id !== null) {
+            app(ReconcileDocumentFamilyDeletion::class)->handle($completed->document_family_deletion_operation_id);
+        }
+
+        return $completed;
     }
 
     private function assertLease(DocumentDeletionOperation $operation, array $payload): void

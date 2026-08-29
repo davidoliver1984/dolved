@@ -35,4 +35,9 @@ class DocumentDeletionOperation extends Model
     {
         return $this->belongsTo(Workspace::class);
     }
+
+    public function familyDeletionOperation(): BelongsTo
+    {
+        return $this->belongsTo(DocumentFamilyDeletionOperation::class, 'document_family_deletion_operation_id');
+    }
 }

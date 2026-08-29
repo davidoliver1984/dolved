@@ -14659,6 +14659,24 @@ Implement preview/confirm deletion, tombstones and cleanup. At the reserved
 export-hold seam. ADR-0037 will define the real hold schema, expiry and export
 contract; this stage must not invent them.
 
+Completed 2026-08-29: family deletion now uses a read-only, tenant-authorised
+preview and a short-lived actor/family/state-bound confirmation digest. Confirm
+locks the family and versions in deterministic order, rejects stale state and
+active clone/deletion conflicts, preserves truthful governance history, freezes
+one existing-shape child deletion per version and derives the dedicated parent
+status from those children. Completed children remove all seven persisted
+content shapes plus exact clone-manifest objects; the family becomes an
+immutable tombstone only after every child completes. The `documents.id`
+coordination boundary is represented only by a tested, fail-closed interface
+with the approved no-op implementation; no ADR-0037 schema or behavior was
+introduced.
+
+Provider-free verification passed with 429 Laravel tests (3 skipped, 2,307
+assertions) and 649 Python tests (4 skipped). Pint, Ruff formatting/lint and
+Mypy were clean. Evidence is recorded in
+`docs/journal/2026-08-29-r23-s02c-family-deletion-and-tombstones.md`; no
+providers were called.
+
 ## Stage 23.2d — Version-governance acceptance tests
 
 Run the full ADR-0031 concealment, idempotency, concurrency, clone, cleanup,

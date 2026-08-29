@@ -25,13 +25,21 @@ class DocumentFamily extends Model
             if ($family->isDirty(['public_id', 'workspace_id'])) {
                 throw new LogicException('Document family identity and ownership are immutable.');
             }
+
+            if ($family->getRawOriginal('tombstoned_at') !== null
+                && $family->isDirty(array_diff(array_keys($family->getDirty()), ['updated_at']))) {
+                throw new LogicException('A document family tombstone is immutable.');
+            }
         });
     }
 
     /** @return array<string, string> */
     protected function casts(): array
     {
-        return ['review_due_date' => 'immutable_date'];
+        return [
+            'review_due_date' => 'immutable_date',
+            'tombstoned_at' => 'immutable_datetime',
+        ];
     }
 
     /** @return BelongsTo<Workspace, $this> */
@@ -50,6 +58,12 @@ class DocumentFamily extends Model
     public function governanceAuditEvents(): HasMany
     {
         return $this->hasMany(DocumentGovernanceAuditEvent::class);
+    }
+
+    /** @return HasMany<DocumentFamilyDeletionOperation, $this> */
+    public function deletionOperations(): HasMany
+    {
+        return $this->hasMany(DocumentFamilyDeletionOperation::class);
     }
 
     /** @return BelongsTo<DocumentCategory, $this> */

@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Contracts\Documents\ExportSourceHold;
 use App\Contracts\Ingestion\ContentCloneVectorGateway;
 use App\Contracts\Ingestion\IngestionEventPublisher;
 use App\Contracts\Platform\OperationalMetricsReader;
 use App\Models\User;
 use App\Observers\UserAccessObserver;
+use App\Services\Documents\NoopExportSourceHold;
 use App\Services\Ingestion\AiContentCloneVectorGateway;
 use App\Services\Ingestion\SqsIngestionEventPublisher;
 use App\Services\Platform\PrometheusOperationalMetricsReader;
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(ExportSourceHold::class, NoopExportSourceHold::class);
         $this->app->bind(
             IngestionEventPublisher::class,
             SqsIngestionEventPublisher::class,

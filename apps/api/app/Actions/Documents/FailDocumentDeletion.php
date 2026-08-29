@@ -14,7 +14,7 @@ class FailDocumentDeletion
 {
     public function handle(string $eventId, array $payload): DocumentDeletionOperation
     {
-        return DB::transaction(function () use ($eventId, $payload): DocumentDeletionOperation {
+        $operation = DB::transaction(function () use ($eventId, $payload): DocumentDeletionOperation {
             $operation = DocumentDeletionOperation::query()->with('document.workspace')->where('public_id', $eventId)->lockForUpdate()->firstOrFail();
             if ($operation->lease_token_hash === null
                 || ! hash_equals($operation->lease_token_hash, hash('sha256', $payload['lease_token']))
@@ -45,5 +45,11 @@ class FailDocumentDeletion
 
             return $operation;
         });
+
+        if ($operation->document_family_deletion_operation_id !== null) {
+            app(ReconcileDocumentFamilyDeletion::class)->handle($operation->document_family_deletion_operation_id);
+        }
+
+        return $operation;
     }
 }

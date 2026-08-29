@@ -10,13 +10,18 @@ use App\Actions\Documents\CompleteDocumentDeletion;
 use App\Actions\Ingestion\CancelIngestionAttempt;
 use App\Actions\Ingestion\PublishIngestionOutbox;
 use App\Contracts\Ingestion\IngestionEventPublisher;
+use App\Enums\ContentCloneManifestStatus;
+use App\Enums\DocumentContentCloneStatus;
 use App\Enums\DocumentDeletionStatus;
 use App\Enums\DocumentStatus;
 use App\Enums\ExtractionProjectionStatus;
+use App\Enums\ExtractionUploadCleanupState;
 use App\Enums\ExtractionUploadStatus;
 use App\Enums\IngestionAttemptStatus;
 use App\Jobs\AdvanceDocumentDeletion as AdvanceDocumentDeletionJob;
 use App\Models\Document;
+use App\Models\DocumentContentCloneManifest;
+use App\Models\DocumentContentCloneOperation;
 use App\Models\DocumentExtractionArtifact;
 use App\Models\DocumentExtractionProjectionElement;
 use App\Models\DocumentExtractionProjectionGeneration;
@@ -231,6 +236,7 @@ class DocumentAdministrationTest extends TestCase
         Storage::fake('document-administration-test');
         config()->set('documents.storage_disk', 'document-administration-test');
         config()->set('ingestion.orchestration.extraction_artifact_disk', 'document-administration-test');
+        config()->set('ingestion.orchestration.content_clone_manifest_disk', 'document-administration-test');
         $owner = User::factory()->create();
         $workspace = Workspace::factory()->create();
         WorkspaceMembership::factory()->for($workspace)->for($owner)->owner()->create();
@@ -239,6 +245,42 @@ class DocumentAdministrationTest extends TestCase
         $attempt = IngestionEventClaim::factory()->for($document)->create([
             'status' => IngestionAttemptStatus::Completed,
             'completed_at' => now(),
+        ]);
+        $sourceDocument = Document::factory()->for($workspace)->indexed()->create();
+        $sourceAttempt = IngestionEventClaim::factory()->for($sourceDocument)->create([
+            'status' => IngestionAttemptStatus::Completed,
+            'completed_at' => now(),
+        ]);
+        $cloneOperation = DocumentContentCloneOperation::query()->create([
+            'public_id' => (string) Str::uuid(),
+            'workspace_id' => $workspace->id,
+            'source_document_id' => $sourceDocument->id,
+            'target_document_id' => $document->id,
+            'source_ingestion_event_claim_id' => $sourceAttempt->id,
+            'target_ingestion_event_claim_id' => $attempt->id,
+            'status' => DocumentContentCloneStatus::Indexed,
+            'materialisation_pipeline_fingerprint' => str_repeat('d', 64),
+            'materialisation_pipeline_components' => ['contract' => 'fixture-v1'],
+            'source_checksum_sha256' => str_repeat('e', 64),
+            'authorised_at' => now()->subMinute(),
+            'indexed_at' => now(),
+        ]);
+        $manifestKey = $document->storage_key.'.clone-manifest.json';
+        Storage::disk('document-administration-test')->put($manifestKey, '{}');
+        $cloneManifest = DocumentContentCloneManifest::query()->create([
+            'public_id' => (string) Str::uuid(),
+            'document_content_clone_operation_id' => $cloneOperation->id,
+            'ingestion_event_claim_id' => $attempt->id,
+            'lease_generation' => 1,
+            'object_key' => $manifestKey,
+            'schema_version' => 'document-content-clone-manifest-v1',
+            'entry_count' => 0,
+            'size_bytes' => 2,
+            'checksum_sha256' => hash('sha256', '{}'),
+            'status' => ContentCloneManifestStatus::Consumed,
+            'expires_at' => now()->addMinute(),
+            'consumed_at' => now(),
+            'cleanup_state' => ExtractionUploadCleanupState::Eligible,
         ]);
         $artifactKey = $document->storage_key.'.extraction.json';
         Storage::disk('document-administration-test')->put($artifactKey, '{}');
@@ -298,10 +340,13 @@ class DocumentAdministrationTest extends TestCase
 
         Storage::disk('document-administration-test')->assertMissing($document->storage_key);
         Storage::disk('document-administration-test')->assertMissing($artifactKey);
+        Storage::disk('document-administration-test')->assertMissing($manifestKey);
         $this->assertDatabaseMissing('document_extraction_artifacts', ['id' => $artifact->id]);
         $this->assertDatabaseMissing('document_extraction_projection_generations', ['id' => $generation->id]);
         $this->assertDatabaseMissing('document_extraction_projection_elements', ['projection_generation_id' => $generation->id]);
         $this->assertDatabaseMissing('document_extraction_projection_warnings', ['projection_generation_id' => $generation->id]);
+        $this->assertSame(ExtractionUploadCleanupState::Deleted, $cloneManifest->fresh()->cleanup_state);
+        $this->assertTrue($operation->fresh()->cleanup_evidence['clone_manifest_objects_removed']);
         $this->assertSame(DocumentStatus::Deleted, $document->fresh()->status);
         $this->assertSame(DocumentDeletionStatus::Completed, $operation->fresh()->status);
     }
