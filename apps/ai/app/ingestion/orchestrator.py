@@ -417,16 +417,26 @@ class IngestionOrchestrator:
         artifact = document_extraction_artifact(normalised)
         content = canonical_artifact_bytes(artifact)
         grant = self._protocol.authorise_extraction_artifact(context)
-        upload = grant["upload"]
         if len(content) > int(grant["max_bytes"]):
             raise RuntimeError("extraction_artifact_too_large")
-        heartbeat.assert_healthy()
-        result = uploader.upload(
-            url=str(upload["url"]),
-            method=str(upload["method"]),
-            headers={str(key): str(value) for key, value in upload["headers"].items()},
-            content=content,
-        )
+        if grant["outcome"] == "authorised":
+            upload = grant["upload"]
+            heartbeat.assert_healthy()
+            result = uploader.upload(
+                url=str(upload["url"]),
+                method=str(upload["method"]),
+                headers={
+                    str(key): str(value) for key, value in upload["headers"].items()
+                },
+                content=content,
+            )
+            storage_etag = result.storage_etag
+            storage_version_id = result.storage_version_id
+        elif grant["outcome"] == "already_verified":
+            storage_etag = None
+            storage_version_id = None
+        else:
+            raise RuntimeError("extraction_artifact_authorisation_invalid")
         heartbeat.assert_healthy()
         self._protocol.acknowledge_extraction_artifact(
             context,
@@ -439,8 +449,8 @@ class IngestionOrchestrator:
                 "warning_manifest_digest": warning_manifest_digest(artifact),
                 "element_count": len(artifact["elements"]),
                 "warning_count": len(artifact["extraction_warnings"]),
-                "storage_etag": result.storage_etag,
-                "storage_version_id": result.storage_version_id,
+                "storage_etag": storage_etag,
+                "storage_version_id": storage_version_id,
             },
         )
 

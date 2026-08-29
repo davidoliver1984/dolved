@@ -22,6 +22,30 @@ final class StructuredExtractionCanonicaliser
         return hash('sha256', $this->canonicalBytes($artifact));
     }
 
+    /** @param array<string, mixed> $value */
+    public function canonicalValueBytes(array $value): string
+    {
+        return $this->canonicalize($this->normaliseValue($value));
+    }
+
+    /** @param iterable<array<string, mixed>> $values */
+    public function manifestDigest(iterable $values): string
+    {
+        $context = hash_init('sha256');
+        hash_update($context, '[');
+        $first = true;
+        foreach ($values as $value) {
+            if (! $first) {
+                hash_update($context, ',');
+            }
+            hash_update($context, $this->canonicalValueBytes($value));
+            $first = false;
+        }
+        hash_update($context, ']');
+
+        return hash_final($context);
+    }
+
     /** @param array<string, mixed> $artifact */
     public function projectionManifestDigest(array $artifact): string
     {

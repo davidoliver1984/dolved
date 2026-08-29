@@ -32,6 +32,14 @@ class StructuredExtractionCanonicaliserTest extends TestCase
         $this->assertSame($vectors['expected']['artifact_sha256'], $canonicaliser->artifactDigest($vectors['artifact']));
         $this->assertSame($vectors['expected']['projection_manifest_sha256'], $canonicaliser->projectionManifestDigest($vectors['artifact']));
         $this->assertSame($vectors['expected']['warning_manifest_sha256'], $canonicaliser->warningManifestDigest($vectors['artifact']));
+        $this->assertSame(
+            $vectors['expected']['projection_manifest_sha256'],
+            $canonicaliser->manifestDigest($canonicaliser->projectionManifest($vectors['artifact'])),
+        );
+        $this->assertSame(
+            $vectors['expected']['warning_manifest_sha256'],
+            $canonicaliser->manifestDigest($canonicaliser->warningManifest($vectors['artifact'])),
+        );
     }
 
     public function test_uuid_and_unicode_rules_are_canonical_without_content_normalisation(): void

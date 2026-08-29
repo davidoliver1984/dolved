@@ -9,12 +9,13 @@
     "data": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["outcome", "artifact_id", "artifact_sha256", "size_bytes"],
+      "required": ["outcome", "artifact_id", "artifact_sha256", "size_bytes", "projection_generation_id"],
       "properties": {
-        "outcome": { "const": "verified" },
+        "outcome": { "const": "published" },
         "artifact_id": { "type": "string", "format": "uuid" },
         "artifact_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-        "size_bytes": { "type": "integer", "minimum": 1 }
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "projection_generation_id": { "type": "string", "format": "uuid" }
       }
     }
   }

@@ -35,6 +35,9 @@ class AuthoriseExtractionArtifactUpload
                 ->where('lease_generation', $attempt->lease_generation)
                 ->lockForUpdate()->first();
             if ($existing !== null) {
+                if ($existing->status === ExtractionUploadStatus::Verified) {
+                    return $existing;
+                }
                 if ($existing->status !== ExtractionUploadStatus::Authorised || $existing->expires_at->isPast()) {
                     throw IngestionAttemptException::invalid('artifact_upload_ineligible', 'The extraction upload authorisation is no longer active.');
                 }
@@ -55,6 +58,18 @@ class AuthoriseExtractionArtifactUpload
                 'expires_at' => CarbonImmutable::now()->addSeconds(max(30, (int) config('ingestion.orchestration.extraction_artifact_upload_seconds'))),
             ]);
         });
+
+        if ($record->status === ExtractionUploadStatus::Verified) {
+            return [
+                'outcome' => 'already_verified',
+                'authorisation_id' => $record->public_id,
+                'object_key' => $record->object_key,
+                'lease_generation' => $record->lease_generation,
+                'contract_version' => $record->contract_version,
+                'max_bytes' => max(1, (int) config('ingestion.orchestration.extraction_artifact_max_bytes')),
+                'upload' => null,
+            ];
+        }
 
         return [
             'outcome' => 'authorised',

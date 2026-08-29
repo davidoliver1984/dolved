@@ -104,6 +104,24 @@ class ExtractionArtifactObjectStorage
         }
     }
 
+    /** @return resource */
+    public function readStreamExact(string $objectKey)
+    {
+        try {
+            $stream = $this->filesystems
+                ->disk((string) config('ingestion.orchestration.extraction_artifact_disk'))
+                ->readStream($objectKey);
+            if (! is_resource($stream)) {
+                throw new \RuntimeException('Artifact stream unavailable.');
+            }
+
+            return $stream;
+        } catch (Throwable $exception) {
+            report($exception);
+            throw IngestionAttemptException::invalid('artifact_storage_unavailable', 'Extraction artifact storage is temporarily unavailable.', 503);
+        }
+    }
+
     /** @param array<string, mixed> $headers @return array<string, string> */
     private function workerHeaders(array $headers): array
     {

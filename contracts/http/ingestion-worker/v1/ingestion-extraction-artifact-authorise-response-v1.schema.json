@@ -11,14 +11,14 @@
       "additionalProperties": false,
       "required": ["outcome", "authorisation_id", "object_key", "lease_generation", "contract_version", "max_bytes", "upload"],
       "properties": {
-        "outcome": { "const": "authorised" },
+        "outcome": { "enum": ["authorised", "already_verified"] },
         "authorisation_id": { "type": "string", "format": "uuid" },
         "object_key": { "type": "string", "minLength": 1 },
         "lease_generation": { "type": "integer", "minimum": 1 },
         "contract_version": { "const": "document-extraction-artifact-v1" },
         "max_bytes": { "type": "integer", "minimum": 1 },
         "upload": {
-          "type": "object",
+          "type": ["object", "null"],
           "additionalProperties": false,
           "required": ["url", "method", "headers", "expires_at"],
           "properties": {
@@ -36,7 +36,14 @@
             "expires_at": { "type": "string", "format": "date-time" }
           }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "outcome": { "const": "authorised" } } },
+          "then": { "properties": { "upload": { "type": "object" } } },
+          "else": { "properties": { "upload": { "type": "null" } } }
+        }
+      ]
     }
   }
 }

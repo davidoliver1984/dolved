@@ -208,10 +208,11 @@
       },
       "response": {
         "data": {
-          "outcome": "verified",
+          "outcome": "published",
           "artifact_id": "00000000-0000-0000-0000-000000000098",
           "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "size_bytes": 123
+          "size_bytes": 123,
+          "projection_generation_id": "00000000-0000-0000-0000-000000000097"
         }
       },
       "invalid": [

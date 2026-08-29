@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Internal;
 use App\Actions\Ingestion\AcknowledgeExtractionArtifactUpload;
 use App\Actions\Ingestion\AuthoriseExtractionArtifactUpload;
 use App\Actions\Ingestion\AuthoriseIngestionPublication;
+use App\Actions\Ingestion\BuildAndPublishExtractionProjection;
 use App\Actions\Ingestion\CancelIngestionAttempt;
 use App\Actions\Ingestion\CompleteIngestionAttempt;
 use App\Actions\Ingestion\FailIngestionAttempt;
@@ -25,15 +26,21 @@ class IngestionOperationController extends Controller
         return response()->json(['data' => $action->handle($eventId, $request->validated())]);
     }
 
-    public function acknowledgeExtractionUpload(IngestionOperationRequest $request, string $eventId, AcknowledgeExtractionArtifactUpload $action): JsonResponse
-    {
+    public function acknowledgeExtractionUpload(
+        IngestionOperationRequest $request,
+        string $eventId,
+        AcknowledgeExtractionArtifactUpload $action,
+        BuildAndPublishExtractionProjection $publisher,
+    ): JsonResponse {
         $artifact = $action->handle($eventId, $request->validated());
+        $projection = $publisher->handle($artifact);
 
         return response()->json(['data' => [
-            'outcome' => 'verified',
+            'outcome' => 'published',
             'artifact_id' => $artifact->public_id,
             'artifact_sha256' => $artifact->artifact_sha256,
             'size_bytes' => $artifact->size_bytes,
+            'projection_generation_id' => $projection->public_id,
         ]]);
     }
 

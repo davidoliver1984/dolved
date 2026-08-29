@@ -67,7 +67,10 @@ def grant(**changes: Any) -> ClaimGrant:
 
 class FakeProtocol:
     def __init__(
-        self, claim_grant: ClaimGrant, resume_chunks: list[dict[str, Any]] | None = None
+        self,
+        claim_grant: ClaimGrant,
+        resume_chunks: list[dict[str, Any]] | None = None,
+        artifact_authorisation_outcome: str = "authorised",
     ) -> None:
         self.claim_grant = claim_grant
         self.resume_chunks = resume_chunks or []
@@ -75,6 +78,7 @@ class FakeProtocol:
         self.evidence: dict[str, Any] | None = None
         self.failure_usage: list[dict[str, Any]] | None = None
         self.artifact_acknowledgement: dict[str, Any] | None = None
+        self.artifact_authorisation_outcome = artifact_authorisation_outcome
 
     def claim(self, **_: Any) -> ClaimGrant:
         self.calls.append("claim")
@@ -87,10 +91,13 @@ class FakeProtocol:
     def authorise_extraction_artifact(self, _: dict[str, Any]) -> dict[str, Any]:
         self.calls.append("authorise_artifact")
         return {
+            "outcome": self.artifact_authorisation_outcome,
             "authorisation_id": "00000000-0000-0000-0000-000000000099",
             "contract_version": "document-extraction-artifact-v1",
             "max_bytes": 1_000_000,
-            "upload": {
+            "upload": None
+            if self.artifact_authorisation_outcome == "already_verified"
+            else {
                 "url": "https://objects.example/artifact",
                 "method": "PUT",
                 "headers": {"If-None-Match": "*"},
@@ -102,7 +109,7 @@ class FakeProtocol:
     ) -> dict[str, Any]:
         self.calls.append("acknowledge_artifact")
         self.artifact_acknowledgement = evidence
-        return {"outcome": "verified"}
+        return {"outcome": "published"}
 
     def submit_chunks(
         self, _: dict[str, Any], chunks: list[dict[str, Any]]
@@ -276,6 +283,23 @@ def test_canonical_artifact_is_uploaded_once_and_acknowledged_before_chunks() ->
     assert protocol.artifact_acknowledgement is not None
     assert protocol.artifact_acknowledgement["size_bytes"] == len(uploader.content)
     assert protocol.artifact_acknowledgement["storage_version_id"] == "version-1"
+
+
+def test_verified_artifact_retry_skips_upload_and_repeats_acknowledgement() -> None:
+    content = b"Canonical text for ingestion.\n"
+    event = {**EVENT, "byte_size": len(content)}
+    protocol = FakeProtocol(grant(), artifact_authorisation_outcome="already_verified")
+    uploader = FakeArtifactUploader()
+
+    outcome = orchestrator(
+        protocol, FakeVectorStore(), content, artifact_uploader=uploader
+    ).process(event=event, raw_body="{}", message=message())
+
+    assert outcome.acknowledge is True
+    assert uploader.content is None
+    assert protocol.artifact_acknowledgement is not None
+    assert protocol.artifact_acknowledgement["storage_version_id"] is None
+    assert protocol.calls.index("acknowledge_artifact") < protocol.calls.index("submit")
 
 
 def test_normal_path_seals_authorises_publishes_verifies_and_completes() -> None:

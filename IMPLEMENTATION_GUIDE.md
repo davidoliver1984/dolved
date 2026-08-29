@@ -14575,6 +14575,19 @@ delivery remain deferred to R23-S03c and R23-S03d respectively.
 
 Implement generation/build binding and atomic current-projection publication.
 
+Completed 2026-08-29: verified canonical extraction artifacts are now consumed
+through an exact-key streaming reader and written into tenant-bound inactive
+projection generations in bounded batches. Laravel independently recomputes the
+ordered element and warning manifests from persisted rows, verifies counts and
+digests, and only then atomically publishes the new generation and switches the
+document's active pointer. PostgreSQL supplies generated full-text vectors and
+the database enforces scoped generation, artifact and active-pointer lineage.
+Failed or incomplete generations remain invisible; bounded scheduled cleanup
+removes only inactive stale generations. A retry of an already verified upload
+skips object transfer and re-enters acknowledgement so a crash before projection
+publication can safely build a fresh inactive generation. Browser source and
+extracted-text delivery remain deferred to R23-S03d.
+
 ## Stage 23.3d — Source and extracted-text delivery
 
 Implement tenant-authorised Range/HEAD-capable source delivery and the bounded

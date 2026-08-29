@@ -187,4 +187,14 @@ class Document extends Model
     {
         return $this->hasOne(DocumentDeletionOperation::class);
     }
+
+    public function extractionProjectionGenerations(): HasMany
+    {
+        return $this->hasMany(DocumentExtractionProjectionGeneration::class);
+    }
+
+    public function activeExtractionProjectionGeneration(): BelongsTo
+    {
+        return $this->belongsTo(DocumentExtractionProjectionGeneration::class, 'active_extraction_projection_generation_id');
+    }
 }

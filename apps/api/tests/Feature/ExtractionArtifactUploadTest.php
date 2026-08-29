@@ -6,14 +6,17 @@ namespace Tests\Feature;
 
 use App\Actions\Ingestion\AcknowledgeExtractionArtifactUpload;
 use App\Actions\Ingestion\AuthoriseExtractionArtifactUpload;
+use App\Actions\Ingestion\BuildAndPublishExtractionProjection;
 use App\Actions\Ingestion\ClaimDocumentIngestion;
 use App\Actions\Ingestion\SweepExtractionArtifactOrphans;
 use App\Enums\DocumentStatus;
+use App\Enums\ExtractionProjectionStatus;
 use App\Enums\ExtractionUploadCleanupState;
 use App\Enums\ExtractionUploadStatus;
 use App\Exceptions\IngestionAttemptException;
 use App\Models\Document;
 use App\Models\DocumentExtractionArtifact;
+use App\Models\DocumentExtractionProjectionGeneration;
 use App\Models\DocumentExtractionUploadAuthorisation;
 use App\Models\EmbeddingProfile;
 use App\Models\EmbeddingSpaceGeneration;
@@ -21,9 +24,11 @@ use App\Models\IngestionEventClaim;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Services\Documents\ExtractionArtifactObjectStorage;
+use App\Services\Documents\StructuredExtractionCanonicaliser;
 use App\Support\Ingestion\DocumentIngestionRequestedPayload;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Mockery;
 use Tests\TestCase;
@@ -111,6 +116,9 @@ class ExtractionArtifactUploadTest extends TestCase
         $this->assertSame($sha, $artifact->artifact_sha256);
         $this->assertDatabaseCount('document_extraction_artifacts', 1);
         $this->assertSame(ExtractionUploadStatus::Verified, DocumentExtractionUploadAuthorisation::query()->sole()->status);
+        $retryGrant = app(AuthoriseExtractionArtifactUpload::class)->handle($this->attempt->event_id, $this->context);
+        $this->assertSame('already_verified', $retryGrant['outcome']);
+        $this->assertNull($retryGrant['upload']);
 
         try {
             app(AcknowledgeExtractionArtifactUpload::class)->handle($this->attempt->event_id, [
@@ -142,6 +150,97 @@ class ExtractionArtifactUploadTest extends TestCase
             'warning_manifest_digest' => str_repeat('c', 64),
             'element_count' => 0, 'warning_count' => 0,
         ]);
+    }
+
+    public function test_verified_artifact_is_streamed_verified_and_atomically_published(): void
+    {
+        $vectors = json_decode((string) file_get_contents(base_path('../../contracts/documents/extraction-artifact/v1/canonicalisation-vectors.json')), true, flags: JSON_THROW_ON_ERROR);
+        $artifactValue = $vectors['artifact'];
+        $bytes = app(StructuredExtractionCanonicaliser::class)->canonicalBytes($artifactValue);
+        $this->storage->shouldReceive('createUploadRequest')->once()->andReturn([
+            'url' => 'https://objects.example/exact', 'method' => 'PUT', 'headers' => [],
+            'expires_at' => '2026-08-29T12:05:00+00:00',
+        ]);
+        $grant = app(AuthoriseExtractionArtifactUpload::class)->handle($this->attempt->event_id, $this->context);
+        $this->storage->shouldReceive('inspect')->once()->andReturn([
+            'size_bytes' => strlen($bytes),
+            'sha256' => $vectors['expected']['artifact_sha256'],
+            'contract_version' => 'document-extraction-artifact-v1',
+        ]);
+        $artifact = app(AcknowledgeExtractionArtifactUpload::class)->handle($this->attempt->event_id, [
+            ...$this->context,
+            'authorisation_id' => $grant['authorisation_id'],
+            'artifact_contract_version' => 'document-extraction-artifact-v1',
+            'artifact_sha256' => $vectors['expected']['artifact_sha256'],
+            'size_bytes' => strlen($bytes),
+            'projection_manifest_digest' => $vectors['expected']['projection_manifest_sha256'],
+            'warning_manifest_digest' => $vectors['expected']['warning_manifest_sha256'],
+            'element_count' => count($artifactValue['elements']),
+            'warning_count' => count($artifactValue['extraction_warnings']),
+        ]);
+        $this->storage->shouldReceive('readStreamExact')->times(6)->andReturnUsing(function () use ($bytes) {
+            $stream = fopen('php://temp', 'w+b');
+            fwrite($stream, $bytes);
+            rewind($stream);
+
+            return $stream;
+        });
+
+        $generation = app(BuildAndPublishExtractionProjection::class)->handle($artifact);
+        $duplicate = app(BuildAndPublishExtractionProjection::class)->handle($artifact);
+
+        $this->assertSame($generation->id, $duplicate->id);
+        $this->assertSame(ExtractionProjectionStatus::Published, $generation->status);
+        $this->assertSame($generation->id, $this->attempt->document->refresh()->active_extraction_projection_generation_id);
+        $this->assertSame($vectors['expected']['projection_manifest_sha256'], $generation->verified_projection_manifest_digest);
+        $this->assertDatabaseCount('document_extraction_projection_elements', 4);
+        $this->assertDatabaseCount('document_extraction_projection_warnings', 1);
+        $this->assertDatabaseCount('document_extraction_projection_generations', 1);
+    }
+
+    public function test_projection_digest_mismatch_fails_closed_without_active_generation(): void
+    {
+        $vectors = json_decode((string) file_get_contents(base_path('../../contracts/documents/extraction-artifact/v1/canonicalisation-vectors.json')), true, flags: JSON_THROW_ON_ERROR);
+        $bytes = app(StructuredExtractionCanonicaliser::class)->canonicalBytes($vectors['artifact']);
+        $this->storage->shouldReceive('createUploadRequest')->once()->andReturn([
+            'url' => 'https://objects.example/exact', 'method' => 'PUT', 'headers' => [],
+            'expires_at' => '2026-08-29T12:05:00+00:00',
+        ]);
+        $grant = app(AuthoriseExtractionArtifactUpload::class)->handle($this->attempt->event_id, $this->context);
+        $this->storage->shouldReceive('inspect')->once()->andReturn([
+            'size_bytes' => strlen($bytes), 'sha256' => $vectors['expected']['artifact_sha256'],
+            'contract_version' => 'document-extraction-artifact-v1',
+        ]);
+        $artifact = app(AcknowledgeExtractionArtifactUpload::class)->handle($this->attempt->event_id, [
+            ...$this->context, 'authorisation_id' => $grant['authorisation_id'],
+            'artifact_contract_version' => 'document-extraction-artifact-v1',
+            'artifact_sha256' => $vectors['expected']['artifact_sha256'], 'size_bytes' => strlen($bytes),
+            'projection_manifest_digest' => str_repeat('f', 64),
+            'warning_manifest_digest' => $vectors['expected']['warning_manifest_sha256'],
+            'element_count' => 4, 'warning_count' => 1,
+        ]);
+        $this->storage->shouldReceive('readStreamExact')->times(6)->andReturnUsing(function () use ($bytes) {
+            $stream = fopen('php://temp', 'w+b');
+            fwrite($stream, $bytes);
+            rewind($stream);
+
+            return $stream;
+        });
+
+        try {
+            app(BuildAndPublishExtractionProjection::class)->handle($artifact);
+            $this->fail('A mismatched projection was published.');
+        } catch (IngestionAttemptException $exception) {
+            $this->assertSame('extraction_projection_identity_mismatch', $exception->errorCode);
+        }
+
+        $this->assertNull($this->attempt->document->refresh()->active_extraction_projection_generation_id);
+        $this->assertSame(ExtractionProjectionStatus::Failed, DocumentExtractionProjectionGeneration::query()->sole()->status);
+        $this->assertNull($artifact->refresh()->published_at);
+
+        CarbonImmutable::setTestNow('2026-08-29T12:05:01Z');
+        $this->assertSame(0, Artisan::call('documents:sweep-extraction-projections'));
+        $this->assertDatabaseCount('document_extraction_projection_generations', 0);
     }
 
     public function test_orphan_sweep_waits_for_live_lease_then_deletes_only_exact_expired_key(): void
