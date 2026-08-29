@@ -39,11 +39,11 @@
   },
   "progress": {
     "current_phase": "R23",
-    "current_session": "R23-S01",
-    "next_action": "Begin R23-S01 — add continuous integration for the accepted test taxonomy and gates.",
+    "current_session": "R23-S01a",
+    "next_action": "Begin R23-S01a — implement ADR-0030 metadata migration and domain model only.",
     "completed_through": "R22-GATE",
     "completed_phase_count": 23,
-    "total_phase_count": 25
+    "total_phase_count": 30
   },
   "phases": [
     {
@@ -4688,26 +4688,137 @@
     },
     {
       "id": "R23",
-      "guide_phase": "Phase 23 \u2014 CI/CD and Production Readiness",
+      "guide_phase": "Phase 23 — Document Metadata, Governance and Structured Content",
+      "title": "Document Metadata, Governance and Structured Content",
+      "guide_start_line": 14490,
+      "guide_end_line": 14583,
+      "status": "not_started",
+      "objective": "Implement ADR-0030 through ADR-0032 in their binding metadata, governance and structured-extraction dependency order.",
+      "accepted_adrs": ["ADR-0030", "ADR-0031", "ADR-0032"],
+      "workflow": [
+        "Implement only the bounded accepted-ADR session.",
+        "Run provider-free session checks and repository checks required by the guide.",
+        "Record factual evidence, journal and commit before advancing."
+      ],
+      "sessions": [
+        {"id": "R23-S01a", "guide_stage": "Stage 23.1a — Metadata migration and domain model", "title": "Build Metadata Migration and Domain Model", "status": "not_started", "objective": "Implement ADR-0030 categories, tags, family metadata, ownership and source-checksum constraints.", "session_mode": "implementation", "depends_on": []},
+        {"id": "R23-S01b", "guide_stage": "Stage 23.1b — Metadata policies, actions and API resources", "title": "Add Metadata Policies and APIs", "status": "not_started", "objective": "Implement authorised metadata reads and mutations without changing authority semantics.", "session_mode": "implementation", "depends_on": ["R23-S01a"]},
+        {"id": "R23-S01c", "guide_stage": "Stage 23.1c — Metadata backfill", "title": "Backfill Metadata", "status": "not_started", "objective": "Run the resumable ADR-0030 legacy metadata and checksum backfill.", "session_mode": "implementation", "depends_on": ["R23-S01b"]},
+        {"id": "R23-S01d", "guide_stage": "Stage 23.1d — Metadata acceptance tests", "title": "Verify Metadata Foundation", "status": "not_started", "objective": "Complete ADR-0030 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S01c"]},
+        {"id": "R23-S02a", "guide_stage": "Stage 23.2a — Version-governance API foundation", "title": "Build Version-Governance API Foundation", "status": "not_started", "objective": "Implement ADR-0031 routes, policies and resources that do not consume structured extraction.", "session_mode": "implementation", "depends_on": ["R23-S01d"]},
+        {"id": "R23-S03a", "guide_stage": "Stage 23.3a — Structured extraction schema and digests", "title": "Build Structured Extraction Schema", "status": "not_started", "objective": "Implement ADR-0032 canonical artifact identities and digests.", "session_mode": "implementation", "depends_on": ["R23-S02a"]},
+        {"id": "R23-S03b", "guide_stage": "Stage 23.3b — Upload authorisation and worker acknowledgement", "title": "Authorise Extraction Uploads", "status": "not_started", "objective": "Implement upload acknowledgement and orphan recovery.", "session_mode": "implementation", "depends_on": ["R23-S03a"]},
+        {"id": "R23-S03c", "guide_stage": "Stage 23.3c — Atomic projection publication", "title": "Publish Extraction Projections", "status": "not_started", "objective": "Implement atomic current structured-extraction projection publication.", "session_mode": "implementation", "depends_on": ["R23-S03b"]},
+        {"id": "R23-S03d", "guide_stage": "Stage 23.3d — Source and extracted-text delivery", "title": "Deliver Sources and Extracted Text", "status": "not_started", "objective": "Implement tenant-authorised source and extracted-text delivery.", "session_mode": "implementation", "depends_on": ["R23-S03c"]},
+        {"id": "R23-S03e", "guide_stage": "Stage 23.3e — Structured extraction acceptance evidence", "title": "Verify Structured Extraction", "status": "not_started", "objective": "Complete ADR-0032 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S03d"]},
+        {"id": "R23-S02b", "guide_stage": "Stage 23.2b — Clone contract and orchestration", "title": "Build Clone Orchestration", "status": "not_started", "objective": "Implement ADR-0031 clone compatibility against verified ADR-0032 identity.", "session_mode": "implementation", "depends_on": ["R23-S03e"]},
+        {"id": "R23-S02c", "guide_stage": "Stage 23.2c — Family deletion and tombstones", "title": "Build Family Deletion", "status": "not_started", "objective": "Implement deletion and tombstones with the tested no-op ADR-0037 export-hold seam.", "session_mode": "implementation", "depends_on": ["R23-S02b"], "export_boundary": "No ADR-0037 behavior; retain only the tested no-op export-hold seam."},
+        {"id": "R23-S02d", "guide_stage": "Stage 23.2d — Version-governance acceptance tests", "title": "Verify Version Governance", "status": "not_started", "objective": "Complete ADR-0031 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S02c"]}
+      ],
+      "gate": {"id": "R23-GATE", "title": "Document Metadata, Governance and Structured Content Acceptance Gate", "status": "not_started", "completion_evidence": []}
+    },
+    {
+      "id": "R24",
+      "guide_phase": "Phase 24 — Knowledge Library Product Interface",
+      "title": "Knowledge Library Product Interface",
+      "guide_start_line": 14585,
+      "guide_end_line": 14620,
+      "status": "not_started",
+      "objective": "Implement ADR-0033's accessible route-backed knowledge-library experience.",
+      "accepted_adrs": ["ADR-0033"],
+      "visual_review_policy": "Every user-facing session requires direct browser evidence and David's explicit approval before closure.",
+      "sessions": [
+        {"id": "R24-S01", "guide_stage": "Stage 24.1 — Contextual navigation shell and route scaffolding", "title": "Build Library Navigation Shell", "status": "not_started", "depends_on": ["R23-GATE"], "requires_visual_review": true},
+        {"id": "R24-S02", "guide_stage": "Stage 24.2 — Library table and activity-summary projection", "title": "Build Library Table", "status": "not_started", "depends_on": ["R24-S01"], "requires_visual_review": true},
+        {"id": "R24-S03", "guide_stage": "Stage 24.3 — Family detail and version history", "title": "Build Family Detail", "status": "not_started", "depends_on": ["R24-S02"], "requires_visual_review": true},
+        {"id": "R24-S04", "guide_stage": "Stage 24.4 — Source viewing and extracted text", "title": "Build Source Viewing", "status": "not_started", "depends_on": ["R24-S03"], "requires_visual_review": true},
+        {"id": "R24-S05", "guide_stage": "Stage 24.5 — Version comparison", "title": "Build Version Comparison", "status": "not_started", "depends_on": ["R24-S04"], "requires_visual_review": true},
+        {"id": "R24-S06", "guide_stage": "Stage 24.6 — Saved views and category settings", "title": "Build Saved Views and Category Settings", "status": "not_started", "depends_on": ["R24-S05"], "requires_visual_review": true},
+        {"id": "R24-S07", "guide_stage": "Stage 24.7 — Small-corpus onboarding and searchable-count projection", "title": "Build Small-Corpus Onboarding", "status": "not_started", "depends_on": ["R24-S06"], "requires_visual_review": true},
+        {"id": "R24-S08", "guide_stage": "Stage 24.8 — Small-corpus Playwright readiness journey", "title": "Verify Small-Corpus Readiness", "status": "not_started", "depends_on": ["R24-S07"], "requires_visual_review": true},
+        {"id": "R24-S09", "guide_stage": "Stage 24.9 — Deleted/history presentation", "title": "Build Deleted History", "status": "not_started", "depends_on": ["R24-S08"], "requires_visual_review": true}
+      ],
+      "export_boundary": "ADR-0037 export navigation and interchange remain excluded.",
+      "gate": {"id": "R24-GATE", "title": "Knowledge Library Product Interface Acceptance Gate", "status": "not_started", "completion_evidence": []}
+    },
+    {
+      "id": "R25",
+      "guide_phase": "Phase 25 — Import Staging and Promotion",
+      "title": "Import Staging and Promotion",
+      "guide_start_line": 14622,
+      "guide_end_line": 14650,
+      "status": "not_started",
+      "objective": "Implement ADR-0034's isolated staging, preflight, matching and atomic promotion lifecycle.",
+      "accepted_adrs": ["ADR-0034"],
+      "sessions": [
+        {"id": "R25-S01", "guide_stage": "Stage 25.1 — Domain, schema and staging-privacy verification", "title": "Build Import Domain and Staging Privacy", "status": "not_started", "depends_on": ["R24-GATE"]},
+        {"id": "R25-S02", "guide_stage": "Stage 25.2 — Preflight contract and lease reconciliation", "title": "Build Import Preflight", "status": "not_started", "depends_on": ["R25-S01"]},
+        {"id": "R25-S03", "guide_stage": "Stage 25.3 — Deterministic matching", "title": "Build Import Matching", "status": "not_started", "depends_on": ["R25-S02"]},
+        {"id": "R25-S04", "guide_stage": "Stage 25.4 — Promotion state machine", "title": "Build Import Promotion", "status": "not_started", "depends_on": ["R25-S03"]},
+        {"id": "R25-S05", "guide_stage": "Stage 25.5 — Legacy cutover and drain", "title": "Cut Over Legacy Imports", "status": "not_started", "depends_on": ["R25-S04"]},
+        {"id": "R25-S06", "guide_stage": "Stage 25.6 — Import workflow and progress UI", "title": "Build Import Workflow UI", "status": "not_started", "depends_on": ["R25-S05"], "requires_visual_review": true, "visual_review_policy": "All ADR-0034 checkpoints require David's explicit approval."},
+        {"id": "R25-S07", "guide_stage": "Stage 25.7 — Provider-free and Playwright acceptance journeys", "title": "Verify Import Staging and Promotion", "status": "not_started", "depends_on": ["R25-S06"]}
+      ],
+      "export_boundary": "ADR-0037 interchange remains excluded.",
+      "gate": {"id": "R25-GATE", "title": "Import Staging and Promotion Acceptance Gate", "status": "not_started", "completion_evidence": []}
+    },
+    {
+      "id": "R26",
+      "guide_phase": "Phase 26 — Frozen Bulk Document Operations",
+      "title": "Frozen Bulk Document Operations",
+      "guide_start_line": 14652,
+      "guide_end_line": 14677,
+      "status": "not_started",
+      "objective": "Implement ADR-0035's frozen, auditable bulk operations after ADR-0034.",
+      "accepted_adrs": ["ADR-0035"],
+      "sessions": [
+        {"id": "R26-S01", "guide_stage": "Stage 26.1 — PostgreSQL role and privilege foundation", "title": "Establish PostgreSQL Runtime Roles", "status": "not_started", "depends_on": ["R25-GATE"], "objective": "Establish owner/migrator/runtime roles and effective/default privileges before protected ADR-0035/0036 migrations."},
+        {"id": "R26-S02", "guide_stage": "Stage 26.2 — Bulk domain, schema, frozen membership and APIs", "title": "Build Frozen Bulk Domain", "status": "not_started", "depends_on": ["R26-S01"]},
+        {"id": "R26-S03", "guide_stage": "Stage 26.3 — Queue execution, concurrency, cancellation, retry and audit", "title": "Build Bulk Execution", "status": "not_started", "depends_on": ["R26-S02"]},
+        {"id": "R26-S04", "guide_stage": "Stage 26.4 — Selection, preflight, progress/result UI and Playwright", "title": "Build and Verify Bulk Operations UI", "status": "not_started", "depends_on": ["R26-S03"], "requires_visual_review": true, "visual_review_policy": "All ADR-0035 checkpoints require David's explicit approval."}
+      ],
+      "gate": {"id": "R26-GATE", "title": "Frozen Bulk Document Operations Acceptance Gate", "status": "not_started", "completion_evidence": []}
+    },
+    {
+      "id": "R27",
+      "guide_phase": "Phase 27 — Document Governance Notifications and Reminders",
+      "title": "Document Governance Notifications and Reminders",
+      "guide_start_line": 14679,
+      "guide_end_line": 14705,
+      "status": "not_started",
+      "objective": "Implement ADR-0036 after ADR-0030 through ADR-0035 and the PostgreSQL role foundation.",
+      "accepted_adrs": ["ADR-0036"],
+      "sessions": [
+        {"id": "R27-S01", "guide_stage": "Stage 27.1 — Events, projections, owner controls and provider-free APIs", "title": "Build Governance Event Foundation", "status": "not_started", "depends_on": ["R26-GATE", "R26-S01"]},
+        {"id": "R27-S02", "guide_stage": "Stage 27.2 — Inbox and actionable-work projections", "title": "Build Governance Inbox", "status": "not_started", "depends_on": ["R27-S01"]},
+        {"id": "R27-S03", "guide_stage": "Stage 27.3 — Schedulers, reminders, preferences, envelopes and delivery", "title": "Build Governance Reminder Delivery", "status": "not_started", "depends_on": ["R27-S01"]},
+        {"id": "R27-S04", "guide_stage": "Stage 27.4 — Email templates and tenant-branding seam", "title": "Build Governance Email Templates", "status": "not_started", "depends_on": ["R27-S03"]},
+        {"id": "R27-S05", "guide_stage": "Stage 27.5 — Visual, accessibility and Playwright acceptance", "title": "Verify Governance Notifications", "status": "not_started", "depends_on": ["R27-S02", "R27-S03", "R27-S04"], "requires_visual_review": true, "visual_review_policy": "Every ADR-0036 product and email checkpoint requires David's direct review in order."}
+      ],
+      "gate": {"id": "R27-GATE", "title": "Document Governance Notifications and Reminders Acceptance Gate", "status": "not_started", "completion_evidence": []}
+    },
+    {
+      "id": "R28",
+      "guide_phase": "Phase 28 \u2014 CI/CD and Production Readiness",
       "title": "CI/CD and Production Readiness",
-      "guide_start_line": 14307,
+      "guide_start_line": 14707,
       "sessions": [
         {
-          "id": "R23-S01",
-          "guide_stage": "Stage 23.1 \u2014 Add Continuous Integration",
+          "id": "R28-S01",
+          "guide_stage": "Stage 28.1 \u2014 Add Continuous Integration",
           "title": "Add Continuous Integration",
-          "guide_start_line": 14315,
-          "guide_end_line": 14353,
+          "guide_start_line": 14715,
+          "guide_end_line": 14753,
           "status": "not_started",
           "objective": "Run quality and test checks automatically for every relevant change.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 23 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 23.1 \u2014 Add Continuous Integration",
+            "phase": "Phase 28 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 28.1 \u2014 Add Continuous Integration",
             "source_lines": {
-              "start": 14315,
-              "end": 14353
+              "start": 14715,
+              "end": 14753
             }
           },
           "workflow": [
@@ -4735,21 +4846,21 @@
           "completion_evidence": []
         },
         {
-          "id": "R23-S02",
-          "guide_stage": "Stage 23.2 \u2014 Create Production Container Builds",
+          "id": "R28-S02",
+          "guide_stage": "Stage 28.2 \u2014 Create Production Container Builds",
           "title": "Create Production Container Builds",
-          "guide_start_line": 14355,
-          "guide_end_line": 14394,
+          "guide_start_line": 14755,
+          "guide_end_line": 14794,
           "status": "not_started",
           "objective": "Create minimal, immutable runtime images distinct from development behaviour.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 23 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 23.2 \u2014 Create Production Container Builds",
+            "phase": "Phase 28 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 28.2 \u2014 Create Production Container Builds",
             "source_lines": {
-              "start": 14355,
-              "end": 14394
+              "start": 14755,
+              "end": 14794
             }
           },
           "workflow": [
@@ -4777,21 +4888,21 @@
           "completion_evidence": []
         },
         {
-          "id": "R23-S03",
-          "guide_stage": "Stage 23.3 \u2014 Add Infrastructure as Code",
+          "id": "R28-S03",
+          "guide_stage": "Stage 28.3 \u2014 Add Infrastructure as Code",
           "title": "Add Infrastructure as Code",
-          "guide_start_line": 14396,
-          "guide_end_line": 14444,
+          "guide_start_line": 14796,
+          "guide_end_line": 14844,
           "status": "not_started",
           "objective": "Define production infrastructure under infrastructure/terraform.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 23 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 23.3 \u2014 Add Infrastructure as Code",
+            "phase": "Phase 28 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 28.3 \u2014 Add Infrastructure as Code",
             "source_lines": {
-              "start": 14396,
-              "end": 14444
+              "start": 14796,
+              "end": 14844
             }
           },
           "workflow": [
@@ -4819,21 +4930,21 @@
           "completion_evidence": []
         },
         {
-          "id": "R23-S04",
-          "guide_stage": "Stage 23.4 \u2014 Configure Secrets and Environment Management",
+          "id": "R28-S04",
+          "guide_stage": "Stage 28.4 \u2014 Configure Secrets and Environment Management",
           "title": "Configure Secrets and Environment Management",
-          "guide_start_line": 14446,
-          "guide_end_line": 14481,
+          "guide_start_line": 14846,
+          "guide_end_line": 14881,
           "status": "not_started",
           "objective": "Create a secure configuration contract across local, CI, staging and production environments.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 23 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 23.4 \u2014 Configure Secrets and Environment Management",
+            "phase": "Phase 28 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 28.4 \u2014 Configure Secrets and Environment Management",
             "source_lines": {
-              "start": 14446,
-              "end": 14481
+              "start": 14846,
+              "end": 14881
             }
           },
           "workflow": [
@@ -4861,21 +4972,21 @@
           "completion_evidence": []
         },
         {
-          "id": "R23-S05",
-          "guide_stage": "Stage 23.5 \u2014 Add Database Backup and Recovery",
+          "id": "R28-S05",
+          "guide_stage": "Stage 28.5 \u2014 Add Database Backup and Recovery",
           "title": "Add Database Backup and Recovery",
-          "guide_start_line": 14483,
-          "guide_end_line": 14508,
+          "guide_start_line": 14883,
+          "guide_end_line": 14908,
           "status": "not_started",
           "objective": "Define and test relational database backup and restoration.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 23 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 23.5 \u2014 Add Database Backup and Recovery",
+            "phase": "Phase 28 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 28.5 \u2014 Add Database Backup and Recovery",
             "source_lines": {
-              "start": 14483,
-              "end": 14508
+              "start": 14883,
+              "end": 14908
             }
           },
           "workflow": [
@@ -4903,21 +5014,21 @@
           "completion_evidence": []
         },
         {
-          "id": "R23-S06",
-          "guide_stage": "Stage 23.6 \u2014 Define Vector Index Recovery",
+          "id": "R28-S06",
+          "guide_stage": "Stage 28.6 \u2014 Define Vector Index Recovery",
           "title": "Define Vector Index Recovery",
-          "guide_start_line": 14510,
-          "guide_end_line": 14545,
+          "guide_start_line": 14910,
+          "guide_end_line": 14945,
           "status": "not_started",
           "objective": "Define whether vector data is backed up, recreated or both.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 23 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 23.6 \u2014 Define Vector Index Recovery",
+            "phase": "Phase 28 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 28.6 \u2014 Define Vector Index Recovery",
             "source_lines": {
-              "start": 14510,
-              "end": 14545
+              "start": 14910,
+              "end": 14945
             }
           },
           "workflow": [
@@ -4945,21 +5056,21 @@
           "completion_evidence": []
         },
         {
-          "id": "R23-S07",
-          "guide_stage": "Stage 23.7 \u2014 Perform Security Hardening",
+          "id": "R28-S07",
+          "guide_stage": "Stage 28.7 \u2014 Perform Security Hardening",
           "title": "Perform Security Hardening",
-          "guide_start_line": 14547,
-          "guide_end_line": 14595,
+          "guide_start_line": 14947,
+          "guide_end_line": 14995,
           "status": "not_started",
           "objective": "Review and harden the complete platform before public deployment.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 23 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 23.7 \u2014 Perform Security Hardening",
+            "phase": "Phase 28 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 28.7 \u2014 Perform Security Hardening",
             "source_lines": {
-              "start": 14547,
-              "end": 14595
+              "start": 14947,
+              "end": 14995
             }
           },
           "workflow": [
@@ -4987,21 +5098,21 @@
           "completion_evidence": []
         },
         {
-          "id": "R23-S08",
-          "guide_stage": "Stage 23.8 \u2014 Create Staging Deployment",
+          "id": "R28-S08",
+          "guide_stage": "Stage 28.8 \u2014 Create Staging Deployment",
           "title": "Create Staging Deployment",
-          "guide_start_line": 14597,
-          "guide_end_line": 14623,
+          "guide_start_line": 14997,
+          "guide_end_line": 15023,
           "status": "not_started",
           "objective": "Deploy the complete platform to a production-like staging environment.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 23 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 23.8 \u2014 Create Staging Deployment",
+            "phase": "Phase 28 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 28.8 \u2014 Create Staging Deployment",
             "source_lines": {
-              "start": 14597,
-              "end": 14623
+              "start": 14997,
+              "end": 15023
             }
           },
           "workflow": [
@@ -5029,21 +5140,21 @@
           "completion_evidence": []
         },
         {
-          "id": "R23-S09",
-          "guide_stage": "Stage 23.9 \u2014 Production Readiness Review",
+          "id": "R28-S09",
+          "guide_stage": "Stage 28.9 \u2014 Production Readiness Review",
           "title": "Production Readiness Review",
-          "guide_start_line": 14625,
-          "guide_end_line": 14671,
+          "guide_start_line": 15025,
+          "guide_end_line": 15071,
           "status": "not_started",
           "objective": "Perform a formal go-live review against technical and operational criteria.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 23 \u2014 CI/CD and Production Readiness",
-            "stage": "Stage 23.9 \u2014 Production Readiness Review",
+            "phase": "Phase 28 \u2014 CI/CD and Production Readiness",
+            "stage": "Stage 28.9 \u2014 Production Readiness Review",
             "source_lines": {
-              "start": 14625,
-              "end": 14671
+              "start": 15025,
+              "end": 15071
             }
           },
           "workflow": [
@@ -5071,11 +5182,11 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 14671,
+      "guide_end_line": 15071,
       "status": "not_started",
       "objective": "Make the platform reproducibly testable, buildable, deployable and operable outside a developer laptop.",
       "gate": {
-        "id": "R23-GATE",
+        "id": "R28-GATE",
         "title": "CI/CD and Production Readiness Acceptance Gate",
         "status": "not_started",
         "requirements": [
@@ -5083,33 +5194,33 @@
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
           "Ensure relevant ADRs and the ADR index are current.",
           "Commit the completed phase.",
-          "Create annotated Git tag phase-23 where required by the guide."
+          "Create annotated Git tag phase-28 where required by the guide."
         ],
         "completion_evidence": []
       }
     },
     {
-      "id": "R24",
-      "guide_phase": "Phase 24 \u2014 Documentation and Demonstration Readiness",
+      "id": "R29",
+      "guide_phase": "Phase 29 \u2014 Documentation and Demonstration Readiness",
       "title": "Documentation and Demonstration Readiness",
-      "guide_start_line": 14673,
+      "guide_start_line": 15073,
       "sessions": [
         {
-          "id": "R24-S01",
-          "guide_stage": "Stage 24.1 \u2014 Write Architecture Documentation",
+          "id": "R29-S01",
+          "guide_stage": "Stage 29.1 \u2014 Write Architecture Documentation",
           "title": "Write Architecture Documentation",
-          "guide_start_line": 14681,
-          "guide_end_line": 14717,
+          "guide_start_line": 15081,
+          "guide_end_line": 15117,
           "status": "not_started",
           "objective": "Explain the system clearly to reviewers, collaborators, clients and future contributors.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 24 \u2014 Documentation and Demonstration Readiness",
-            "stage": "Stage 24.1 \u2014 Write Architecture Documentation",
+            "phase": "Phase 29 \u2014 Documentation and Demonstration Readiness",
+            "stage": "Stage 29.1 \u2014 Write Architecture Documentation",
             "source_lines": {
-              "start": 14681,
-              "end": 14717
+              "start": 15081,
+              "end": 15117
             }
           },
           "workflow": [
@@ -5137,21 +5248,21 @@
           "completion_evidence": []
         },
         {
-          "id": "R24-S02",
-          "guide_stage": "Stage 24.2 \u2014 Create Demonstration Dataset and Scenario",
+          "id": "R29-S02",
+          "guide_stage": "Stage 29.2 \u2014 Create Demonstration Dataset and Scenario",
           "title": "Create Demonstration Dataset and Scenario",
-          "guide_start_line": 14719,
-          "guide_end_line": 14744,
+          "guide_start_line": 15119,
+          "guide_end_line": 15144,
           "status": "not_started",
           "objective": "Provide a safe, repeatable demonstration of ingestion, retrieval, citations and tenant isolation.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 24 \u2014 Documentation and Demonstration Readiness",
-            "stage": "Stage 24.2 \u2014 Create Demonstration Dataset and Scenario",
+            "phase": "Phase 29 \u2014 Documentation and Demonstration Readiness",
+            "stage": "Stage 29.2 \u2014 Create Demonstration Dataset and Scenario",
             "source_lines": {
-              "start": 14719,
-              "end": 14744
+              "start": 15119,
+              "end": 15144
             }
           },
           "workflow": [
@@ -5179,21 +5290,21 @@
           "completion_evidence": []
         },
         {
-          "id": "R24-S03",
-          "guide_stage": "Stage 24.3 \u2014 Finalise Repository README",
+          "id": "R29-S03",
+          "guide_stage": "Stage 29.3 \u2014 Finalise Repository README",
           "title": "Finalise Repository README",
-          "guide_start_line": 14746,
-          "guide_end_line": 14877,
+          "guide_start_line": 15146,
+          "guide_end_line": 15277,
           "status": "not_started",
           "objective": "Make the root README an accurate entry point for technical reviewers.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 24 \u2014 Documentation and Demonstration Readiness",
-            "stage": "Stage 24.3 \u2014 Finalise Repository README",
+            "phase": "Phase 29 \u2014 Documentation and Demonstration Readiness",
+            "stage": "Stage 29.3 \u2014 Finalise Repository README",
             "source_lines": {
-              "start": 14746,
-              "end": 14877
+              "start": 15146,
+              "end": 15277
             }
           },
           "workflow": [
@@ -5221,11 +5332,11 @@
           "completion_evidence": []
         }
       ],
-      "guide_end_line": 14877,
+      "guide_end_line": 15277,
       "status": "not_started",
       "objective": "Document the platform clearly and provide a reproducible way to demonstrate its capabilities, without letting presentation work substitute for engineering substance.",
       "gate": {
-        "id": "R24-GATE",
+        "id": "R29-GATE",
         "title": "Documentation and Demonstration Readiness Acceptance Gate",
         "status": "not_started",
         "requirements": [
@@ -5233,7 +5344,7 @@
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
           "Ensure relevant ADRs and the ADR index are current.",
           "Commit the completed phase.",
-          "Create annotated Git tag phase-24 where required by the guide."
+          "Create annotated Git tag phase-29 where required by the guide."
         ],
         "completion_evidence": []
       }

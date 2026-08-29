@@ -14482,12 +14482,229 @@ Completed on 2026-08-23.
 
 ### Gate outcome
 
-Phase 22 is accepted. The repository is ready to begin R23-S01 without
+Phase 22 is accepted. The repository is ready to begin R23-S01a without
 changing retrieval, generation, threshold, calibration or benchmark policy.
 
 ---
 
-# Phase 23 — CI/CD and Production Readiness
+# Phase 23 — Document Metadata, Governance and Structured Content
+
+## Phase objective
+
+Implement ADR-0030, ADR-0031 and ADR-0032 in their binding dependency order.
+ADR-0030 establishes authoritative family/version metadata. ADR-0031 work that
+does not consume extraction identity follows; ADR-0032 then establishes that
+identity and its delivery boundary; the remaining clone/deletion work follows.
+
+Every session is provider-free unless its accepted ADR explicitly says
+otherwise. No session changes retrieval, generation, calibration or threshold
+policy.
+
+## Stage 23.1a — Metadata migration and domain model
+
+Implement ADR-0030 categories, tags, family metadata, owner/source-checksum
+state and constraints. Backfill and user-facing work do not begin here.
+
+Acceptance: migration/model constraints and tenant isolation pass; ADR-0030 is
+the implementation authority. Commit this bounded foundation before S01b.
+
+## Stage 23.1b — Metadata policies, actions and API resources
+
+Implement authorised metadata mutation and read resources without changing
+organisation-owned applicability or version authority.
+
+Acceptance: concealment, authorisation, immutable identities and concurrency
+tests pass. Stop before backfill.
+
+## Stage 23.1c — Metadata backfill
+
+Run the streamed, resumable legacy reinterpretation and source-checksum
+introduction exactly as ADR-0030 specifies, preserving honestly unknown state.
+
+Acceptance: deterministic counts, resumability and no cross-workspace leakage.
+
+## Stage 23.1d — Metadata acceptance tests
+
+Complete ADR-0030's provider-free tenancy, taxonomy, checksum and mutation
+matrix. Record actual evidence and close Stage 23.1 only if clean.
+
+## Stage 23.2a — Version-governance API foundation
+
+Implement only ADR-0031 routes, resources and policies that may precede the
+ADR-0032 extraction foundation. Do not implement clone reuse yet.
+
+## Stage 23.3a — Structured extraction schema and digests
+
+Implement ADR-0032's canonical artifact schema, identities and cross-language
+digest fixtures.
+
+## Stage 23.3b — Upload authorisation and worker acknowledgement
+
+Implement bounded upload acknowledgement and orphan recovery without moving
+source-delivery authority into Python.
+
+## Stage 23.3c — Atomic projection publication
+
+Implement generation/build binding and atomic current-projection publication.
+
+## Stage 23.3d — Source and extracted-text delivery
+
+Implement tenant-authorised Range/HEAD-capable source delivery and the bounded
+structured/extracted-text routes.
+
+## Stage 23.3e — Structured extraction acceptance evidence
+
+Run ADR-0032's provider-free cross-language, tenancy, digest, recovery and
+delivery tests. Clone work remains blocked until this stage is accepted.
+
+## Stage 23.2b — Clone contract and orchestration
+
+Implement ADR-0031 clone compatibility and reuse only now that ADR-0032's
+verified extraction identity exists.
+
+## Stage 23.2c — Family deletion and tombstones
+
+Implement preview/confirm deletion, tombstones and cleanup. At the reserved
+`documents.id` export coordination point, implement and test only a no-op
+export-hold seam. ADR-0037 will define the real hold schema, expiry and export
+contract; this stage must not invent them.
+
+## Stage 23.2d — Version-governance acceptance tests
+
+Run the full ADR-0031 concealment, idempotency, concurrency, clone, cleanup,
+tombstone and no-op export-hold seam matrix.
+
+## Phase 23 gate
+
+The sequence is binding: S01a–d, S02a, S03a–e, then S02b–d. Update the guide
+with actual evidence, journal each bounded session and commit each verified
+boundary before advancing.
+
+---
+
+# Phase 24 — Knowledge Library Product Interface
+
+## Phase objective
+
+Implement ADR-0033 after Phase 23 supplies authoritative metadata, governance,
+structured extraction and source delivery.
+
+## Mandatory visual-review boundary
+
+Each user-facing session below must present direct browser URLs or screenshots
+covering the ADR's applicable light/dark, desktop/mobile, keyboard/focus,
+loading/empty/partial/error/progress states. David's explicit approval is a
+session acceptance requirement; tests alone never close the session.
+
+## Stage 24.1 — Contextual navigation shell and route scaffolding
+
+## Stage 24.2 — Library table and activity-summary projection
+
+## Stage 24.3 — Family detail and version history
+
+## Stage 24.4 — Source viewing and extracted text
+
+## Stage 24.5 — Version comparison
+
+## Stage 24.6 — Saved views and category settings
+
+## Stage 24.7 — Small-corpus onboarding and searchable-count projection
+
+## Stage 24.8 — Small-corpus Playwright readiness journey
+
+## Stage 24.9 — Deleted/history presentation
+
+All stages implement the exact ADR-0033 contracts in order. Export navigation
+remains reserved and absent until ADR-0037 is accepted.
+
+---
+
+# Phase 25 — Import Staging and Promotion
+
+## Phase objective
+
+Implement ADR-0034 after the Phase 23 data foundation and Phase 24 library
+surface are available.
+
+## Stage 25.1 — Domain, schema and staging-privacy verification
+
+## Stage 25.2 — Preflight contract and lease reconciliation
+
+## Stage 25.3 — Deterministic matching
+
+## Stage 25.4 — Promotion state machine
+
+## Stage 25.5 — Legacy cutover and drain
+
+## Stage 25.6 — Import workflow and progress UI
+
+This stage must present every ADR-0034 visual checkpoint for David's explicit
+review before acceptance.
+
+## Stage 25.7 — Provider-free and Playwright acceptance journeys
+
+Stages follow ADR-0034's retry, adoption, actor-idempotency, checksum-
+serialization and lineage rules. No export/import interchange behavior from
+future ADR-0037 is included.
+
+---
+
+# Phase 26 — Frozen Bulk Document Operations
+
+## Phase objective
+
+Implement ADR-0035 after ADR-0034 promotion primitives exist.
+
+## Stage 26.1 — PostgreSQL role and privilege foundation
+
+Provision and verify owner, migrator and `rag_platform_app` roles; isolate
+credentials; reconcile existing and default privileges for existing and future
+schemas, tables, sequences and functions; prove the complete current
+application under the runtime role. This stage must pass before any protected
+ADR-0035 or ADR-0036 migration.
+
+## Stage 26.2 — Bulk domain, schema, frozen membership and APIs
+
+## Stage 26.3 — Queue execution, concurrency, cancellation, retry and audit
+
+## Stage 26.4 — Selection, preflight, progress/result UI and Playwright
+
+Stage 26.4 includes every ADR-0035 named visual checkpoint and requires David's
+explicit approval before closure. All stages preserve the accepted lock order,
+attempt-generation incorporation, database privilege and no-duplicate-mutation
+rules.
+
+---
+
+# Phase 27 — Document Governance Notifications and Reminders
+
+## Phase objective
+
+Implement ADR-0036 after ADR-0030–0035 event-producing lifecycles and the
+R26-S01 PostgreSQL privilege foundation exist.
+
+## Stage 27.1 — Events, projections, owner controls and provider-free APIs
+
+Implement Session A from ADR-0036, including its exact event vocabulary,
+occurrence identities, producer ownership, outbox/projector, protected-column
+privileges and owner-change function.
+
+## Stage 27.2 — Inbox and actionable-work projections
+
+## Stage 27.3 — Schedulers, reminders, preferences, envelopes and delivery
+
+## Stage 27.4 — Email templates and tenant-branding seam
+
+## Stage 27.5 — Visual, accessibility and Playwright acceptance
+
+Run the product-surface and email checkpoints in ADR-0036's required order.
+Each checkpoint requires a direct browser preview or screenshot and David's
+explicit approval before proceeding. Provider deliverability remains governed
+by its existing separate smoke-test boundary.
+
+---
+
+# Phase 28 — CI/CD and Production Readiness
 
 ## Phase objective
 
@@ -14495,7 +14712,7 @@ Make the platform reproducibly testable, buildable, deployable and operable outs
 
 ---
 
-## Stage 23.1 — Add Continuous Integration
+## Stage 28.1 — Add Continuous Integration
 
 ### Objective
 
@@ -14535,7 +14752,7 @@ git commit -m "Add continuous integration pipeline"
 
 ---
 
-## Stage 23.2 — Create Production Container Builds
+## Stage 28.2 — Create Production Container Builds
 
 ### Objective
 
@@ -14576,7 +14793,7 @@ git commit -m "Add production container builds"
 
 ---
 
-## Stage 23.3 — Add Infrastructure as Code
+## Stage 28.3 — Add Infrastructure as Code
 
 ### Objective
 
@@ -14626,7 +14843,7 @@ git commit -m "Define production infrastructure"
 
 ---
 
-## Stage 23.4 — Configure Secrets and Environment Management
+## Stage 28.4 — Configure Secrets and Environment Management
 
 ### Objective
 
@@ -14663,7 +14880,7 @@ git commit -m "Harden environment and secret management"
 
 ---
 
-## Stage 23.5 — Add Database Backup and Recovery
+## Stage 28.5 — Add Database Backup and Recovery
 
 ### Objective
 
@@ -14690,7 +14907,7 @@ git commit -m "Add database backup and recovery plan"
 
 ---
 
-## Stage 23.6 — Define Vector Index Recovery
+## Stage 28.6 — Define Vector Index Recovery
 
 ### Objective
 
@@ -14727,7 +14944,7 @@ git commit -m "Define vector index recovery"
 
 ---
 
-## Stage 23.7 — Perform Security Hardening
+## Stage 28.7 — Perform Security Hardening
 
 ### Objective
 
@@ -14777,7 +14994,7 @@ git commit -m "Harden platform security"
 
 ---
 
-## Stage 23.8 — Create Staging Deployment
+## Stage 28.8 — Create Staging Deployment
 
 ### Objective
 
@@ -14805,7 +15022,7 @@ To be defined based on the deployment platform.
 
 ---
 
-## Stage 23.9 — Production Readiness Review
+## Stage 28.9 — Production Readiness Review
 
 ### Objective
 
@@ -14853,7 +15070,7 @@ git commit -m "Complete production readiness review"
 
 ---
 
-# Phase 24 — Documentation and Demonstration Readiness
+# Phase 29 — Documentation and Demonstration Readiness
 
 ## Phase objective
 
@@ -14861,7 +15078,7 @@ Document the platform clearly and provide a reproducible way to demonstrate its 
 
 ---
 
-## Stage 24.1 — Write Architecture Documentation
+## Stage 29.1 — Write Architecture Documentation
 
 ### Objective
 
@@ -14899,7 +15116,7 @@ git commit -m "Document platform architecture"
 
 ---
 
-## Stage 24.2 — Create Demonstration Dataset and Scenario
+## Stage 29.2 — Create Demonstration Dataset and Scenario
 
 ### Objective
 
@@ -14926,7 +15143,7 @@ git commit -m "Add repeatable platform demonstration"
 
 ---
 
-## Stage 24.3 — Finalise Repository README
+## Stage 29.3 — Finalise Repository README
 
 ### Objective
 

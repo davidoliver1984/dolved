@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 23 of 25 (CI/CD and Production Readiness) |
+| Project status | In Progress — Phase 23 of 30 (Document Metadata, Governance and Structured Content) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -967,7 +967,139 @@ Comprehensive test suite.
 
 ---
 
-## Phase 23 — CI/CD and Production Readiness
+## Phase 23 — Document Metadata, Governance and Structured Content
+
+### Objectives
+
+Implement the accepted ADR-0030–0032 foundation in its binding dependency
+order: document-family/version metadata first, then the governance primitives
+that do not depend on structured extraction, then structured extraction and
+source delivery, and finally governance paths that require that extraction
+identity.
+
+### Sessions
+
+- R23-S01a–S01d: ADR-0030 migration/domain model, policies/API, backfill and tests.
+- R23-S02a: ADR-0031 governance routes, resources and policies that can safely
+  precede structured extraction.
+- R23-S03a–S03e: ADR-0032 schema/digests, worker acknowledgement, projection
+  publication, source/extracted-text delivery and acceptance evidence.
+- R23-S02b–S02d: ADR-0031 clone orchestration, family deletion/tombstones and
+  full governance tests after ADR-0032 is available.
+
+Deletion must retain a tested no-op export-hold seam at the reserved
+`documents.id` coordination point. ADR-0037 alone will define the eventual
+export/interchange contract; no export behavior is part of this phase.
+
+### Deliverable
+
+Verified metadata, governance and structured-content foundations for the
+knowledge library and import lifecycle.
+
+---
+
+## Phase 24 — Knowledge Library Product Interface
+
+### Objectives
+
+Implement ADR-0033's route-backed knowledge-library experience after the Phase
+23 data and delivery contracts exist.
+
+### Sessions
+
+R24-S01 through R24-S09 implement the contextual shell, library table, family
+detail, source viewing, comparison, saved views/category settings,
+small-corpus onboarding, the Playwright readiness journey and deleted/history
+presentation in the order defined by ADR-0033.
+
+Every user-facing session stops at its staged light/dark, desktop/mobile,
+keyboard/focus and state/error visual checkpoint for David's explicit review
+before closure. Export UI remains reserved for ADR-0037.
+
+### Deliverable
+
+A reviewed, accessible knowledge-library interface built on authoritative
+family, version and extraction data.
+
+---
+
+## Phase 25 — Import Staging and Promotion
+
+### Objectives
+
+Implement ADR-0034's isolated staging, deterministic preflight/matching and
+atomic promotion lifecycle after the library foundation is available.
+
+### Sessions
+
+R25-S01 through R25-S07 implement schema/privacy, preflight, matching,
+promotion, legacy cutover/drain, workflow/progress UI, and provider-free plus
+Playwright verification in the binding ADR order.
+
+The user-facing workflow session requires every ADR-0034 visual checkpoint and
+David's approval before it closes.
+
+### Deliverable
+
+A tenant-safe, recoverable import-staging and promotion workflow.
+
+---
+
+## Phase 26 — Frozen Bulk Document Operations
+
+### Objectives
+
+Implement ADR-0035 only after ADR-0034's `ImportItem` and promotion primitives
+exist.
+
+### Sessions
+
+- R26-S01: PostgreSQL owner/migrator/runtime role foundation, default
+  privileges and complete existing-application verification under
+  `rag_platform_app`; this precedes every protected migration in ADR-0035 and
+  ADR-0036.
+- R26-S02: bulk domain, constrained schema, frozen membership and provider-free
+  APIs.
+- R26-S03: queue execution, locking, retry, cancellation and audit.
+- R26-S04: selection, preflight, progress/result UI and Playwright journey.
+
+R26-S04 includes all ADR-0035 visual checkpoints and requires David's explicit
+review before closure.
+
+### Deliverable
+
+Frozen, auditable and recoverable bulk operations with a reviewed product
+surface.
+
+---
+
+## Phase 27 — Document Governance Notifications and Reminders
+
+### Objectives
+
+Implement ADR-0036 after ADR-0030–0035 have supplied their event-producing
+lifecycles and after R26-S01 has established the PostgreSQL privilege model.
+
+### Sessions
+
+- R27-S01: schema, event vocabulary, producers, outbox/projector, owner-change
+  controls and provider-free API tests.
+- R27-S02: in-product inbox and actionable-work/dashboard projections.
+- R27-S03: schedules, reminders, preferences, envelopes and delivery.
+- R27-S04: email templates and the reserved tenant-branding seam.
+- R27-S05: the ordered product/email visual and accessibility checkpoints plus
+  Playwright verification.
+
+R27-S05 requires David's explicit review at every named ADR-0036 checkpoint.
+
+### Deliverable
+
+Durable document-governance notifications, reminders and controlled email
+delivery with reviewed in-product and email presentation.
+
+---
+
+## Phase 28 — CI/CD and Production Readiness
 
 ### Objectives
 
@@ -992,7 +1124,7 @@ Production-ready platform.
 
 ---
 
-## Phase 24 — Documentation and Demonstration Readiness
+## Phase 29 — Documentation and Demonstration Readiness
 
 ### Objectives
 
@@ -1067,14 +1199,19 @@ A phase is complete only when:
 | Observability Foundation | ✅ Complete |
 | Embeddings | ✅ Complete |
 | Vector Storage | ✅ Complete |
-| Ingestion Orchestration | ⬜ Not Started |
-| Retrieval | ⬜ Not Started |
-| Grounded Generation | ⬜ Not Started |
-| Conversation and Streaming | ⬜ Not Started |
+| Ingestion Orchestration | ✅ Complete |
+| Retrieval | ✅ Complete |
+| Grounded Generation | ✅ Complete |
+| Conversation and Streaming | ✅ Complete |
 | Administration | ✅ Complete |
 | Observability and Operations | ✅ Complete |
-| Product Experience and Interface Design | 🟨 In Progress |
-| Testing and Quality Strategy | ⬜ Not Started |
+| Product Experience and Interface Design | ✅ Complete |
+| Testing and Quality Strategy | ✅ Complete |
+| Document Metadata, Governance and Structured Content | 🟨 In Progress |
+| Knowledge Library Product Interface | ⬜ Not Started |
+| Import Staging and Promotion | ⬜ Not Started |
+| Frozen Bulk Document Operations | ⬜ Not Started |
+| Document Governance Notifications and Reminders | ⬜ Not Started |
 | CI/CD and Production Readiness | ⬜ Not Started |
 | Documentation and Demonstration Readiness | ⬜ Not Started |
 
