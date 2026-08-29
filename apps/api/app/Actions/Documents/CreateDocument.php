@@ -50,7 +50,10 @@ class CreateDocument
         }
 
         return DB::transaction(function () use ($workspace, $creator, $sourceFilename, $mediaType, $sizeBytes, $extension): Document {
-            $family = new DocumentFamily(['name' => $sourceFilename]);
+            $family = new DocumentFamily([
+                'name' => $sourceFilename,
+                'owner_user_id' => $creator->id,
+            ]);
             $family->public_id = (string) Str::uuid();
             $family->workspace()->associate($workspace);
             $family->save();

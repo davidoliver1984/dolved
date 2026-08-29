@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\DocumentGovernanceActorType;
+use App\Enums\DocumentGovernanceSystemActorCode;
+use App\Enums\DocumentGovernanceTargetScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,6 +21,9 @@ class DocumentGovernanceAuditEvent extends Model
             'previous_values' => 'array',
             'new_values' => 'array',
             'occurred_at' => 'immutable_datetime',
+            'target_scope' => DocumentGovernanceTargetScope::class,
+            'actor_type' => DocumentGovernanceActorType::class,
+            'system_actor_code' => DocumentGovernanceSystemActorCode::class,
         ];
     }
 
@@ -31,6 +37,12 @@ class DocumentGovernanceAuditEvent extends Model
     public function document(): BelongsTo
     {
         return $this->belongsTo(Document::class);
+    }
+
+    /** @return BelongsTo<DocumentFamily, $this> */
+    public function documentFamily(): BelongsTo
+    {
+        return $this->belongsTo(DocumentFamily::class);
     }
 
     /** @return BelongsTo<User, $this> */

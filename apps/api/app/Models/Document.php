@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\ChecksumUnavailableReason;
+use App\Enums\ChecksumVerificationStatus;
 use App\Enums\DocumentGovernanceStatus;
 use App\Enums\DocumentStatus;
 use Database\Factories\DocumentFactory;
@@ -17,6 +19,8 @@ use LogicException;
 
 #[Fillable([
     'source_filename',
+    'publisher_label',
+    'source_url',
     'media_type',
     'size_bytes',
     'failure_category',
@@ -54,6 +58,8 @@ class Document extends Model
                 $document->exists
                 && $document->isDirty([
                     'source_filename',
+                    'publisher_label',
+                    'source_url',
                     'media_type',
                     'size_bytes',
                 ])
@@ -61,6 +67,18 @@ class Document extends Model
                 throw new LogicException(
                     'Document source metadata is immutable after creation.'
                 );
+            }
+
+            if (
+                $document->exists
+                && $document->getRawOriginal('checksum_verification_status') === ChecksumVerificationStatus::Verified->value
+                && $document->isDirty([
+                    'source_checksum_sha256',
+                    'checksum_verification_status',
+                    'checksum_unavailable_reason',
+                ])
+            ) {
+                throw new LogicException('A verified document checksum is immutable.');
             }
 
             if (
@@ -87,6 +105,8 @@ class Document extends Model
         return [
             'status' => DocumentStatus::class,
             'governance_status' => DocumentGovernanceStatus::class,
+            'checksum_verification_status' => ChecksumVerificationStatus::class,
+            'checksum_unavailable_reason' => ChecksumUnavailableReason::class,
             'size_bytes' => 'integer',
             'effective_from' => 'immutable_datetime',
             'approved_at' => 'immutable_datetime',

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
-#[Fillable(['name'])]
+#[Fillable(['name', 'description', 'category_id', 'owner_user_id', 'review_due_date'])]
 class DocumentFamily extends Model
 {
     /** @use HasFactory<DocumentFamilyFactory> */
@@ -28,6 +28,12 @@ class DocumentFamily extends Model
         });
     }
 
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return ['review_due_date' => 'immutable_date'];
+    }
+
     /** @return BelongsTo<Workspace, $this> */
     public function workspace(): BelongsTo
     {
@@ -38,6 +44,27 @@ class DocumentFamily extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(Document::class)->orderBy('effective_from');
+    }
+
+    /** @return BelongsTo<DocumentCategory, $this> */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(DocumentCategory::class, 'category_id');
+    }
+
+    /** @return BelongsTo<User, $this> */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_user_id');
+    }
+
+    /** @return BelongsToMany<DocumentTag, $this> */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            DocumentTag::class,
+            'document_family_tag_assignments',
+        )->withPivot('workspace_id')->withTimestamps();
     }
 
     /** @return BelongsToMany<OrganisationalLocation, $this> */

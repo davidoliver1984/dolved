@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R23",
-    "current_session": "R23-S01a",
-    "next_action": "Begin R23-S01a — implement ADR-0030 metadata migration and domain model only.",
-    "completed_through": "R22-GATE",
+    "current_session": "R23-S01b",
+    "next_action": "Begin R23-S01b — implement ADR-0030 metadata policies, actions and API resources without changing authority semantics.",
+    "completed_through": "R23-S01a",
     "completed_phase_count": 23,
     "total_phase_count": 30
   },
@@ -4692,7 +4692,7 @@
       "title": "Document Metadata, Governance and Structured Content",
       "guide_start_line": 14490,
       "guide_end_line": 14583,
-      "status": "not_started",
+      "status": "in_progress",
       "objective": "Implement ADR-0030 through ADR-0032 in their binding metadata, governance and structured-extraction dependency order.",
       "accepted_adrs": ["ADR-0030", "ADR-0031", "ADR-0032"],
       "workflow": [
@@ -4701,7 +4701,7 @@
         "Record factual evidence, journal and commit before advancing."
       ],
       "sessions": [
-        {"id": "R23-S01a", "guide_stage": "Stage 23.1a — Metadata migration and domain model", "title": "Build Metadata Migration and Domain Model", "status": "not_started", "objective": "Implement ADR-0030 categories, tags, family metadata, ownership and source-checksum constraints.", "session_mode": "implementation", "depends_on": []},
+        {"id": "R23-S01a", "guide_stage": "Stage 23.1a — Metadata migration and domain model", "title": "Build Metadata Migration and Domain Model", "status": "completed", "objective": "Implement ADR-0030 categories, tags, family metadata, ownership and source-checksum constraints.", "session_mode": "implementation", "depends_on": []},
         {"id": "R23-S01b", "guide_stage": "Stage 23.1b — Metadata policies, actions and API resources", "title": "Add Metadata Policies and APIs", "status": "not_started", "objective": "Implement authorised metadata reads and mutations without changing authority semantics.", "session_mode": "implementation", "depends_on": ["R23-S01a"]},
         {"id": "R23-S01c", "guide_stage": "Stage 23.1c — Metadata backfill", "title": "Backfill Metadata", "status": "not_started", "objective": "Run the resumable ADR-0030 legacy metadata and checksum backfill.", "session_mode": "implementation", "depends_on": ["R23-S01b"]},
         {"id": "R23-S01d", "guide_stage": "Stage 23.1d — Metadata acceptance tests", "title": "Verify Metadata Foundation", "status": "not_started", "objective": "Complete ADR-0030 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S01c"]},

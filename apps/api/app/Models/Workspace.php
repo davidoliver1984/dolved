@@ -62,6 +62,18 @@ class Workspace extends Model
         return $this->hasMany(DocumentFamily::class);
     }
 
+    /** @return HasMany<DocumentCategory, $this> */
+    public function documentCategories(): HasMany
+    {
+        return $this->hasMany(DocumentCategory::class);
+    }
+
+    /** @return HasMany<DocumentTag, $this> */
+    public function documentTags(): HasMany
+    {
+        return $this->hasMany(DocumentTag::class);
+    }
+
     /** @return HasMany<OrganisationalLocation, $this> */
     public function organisationalLocations(): HasMany
     {

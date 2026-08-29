@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Support\Documents;
 
+use App\Enums\DocumentGovernanceActorType;
+use App\Enums\DocumentGovernanceTargetScope;
 use App\Models\Document;
 use App\Models\DocumentGovernanceAuditEvent;
 use App\Models\User;
@@ -17,8 +19,12 @@ final class RecordDocumentGovernanceAudit
         DocumentGovernanceAuditEvent::query()->create([
             'public_id' => (string) Str::uuid(),
             'workspace_id' => $document->workspace_id,
+            'document_family_id' => $document->document_family_id,
             'document_id' => $document->id,
+            'target_scope' => DocumentGovernanceTargetScope::Version,
+            'actor_type' => DocumentGovernanceActorType::Human,
             'actor_user_id' => $actor->id,
+            'system_actor_code' => null,
             'action' => $action,
             'reason' => $reason,
             'previous_values' => $before,

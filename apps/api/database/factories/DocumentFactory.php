@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\ChecksumVerificationStatus;
 use App\Enums\DocumentGovernanceStatus;
 use App\Enums\DocumentStatus;
 use App\Models\Document;
@@ -56,8 +57,13 @@ class DocumentFactory extends Factory
             'approved_at' => null,
             'withdrawn_at' => null,
             'source_filename' => fake()->word().'.pdf',
+            'publisher_label' => null,
+            'source_url' => null,
             'media_type' => 'application/pdf',
             'size_bytes' => fake()->numberBetween(1, 10_000_000),
+            'source_checksum_sha256' => null,
+            'checksum_verification_status' => ChecksumVerificationStatus::Pending,
+            'checksum_unavailable_reason' => null,
             'storage_key' => fn (array $attributes): string => sprintf(
                 'workspaces/%s/documents/%s/source',
                 Workspace::query()->findOrFail($attributes['workspace_id'])->public_id,
