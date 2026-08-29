@@ -14730,6 +14730,18 @@ session acceptance requirement; tests alone never close the session.
 
 ## Stage 24.1 — Contextual navigation shell and route scaffolding
 
+Completed 2026-08-29: the workspace shell now exposes segment-safe,
+route-backed Library, Scheduled, Needs attention, Deleted history and
+Categories destinations without introducing the reserved import/export
+surfaces. Workspace and family scaffolds independently reauthorise their
+public identities and fail closed through dedicated loading, error and
+not-found states. Desktop/mobile and light/dark browser review confirmed one
+contextual active destination, mobile-menu dismissal after navigation, direct
+deep-link reload and no horizontal overflow. David approved the visual boundary.
+Provider-free verification passed with 29 web test files and 127 tests; ESLint,
+TypeScript and `git diff --check` were clean. Evidence is recorded in
+`docs/journal/2026-08-29-r24-s01-library-navigation-shell.md`.
+
 ## Stage 24.2 — Library table and activity-summary projection
 
 ## Stage 24.3 — Family detail and version history

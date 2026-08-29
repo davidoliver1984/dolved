@@ -18,6 +18,13 @@ import type { DocumentUploadConfiguration } from "@/lib/document-upload";
 import { serverEnvironment } from "@/lib/env/server";
 import { structuredLog } from "@/lib/structured-log";
 
+export type DocumentFamilyMetadata = {
+  public_id: string;
+  name: string;
+  description: string | null;
+  review_due_date: string | null;
+};
+
 async function serverFetch(path: string): Promise<Response> {
   const cookieHeader = await forwardedAuthCookieHeader();
   const headers = new Headers({
@@ -170,6 +177,19 @@ export async function initialWorkspaceDocument(
   if (response.status === 404) return null;
   if (!response.ok) throw new Error("The workspace document is unavailable.");
   const payload = (await response.json()) as { data: AdminDocument };
+  return payload.data;
+}
+
+export async function initialDocumentFamilyMetadata(
+  workspacePublicId: string,
+  familyPublicId: string,
+): Promise<DocumentFamilyMetadata | null> {
+  const response = await serverFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-families/${encodeURIComponent(familyPublicId)}/metadata`,
+  );
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error("The document family is unavailable.");
+  const payload = (await response.json()) as { data: DocumentFamilyMetadata };
   return payload.data;
 }
 

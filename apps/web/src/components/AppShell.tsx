@@ -3,9 +3,13 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
   Activity,
+  Archive,
+  CalendarClock,
   ChevronLeft,
   ChevronRight,
+  CircleAlert,
   FileText,
+  FolderOpen,
   Gauge,
   BellRing,
   LineChart,
@@ -48,6 +52,26 @@ function workspaceIdFromPath(pathname: string) {
   return pathname.match(/^\/app\/workspaces\/([^/]+)/)?.[1] ?? null;
 }
 
+function workspaceSection(pathname: string, workspaceId: string | null, section: string) {
+  if (!workspaceId) return false;
+  const base = `/app/workspaces/${workspaceId}/${section}`;
+  return pathname === base || pathname.startsWith(`${base}/`);
+}
+
+type DocumentsDestination = "attention" | "categories" | "deleted" | "library" | "saved" | "scheduled";
+
+function documentsDestination(pathname: string, workspaceId: string | null): DocumentsDestination | null {
+  if (!workspaceSection(pathname, workspaceId, "documents")) return null;
+  const base = `/app/workspaces/${workspaceId}/documents`;
+  const remainder = pathname.slice(base.length).split("/").filter(Boolean);
+  if (remainder[0] === "scheduled") return "scheduled";
+  if (remainder[0] === "attention") return "attention";
+  if (remainder[0] === "deleted") return "deleted";
+  if (remainder[0] === "saved") return "saved";
+  if (remainder[0] === "settings" && remainder[1] === "categories") return "categories";
+  return "library";
+}
+
 function activeClass(active: boolean) {
   return cn(
     "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-sidebar-ring",
@@ -68,8 +92,10 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
     () => workspaces.find((item) => item.public_id === workspaceId) ?? null,
     [workspaceId, workspaces],
   );
-  const isAdministration = pathname.includes("/administration");
+  const isAdministration = workspaceSection(pathname, workspaceId, "administration");
   const isPlatformOperations = pathname.startsWith("/app/platform/operations");
+  const activeDocumentsDestination = documentsDestination(pathname, workspaceId);
+  const isDocuments = activeDocumentsDestination !== null;
   const workspaceHome = `/app/workspaces/${workspaceId}`;
   const closeMobileNavigation = () => setMobileOpen(false);
   const sidebarLabel = (label: string) => (
@@ -93,7 +119,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
         <MessageSquarePlus aria-hidden="true" className="size-5 shrink-0 text-current" />
         {sidebarLabel("New conversation")}
       </Link>
-      <Link aria-current={pathname.includes("/documents") ? "page" : undefined} className={activeClass(pathname.includes("/documents"))} href={`/app/workspaces/${workspaceId}/documents`} onClick={closeMobileNavigation}>
+      <Link aria-current={isDocuments ? "page" : undefined} className={activeClass(isDocuments)} href={`/app/workspaces/${workspaceId}/documents`} onClick={closeMobileNavigation}>
         <FileText aria-hidden="true" className="size-5 shrink-0" />
         {sidebarLabel("Documents")}
       </Link>
@@ -115,6 +141,18 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
         <Link aria-current={pathname.endsWith("/telemetry") ? "page" : undefined} className={activeClass(pathname.endsWith("/telemetry"))} href="/app/platform/operations/telemetry" onClick={closeMobileNavigation}><LineChart aria-hidden="true" className="size-4" /><span>Global telemetry</span></Link>
         <Link aria-current={pathname.endsWith("/policy") ? "page" : undefined} className={activeClass(pathname.endsWith("/policy"))} href="/app/platform/operations/policy" onClick={closeMobileNavigation}><SlidersHorizontal aria-hidden="true" className="size-4" /><span>Operational policy</span></Link>
         <Link className="mt-2 px-3 py-2 text-sm text-foreground-muted underline-offset-4 hover:text-foreground hover:underline" href="/app" onClick={closeMobileNavigation}>Back to chat</Link>
+      </nav>
+    </div>
+  ) : isDocuments && workspaceId ? (
+    <div className={cn("min-h-0 flex-1 overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
+      <p className="px-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-faint">Knowledge library</p>
+      <nav aria-label="Knowledge library" className="mt-2 grid gap-1">
+        <Link aria-current={activeDocumentsDestination === "library" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "library")} href={`/app/workspaces/${workspaceId}/documents`} onClick={closeMobileNavigation}><FolderOpen aria-hidden="true" className="size-4" /><span>Library</span></Link>
+        <Link aria-current={activeDocumentsDestination === "scheduled" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "scheduled")} href={`/app/workspaces/${workspaceId}/documents/scheduled`} onClick={closeMobileNavigation}><CalendarClock aria-hidden="true" className="size-4" /><span>Scheduled</span></Link>
+        <Link aria-current={activeDocumentsDestination === "attention" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "attention")} href={`/app/workspaces/${workspaceId}/documents/attention`} onClick={closeMobileNavigation}><CircleAlert aria-hidden="true" className="size-4" /><span>Needs attention</span></Link>
+        <Link aria-current={activeDocumentsDestination === "deleted" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "deleted")} href={`/app/workspaces/${workspaceId}/documents/deleted`} onClick={closeMobileNavigation}><Archive aria-hidden="true" className="size-4" /><span>Deleted history</span></Link>
+        <Link aria-current={activeDocumentsDestination === "categories" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "categories")} href={`/app/workspaces/${workspaceId}/documents/settings/categories`} onClick={closeMobileNavigation}><Settings2 aria-hidden="true" className="size-4" /><span>Categories</span></Link>
+        <Link className="mt-2 px-3 py-2 text-sm text-foreground-muted underline-offset-4 hover:text-foreground hover:underline" href={`/app/workspaces/${workspaceId}`} onClick={closeMobileNavigation}>Back to chat</Link>
       </nav>
     </div>
   ) : workspaceId ? (
@@ -185,7 +223,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur lg:hidden"><Wordmark href="/app" /><DialogPrimitive.Trigger asChild><Button aria-label="Open navigation" size="icon" variant="outline"><Menu aria-hidden="true" /></Button></DialogPrimitive.Trigger></header>
         <DialogPrimitive.Portal><DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-overlay lg:hidden" /><DialogPrimitive.Content className="fixed inset-y-0 left-0 z-50 w-[min(88vw,20rem)] border-r border-sidebar-border bg-sidebar p-4 outline-none lg:hidden"><DialogPrimitive.Title className="sr-only">Application navigation</DialogPrimitive.Title>{sidebar}<DialogPrimitive.Close aria-label="Close navigation" className="absolute right-3 top-3 grid size-11 place-items-center rounded-md hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring"><X aria-hidden="true" /></DialogPrimitive.Close></DialogPrimitive.Content></DialogPrimitive.Portal>
       </DialogPrimitive.Root>
-      <main className={cn("min-h-dvh transition-[padding]", collapsed ? "lg:pl-20" : "lg:pl-72")}><div className="mx-auto w-full max-w-[96rem] p-4 sm:p-6 lg:p-8">{children}</div></main>
+      <main className={cn("min-h-[calc(100dvh-4rem)] transition-[padding] lg:min-h-dvh", collapsed ? "lg:pl-20" : "lg:pl-72")}><div className="mx-auto w-full max-w-[96rem] p-4 sm:p-6 lg:p-8">{children}</div></main>
     </div>
   );
 }

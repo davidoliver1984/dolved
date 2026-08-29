@@ -110,6 +110,48 @@ describe("AppShell", () => {
     expect(screen.getByRole("link", { name: "Back to chat" }).getAttribute("href")).toBe("/app");
   });
 
+  it.each([
+    ["/app/workspaces/workspace-1/documents", "Library"],
+    ["/app/workspaces/workspace-1/documents/families/family-1", "Library"],
+    ["/app/workspaces/workspace-1/documents/document-1", "Library"],
+    ["/app/workspaces/workspace-1/documents/scheduled", "Scheduled"],
+    ["/app/workspaces/workspace-1/documents/attention", "Needs attention"],
+    ["/app/workspaces/workspace-1/documents/deleted", "Deleted history"],
+    ["/app/workspaces/workspace-1/documents/settings/categories", "Categories"],
+  ])("maps %s to one active knowledge-library destination", (path, activeLabel) => {
+    pathnameState.value = path;
+    render(
+      <AppShell
+        canOperatePlatform={false}
+        user={user}
+        workspaces={[{ public_id: "workspace-1", name: "Alderbridge", slug: "alderbridge", role: "owner" }]}
+      >
+        <p>Library content</p>
+      </AppShell>,
+    );
+
+    const contextual = screen.getByRole("navigation", { name: "Knowledge library" });
+    expect(screen.getByRole("link", { name: "Documents" }).getAttribute("aria-current")).toBe("page");
+    expect(within(contextual).getByRole("link", { name: activeLabel }).getAttribute("aria-current")).toBe("page");
+    expect(within(contextual).getAllByRole("link").filter((link) => link.getAttribute("aria-current") === "page")).toHaveLength(1);
+  });
+
+  it("does not activate documents for a path that merely contains the word", () => {
+    pathnameState.value = "/app/workspaces/workspace-1/conversations/documents-review";
+    render(
+      <AppShell
+        canOperatePlatform={false}
+        user={user}
+        workspaces={[{ public_id: "workspace-1", name: "Alderbridge", slug: "alderbridge", role: "owner" }]}
+      >
+        <p>Conversation content</p>
+      </AppShell>,
+    );
+
+    expect(screen.getByRole("link", { name: "Documents" }).getAttribute("aria-current")).toBeNull();
+    expect(screen.queryByRole("navigation", { name: "Knowledge library" })).toBeNull();
+  });
+
   it("offers sign out from the named account menu", async () => {
     const interaction = userEvent.setup();
     render(
