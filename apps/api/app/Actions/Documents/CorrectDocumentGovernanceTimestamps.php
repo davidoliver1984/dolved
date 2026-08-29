@@ -10,6 +10,7 @@ use App\Models\Document;
 use App\Models\User;
 use App\Support\Documents\DocumentAuthorityTimeline;
 use App\Support\Documents\DocumentGovernanceAuthorizer;
+use App\Support\Documents\LockDocumentFamilyLineage;
 use App\Support\Documents\RecordDocumentGovernanceAudit;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,7 @@ final readonly class CorrectDocumentGovernanceTimestamps
     public function __construct(
         private DocumentGovernanceAuthorizer $authorizer,
         private DocumentAuthorityTimeline $timeline,
+        private LockDocumentFamilyLineage $lockLineage,
         private RecordDocumentGovernanceAudit $audit,
     ) {}
 
@@ -30,7 +32,7 @@ final readonly class CorrectDocumentGovernanceTimestamps
         string $reason,
     ): Document {
         return DB::transaction(function () use ($document, $actor, $approvedAt, $withdrawnAt, $reason): Document {
-            $locked = Document::query()->lockForUpdate()->findOrFail($document->id);
+            [, $locked, $versions] = $this->lockLineage->handle($document);
             $this->authorizer->historicalCorrection($actor, $locked);
             $reason = trim($reason);
 
@@ -57,9 +59,7 @@ final readonly class CorrectDocumentGovernanceTimestamps
             $locked->approved_at = $approvedAt;
             $locked->withdrawn_at = $withdrawnAt;
             $locked->save();
-            $this->timeline->assertConsistent(
-                Document::query()->where('document_family_id', $locked->document_family_id)->lockForUpdate()->get(),
-            );
+            $this->timeline->assertConsistent($versions);
             $this->audit->record($locked, $actor, 'historical_timestamps_corrected', $before, $locked->only(array_keys($before)), $reason);
 
             return $locked->refresh();

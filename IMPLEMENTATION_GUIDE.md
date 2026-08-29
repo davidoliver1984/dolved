@@ -14533,6 +14533,13 @@ matrix. Record actual evidence and close Stage 23.1 only if clean.
 Implement only ADR-0031 routes, resources and policies that may precede the
 ADR-0032 extraction foundation. Do not implement clone reuse yet.
 
+Completed 2026-08-29: tenant-scoped version history and the approve,
+withdraw/cancel, reschedule and owner-only timestamp-correction routes now use
+durable per-workspace/per-purpose idempotency, stable typed conflicts and the
+family-first deterministic locking order. The applicability-only successor
+mutation remains deliberately deferred with clone reuse until ADR-0032 exists;
+no incomplete browser route was exposed.
+
 ## Stage 23.3a — Structured extraction schema and digests
 
 Implement ADR-0032's canonical artifact schema, identities and cross-language

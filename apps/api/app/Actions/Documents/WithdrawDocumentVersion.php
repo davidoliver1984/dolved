@@ -9,6 +9,7 @@ use App\Exceptions\DocumentGovernanceException;
 use App\Models\Document;
 use App\Models\User;
 use App\Support\Documents\DocumentGovernanceAuthorizer;
+use App\Support\Documents\LockDocumentFamilyLineage;
 use App\Support\Documents\RecordDocumentGovernanceAudit;
 use Illuminate\Support\Facades\DB;
 
@@ -16,13 +17,14 @@ final readonly class WithdrawDocumentVersion
 {
     public function __construct(
         private DocumentGovernanceAuthorizer $authorizer,
+        private LockDocumentFamilyLineage $lockLineage,
         private RecordDocumentGovernanceAudit $audit,
     ) {}
 
     public function handle(Document $document, User $actor): Document
     {
         return DB::transaction(function () use ($document, $actor): Document {
-            $locked = Document::query()->lockForUpdate()->findOrFail($document->id);
+            [, $locked] = $this->lockLineage->handle($document);
             $this->authorizer->ordinary($actor, $locked);
 
             if ($locked->governance_status !== DocumentGovernanceStatus::Approved) {

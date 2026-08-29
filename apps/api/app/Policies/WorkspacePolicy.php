@@ -39,4 +39,17 @@ class WorkspacePolicy
     {
         return $this->viewAdministration($user, $workspace);
     }
+
+    public function manageDocumentGovernance(User $user, Workspace $workspace): bool
+    {
+        return $this->viewAdministration($user, $workspace);
+    }
+
+    public function correctDocumentGovernance(User $user, Workspace $workspace): bool
+    {
+        return $workspace->memberships()
+            ->whereBelongsTo($user)
+            ->where('role', WorkspaceRole::Owner->value)
+            ->exists();
+    }
 }
