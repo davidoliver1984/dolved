@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Actions\Documents\RenameDocumentFamily;
+use App\Actions\Documents\SyncDocumentFamilyTags;
+use App\Actions\Documents\UpdateDocumentFamilyMetadata;
 use App\Actions\Retrieval\RetrieveWorkspaceEvidence;
 use App\Enums\DocumentStatus;
 use App\Enums\EvidenceThresholdPolicyStatus;
@@ -15,7 +18,9 @@ use App\Exceptions\RetrievalException;
 use App\Exceptions\RetrievalExecutionException;
 use App\Exceptions\RetrievalPlannerException;
 use App\Models\Document;
+use App\Models\DocumentCategory;
 use App\Models\DocumentChunk;
+use App\Models\DocumentTag;
 use App\Models\EmbeddingProfile;
 use App\Models\EmbeddingSpaceGeneration;
 use App\Models\EvidenceThresholdPolicy;
@@ -81,6 +86,42 @@ class SemanticRetrievalTest extends TestCase
         $this->assertSame([$first->public_id], $historical->documentPublicIdsBySide['primary']);
         $this->assertSame([$second->public_id], $compare->documentPublicIdsBySide['primary']);
         $this->assertSame([$first->public_id], $compare->documentPublicIdsBySide['comparison']);
+    }
+
+    public function test_family_metadata_and_owner_eligibility_do_not_change_retrieval_authority(): void
+    {
+        [$workspace, $actor, $generation] = $this->retrievalWorkspace();
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-02');
+        $family = $document->family;
+        $category = DocumentCategory::factory()->for($workspace)->create();
+        $tag = DocumentTag::factory()->for($workspace)->create();
+        $recordedOwner = User::factory()->create();
+        $membership = WorkspaceMembership::factory()->for($workspace)->for($recordedOwner)->member()->create();
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($actor, $workspace->public_id);
+        $plan = new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Current, null, null, [], null, $this->lineage(), $this->plannerUsage(),
+        );
+        $evaluatedAt = CarbonImmutable::parse('2026-03-01');
+        $before = app(EligibilityResolver::class)->handle($scope, $plan, $evaluatedAt);
+
+        app(RenameDocumentFamily::class)->handle($family, $actor, 'Renamed governance family');
+        app(UpdateDocumentFamilyMetadata::class)->handle(
+            $family,
+            $actor,
+            'Advisory library metadata only.',
+            $category,
+            $recordedOwner,
+            '2027-03-31',
+        );
+        app(SyncDocumentFamilyTags::class)->handle($family, $actor, [$tag->public_id]);
+        $membership->delete();
+        $recordedOwner->forceFill(['disabled_at' => now()])->save();
+
+        $after = app(EligibilityResolver::class)->handle($scope, $plan, $evaluatedAt);
+
+        $this->assertSame($before->outcome, $after->outcome);
+        $this->assertSame($before->documentPublicIdsBySide, $after->documentPublicIdsBySide);
+        $this->assertSame([$document->public_id], $after->documentPublicIdsBySide['primary']);
     }
 
     public function test_location_alias_narrows_by_ancestor_and_ambiguous_reference_clarifies(): void

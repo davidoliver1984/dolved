@@ -11,7 +11,9 @@ use App\Models\DocumentTag;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceMembership;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 final class DocumentMetadataApiTest extends TestCase
@@ -78,6 +80,9 @@ final class DocumentMetadataApiTest extends TestCase
         $disabled = User::factory()->create(['disabled_at' => now()]);
         WorkspaceMembership::factory()->for($workspace)->for($disabled)->member()->create();
         $outsider = User::factory()->create();
+        $disabledOutsider = User::factory()->create(['disabled_at' => now()]);
+        $eligible = User::factory()->create();
+        WorkspaceMembership::factory()->for($workspace)->for($eligible)->member()->create();
 
         $this->actingAs($owner)
             ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($disabled))
@@ -85,6 +90,13 @@ final class DocumentMetadataApiTest extends TestCase
         $this->actingAs($owner)
             ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($outsider))
             ->assertNotFound();
+        $this->actingAs($owner)
+            ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($disabledOutsider))
+            ->assertNotFound();
+        $this->actingAs($owner)
+            ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($eligible))
+            ->assertOk()
+            ->assertJsonPath('data.owner.public_id', $eligible->public_id);
 
         $otherWorkspace = Workspace::factory()->withOwner()->create();
         $otherCategory = DocumentCategory::factory()->for($otherWorkspace)->create();
@@ -122,6 +134,37 @@ final class DocumentMetadataApiTest extends TestCase
             ->assertUnprocessable();
 
         $this->assertCount(20, $family->refresh()->tags);
+    }
+
+    public function test_two_contending_nineteen_plus_one_tag_sets_serialize_on_the_family_row(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $family = DocumentFamily::factory()->for($workspace)->create(['owner_user_id' => $owner->id]);
+        $tags = DocumentTag::factory()->count(21)->for($workspace)->create();
+        $queries = [];
+        DB::listen(function (QueryExecuted $query) use (&$queries): void {
+            $queries[] = strtolower($query->sql);
+        });
+
+        $first = $tags->take(20)->pluck('public_id')->all();
+        $second = $tags->take(19)->push($tags->last())->pluck('public_id')->all();
+        $this->actingAs($owner)
+            ->putJson($this->tagsUrl($workspace, $family), ['tag_public_ids' => $first])
+            ->assertOk();
+        $this->actingAs($owner)
+            ->putJson($this->tagsUrl($workspace, $family), ['tag_public_ids' => $second])
+            ->assertOk();
+
+        $this->assertCount(20, $family->refresh()->tags);
+        $actual = $family->tags->pluck('public_id')->sort()->values()->all();
+        sort($second);
+        $this->assertSame($second, $actual);
+        if (DB::getDriverName() === 'pgsql') {
+            $this->assertGreaterThanOrEqual(2, collect($queries)->filter(
+                fn (string $sql): bool => str_contains($sql, 'document_families')
+                    && str_contains($sql, 'for update'),
+            )->count());
+        }
     }
 
     public function test_taxonomy_mutations_are_workspace_scoped_and_categories_archive_without_deletion(): void

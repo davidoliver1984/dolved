@@ -20,6 +20,7 @@ use App\Support\Documents\CreateApplicabilitySnapshot;
 use App\Support\Documents\RecordDocumentGovernanceAudit;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use LogicException;
 use Tests\TestCase;
@@ -136,6 +137,33 @@ class DocumentMetadataFoundationTest extends TestCase
 
         $this->expectException(LogicException::class);
         $document->save();
+    }
+
+    public function test_checksum_shape_constraint_rejects_every_inconsistent_state(): void
+    {
+        if (DB::getDriverName() !== 'pgsql') {
+            $this->markTestSkipped('The checksum shape is a PostgreSQL database constraint.');
+        }
+
+        $document = Document::factory()->create();
+
+        foreach ([
+            ['verified', null, null],
+            ['pending', str_repeat('a', 64), null],
+            ['unavailable', null, null],
+            ['unavailable', str_repeat('a', 64), 'source_missing'],
+        ] as [$status, $checksum, $reason]) {
+            try {
+                DB::transaction(fn (): int => DB::table('documents')->where('id', $document->id)->update([
+                    'checksum_verification_status' => $status,
+                    'source_checksum_sha256' => $checksum,
+                    'checksum_unavailable_reason' => $reason,
+                ]));
+                $this->fail("The inconsistent {$status} checksum shape was accepted.");
+            } catch (QueryException) {
+                $this->assertTrue(true);
+            }
+        }
     }
 
     public function test_version_scoped_publisher_and_source_url_are_immutable(): void
