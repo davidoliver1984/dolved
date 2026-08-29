@@ -6,16 +6,19 @@ namespace App\Http\Controllers;
 
 use App\Actions\Documents\ApproveDocumentVersion;
 use App\Actions\Documents\CorrectDocumentGovernanceTimestamps;
+use App\Actions\Documents\ExecuteApplicabilityOnlySuccessorCommand;
 use App\Actions\Documents\ExecuteDocumentGovernanceCommand;
 use App\Actions\Documents\RescheduleDocumentVersion;
 use App\Actions\Documents\WithdrawDocumentVersion;
 use App\Exceptions\DocumentGovernanceException;
 use App\Exceptions\DocumentGovernanceIdempotencyConflict;
 use App\Http\Requests\CorrectDocumentGovernanceTimestampsRequest;
+use App\Http\Requests\CreateApplicabilityOnlySuccessorRequest;
 use App\Http\Requests\DocumentGovernanceCommandRequest;
 use App\Http\Requests\RescheduleDocumentVersionRequest;
 use App\Http\Resources\DocumentVersionResource;
 use App\Models\Document;
+use App\Models\OrganisationalLocation;
 use App\Models\User;
 use App\Queries\Documents\FindDocumentFamilyForWorkspace;
 use App\Queries\Documents\FindDocumentForWorkspace;
@@ -24,6 +27,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 final class DocumentVersionGovernanceController extends Controller
 {
@@ -50,6 +54,50 @@ final class DocumentVersionGovernanceController extends Controller
     public function approve(DocumentGovernanceCommandRequest $request, string $workspacePublicId, string $documentPublicId, FindWorkspaceForUser $workspaces, FindDocumentForWorkspace $documents, ExecuteDocumentGovernanceCommand $commands, ApproveDocumentVersion $approve): JsonResponse
     {
         return $this->execute($request, $workspacePublicId, $documentPublicId, 'approve', [], $workspaces, $documents, $commands, fn (Document $document, User $user): Document => $approve->handle($document, $user));
+    }
+
+    public function applicabilitySuccessor(
+        CreateApplicabilityOnlySuccessorRequest $request,
+        string $workspacePublicId,
+        string $documentPublicId,
+        FindWorkspaceForUser $workspaces,
+        FindDocumentForWorkspace $documents,
+        ExecuteApplicabilityOnlySuccessorCommand $commands,
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $request->user();
+        $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
+        Gate::authorize('manageDocumentGovernance', $workspace);
+        $document = $documents->handle($workspace, $documentPublicId);
+        $locationPublicIds = $request->array('location_public_ids');
+        $locations = OrganisationalLocation::query()
+            ->where('workspace_id', $workspace->id)
+            ->whereIn('public_id', $locationPublicIds)
+            ->orderBy('id')->get();
+        if ($locations->count() !== count($locationPublicIds)) {
+            abort(404);
+        }
+
+        try {
+            [$result, $command, $replayed] = $commands->handle(
+                $document,
+                $user,
+                $request->string('idempotency_key')->value(),
+                CarbonImmutable::parse($request->string('effective_from')->value()),
+                $locations->all(),
+                (string) Str::uuid(),
+            );
+        } catch (DocumentGovernanceIdempotencyConflict) {
+            return response()->json(['error' => ['code' => 'idempotency_key_conflict']], 409);
+        } catch (DocumentGovernanceException) {
+            return response()->json(['error' => ['code' => 'governance_state_conflict']], 409);
+        }
+        $result->load(['family', 'predecessor', 'applicabilitySnapshot.locations']);
+
+        return response()->json([
+            'data' => (new DocumentVersionResource($result))->resolve($request),
+            'meta' => ['command_public_id' => $command->public_id, 'replayed' => $replayed],
+        ]);
     }
 
     public function withdraw(DocumentGovernanceCommandRequest $request, string $workspacePublicId, string $documentPublicId, FindWorkspaceForUser $workspaces, FindDocumentForWorkspace $documents, ExecuteDocumentGovernanceCommand $commands, WithdrawDocumentVersion $withdraw): JsonResponse

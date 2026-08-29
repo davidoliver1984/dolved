@@ -8,6 +8,7 @@ use App\Enums\DocumentStatus;
 use App\Enums\EmbeddingSpaceGenerationStatus;
 use App\Enums\ExtractionUploadCleanupState;
 use App\Enums\ExtractionUploadStatus;
+use App\Enums\IngestionAttemptOrigin;
 use App\Enums\IngestionAttemptStatus;
 use App\Enums\IngestionClaimOutcome;
 use App\Enums\WorkspaceCorpusGenerationStatus;
@@ -19,12 +20,15 @@ use App\Models\EmbeddingSpaceGeneration;
 use App\Models\IngestionEventClaim;
 use App\Models\WorkspaceCorpusGeneration;
 use App\Support\Ingestion\IngestionClaimResult;
+use App\Support\Ingestion\MaterialisationPipelineIdentity;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ClaimDocumentIngestion
 {
+    public function __construct(private readonly MaterialisationPipelineIdentity $pipelineIdentity) {}
+
     /** @param array<string, mixed> $event */
     public function handle(array $event, string $payloadSha256): IngestionClaimResult
     {
@@ -45,6 +49,12 @@ class ClaimDocumentIngestion
                 ->first();
 
             if ($attempt !== null) {
+                if ($attempt->attempt_origin !== IngestionAttemptOrigin::Ingestion) {
+                    throw IngestionAttemptException::invalid(
+                        'attempt_origin_mismatch',
+                        'An ordinary ingestion event cannot mutate a content-clone attempt.',
+                    );
+                }
                 $this->assertIdentity($attempt, $event, $payloadSha256);
 
                 if ($attempt->status === IngestionAttemptStatus::Completed) {
@@ -66,6 +76,14 @@ class ClaimDocumentIngestion
                     $attempt->embedding_space_generation_id = $embeddingSpace->id;
                     $attempt->sparse_space_generation_id = $corpus->sparse_space_generation_id;
                     $attempt->workspace_corpus_generation_id = $corpus->id;
+                }
+
+                if ($attempt->materialisation_pipeline_fingerprint === null) {
+                    $embedding = $attempt->embeddingSpaceGeneration()->with('embeddingProfile')->firstOrFail();
+                    $corpus = $attempt->workspaceCorpusGeneration()->with('sparseSpaceGeneration.sparseEmbeddingProfile')->firstOrFail();
+                    $identity = $this->pipelineIdentity->for($embedding, $corpus);
+                    $attempt->materialisation_pipeline_fingerprint = $identity['fingerprint'];
+                    $attempt->materialisation_pipeline_components = $identity['components'];
                 }
 
                 $wasSealed = $attempt->status !== IngestionAttemptStatus::Open;
@@ -108,6 +126,7 @@ class ClaimDocumentIngestion
             }
 
             [$embeddingSpace, $corpus] = $this->resolveGenerations($document);
+            $identity = $this->pipelineIdentity->for($embeddingSpace, $corpus);
             $token = (string) Str::uuid();
             $attempt = IngestionEventClaim::query()->create([
                 'event_id' => $event['event_id'],
@@ -117,6 +136,9 @@ class ClaimDocumentIngestion
                 'document_public_id' => $event['document_id'],
                 'correlation_id' => $event['correlation_id'],
                 'payload_sha256' => $payloadSha256,
+                'attempt_origin' => IngestionAttemptOrigin::Ingestion,
+                'materialisation_pipeline_fingerprint' => $identity['fingerprint'],
+                'materialisation_pipeline_components' => $identity['components'],
                 'claimed_at' => now(),
                 'embedding_space_generation_id' => $embeddingSpace->id,
                 'sparse_space_generation_id' => $corpus->sparse_space_generation_id,

@@ -39,4 +39,5 @@ Artisan::command('observability:record-operational-snapshot', function (RecordOp
 Schedule::command('observability:record-operational-snapshot')->everyMinute()->withoutOverlapping();
 
 Schedule::command('ingestion:extraction-artifacts:sweep')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('ingestion:content-clone-manifests:sweep')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('documents:sweep-extraction-projections')->everyFiveMinutes()->withoutOverlapping();

@@ -250,3 +250,41 @@ class VectorCompletenessReport(ImmutableModel):
             and not self.payload_mismatch_point_ids
             and self.vector_schema_compatible
         )
+
+
+class VectorCloneMapping(ImmutableModel):
+    source_point_id: UUID
+    target_point: VectorPointIdentity
+
+
+class VectorCloneRequest(ImmutableModel):
+    vector_space: VectorSpace
+    source_scope: VectorScope
+    target_scope: VectorScope
+    mappings: tuple[VectorCloneMapping, ...]
+    batch_size: int = Field(default=64, ge=1, le=1000)
+
+    @model_validator(mode="after")
+    def validate_mapping_identity(self) -> VectorCloneRequest:
+        source_ids = tuple(mapping.source_point_id for mapping in self.mappings)
+        target_ids = tuple(mapping.target_point.point_id for mapping in self.mappings)
+        if len(set(source_ids)) != len(source_ids) or len(set(target_ids)) != len(
+            target_ids
+        ):
+            raise ValueError("clone point identities must be unique")
+        for mapping in self.mappings:
+            point = mapping.target_point
+            if (
+                point.workspace_id != self.target_scope.workspace_id
+                or point.document_id != self.target_scope.document_id
+                or point.event_id != self.target_scope.event_id
+                or point.workspace_corpus_generation_id
+                != self.target_scope.workspace_corpus_generation_id
+            ):
+                raise ValueError("target point does not match target scope")
+        return self
+
+
+class VectorCloneReport(ImmutableModel):
+    complete: bool
+    point_ids: tuple[UUID, ...]

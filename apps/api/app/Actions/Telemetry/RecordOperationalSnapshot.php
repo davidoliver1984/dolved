@@ -6,6 +6,7 @@ namespace App\Actions\Telemetry;
 
 use App\Enums\DocumentDeletionStatus;
 use App\Enums\ExtractionUploadCleanupState;
+use App\Enums\IngestionAttemptOrigin;
 use App\Enums\IngestionAttemptStatus;
 use App\Models\DocumentDeletionOperation;
 use App\Models\DocumentExtractionUploadAuthorisation;
@@ -54,9 +55,12 @@ final class RecordOperationalSnapshot
             (clone $pending)->count(),
             $oldest === null ? 0.0 : max(0.0, now()->diffInMilliseconds($oldest, absolute: true) / 1_000),
         );
-        $this->telemetry->stuck('ingestion', IngestionEventClaim::query()
-            ->whereIn('status', [IngestionAttemptStatus::Open->value, IngestionAttemptStatus::Sealed->value, IngestionAttemptStatus::PublicationAuthorised->value])
-            ->where('updated_at', '<', now()->subMinutes(5))->count());
+        foreach (IngestionAttemptOrigin::cases() as $origin) {
+            $this->telemetry->stuck($origin->value, IngestionEventClaim::query()
+                ->where('attempt_origin', $origin->value)
+                ->whereIn('status', [IngestionAttemptStatus::Open->value, IngestionAttemptStatus::Sealed->value, IngestionAttemptStatus::PublicationAuthorised->value])
+                ->where('updated_at', '<', now()->subMinutes(5))->count());
+        }
         $this->telemetry->stuck('document_deletion', DocumentDeletionOperation::query()
             ->whereNotIn('status', [DocumentDeletionStatus::Completed->value])
             ->where('updated_at', '<', now()->subMinutes(5))->count());

@@ -6,6 +6,7 @@ namespace Tests\Feature;
 
 use App\Actions\Ingestion\ClaimDocumentIngestion;
 use App\Enums\DocumentStatus;
+use App\Enums\IngestionAttemptOrigin;
 use App\Models\Document;
 use App\Models\EmbeddingProfile;
 use App\Models\EmbeddingSpaceGeneration;
@@ -84,6 +85,9 @@ class DocumentIngestionClaimTest extends TestCase
         $this->assertSame($event['workspace_id'], $claim->workspace_public_id);
         $this->assertSame($event['document_id'], $claim->document_public_id);
         $this->assertSame($event['correlation_id'], $claim->correlation_id);
+        $this->assertSame(IngestionAttemptOrigin::Ingestion, $claim->attempt_origin);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{64}$/', (string) $claim->materialisation_pipeline_fingerprint);
+        $this->assertIsArray($claim->materialisation_pipeline_components);
         $this->assertNotNull($claim->claimed_at);
     }
 
@@ -455,6 +459,9 @@ class DocumentIngestionClaimTest extends TestCase
             'document_public_id',
             'correlation_id',
             'payload_sha256',
+            'attempt_origin',
+            'materialisation_pipeline_fingerprint',
+            'materialisation_pipeline_components',
             'claimed_at',
             'created_at',
             'updated_at',

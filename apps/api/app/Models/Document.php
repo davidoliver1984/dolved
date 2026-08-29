@@ -178,6 +178,11 @@ class Document extends Model
         return $this->hasOne(IngestionEventClaim::class)->latestOfMany();
     }
 
+    public function contentCloneOperation(): HasOne
+    {
+        return $this->hasOne(DocumentContentCloneOperation::class, 'target_document_id');
+    }
+
     public function ingestionRetries(): HasMany
     {
         return $this->hasMany(DocumentIngestionRetry::class);

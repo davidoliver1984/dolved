@@ -14627,6 +14627,31 @@ ADR-0032 identity.
 Implement ADR-0031 clone compatibility and reuse only now that ADR-0032's
 verified extraction identity exists.
 
+Completed 2026-08-29: every ingestion claim now carries an explicit
+`ingestion`/`content_clone` origin and a write-once materialisation-pipeline
+fingerprint with its inspectable components. Clone eligibility recomputes the
+current fingerprint and fails closed on checksum, completed-publication,
+active-generation or pipeline drift. The governed applicability-successor
+route creates a target-owned claim and clone operation under deterministic
+family/version locks and durable command idempotency.
+
+Laravel independently copies and verifies the source object, extraction
+artifact, relational projection, warnings, chunks and corpus assignments;
+Python alone copies, independently verifies and publishes the exact bounded
+Qdrant point mapping. Durable manifests bind the exact object key, checksum,
+count, schema, operation, claim and lease generation. The explicit clone state
+machine permits ordinary ingestion only after verified removal of all cloned
+derived layers, while the final transaction publishes claim evidence and the
+target `INDEXED` state atomically. Usage, telemetry and stuck-operation
+projections distinguish clone work from ordinary ingestion, and the bounded
+manifest sweeper deletes exact recorded keys without bucket scans.
+
+Provider-free verification passed with 423 Laravel tests (3 skipped, 2,257
+assertions) and 649 Python tests (4 skipped). Pint, Ruff formatting/lint and
+Mypy were clean. Evidence is recorded in
+`docs/journal/2026-08-29-r23-s02b-clone-contract-and-orchestration.md`; no
+providers were called.
+
 ## Stage 23.2c — Family deletion and tombstones
 
 Implement preview/confirm deletion, tombstones and cleanup. At the reserved

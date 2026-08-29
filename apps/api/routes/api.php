@@ -150,6 +150,7 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::put('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/metadata', [DocumentMetadataController::class, 'updateFamily']);
     Route::put('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/tags', [DocumentMetadataController::class, 'syncTags']);
     Route::get('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/versions', [DocumentVersionGovernanceController::class, 'index']);
+    Route::post('/workspaces/{workspacePublicId}/documents/{documentPublicId}/governance/applicability-successors', [DocumentVersionGovernanceController::class, 'applicabilitySuccessor']);
     Route::post('/workspaces/{workspacePublicId}/documents/{documentPublicId}/governance/approve', [DocumentVersionGovernanceController::class, 'approve']);
     Route::post('/workspaces/{workspacePublicId}/documents/{documentPublicId}/governance/withdraw', [DocumentVersionGovernanceController::class, 'withdraw']);
     Route::patch('/workspaces/{workspacePublicId}/documents/{documentPublicId}/governance/schedule', [DocumentVersionGovernanceController::class, 'reschedule']);

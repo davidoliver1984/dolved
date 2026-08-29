@@ -80,7 +80,7 @@ final class TelemetryServiceProvider extends ServiceProvider
         IngestionEventClaim::updated(function (IngestionEventClaim $claim): void {
             if ($claim->wasChanged('status') && in_array($claim->status->value, ['completed', 'failed', 'cancelled'], true)) {
                 $this->app->make(OperationalTelemetry::class)->operation(
-                    'ingestion',
+                    $claim->attempt_origin->value,
                     $claim->status->value,
                     max(0.0, ($claim->completed_at ?? $claim->failed_at ?? $claim->cancelled_at ?? now())->diffInMilliseconds($claim->claimed_at ?? $claim->created_at, absolute: true) / 1_000),
                     $claim->failure_code,

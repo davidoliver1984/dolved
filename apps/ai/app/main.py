@@ -7,6 +7,7 @@ from opentelemetry import metrics, trace
 from opentelemetry.propagate import extract
 from opentelemetry.trace import SpanKind, Status, StatusCode
 
+from app.content_clone.routes import router as content_clone_router
 from app.conversation.routes import router as conversation_router
 from app.generation.routes import router as generation_router
 from app.operational_metrics import record_route_operation
@@ -44,6 +45,7 @@ app = FastAPI(
 app.include_router(retrieval_router)
 app.include_router(generation_router)
 app.include_router(conversation_router)
+app.include_router(content_clone_router)
 
 
 @app.middleware("http")

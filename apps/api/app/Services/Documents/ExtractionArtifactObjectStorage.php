@@ -104,6 +104,45 @@ class ExtractionArtifactObjectStorage
         }
     }
 
+    public function copyExact(string $sourceKey, string $targetKey): void
+    {
+        try {
+            $disk = $this->filesystems->disk((string) config('ingestion.orchestration.extraction_artifact_disk'));
+            if (! $disk->exists($sourceKey) || $disk->exists($targetKey) || ! $disk->copy($sourceKey, $targetKey)) {
+                throw new \RuntimeException('Artifact copy failed.');
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+            throw IngestionAttemptException::invalid('artifact_storage_unavailable', 'Extraction artifact storage is temporarily unavailable.', 503);
+        }
+    }
+
+    public function writeExact(string $objectKey, string $contents): void
+    {
+        try {
+            $disk = $this->filesystems->disk((string) config('ingestion.orchestration.content_clone_manifest_disk'));
+            if ($disk->exists($objectKey) || ! $disk->put($objectKey, $contents)) {
+                throw new \RuntimeException('Clone manifest write failed.');
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+            throw IngestionAttemptException::invalid('clone_manifest_storage_unavailable', 'The clone manifest could not be stored.', 503);
+        }
+    }
+
+    public function deleteManifestExact(string $objectKey): void
+    {
+        try {
+            $disk = $this->filesystems->disk((string) config('ingestion.orchestration.content_clone_manifest_disk'));
+            if ($disk->exists($objectKey) && ! $disk->delete($objectKey)) {
+                throw new \RuntimeException('Clone manifest delete failed.');
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+            throw IngestionAttemptException::invalid('clone_manifest_storage_unavailable', 'The clone manifest could not be deleted.', 503);
+        }
+    }
+
     /** @return resource */
     public function readStreamExact(string $objectKey)
     {

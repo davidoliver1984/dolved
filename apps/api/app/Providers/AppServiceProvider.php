@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Contracts\Ingestion\ContentCloneVectorGateway;
 use App\Contracts\Ingestion\IngestionEventPublisher;
 use App\Contracts\Platform\OperationalMetricsReader;
 use App\Models\User;
 use App\Observers\UserAccessObserver;
+use App\Services\Ingestion\AiContentCloneVectorGateway;
 use App\Services\Ingestion\SqsIngestionEventPublisher;
 use App\Services\Platform\PrometheusOperationalMetricsReader;
 use App\Support\CanonicalEmail;
@@ -29,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             OperationalMetricsReader::class,
             PrometheusOperationalMetricsReader::class,
+        );
+        $this->app->bind(
+            ContentCloneVectorGateway::class,
+            AiContentCloneVectorGateway::class,
         );
     }
 

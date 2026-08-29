@@ -1,4 +1,6 @@
-from typing import Protocol
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Protocol
 
 from app.vector_store.models import (
     SparseVectorSearchRequest,
@@ -11,6 +13,9 @@ from app.vector_store.models import (
     VectorUpsertRequest,
     VectorUpsertResult,
 )
+
+if TYPE_CHECKING:
+    from app.vector_store.models import VectorCloneReport, VectorCloneRequest
 
 
 class VectorStore(Protocol):
@@ -37,3 +42,5 @@ class VectorStore(Protocol):
     def delete(self, scope: VectorScope) -> None: ...
 
     def remove_vector_space(self, vector_space: VectorSpace) -> None: ...
+
+    def clone_points(self, request: VectorCloneRequest) -> VectorCloneReport: ...

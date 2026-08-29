@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Ingestion;
 
 use App\Enums\DocumentStatus;
+use App\Enums\IngestionAttemptOrigin;
 use App\Enums\IngestionAttemptStatus;
 use App\Exceptions\IngestionAttemptException;
 use App\Models\IngestionEventClaim;
@@ -21,7 +22,14 @@ class IngestionAttemptAuthorizer
         bool $allowFailed = false,
         bool $allowCancelled = false,
         bool $allowDeleting = false,
+        IngestionAttemptOrigin $expectedOrigin = IngestionAttemptOrigin::Ingestion,
     ): void {
+        if ($attempt->attempt_origin !== $expectedOrigin) {
+            throw IngestionAttemptException::invalid(
+                'attempt_origin_mismatch',
+                'The ingestion attempt origin is not authorised for this operation.',
+            );
+        }
         if (
             $attempt->event_id !== $eventId
             || $attempt->workspace_public_id !== $workspaceId

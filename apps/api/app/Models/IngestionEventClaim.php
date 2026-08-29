@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\IngestionAttemptOrigin;
 use App\Enums\IngestionAttemptStatus;
 use Database\Factories\IngestionEventClaimFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use LogicException;
 
 #[Fillable([
@@ -21,6 +23,9 @@ use LogicException;
     'document_public_id',
     'correlation_id',
     'payload_sha256',
+    'attempt_origin',
+    'materialisation_pipeline_fingerprint',
+    'materialisation_pipeline_components',
     'claimed_at',
     'embedding_space_generation_id',
     'sparse_space_generation_id',
@@ -55,8 +60,14 @@ class IngestionEventClaim extends Model
             if ($claim->isDirty([
                 'event_id', 'workspace_id', 'document_id', 'workspace_public_id',
                 'document_public_id', 'correlation_id', 'payload_sha256',
+                'attempt_origin',
             ])) {
                 throw new LogicException('Ingestion attempt identity is immutable.');
+            }
+            foreach (['materialisation_pipeline_fingerprint', 'materialisation_pipeline_components'] as $field) {
+                if ($claim->isDirty($field) && $claim->getRawOriginal($field) !== null) {
+                    throw new LogicException('Ingestion attempt pipeline identity is immutable once established.');
+                }
             }
             foreach (['embedding_space_generation_id', 'sparse_space_generation_id', 'workspace_corpus_generation_id'] as $field) {
                 if ($claim->isDirty($field) && $claim->getOriginal($field) !== null) {
@@ -74,6 +85,8 @@ class IngestionEventClaim extends Model
         return [
             'claimed_at' => 'immutable_datetime',
             'status' => IngestionAttemptStatus::class,
+            'attempt_origin' => IngestionAttemptOrigin::class,
+            'materialisation_pipeline_components' => 'array',
             'lease_generation' => 'integer',
             'lease_expires_at' => 'immutable_datetime',
             'expected_chunk_count' => 'integer',
@@ -127,5 +140,10 @@ class IngestionEventClaim extends Model
     public function extractionUploadAuthorisations(): HasMany
     {
         return $this->hasMany(DocumentExtractionUploadAuthorisation::class);
+    }
+
+    public function contentCloneOperation(): HasOne
+    {
+        return $this->hasOne(DocumentContentCloneOperation::class, 'target_ingestion_event_claim_id');
     }
 }

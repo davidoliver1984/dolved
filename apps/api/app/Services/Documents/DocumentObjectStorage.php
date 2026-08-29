@@ -189,6 +189,32 @@ class DocumentObjectStorage
         }
     }
 
+    /** @return array{size_bytes: int, sha256: string} */
+    public function copy(Document $source, Document $target): array
+    {
+        try {
+            $disk = $this->filesystems->disk((string) config('documents.storage_disk'));
+            if (! $disk->exists($source->storage_key)) {
+                throw DocumentUploadException::storageUnavailable();
+            }
+            if ($disk->exists($target->storage_key) || ! $disk->copy($source->storage_key, $target->storage_key)) {
+                throw DocumentUploadException::storageUnavailable();
+            }
+        } catch (DocumentUploadException $exception) {
+            throw $exception;
+        } catch (Throwable $exception) {
+            report($exception);
+            throw DocumentUploadException::storageUnavailable();
+        }
+
+        $identity = $this->streamedIdentity($target);
+        if ($identity === null) {
+            throw DocumentUploadException::storageUnavailable();
+        }
+
+        return $identity;
+    }
+
     /**
      * @param  array<string, mixed>  $headers
      * @return array<string, string>

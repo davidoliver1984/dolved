@@ -6,6 +6,7 @@ from uuid import UUID
 from qdrant_client import QdrantClient
 from qdrant_client import models as qdrant_models
 
+from app.sparse.models import SparseVector
 from app.vector_store.errors import (
     VectorSpaceCompatibilityError,
     VectorStoreError,
@@ -15,6 +16,8 @@ from app.vector_store.errors import (
 )
 from app.vector_store.models import (
     SparseVectorSearchRequest,
+    VectorCloneReport,
+    VectorCloneRequest,
     VectorCompletenessReport,
     VectorCompletenessRequest,
     VectorDistance,
@@ -304,6 +307,122 @@ class QdrantVectorStore:
             unexpected_point_ids=tuple(sorted(actual_ids - expected_ids, key=str)),
             payload_mismatch_point_ids=mismatches,
             vector_schema_compatible=(schema_compatible and point_vectors_compatible),
+        )
+
+    def clone_points(self, request: VectorCloneRequest) -> VectorCloneReport:
+        """Copy exact mapped vectors and independently verify the target scope."""
+        self._validate_vector_space_safe(request.vector_space)
+        source: dict[UUID, Any] = {}
+        try:
+            offset: int | str | UUID | None = None
+            while True:
+                records, offset = self._client.scroll(
+                    collection_name=request.vector_space.collection_name,
+                    scroll_filter=self._scope_filter(request.source_scope),
+                    limit=request.batch_size,
+                    offset=offset,
+                    with_payload=list(PAYLOAD_FIELDS + OPTIONAL_PAYLOAD_FIELDS),
+                    with_vectors=[
+                        request.vector_space.vector_name,
+                        *(
+                            [request.vector_space.sparse.vector_name]
+                            if request.vector_space.sparse is not None
+                            else []
+                        ),
+                    ],
+                )
+                for record in records:
+                    source[self._point_id(record.id)] = record
+                if offset is None:
+                    break
+        except Exception as exception:
+            raise VectorStoreUnavailableError(
+                "The source vector scope could not be read for cloning."
+            ) from exception
+
+        expected_source_ids = {mapping.source_point_id for mapping in request.mappings}
+        if set(source) != expected_source_ids:
+            raise VectorStoreMalformedResponseError(
+                "The source vector scope does not match the authorised clone manifest."
+            )
+        points: list[VectorPoint] = []
+        for mapping in request.mappings:
+            record = source[mapping.source_point_id]
+            vectors = record.vector
+            if not isinstance(vectors, Mapping):
+                raise VectorStoreMalformedResponseError(
+                    "A source point did not expose named vectors."
+                )
+            dense = vectors.get(request.vector_space.vector_name)
+            if not isinstance(dense, list):
+                raise VectorStoreMalformedResponseError(
+                    "A source point did not expose its dense vector."
+                )
+            sparse_vector = None
+            if request.vector_space.sparse is not None:
+                sparse = vectors.get(request.vector_space.sparse.vector_name)
+                indices = getattr(sparse, "indices", None)
+                values = getattr(sparse, "values", None)
+                if not isinstance(indices, list) or not isinstance(values, list):
+                    raise VectorStoreMalformedResponseError(
+                        "A source point did not expose its sparse vector."
+                    )
+                sparse_vector = SparseVector(
+                    indices=tuple(indices), values=tuple(values)
+                )
+            points.append(
+                VectorPoint(
+                    **mapping.target_point.model_dump(),
+                    values=tuple(float(value) for value in dense),
+                    sparse_vector=sparse_vector,
+                )
+            )
+
+        if points:
+            self.upsert(
+                VectorUpsertRequest(
+                    vector_space=request.vector_space,
+                    points=tuple(points),
+                    batch_size=request.batch_size,
+                )
+            )
+        verification = self.verify_completeness(
+            VectorCompletenessRequest(
+                scope=request.target_scope,
+                expected_points=tuple(
+                    mapping.target_point for mapping in request.mappings
+                ),
+            )
+        )
+        if verification.is_complete:
+            self.publish(request.target_scope)
+            published_scope = request.target_scope.model_copy(
+                update={"publication_status": VectorPublicationStatus.PUBLISHED}
+            )
+            published = self.verify_completeness(
+                VectorCompletenessRequest(
+                    scope=published_scope,
+                    expected_points=tuple(
+                        mapping.target_point.model_copy(
+                            update={
+                                "publication_status": VectorPublicationStatus.PUBLISHED
+                            }
+                        )
+                        for mapping in request.mappings
+                    ),
+                )
+            )
+            return VectorCloneReport(
+                complete=published.is_complete,
+                point_ids=tuple(
+                    mapping.target_point.point_id for mapping in request.mappings
+                ),
+            )
+        return VectorCloneReport(
+            complete=False,
+            point_ids=tuple(
+                mapping.target_point.point_id for mapping in request.mappings
+            ),
         )
 
     def delete(self, scope: VectorScope) -> None:
