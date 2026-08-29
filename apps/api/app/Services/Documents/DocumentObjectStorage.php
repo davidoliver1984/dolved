@@ -101,6 +101,75 @@ class DocumentObjectStorage
         }
     }
 
+    /** @return null|array{size_bytes: int, content_type: string} */
+    public function metadata(Document $document): ?array
+    {
+        try {
+            $disk = $this->filesystems->disk((string) config('documents.storage_disk'));
+
+            if (! $disk->exists($document->storage_key)) {
+                return null;
+            }
+
+            return [
+                'size_bytes' => $disk->size($document->storage_key),
+                'content_type' => $document->media_type,
+            ];
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw DocumentUploadException::storageUnavailable();
+        }
+    }
+
+    /** @return resource */
+    public function readStream(Document $document)
+    {
+        try {
+            $stream = $this->filesystems
+                ->disk((string) config('documents.storage_disk'))
+                ->readStream($document->storage_key);
+
+            if (! is_resource($stream)) {
+                throw DocumentUploadException::storageUnavailable();
+            }
+
+            return $stream;
+        } catch (DocumentUploadException $exception) {
+            throw $exception;
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw DocumentUploadException::storageUnavailable();
+        }
+    }
+
+    /** @return resource */
+    public function readRange(Document $document, int $start)
+    {
+        $stream = $this->readStream($document);
+
+        if ($start === 0) {
+            return $stream;
+        }
+
+        if (@fseek($stream, $start) === 0) {
+            return $stream;
+        }
+
+        $remaining = $start;
+        while ($remaining > 0) {
+            $discarded = fread($stream, min(64 * 1024, $remaining));
+            if ($discarded === false || $discarded === '') {
+                fclose($stream);
+                throw DocumentUploadException::storageUnavailable();
+            }
+            $remaining -= strlen($discarded);
+        }
+
+        return $stream;
+    }
+
     public function delete(Document $document): void
     {
         try {

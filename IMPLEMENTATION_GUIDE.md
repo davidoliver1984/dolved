@@ -14593,6 +14593,18 @@ extracted-text delivery remain deferred to R23-S03d.
 Implement tenant-authorised Range/HEAD-capable source delivery and the bounded
 structured/extracted-text routes.
 
+Completed 2026-08-29: active workspace members can now access an indexed
+document's immutable source only through a reauthorised Laravel proxy. The
+route implements full GET/HEAD parity, the accepted single byte-range grammar,
+typed `416` responses, bounded streaming, deterministic safe content headers,
+attachment-only DOCX behavior and tenant concealment before storage metadata is
+read. No browser presigned URL is issued. The active published extraction
+projection is separately exposed as a bounded cursor-paginated JSON view with
+the required label and layout disclaimer, safe selected element/warning/change
+fields, and document-scoped PostgreSQL full-text search. Delivery telemetry is
+content-free and records only allowlisted public identities, result status,
+sanitised range and byte count.
+
 ## Stage 23.3e — Structured extraction acceptance evidence
 
 Run ADR-0032's provider-free cross-language, tenancy, digest, recovery and

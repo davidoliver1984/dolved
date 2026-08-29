@@ -12,6 +12,7 @@ final class PrivacySafeJsonFormatter implements FormatterInterface
     /** @var list<string> */
     private const SAFE_CONTEXT_FIELDS = [
         'attempt_count',
+        'byte_count',
         'claim_outcome',
         'conversation_id',
         'correlation_id',
@@ -29,6 +30,8 @@ final class PrivacySafeJsonFormatter implements FormatterInterface
         'outbox_marked_published',
         'outcome',
         'request_id',
+        'requested_range',
+        'result_status',
         'retry_delay_seconds',
         'run_id',
         'transport_message_id',

@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R23",
-    "current_session": "R23-S03d",
-    "next_action": "Begin R23-S03d — implement tenant-authorised source and extracted-text delivery.",
-    "completed_through": "R23-S03c",
+    "current_session": "R23-S03e",
+    "next_action": "Begin R23-S03e — complete ADR-0032 provider-free structured extraction acceptance evidence.",
+    "completed_through": "R23-S03d",
     "completed_phase_count": 23,
     "total_phase_count": 30
   },
@@ -4709,7 +4709,7 @@
         {"id": "R23-S03a", "guide_stage": "Stage 23.3a — Structured extraction schema and digests", "title": "Build Structured Extraction Schema", "status": "completed", "objective": "Implement ADR-0032 canonical artifact identities and digests.", "session_mode": "implementation", "depends_on": ["R23-S02a"]},
         {"id": "R23-S03b", "guide_stage": "Stage 23.3b — Upload authorisation and worker acknowledgement", "title": "Authorise Extraction Uploads", "status": "completed", "objective": "Implement upload acknowledgement and orphan recovery.", "session_mode": "implementation", "depends_on": ["R23-S03a"]},
         {"id": "R23-S03c", "guide_stage": "Stage 23.3c — Atomic projection publication", "title": "Publish Extraction Projections", "status": "completed", "objective": "Implement atomic current structured-extraction projection publication.", "session_mode": "implementation", "depends_on": ["R23-S03b"]},
-        {"id": "R23-S03d", "guide_stage": "Stage 23.3d — Source and extracted-text delivery", "title": "Deliver Sources and Extracted Text", "status": "not_started", "objective": "Implement tenant-authorised source and extracted-text delivery.", "session_mode": "implementation", "depends_on": ["R23-S03c"]},
+        {"id": "R23-S03d", "guide_stage": "Stage 23.3d — Source and extracted-text delivery", "title": "Deliver Sources and Extracted Text", "status": "completed", "objective": "Implement tenant-authorised source and extracted-text delivery.", "session_mode": "implementation", "depends_on": ["R23-S03c"]},
         {"id": "R23-S03e", "guide_stage": "Stage 23.3e — Structured extraction acceptance evidence", "title": "Verify Structured Extraction", "status": "not_started", "objective": "Complete ADR-0032 provider-free acceptance evidence.", "session_mode": "verification", "depends_on": ["R23-S03d"]},
         {"id": "R23-S02b", "guide_stage": "Stage 23.2b — Clone contract and orchestration", "title": "Build Clone Orchestration", "status": "not_started", "objective": "Implement ADR-0031 clone compatibility against verified ADR-0032 identity.", "session_mode": "implementation", "depends_on": ["R23-S03e"]},
         {"id": "R23-S02c", "guide_stage": "Stage 23.2c — Family deletion and tombstones", "title": "Build Family Deletion", "status": "not_started", "objective": "Implement deletion and tombstones with the tested no-op ADR-0037 export-hold seam.", "session_mode": "implementation", "depends_on": ["R23-S02b"], "export_boundary": "No ADR-0037 behavior; retain only the tested no-op export-hold seam."},

@@ -24,6 +24,9 @@ final class PrivacySafeJsonFormatterTest extends TestCase
                 'event_name' => 'document.ingestion.claimed.v1',
                 'correlation_id' => 'correlation-1',
                 'document_id' => 'document-1',
+                'result_status' => 206,
+                'requested_range' => 'bytes=10-19',
+                'byte_count' => 10,
                 'prompt' => 'private prompt',
             ],
         ));
@@ -33,6 +36,9 @@ final class PrivacySafeJsonFormatterTest extends TestCase
         self::assertSame('document.ingestion.claimed.v1', $payload['event_name']);
         self::assertSame('correlation-1', $payload['correlation_id']);
         self::assertSame('document-1', $payload['document_id']);
+        self::assertSame(206, $payload['result_status']);
+        self::assertSame('bytes=10-19', $payload['requested_range']);
+        self::assertSame(10, $payload['byte_count']);
         self::assertArrayNotHasKey('message', $payload);
         self::assertArrayNotHasKey('prompt', $payload);
         self::assertStringNotContainsString('sensitive', $encoded);
