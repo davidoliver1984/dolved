@@ -11,6 +11,7 @@ use App\Models\DocumentFamily;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Support\Documents\CreateApplicabilitySnapshot;
+use App\Support\Documents\DeriveDocumentFamilyTitle;
 use App\Support\Documents\SafeDocumentSourceUrl;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -67,7 +68,7 @@ class CreateDocument
 
         return DB::transaction(function () use ($workspace, $creator, $sourceFilename, $mediaType, $sizeBytes, $extension, $publisherLabel, $sourceUrl): Document {
             $family = new DocumentFamily([
-                'name' => $sourceFilename,
+                'name' => DeriveDocumentFamilyTitle::fromSourceFilename($sourceFilename),
                 'owner_user_id' => $creator->id,
             ]);
             $family->public_id = (string) Str::uuid();

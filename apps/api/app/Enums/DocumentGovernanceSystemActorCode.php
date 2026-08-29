@@ -6,6 +6,7 @@ namespace App\Enums;
 
 enum DocumentGovernanceSystemActorCode: string
 {
+    case TitleBackfill = 'title_backfill';
     case OwnerBackfillLineageRoot = 'owner_backfill_lineage_root';
     case OwnerBackfillWorkspaceCreatorFallback = 'owner_backfill_workspace_creator_fallback';
     case ChecksumBackfill = 'checksum_backfill';

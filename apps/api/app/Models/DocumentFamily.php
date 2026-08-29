@@ -46,6 +46,12 @@ class DocumentFamily extends Model
         return $this->hasMany(Document::class)->orderBy('effective_from');
     }
 
+    /** @return HasMany<DocumentGovernanceAuditEvent, $this> */
+    public function governanceAuditEvents(): HasMany
+    {
+        return $this->hasMany(DocumentGovernanceAuditEvent::class);
+    }
+
     /** @return BelongsTo<DocumentCategory, $this> */
     public function category(): BelongsTo
     {

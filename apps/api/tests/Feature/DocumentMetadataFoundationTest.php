@@ -121,6 +121,7 @@ class DocumentMetadataFoundationTest extends TestCase
         $document->refresh()->load('family.owner');
 
         $this->assertTrue($document->family->owner->is($creator));
+        $this->assertSame('Medication policy', $document->family->name);
         $this->assertSame(ChecksumVerificationStatus::Pending, $document->checksum_verification_status);
     }
 
