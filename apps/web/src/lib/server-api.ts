@@ -4,8 +4,10 @@ import type {
   AdminDocument,
   DocumentPage,
   DocumentFamilyPage,
+  DocumentMetadata,
   DocumentVersionHistory,
   PlatformOperationsSnapshot,
+  SavedView,
   User,
   Workspace,
   WorkspaceAdministrationPage,
@@ -208,6 +210,28 @@ export async function initialDocumentLibrary(
   );
   if (!response.ok) throw new Error("The knowledge library is unavailable.");
   return (await response.json()) as DocumentFamilyPage;
+}
+
+export async function initialSavedViews(workspacePublicId: string): Promise<SavedView[]> {
+  const response = await serverFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/saved-views`);
+  if (!response.ok) throw new Error("Saved views are unavailable.");
+  const payload = (await response.json()) as { data: SavedView[] };
+  return payload.data;
+}
+
+export async function initialSavedView(workspacePublicId: string, savedViewPublicId: string): Promise<SavedView | null> {
+  const response = await serverFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/saved-views/${encodeURIComponent(savedViewPublicId)}`);
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error("The saved view is unavailable.");
+  const payload = (await response.json()) as { data: SavedView };
+  return payload.data;
+}
+
+export async function initialDocumentMetadata(workspacePublicId: string): Promise<DocumentMetadata> {
+  const response = await serverFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-metadata`);
+  if (!response.ok) throw new Error("Library settings are unavailable.");
+  const payload = (await response.json()) as { data: DocumentMetadata };
+  return payload.data;
 }
 
 export async function initialWorkspaceDocument(

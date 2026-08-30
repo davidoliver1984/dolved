@@ -2,12 +2,15 @@ import { notFound } from "next/navigation";
 import { DocumentAdministration } from "@/components/DocumentAdministration";
 import { DocumentLibraryTable } from "@/components/DocumentLibraryTable";
 import { DocumentUploadPanel } from "@/components/DocumentUploadPanel";
+import { SavedViewsPanel } from "@/components/SavedViewsPanel";
 import {
   initialWorkspaceDocuments,
   initialDocumentLibrary,
+  initialSavedViews,
   userWorkspace,
   workspaceUploadConfiguration,
 } from "@/lib/server-api";
+import { savedViewDefinitionFromQuery } from "@/lib/saved-view";
 
 export default async function DocumentsPage({ params, searchParams }: Readonly<{ params: Promise<{ workspacePublicId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }>) {
   const { workspacePublicId } = await params;
@@ -16,11 +19,12 @@ export default async function DocumentsPage({ params, searchParams }: Readonly<{
   if (!workspace) notFound();
   const libraryQuery = new URLSearchParams();
   for (const [key, value] of Object.entries(query)) { const item = Array.isArray(value) ? value[0] : value; if (item) libraryQuery.set(key, item); }
-  const [configuration, documents, library] = await Promise.all([
+  const [configuration, documents, library, savedViews] = await Promise.all([
     workspaceUploadConfiguration(workspacePublicId),
     initialWorkspaceDocuments(workspacePublicId),
     initialDocumentLibrary(workspacePublicId, libraryQuery.toString()),
+    initialSavedViews(workspacePublicId),
   ]);
   if (!configuration) notFound();
-  return <div className="grid gap-6"><header><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Documents</p><h1 className="mt-2 text-3xl font-semibold">Knowledge sources</h1><p className="mt-2 text-foreground-muted">Upload, review and manage the sources available to {workspace.name}.</p></header><DocumentUploadPanel configuration={configuration} workspacePublicId={workspacePublicId} /><DocumentLibraryTable page={library} query={query} workspacePublicId={workspacePublicId} /><details><summary className="cursor-pointer text-sm font-semibold text-foreground-muted">Technical ingestion controls</summary><div className="mt-4"><DocumentAdministration initialPage={documents} workspacePublicId={workspacePublicId} /></div></details></div>;
+  return <div className="grid gap-6"><header><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Documents</p><h1 className="mt-2 text-3xl font-semibold">Knowledge sources</h1><p className="mt-2 text-foreground-muted">Upload, review and manage the sources available to {workspace.name}.</p></header><DocumentUploadPanel configuration={configuration} workspacePublicId={workspacePublicId} /><SavedViewsPanel currentDefinition={savedViewDefinitionFromQuery(query)} initialViews={savedViews} workspacePublicId={workspacePublicId} /><DocumentLibraryTable page={library} query={query} workspacePublicId={workspacePublicId} /><details><summary className="cursor-pointer text-sm font-semibold text-foreground-muted">Technical ingestion controls</summary><div className="mt-4"><DocumentAdministration initialPage={documents} workspacePublicId={workspacePublicId} /></div></details></div>;
 }

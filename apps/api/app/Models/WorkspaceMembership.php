@@ -21,6 +21,12 @@ class WorkspaceMembership extends Model
         static::creating(function (WorkspaceMembership $membership): void {
             $membership->public_id ??= (string) Str::uuid();
         });
+        static::deleting(function (WorkspaceMembership $membership): void {
+            SavedView::query()
+                ->where('workspace_id', $membership->workspace_id)
+                ->where('user_id', $membership->user_id)
+                ->delete();
+        });
     }
 
     /**

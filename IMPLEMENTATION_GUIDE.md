@@ -14840,6 +14840,23 @@ assertions, 30 web test files / 129 tests, Pint, ESLint, TypeScript and
 
 ## Stage 24.6 — Saved views and category settings
 
+Completed on 2026-08-30. Laravel now owns the versioned, user-scoped
+`SavedView` domain with canonical bounded definitions, normalized per-user
+names, owner-only rename/delete, tenant-safe concealment, membership-end
+cleanup and safe mutation audits. Saved definitions reopen against current
+Library data and visibly discard unsupported legacy fields rather than
+silently reinterpreting them.
+
+The route-backed Categories surface supports administrator-owned create,
+rename and archive operations. Archived categories remain visible for truthful
+history while staying out of new-assignment controls. David approved the live
+Saved views and Categories presentation on 2026-08-30.
+
+Provider-free verification passed with 20 focused Laravel tests / 133
+assertions, 33 web test files / 134 tests, Pint, ESLint, TypeScript, JSON and
+`git diff --check`. Evidence is recorded in
+`docs/journal/2026-08-30-r24-s06-saved-views-category-settings.md`.
+
 ## Stage 24.7 — Small-corpus onboarding and searchable-count projection
 
 ## Stage 24.8 — Small-corpus Playwright readiness journey

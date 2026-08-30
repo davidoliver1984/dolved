@@ -191,6 +191,42 @@ export type DocumentPage = {
   };
 };
 
+export type DocumentCategory = {
+  public_id: string;
+  name: string;
+  status: "active" | "archived";
+};
+
+export type DocumentMetadata = {
+  categories: DocumentCategory[];
+  tags: Array<{ public_id: string; name: string }>;
+};
+
+export type SavedViewDefinition = {
+  search?: string;
+  filters?: {
+    category?: string | null;
+    applicability?: string | null;
+    owner?: string | null;
+    review_status?: "unassigned" | "overdue" | "due_soon";
+    status?: "uploading" | "uploaded" | "queued" | "processing" | "indexed" | "failed";
+  };
+  sort?: "last_meaningful_update" | "title" | "review_due_date";
+  direction?: "asc" | "desc";
+  page_size?: 25 | 50 | 100;
+  historical?: boolean;
+};
+
+export type SavedView = {
+  public_id: string;
+  name: string;
+  definition_schema_version: number;
+  definition: SavedViewDefinition;
+  notices: string[];
+  created_at: string | null;
+  updated_at: string | null;
+};
+
 export type DocumentFamilyLibraryRow = {
   public_id: string;
   name: string;
@@ -316,6 +352,42 @@ export function updateDocumentFamilyTags(workspacePublicId: string, familyPublic
     method: "PUT",
     body: JSON.stringify({ tag_public_ids: tagPublicIds }),
   });
+}
+
+export function createSavedView(workspacePublicId: string, name: string, definition: SavedViewDefinition): Promise<{ data: SavedView }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/saved-views`, {
+    method: "POST",
+    body: JSON.stringify({ name, definition }),
+  });
+}
+
+export function renameSavedView(workspacePublicId: string, savedViewPublicId: string, name: string): Promise<{ data: SavedView }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/saved-views/${encodeURIComponent(savedViewPublicId)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ name }),
+  });
+}
+
+export function deleteSavedView(workspacePublicId: string, savedViewPublicId: string): Promise<unknown> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/saved-views/${encodeURIComponent(savedViewPublicId)}`, { method: "DELETE" });
+}
+
+export function createDocumentCategory(workspacePublicId: string, name: string): Promise<{ data: DocumentCategory }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-categories`, {
+    method: "POST",
+    body: JSON.stringify({ name }),
+  });
+}
+
+export function renameDocumentCategory(workspacePublicId: string, categoryPublicId: string, name: string): Promise<{ data: DocumentCategory }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-categories/${encodeURIComponent(categoryPublicId)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ name }),
+  });
+}
+
+export function archiveDocumentCategory(workspacePublicId: string, categoryPublicId: string): Promise<{ data: DocumentCategory }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-categories/${encodeURIComponent(categoryPublicId)}/archive`, { method: "PATCH" });
 }
 
 export function workspaceDocuments(

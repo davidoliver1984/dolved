@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Actions\Documents\ArchiveDocumentCategory;
 use App\Actions\Documents\CreateDocumentCategory;
 use App\Actions\Documents\CreateDocumentTag;
+use App\Actions\Documents\RenameDocumentCategory;
 use App\Actions\Documents\RenameDocumentFamily;
 use App\Actions\Documents\SyncDocumentFamilyTags;
 use App\Actions\Documents\UpdateDocumentFamilyMetadata;
@@ -155,7 +156,18 @@ final class DocumentMetadataController extends Controller
         $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
         Gate::authorize('manageDocumentMetadata', $workspace);
 
-        return new DocumentCategoryResource($create->handle($workspace, $request->string('name')->value()));
+        return new DocumentCategoryResource($create->handle($workspace, $user, $request->string('name')->value()));
+    }
+
+    public function renameCategory(StoreDocumentTaxonomyRequest $request, string $workspacePublicId, string $categoryPublicId, FindWorkspaceForUser $workspaces, RenameDocumentCategory $rename): DocumentCategoryResource
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
+        Gate::authorize('manageDocumentMetadata', $workspace);
+        $category = $workspace->documentCategories()->where('public_id', $categoryPublicId)->firstOrFail();
+
+        return new DocumentCategoryResource($rename->handle($category, $user, $request->string('name')->value()));
     }
 
     public function archiveCategory(Request $request, string $workspacePublicId, string $categoryPublicId, FindWorkspaceForUser $workspaces, ArchiveDocumentCategory $archive): DocumentCategoryResource
@@ -166,7 +178,7 @@ final class DocumentMetadataController extends Controller
         Gate::authorize('manageDocumentMetadata', $workspace);
         $category = $workspace->documentCategories()->where('public_id', $categoryPublicId)->firstOrFail();
 
-        return new DocumentCategoryResource($archive->handle($category));
+        return new DocumentCategoryResource($archive->handle($category, $user));
     }
 
     public function storeTag(StoreDocumentTagRequest $request, string $workspacePublicId, FindWorkspaceForUser $workspaces, CreateDocumentTag $create): DocumentTagResource

@@ -190,6 +190,10 @@ final class DocumentMetadataApiTest extends TestCase
             ->assertCreated()
             ->json('data.public_id');
         $this->actingAs($owner)
+            ->patchJson("/api/workspaces/{$workspace->public_id}/document-categories/{$categoryId}", ['name' => 'Clinical policies'])
+            ->assertOk()
+            ->assertJsonPath('data.name', 'Clinical policies');
+        $this->actingAs($owner)
             ->patchJson("/api/workspaces/{$workspace->public_id}/document-categories/{$categoryId}/archive")
             ->assertOk()
             ->assertJsonPath('data.status', DocumentCategoryStatus::Archived->value);
@@ -200,9 +204,14 @@ final class DocumentMetadataApiTest extends TestCase
 
         $this->assertDatabaseHas('document_categories', [
             'workspace_id' => $workspace->id,
-            'normalised_name' => 'policies',
+            'normalised_name' => 'clinical policies',
             'status' => 'archived',
         ]);
+        $this->assertDatabaseHas('library_settings_audit_events', [
+            'target_public_id' => $categoryId,
+            'action' => 'document_category_renamed',
+        ]);
+        $this->assertDatabaseCount('library_settings_audit_events', 3);
     }
 
     /** @return array{User, Workspace} */
