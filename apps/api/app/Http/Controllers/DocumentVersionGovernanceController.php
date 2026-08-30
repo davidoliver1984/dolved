@@ -10,6 +10,8 @@ use App\Actions\Documents\ExecuteApplicabilityOnlySuccessorCommand;
 use App\Actions\Documents\ExecuteDocumentGovernanceCommand;
 use App\Actions\Documents\RescheduleDocumentVersion;
 use App\Actions\Documents\WithdrawDocumentVersion;
+use App\Enums\DocumentGovernanceStatus;
+use App\Enums\DocumentStatus;
 use App\Exceptions\DocumentGovernanceException;
 use App\Exceptions\DocumentGovernanceIdempotencyConflict;
 use App\Http\Requests\CorrectDocumentGovernanceTimestampsRequest;
@@ -23,6 +25,7 @@ use App\Models\User;
 use App\Queries\Documents\FindDocumentFamilyForWorkspace;
 use App\Queries\Documents\FindDocumentForWorkspace;
 use App\Queries\Workspaces\FindWorkspaceForUser;
+use App\Support\Documents\DocumentAuthorityTimeline;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,6 +40,7 @@ final class DocumentVersionGovernanceController extends Controller
         string $familyPublicId,
         FindWorkspaceForUser $workspaces,
         FindDocumentFamilyForWorkspace $families,
+        DocumentAuthorityTimeline $timeline,
     ): JsonResponse {
         /** @var User $user */
         $user = $request->user();
@@ -44,11 +48,40 @@ final class DocumentVersionGovernanceController extends Controller
         Gate::authorize('viewDocumentMetadata', $workspace);
         $family = $families->handle($workspace, $familyPublicId);
         $versions = $family->documents()
-            ->with(['family', 'predecessor', 'applicabilitySnapshot.locations'])
+            ->with(['family', 'predecessor', 'applicabilitySnapshot.locations', 'activeExtractionProjectionGeneration'])
             ->orderBy('id')
             ->get();
 
-        return response()->json(['data' => DocumentVersionResource::collection($versions)->resolve($request)]);
+        $current = $timeline->resolve($family, now());
+        $canManage = Gate::allows('manageDocumentGovernance', $workspace);
+        $canCorrect = Gate::allows('correctDocumentGovernance', $workspace);
+        $versions->each(function (Document $version) use ($canCorrect, $canManage, $current, $timeline): void {
+            $authorityStart = $timeline->authorityStart($version);
+            $version->setAttribute('is_current_authority', $current?->is($version) ?? false);
+            $version->setAttribute('capabilities', [
+                'approve' => $canManage && $version->governance_status === DocumentGovernanceStatus::Draft,
+                'withdraw' => $canManage && $version->governance_status === DocumentGovernanceStatus::Approved,
+                'reschedule' => $canManage
+                    && $version->governance_status === DocumentGovernanceStatus::Approved
+                    && $authorityStart?->isFuture() === true,
+                'create_applicability_successor' => $canManage && $version->status === DocumentStatus::Indexed,
+                'correct_timestamps' => $canCorrect,
+            ]);
+        });
+
+        return response()->json([
+            'data' => DocumentVersionResource::collection($versions)->resolve($request),
+            'meta' => [
+                'current_version_public_id' => $current?->public_id,
+                'locations' => $workspace->organisationalLocations()
+                    ->orderBy('name')
+                    ->get(['public_id', 'name'])
+                    ->map(fn ($location): array => [
+                        'public_id' => $location->public_id,
+                        'name' => $location->name,
+                    ])->values()->all(),
+            ],
+        ]);
     }
 
     public function approve(DocumentGovernanceCommandRequest $request, string $workspacePublicId, string $documentPublicId, FindWorkspaceForUser $workspaces, FindDocumentForWorkspace $documents, ExecuteDocumentGovernanceCommand $commands, ApproveDocumentVersion $approve): JsonResponse

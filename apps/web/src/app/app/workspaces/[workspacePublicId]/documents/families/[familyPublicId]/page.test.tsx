@@ -1,17 +1,18 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { familyMetadataMock, notFoundMock, userWorkspaceMock } = vi.hoisted(() => ({
-  familyMetadataMock: vi.fn(),
+const { familyDetailMock, notFoundMock, refreshMock, userWorkspaceMock } = vi.hoisted(() => ({
+  familyDetailMock: vi.fn(),
   notFoundMock: vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
   }),
+  refreshMock: vi.fn(),
   userWorkspaceMock: vi.fn(),
 }));
 
-vi.mock("next/navigation", () => ({ notFound: notFoundMock }));
+vi.mock("next/navigation", () => ({ notFound: notFoundMock, useRouter: () => ({ refresh: refreshMock }) }));
 vi.mock("@/lib/server-api", () => ({
-  initialDocumentFamilyMetadata: familyMetadataMock,
+  initialDocumentFamilyDetail: familyDetailMock,
   userWorkspace: userWorkspaceMock,
 }));
 
@@ -26,11 +27,30 @@ describe("document family route scaffold", () => {
       slug: "alderbridge",
       role: "owner",
     });
-    familyMetadataMock.mockResolvedValue({
-      public_id: "family-1",
-      name: "Medication procedure",
-      description: null,
-      review_due_date: null,
+    familyDetailMock.mockResolvedValue({
+      family: {
+        public_id: "family-1",
+        name: "Medication procedure",
+        description: "How omitted doses are managed.",
+        review_due_date: "2027-01-01",
+        category: { public_id: "category-1", name: "Medication", status: "active" },
+        owner: { public_id: "user-1", name: "David Oliver" },
+        tags: [{ public_id: "tag-1", name: "Safety" }],
+        capabilities: { edit: false },
+        edit_options: null,
+      },
+      history: {
+        data: [{
+          public_id: "document-1", family_public_id: "family-1", source_filename: "medication.pdf",
+          publisher_label: "Alderbridge", source_url: null, media_type: "application/pdf", size_bytes: 1024,
+          status: "indexed", governance_status: "approved", predecessor_public_id: null,
+          effective_from: "2026-01-01T00:00:00Z", approved_at: "2026-01-02T00:00:00Z", withdrawn_at: null,
+          is_current_authority: true, extraction_warning_count: 0,
+          applicability: { scope: "universal", locations: [] },
+          capabilities: { approve: false, withdraw: false, reschedule: false, create_applicability_successor: false, correct_timestamps: false },
+        }],
+        meta: { current_version_public_id: "document-1", locations: [] },
+      },
     });
   });
 
@@ -45,14 +65,16 @@ describe("document family route scaffold", () => {
     );
 
     expect(screen.getByText("Medication procedure")).not.toBeNull();
-    expect(screen.getByRole("heading", { level: 1, name: "Family details" })).not.toBeNull();
-    expect(familyMetadataMock).toHaveBeenCalledWith("workspace-1", "family-1");
+    expect(screen.getByRole("heading", { level: 1, name: "Medication procedure" })).not.toBeNull();
+    expect(screen.getByText("Current authority")).not.toBeNull();
+    expect(screen.getByText("Version 1")).not.toBeNull();
+    expect(familyDetailMock).toHaveBeenCalledWith("workspace-1", "family-1");
   });
 
   it.each(["missing", "deleted", "cross-workspace"])(
     "conceals a %s family identifier",
     async () => {
-      familyMetadataMock.mockResolvedValue(null);
+      familyDetailMock.mockResolvedValue(null);
 
       await expect(
         DocumentFamilyPage({

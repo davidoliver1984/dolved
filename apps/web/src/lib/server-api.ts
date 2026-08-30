@@ -4,6 +4,7 @@ import type {
   AdminDocument,
   DocumentPage,
   DocumentFamilyPage,
+  DocumentVersionHistory,
   PlatformOperationsSnapshot,
   User,
   Workspace,
@@ -24,6 +25,20 @@ export type DocumentFamilyMetadata = {
   name: string;
   description: string | null;
   review_due_date: string | null;
+  category: { public_id: string; name: string; status: string } | null;
+  owner: { public_id: string; name: string } | null;
+  tags: Array<{ public_id: string; name: string }>;
+  capabilities: { edit: boolean };
+  edit_options: null | {
+    categories: Array<{ public_id: string; name: string }>;
+    tags: Array<{ public_id: string; name: string }>;
+    owners: Array<{ public_id: string; name: string }>;
+  };
+};
+
+export type DocumentFamilyDetail = {
+  family: DocumentFamilyMetadata;
+  history: DocumentVersionHistory;
 };
 
 async function serverFetch(path: string): Promise<Response> {
@@ -203,6 +218,24 @@ export async function initialDocumentFamilyMetadata(
   if (!response.ok) throw new Error("The document family is unavailable.");
   const payload = (await response.json()) as { data: DocumentFamilyMetadata };
   return payload.data;
+}
+
+export async function initialDocumentFamilyDetail(
+  workspacePublicId: string,
+  familyPublicId: string,
+): Promise<DocumentFamilyDetail | null> {
+  const base = `/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-families/${encodeURIComponent(familyPublicId)}`;
+  const [familyResponse, historyResponse] = await Promise.all([
+    serverFetch(`${base}/metadata`),
+    serverFetch(`${base}/versions`),
+  ]);
+  if (familyResponse.status === 404 || historyResponse.status === 404) return null;
+  if (!familyResponse.ok || !historyResponse.ok) {
+    throw new Error("The document family is unavailable.");
+  }
+  const familyPayload = (await familyResponse.json()) as { data: DocumentFamilyMetadata };
+  const history = (await historyResponse.json()) as DocumentVersionHistory;
+  return { family: familyPayload.data, history };
 }
 
 export async function initialConversation(

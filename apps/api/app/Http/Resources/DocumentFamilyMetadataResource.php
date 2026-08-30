@@ -23,6 +23,8 @@ final class DocumentFamilyMetadataResource extends JsonResource
                 'name' => $this->owner->name,
             ],
             'tags' => DocumentTagResource::collection($this->whenLoaded('tags')),
+            'capabilities' => $this->getAttribute('capabilities') ?? ['edit' => false],
+            'edit_options' => $this->getAttribute('edit_options'),
         ];
     }
 }

@@ -52,9 +52,33 @@ final class DocumentMetadataController extends Controller
         $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
         Gate::authorize('viewDocumentMetadata', $workspace);
 
-        return new DocumentFamilyMetadataResource(
-            $families->handle($workspace, $familyPublicId)->load(['category', 'owner', 'tags']),
-        );
+        $family = $families->handle($workspace, $familyPublicId)->load(['category', 'owner', 'tags']);
+        $canEdit = Gate::allows('manageDocumentMetadata', $workspace);
+        $family->setAttribute('capabilities', ['edit' => $canEdit]);
+        $family->setAttribute('edit_options', $canEdit ? [
+            'categories' => $workspace->documentCategories()
+                ->where('status', DocumentCategoryStatus::Active->value)
+                ->orderBy('normalised_name')
+                ->get(['public_id', 'name'])
+                ->map(fn ($category): array => ['public_id' => $category->public_id, 'name' => $category->name])
+                ->values()->all(),
+            'tags' => $workspace->documentTags()
+                ->orderBy('normalised_name')
+                ->get(['public_id', 'name'])
+                ->map(fn ($tag): array => ['public_id' => $tag->public_id, 'name' => $tag->name])
+                ->values()->all(),
+            'owners' => $workspace->memberships()
+                ->with('user')
+                ->whereHas('user', fn ($query) => $query->whereNull('disabled_at'))
+                ->orderBy('id')
+                ->get()
+                ->map(fn ($membership): array => [
+                    'public_id' => $membership->user->public_id,
+                    'name' => $membership->user->name,
+                ])->values()->all(),
+        ] : null);
+
+        return new DocumentFamilyMetadataResource($family);
     }
 
     public function updateFamily(

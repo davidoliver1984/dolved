@@ -19,6 +19,15 @@ final class DocumentVersionResource extends DocumentResource
             'effective_from' => $this->effective_from,
             'approved_at' => $this->approved_at,
             'withdrawn_at' => $this->withdrawn_at,
+            'is_current_authority' => (bool) $this->getAttribute('is_current_authority'),
+            'extraction_warning_count' => $this->activeExtractionProjectionGeneration?->expected_warning_count ?? 0,
+            'capabilities' => $this->getAttribute('capabilities') ?? [
+                'approve' => false,
+                'withdraw' => false,
+                'reschedule' => false,
+                'create_applicability_successor' => false,
+                'correct_timestamps' => false,
+            ],
             'applicability' => $this->whenLoaded('applicabilitySnapshot', fn (): array => [
                 'scope' => $this->applicabilitySnapshot->scope->value,
                 'locations' => $this->applicabilitySnapshot->locations->map(fn ($location): array => [

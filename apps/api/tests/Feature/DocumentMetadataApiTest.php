@@ -36,6 +36,20 @@ final class DocumentMetadataApiTest extends TestCase
             ->assertJsonPath('data.tags.0.public_id', $tag->public_id);
 
         $this->actingAs($member)
+            ->getJson($this->familyUrl($workspace, $family))
+            ->assertOk()
+            ->assertJsonPath('data.capabilities.edit', false)
+            ->assertJsonPath('data.edit_options', null);
+
+        $this->actingAs($owner)
+            ->getJson($this->familyUrl($workspace, $family))
+            ->assertOk()
+            ->assertJsonPath('data.capabilities.edit', true)
+            ->assertJsonPath('data.edit_options.categories.0.public_id', $category->public_id)
+            ->assertJsonPath('data.edit_options.tags.0.public_id', $tag->public_id)
+            ->assertJsonPath('data.edit_options.owners.0.public_id', $owner->public_id);
+
+        $this->actingAs($member)
             ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($owner))
             ->assertForbidden();
     }

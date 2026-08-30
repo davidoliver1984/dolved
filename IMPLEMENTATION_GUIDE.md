@@ -14770,6 +14770,22 @@ Evidence is recorded in
 
 ## Stage 24.3 — Family detail and version history
 
+Completed 2026-08-30: the family detail route now presents authoritative
+family metadata, the resolved current authority and the complete version
+history from tenant-authorised APIs. Metadata editing and governance actions
+are capability-driven from Laravel policy decisions; the interface does not
+reimplement authority, applicability or governance rules in the browser.
+Version history exposes evidence-processing state, authority intervals and
+explicit current/scheduled/historical presentation without predecessor
+resurrection.
+
+David reviewed the live detail experience, including an approved document that
+resolved as the family's current authority, and approved the visual boundary.
+Provider-free verification passed with the focused Laravel metadata and
+governance suite (12 tests, 87 assertions), 30 web test files / 129 tests,
+Pint, ESLint, TypeScript and `git diff --check`. Evidence is recorded in
+`docs/journal/2026-08-30-r24-s03-family-detail.md`.
+
 ## Stage 24.4 — Source viewing and extracted text
 
 ## Stage 24.5 — Version comparison

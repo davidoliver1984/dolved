@@ -224,8 +224,98 @@ export type DocumentFamilyPage = {
   meta: { current_page: number; last_page: number; per_page: number; total: number };
 };
 
+export type DocumentVersion = {
+  public_id: string;
+  family_public_id: string;
+  source_filename: string;
+  publisher_label: string | null;
+  source_url: string | null;
+  media_type: string;
+  size_bytes: number;
+  status: string;
+  governance_status: "draft" | "approved" | "withdrawn";
+  predecessor_public_id: string | null;
+  effective_from: string;
+  approved_at: string | null;
+  withdrawn_at: string | null;
+  is_current_authority: boolean;
+  extraction_warning_count: number;
+  applicability: {
+    scope: string;
+    locations: Array<{ public_id: string; name: string }>;
+  };
+  capabilities: {
+    approve: boolean;
+    withdraw: boolean;
+    reschedule: boolean;
+    create_applicability_successor: boolean;
+    correct_timestamps: boolean;
+  };
+};
+
+export type DocumentVersionHistory = {
+  data: DocumentVersion[];
+  meta: {
+    current_version_public_id: string | null;
+    locations: Array<{ public_id: string; name: string }>;
+  };
+};
+
 export function workspaceDocumentLibrary(workspacePublicId: string, query = ""): Promise<DocumentFamilyPage> {
   return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-library${query ? `?${query}` : ""}`);
+}
+
+function governancePath(workspacePublicId: string, documentPublicId: string, action: string): string {
+  return `/api/workspaces/${encodeURIComponent(workspacePublicId)}/documents/${encodeURIComponent(documentPublicId)}/governance/${action}`;
+}
+
+export function approveDocumentVersion(workspacePublicId: string, documentPublicId: string): Promise<unknown> {
+  return apiFetch(governancePath(workspacePublicId, documentPublicId, "approve"), {
+    method: "POST",
+    body: JSON.stringify({ idempotency_key: crypto.randomUUID() }),
+  });
+}
+
+export function withdrawDocumentVersion(workspacePublicId: string, documentPublicId: string): Promise<unknown> {
+  return apiFetch(governancePath(workspacePublicId, documentPublicId, "withdraw"), {
+    method: "POST",
+    body: JSON.stringify({ idempotency_key: crypto.randomUUID() }),
+  });
+}
+
+export function rescheduleDocumentVersion(workspacePublicId: string, documentPublicId: string, effectiveFrom: string): Promise<unknown> {
+  return apiFetch(governancePath(workspacePublicId, documentPublicId, "schedule"), {
+    method: "PATCH",
+    body: JSON.stringify({ idempotency_key: crypto.randomUUID(), effective_from: effectiveFrom }),
+  });
+}
+
+export function createApplicabilitySuccessor(workspacePublicId: string, documentPublicId: string, effectiveFrom: string, locationPublicIds: string[]): Promise<unknown> {
+  return apiFetch(governancePath(workspacePublicId, documentPublicId, "applicability-successors"), {
+    method: "POST",
+    body: JSON.stringify({ idempotency_key: crypto.randomUUID(), effective_from: effectiveFrom, location_public_ids: locationPublicIds }),
+  });
+}
+
+export function correctDocumentVersionTimestamps(workspacePublicId: string, documentPublicId: string, approvedAt: string, withdrawnAt: string | null, reason: string): Promise<unknown> {
+  return apiFetch(governancePath(workspacePublicId, documentPublicId, "timestamps"), {
+    method: "PATCH",
+    body: JSON.stringify({ idempotency_key: crypto.randomUUID(), approved_at: approvedAt, withdrawn_at: withdrawnAt, reason }),
+  });
+}
+
+export function updateDocumentFamilyMetadata(workspacePublicId: string, familyPublicId: string, values: { name: string; description: string | null; category_public_id: string | null; owner_public_id: string; review_due_date: string | null }): Promise<unknown> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-families/${encodeURIComponent(familyPublicId)}/metadata`, {
+    method: "PUT",
+    body: JSON.stringify(values),
+  });
+}
+
+export function updateDocumentFamilyTags(workspacePublicId: string, familyPublicId: string, tagPublicIds: string[]): Promise<unknown> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-families/${encodeURIComponent(familyPublicId)}/tags`, {
+    method: "PUT",
+    body: JSON.stringify({ tag_public_ids: tagPublicIds }),
+  });
 }
 
 export function workspaceDocuments(

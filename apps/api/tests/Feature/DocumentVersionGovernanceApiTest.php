@@ -33,7 +33,9 @@ final class DocumentVersionGovernanceApiTest extends TestCase
             ->assertOk()
             ->assertJsonCount(2, 'data')
             ->assertJsonPath('data.0.public_id', $first->public_id)
-            ->assertJsonPath('data.1.predecessor_public_id', $first->public_id);
+            ->assertJsonPath('data.1.predecessor_public_id', $first->public_id)
+            ->assertJsonPath('data.0.capabilities.approve', false)
+            ->assertJsonPath('data.0.is_current_authority', false);
 
         $this->actingAs($member)
             ->postJson($this->commandUrl($workspace, $second, 'approve'), ['idempotency_key' => (string) Str::uuid()])
@@ -46,6 +48,31 @@ final class DocumentVersionGovernanceApiTest extends TestCase
         $this->actingAs($owner)
             ->postJson($this->commandUrl($workspace, Document::factory()->for($otherWorkspace)->create(), 'approve'), ['idempotency_key' => (string) Str::uuid()])
             ->assertNotFound();
+    }
+
+    public function test_history_derives_current_authority_and_exact_state_bound_capabilities(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        [$family, $first, $second] = $this->lineage($workspace, $owner);
+        $first->forceFill([
+            'status' => 'indexed',
+            'governance_status' => DocumentGovernanceStatus::Approved,
+            'approved_at' => CarbonImmutable::parse('2026-01-02'),
+        ])->save();
+        $this->travelTo('2026-03-01');
+
+        $this->actingAs($owner)
+            ->getJson($this->historyUrl($workspace, $family))
+            ->assertOk()
+            ->assertJsonPath('meta.current_version_public_id', $first->public_id)
+            ->assertJsonPath('data.0.is_current_authority', true)
+            ->assertJsonPath('data.0.capabilities.withdraw', true)
+            ->assertJsonPath('data.0.capabilities.create_applicability_successor', true)
+            ->assertJsonPath('data.0.capabilities.approve', false)
+            ->assertJsonPath('data.1.capabilities.approve', true)
+            ->assertJsonPath('data.1.capabilities.withdraw', false);
+
+        $this->travelBack();
     }
 
     public function test_matching_completed_command_replays_and_conflicting_binding_fails_closed(): void
