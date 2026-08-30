@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R24",
-    "current_session": "R24-S09",
-    "next_action": "Begin R24-S09 — build ADR-0033 deleted/history presentation and complete the consolidated Phase 24 visual review.",
-    "completed_through": "R24-S07",
-    "completed_phase_count": 24,
+    "current_phase": "R25",
+    "current_session": "R25-S01",
+    "next_action": "Begin R25-S01 — build the ADR-0034 import domain, schema and staging-privacy boundary.",
+    "completed_through": "R24-GATE",
+    "completed_phase_count": 25,
     "total_phase_count": 30
   },
   "phases": [
@@ -4729,7 +4729,7 @@
       "title": "Knowledge Library Product Interface",
       "guide_start_line": 14585,
       "guide_end_line": 14620,
-      "status": "in_progress",
+      "status": "completed",
       "objective": "Implement ADR-0033's accessible route-backed knowledge-library experience.",
       "accepted_adrs": ["ADR-0033"],
       "visual_review_policy": "Every user-facing session requires direct browser evidence and David's explicit approval before closure.",
@@ -4741,10 +4741,10 @@
         {"id": "R24-S05", "guide_stage": "Stage 24.5 — Version comparison", "title": "Build Version Comparison", "status": "completed", "depends_on": ["R24-S04"], "requires_visual_review": true, "visual_acceptance": "functional_provisional", "completion_evidence": ["Same-family tenant-concealed comparison supports explicit/default predecessor and successor selection, rejects identical versions, and preserves truthful single-version, deleted-side and unavailable-projection states", "Ordered ADR-0032 projection elements are compared through a bounded response without retrieval-chunk reconstruction", "Development-only representative fixture uses the production comparison component without claiming workspace evidence", "Functional checkpoint passed. Current visual treatment is a strong provisional foundation. Final comparison-page visual and end-to-end flow sign-off is deferred to the consolidated S09 review.", "Focused Laravel suite: 9 tests / 68 assertions; web: 30 files / 129 tests; Pint, ESLint, TypeScript and git diff --check passed", "docs/journal/2026-08-30-r24-s05-version-comparison.md"]},
         {"id": "R24-S06", "guide_stage": "Stage 24.6 — Saved views and category settings", "title": "Build Saved Views and Category Settings", "status": "completed", "depends_on": ["R24-S05"], "requires_visual_review": true, "completion_evidence": ["Versioned user-owned SavedView lifecycle rejects unsupported definitions, reopens against live Library data, conceals cross-user/workspace identifiers and removes views when membership ends", "Category settings support role-gated create, audited rename and archive while retaining archived categories truthfully", "Live Library saved-view and category-settings surfaces approved by David on 2026-08-30", "Focused Laravel regression: 20 tests / 133 assertions; web: 33 files / 134 tests; Pint, ESLint, TypeScript, JSON and git diff checks passed", "docs/journal/2026-08-30-r24-s06-saved-views-category-settings.md"]},
         {"id": "R24-S07", "guide_stage": "Stage 24.7 — Small-corpus onboarding and searchable-count projection", "title": "Build Small-Corpus Onboarding", "status": "completed", "depends_on": ["R24-S06"], "requires_visual_review": true, "completion_evidence": ["Truthful workspace readiness API counts distinct searchable document families using the exact shared CURRENT authority definition", "Deterministic starter questions derive only from currently searchable family titles and remain separate from the count-only endpoint", "The workspace presents honest zero/ready copy, real Library and composer actions, five user-facing stages and the complete ten-state readiness model", "Live small-corpus workspace presentation approved by David on 2026-08-30", "Focused Laravel suite: 12 tests / 52 assertions; web: 3 files / 15 tests; Pint, ESLint, TypeScript and git diff --check passed", "docs/journal/2026-08-30-r24-s07-small-corpus-onboarding.md"]},
-        {"id": "R24-S09", "guide_stage": "Stage 24.9 — Deleted/history presentation", "title": "Build Deleted History", "status": "in_progress", "depends_on": ["R24-S07"], "requires_visual_review": true, "acceptance_scope": "Implemented Phase 24 knowledge-library surfaces only; final import-flow acceptance remains mandatory at R25-GATE.", "design_handover": ["Before consolidated visual sign-off, extend the bounded comparison adapter with deterministic section-aware alignment, moved-block classification, change counts and an explicit reliable/partial/unavailable alignment state", "Derive restrained word-level spans client-side only after the backend has aligned modified element pairs; do not infer alignment from equal ordinals", "Preserve formatting-only comparison as explicitly unavailable under ADR-0032 unless a separately reviewed extraction-contract extension retains formatting signals", "Complete the document-friendly side-by-side/inline responsive layout, filters, collapsed unchanged context, change navigation, accessible labels/tooltips, and consolidated button/card/spacing treatment"]}
+        {"id": "R24-S09", "guide_stage": "Stage 24.9 — Deleted/history presentation", "title": "Build Deleted History", "status": "completed", "depends_on": ["R24-S07"], "requires_visual_review": true, "acceptance_scope": "Implemented Phase 24 knowledge-library surfaces only; final import-flow acceptance remains mandatory at R25-GATE.", "completion_evidence": ["Completed tenant-scoped deletion tombstones are presented to owners and administrators with retained operation, actor, timestamp, version-count and audit lineage; ordinary members are excluded", "Comparison alignment is deterministic and section-aware with added, removed, modified and moved classification, reliable/partial/unavailable states and no formatting-only claim", "The document-friendly comparison supports side-by-side and inline modes, filters, collapsed unchanged context, change navigation and restrained word-level marks only after backend alignment", "Representative production-component comparison and deleted-history fixtures approved by David on 2026-08-30", "Focused Laravel: 13 tests / 89 assertions; complete web suite: 36 files / 142 tests; Pint, ESLint, TypeScript and git diff --check passed", "docs/journal/2026-08-30-r24-s09-phase-closure.md"]}
       ],
       "export_boundary": "ADR-0037 export navigation and interchange remain excluded.",
-      "gate": {"id": "R24-GATE", "title": "Knowledge Library Product Interface Acceptance Gate", "status": "not_started", "depends_on": ["R24-S09"], "acceptance_scope": "Independent ADR-0033 library surfaces only; does not assert final ADR-0034 import-flow acceptance.", "completion_evidence": []}
+      "gate": {"id": "R24-GATE", "title": "Knowledge Library Product Interface Acceptance Gate", "status": "completed", "depends_on": ["R24-S09"], "acceptance_scope": "Independent ADR-0033 library surfaces only; does not assert final ADR-0034 import-flow acceptance.", "completion_evidence": ["All independent Phase 24 knowledge-library surfaces passed their mandatory visual checkpoints", "ADR-0033 comparison handover completed with explicit alignment reliability and formatting-only unavailability", "The import-through-grounded-answer journey remains unchanged, unexecuted and mandatory at R25-S07 and R25-GATE", "No legacy direct-upload substitute was introduced", "docs/journal/2026-08-30-r24-s09-phase-closure.md"]}
     },
     {
       "id": "R25",
@@ -4752,11 +4752,11 @@
       "title": "Import Staging and Promotion",
       "guide_start_line": 14622,
       "guide_end_line": 14650,
-      "status": "not_started",
+      "status": "in_progress",
       "objective": "Implement ADR-0034's isolated staging, preflight, matching and atomic promotion lifecycle.",
       "accepted_adrs": ["ADR-0034"],
       "sessions": [
-        {"id": "R25-S01", "guide_stage": "Stage 25.1 — Domain, schema and staging-privacy verification", "title": "Build Import Domain and Staging Privacy", "status": "not_started", "depends_on": ["R24-GATE"]},
+        {"id": "R25-S01", "guide_stage": "Stage 25.1 — Domain, schema and staging-privacy verification", "title": "Build Import Domain and Staging Privacy", "status": "in_progress", "depends_on": ["R24-GATE"]},
         {"id": "R25-S02", "guide_stage": "Stage 25.2 — Preflight contract and lease reconciliation", "title": "Build Import Preflight", "status": "not_started", "depends_on": ["R25-S01"]},
         {"id": "R25-S03", "guide_stage": "Stage 25.3 — Deterministic matching", "title": "Build Import Matching", "status": "not_started", "depends_on": ["R25-S02"]},
         {"id": "R25-S04", "guide_stage": "Stage 25.4 — Promotion state machine", "title": "Build Import Promotion", "status": "not_started", "depends_on": ["R25-S03"]},

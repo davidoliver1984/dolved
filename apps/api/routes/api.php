@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChatStreamController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\DeletedDocumentFamilyController;
 use App\Http\Controllers\DocumentAdministrationController;
 use App\Http\Controllers\DocumentContentController;
 use App\Http\Controllers\DocumentFamilyDeletionController;
@@ -150,6 +151,7 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::match(['GET', 'HEAD'], '/workspaces/{workspacePublicId}/documents/{documentPublicId}/source', [DocumentContentController::class, 'source']);
     Route::get('/workspaces/{workspacePublicId}/documents/{documentPublicId}/extracted-text', [DocumentContentController::class, 'extractedText']);
     Route::get('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/comparison', [DocumentContentController::class, 'comparison']);
+    Route::get('/workspaces/{workspacePublicId}/document-family-tombstones', DeletedDocumentFamilyController::class);
     Route::get('/workspaces/{workspacePublicId}/document-metadata', [DocumentMetadataController::class, 'index']);
     Route::post('/workspaces/{workspacePublicId}/document-categories', [DocumentMetadataController::class, 'storeCategory']);
     Route::patch('/workspaces/{workspacePublicId}/document-categories/{categoryPublicId}', [DocumentMetadataController::class, 'renameCategory']);

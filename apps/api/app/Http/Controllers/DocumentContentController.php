@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Queries\Documents\FindDocumentFamilyForWorkspace;
 use App\Queries\Documents\FindDocumentForWorkspace;
 use App\Queries\Workspaces\FindWorkspaceForUser;
+use App\Services\Documents\AlignDocumentComparison;
 use App\Services\Documents\DocumentObjectStorage;
 use App\Services\Documents\SingleByteRange;
 use App\Services\Documents\UnsatisfiableByteRange;
@@ -28,7 +29,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 final class DocumentContentController extends Controller
 {
-    public function comparison(Request $request, string $workspacePublicId, string $familyPublicId, FindWorkspaceForUser $workspaces, FindDocumentFamilyForWorkspace $families, DocumentAuthorityTimeline $timeline): JsonResponse
+    public function comparison(Request $request, string $workspacePublicId, string $familyPublicId, FindWorkspaceForUser $workspaces, FindDocumentFamilyForWorkspace $families, DocumentAuthorityTimeline $timeline, AlignDocumentComparison $alignment): JsonResponse
     {
         $values = $request->validate(['from' => ['sometimes', 'uuid'], 'to' => ['sometimes', 'uuid']]);
         /** @var User $user */
@@ -63,16 +64,14 @@ final class DocumentContentController extends Controller
         }
 
         $sides = collect(['from' => $from, 'to' => $to])->map(fn (Document $document): array => $this->comparisonSide($document))->all();
-        $left = collect($sides['from']['elements'])->keyBy('ordinal');
-        $right = collect($sides['to']['elements'])->keyBy('ordinal');
-        $differences = $left->keys()->merge($right->keys())->unique()->sort()->map(function ($ordinal) use ($left, $right): array {
-            $before = $left->get($ordinal);
-            $after = $right->get($ordinal);
+        $aligned = $alignment->handle(
+            $sides['from']['elements'],
+            $sides['to']['elements'],
+            $sides['from']['content_available'] && $sides['to']['content_available'],
+            $sides['from']['truncated'] || $sides['to']['truncated'] || $sides['from']['warnings'] !== [] || $sides['to']['warnings'] !== [],
+        );
 
-            return ['ordinal' => $ordinal, 'status' => $before === null ? 'added' : ($after === null ? 'removed' : ($before['kind'] === $after['kind'] && $before['text'] === $after['text'] ? 'unchanged' : 'changed')), 'before' => $before, 'after' => $after];
-        })->values()->all();
-
-        return response()->json(['data' => ['available' => true, 'family' => ['public_id' => $family->public_id, 'name' => $family->name], 'from' => $sides['from'], 'to' => $sides['to'], 'differences' => $differences]]);
+        return response()->json(['data' => array_merge(['available' => true, 'family' => ['public_id' => $family->public_id, 'name' => $family->name], 'from' => $sides['from'], 'to' => $sides['to']], $aligned)]);
     }
 
     public function source(

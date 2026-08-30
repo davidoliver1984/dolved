@@ -73,6 +73,18 @@ describe("AppShell", () => {
 
     expect(screen.queryByRole("link", { name: "Administration" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Platform operations" })).toBeNull();
+    pathnameState.value = "/app/workspaces/workspace-1/documents";
+    cleanup();
+    render(
+      <AppShell
+        canOperatePlatform={false}
+        user={user}
+        workspaces={[{ public_id: "workspace-1", name: "Alderbridge", slug: "alderbridge", role: "member" }]}
+      >
+        <p>Workspace content</p>
+      </AppShell>,
+    );
+    expect(screen.queryByRole("link", { name: "Deleted history" })).toBeNull();
   });
 
   it("marks route-backed administration navigation active", () => {

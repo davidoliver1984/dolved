@@ -57,7 +57,40 @@ export type ExtractedTextPage = {
 
 export type ComparisonElement = { id: string; ordinal: number; kind: string; text: string };
 export type ComparisonSide = { document: { public_id: string; source_filename: string; publisher_label: string | null; source_url: string | null; governance_status: string; effective_from: string | null; approved_at: string | null; withdrawn_at: string | null }; content_available: boolean; truncated: boolean; elements: ComparisonElement[]; warnings: Array<{ code: string | null; message: string | null }> };
-export type DocumentComparison = { available: boolean; reason?: string; family?: { public_id: string; name: string }; from?: ComparisonSide; to?: ComparisonSide; differences?: Array<{ ordinal: number; status: "added" | "removed" | "changed" | "unchanged"; before: ComparisonElement | null; after: ComparisonElement | null }> };
+export type ComparisonStatus = "added" | "removed" | "modified" | "moved" | "unchanged";
+export type DocumentComparison = {
+  available: boolean;
+  reason?: string;
+  family?: { public_id: string; name: string };
+  from?: ComparisonSide;
+  to?: ComparisonSide;
+  alignment_status?: "reliable" | "partial" | "unavailable";
+  alignment_reason?: string | null;
+  formatting_comparison?: "unavailable";
+  formatting_reason?: string;
+  change_counts?: Record<ComparisonStatus, number>;
+  differences?: Array<{
+    id: string;
+    position: number;
+    section: string;
+    status: ComparisonStatus;
+    before: ComparisonElement | null;
+    after: ComparisonElement | null;
+  }>;
+};
+export type DeletedDocumentFamily = {
+  family: { public_id: string; name: string };
+  operation_public_id: string;
+  deleted_at: string;
+  reason: string | null;
+  audit_reference: string | null;
+  requested_by: { public_id: string; name: string } | null;
+  versions_removed: number;
+};
+export type DeletedDocumentFamilyPage = {
+  data: DeletedDocumentFamily[];
+  meta: { current_page: number; last_page: number; per_page: number; total: number };
+};
 export type KnowledgeReadiness = { searchable_document_count: number };
 export type StarterQuestion = { family_public_id: string; question: string };
 
@@ -277,6 +310,17 @@ export async function initialDocumentComparison(workspacePublicId: string, famil
   if (!response.ok) throw new Error("The version comparison is unavailable.");
   const payload = (await response.json()) as { data: DocumentComparison };
   return payload.data;
+}
+
+export async function initialDeletedDocumentFamilies(
+  workspacePublicId: string,
+  page = 1,
+): Promise<DeletedDocumentFamilyPage> {
+  const response = await serverFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-family-tombstones?page=${page}`,
+  );
+  if (!response.ok) throw new Error("Deleted document history is unavailable.");
+  return (await response.json()) as DeletedDocumentFamilyPage;
 }
 
 export async function initialDocumentFamilyMetadata(

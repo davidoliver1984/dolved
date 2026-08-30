@@ -48,6 +48,11 @@ final class DocumentFamilyDeletionOperation extends Model
         return $this->belongsTo(Workspace::class);
     }
 
+    public function requestedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requested_by_user_id');
+    }
+
     public function children(): HasMany
     {
         return $this->hasMany(DocumentDeletionOperation::class);

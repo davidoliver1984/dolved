@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 24 of 30 (Knowledge Library Product Interface) |
+| Project status | In Progress — Phase 25 of 30 (Import Staging and Promotion) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -1038,7 +1038,8 @@ before closure. Export UI remains reserved for ADR-0037.
 A reviewed, accessible knowledge-library interface built on authoritative
 family, version and extraction data. This phase gate accepts the implemented
 library surfaces; final import-flow acceptance remains at the mandatory Phase
-25 gate.
+25 gate. Completed on 2026-08-30 with the deferred ADR-0033 journey retained
+unchanged as a binding Phase 25 acceptance requirement.
 
 ---
 

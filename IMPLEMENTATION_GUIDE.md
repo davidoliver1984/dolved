@@ -14891,16 +14891,34 @@ journey is a mandatory Stage 25.7 and Phase 25 gate requirement.
 
 ## Stage 24.9 — Deleted/history presentation
 
-This independent stage may proceed after Stage 24.7 because ADR-0031's
-family-deletion tombstone data already exists. Its visual checkpoint accepts
+Completed on 2026-08-30. A tenant-scoped owner/administrator endpoint now
+presents only completed ADR-0031 family-deletion tombstones with the retained
+operation identity, deletion time, requester, version count and governance
+audit reference. A missing deletion reason is rendered truthfully rather than
+invented. Ordinary members cannot discover the route or navigation item, and
+cross-workspace access remains concealed.
+
+The retained Stage 24.5 handover was completed in the same boundary. The
+bounded comparison adapter now performs deterministic section-aware alignment,
+classifies added, removed, modified and moved extracted elements, counts each
+class and reports reliable, partial or unavailable alignment explicitly. The
+web layer derives restrained word-level marks only for backend-aligned modified
+pairs. It provides document-friendly side-by-side and inline modes, filters,
+collapsed unchanged context and change navigation. Formatting-only comparison
+remains explicitly unavailable because ADR-0032 does not retain those signals.
+
+David approved the representative production-component fixtures for both
+comparison and deleted history on 2026-08-30. This visual checkpoint accepts
 the implemented Phase 24 knowledge-library surfaces only; it does not claim
 acceptance of Phase 25's future import, staging, matching, review, recovery or
-promotion experience.
+promotion experience. The unchanged import-through-grounded-answer journey
+remains mandatory at Stage 25.7. Export navigation remains reserved and absent
+until ADR-0037 is accepted.
 
-The remaining Phase 24 stages implement ADR-0033's independent contracts in
-the corrected dependency order above. The reallocated journey remains
-mandatory at Stage 25.7. Export navigation remains reserved and absent until
-ADR-0037 is accepted.
+Provider-free verification passed with 13 focused Laravel tests / 89
+assertions, the complete 36-file / 142-test web suite, Pint, ESLint, TypeScript
+and `git diff --check`. Evidence is recorded in
+`docs/journal/2026-08-30-r24-s09-phase-closure.md`.
 
 ---
 
