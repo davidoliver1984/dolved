@@ -1,50 +1,26 @@
-import { FileText } from "lucide-react";
+import { Download, FileSearch } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { formatDateTime } from "@/lib/date";
+import { Button } from "@/components/ui/button";
 import { initialWorkspaceDocument, userWorkspace } from "@/lib/server-api";
 
 function bytes(value: number): string {
   if (value < 1024) return `${value} B`;
   if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
-  return `${(value / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(value / 1024 / 1024).toFixed(1)} MB`;
 }
 
 export default async function DocumentSourcePage({ params }: Readonly<{ params: Promise<{ documentPublicId: string; workspacePublicId: string }> }>) {
   const { documentPublicId, workspacePublicId } = await params;
-  const workspace = await userWorkspace(workspacePublicId);
-  if (!workspace) notFound();
-  const document = await initialWorkspaceDocument(workspacePublicId, documentPublicId);
-  if (!document) notFound();
+  const [workspace, document] = await Promise.all([userWorkspace(workspacePublicId), initialWorkspaceDocument(workspacePublicId, documentPublicId)]);
+  if (!workspace || !document || document.status !== "indexed") notFound();
+  const contentPath = `/app/workspaces/${workspacePublicId}/documents/${documentPublicId}/content`;
+  const inline = ["application/pdf", "text/plain", "text/markdown"].includes(document.media_type);
 
   return (
-    <div className="grid max-w-3xl gap-6">
-      <header>
-        <p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Document source</p>
-        <h1 className="mt-2 text-3xl font-semibold">{document.source_filename}</h1>
-        <p className="mt-2 text-foreground-muted">Authorised source details for {workspace.name}.</p>
-      </header>
-      <Card>
-        <CardHeader className="flex-row items-start gap-4">
-          <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-surface-raised text-brand">
-            <FileText aria-hidden="true" className="size-5" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <CardTitle>{document.source_filename}</CardTitle>
-            <p className="mt-1 text-sm text-foreground-muted">{document.media_type} · {bytes(document.size_bytes)}</p>
-          </div>
-          <StatusBadge status={document.status === "indexed" ? "success" : "pending"}>{document.status}</StatusBadge>
-        </CardHeader>
-        <CardContent>
-          <dl className="grid gap-4 text-sm sm:grid-cols-2">
-            <div><dt className="text-foreground-muted">Governance</dt><dd className="mt-1 font-medium">{document.governance_status}</dd></div>
-            <div><dt className="text-foreground-muted">Added</dt><dd className="mt-1 font-medium">{formatDateTime(document.created_at)}</dd></div>
-            <div><dt className="text-foreground-muted">Added by</dt><dd className="mt-1 font-medium">{document.created_by?.name ?? "Unavailable"}</dd></div>
-            <div><dt className="text-foreground-muted">Source status</dt><dd className="mt-1 font-medium">{document.status}</dd></div>
-          </dl>
-        </CardContent>
-      </Card>
+    <div className="grid min-h-[calc(100vh-8rem)] gap-5">
+      <header className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Authorised source</p><h1 className="mt-2 break-words text-3xl font-semibold">{document.source_filename}</h1><p className="mt-2 text-foreground-muted">{document.media_type} · {bytes(document.size_bytes)}</p><p className="mt-1 text-sm text-foreground-muted">Source retained by {workspace.name}.</p></div><div className="flex flex-wrap gap-2"><Button asChild variant="outline"><Link href={`${contentPath}?download=1`}><Download aria-hidden="true" />Download</Link></Button><Button asChild variant="secondary"><Link href={`/app/workspaces/${workspacePublicId}/documents/${documentPublicId}/extracted-text`}><FileSearch aria-hidden="true" />Extracted text</Link></Button></div></header>
+      {inline ? <iframe className="min-h-[70vh] w-full rounded-xl border border-border bg-white" src={contentPath} title={`Source: ${document.source_filename}`} /> : <section className="grid min-h-80 place-items-center rounded-xl border border-dashed border-border bg-surface p-8 text-center"><div><h2 className="text-xl font-semibold">Preview unavailable</h2><p className="mt-2 max-w-lg text-foreground-muted">This source format cannot be previewed safely in the browser. Download the authorised original or inspect the extracted text.</p></div></section>}
     </div>
   );
 }

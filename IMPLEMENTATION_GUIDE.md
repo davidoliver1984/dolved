@@ -14788,6 +14788,20 @@ Pint, ESLint, TypeScript and `git diff --check`. Evidence is recorded in
 
 ## Stage 24.4 — Source viewing and extracted text
 
+Completed 2026-08-30: version-specific source links now open an application
+route that proxies ADR-0032's tenant-authorised, byte-range-aware source
+delivery without constructing or exposing any browser storage URL. Safely
+previewable source types render inline; unsupported formats retain a truthful
+unavailable-preview state with authorised download and extracted-text options.
+
+The extracted-text route consumes only ADR-0032's published, ordered projection
+through its bounded cursor API. It renders structured elements and warnings,
+states that the text was extracted for search and may not preserve visual
+layout, and never reconstructs content from retrieval chunks or emits raw JSON.
+David approved both live routes. Provider-free verification passed with 30 web
+test files / 129 tests, ESLint, TypeScript and `git diff --check`. Evidence is
+recorded in `docs/journal/2026-08-30-r24-s04-source-viewing.md`.
+
 ## Stage 24.5 — Version comparison
 
 ## Stage 24.6 — Saved views and category settings

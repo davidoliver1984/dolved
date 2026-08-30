@@ -1,4 +1,4 @@
-import { CalendarDays, CircleAlert, ExternalLink, FileClock, GitCompareArrows, Tags, UserRound } from "lucide-react";
+import { CalendarDays, CircleAlert, ExternalLink, FileClock, FileSearch, GitCompareArrows, Tags, UserRound } from "lucide-react";
 import Link from "next/link";
 import { DocumentGovernanceActions } from "@/components/DocumentGovernanceActions";
 import { DocumentFamilyMetadataEditor } from "@/components/DocumentFamilyMetadataEditor";
@@ -71,7 +71,8 @@ function VersionCard({
         {version.source_url ? <p className="text-sm"><a className="inline-flex items-center gap-1 text-brand underline-offset-4 hover:underline" href={version.source_url} rel="noreferrer" target="_blank">Publisher source <ExternalLink aria-hidden="true" className="size-4" /></a></p> : null}
         {version.extraction_warning_count > 0 ? <p className="flex items-center gap-2 text-sm text-warning"><CircleAlert aria-hidden="true" className="size-4" />{version.extraction_warning_count} extraction warning(s)</p> : null}
         <div className="flex flex-wrap gap-2">
-          <Button asChild size="sm" variant="secondary"><Link href={applicationPath} target="_blank">Open version <ExternalLink aria-hidden="true" /></Link></Button>
+          {version.status === "indexed" ? <Button asChild size="sm" variant="secondary"><Link href={applicationPath} target="_blank">View source <ExternalLink aria-hidden="true" /></Link></Button> : null}
+          {version.status === "indexed" ? <Button asChild size="sm" variant="outline"><Link href={`${applicationPath}/extracted-text`}><FileSearch aria-hidden="true" />Extracted text</Link></Button> : null}
           <Button asChild size="sm" variant="outline"><Link href={`/app/workspaces/${workspacePublicId}/documents/families/${version.family_public_id ?? ""}/compare?from=${version.public_id}`}>Compare</Link></Button>
         </div>
         <DocumentGovernanceActions locations={locations} version={version} workspacePublicId={workspacePublicId} />

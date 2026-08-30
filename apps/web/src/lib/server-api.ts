@@ -41,6 +41,18 @@ export type DocumentFamilyDetail = {
   history: DocumentVersionHistory;
 };
 
+export type ExtractedTextPage = {
+  label: string;
+  notice: string;
+  projection_generation_id: string;
+  elements: Array<{ id: string; ordinal: number; kind: string; text: string; source_locations: Array<Record<string, unknown>>; level: number | null; rows: unknown[] | null }>;
+  warnings: Array<{ code: string | null; message: string | null; element_id: string | null; source_location: unknown }>;
+  warnings_truncated: boolean;
+  changes: Array<{ code: string | null; message: string | null; source_element_ids: string[] }>;
+  changes_truncated: boolean;
+  pagination: { next_cursor: string | null; previous_cursor: string | null; per_page: number };
+};
+
 async function serverFetch(path: string): Promise<Response> {
   const cookieHeader = await forwardedAuthCookieHeader();
   const headers = new Headers({
@@ -204,6 +216,14 @@ export async function initialWorkspaceDocument(
   if (response.status === 404) return null;
   if (!response.ok) throw new Error("The workspace document is unavailable.");
   const payload = (await response.json()) as { data: AdminDocument };
+  return payload.data;
+}
+
+export async function initialExtractedText(workspacePublicId: string, documentPublicId: string, query = ""): Promise<ExtractedTextPage | null> {
+  const response = await serverFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/documents/${encodeURIComponent(documentPublicId)}/extracted-text${query ? `?${query}` : ""}`);
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error("Extracted text is unavailable.");
+  const payload = (await response.json()) as { data: ExtractedTextPage };
   return payload.data;
 }
 
