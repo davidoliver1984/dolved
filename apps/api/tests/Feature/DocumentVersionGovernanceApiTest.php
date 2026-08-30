@@ -75,6 +75,81 @@ final class DocumentVersionGovernanceApiTest extends TestCase
         $this->travelBack();
     }
 
+    public function test_comparison_is_family_bound_distinct_and_truthful_when_projection_is_unavailable(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        [$family, $first, $second] = $this->lineage($workspace, $owner);
+        $url = "/api/workspaces/{$workspace->public_id}/document-families/{$family->public_id}/comparison";
+
+        $this->actingAs($owner)->getJson($url.'?'.http_build_query(['from' => $first->public_id, 'to' => $second->public_id]))
+            ->assertOk()
+            ->assertJsonPath('data.available', true)
+            ->assertJsonPath('data.from.document.public_id', $first->public_id)
+            ->assertJsonPath('data.to.document.public_id', $second->public_id)
+            ->assertJsonPath('data.from.content_available', false)
+            ->assertJsonPath('data.to.content_available', false);
+
+        $this->actingAs($owner)->getJson($url.'?'.http_build_query(['from' => $first->public_id, 'to' => $first->public_id]))
+            ->assertUnprocessable();
+
+        $other = Document::factory()->for($workspace)->create();
+        $this->actingAs($owner)->getJson($url.'?'.http_build_query(['from' => $first->public_id, 'to' => $other->public_id]))
+            ->assertNotFound();
+    }
+
+    public function test_comparison_defaults_are_lineage_bound_and_single_version_is_truthfully_unavailable(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        [$family, $first, $second] = $this->lineage($workspace, $owner);
+        $first->forceFill([
+            'status' => 'indexed',
+            'governance_status' => DocumentGovernanceStatus::Approved,
+            'approved_at' => CarbonImmutable::parse('2026-01-02'),
+        ])->save();
+        $second->forceFill([
+            'status' => 'indexed',
+            'governance_status' => DocumentGovernanceStatus::Approved,
+            'approved_at' => CarbonImmutable::parse('2026-06-02'),
+        ])->save();
+        $url = "/api/workspaces/{$workspace->public_id}/document-families/{$family->public_id}/comparison";
+        $this->travelTo('2026-07-01');
+
+        $this->actingAs($owner)->getJson($url)
+            ->assertOk()
+            ->assertJsonPath('data.from.document.public_id', $first->public_id)
+            ->assertJsonPath('data.to.document.public_id', $second->public_id);
+        $this->actingAs($owner)->getJson($url.'?'.http_build_query(['to' => $second->public_id]))
+            ->assertOk()
+            ->assertJsonPath('data.from.document.public_id', $first->public_id);
+        $this->actingAs($owner)->getJson($url.'?'.http_build_query(['from' => $first->public_id]))
+            ->assertOk()
+            ->assertJsonPath('data.to.document.public_id', $second->public_id);
+
+        $singleFamily = DocumentFamily::factory()->for($workspace)->create(['owner_user_id' => $owner->id]);
+        Document::factory()->for($workspace)->for($singleFamily, 'family')->for($owner, 'createdBy')->create();
+        $singleUrl = "/api/workspaces/{$workspace->public_id}/document-families/{$singleFamily->public_id}/comparison";
+        $this->actingAs($owner)->getJson($singleUrl)
+            ->assertOk()
+            ->assertJsonPath('data.available', false)
+            ->assertJsonPath('data.reason', 'This family has only one comparable version.');
+
+        $this->travelBack();
+    }
+
+    public function test_deleted_comparison_side_retains_metadata_and_marks_content_unavailable(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        [$family, $first, $second] = $this->lineage($workspace, $owner);
+        $first->forceFill(['status' => 'deleted'])->save();
+        $url = "/api/workspaces/{$workspace->public_id}/document-families/{$family->public_id}/comparison";
+
+        $this->actingAs($owner)->getJson($url.'?'.http_build_query(['from' => $first->public_id, 'to' => $second->public_id]))
+            ->assertOk()
+            ->assertJsonPath('data.from.document.public_id', $first->public_id)
+            ->assertJsonPath('data.from.content_available', false)
+            ->assertJsonPath('data.to.document.public_id', $second->public_id);
+    }
+
     public function test_matching_completed_command_replays_and_conflicting_binding_fails_closed(): void
     {
         [$owner, $workspace] = $this->ownerWorkspace();

@@ -1,11 +1,14 @@
 import { notFound } from "next/navigation";
-import { DocumentFamilyRouteScaffold } from "@/components/DocumentFamilyRouteScaffold";
-import { initialDocumentFamilyMetadata, userWorkspace } from "@/lib/server-api";
+import { DocumentComparisonView } from "@/components/DocumentComparisonView";
+import { initialDocumentComparison, initialDocumentFamilyMetadata, userWorkspace } from "@/lib/server-api";
 
-export default async function DocumentFamilyComparePage({ params }: Readonly<{ params: Promise<{ familyPublicId: string; workspacePublicId: string }> }>) {
+export default async function DocumentFamilyComparePage({ params, searchParams }: Readonly<{ params: Promise<{ familyPublicId: string; workspacePublicId: string }>; searchParams: Promise<{ from?: string; to?: string }> }>) {
   const { familyPublicId, workspacePublicId } = await params;
-  if (!(await userWorkspace(workspacePublicId))) notFound();
-  const family = await initialDocumentFamilyMetadata(workspacePublicId, familyPublicId);
-  if (!family) notFound();
-  return <DocumentFamilyRouteScaffold description="Compare two authorised versions from the same document family." emptyDescription="Choose-version controls and comparison content will be added in the dedicated comparison stage." family={family} title="Compare versions" />;
+  const selection = await searchParams;
+  const query = new URLSearchParams();
+  if (selection.from) query.set("from", selection.from);
+  if (selection.to) query.set("to", selection.to);
+  const [workspace, family, comparison] = await Promise.all([userWorkspace(workspacePublicId), initialDocumentFamilyMetadata(workspacePublicId, familyPublicId), initialDocumentComparison(workspacePublicId, familyPublicId, query.toString())]);
+  if (!workspace || !family || !comparison) notFound();
+  return <DocumentComparisonView comparison={comparison} familyName={family.name} />;
 }

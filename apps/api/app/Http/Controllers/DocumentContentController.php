@@ -10,11 +10,13 @@ use App\Models\Document;
 use App\Models\DocumentExtractionProjectionElement;
 use App\Models\DocumentExtractionProjectionWarning;
 use App\Models\User;
+use App\Queries\Documents\FindDocumentFamilyForWorkspace;
 use App\Queries\Documents\FindDocumentForWorkspace;
 use App\Queries\Workspaces\FindWorkspaceForUser;
 use App\Services\Documents\DocumentObjectStorage;
 use App\Services\Documents\SingleByteRange;
 use App\Services\Documents\UnsatisfiableByteRange;
+use App\Support\Documents\DocumentAuthorityTimeline;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,6 +28,53 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 final class DocumentContentController extends Controller
 {
+    public function comparison(Request $request, string $workspacePublicId, string $familyPublicId, FindWorkspaceForUser $workspaces, FindDocumentFamilyForWorkspace $families, DocumentAuthorityTimeline $timeline): JsonResponse
+    {
+        $values = $request->validate(['from' => ['sometimes', 'uuid'], 'to' => ['sometimes', 'uuid']]);
+        /** @var User $user */
+        $user = $request->user();
+        $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
+        $family = $families->handle($workspace, $familyPublicId);
+        Gate::authorize('viewDocumentMetadata', $workspace);
+        $versions = $family->documents()->with(['predecessor', 'activeExtractionProjectionGeneration'])->orderBy('id')->get();
+        $find = function (?string $publicId) use ($versions): ?Document {
+            if ($publicId === null) {
+                return null;
+            }
+            /** @var Document|null $document */
+            $document = $versions->firstWhere('public_id', $publicId);
+            abort_if($document === null, 404);
+
+            return $document;
+        };
+        $from = $find($values['from'] ?? null);
+        $to = $find($values['to'] ?? null);
+        if ($from === null && $to === null) {
+            $to = $timeline->resolve($family, now());
+            $from = $to?->predecessor;
+        } elseif ($from === null) {
+            $from = $to?->predecessor;
+        } elseif ($to === null) {
+            $to = $versions->first(fn (Document $candidate): bool => $candidate->predecessor_document_id === $from->id);
+        }
+        abort_if($from?->is($to), 422, 'Choose two distinct versions.');
+        if ($from === null || $to === null) {
+            return response()->json(['data' => ['available' => false, 'reason' => 'This family has only one comparable version.']]);
+        }
+
+        $sides = collect(['from' => $from, 'to' => $to])->map(fn (Document $document): array => $this->comparisonSide($document))->all();
+        $left = collect($sides['from']['elements'])->keyBy('ordinal');
+        $right = collect($sides['to']['elements'])->keyBy('ordinal');
+        $differences = $left->keys()->merge($right->keys())->unique()->sort()->map(function ($ordinal) use ($left, $right): array {
+            $before = $left->get($ordinal);
+            $after = $right->get($ordinal);
+
+            return ['ordinal' => $ordinal, 'status' => $before === null ? 'added' : ($after === null ? 'removed' : ($before['kind'] === $after['kind'] && $before['text'] === $after['text'] ? 'unchanged' : 'changed')), 'before' => $before, 'after' => $after];
+        })->values()->all();
+
+        return response()->json(['data' => ['available' => true, 'family' => ['public_id' => $family->public_id, 'name' => $family->name], 'from' => $sides['from'], 'to' => $sides['to'], 'differences' => $differences]]);
+    }
+
     public function source(
         Request $request,
         string $workspacePublicId,
@@ -183,6 +232,22 @@ final class DocumentContentController extends Controller
             'message' => $warning->payload['message'] ?? null,
             'element_id' => $warning->payload['element_id'] ?? null,
             'source_location' => $warning->payload['source_location'] ?? null,
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function comparisonSide(Document $document): array
+    {
+        $generation = $document->activeExtractionProjectionGeneration;
+        $available = $document->status === DocumentStatus::Indexed && $generation?->status === ExtractionProjectionStatus::Published;
+        $elements = $available ? $generation->elements()->orderBy('ordinal')->orderBy('id')->limit(501)->get() : collect();
+
+        return [
+            'document' => ['public_id' => $document->public_id, 'source_filename' => $document->source_filename, 'publisher_label' => $document->publisher_label, 'source_url' => $document->source_url, 'governance_status' => $document->governance_status->value, 'effective_from' => $document->effective_from?->toIso8601String(), 'approved_at' => $document->approved_at?->toIso8601String(), 'withdrawn_at' => $document->withdrawn_at?->toIso8601String()],
+            'content_available' => $available,
+            'truncated' => $elements->count() > 500,
+            'elements' => $elements->take(500)->map(fn (DocumentExtractionProjectionElement $element): array => $this->element($element))->values()->all(),
+            'warnings' => $available ? $generation->warnings()->orderBy('ordinal')->limit(100)->get()->map(fn (DocumentExtractionProjectionWarning $warning): array => $this->warning($warning))->values()->all() : [],
         ];
     }
 

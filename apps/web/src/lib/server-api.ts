@@ -53,6 +53,10 @@ export type ExtractedTextPage = {
   pagination: { next_cursor: string | null; previous_cursor: string | null; per_page: number };
 };
 
+export type ComparisonElement = { id: string; ordinal: number; kind: string; text: string };
+export type ComparisonSide = { document: { public_id: string; source_filename: string; publisher_label: string | null; source_url: string | null; governance_status: string; effective_from: string | null; approved_at: string | null; withdrawn_at: string | null }; content_available: boolean; truncated: boolean; elements: ComparisonElement[]; warnings: Array<{ code: string | null; message: string | null }> };
+export type DocumentComparison = { available: boolean; reason?: string; family?: { public_id: string; name: string }; from?: ComparisonSide; to?: ComparisonSide; differences?: Array<{ ordinal: number; status: "added" | "removed" | "changed" | "unchanged"; before: ComparisonElement | null; after: ComparisonElement | null }> };
+
 async function serverFetch(path: string): Promise<Response> {
   const cookieHeader = await forwardedAuthCookieHeader();
   const headers = new Headers({
@@ -224,6 +228,14 @@ export async function initialExtractedText(workspacePublicId: string, documentPu
   if (response.status === 404) return null;
   if (!response.ok) throw new Error("Extracted text is unavailable.");
   const payload = (await response.json()) as { data: ExtractedTextPage };
+  return payload.data;
+}
+
+export async function initialDocumentComparison(workspacePublicId: string, familyPublicId: string, query = ""): Promise<DocumentComparison | null> {
+  const response = await serverFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-families/${encodeURIComponent(familyPublicId)}/comparison${query ? `?${query}` : ""}`);
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error("The version comparison is unavailable.");
+  const payload = (await response.json()) as { data: DocumentComparison };
   return payload.data;
 }
 

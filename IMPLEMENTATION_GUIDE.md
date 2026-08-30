@@ -14804,6 +14804,40 @@ recorded in `docs/journal/2026-08-30-r24-s04-source-viewing.md`.
 
 ## Stage 24.5 — Version comparison
 
+Completed 2026-08-30: the tenant-authorised family comparison route now binds
+both version identifiers to the route family, rejects identical versions,
+resolves the accepted predecessor/successor defaults, and preserves truthful
+single-version, deleted-side and unavailable-projection states. The response
+uses only ADR-0032's ordered, published extraction projection and remains
+bounded to 500 elements per side; it does not reconstruct text from retrieval
+chunks.
+
+The production comparison component was exercised through a clearly labelled
+development-only representative fixture. David accepted the functional page
+provisionally and directed that isolated styling work not interrupt the
+remaining implementation sequence:
+
+> Functional checkpoint passed. Current visual treatment is a strong
+> provisional foundation. Final comparison-page visual and end-to-end flow
+> sign-off is deferred to the consolidated S09 review.
+
+A bounded contract review found that final refinement is not visual-only. The
+current equal-ordinal adapter cannot truthfully classify insertion-shifted or
+moved elements and has no explicit alignment-reliability state. At the start of
+R24-S09, before consolidated visual sign-off, extend this adapter—without a
+schema migration—to return deterministic section-aware aligned pairs, moved
+classification, change counts and reliable/partial/unavailable alignment
+status. Word-level additions/removals may then be derived from already aligned
+text pairs in the web layer. ADR-0032 does not retain inline formatting, so
+formatting-only detection must remain explicitly unavailable unless a separate
+reviewed extraction-contract extension is authorised. The complete retained
+handover is recorded in `tasks.json` and
+`docs/journal/2026-08-30-r24-s05-version-comparison.md`.
+
+Provider-free verification passed with 9 focused Laravel tests / 68
+assertions, 30 web test files / 129 tests, Pint, ESLint, TypeScript and
+`git diff --check`.
+
 ## Stage 24.6 — Saved views and category settings
 
 ## Stage 24.7 — Small-corpus onboarding and searchable-count projection

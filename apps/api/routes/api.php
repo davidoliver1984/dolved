@@ -145,6 +145,7 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::get('/workspaces/{workspacePublicId}/documents/{documentPublicId}', [DocumentAdministrationController::class, 'show']);
     Route::match(['GET', 'HEAD'], '/workspaces/{workspacePublicId}/documents/{documentPublicId}/source', [DocumentContentController::class, 'source']);
     Route::get('/workspaces/{workspacePublicId}/documents/{documentPublicId}/extracted-text', [DocumentContentController::class, 'extractedText']);
+    Route::get('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/comparison', [DocumentContentController::class, 'comparison']);
     Route::get('/workspaces/{workspacePublicId}/document-metadata', [DocumentMetadataController::class, 'index']);
     Route::post('/workspaces/{workspacePublicId}/document-categories', [DocumentMetadataController::class, 'storeCategory']);
     Route::patch('/workspaces/{workspacePublicId}/document-categories/{categoryPublicId}/archive', [DocumentMetadataController::class, 'archiveCategory']);
