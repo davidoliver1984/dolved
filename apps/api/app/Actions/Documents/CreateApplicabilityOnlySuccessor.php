@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Services\Documents\DocumentObjectStorage;
 use App\Support\Documents\ContentCloneCompatibility;
 use App\Support\Documents\DocumentGovernanceAuthorizer;
+use App\Support\Documents\MaintainDocumentFamilyActivitySummary;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -32,6 +33,7 @@ final readonly class CreateApplicabilityOnlySuccessor
         private ContentCloneCompatibility $compatibility,
         private MaterialiseDocumentContentClone $materialise,
         private RequestDocumentIngestion $requestIngestion,
+        private ?MaintainDocumentFamilyActivitySummary $activity = null,
     ) {}
 
     /** @param list<OrganisationalLocation> $locations */
@@ -147,6 +149,8 @@ final readonly class CreateApplicabilityOnlySuccessor
                 'source_checksum_sha256' => $source->source_checksum_sha256,
                 'authorised_at' => now(),
             ]);
+            ($this->activity ?? app(MaintainDocumentFamilyActivitySummary::class))
+                ->record($target->family()->firstOrFail(), $operation->authorised_at);
             $target->forceFill(['status' => DocumentStatus::Processing])->save();
 
             return [$target->refresh(), $operation, $leaseToken];

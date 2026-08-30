@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Workspace;
 use App\Support\Documents\CreateApplicabilitySnapshot;
 use App\Support\Documents\DeriveDocumentFamilyTitle;
+use App\Support\Documents\MaintainDocumentFamilyActivitySummary;
 use App\Support\Documents\SafeDocumentSourceUrl;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -19,7 +20,10 @@ use InvalidArgumentException;
 
 class CreateDocument
 {
-    public function __construct(private readonly CreateApplicabilitySnapshot $createApplicabilitySnapshot) {}
+    public function __construct(
+        private readonly CreateApplicabilitySnapshot $createApplicabilitySnapshot,
+        private readonly ?MaintainDocumentFamilyActivitySummary $activity = null,
+    ) {}
 
     public function handle(
         Workspace $workspace,
@@ -93,6 +97,7 @@ class CreateDocument
             $document->family()->associate($family);
             $document->createdBy()->associate($creator);
             $document->save();
+            ($this->activity ?? app(MaintainDocumentFamilyActivitySummary::class))->record($family, $document->created_at);
 
             $defaults = $family->defaultApplicabilityLocations()->get()->all();
             $this->createApplicabilitySnapshot->create($document, $defaults);

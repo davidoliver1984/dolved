@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R24",
-    "current_session": "R24-S02",
-    "next_action": "Begin R24-S02 — build the ADR-0033 library table and activity-summary projection, then stop at the mandatory visual-review boundary.",
-    "completed_through": "R23-GATE",
+    "current_session": "R24-S03",
+    "next_action": "Begin R24-S03 — build ADR-0033 family detail and version history, then stop at the mandatory visual-review boundary.",
+    "completed_through": "R24-S02",
     "completed_phase_count": 24,
     "total_phase_count": 30
   },
@@ -4735,8 +4735,8 @@
       "visual_review_policy": "Every user-facing session requires direct browser evidence and David's explicit approval before closure.",
       "sessions": [
         {"id": "R24-S01", "guide_stage": "Stage 24.1 — Contextual navigation shell and route scaffolding", "title": "Build Library Navigation Shell", "status": "completed", "depends_on": ["R23-GATE"], "requires_visual_review": true, "completion_evidence": ["Contextual Library, Scheduled, Needs attention, Deleted history and Categories navigation is route-backed and segment-safe", "Workspace and document-family route scaffolds fail closed with loading, empty, error and concealment states", "Desktop/mobile and light/dark browser review approved by David on 2026-08-29", "29 web test files / 127 tests, ESLint, TypeScript and git diff --check passed", "docs/journal/2026-08-29-r24-s01-library-navigation-shell.md"]},
-        {"id": "R24-S02", "guide_stage": "Stage 24.2 — Library table and activity-summary projection", "title": "Build Library Table", "status": "not_started", "depends_on": ["R24-S01"], "requires_visual_review": true},
-        {"id": "R24-S03", "guide_stage": "Stage 24.3 — Family detail and version history", "title": "Build Family Detail", "status": "not_started", "depends_on": ["R24-S02"], "requires_visual_review": true},
+        {"id": "R24-S02", "guide_stage": "Stage 24.2 — Library table and activity-summary projection", "title": "Build Library Table", "status": "completed", "depends_on": ["R24-S01"], "requires_visual_review": true, "completion_evidence": ["Dedicated tenant-authorised family-level Library API resolves current attained authority without predecessor resurrection", "Durable activity-summary projection has live producer maintenance and an exact idempotent rebuild path", "Responsive real-data Library table supports search, filters, sorting, pagination and explicit historical inclusion", "Live browser presentation and family-versus-technical-list distinction approved by David on 2026-08-30", "Focused Laravel suite: 38 passed / 1 skipped / 171 assertions; web: 30 files / 129 tests; formatting, lint, type and diff checks passed", "docs/journal/2026-08-30-r24-s02-library-table.md"]},
+        {"id": "R24-S03", "guide_stage": "Stage 24.3 — Family detail and version history", "title": "Build Family Detail", "status": "in_progress", "depends_on": ["R24-S02"], "requires_visual_review": true},
         {"id": "R24-S04", "guide_stage": "Stage 24.4 — Source viewing and extracted text", "title": "Build Source Viewing", "status": "not_started", "depends_on": ["R24-S03"], "requires_visual_review": true},
         {"id": "R24-S05", "guide_stage": "Stage 24.5 — Version comparison", "title": "Build Version Comparison", "status": "not_started", "depends_on": ["R24-S04"], "requires_visual_review": true},
         {"id": "R24-S06", "guide_stage": "Stage 24.6 — Saved views and category settings", "title": "Build Saved Views and Category Settings", "status": "not_started", "depends_on": ["R24-S05"], "requires_visual_review": true},

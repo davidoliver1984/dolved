@@ -11,8 +11,10 @@ use App\Models\DocumentExtractionArtifact;
 use App\Models\DocumentExtractionProjectionElement;
 use App\Models\DocumentExtractionProjectionGeneration;
 use App\Models\DocumentExtractionProjectionWarning;
+use App\Models\DocumentFamily;
 use App\Services\Documents\ExtractionArtifactStreamReader;
 use App\Services\Documents\StructuredExtractionCanonicaliser;
+use App\Support\Documents\MaintainDocumentFamilyActivitySummary;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -23,6 +25,7 @@ final class BuildAndPublishExtractionProjection
     public function __construct(
         private readonly ExtractionArtifactStreamReader $reader,
         private readonly StructuredExtractionCanonicaliser $canonicaliser,
+        private readonly ?MaintainDocumentFamilyActivitySummary $activity = null,
     ) {}
 
     public function handle(DocumentExtractionArtifact $artifact): DocumentExtractionProjectionGeneration
@@ -169,6 +172,8 @@ final class BuildAndPublishExtractionProjection
         }
 
         return DB::transaction(function () use ($generation, $artifact, $projectionDigest, $warningDigest): DocumentExtractionProjectionGeneration {
+            $familyId = Document::query()->whereKey($artifact->document_id)->value('document_family_id');
+            $family = DocumentFamily::query()->whereKey($familyId)->lockForUpdate()->firstOrFail();
             $document = Document::query()->whereKey($artifact->document_id)->lockForUpdate()->firstOrFail();
             $locked = DocumentExtractionProjectionGeneration::query()->whereKey($generation->id)->lockForUpdate()->firstOrFail();
             if ($locked->status !== ExtractionProjectionStatus::Building) {
@@ -200,15 +205,21 @@ final class BuildAndPublishExtractionProjection
                     'retired_at' => now(),
                     'updated_at' => now(),
                 ]);
+            $publishedAt = now();
             $locked->forceFill([
                 'status' => ExtractionProjectionStatus::Published,
                 'verified_projection_manifest_digest' => $projectionDigest,
                 'verified_warning_manifest_digest' => $warningDigest,
-                'verified_at' => now(),
-                'published_at' => now(),
+                'verified_at' => $publishedAt,
+                'published_at' => $publishedAt,
             ])->save();
             $document->forceFill(['active_extraction_projection_generation_id' => $locked->id])->save();
-            $artifact->forceFill(['published_at' => now()])->save();
+            $artifact->forceFill(['published_at' => $publishedAt])->save();
+            $activity = $this->activity ?? app(MaintainDocumentFamilyActivitySummary::class);
+            if ($locked->expected_warning_count > 0
+                && $activity->warningWasCurrent($family, $document, $publishedAt)) {
+                $activity->record($family, $publishedAt);
+            }
 
             return $locked->refresh();
         });

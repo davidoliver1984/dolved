@@ -8,16 +8,21 @@ use App\Enums\DocumentGovernanceStatus;
 use App\Enums\DocumentStatus;
 use App\Exceptions\DocumentGovernanceException;
 use App\Models\Document;
+use App\Models\DocumentFamily;
 use App\Models\OrganisationalLocation;
 use App\Models\User;
 use App\Support\Documents\CreateApplicabilitySnapshot;
+use App\Support\Documents\MaintainDocumentFamilyActivitySummary;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 final readonly class CreateDocumentVersion
 {
-    public function __construct(private CreateApplicabilitySnapshot $createApplicabilitySnapshot) {}
+    public function __construct(
+        private CreateApplicabilitySnapshot $createApplicabilitySnapshot,
+        private ?MaintainDocumentFamilyActivitySummary $activity = null,
+    ) {}
 
     /** @param null|array<int, OrganisationalLocation> $applicabilityLocations */
     public function handle(
@@ -31,6 +36,7 @@ final readonly class CreateDocumentVersion
         ?string $extension = null,
     ): Document {
         return DB::transaction(function () use ($predecessor, $creator, $sourceFilename, $mediaType, $sizeBytes, $effectiveFrom, $applicabilityLocations, $extension): Document {
+            $family = DocumentFamily::query()->whereKey($predecessor->document_family_id)->lockForUpdate()->firstOrFail();
             $locked = Document::query()->with('applicabilitySnapshot.locations')->lockForUpdate()->findOrFail($predecessor->id);
 
             if (Document::query()->where('predecessor_document_id', $locked->id)->exists()) {
@@ -65,6 +71,7 @@ final readonly class CreateDocumentVersion
             $baseKey = sprintf('workspaces/%s/documents/%s/source', $locked->workspace->public_id, $publicId);
             $document->storage_key = $extension === null ? $baseKey : $baseKey.'.'.$extension;
             $document->save();
+            ($this->activity ?? app(MaintainDocumentFamilyActivitySummary::class))->record($family, $document->created_at);
 
             $locations = $applicabilityLocations ?? $locked->applicabilitySnapshot->locations->all();
             $this->createApplicabilitySnapshot->create($document, $locations);

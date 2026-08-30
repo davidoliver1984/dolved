@@ -6,9 +6,12 @@ namespace App\Actions\Ingestion;
 
 use App\Models\IngestionAuditEvent;
 use App\Models\IngestionEventClaim;
+use App\Support\Documents\MaintainDocumentFamilyActivitySummary;
 
 class RecordIngestionAudit
 {
+    public function __construct(private readonly ?MaintainDocumentFamilyActivitySummary $activity = null) {}
+
     /** @param array<string, mixed> $context */
     public function handle(
         IngestionEventClaim $attempt,
@@ -20,7 +23,7 @@ class RecordIngestionAudit
             'embeddingSpaceGeneration:id,public_id',
             'workspaceCorpusGeneration:id,public_id',
         ]);
-        IngestionAuditEvent::query()->firstOrCreate(
+        $event = IngestionAuditEvent::query()->firstOrCreate(
             [
                 'event_id' => $attempt->event_id,
                 'action' => $action,
@@ -38,5 +41,10 @@ class RecordIngestionAudit
                 'occurred_at' => now(),
             ],
         );
+        if (($action === 'publication_completed' && $outcome === 'indexed')
+            || ($action === 'processing_failed' && $outcome === 'failed')) {
+            ($this->activity ?? app(MaintainDocumentFamilyActivitySummary::class))
+                ->record($attempt->document->family()->firstOrFail(), $event->occurred_at);
+        }
     }
 }

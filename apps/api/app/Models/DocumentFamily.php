@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use LogicException;
 
 #[Fillable(['name', 'description', 'category_id', 'owner_user_id', 'review_due_date'])]
@@ -64,6 +65,12 @@ class DocumentFamily extends Model
     public function deletionOperations(): HasMany
     {
         return $this->hasMany(DocumentFamilyDeletionOperation::class);
+    }
+
+    /** @return HasOne<DocumentFamilyActivitySummary, $this> */
+    public function activitySummary(): HasOne
+    {
+        return $this->hasOne(DocumentFamilyActivitySummary::class, 'family_id');
     }
 
     /** @return BelongsTo<DocumentCategory, $this> */

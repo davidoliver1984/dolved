@@ -8,6 +8,7 @@ use App\Enums\DocumentStatus;
 use App\Enums\IngestionAttemptStatus;
 use App\Enums\WorkspaceCorpusGenerationStatus;
 use App\Exceptions\IngestionAttemptException;
+use App\Models\DocumentFamily;
 use App\Models\IngestionEventClaim;
 use App\Models\WorkspaceCorpusGenerationChunk;
 use App\Services\Ingestion\IngestionAttemptAuthorizer;
@@ -43,6 +44,8 @@ class CompleteIngestionAttempt
                 throw IngestionAttemptException::invalid('publication_not_verified', 'Completion requires post-publication verification.', 422);
             }
 
+            $familyId = $attempt->document()->value('document_family_id');
+            DocumentFamily::query()->whereKey($familyId)->lockForUpdate()->firstOrFail();
             $document = $attempt->document()->lockForUpdate()->firstOrFail();
             if ($document->status !== DocumentStatus::Processing) {
                 throw IngestionAttemptException::invalid('document_ineligible', 'The Document is not eligible for completion.');

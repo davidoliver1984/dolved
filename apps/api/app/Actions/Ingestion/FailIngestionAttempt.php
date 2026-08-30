@@ -10,6 +10,7 @@ use App\Enums\ExtractionUploadStatus;
 use App\Enums\IngestionAttemptStatus;
 use App\Exceptions\IngestionAttemptException;
 use App\Models\DocumentExtractionUploadAuthorisation;
+use App\Models\DocumentFamily;
 use App\Models\IngestionEventClaim;
 use App\Services\Ingestion\IngestionAttemptAuthorizer;
 use App\Support\Usage\RecordWorkspaceUsage;
@@ -41,6 +42,8 @@ class FailIngestionAttempt
             if (in_array($attempt->status, [IngestionAttemptStatus::Completed, IngestionAttemptStatus::PublicationAuthorised], true)) {
                 throw IngestionAttemptException::invalid('attempt_ineligible', 'The attempt cannot be failed in its current state.');
             }
+            $familyId = $attempt->document()->value('document_family_id');
+            DocumentFamily::query()->whereKey($familyId)->lockForUpdate()->firstOrFail();
             $document = $attempt->document()->lockForUpdate()->firstOrFail();
             if ($document->status !== DocumentStatus::Processing) {
                 throw IngestionAttemptException::invalid('document_ineligible', 'The Document is not eligible for failure reporting.');

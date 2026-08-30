@@ -15,10 +15,12 @@ use Illuminate\Support\Str;
 
 final class RecordDocumentGovernanceAudit
 {
+    public function __construct(private readonly ?MaintainDocumentFamilyActivitySummary $activity = null) {}
+
     /** @param array<string, mixed> $before @param array<string, mixed> $after */
     public function record(Document $document, User $actor, string $action, array $before, array $after, ?string $reason = null): void
     {
-        DocumentGovernanceAuditEvent::query()->create([
+        $event = DocumentGovernanceAuditEvent::query()->create([
             'public_id' => (string) Str::uuid(),
             'workspace_id' => $document->workspace_id,
             'document_family_id' => $document->document_family_id,
@@ -33,12 +35,13 @@ final class RecordDocumentGovernanceAudit
             'new_values' => $after,
             'occurred_at' => now(),
         ]);
+        $this->recordActivity($document->family()->firstOrFail(), $action, $event->occurred_at);
     }
 
     /** @param array<string, mixed> $before @param array<string, mixed> $after */
     public function recordFamily(DocumentFamily $family, User $actor, string $action, array $before, array $after, ?string $reason = null): void
     {
-        DocumentGovernanceAuditEvent::query()->create([
+        $event = DocumentGovernanceAuditEvent::query()->create([
             'public_id' => (string) Str::uuid(),
             'workspace_id' => $family->workspace_id,
             'document_family_id' => $family->id,
@@ -53,12 +56,13 @@ final class RecordDocumentGovernanceAudit
             'new_values' => $after,
             'occurred_at' => now(),
         ]);
+        $this->recordActivity($family, $action, $event->occurred_at);
     }
 
     /** @param array<string, mixed> $before @param array<string, mixed> $after */
     public function recordSystem(Document $document, DocumentGovernanceSystemActorCode $actor, string $action, array $before, array $after, ?string $reason = null): void
     {
-        DocumentGovernanceAuditEvent::query()->create([
+        $event = DocumentGovernanceAuditEvent::query()->create([
             'public_id' => (string) Str::uuid(),
             'workspace_id' => $document->workspace_id,
             'document_family_id' => $document->document_family_id,
@@ -73,12 +77,13 @@ final class RecordDocumentGovernanceAudit
             'new_values' => $after,
             'occurred_at' => now(),
         ]);
+        $this->recordActivity($document->family()->firstOrFail(), $action, $event->occurred_at);
     }
 
     /** @param array<string, mixed> $before @param array<string, mixed> $after */
     public function recordSystemFamily(DocumentFamily $family, DocumentGovernanceSystemActorCode $actor, string $action, array $before, array $after, ?string $reason = null): void
     {
-        DocumentGovernanceAuditEvent::query()->create([
+        $event = DocumentGovernanceAuditEvent::query()->create([
             'public_id' => (string) Str::uuid(),
             'workspace_id' => $family->workspace_id,
             'document_family_id' => $family->id,
@@ -93,5 +98,13 @@ final class RecordDocumentGovernanceAudit
             'new_values' => $after,
             'occurred_at' => now(),
         ]);
+        $this->recordActivity($family, $action, $event->occurred_at);
+    }
+
+    private function recordActivity(DocumentFamily $family, string $action, mixed $occurredAt): void
+    {
+        if (in_array($action, MaintainDocumentFamilyActivitySummary::GOVERNANCE_ACTIONS, true)) {
+            ($this->activity ?? app(MaintainDocumentFamilyActivitySummary::class))->record($family, $occurredAt);
+        }
     }
 }

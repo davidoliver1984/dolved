@@ -191,6 +191,43 @@ export type DocumentPage = {
   };
 };
 
+export type DocumentFamilyLibraryRow = {
+  public_id: string;
+  name: string;
+  description: string | null;
+  category: { public_id: string; name: string; status: string } | null;
+  tags: Array<{ public_id: string; name: string; status: string }>;
+  owner: { public_id?: string; name: string; needs_reassignment: boolean };
+  review_due_date: string | null;
+  last_meaningful_update: string;
+  state: "current" | "scheduled" | "draft" | "historical" | "uploading" | "uploaded" | "queued" | "processing" | "failed";
+  scheduled_effective_from: string | null;
+  version_count: number;
+  historical: boolean;
+  current_version: null | {
+    public_id: string;
+    technical_status: string;
+    source_filename: string;
+    media_type: string;
+    size_bytes: number;
+    checksum_verification_status: string;
+    governance_status: string;
+    effective_from: string | null;
+    approved_at: string | null;
+    withdrawn_at: string | null;
+    extraction_warning_count: number;
+  };
+};
+
+export type DocumentFamilyPage = {
+  data: DocumentFamilyLibraryRow[];
+  meta: { current_page: number; last_page: number; per_page: number; total: number };
+};
+
+export function workspaceDocumentLibrary(workspacePublicId: string, query = ""): Promise<DocumentFamilyPage> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-library${query ? `?${query}` : ""}`);
+}
+
 export function workspaceDocuments(
   workspacePublicId: string,
   query = "",

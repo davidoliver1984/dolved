@@ -3,6 +3,7 @@ import "server-only";
 import type {
   AdminDocument,
   DocumentPage,
+  DocumentFamilyPage,
   PlatformOperationsSnapshot,
   User,
   Workspace,
@@ -165,6 +166,17 @@ export async function initialWorkspaceDocuments(
     throw new Error("The workspace document list is unavailable.");
   }
   return (await response.json()) as DocumentPage;
+}
+
+export async function initialDocumentLibrary(
+  workspacePublicId: string,
+  query = "",
+): Promise<DocumentFamilyPage> {
+  const response = await serverFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-library${query ? `?${query}` : ""}`,
+  );
+  if (!response.ok) throw new Error("The knowledge library is unavailable.");
+  return (await response.json()) as DocumentFamilyPage;
 }
 
 export async function initialWorkspaceDocument(

@@ -14744,6 +14744,30 @@ TypeScript and `git diff --check` were clean. Evidence is recorded in
 
 ## Stage 24.2 — Library table and activity-summary projection
 
+Completed 2026-08-30: the workspace Library now presents one row per
+`DocumentFamily` from a dedicated, tenant-authorised API rather than exposing
+the legacy per-version document administration feed. The query resolves the
+current attained authority state without predecessor resurrection, supports
+page-based search, filtering and sorting, and includes historical-only families
+only when explicitly requested. A durable family activity-summary projection is
+maintained by document creation/versioning, governance, ingestion and extraction
+producer paths; the exact rebuild command derives the same state from
+authoritative records while preserving projection identity.
+
+The responsive web table renders the real workspace population with loading,
+empty, error, pagination and historical controls. The older technical ingestion
+surface remains visibly separated under its existing disclosure until later
+ADR-0033 destinations replace it. David approved the live browser presentation
+and the distinction between family-level Library rows and per-document technical
+controls. Provider-free verification passed with the focused Laravel metadata,
+library, governance and temporal-authority suites (38 passed, 1 skipped, 171
+assertions), 30 web test files / 129 tests, Pint, ESLint, TypeScript and
+`git diff --check`. The broad Laravel suite reached 377 passed / 3 skipped; its
+remaining failures are the already-known environment fixture, contract-mount and
+document-storage configuration gaps, with no R24-S02 focused regression.
+Evidence is recorded in
+`docs/journal/2026-08-30-r24-s02-library-table.md`.
+
 ## Stage 24.3 — Family detail and version history
 
 ## Stage 24.4 — Source viewing and extracted text

@@ -6,6 +6,7 @@ use App\Http\Controllers\DocumentAdministrationController;
 use App\Http\Controllers\DocumentContentController;
 use App\Http\Controllers\DocumentFamilyDeletionController;
 use App\Http\Controllers\DocumentIngestionController;
+use App\Http\Controllers\DocumentLibraryController;
 use App\Http\Controllers\DocumentMetadataController;
 use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\DocumentVersionGovernanceController;
@@ -140,6 +141,7 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::delete('/workspaces/{workspacePublicId}/membership', [WorkspaceAdministrationController::class, 'leave']);
     Route::post('/workspace-invitations/accept', [WorkspaceAdministrationController::class, 'accept']);
     Route::get('/workspaces/{workspacePublicId}/documents', [DocumentAdministrationController::class, 'index']);
+    Route::get('/workspaces/{workspacePublicId}/document-library', [DocumentLibraryController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}/documents/{documentPublicId}', [DocumentAdministrationController::class, 'show']);
     Route::match(['GET', 'HEAD'], '/workspaces/{workspacePublicId}/documents/{documentPublicId}/source', [DocumentContentController::class, 'source']);
     Route::get('/workspaces/{workspacePublicId}/documents/{documentPublicId}/extracted-text', [DocumentContentController::class, 'extractedText']);
