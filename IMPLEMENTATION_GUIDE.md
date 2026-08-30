@@ -14882,10 +14882,25 @@ assertions, 3 focused web files / 15 tests, Pint, ESLint, TypeScript and
 
 ## Stage 24.8 — Small-corpus Playwright readiness journey
 
+Reallocated on 2026-08-30; not executed, skipped or passed. ADR-0033's complete
+nine-step Playwright journey requires ADR-0034's `ImportBatch`, `ImportItem`,
+matching, review and promotion implementation. None of those contracts exists
+before Phase 25, and the legacy direct-upload path cannot substitute for them.
+There is no independent R24-S08 remainder after Stage 24.7. The unchanged
+journey is a mandatory Stage 25.7 and Phase 25 gate requirement.
+
 ## Stage 24.9 — Deleted/history presentation
 
-All stages implement the exact ADR-0033 contracts in order. Export navigation
-remains reserved and absent until ADR-0037 is accepted.
+This independent stage may proceed after Stage 24.7 because ADR-0031's
+family-deletion tombstone data already exists. Its visual checkpoint accepts
+the implemented Phase 24 knowledge-library surfaces only; it does not claim
+acceptance of Phase 25's future import, staging, matching, review, recovery or
+promotion experience.
+
+The remaining Phase 24 stages implement ADR-0033's independent contracts in
+the corrected dependency order above. The reallocated journey remains
+mandatory at Stage 25.7. Export navigation remains reserved and absent until
+ADR-0037 is accepted.
 
 ---
 
@@ -14912,6 +14927,16 @@ This stage must present every ADR-0034 visual checkpoint for David's explicit
 review before acceptance.
 
 ## Stage 25.7 — Provider-free and Playwright acceptance journeys
+
+In addition to ADR-0034's provider-free and Playwright acceptance, execute
+ADR-0033's complete, unchanged small-corpus journey through the real
+`ImportBatch` flow: create a new workspace, import approximately ten
+representative documents, resolve matching/details, promote to `COMMITTED`,
+reach real `INDEXED` processing, approve/current-authorise, assert the truthful
+searchable-family count, ask a corpus-supported question and receive a grounded
+answer with valid evidence/citation behaviour. Upload or indexing alone cannot
+pass the journey, and the legacy direct-upload path is not an acceptable
+substitute. This journey is mandatory evidence for the Phase 25 gate.
 
 Stages follow ADR-0034's retry, adoption, actor-idempotency, checksum-
 serialization and lineage rules. No export/import interchange behavior from

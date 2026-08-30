@@ -1021,10 +1021,13 @@ Implement ADR-0033's route-backed knowledge-library experience after the Phase
 
 ### Sessions
 
-R24-S01 through R24-S09 implement the contextual shell, library table, family
-detail, source viewing, comparison, saved views/category settings,
-small-corpus onboarding, the Playwright readiness journey and deleted/history
-presentation in the order defined by ADR-0033.
+R24-S01 through R24-S07 and R24-S09 implement the contextual shell, library
+table, family detail, source viewing, comparison, saved views/category
+settings, small-corpus onboarding and deleted/history presentation. ADR-0033's
+import-through-grounded-answer Playwright journey remains mandatory but, under
+its dated implementation-sequencing clarification, executes at R25-S07 after
+the real ADR-0034 import workflow exists. No legacy-upload substitute is
+accepted.
 
 Every user-facing session stops at its staged light/dark, desktop/mobile,
 keyboard/focus and state/error visual checkpoint for David's explicit review
@@ -1033,7 +1036,9 @@ before closure. Export UI remains reserved for ADR-0037.
 ### Deliverable
 
 A reviewed, accessible knowledge-library interface built on authoritative
-family, version and extraction data.
+family, version and extraction data. This phase gate accepts the implemented
+library surfaces; final import-flow acceptance remains at the mandatory Phase
+25 gate.
 
 ---
 
@@ -1048,7 +1053,10 @@ atomic promotion lifecycle after the library foundation is available.
 
 R25-S01 through R25-S07 implement schema/privacy, preflight, matching,
 promotion, legacy cutover/drain, workflow/progress UI, and provider-free plus
-Playwright verification in the binding ADR order.
+Playwright verification in the binding ADR order. R25-S07 also owns ADR-0033's
+unchanged nine-step import-through-grounded-answer journey; the Phase 25 gate
+cannot pass until that journey proves genuine readiness through the real
+`ImportBatch` flow.
 
 The user-facing workflow session requires every ADR-0034 visual checkpoint and
 David's approval before it closes.

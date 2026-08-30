@@ -794,3 +794,26 @@ view definition size or starter-question title-suitability rules.
 
 Not allocated here: ADR-0035's bulk-execution UI, ADR-0036's notification
 UI, ADR-0037's export UI.
+
+### Post-acceptance implementation-sequencing clarification — 2026-08-30
+
+The required Playwright journey above remains normative and unchanged, but its
+original R24-S08 execution allocation created an impossible dependency cycle:
+steps 2–4 require ADR-0034's real `ImportBatch`, `ImportItem`, matching, review
+and promotion implementation, while that implementation is owned by Phase 25
+and Phase 25 originally followed the Phase 24 gate.
+
+R24-S08 contains no independently executable remainder once R24-S07's count,
+starter-question and onboarding-model work is complete. The complete
+import-through-grounded-answer journey therefore executes as a mandatory part
+of R25-S07, after R25-S01 through R25-S06 have implemented and visually
+reviewed the real ADR-0034 workflow. It is not completed, skipped or weakened
+by this clarification. The legacy direct-upload path is explicitly not an
+acceptable substitute.
+
+R24-S09 may proceed after R24-S07 because it depends only on ADR-0031's existing
+family-deletion tombstone data. The Phase 24 gate accepts only the independently
+implemented ADR-0033 product surfaces through R24-S09; it does not claim final
+import-flow acceptance. The Phase 25 gate must not pass until R25-S07 has run
+the complete nine-step journey above, including the genuinely searchable count
+and grounded-answer-with-valid-evidence assertion.
