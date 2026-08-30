@@ -41,6 +41,7 @@ final class ListDocumentFamiliesRequest extends FormRequest
             'owner' => Str::isUuid($this->input('owner')) ? $this->input('owner') : null,
             'per_page' => in_array($perPage, self::PAGE_SIZES, true) ? $perPage : 25,
             'historical' => filter_var($this->input('historical', false), FILTER_VALIDATE_BOOL),
+            'searchable' => filter_var($this->input('searchable', false), FILTER_VALIDATE_BOOL),
             'page' => max(1, $this->integer('page', 1)),
         ]);
     }
@@ -60,6 +61,7 @@ final class ListDocumentFamiliesRequest extends FormRequest
             'per_page' => ['required', 'integer'],
             'page' => ['required', 'integer', 'min:1'],
             'historical' => ['required', 'boolean'],
+            'searchable' => ['required', 'boolean'],
         ];
     }
 }

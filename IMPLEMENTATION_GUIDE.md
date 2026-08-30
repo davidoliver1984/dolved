@@ -14859,6 +14859,27 @@ assertions, 33 web test files / 134 tests, Pint, ESLint, TypeScript, JSON and
 
 ## Stage 24.7 — Small-corpus onboarding and searchable-count projection
 
+Completed on 2026-08-30. A dedicated tenant-authorised readiness projection
+counts distinct document families that have an approved, indexed and currently
+attained authority version. It reuses the Library's extracted CURRENT-authority
+query, including no-predecessor-resurrection semantics, rather than maintaining
+a second interpretation of searchability. The count endpoint returns only the
+count; deterministic starter questions are served separately and derive only
+from currently searchable family titles.
+
+The workspace now keeps the exact searchable count visible and explains
+truthfully that upload, processing and approval do not individually make a
+document searchable. Zero and ready states provide real Library and composer
+actions. The progressive disclosure preserves five user-facing stages and the
+complete ten-state ADR-0033 onboarding model without presenting internal state
+machinery as the primary experience. David approved the live small-corpus
+workspace presentation on 2026-08-30.
+
+Provider-free verification passed with 12 focused Laravel tests / 52
+assertions, 3 focused web files / 15 tests, Pint, ESLint, TypeScript and
+`git diff --check`. Evidence is recorded in
+`docs/journal/2026-08-30-r24-s07-small-corpus-onboarding.md`.
+
 ## Stage 24.8 — Small-corpus Playwright readiness journey
 
 ## Stage 24.9 — Deleted/history presentation

@@ -1,18 +1,22 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { initialConversationMock, notFoundMock, userWorkspaceMock } = vi.hoisted(() => ({
+const { initialConversationMock, notFoundMock, readinessMock, starterQuestionsMock, userWorkspaceMock } = vi.hoisted(() => ({
   initialConversationMock: vi.fn(),
   notFoundMock: vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
   }),
   userWorkspaceMock: vi.fn(),
+  readinessMock: vi.fn(),
+  starterQuestionsMock: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({ notFound: notFoundMock }));
 vi.mock("@/lib/server-api", () => ({
   initialConversation: initialConversationMock,
   userWorkspace: userWorkspaceMock,
+  workspaceKnowledgeReadiness: readinessMock,
+  workspaceStarterQuestions: starterQuestionsMock,
 }));
 vi.mock("@/components/RoutedChatWorkspace", () => ({
   RoutedChatWorkspace: ({ conversationId, workspaceId }: { conversationId: string; workspaceId: string }) => (
@@ -43,6 +47,8 @@ describe("conversation route ownership", () => {
     vi.clearAllMocks();
     userWorkspaceMock.mockResolvedValue(workspace);
     initialConversationMock.mockResolvedValue(conversation);
+    readinessMock.mockResolvedValue({ searchable_document_count: 1 });
+    starterQuestionsMock.mockResolvedValue([]);
   });
 
   it("renders only after both workspace and conversation identities validate", async () => {

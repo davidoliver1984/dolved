@@ -17,37 +17,16 @@ use Illuminate\Support\Facades\DB;
 
 final class PaginateDocumentLibrary
 {
+    public function __construct(private BuildCurrentDocumentForFamily $currentDocument) {}
+
     /** @param array<string, mixed> $filters */
     public function handle(Workspace $workspace, array $filters): LengthAwarePaginator
     {
         $authorityStart = DB::getDriverName() === 'pgsql'
             ? 'GREATEST(effective_from, approved_at)'
             : 'CASE WHEN effective_from > approved_at THEN effective_from ELSE approved_at END';
-        $successorAuthorityStart = DB::getDriverName() === 'pgsql'
-            ? 'GREATEST(successors.effective_from, successors.approved_at)'
-            : 'CASE WHEN successors.effective_from > successors.approved_at THEN successors.effective_from ELSE successors.approved_at END';
-        $candidateAuthorityStart = DB::getDriverName() === 'pgsql'
-            ? 'GREATEST(documents.effective_from, documents.approved_at)'
-            : 'CASE WHEN documents.effective_from > documents.approved_at THEN documents.effective_from ELSE documents.approved_at END';
         $now = now();
-        $current = Document::query()->select('id')
-            ->whereColumn('document_family_id', 'document_families.id')
-            ->where('status', DocumentStatus::Indexed->value)
-            ->where('governance_status', DocumentGovernanceStatus::Approved->value)
-            ->whereNotNull('approved_at')
-            ->whereRaw("{$authorityStart} <= ?", [$now])
-            ->where(fn (Builder $query): Builder => $query->whereNull('withdrawn_at')->orWhere('withdrawn_at', '>', $now))
-            ->whereNotExists(function ($successors) use ($candidateAuthorityStart, $now, $successorAuthorityStart): void {
-                $successors->selectRaw('1')->from('documents as successors')
-                    ->whereColumn('successors.document_family_id', 'documents.document_family_id')
-                    ->whereIn('successors.governance_status', [DocumentGovernanceStatus::Approved->value, DocumentGovernanceStatus::Withdrawn->value])
-                    ->whereNotNull('successors.approved_at')
-                    ->whereRaw("{$successorAuthorityStart} <= ?", [$now])
-                    ->whereRaw("{$successorAuthorityStart} > {$candidateAuthorityStart}")
-                    ->where(fn ($attained) => $attained->whereNull('successors.withdrawn_at')->orWhereRaw("successors.withdrawn_at >= {$successorAuthorityStart}"));
-            })
-            ->orderByRaw("{$authorityStart} DESC")
-            ->orderByDesc('id')->limit(1);
+        $current = $this->currentDocument->handle();
         $scheduled = Document::query()->select('effective_from')
             ->whereColumn('document_family_id', 'document_families.id')
             ->where('governance_status', DocumentGovernanceStatus::Approved->value)
@@ -113,6 +92,10 @@ final class PaginateDocumentLibrary
                     $query->whereBetween('review_due_date', [today(), today()->addDays(30)]);
                 }
             });
+
+        if ($filters['searchable'] ?? false) {
+            $query->whereExists(clone $current);
+        }
 
         if (($filters['status'] ?? null) !== null) {
             $query->whereIn('document_families.id', Document::query()->select('document_family_id')->where('status', $filters['status']));

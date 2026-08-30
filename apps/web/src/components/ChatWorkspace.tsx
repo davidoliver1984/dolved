@@ -17,6 +17,7 @@ import { CitationButton, CitationChip } from "@/components/ui/citation-chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { EvidenceItem } from "@/components/ui/evidence-item";
 import { Notice } from "@/components/ui/notice";
+import { KnowledgeReadinessPanel, type StarterQuestion } from "@/components/KnowledgeReadinessPanel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StreamingStatus } from "@/components/ui/streaming-status";
@@ -79,6 +80,8 @@ type ChatWorkspaceProps = {
   workspaceId: string;
   workspaceName: string;
   services?: ChatServices;
+  searchableDocumentCount?: number;
+  starterQuestions?: StarterQuestion[];
 };
 
 const progressLabels: Record<string, string> = {
@@ -179,6 +182,8 @@ export function ChatWorkspace({
   workspaceId,
   workspaceName,
   services = defaultServices,
+  searchableDocumentCount,
+  starterQuestions = [],
 }: ChatWorkspaceProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [active, setActive] = useState<Conversation | null>(null);
@@ -193,6 +198,7 @@ export function ChatWorkspace({
   const [accessRevoked, setAccessRevoked] = useState(false);
   const unsubscribe = useRef<null | (() => void)>(null);
   const transcript = useRef<HTMLDivElement>(null);
+  const questionInput = useRef<HTMLTextAreaElement>(null);
   const provisionalPartsRef = useRef<AnswerPart[]>([]);
 
   const refreshList = useCallback(async () => {
@@ -416,6 +422,12 @@ export function ChatWorkspace({
     }
   };
 
+  const focusQuestion = () => questionInput.current?.focus();
+  const chooseQuestion = (question: string) => {
+    setDraft(question);
+    requestAnimationFrame(focusQuestion);
+  };
+
   const runsByMessage = new Map(
     (active?.runs ?? [])
       .filter((run) => run.assistant_message_id)
@@ -459,6 +471,7 @@ export function ChatWorkspace({
 
       <div className="grid min-h-0 grid-rows-[auto_1fr_auto_auto] gap-4">
         {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">Ask {workspaceName}</h1><p className="mt-2 text-sm text-foreground-muted">Answers use only evidence eligible for this workspace and question.</p></header> : null}
+        {searchableDocumentCount !== undefined ? <KnowledgeReadinessPanel onAsk={focusQuestion} onChooseQuestion={chooseQuestion} searchableDocumentCount={searchableDocumentCount} starterQuestions={starterQuestions} workspaceId={workspaceId} /> : null}
         <p aria-atomic="true" aria-live="polite" className="sr-only" role="status">{announcement}</p>
         <div aria-busy={loading} className="grid min-h-96 content-start gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 sm:p-6" ref={transcript}>
           {loading ? <div aria-label="Loading conversation" className="grid gap-4"><Skeleton className="h-20 w-3/4" /><Skeleton className="ml-auto h-16 w-2/3" /><Skeleton className="h-28 w-4/5" /></div> : null}
@@ -524,6 +537,7 @@ export function ChatWorkspace({
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={keyboardSubmit}
             placeholder="Ask about an eligible policy or procedure…"
+            ref={questionInput}
             rows={3}
             value={draft}
           />

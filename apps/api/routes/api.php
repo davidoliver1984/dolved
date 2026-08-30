@@ -19,6 +19,7 @@ use App\Http\Controllers\RetrievalController;
 use App\Http\Controllers\SavedViewController;
 use App\Http\Controllers\WorkspaceAdministrationController;
 use App\Http\Controllers\WorkspaceController;
+use App\Http\Controllers\WorkspaceKnowledgeReadinessController;
 use App\Http\Controllers\WorkspaceUsageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -143,6 +144,8 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::post('/workspace-invitations/accept', [WorkspaceAdministrationController::class, 'accept']);
     Route::get('/workspaces/{workspacePublicId}/documents', [DocumentAdministrationController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}/document-library', [DocumentLibraryController::class, 'index']);
+    Route::get('/workspaces/{workspacePublicId}/knowledge-readiness', [WorkspaceKnowledgeReadinessController::class, 'show']);
+    Route::get('/workspaces/{workspacePublicId}/starter-questions', [WorkspaceKnowledgeReadinessController::class, 'starterQuestions']);
     Route::get('/workspaces/{workspacePublicId}/documents/{documentPublicId}', [DocumentAdministrationController::class, 'show']);
     Route::match(['GET', 'HEAD'], '/workspaces/{workspacePublicId}/documents/{documentPublicId}/source', [DocumentContentController::class, 'source']);
     Route::get('/workspaces/{workspacePublicId}/documents/{documentPublicId}/extracted-text', [DocumentContentController::class, 'extractedText']);
