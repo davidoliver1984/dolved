@@ -75,6 +75,7 @@ services:
       AWS_USE_PATH_STYLE_ENDPOINT: "true"
       DOCUMENT_STORAGE_DISK: s3
       DOCUMENT_UPLOAD_DISK: s3_uploads
+      EXTRACTION_ARTIFACT_UPLOAD_DISK: s3
       DOCUMENT_MAX_UPLOAD_MB: ${DOCUMENT_MAX_UPLOAD_MB:-25}
       DOCUMENT_PRESIGNED_URL_LIFETIME_SECONDS: ${DOCUMENT_PRESIGNED_URL_LIFETIME_SECONDS:-600}
       DOCUMENT_UPLOAD_CONCURRENCY: ${DOCUMENT_UPLOAD_CONCURRENCY:-3}
@@ -248,6 +249,14 @@ services:
       DB_USERNAME: ${POSTGRES_USER:-rag_platform}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
       DB_QUEUE_CONNECTION: pgsql
+      FILESYSTEM_DISK: s3
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+      AWS_BUCKET: ${DOCUMENT_UPLOAD_BUCKET:-rag-platform-document-uploads-local}
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_USE_PATH_STYLE_ENDPOINT: "true"
+      DOCUMENT_STORAGE_DISK: s3
       CONVERSATION_QUEUE: ${CONVERSATION_QUEUE:-conversation-generation}
       DOCUMENT_ADMINISTRATION_QUEUE: ${DOCUMENT_ADMINISTRATION_QUEUE:-document-administration}
       CONVERSATION_QUEUE_RETRY_AFTER: ${CONVERSATION_QUEUE_RETRY_AFTER:-960}
@@ -275,6 +284,8 @@ services:
       ai:
         condition: service_healthy
       postgres:
+        condition: service_healthy
+      localstack:
         condition: service_healthy
     stop_grace_period: 30s
 

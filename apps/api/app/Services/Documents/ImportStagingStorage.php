@@ -12,7 +12,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Throwable;
 
-final class ImportStagingStorage
+class ImportStagingStorage
 {
     public function __construct(
         private readonly FilesystemFactory $filesystems,

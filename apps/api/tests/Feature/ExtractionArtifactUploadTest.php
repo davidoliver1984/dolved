@@ -14,6 +14,7 @@ use App\Enums\ExtractionProjectionStatus;
 use App\Enums\ExtractionUploadCleanupState;
 use App\Enums\ExtractionUploadStatus;
 use App\Exceptions\IngestionAttemptException;
+use App\Http\Controllers\Internal\IngestionOperationController;
 use App\Models\Document;
 use App\Models\DocumentExtractionArtifact;
 use App\Models\DocumentExtractionProjectionGeneration;
@@ -29,6 +30,7 @@ use App\Support\Ingestion\DocumentIngestionRequestedPayload;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Mockery;
 use Tests\TestCase;
@@ -78,6 +80,18 @@ class ExtractionArtifactUploadTest extends TestCase
     {
         CarbonImmutable::setTestNow();
         parent::tearDown();
+    }
+
+    public function test_acknowledgement_route_targets_the_existing_controller_method(): void
+    {
+        $route = Route::getRoutes()->getByName('ingestion.extraction-artifact.acknowledge');
+
+        $this->assertNotNull($route);
+        $this->assertSame(
+            IngestionOperationController::class.'@acknowledgeExtractionUpload',
+            $route->getActionName(),
+        );
+        $this->assertTrue(method_exists(IngestionOperationController::class, 'acknowledgeExtractionUpload'));
     }
 
     public function test_current_lease_authorises_exact_conditional_key_and_acknowledges_observed_identity(): void

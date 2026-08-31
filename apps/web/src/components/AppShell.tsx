@@ -9,6 +9,7 @@ import {
   ChevronRight,
   CircleAlert,
   FileText,
+  FileUp,
   FolderOpen,
   Gauge,
   BellRing,
@@ -58,7 +59,7 @@ function workspaceSection(pathname: string, workspaceId: string | null, section:
   return pathname === base || pathname.startsWith(`${base}/`);
 }
 
-type DocumentsDestination = "attention" | "categories" | "deleted" | "library" | "saved" | "scheduled";
+type DocumentsDestination = "attention" | "categories" | "deleted" | "imports" | "library" | "saved" | "scheduled";
 
 function documentsDestination(pathname: string, workspaceId: string | null): DocumentsDestination | null {
   if (!workspaceSection(pathname, workspaceId, "documents")) return null;
@@ -67,6 +68,7 @@ function documentsDestination(pathname: string, workspaceId: string | null): Doc
   if (remainder[0] === "scheduled") return "scheduled";
   if (remainder[0] === "attention") return "attention";
   if (remainder[0] === "deleted") return "deleted";
+  if (remainder[0] === "imports") return "imports";
   if (remainder[0] === "saved") return "saved";
   if (remainder[0] === "settings" && remainder[1] === "categories") return "categories";
   return "library";
@@ -148,6 +150,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
       <p className="px-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-faint">Knowledge library</p>
       <nav aria-label="Knowledge library" className="mt-2 grid gap-1">
         <Link aria-current={activeDocumentsDestination === "library" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "library")} href={`/app/workspaces/${workspaceId}/documents`} onClick={closeMobileNavigation}><FolderOpen aria-hidden="true" className="size-4" /><span>Library</span></Link>
+        <Link aria-current={activeDocumentsDestination === "imports" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "imports")} href={`/app/workspaces/${workspaceId}/documents/imports`} onClick={closeMobileNavigation}><FileUp aria-hidden="true" className="size-4" /><span>Import documents</span></Link>
         <Link aria-current={activeDocumentsDestination === "scheduled" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "scheduled")} href={`/app/workspaces/${workspaceId}/documents/scheduled`} onClick={closeMobileNavigation}><CalendarClock aria-hidden="true" className="size-4" /><span>Scheduled</span></Link>
         <Link aria-current={activeDocumentsDestination === "attention" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "attention")} href={`/app/workspaces/${workspaceId}/documents/attention`} onClick={closeMobileNavigation}><CircleAlert aria-hidden="true" className="size-4" /><span>Needs attention</span></Link>
         {workspace?.role !== "member" ? <Link aria-current={activeDocumentsDestination === "deleted" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "deleted")} href={`/app/workspaces/${workspaceId}/documents/deleted`} onClick={closeMobileNavigation}><Archive aria-hidden="true" className="size-4" /><span>Deleted history</span></Link> : null}

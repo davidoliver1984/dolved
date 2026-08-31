@@ -22,6 +22,7 @@ use App\Enums\PromotionAttemptStatus;
 use App\Enums\PromotionOperationKind;
 use App\Enums\WorkspaceRole;
 use App\Exceptions\ImportPromotionException;
+use App\Jobs\AdvanceImportPromotion;
 use App\Models\Document;
 use App\Models\ImportBatch;
 use App\Models\ImportItem;
@@ -110,6 +111,33 @@ final class ImportPromotionStateMachineTest extends TestCase
         $this->assertSame(1, $failed->failures()->count());
         $this->assertDatabaseCount('promotion_attempt_failures', 1);
         $this->assertSame(PromotionAttemptStatus::Failed, app(ReconcileImportPromotion::class)->handle($failed)->status);
+    }
+
+    public function test_promotion_job_records_a_durable_failure_before_retrying(): void
+    {
+        [, $actor, $item] = $this->item();
+        app(CreateImportDecisionSnapshot::class)->handle($item, $actor, $this->definition($actor));
+        $attempt = app(ReserveImportPromotion::class)->handle($item, $actor, PromotionOperationKind::Promote, 'job-failure');
+        $storage = Mockery::mock(ImportPromotionObjectStorage::class);
+        $storage->shouldReceive('materialise')->once()->andThrow(ImportPromotionException::conflict('promotion_storage_unavailable'));
+        $this->app->instance(ImportPromotionObjectStorage::class, $storage);
+
+        try {
+            app()->call([new AdvanceImportPromotion($attempt->id), 'handle']);
+            $this->fail('The failed promotion job did not propagate its execution failure.');
+        } catch (ImportPromotionException $exception) {
+            $this->assertSame('promotion_storage_unavailable', $exception->reason);
+        }
+
+        $attempt->refresh();
+        $this->assertSame(PromotionAttemptStatus::Copying, $attempt->status);
+        $this->assertSame(1, $attempt->failures()->count());
+        $this->assertNull($attempt->lease_token_hash);
+        $this->assertDatabaseHas('promotion_attempt_failures', [
+            'promotion_attempt_id' => $attempt->id,
+            'lease_generation' => 1,
+            'failure_code' => 'promotion_execution_failed',
+        ]);
     }
 
     public function test_adoption_requires_an_authorised_new_decision_and_new_actor_identity(): void

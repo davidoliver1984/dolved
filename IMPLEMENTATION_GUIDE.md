@@ -15072,8 +15072,31 @@ and `git diff --check`. Evidence is recorded in
 
 ## Stage 25.6 — Import workflow and progress UI
 
-This stage must present every ADR-0034 visual checkpoint for David's explicit
-review before acceptance.
+Completed on 31 August 2026. The workspace library now exposes the real
+ADR-0034 import path for staging, preflight, deterministic matching, review and
+promotion. The UI presents the accepted seven-step flow and reports only the
+truthful coarse post-promotion states `Promoted/queued`, `Processing` and
+`Indexed`; it does not infer unavailable ingestion substages. The legacy
+direct-upload panel is no longer presented as the import workflow.
+
+The API boundary creates import batches, stages workspace/item-scoped objects,
+starts and reports preflight, records immutable decisions, and advances the
+existing promotion state machine. Promotion dispatch also records durable
+typed failure state and clears its lease if downstream dispatch fails. The
+runtime uses the existing S3-backed extraction-artifact contract for both the
+API and conversation worker, and the ingestion acknowledgement route is bound
+to the existing controller action.
+
+The approved live review used batch
+`00b3c353-ee16-44bd-a39d-409fc0eb30ba`, item
+`2cb32bcf-4c62-4a49-8576-a7e25773edcc` and promotion
+`50589300-846d-44d5-81a5-7833dacf00e2`. It produced indexed document
+`98c0a4ec-c996-4dca-9f01-83837707dcbd`, one canonical chunk and one active
+hybrid point with an empty queue and DLQ. David approved every required visual
+checkpoint after viewing the completed document. Verification passed with 507
+Laravel tests / 2,724 assertions (6 skipped), 145 web tests, Pint, web lint,
+TypeScript and `git diff --check`. Full evidence is recorded in
+`docs/journal/2026-08-31-r25-s06-import-workflow-ui.md`.
 
 ## Stage 25.7 — Provider-free and Playwright acceptance journeys
 

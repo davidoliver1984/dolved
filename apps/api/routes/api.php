@@ -11,6 +11,7 @@ use App\Http\Controllers\DocumentLibraryController;
 use App\Http\Controllers\DocumentMetadataController;
 use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\DocumentVersionGovernanceController;
+use App\Http\Controllers\ImportWorkflowController;
 use App\Http\Controllers\Internal\DocumentDeletionOperationController;
 use App\Http\Controllers\Internal\DocumentIngestionClaimController;
 use App\Http\Controllers\Internal\ImportPreflightController;
@@ -102,7 +103,7 @@ Route::post(
 Route::prefix('/internal/ingestion/events/{eventId}')->group(function (): void {
     Route::post('/extraction-artifact/authorise', [IngestionOperationController::class, 'authoriseExtractionUpload'])
         ->middleware('ingestion.worker:ingestion.extraction-artifact.authorise')->name('ingestion.extraction-artifact.authorise');
-    Route::post('/extraction-artifact/acknowledge', [IngestionOperationController::class, 'acknowledgeExtractionArtifactUpload'])
+    Route::post('/extraction-artifact/acknowledge', [IngestionOperationController::class, 'acknowledgeExtractionUpload'])
         ->middleware('ingestion.worker:ingestion.extraction-artifact.acknowledge')->name('ingestion.extraction-artifact.acknowledge');
     Route::post('/lease/renew', [IngestionOperationController::class, 'renew'])
         ->middleware('ingestion.worker:ingestion.lease.renew')->name('ingestion.lease.renew');
@@ -152,6 +153,15 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::delete('/workspaces/{workspacePublicId}/membership', [WorkspaceAdministrationController::class, 'leave']);
     Route::post('/workspace-invitations/accept', [WorkspaceAdministrationController::class, 'accept']);
     Route::get('/workspaces/{workspacePublicId}/documents', [DocumentAdministrationController::class, 'index']);
+    Route::get('/workspaces/{workspacePublicId}/imports/configuration', [ImportWorkflowController::class, 'configuration']);
+    Route::get('/workspaces/{workspacePublicId}/imports', [ImportWorkflowController::class, 'index']);
+    Route::post('/workspaces/{workspacePublicId}/imports', [ImportWorkflowController::class, 'store']);
+    Route::get('/workspaces/{workspacePublicId}/imports/{batchPublicId}', [ImportWorkflowController::class, 'show']);
+    Route::post('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/uploaded', [ImportWorkflowController::class, 'uploaded']);
+    Route::get('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/matches', [ImportWorkflowController::class, 'matches']);
+    Route::post('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/decision', [ImportWorkflowController::class, 'decide']);
+    Route::post('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/promotions', [ImportWorkflowController::class, 'promote']);
+    Route::post('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/promotions/{attemptPublicId}/cancel', [ImportWorkflowController::class, 'cancel']);
     Route::get('/workspaces/{workspacePublicId}/document-library', [DocumentLibraryController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}/knowledge-readiness', [WorkspaceKnowledgeReadinessController::class, 'show']);
     Route::get('/workspaces/{workspacePublicId}/starter-questions', [WorkspaceKnowledgeReadinessController::class, 'starterQuestions']);
