@@ -27,6 +27,21 @@ if ! awslocal s3api head-bucket --bucket "$DOCUMENT_UPLOAD_BUCKET" >/dev/null 2>
     fi
 fi
 
+awslocal s3api put-public-access-block \
+    --bucket "$DOCUMENT_UPLOAD_BUCKET" \
+    --public-access-block-configuration \
+        'BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true'
+
+bucket_encryption_file="/tmp/rag-platform-document-upload-encryption.json"
+printf '%s\n' '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"},"BucketKeyEnabled":false}]}' \
+    > "$bucket_encryption_file"
+
+awslocal s3api put-bucket-encryption \
+    --bucket "$DOCUMENT_UPLOAD_BUCKET" \
+    --server-side-encryption-configuration "file://$bucket_encryption_file"
+
+rm -f "$bucket_encryption_file"
+
 cors_configuration_file="/tmp/rag-platform-document-upload-cors.json"
 
 printf '{"CORSRules":[{"AllowedHeaders":["content-type"],"AllowedMethods":["PUT","HEAD"],"AllowedOrigins":["%s"],"ExposeHeaders":["ETag"],"MaxAgeSeconds":300}]}\n' \

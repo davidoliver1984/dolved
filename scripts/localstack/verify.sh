@@ -11,6 +11,40 @@ set -eu
 awslocal s3api head-bucket \
     --bucket "$DOCUMENT_UPLOAD_BUCKET"
 
+public_access_block="$(
+    awslocal s3api get-public-access-block \
+        --bucket "$DOCUMENT_UPLOAD_BUCKET" \
+        --output json
+)"
+
+case "$public_access_block" in
+    *'"BlockPublicAcls": true'*'"IgnorePublicAcls": true'*'"BlockPublicPolicy": true'*'"RestrictPublicBuckets": true'*)
+        ;;
+    *)
+        printf 'Document-upload bucket is not fully private: %s\n' \
+            "$public_access_block" \
+            >&2
+        exit 1
+        ;;
+esac
+
+bucket_encryption="$(
+    awslocal s3api get-bucket-encryption \
+        --bucket "$DOCUMENT_UPLOAD_BUCKET" \
+        --output json
+)"
+
+case "$bucket_encryption" in
+    *'"SSEAlgorithm": "AES256"'*)
+        ;;
+    *)
+        printf 'Document-upload bucket encryption is not configured: %s\n' \
+            "$bucket_encryption" \
+            >&2
+        exit 1
+        ;;
+esac
+
 cors_configuration="$(
     awslocal s3api get-bucket-cors \
         --bucket "$DOCUMENT_UPLOAD_BUCKET" \
@@ -71,6 +105,8 @@ esac
 
 printf 'Local AWS resources verified:\n'
 printf '  bucket: %s\n' "$DOCUMENT_UPLOAD_BUCKET"
+printf '  bucket public access: blocked\n'
+printf '  bucket encryption: AES256\n'
 printf '  upload CORS origin: %s\n' "$DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN"
 printf '  queue:  %s\n' "$queue_url"
 printf '  dlq:    %s\n' "$dlq_url"

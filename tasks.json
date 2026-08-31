@@ -39,8 +39,8 @@
   },
   "progress": {
     "current_phase": "R25",
-    "current_session": "R25-S01",
-    "next_action": "Begin R25-S01 — build the ADR-0034 import domain, schema and staging-privacy boundary.",
+    "current_session": "R25-S02",
+    "next_action": "Begin R25-S02 — build the ADR-0034 asynchronous preflight contract and lease reconciliation boundary.",
     "completed_through": "R24-GATE",
     "completed_phase_count": 25,
     "total_phase_count": 30
@@ -4756,8 +4756,8 @@
       "objective": "Implement ADR-0034's isolated staging, preflight, matching and atomic promotion lifecycle.",
       "accepted_adrs": ["ADR-0034"],
       "sessions": [
-        {"id": "R25-S01", "guide_stage": "Stage 25.1 — Domain, schema and staging-privacy verification", "title": "Build Import Domain and Staging Privacy", "status": "in_progress", "depends_on": ["R24-GATE"]},
-        {"id": "R25-S02", "guide_stage": "Stage 25.2 — Preflight contract and lease reconciliation", "title": "Build Import Preflight", "status": "not_started", "depends_on": ["R25-S01"]},
+        {"id": "R25-S01", "guide_stage": "Stage 25.1 — Domain, schema and staging-privacy verification", "title": "Build Import Domain and Staging Privacy", "status": "completed", "depends_on": ["R24-GATE"], "completion_evidence": ["Complete ADR-0034 relational-invariant schema with PostgreSQL composite bindings and generated actor identity", "Exact workspace/item-scoped staging-key and storage boundary", "LocalStack public-access block and AES-256 encryption verification", "13 focused tests / 46 assertions and complete Laravel suite", "docs/journal/2026-08-31-r25-s01-import-domain-and-staging-privacy.md"]},
+        {"id": "R25-S02", "guide_stage": "Stage 25.2 — Preflight contract and lease reconciliation", "title": "Build Import Preflight", "status": "in_progress", "depends_on": ["R25-S01"]},
         {"id": "R25-S03", "guide_stage": "Stage 25.3 — Deterministic matching", "title": "Build Import Matching", "status": "not_started", "depends_on": ["R25-S02"]},
         {"id": "R25-S04", "guide_stage": "Stage 25.4 — Promotion state machine", "title": "Build Import Promotion", "status": "not_started", "depends_on": ["R25-S03"]},
         {"id": "R25-S05", "guide_stage": "Stage 25.5 — Legacy cutover and drain", "title": "Cut Over Legacy Imports", "status": "not_started", "depends_on": ["R25-S04"]},
