@@ -45,7 +45,7 @@ final class ImportDomainFoundationTest extends TestCase
         }
 
         $this->assertTrue(Schema::hasColumns('import_items', [
-            'import_batch_id', 'workspace_id', 'staged_object_key',
+            'import_batch_id', 'workspace_id', 'staged_object_key', 'source_filename',
             'source_checksum_sha256', 'preflight_status', 'match_status',
             'current_decision_snapshot_id', 'replaced_by_import_item_id',
         ]));
@@ -199,6 +199,7 @@ final class ImportDomainFoundationTest extends TestCase
     {
         [$workspace, $actor, $batch] = $this->batch();
         $item = $this->item($batch, [
+            'source_filename' => 'source.pdf',
             'preflight_status' => ImportPreflightStatus::Verified,
             'source_checksum_sha256' => str_repeat('a', 64),
             'media_type' => 'application/pdf',
@@ -213,6 +214,13 @@ final class ImportDomainFoundationTest extends TestCase
         try {
             $item->update(['size_bytes' => 101]);
             $this->fail('Verified source identity changed.');
+        } catch (LogicException) {
+            $this->assertTrue(true);
+        }
+
+        try {
+            $item->update(['source_filename' => 'renamed.pdf']);
+            $this->fail('Import source filename identity changed.');
         } catch (LogicException) {
             $this->assertTrue(true);
         }

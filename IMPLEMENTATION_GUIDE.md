@@ -14983,6 +14983,35 @@ here.
 
 ## Stage 25.3 — Deterministic matching
 
+**Completed 2026-08-31.** Verified import items now receive deterministic,
+provider-free reconciliation based only on their verified checksum, original
+source filename and existing family title. Exact checksum matches are scoped
+to one workspace and distinguish live technical states from informational
+`DELETING`/`DELETED` history without allowing governance state to hide a
+duplicate. Applicability-only intent is redirected to ADR-0031's existing
+successor action. Possible family matches use the versioned
+`family-title-levenshtein-v1` profile, Unicode-normalised filename stems and
+titles, a tracked threshold, stable score/public-ID ordering and a hard
+five-candidate limit. Unsupported source identity fails closed, and matching
+never selects a family or changes the import decision automatically.
+
+The durable workspace/checksum reservation now has one transaction-bound lock
+primitive shared with both ADR-0031 clone completion paths. The reservation is
+the first lock in each clone final transaction; only after acquiring it does
+the clone re-read the verified live source before committing. Real PostgreSQL
+tests prove concurrent first creation, reuse, rollback recovery, same-pair
+serialization and cross-workspace independence. The complete promotion-versus-
+clone concurrency matrix remains an R25-S04/S07 acceptance responsibility
+because the promotion consumer does not exist until Stage 25.4; no promotion,
+decision-snapshot or user-interface behavior was introduced in this stage.
+
+Verification passed with the complete Laravel suite (485 passed, 3 skipped,
+2,606 assertions), the isolated PostgreSQL serialization profile (2 tests,
+9 assertions), Pint and `git diff --check`. The complete Python suite was also
+re-run unchanged to protect the shared application boundary. Evidence is
+recorded in
+`docs/journal/2026-08-31-r25-s03-deterministic-import-matching.md`.
+
 ## Stage 25.4 — Promotion state machine
 
 ## Stage 25.5 — Legacy cutover and drain

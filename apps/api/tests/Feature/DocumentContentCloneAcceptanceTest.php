@@ -99,6 +99,10 @@ final class DocumentContentCloneAcceptanceTest extends TestCase
             'workspace_corpus_generation_id' => $targetAttempt->workspace_corpus_generation_id,
             'document_chunk_id' => $targetChunk->id,
         ]);
+        $this->assertDatabaseHas('workspace_checksum_reservations', [
+            'workspace_id' => $operation->workspace_id,
+            'source_checksum_sha256' => $operation->source_checksum_sha256,
+        ]);
         $this->assertSame(1, $gateway->cloneCalls);
     }
 
@@ -200,6 +204,33 @@ final class DocumentContentCloneAcceptanceTest extends TestCase
 
         $this->assertSame(DocumentContentCloneStatus::Authorised, $operation->refresh()->status);
         $this->assertSame(IngestionAttemptOrigin::Ingestion, $operation->targetAttempt->attempt_origin);
+    }
+
+    public function test_clone_completion_rechecks_the_verified_live_source_under_the_checksum_lock(): void
+    {
+        [$owner, $source] = $this->compatibleSource();
+        $this->app->instance(ContentCloneVectorGateway::class, new CloneVectorGatewayFixture);
+        [, $operation, $leaseToken] = app(CreateApplicabilityOnlySuccessor::class)->prepare(
+            $source,
+            $owner,
+            now()->addMonth(),
+            [],
+            (string) Str::uuid(),
+        );
+        $source->forceFill(['status' => DocumentStatus::Deleted])->save();
+
+        try {
+            app(MaterialiseDocumentContentClone::class)->handle($operation, $leaseToken);
+            $this->fail('Clone completion accepted a source that was no longer live.');
+        } catch (IngestionAttemptException $exception) {
+            $this->assertSame('clone_source_changed', $exception->errorCode);
+        }
+
+        $this->assertSame(DocumentContentCloneStatus::CleanupRequired, $operation->refresh()->status);
+        $this->assertDatabaseMissing('workspace_checksum_reservations', [
+            'workspace_id' => $operation->workspace_id,
+            'source_checksum_sha256' => $operation->source_checksum_sha256,
+        ]);
     }
 
     /** @return array{User, Document, IngestionEventClaim, WorkspaceCorpusGeneration} */

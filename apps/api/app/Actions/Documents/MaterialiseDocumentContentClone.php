@@ -28,6 +28,7 @@ use App\Services\Documents\DocumentObjectStorage;
 use App\Services\Documents\ExtractionArtifactObjectStorage;
 use App\Services\Ingestion\DeterministicVectorPointIdentity;
 use App\Services\Ingestion\IngestionCanonicaliser;
+use App\Support\Imports\WorkspaceChecksumLock;
 use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -45,6 +46,7 @@ final readonly class MaterialiseDocumentContentClone
         private ContentCloneVectorGateway $vectors,
         private RecordIngestionAudit $audit,
         private RecordWorkspaceUsage $usage,
+        private WorkspaceChecksumLock $checksumLocks,
     ) {}
 
     public function handle(DocumentContentCloneOperation $operation, string $leaseToken): Document
@@ -363,6 +365,27 @@ final readonly class MaterialiseDocumentContentClone
         string $leaseToken,
     ): Document {
         return DB::transaction(function () use ($operation, $manifest, $report, $chunkDigest, $leaseToken): Document {
+            $this->checksumLocks->acquire($operation->workspace_id, $operation->source_checksum_sha256);
+            $sourceStillLive = Document::query()
+                ->whereKey($operation->source_document_id)
+                ->where('workspace_id', $operation->workspace_id)
+                ->where('source_checksum_sha256', $operation->source_checksum_sha256)
+                ->where('checksum_verification_status', ChecksumVerificationStatus::Verified->value)
+                ->whereIn('status', [
+                    DocumentStatus::Uploaded->value,
+                    DocumentStatus::Queued->value,
+                    DocumentStatus::Processing->value,
+                    DocumentStatus::Indexed->value,
+                    DocumentStatus::Failed->value,
+                ])
+                ->exists();
+            if (! $sourceStillLive) {
+                throw IngestionAttemptException::invalid(
+                    'clone_source_changed',
+                    'The verified clone source changed before completion.',
+                    409,
+                );
+            }
             $target = Document::query()->whereKey($operation->target_document_id)->lockForUpdate()->firstOrFail();
             $attempt = IngestionEventClaim::query()->whereKey($operation->target_ingestion_event_claim_id)->lockForUpdate()->firstOrFail();
             $locked = DocumentContentCloneOperation::query()->whereKey($operation->id)->lockForUpdate()->firstOrFail();

@@ -18,4 +18,11 @@ return [
         'lease_seconds' => max(60, (int) env('IMPORT_PREFLIGHT_LEASE_SECONDS', 600)),
         'reclaim_batch_size' => max(1, (int) env('IMPORT_PREFLIGHT_RECLAIM_BATCH_SIZE', 25)),
     ],
+    'matching' => [
+        'profile_version' => 'family-title-levenshtein-v1',
+        'threshold_basis_points' => 6000,
+        'maximum_candidates' => 5,
+        'maximum_exact_matches' => 5,
+        'maximum_normalised_characters' => 200,
+    ],
 ];

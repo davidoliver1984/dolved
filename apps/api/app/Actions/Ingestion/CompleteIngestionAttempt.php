@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Actions\Ingestion;
 
+use App\Enums\ChecksumVerificationStatus;
 use App\Enums\DocumentStatus;
 use App\Enums\IngestionAttemptStatus;
 use App\Enums\WorkspaceCorpusGenerationStatus;
 use App\Exceptions\IngestionAttemptException;
+use App\Models\Document;
 use App\Models\DocumentFamily;
 use App\Models\IngestionEventClaim;
 use App\Models\WorkspaceCorpusGenerationChunk;
 use App\Services\Ingestion\IngestionAttemptAuthorizer;
+use App\Support\Imports\WorkspaceChecksumLock;
 use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
 
@@ -21,12 +24,50 @@ class CompleteIngestionAttempt
         private readonly IngestionAttemptAuthorizer $authorizer,
         private readonly RecordIngestionAudit $audit,
         private readonly RecordWorkspaceUsage $usage,
+        private readonly WorkspaceChecksumLock $checksumLocks,
     ) {}
 
     /** @param array<string, mixed> $payload */
     public function handle(string $eventId, array $payload): IngestionEventClaim
     {
-        return DB::transaction(function () use ($eventId, $payload): IngestionEventClaim {
+        $cloneIdentity = DB::table('ingestion_event_claims as attempts')
+            ->join('document_content_clone_operations as clones', 'clones.target_document_id', '=', 'attempts.document_id')
+            ->where('attempts.event_id', $eventId)
+            ->select([
+                'attempts.status as attempt_status',
+                'clones.workspace_id',
+                'clones.source_document_id',
+                'clones.source_checksum_sha256',
+            ])
+            ->first();
+
+        return DB::transaction(function () use ($eventId, $payload, $cloneIdentity): IngestionEventClaim {
+            if ($cloneIdentity !== null && $cloneIdentity->attempt_status !== IngestionAttemptStatus::Completed->value) {
+                $this->checksumLocks->acquire(
+                    (int) $cloneIdentity->workspace_id,
+                    (string) $cloneIdentity->source_checksum_sha256,
+                );
+                $sourceStillLive = Document::query()
+                    ->whereKey((int) $cloneIdentity->source_document_id)
+                    ->where('workspace_id', (int) $cloneIdentity->workspace_id)
+                    ->where('source_checksum_sha256', (string) $cloneIdentity->source_checksum_sha256)
+                    ->where('checksum_verification_status', ChecksumVerificationStatus::Verified->value)
+                    ->whereIn('status', [
+                        DocumentStatus::Uploaded->value,
+                        DocumentStatus::Queued->value,
+                        DocumentStatus::Processing->value,
+                        DocumentStatus::Indexed->value,
+                        DocumentStatus::Failed->value,
+                    ])
+                    ->exists();
+                if (! $sourceStillLive) {
+                    throw IngestionAttemptException::invalid(
+                        'clone_source_changed',
+                        'The verified clone source changed before completion.',
+                        409,
+                    );
+                }
+            }
             $attempt = IngestionEventClaim::query()->where('event_id', $eventId)->lockForUpdate()->firstOrFail();
             $this->authorizer->assert($attempt, $payload['event_id'], $payload['workspace_id'], $payload['document_id'], $payload['lease_token'], allowCompleted: true);
             $evidence = collect($payload)->only(array_keys($attempt->publication_evidence ?? []))->all();

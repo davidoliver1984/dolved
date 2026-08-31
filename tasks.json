@@ -39,8 +39,8 @@
   },
   "progress": {
     "current_phase": "R25",
-    "current_session": "R25-S03",
-    "next_action": "Begin R25-S03 — build ADR-0034 deterministic duplicate and family matching without starting promotion.",
+    "current_session": "R25-S04",
+    "next_action": "Begin R25-S04 — build ADR-0034's promotion state machine on the verified matching and checksum-serialization boundary.",
     "completed_through": "R24-GATE",
     "completed_phase_count": 25,
     "total_phase_count": 30
@@ -4758,8 +4758,8 @@
       "sessions": [
         {"id": "R25-S01", "guide_stage": "Stage 25.1 — Domain, schema and staging-privacy verification", "title": "Build Import Domain and Staging Privacy", "status": "completed", "depends_on": ["R24-GATE"], "completion_evidence": ["Complete ADR-0034 relational-invariant schema with PostgreSQL composite bindings and generated actor identity", "Exact workspace/item-scoped staging-key and storage boundary", "LocalStack public-access block and AES-256 encryption verification", "13 focused tests / 46 assertions and complete Laravel suite", "docs/journal/2026-08-31-r25-s01-import-domain-and-staging-privacy.md"]},
         {"id": "R25-S02", "guide_stage": "Stage 25.2 — Preflight contract and lease reconciliation", "title": "Build Import Preflight", "status": "completed", "depends_on": ["R25-S01"], "completion_evidence": ["Immutable generation-bound ImportPreflightAttempt and import.preflight.requested outbox contract", "Exact staged-object read authority and bounded provider-free Python inspection", "Purpose-scoped HMAC complete/fail callbacks with fail-closed identity, lease and replay reconciliation", "Expired leases terminalise before successor dispatch and remain recoverable after temporary dispatch unavailability", "Complete Laravel suite: 480 passed / 3 skipped; complete Python suite: 654 passed / 4 skipped", "docs/journal/2026-08-31-r25-s02-import-preflight.md"]},
-        {"id": "R25-S03", "guide_stage": "Stage 25.3 — Deterministic matching", "title": "Build Import Matching", "status": "in_progress", "depends_on": ["R25-S02"]},
-        {"id": "R25-S04", "guide_stage": "Stage 25.4 — Promotion state machine", "title": "Build Import Promotion", "status": "not_started", "depends_on": ["R25-S03"]},
+        {"id": "R25-S03", "guide_stage": "Stage 25.3 — Deterministic matching", "title": "Build Import Matching", "status": "completed", "depends_on": ["R25-S02"], "completion_evidence": ["Workspace-scoped verified-checksum duplicate classification with live blocking and deleted informational results", "Versioned provider-free filename/title matching with deterministic bounded ordering and no automatic selection", "Shared transaction-bound workspace/checksum reservation integrated into both ADR-0031 clone completion paths", "Complete Laravel suite: 485 passed / 3 skipped; isolated PostgreSQL serialization profile: 2 passed", "docs/journal/2026-08-31-r25-s03-deterministic-import-matching.md"]},
+        {"id": "R25-S04", "guide_stage": "Stage 25.4 — Promotion state machine", "title": "Build Import Promotion", "status": "in_progress", "depends_on": ["R25-S03"]},
         {"id": "R25-S05", "guide_stage": "Stage 25.5 — Legacy cutover and drain", "title": "Cut Over Legacy Imports", "status": "not_started", "depends_on": ["R25-S04"]},
         {"id": "R25-S06", "guide_stage": "Stage 25.6 — Import workflow and progress UI", "title": "Build Import Workflow UI", "status": "not_started", "depends_on": ["R25-S05"], "requires_visual_review": true, "visual_review_policy": "All ADR-0034 checkpoints require David's explicit approval."},
         {"id": "R25-S07", "guide_stage": "Stage 25.7 — Provider-free and Playwright acceptance journeys", "title": "Verify Import Staging, Promotion and Small-Corpus Readiness", "status": "not_started", "depends_on": ["R25-S06"], "mandatory_acceptance_requirements": ["Run ADR-0033's complete nine-step small-corpus journey through the real ADR-0034 ImportBatch flow", "Assert genuine searchable readiness rather than upload, promotion or indexing alone", "Receive a grounded answer with valid evidence/citation behaviour", "Do not substitute the legacy direct-upload path"]}

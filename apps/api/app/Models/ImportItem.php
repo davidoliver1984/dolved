@@ -19,7 +19,7 @@ final class ImportItem extends Model
     protected static function booted(): void
     {
         self::updating(function (self $item): void {
-            if ($item->isDirty(['public_id', 'import_batch_id', 'workspace_id', 'staged_object_key', 'declared_media_type'])) {
+            if ($item->isDirty(['public_id', 'import_batch_id', 'workspace_id', 'staged_object_key', 'source_filename', 'declared_media_type'])) {
                 throw new LogicException('Import item identity and staging key are immutable.');
             }
             if ($item->getRawOriginal('preflight_status') === ImportPreflightStatus::Verified->value
