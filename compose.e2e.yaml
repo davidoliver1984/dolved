@@ -23,8 +23,8 @@ services:
       SANCTUM_STATEFUL_DOMAINS: ${SANCTUM_STATEFUL_DOMAINS}
       SESSION_COOKIE: rag-platform-session
       DB_DATABASE: ${POSTGRES_DB}
-      DB_USERNAME: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_USERNAME: rag_platform_app
+      DB_PASSWORD: ${POSTGRES_APP_PASSWORD}
       AWS_BUCKET: ${DOCUMENT_UPLOAD_BUCKET}
       AWS_UPLOAD_ENDPOINT: http://localhost:${LOCALSTACK_PORT}
       SQS_QUEUE: ${INGESTION_QUEUE}
@@ -52,8 +52,8 @@ services:
     environment:
       APP_ENV: e2e
       DB_DATABASE: ${POSTGRES_DB}
-      DB_USERNAME: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_USERNAME: rag_platform_app
+      DB_PASSWORD: ${POSTGRES_APP_PASSWORD}
       AWS_BUCKET: ${DOCUMENT_UPLOAD_BUCKET}
       SQS_QUEUE: ${INGESTION_QUEUE}
       OTEL_SDK_DISABLED: "true"
@@ -66,8 +66,8 @@ services:
     environment:
       APP_ENV: e2e
       DB_DATABASE: ${POSTGRES_DB}
-      DB_USERNAME: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_USERNAME: rag_platform_app
+      DB_PASSWORD: ${POSTGRES_APP_PASSWORD}
       OTEL_SDK_DISABLED: "true"
       CONTEXTUALISER_PROVIDER: deterministic
       CONTEXTUALISER_MODEL: catalogue-contextualiser

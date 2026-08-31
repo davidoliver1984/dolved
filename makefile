@@ -12,8 +12,8 @@ TAIL ?= 100
 	format format-web format-api format-ai \
 	format-check format-check-web format-check-api format-check-ai \
 	typecheck typecheck-web typecheck-ai \
-	test test-web test-api test-ai test-telemetry test-e2e test-e2e-inspect test-e2e-clean test-splade-integration \
-	bootstrap migrate seed reset clean \
+	test test-web test-api test-ai test-telemetry test-postgres-role-topology test-e2e test-e2e-inspect test-e2e-clean test-splade-integration \
+	bootstrap migrate postgres-roles-verify seed reset clean \
 	aws-provision aws-status qdrant-status publish-ingestion consume-ingestion \
 	telemetry-smoke telemetry-verify telemetry-outage \
 	evaluation-run evaluation-policy-gate evaluation-generation-verify evaluation-generation-live \
@@ -45,6 +45,7 @@ help:
 		'' \
 		'Database' \
 		'  make migrate         Run outstanding Laravel migrations' \
+		'  make postgres-roles-verify  Verify runtime/migrator isolation and effective grants' \
 		'  make seed            Run the Laravel database seeder' \
 		'  make aws-provision   Idempotently provision local AWS resources' \
 		'  make aws-status      Verify the bucket, queues and redrive policy' \
@@ -92,6 +93,7 @@ help:
 		'  make test-api        Run Laravel tests' \
 		'  make test-ai         Run Python tests' \
 		'  make test-telemetry  Verify the pinned Collector sampling component and configuration' \
+		'  make test-postgres-role-topology  Verify Compose credential isolation without starting services' \
 		'  make test-e2e       Run the isolated deterministic ingestion journey' \
 		'  make test-e2e-inspect  Inspect a preserved failed dolved-e2e stack' \
 		'  make test-e2e-clean  Remove only the isolated dolved-e2e stack and volumes' \
@@ -164,7 +166,7 @@ typecheck-web:
 typecheck-ai:
 	$(EXEC) ai uv run mypy app tests
 
-test: test-web test-api test-ai test-telemetry
+test: test-web test-api test-ai test-telemetry test-postgres-role-topology
 
 test-web:
 	$(EXEC) web npm test
@@ -177,6 +179,9 @@ test-ai:
 
 test-telemetry:
 	./scripts/telemetry/test_collector_configuration.sh
+
+test-postgres-role-topology:
+	./scripts/postgres/test_runtime_role_topology.sh
 
 test-e2e:
 	./scripts/e2e/run.sh
@@ -196,7 +201,10 @@ bootstrap:
 	$(MAKE) migrate
 
 migrate:
-	$(EXEC) api php artisan migrate --force
+	$(COMPOSE) run --rm migrator php artisan migrate --force
+
+postgres-roles-verify:
+	./scripts/postgres/verify_runtime_roles.sh
 
 seed:
 	$(EXEC) api php artisan db:seed --force

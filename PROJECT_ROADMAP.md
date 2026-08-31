@@ -1095,7 +1095,8 @@ exist.
 - R26-S01: PostgreSQL owner/migrator/runtime role foundation, default
   privileges and complete existing-application verification under
   `rag_platform_app`; this precedes every protected migration in ADR-0035 and
-  ADR-0036.
+  ADR-0036. Completed 31 August 2026 with fresh-database E2E and live
+  PostgreSQL effective-privilege verification.
 - R26-S02: bulk domain, constrained schema, frozen membership and provider-free
   APIs.
 - R26-S03: queue execution, locking, retry, cancellation and audit.

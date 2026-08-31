@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R26",
-    "current_session": "R26-S01",
-    "next_action": "Begin R26-S01 — establish the PostgreSQL runtime-role and effective/default-privilege foundation required by ADR-0035 and ADR-0036.",
-    "completed_through": "R25-GATE",
+    "current_session": "R26-S02",
+    "next_action": "Begin R26-S02 — build ADR-0035's constrained bulk domain, frozen membership and provider-free APIs on the verified PostgreSQL privilege foundation.",
+    "completed_through": "R26-S01",
     "completed_phase_count": 26,
     "total_phase_count": 32
   },
@@ -5199,7 +5199,7 @@
       "title": "Frozen Bulk Document Operations",
       "guide_start_line": 15138,
       "guide_end_line": 15161,
-      "status": "not_started",
+      "status": "in_progress",
       "objective": "Implement ADR-0035's frozen, auditable bulk operations after ADR-0034.",
       "accepted_adrs": [
         "ADR-0035"
@@ -5209,11 +5209,18 @@
           "id": "R26-S01",
           "guide_stage": "Stage 26.1 — PostgreSQL role and privilege foundation",
           "title": "Establish PostgreSQL Runtime Roles",
-          "status": "not_started",
+          "status": "completed",
           "depends_on": [
             "R25-GATE"
           ],
-          "objective": "Establish owner/migrator/runtime roles and effective/default privileges before protected ADR-0035/0036 migrations."
+          "objective": "Establish owner/migrator/runtime roles and effective/default privileges before protected ADR-0035/0036 migrations.",
+          "completion_evidence": [
+            "Idempotent PostgreSQL owner, one-shot migrator and runtime-role reconciliation with exact membership and credential isolation",
+            "Existing object ownership plus owner-scoped default table, sequence and function privileges verified against PostgreSQL 18",
+            "Runtime DML succeeds while runtime DDL, owner assumption and future-function execution fail closed",
+            "Complete Laravel suite, Pint, Compose validation and isolated 2-journey deterministic E2E suite passed",
+            "docs/journal/2026-08-31-r26-s01-postgresql-runtime-roles.md"
+          ]
         },
         {
           "id": "R26-S02",

@@ -26,7 +26,7 @@ trap 'rm -f "$CONFIG"; "${COMPOSE[@]}" down --volumes --remove-orphans >/dev/nul
 python3 "$ROOT/scripts/evaluation/verify_current_retrieval_topology.py" "$CONFIG"
 
 "${COMPOSE[@]}" up --detach --wait postgres qdrant
-"${COMPOSE[@]}" run --rm --no-deps api php artisan migrate --force
+"${COMPOSE[@]}" run --rm migrator php artisan migrate --force
 "${COMPOSE[@]}" run --rm --no-deps \
   --volume "$OUTPUT:/output" \
   api php artisan evaluation:resolve-current-eligibility \

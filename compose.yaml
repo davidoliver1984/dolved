@@ -1,6 +1,53 @@
 name: ${COMPOSE_PROJECT_NAME:-rag-platform}
 
 services:
+  postgres-role-bootstrap:
+    image: postgres:18.4-alpine
+    environment:
+      PGHOST: postgres
+      PGDATABASE: ${POSTGRES_DB:-rag_platform}
+      PGUSER: ${POSTGRES_USER:-rag_platform}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+      RAG_PLATFORM_MIGRATOR_PASSWORD: ${POSTGRES_MIGRATOR_PASSWORD:-local-migrator-only}
+      RAG_PLATFORM_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:-local-runtime-only}
+      RAG_PLATFORM_DB_SCHEMAS: public
+    volumes:
+      - ./scripts/postgres/reconcile_runtime_roles.sh:/opt/rag-platform/reconcile-runtime-roles.sh:ro
+    command: /opt/rag-platform/reconcile-runtime-roles.sh
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  migrator:
+    profiles:
+      - tools
+    build:
+      context: ./apps/api
+      target: development
+    image: rag-platform-api:development
+    init: true
+    command: php artisan migrate --force
+    environment:
+      APP_NAME: Dolved
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB:-rag_platform}
+      DB_USERNAME: rag_platform_migrator
+      DB_PASSWORD: ${POSTGRES_MIGRATOR_PASSWORD:-local-migrator-only}
+      PGOPTIONS: -c role=rag_platform_owner
+      OTEL_SDK_DISABLED: "true"
+    volumes:
+      - ./apps/api:/app
+      - ./contracts:/contracts:ro
+      - api_vendor:/app/vendor
+    depends_on:
+      postgres-role-bootstrap:
+        condition: service_completed_successfully
+
   web:
     build:
       context: ./apps/web
@@ -62,8 +109,8 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_DATABASE: ${POSTGRES_DB:-rag_platform}
-      DB_USERNAME: ${POSTGRES_USER:-rag_platform}
-      DB_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+      DB_USERNAME: rag_platform_app
+      DB_PASSWORD: ${POSTGRES_APP_PASSWORD:-local-runtime-only}
       FILESYSTEM_DISK: s3
       QUEUE_CONNECTION: sqs
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
@@ -167,6 +214,8 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+      postgres-role-bootstrap:
+        condition: service_completed_successfully
       localstack:
         condition: service_healthy
       mailpit:
@@ -198,8 +247,8 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_DATABASE: ${POSTGRES_DB:-rag_platform}
-      DB_USERNAME: ${POSTGRES_USER:-rag_platform}
-      DB_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+      DB_USERNAME: rag_platform_app
+      DB_PASSWORD: ${POSTGRES_APP_PASSWORD:-local-runtime-only}
       QUEUE_CONNECTION: sqs
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
@@ -226,6 +275,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      postgres-role-bootstrap:
+        condition: service_completed_successfully
       localstack:
         condition: service_healthy
     stop_grace_period: 15s
@@ -246,8 +297,8 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_DATABASE: ${POSTGRES_DB:-rag_platform}
-      DB_USERNAME: ${POSTGRES_USER:-rag_platform}
-      DB_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+      DB_USERNAME: rag_platform_app
+      DB_PASSWORD: ${POSTGRES_APP_PASSWORD:-local-runtime-only}
       DB_QUEUE_CONNECTION: pgsql
       FILESYSTEM_DISK: s3
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
@@ -285,6 +336,8 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+      postgres-role-bootstrap:
+        condition: service_completed_successfully
       localstack:
         condition: service_healthy
     stop_grace_period: 30s

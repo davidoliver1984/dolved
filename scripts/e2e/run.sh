@@ -9,7 +9,7 @@ compose=(docker compose --env-file .env.e2e -p dolved-e2e -f compose.yaml -f com
 services=(postgres qdrant localstack mailpit ai api publisher worker conversation-worker web)
 
 "${compose[@]}" up --detach --build --wait --wait-timeout "${WAIT_TIMEOUT:-180}" "${services[@]}"
-"${compose[@]}" exec -T api php artisan migrate --force
+"${compose[@]}" run --rm migrator php artisan migrate --force
 "${compose[@]}" exec -T api php artisan e2e:provision-retrieval
 
 set +e

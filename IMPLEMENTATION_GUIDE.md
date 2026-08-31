@@ -15143,11 +15143,11 @@ Implement ADR-0035 after ADR-0034 promotion primitives exist.
 
 ## Stage 26.1 — PostgreSQL role and privilege foundation
 
-Provision and verify owner, migrator and `rag_platform_app` roles; isolate
-credentials; reconcile existing and default privileges for existing and future
-schemas, tables, sequences and functions; prove the complete current
-application under the runtime role. This stage must pass before any protected
-ADR-0035 or ADR-0036 migration.
+Completed 31 August 2026: the owner, one-shot migrator and `rag_platform_app`
+roles are reconciled idempotently with isolated credentials. Existing objects
+and owner-scoped defaults are verified for tables, sequences and functions;
+the complete current application and fresh deterministic E2E stack passed
+under the runtime role. Protected ADR-0035/0036 migrations may now proceed.
 
 ## Stage 26.2 — Bulk domain, schema, frozen membership and APIs
 
