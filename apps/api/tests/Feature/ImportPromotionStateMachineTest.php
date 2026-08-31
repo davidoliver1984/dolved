@@ -144,6 +144,15 @@ final class ImportPromotionStateMachineTest extends TestCase
     {
         [$workspace, $actor, $item] = $this->item();
         app(CreateImportDecisionSnapshot::class)->handle($item, $actor, $this->definition($actor));
+        $original = app(ReserveImportPromotion::class)->handle($item, $actor, PromotionOperationKind::Promote, 'adopt-original');
+        $claim = app(ClaimImportPromotion::class)->handle($original);
+        $this->fakeStorageEvidence($item);
+        app(VerifyImportPromotionSource::class)->handle($original, $claim['lease_token'], $claim['lease_generation']);
+        WorkspaceMembership::query()->where('workspace_id', $workspace->id)->where('user_id', $actor->id)->delete();
+        $conflict = app(FinalizeImportPromotion::class)->handle($original, $claim['lease_token'], $claim['lease_generation']);
+        $this->assertSame(PromotionAttemptStatus::Conflict, $conflict->status);
+        $this->assertSame('authorization_changed', $conflict->terminal_reason);
+
         $adopter = User::factory()->create();
         WorkspaceMembership::factory()->for($workspace)->for($adopter)->create(['role' => WorkspaceRole::Admin]);
         $definition = $this->definition($adopter);

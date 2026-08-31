@@ -1066,6 +1066,15 @@ David's approval before it closes.
 
 A tenant-safe, recoverable import-staging and promotion workflow.
 
+**Completed 2026-08-31.** The real `ImportBatch` workflow passed its mandatory
+provider-free browser acceptance: ten representative documents were staged,
+resumed, reviewed, promoted, indexed and approved into ten genuinely searchable
+families before a corpus-supported question produced a grounded answer with a
+valid source citation. The same gate also proved controlled insufficiency and
+stream reconnection, tenant concealment, exact-duplicate correction through
+same-batch replacement lineage, and explicit conflict adoption by a different
+authorised actor. No legacy-upload substitute or provider call was used.
+
 ---
 
 ## Phase 26 — Frozen Bulk Document Operations

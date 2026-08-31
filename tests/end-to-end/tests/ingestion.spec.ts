@@ -22,6 +22,18 @@ const testDirectory = fileURLToPath(new URL(".", import.meta.url));
 const repositoryRoot = resolve(testDirectory, "../../..");
 const fixtures = resolve(testDirectory, "../fixtures/v1");
 const apiBaseUrl = "http://localhost:8100";
+const representativeDocuments = [
+  "representative-policy.txt",
+  "infection-prevention-policy.txt",
+  "safeguarding-policy.txt",
+  "lone-working-policy.txt",
+  "fire-safety-policy.txt",
+  "data-protection-policy.txt",
+  "moving-handling-policy.txt",
+  "incident-reporting-policy.txt",
+  "food-safety-policy.txt",
+  "complaints-policy.txt",
+] as const;
 const password = readFileSync(resolve(repositoryRoot, ".env.e2e"), "utf8")
   .split("\n")
   .find((line) => line.startsWith("E2E_ACCOUNT_PASSWORD="))
@@ -51,6 +63,18 @@ function approveDocument(identity: BootstrapIdentity, documentId: string): void 
       "--workspace", identity.workspace_public_id,
       "--document", documentId,
       "--actor", identity.user_public_id,
+    ],
+    { cwd: repositoryRoot, encoding: "utf8" },
+  );
+}
+
+function composeService(operation: "start" | "stop", service: "conversation-worker"): void {
+  execFileSync(
+    "docker",
+    [
+      "compose", "--env-file", ".env.e2e", "-p", "dolved-e2e",
+      "-f", "compose.yaml", "-f", "compose.e2e.yaml",
+      operation, service,
     ],
     { cwd: repositoryRoot, encoding: "utf8" },
   );
@@ -98,20 +122,7 @@ async function documents(
   return ((await response.json()) as { data: DocumentRecord[] }).data;
 }
 
-async function requestIngestion(
-  request: APIRequestContext,
-  context: BrowserContext,
-  workspaceId: string,
-  documentId: string,
-) {
-  const response = await request.post(
-    `${apiBaseUrl}/api/workspaces/${workspaceId}/documents/${documentId}/ingestion-requests`,
-    { headers: await authHeaders(context) },
-  );
-  expect(response.status()).toBe(202);
-}
-
-test("completes the deterministic ingestion, retrieval, streaming answer and isolation journey", async ({ browser }) => {
+test("imports a representative corpus and proves genuine searchable grounded-answer readiness", async ({ browser }) => {
   test.skip(!password, "The committed E2E password variable is required.");
   const primary = bootstrap("ingestion-primary");
   const secondary = bootstrap("ingestion-secondary");
@@ -119,37 +130,62 @@ test("completes the deterministic ingestion, retrieval, streaming answer and iso
 
   const primaryContext = await browser.newContext();
   const page = await login(primaryContext, primary);
+  await page.goto(`/app/workspaces/${primary.workspace_public_id}/documents/imports`);
+  await page.locator("#import-files").setInputFiles(
+    representativeDocuments.map((filename) => resolve(fixtures, filename)),
+  );
+  await expect(page.getByText("10 files selected", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Stage and verify 10 documents" }).click();
+  await expect(page.getByRole("heading", { name: "Import in progress" })).toBeVisible();
+
+  // Prove the durable batch can be resumed rather than relying on page-local state.
   await page.goto(`/app/workspaces/${primary.workspace_public_id}/documents`);
+  await page.goto(`/app/workspaces/${primary.workspace_public_id}/documents/imports`);
+  await page.getByRole("button", { name: /10 documents/ }).click();
+  await expect(page.getByRole("heading", { name: "Import in progress" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Review match and metadata" }).first())
+    .toBeVisible({ timeout: 90_000 });
 
-  await page.locator("#document-files").setInputFiles([
-    resolve(fixtures, "representative-policy.txt"),
-    resolve(fixtures, "corrupt-policy.pdf"),
-  ]);
-  await page.getByRole("button", { name: "Upload 2 files" }).click();
-  await expect(page.getByText("Complete · 100%", { exact: true })).toHaveCount(2);
+  for (const filename of representativeDocuments) {
+    const reviewButton = page.getByRole("button", { name: "Review match and metadata" }).first();
+    await expect(reviewButton, `review action for ${filename}`).toBeVisible();
+    await reviewButton.click();
+    await expect(page.getByRole("heading", { name: /^Review / })).toBeVisible();
+    await page.getByRole("button", { name: "Save review" }).click();
+    await expect(page.getByRole("heading", { name: /^Review / })).toHaveCount(0);
+  }
 
-  const uploaded = await documents(page.request, primaryContext, primary.workspace_public_id);
-  const representative = uploaded.find((item) => item.source_filename === "representative-policy.txt");
-  const corrupt = uploaded.find((item) => item.source_filename === "corrupt-policy.pdf");
-  expect(representative).toBeDefined();
-  expect(corrupt).toBeDefined();
-  approveDocument(primary, representative!.public_id);
-  await requestIngestion(page.request, primaryContext, primary.workspace_public_id, representative!.public_id);
-  await requestIngestion(page.request, primaryContext, primary.workspace_public_id, corrupt!.public_id);
+  for (const filename of representativeDocuments) {
+    const promoteButton = page.getByRole("button", { name: "Promote to Library" }).first();
+    await expect(promoteButton, `promotion action for ${filename}`).toBeVisible();
+    await promoteButton.click();
+  }
 
   let lastStatuses = "unobserved";
   await expect.poll(async () => {
     const current = await documents(page.request, primaryContext, primary.workspace_public_id);
-    const good = current.find((item) => item.public_id === representative!.public_id);
-    const bad = current.find((item) => item.public_id === corrupt!.public_id);
-    lastStatuses = `${good?.status ?? "missing"}/${bad?.status ?? "missing"}`;
-    return lastStatuses;
-  }, { timeout: 90_000, message: `documents did not reach indexed/failed; last=${lastStatuses}` })
-    .toBe("indexed/failed");
+    const imported = representativeDocuments.map((filename) => current.find((item) => item.source_filename === filename));
+    lastStatuses = imported.map((item) => item?.status ?? "missing").join(",");
+    return imported.length === representativeDocuments.length
+      && imported.every((item) => item?.status === "indexed");
+  }, { timeout: 120_000, message: `imported documents did not all reach indexed; last=${lastStatuses}` })
+    .toBeTruthy();
 
   const finalDocuments = await documents(page.request, primaryContext, primary.workspace_public_id);
-  const failed = finalDocuments.find((item) => item.public_id === corrupt!.public_id);
-  expect(failed?.failure_category).toBeTruthy();
+  const imported = representativeDocuments.map((filename) => {
+    const document = finalDocuments.find((item) => item.source_filename === filename);
+    expect(document, `promoted document ${filename}`).toBeDefined();
+    return document!;
+  });
+  for (const document of imported) approveDocument(primary, document.public_id);
+  const representative = imported.find((item) => item.source_filename === "representative-policy.txt");
+  expect(representative).toBeDefined();
+
+  await page.goto(`/app/workspaces/${primary.workspace_public_id}`);
+  await expect(page.getByText(
+    "10 documents currently searchable within your workspace’s knowledge base",
+    { exact: true },
+  )).toBeVisible();
 
   const question = "What must staff do when a scheduled medicine dose is omitted?";
   const retrieval = await page.request.post(
@@ -174,7 +210,6 @@ test("completes the deterministic ingestion, retrieval, streaming answer and iso
       new URL(request.url()).pathname,
     )) streamRequests += 1;
   });
-  await page.goto(`/app/workspaces/${primary.workspace_public_id}`);
   await page.getByLabel("Ask a question").fill(question);
   await page.getByRole("button", { name: "Send" }).click();
   const groundedAnswer = "Staff must record the omission, assess immediate safety, and notify the responsible clinician before the end of the shift.";
@@ -233,9 +268,108 @@ test("completes the deterministic ingestion, retrieval, streaming answer and iso
   await expect(secondaryPage.getByText(groundedAnswer, { exact: true })).toHaveCount(0);
   const concealedSourcePage = await secondaryPage.goto(sourceUrl!);
   expect(concealedSourcePage?.status()).not.toBe(403);
-  await expect(secondaryPage.getByRole("heading", { name: "Workspace not found." })).toBeVisible();
+  await expect(secondaryPage.getByRole("heading", { name: "Library item not found" })).toBeVisible();
   await expect(secondaryPage.getByRole("heading", { level: 1, name: "representative-policy.txt" })).toHaveCount(0);
+
+  // Prove an exact duplicate is blocked and a corrected replacement remains in the
+  // same durable batch before it can be reviewed and promoted.
+  await page.goto(`/app/workspaces/${primary.workspace_public_id}/documents/imports`);
+  await page.locator("#import-files").setInputFiles(resolve(fixtures, "representative-policy.txt"));
+  await page.getByRole("button", { name: "Stage and verify document" }).click();
+  const duplicateReview = page.getByRole("button", { name: "Review match and metadata" });
+  await expect(duplicateReview).toBeVisible({ timeout: 90_000 });
+  await duplicateReview.click();
+  await expect(page.getByRole("heading", { name: "Duplicate found" })).toBeVisible();
+  await page.getByLabel("Choose corrected file").setInputFiles(
+    resolve(fixtures, "representative-policy-corrected.txt"),
+  );
+  const correctedReview = page.getByRole("button", { name: "Review match and metadata" });
+  await expect(correctedReview).toBeVisible({ timeout: 90_000 });
+  await correctedReview.click();
+  await expect(page.getByRole("heading", { name: "Review representative-policy-corrected.txt" })).toBeVisible();
+  await page.getByRole("button", { name: "Save review" }).click();
+  await page.getByRole("button", { name: "Promote to Library" }).click();
+  await expect(page.getByText("Indexed", { exact: true }).first()).toBeVisible({ timeout: 120_000 });
 
   await primaryContext.close();
   await secondaryContext.close();
+});
+
+test("terminal authorization conflict is explicitly adopted by a different authorised actor", async ({ browser }) => {
+  test.skip(!password, "The committed E2E password variable is required.");
+  const initiator = bootstrap("adoption-initiator");
+  const adopter = bootstrap("adoption-adopter");
+  const initiatorContext = await browser.newContext();
+  const initiatorPage = await login(initiatorContext, initiator);
+  const adopterContext = await browser.newContext();
+  const adopterPage = await login(adopterContext, adopter);
+
+  const invitation = await initiatorPage.request.post(
+    `${apiBaseUrl}/api/workspaces/${initiator.workspace_public_id}/invitations`,
+    {
+      data: { email: adopter.email, role: "admin", idempotency_key: crypto.randomUUID() },
+      headers: await authHeaders(initiatorContext),
+    },
+  );
+  expect(invitation.status()).toBe(201);
+  const invitationLink = ((await invitation.json()) as { data: { invitation_link: string } }).data.invitation_link;
+  const token = invitationLink.split("/").at(-1);
+  expect(token).toMatch(/^[0-9a-f]{64}$/);
+  const accepted = await adopterPage.request.post(`${apiBaseUrl}/api/workspace-invitations/accept`, {
+    data: { token }, headers: await authHeaders(adopterContext),
+  });
+  expect(accepted.ok()).toBeTruthy();
+  const adopterMembershipId = ((await accepted.json()) as { data: { membership_id: string } }).data.membership_id;
+
+  await initiatorPage.goto(`/app/workspaces/${initiator.workspace_public_id}/documents/imports`);
+  await initiatorPage.locator("#import-files").setInputFiles(resolve(fixtures, "safeguarding-policy.txt"));
+  await initiatorPage.getByRole("button", { name: "Stage and verify document" }).click();
+  const review = initiatorPage.getByRole("button", { name: "Review match and metadata" });
+  await expect(review).toBeVisible({ timeout: 90_000 });
+  await review.click();
+  await initiatorPage.getByRole("button", { name: "Save review" }).click();
+
+  let workerStopped = false;
+  try {
+    composeService("stop", "conversation-worker");
+    workerStopped = true;
+    await initiatorPage.getByRole("button", { name: "Promote to Library" }).click();
+
+    const transfer = await initiatorPage.request.post(
+      `${apiBaseUrl}/api/workspaces/${initiator.workspace_public_id}/memberships/${adopterMembershipId}/ownership-transfers`,
+      { data: { idempotency_key: crypto.randomUUID() }, headers: await authHeaders(initiatorContext) },
+    );
+    expect(transfer.ok()).toBeTruthy();
+
+    const members = await adopterPage.request.get(
+      `${apiBaseUrl}/api/workspaces/${initiator.workspace_public_id}/members`,
+      { headers: await authHeaders(adopterContext) },
+    );
+    expect(members.ok()).toBeTruthy();
+    const memberships = ((await members.json()) as {
+      data: Array<{ public_id: string; user: { email: string } }>;
+    }).data;
+    const initiatorMembership = memberships.find((membership) => membership.user.email === initiator.email);
+    expect(initiatorMembership).toBeDefined();
+    const removed = await adopterPage.request.delete(
+      `${apiBaseUrl}/api/workspaces/${initiator.workspace_public_id}/memberships/${initiatorMembership!.public_id}`,
+      { data: { idempotency_key: crypto.randomUUID() }, headers: await authHeaders(adopterContext) },
+    );
+    expect(removed.ok()).toBeTruthy();
+
+    composeService("start", "conversation-worker");
+    workerStopped = false;
+    await adopterPage.goto(`/app/workspaces/${initiator.workspace_public_id}/documents/imports`);
+    await adopterPage.getByRole("button", { name: /1 document/ }).click();
+    const adoption = adopterPage.getByRole("button", { name: "Review and adopt" });
+    await expect(adoption).toBeVisible({ timeout: 90_000 });
+    await adoption.click();
+    await expect(adopterPage.getByRole("heading", { name: "Review and adopt safeguarding-policy.txt" })).toBeVisible();
+    await adopterPage.getByRole("button", { name: "Save and adopt" }).click();
+    await expect(adopterPage.getByText("Indexed", { exact: true }).first()).toBeVisible({ timeout: 120_000 });
+  } finally {
+    if (workerStopped) composeService("start", "conversation-worker");
+    await initiatorContext.close();
+    await adopterContext.close();
+  }
 });

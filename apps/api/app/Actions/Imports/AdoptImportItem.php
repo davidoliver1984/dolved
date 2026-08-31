@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Imports;
 
+use App\Enums\PromotionAttemptStatus;
 use App\Enums\PromotionOperationKind;
 use App\Enums\WorkspaceRole;
 use App\Exceptions\ImportPromotionException;
@@ -26,6 +27,12 @@ final readonly class AdoptImportItem
             ->whereIn('role', [WorkspaceRole::Owner->value, WorkspaceRole::Admin->value])
             ->exists();
         if (! $authorised) {
+            throw ImportPromotionException::conflict('adoption_not_permitted');
+        }
+        $priorAttempt = $item->promotionAttempts()->orderByDesc('attempt_ordinal')->first();
+        if ($priorAttempt === null
+            || $priorAttempt->status !== PromotionAttemptStatus::Conflict
+            || $priorAttempt->actor_user_id === $actor->id) {
             throw ImportPromotionException::conflict('adoption_not_permitted');
         }
         $current = $item->currentDecisionSnapshot;

@@ -20,6 +20,7 @@ export type ImportItem = {
   preflight_status: "pending" | "verified" | "rejected";
   preflight_rejection_reason: string | null;
   match_status: "pending" | "resolved";
+  replaced_by_import_item_public_id?: string | null;
   decision_ready: boolean;
   promotion: null | { public_id: string; status: string; reason: string | null };
   document: null | { public_id: string; status: string };
@@ -74,6 +75,13 @@ export async function stageImportFile(workspaceId: string, batchId: string, item
   await uploadToPresignedUrl(file, upload, onProgress);
   await apiFetch(`${root(workspaceId)}/${encodeURIComponent(batchId)}/items/${encodeURIComponent(itemId)}/uploaded`, { method: "POST" });
 }
+export async function replaceImportFile(workspaceId: string, batchId: string, itemId: string, file: File, onProgress: (progress: number) => void): Promise<void> {
+  const replacement = (await apiFetch<{ data: { item_public_id: string; upload: PresignedUpload } }>(`${root(workspaceId)}/${encodeURIComponent(batchId)}/items/${encodeURIComponent(itemId)}/replacements`, {
+    method: "POST",
+    body: JSON.stringify({ filename: file.name, media_type: file.type, size_bytes: file.size }),
+  })).data;
+  await stageImportFile(workspaceId, batchId, replacement.item_public_id, file, replacement.upload, onProgress);
+}
 export async function importMatches(workspaceId: string, batchId: string, itemId: string): Promise<ImportMatches> {
   return (await apiFetch<{ data: ImportMatches }>(`${root(workspaceId)}/${encodeURIComponent(batchId)}/items/${encodeURIComponent(itemId)}/matches`)).data;
 }
@@ -82,5 +90,8 @@ export async function decideImport(workspaceId: string, batchId: string, itemId:
 }
 export async function promoteImport(workspaceId: string, batchId: string, itemId: string): Promise<void> {
   await apiFetch(`${root(workspaceId)}/${encodeURIComponent(batchId)}/items/${encodeURIComponent(itemId)}/promotions`, { method: "POST", body: JSON.stringify({ idempotency_key: crypto.randomUUID() }) });
+}
+export async function adoptImport(workspaceId: string, batchId: string, itemId: string, definition: ImportDefinition): Promise<void> {
+  await apiFetch(`${root(workspaceId)}/${encodeURIComponent(batchId)}/items/${encodeURIComponent(itemId)}/adoptions`, { method: "POST", body: JSON.stringify({ definition, idempotency_key: crypto.randomUUID() }) });
 }
 export { validateDocumentFile };

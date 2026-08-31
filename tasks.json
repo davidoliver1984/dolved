@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R25",
-    "current_session": "R25-S07",
-    "next_action": "Begin R25-S07 — verify the real ImportBatch workflow with provider-free and Playwright acceptance journeys through genuine searchable readiness and grounded citation behaviour.",
-    "completed_through": "R25-S06",
-    "completed_phase_count": 25,
+    "current_phase": "R26",
+    "current_session": "R26-S01",
+    "next_action": "Begin R26-S01 — establish the PostgreSQL runtime-role and effective/default-privilege foundation required by ADR-0035 and ADR-0036.",
+    "completed_through": "R25-GATE",
+    "completed_phase_count": 26,
     "total_phase_count": 30
   },
   "phases": [
@@ -4752,7 +4752,7 @@
       "title": "Import Staging and Promotion",
       "guide_start_line": 14622,
       "guide_end_line": 14650,
-      "status": "in_progress",
+      "status": "completed",
       "objective": "Implement ADR-0034's isolated staging, preflight, matching and atomic promotion lifecycle.",
       "accepted_adrs": ["ADR-0034"],
       "sessions": [
@@ -4762,10 +4762,10 @@
         {"id": "R25-S04", "guide_stage": "Stage 25.4 — Promotion state machine", "title": "Build Import Promotion", "status": "completed", "depends_on": ["R25-S03"], "completion_evidence": ["Immutable canonical decision snapshots with live authorization, predecessor, metadata and applicability revalidation at commit", "Durable reservation, lease, typed conflict, cancellation, failure-ceiling, reconciliation and adoption state machine", "Exact S3 version-bound document storage with verified reuse, immutable identity and terminal cleanup ownership transfer", "Complete Laravel suite: 494 passed / 5 skipped; clean PostgreSQL promotion profile: 9 passed / 49 assertions; existing checksum serialization profile: 2 passed / 9 assertions", "docs/journal/2026-08-31-r25-s04-import-promotion.md"]},
         {"id": "R25-S05", "guide_stage": "Stage 25.5 — Legacy cutover and drain", "title": "Cut Over Legacy Imports", "status": "completed", "depends_on": ["R25-S04"], "completion_evidence": ["Server-owned transition marker, singleton gate and append-only cutover audit/event lineage", "Bounded resumable inventory and atomic final-remainder closure with PostgreSQL row-lock serialization", "Marked-only legacy completion and ingestion-request continuation with shared internal ingestion preserved", "Narrow stalled-upload expiry and browser-route drain reconciliation", "Local cutover operation d09cc97a-68e7-4f4f-aee2-f9a5fc755ccb marked 15 of 15 pending rows with zero unmarked", "Complete Laravel suite: 502 passed / 6 skipped / 2,694 assertions; fresh PostgreSQL proof: 1 test / 6 assertions", "docs/journal/2026-08-31-r25-s05-legacy-upload-cutover.md"]},
         {"id": "R25-S06", "guide_stage": "Stage 25.6 — Import workflow and progress UI", "title": "Build Import Workflow UI", "status": "completed", "depends_on": ["R25-S05"], "requires_visual_review": true, "visual_review_policy": "All ADR-0034 checkpoints require David's explicit approval.", "completion_evidence": ["Real ImportBatch staging, preflight, matching, review and promotion API/UI flow", "Honest seven-step progress with only Promoted/queued, Processing and Indexed post-promotion states", "Live approved flow produced indexed document 98c0a4ec-c996-4dca-9f01-83837707dcbd, one canonical chunk and one active hybrid point", "All required ADR-0034 visual checkpoints explicitly approved by David", "Complete Laravel suite: 507 passed / 6 skipped / 2,724 assertions; complete web suite: 145 passed", "docs/journal/2026-08-31-r25-s06-import-workflow-ui.md"]},
-        {"id": "R25-S07", "guide_stage": "Stage 25.7 — Provider-free and Playwright acceptance journeys", "title": "Verify Import Staging, Promotion and Small-Corpus Readiness", "status": "not_started", "depends_on": ["R25-S06"], "mandatory_acceptance_requirements": ["Run ADR-0033's complete nine-step small-corpus journey through the real ADR-0034 ImportBatch flow", "Assert genuine searchable readiness rather than upload, promotion or indexing alone", "Receive a grounded answer with valid evidence/citation behaviour", "Do not substitute the legacy direct-upload path"]}
+        {"id": "R25-S07", "guide_stage": "Stage 25.7 — Provider-free and Playwright acceptance journeys", "title": "Verify Import Staging, Promotion and Small-Corpus Readiness", "status": "completed", "depends_on": ["R25-S06"], "mandatory_acceptance_requirements": ["Run ADR-0033's complete nine-step small-corpus journey through the real ADR-0034 ImportBatch flow", "Assert genuine searchable readiness rather than upload, promotion or indexing alone", "Receive a grounded answer with valid evidence/citation behaviour", "Do not substitute the legacy direct-upload path"], "completion_evidence": ["Real ImportBatch browser journey staged 10 representative documents, resumed the durable batch, reviewed and promoted every item, reached 10 genuinely searchable current families, retrieved expected evidence and produced a grounded answer with a valid source citation", "Controlled insufficient-evidence follow-up, stream reconnection, and workspace/conversation/document tenancy concealment passed", "Exact duplicate was blocked and replaced once inside the same durable batch with immutable replacement lineage before corrected review, promotion and indexing", "Authorization-changed CONFLICT was adopted through an explicit revised decision by a different currently authorised actor", "Provider-free Playwright: 2 passed; complete web suite: 37 files / 147 tests; complete Laravel suite: 508 passed / 6 skipped / 2,734 assertions; complete Python suite: 654 passed / 4 skipped", "docs/journal/2026-08-31-r25-s07-phase-closure.md"]}
       ],
       "export_boundary": "ADR-0037 interchange remains excluded.",
-      "gate": {"id": "R25-GATE", "title": "Import Staging and Promotion Acceptance Gate", "status": "not_started", "depends_on": ["R25-S07"], "mandatory_acceptance_requirements": ["ADR-0033's deferred import-through-grounded-answer Playwright journey has passed unchanged through the real ADR-0034 workflow"], "completion_evidence": []}
+      "gate": {"id": "R25-GATE", "title": "Import Staging and Promotion Acceptance Gate", "status": "completed", "depends_on": ["R25-S07"], "mandatory_acceptance_requirements": ["ADR-0033's deferred import-through-grounded-answer Playwright journey has passed unchanged through the real ADR-0034 workflow"], "completion_evidence": ["ADR-0033's deferred journey passed through the real ADR-0034 ImportBatch workflow with genuine searchable readiness and grounded citation behavior", "All ADR-0034 provider-free and Playwright journey classes are represented, including durable resume, mixed multi-file, duplicate correction, explicit adoption and terminal indexing", "No legacy direct-upload substitute and no provider call was used", "docs/journal/2026-08-31-r25-s07-phase-closure.md"]}
     },
     {
       "id": "R26",

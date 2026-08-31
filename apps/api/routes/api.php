@@ -158,9 +158,11 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::post('/workspaces/{workspacePublicId}/imports', [ImportWorkflowController::class, 'store']);
     Route::get('/workspaces/{workspacePublicId}/imports/{batchPublicId}', [ImportWorkflowController::class, 'show']);
     Route::post('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/uploaded', [ImportWorkflowController::class, 'uploaded']);
+    Route::post('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/replacements', [ImportWorkflowController::class, 'replace']);
     Route::get('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/matches', [ImportWorkflowController::class, 'matches']);
     Route::post('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/decision', [ImportWorkflowController::class, 'decide']);
     Route::post('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/promotions', [ImportWorkflowController::class, 'promote']);
+    Route::post('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/adoptions', [ImportWorkflowController::class, 'adopt']);
     Route::post('/workspaces/{workspacePublicId}/imports/{batchPublicId}/items/{itemPublicId}/promotions/{attemptPublicId}/cancel', [ImportWorkflowController::class, 'cancel']);
     Route::get('/workspaces/{workspacePublicId}/document-library', [DocumentLibraryController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}/knowledge-readiness', [WorkspaceKnowledgeReadinessController::class, 'show']);

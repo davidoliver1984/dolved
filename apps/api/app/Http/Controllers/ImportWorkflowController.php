@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Imports\AdoptImportItem;
 use App\Actions\Imports\AssessImportItemMatches;
 use App\Actions\Imports\CreateImportBatch;
 use App\Actions\Imports\CreateImportDecisionSnapshot;
+use App\Actions\Imports\ReplaceImportItem;
 use App\Actions\Imports\RequestImportPromotionCancellation;
 use App\Actions\Imports\ReserveImportPromotion;
 use App\Actions\Imports\StartImportPreflight;
@@ -102,6 +104,28 @@ final class ImportWorkflowController extends Controller
         return response()->json(['data' => ['event_id' => $attempt->event_id, 'status' => 'verifying']], 202);
     }
 
+    public function replace(Request $request, string $workspacePublicId, string $batchPublicId, string $itemPublicId, FindWorkspaceForUser $workspaces, ReplaceImportItem $replace): JsonResponse
+    {
+        [$workspace] = $this->scope($request, $workspacePublicId, $workspaces);
+        $formats = collect(config('documents.formats'))->flatten()->unique()->values()->all();
+        $validated = $request->validate([
+            'filename' => ['required', 'string', 'max:255'],
+            'media_type' => ['required', 'string', Rule::in($formats)],
+            'size_bytes' => ['required', 'integer', 'min:1', 'max:'.config('documents.max_upload_bytes')],
+        ]);
+        $result = $replace->handle(
+            $workspace,
+            $this->item($workspace->id, $batchPublicId, $itemPublicId),
+            $validated['filename'],
+            $validated['media_type'],
+        );
+
+        return response()->json(['data' => [
+            'item_public_id' => $result['item']->public_id,
+            'upload' => $result['upload'],
+        ]], 201);
+    }
+
     public function matches(Request $request, string $workspacePublicId, string $batchPublicId, string $itemPublicId, FindWorkspaceForUser $workspaces, AssessImportItemMatches $assess): JsonResponse
     {
         [$workspace] = $this->scope($request, $workspacePublicId, $workspaces);
@@ -127,6 +151,24 @@ final class ImportWorkflowController extends Controller
         [$workspace, $user] = $this->scope($request, $workspacePublicId, $workspaces);
         $validated = $request->validate(['idempotency_key' => ['required', 'string', 'max:128']]);
         $attempt = $reserve->handle($this->item($workspace->id, $batchPublicId, $itemPublicId), $user, PromotionOperationKind::Promote, $validated['idempotency_key']);
+        AdvanceImportPromotion::dispatch($attempt->id);
+
+        return response()->json(['data' => ['public_id' => $attempt->public_id, 'status' => $attempt->status->value]], 202);
+    }
+
+    public function adopt(Request $request, string $workspacePublicId, string $batchPublicId, string $itemPublicId, FindWorkspaceForUser $workspaces, AdoptImportItem $adopt): JsonResponse
+    {
+        [$workspace, $user] = $this->scope($request, $workspacePublicId, $workspaces);
+        $validated = $request->validate([
+            'definition' => ['required', 'array'],
+            'idempotency_key' => ['required', 'string', 'max:128'],
+        ]);
+        $attempt = $adopt->handle(
+            $this->item($workspace->id, $batchPublicId, $itemPublicId),
+            $user,
+            $validated['definition'],
+            $validated['idempotency_key'],
+        );
         AdvanceImportPromotion::dispatch($attempt->id);
 
         return response()->json(['data' => ['public_id' => $attempt->public_id, 'status' => $attempt->status->value]], 202);
@@ -163,13 +205,14 @@ final class ImportWorkflowController extends Controller
     private function batch(ImportBatch $batch): array
     {
         $batch->loadMissing(['items.promotionAttempts.committedDocument', 'items.preflightAttempts']);
+        $itemsById = $batch->items->keyBy('id');
 
         return [
             'public_id' => $batch->public_id,
             'status' => $batch->status->value,
             'retention_expires_at' => $batch->retention_expires_at,
             'created_at' => $batch->created_at,
-            'items' => $batch->items->map(function (ImportItem $item): array {
+            'items' => $batch->items->map(function (ImportItem $item) use ($itemsById): array {
                 $attempt = $item->promotionAttempts->sortByDesc('id')->first();
                 $document = $attempt?->committedDocument;
 
@@ -181,6 +224,9 @@ final class ImportWorkflowController extends Controller
                     'preflight_status' => $item->preflight_status->value,
                     'preflight_rejection_reason' => $item->preflight_rejection_reason?->value,
                     'match_status' => $item->match_status->value,
+                    'replaced_by_import_item_public_id' => $item->replaced_by_import_item_id === null
+                        ? null
+                        : $itemsById->get($item->replaced_by_import_item_id)?->public_id,
                     'decision_ready' => $item->current_decision_snapshot_id !== null,
                     'promotion' => $attempt === null ? null : [
                         'public_id' => $attempt->public_id,

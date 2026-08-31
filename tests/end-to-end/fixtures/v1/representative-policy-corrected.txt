@@ -1,0 +1,3 @@
+Medication safety amendment
+
+This corrected source replaces an accidentally duplicated upload. Staff must record a missed medicine dose in the medicines record and notify the responsible clinician. The amendment also requires the shift lead to record the follow-up review outcome.

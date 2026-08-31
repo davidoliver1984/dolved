@@ -82,6 +82,37 @@ final class ImportWorkflowApiTest extends TestCase
         $this->assertDatabaseCount('import_items', 0);
     }
 
+    public function test_duplicate_source_can_be_replaced_once_inside_the_same_batch(): void
+    {
+        [$user, $workspace] = $this->memberWorkspace();
+        $storage = $this->mock(ImportStagingStorage::class);
+        $storage->shouldReceive('createUploadRequest')->twice()->andReturn([
+            'url' => 'http://object-storage.test/staged',
+            'method' => 'PUT',
+            'headers' => ['Content-Type' => 'text/plain'],
+            'expires_at' => now()->addMinutes(10)->toIso8601String(),
+        ]);
+
+        $created = $this->actingAs($user)->postJson($this->importsUrl($workspace), [
+            'files' => [['filename' => 'Policy.txt', 'media_type' => 'text/plain', 'size_bytes' => 100]],
+        ])->assertCreated();
+        $batchId = $created->json('data.batch.public_id');
+        $originalId = $created->json('data.batch.items.0.public_id');
+
+        $replacement = $this->actingAs($user)->postJson("{$this->importsUrl($workspace)}/{$batchId}/items/{$originalId}/replacements", [
+            'filename' => 'Policy corrected.txt',
+            'media_type' => 'text/plain',
+            'size_bytes' => 110,
+        ])->assertCreated();
+
+        $replacementId = $replacement->json('data.item_public_id');
+        $this->actingAs($user)->getJson("{$this->importsUrl($workspace)}/{$batchId}")
+            ->assertOk()
+            ->assertJsonPath('data.items.0.replaced_by_import_item_public_id', $replacementId)
+            ->assertJsonPath('data.items.1.public_id', $replacementId);
+        $this->assertDatabaseCount('import_items', 2);
+    }
+
     /** @return array{User, Workspace} */
     private function memberWorkspace(): array
     {

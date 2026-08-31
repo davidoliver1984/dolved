@@ -15114,6 +15114,25 @@ Stages follow ADR-0034's retry, adoption, actor-idempotency, checksum-
 serialization and lineage rules. No export/import interchange behavior from
 future ADR-0037 is included.
 
+**Completed 2026-08-31.** The isolated provider-free Playwright profile passed
+two complete browser tests. The primary journey used the real `ImportBatch`
+path for ten representative sources, resumed the durable batch, reviewed and
+promoted every source, reached ten genuinely searchable current families,
+retrieved the expected evidence and rendered a grounded answer with a valid
+source citation. It also proved controlled insufficient-evidence behavior,
+stream reconnection and workspace/conversation/document concealment. Within
+that journey an identical source was blocked, replaced once in the same batch
+with immutable lineage, and the corrected source was reviewed, promoted and
+indexed. The second journey caused a live-authorization conflict and proved
+explicit adoption through a revised decision by a different authorised actor.
+
+The complete verification gate passed with 508 Laravel tests (6 skipped,
+2,734 assertions), 147 web tests across 37 files, 654 Python tests (4 skipped),
+Collector configuration validation, Pint, ESLint, Ruff, Mypy, TypeScript and
+`git diff --check`. The legacy direct-upload path was not used and no provider
+was called. Evidence is recorded in
+`docs/journal/2026-08-31-r25-s07-phase-closure.md`.
+
 ---
 
 # Phase 26 — Frozen Bulk Document Operations
