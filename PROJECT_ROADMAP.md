@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 25 of 30 (Import Staging and Promotion) |
+| Project status | In Progress — Phase 26 of 32 (Frozen Bulk Document Operations) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -98,9 +98,15 @@ Every architectural decision should favour:
 
 ---
 
-### Cloud (future)
+### Cloud (allocated to Phases 29–30, not yet implemented)
 
-- AWS ECS
+Genuine multi-service AWS architecture, deliberately cost-conscious for
+initial capacity and extensible toward more tenants and resilience — not one
+all-in-one VM, and not yet built. The exact topology is decided by the
+pre-implementation ADR Phase 29 requires before any of the following is
+provisioned.
+
+- AWS ECS/Fargate and load balancing (direction, subject to that ADR)
 - S3
 - SQS
 - CloudWatch
@@ -1131,44 +1137,116 @@ delivery with reviewed in-product and email presentation.
 
 ---
 
-## Phase 28 — CI/CD and Production Readiness
+## Phase 28 — Product-wide Integration and Visual Acceptance
 
 ### Objectives
 
-Make the platform reproducibly testable, buildable, deployable and operable
-outside a developer laptop.
+Review Dolved as one connected product now that the knowledge library, import
+workflow, bulk operations and governance notifications all exist. This is not
+a redesign from scratch and must not become an excuse to add unrelated
+functionality. It owns the accumulated design-corrections register,
+cross-feature flow corrections and the first product-wide visual acceptance
+in the project.
 
-### Tasks
+### Sessions
 
-- Add Continuous Integration
-- Create Production Container Builds
-- Add Infrastructure as Code
-- Configure Secrets and Environment Management
-- Add Database Backup and Recovery
-- Define Vector Index Recovery
-- Perform Security Hardening
-- Create Staging Deployment
-- Production Readiness Review
+R28-S01 through R28-S05 review and classify the design-correction register;
+correct cross-product navigation, information hierarchy and flow; correct
+visual-system consistency across existing surfaces; review responsive,
+theme, accessibility and state coverage; and run integrated Playwright
+journeys across connected production components with representative real
+workflow data.
+
+Every prior per-session visual approval (Phase 21 onward) was a valid staged
+checkpoint for the surface it reviewed at the time — this phase does not
+reopen or invalidate any of them. R28-S05 requires David's explicit, final
+product-wide visual sign-off, the first in the project scoped to the
+connected product rather than one feature or session.
+
+A defect found in this phase is corrected here. A genuinely new capability or
+architectural change found while reviewing the connected product is reported
+and allocated to its own future session or ADR, never smuggled in as visual
+polish. The canonical correction register lives at
+`docs/design-corrections-register.md`.
 
 ### Deliverable
 
-Production-ready platform.
+A cohesive, accessible and explicitly approved product experience across
+every implemented Dolved workflow.
 
 ---
 
-## Phase 29 — Documentation and Demonstration Readiness
+## Phase 29 — CI/CD, AWS Foundation and Staging
+
+### Objectives
+
+Make Dolved reproducibly buildable and deployable, then prove the intended
+AWS architecture in a real staging environment. This phase delivers staging
+only — it must not be read as claiming Dolved is publicly or production
+deployed.
+
+### Sessions
+
+R29-S01 through R29-S09 add continuous integration; production container
+builds; the pre-implementation AWS deployment ADR and infrastructure as code;
+secrets and environment management; database backup/recovery; vector,
+object-storage and queue recovery; security hardening; staging deployment;
+and a staging readiness review. Stage 29.3's ADR must cover deployment
+topology, ownership boundaries, cost/resilience trade-offs and scaling path —
+reflecting genuine AWS architecture, deliberately cost-conscious initial
+capacity, and no false claim of multi-AZ/high-availability guarantees until
+deliberately funded and implemented. Staging must resemble the intended
+production topology closely enough to provide meaningful evidence.
+
+### Deliverable
+
+A CI-controlled, infrastructure-as-code-managed Dolved staging environment on
+AWS with tested deployment, recovery, security and observability controls.
+
+---
+
+## Phase 30 — Production Deployment and Operational Validation
+
+### Objectives
+
+Deploy Dolved as an actual production service, subject to the Phase 29
+deployment ADR, and prove it can be operated safely.
+
+### Sessions
+
+R30-S01 through R30-S06 establish the production environment, IAM and
+ingress; provision production data infrastructure and run initial
+migrations; prove deployment, rollback and a genuine backup-restoration
+drill; add monitoring, alerting and cost controls; verify production-safe
+smoke tests, any explicitly approved live-provider call, and tenant
+isolation; and complete incident readiness and a final go/no-go review.
+
+This phase distinguishes deployment success, technical production readiness,
+public/customer launch, high availability and scale-out from one another, and
+does not claim multi-AZ, zero downtime, disaster recovery or production-scale
+capacity unless a session actually proves it.
+
+### Deliverable
+
+A genuinely deployed Dolved production environment with verified
+operational, recovery, security, monitoring and rollback evidence.
+
+---
+
+## Phase 31 — Documentation and Demonstration Readiness
 
 ### Objectives
 
 Document the platform clearly and provide a reproducible way to demonstrate
 its capabilities, without letting presentation work substitute for
-engineering substance.
+engineering or deployment evidence. Documentation reflects the actual final
+product and deployed architecture from Phases 28–30, not an earlier
+local-only state.
 
-### Tasks
+### Sessions
 
-- Write Architecture Documentation
-- Create Demonstration Dataset and Scenario
-- Finalise Repository README
+R31-S01 through R31-S03 write architecture documentation, create a
+demonstration dataset and scenario, and finalise the repository README.
 
 ### Deliverable
 
@@ -1176,7 +1254,6 @@ A clearly documented platform with a reproducible demonstration of its core
 capabilities.
 
 ---
-
 ## Future enhancements
 
 - OCR

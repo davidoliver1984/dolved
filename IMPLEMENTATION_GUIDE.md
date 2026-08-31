@@ -15190,15 +15190,109 @@ by its existing separate smoke-test boundary.
 
 ---
 
-# Phase 28 — CI/CD and Production Readiness
+# Phase 28 — Product-wide Integration and Visual Acceptance
 
 ## Phase objective
 
-Make the platform reproducibly testable, buildable, deployable and operable outside a developer laptop.
+Review Dolved as one connected product now that the knowledge library, import
+workflow, bulk operations and governance notifications all exist. This is not
+a redesign from scratch and must not become an excuse to add unrelated
+functionality. It owns the accumulated design-corrections register, cross-
+feature flow corrections and the first product-wide visual acceptance in the
+project.
+
+Every prior per-session visual approval (Phase 21's design system and every
+`requires_visual_review` checkpoint in Phases 24 through 27) was a valid,
+final approval **for the surface it reviewed at the time**. None of them
+claimed to be a final connected-product review, and this phase does not
+reopen, weaken or imply a failure of any of them. It adds the one review layer
+that could not exist before every feature it covers was built: does Dolved
+read as one coherent product when its parts are used together.
+
+A defect found in this phase is corrected here. A genuinely new capability or
+an architectural change discovered while reviewing the connected product is
+reported and allocated to its own future session or ADR — it is never
+smuggled into this phase as "visual polish."
+
+## Stage 28.1 — Consolidated correction-register review and classification
+
+Review the canonical design-correction register
+(`docs/design-corrections-register.md`) together with David's own evolving
+manual list once he provides it. Classify every entry as one of: a cosmetic or
+interaction correction, an ordinary implementation defect, a genuinely new
+capability, or an architectural change. Record the classification and the
+session it is allocated to. Only cosmetic/interaction corrections and ordinary
+defects are corrected inside Phase 28 itself.
+
+## Stage 28.2 — Cross-product navigation, information hierarchy and flow corrections
+
+Review end-to-end navigation and hand-off across chat, Library, family/version
+detail, comparison, import, bulk operations, administration, platform
+operations and notifications. Correct information-hierarchy and flow defects
+the register identifies. Do not introduce a new navigation concept, information
+architecture change or route structure here — that is an architectural change
+and belongs to its own ADR-backed session.
+
+## Stage 28.3 — Visual-system consistency across existing surfaces
+
+Correct inconsistent buttons, cards, tables, forms, dialogs, spacing,
+typography and status treatment across every implemented surface. Add or
+correct plain-language help text and circular information tooltips where the
+register identifies a gap. Preserve every existing accepted visual-design
+decision (Phase 21's approved chat shell, slate palette and component
+language); this stage corrects drift and gaps against that system, it does not
+replace it.
+
+## Stage 28.4 — Responsive, theme, accessibility and complete state review
+
+Review every implemented surface for its loading, empty, warning, error,
+unavailable, partial and permission-concealed states; keyboard navigation,
+focus management and screen-reader behaviour against WCAG; desktop, tablet and
+mobile layout; and light/dark theme correctness. Record any gap found as a
+register entry and correct it within this stage where it is a defect or
+cosmetic correction.
+
+## Stage 28.5 — Integrated Playwright journeys and final product-wide sign-off
+
+Run integrated Playwright journeys that cross feature boundaries (for example:
+import a document, find it in the Library, compare two versions, run a bulk
+operation against it, and receive a governance notification about it) against
+connected production components, using representative real workflow data —
+never dev-only fixtures as the sole acceptance evidence. Capture staged browser
+evidence for the corrected surfaces.
+
+Stage 28.5 requires David's explicit, final product-wide visual sign-off
+before closure. This is the first sign-off in the project scoped to the
+connected product as a whole rather than to one feature or session, and it
+does not retroactively withdraw any earlier staged approval.
+
+## Phase 28 gate
+
+The design-correction register must show every entry classified and either
+corrected, explicitly deferred with a reason, or reallocated to a future
+session/ADR — never silently dropped. David's final product-wide visual
+sign-off from Stage 28.5 is the phase's own closing acceptance evidence.
 
 ---
 
-## Stage 28.1 — Add Continuous Integration
+# Phase 29 — CI/CD, AWS Foundation and Staging
+
+## Phase objective
+
+Make Dolved reproducibly buildable and deployable, then prove the intended
+cloud architecture in a real AWS staging environment. Phase 29 delivers a
+staging environment only. It must not claim, imply or be read as claiming
+that Dolved is publicly or production deployed — that is Phase 30's own,
+separately gated, deliverable.
+
+No unresolved AWS architecture decision is locked in by planning prose alone.
+Stage 29.3 requires a pre-implementation ADR covering the deployment topology,
+service-ownership boundaries, cost/resilience trade-offs and scaling path
+before any AWS infrastructure is provisioned.
+
+---
+
+## Stage 29.1 — Add Continuous Integration
 
 ### Objective
 
@@ -15219,7 +15313,8 @@ Not yet executed.
 * contract tests;
 * container builds;
 * selected integration tests;
-* dependency and security scanning.
+* dependency and security scanning;
+* software-supply-chain checks (dependency provenance/SBOM) and container-image vulnerability scanning.
 
 ### Acceptance criteria
 
@@ -15230,6 +15325,7 @@ Not yet executed.
 * External providers use fakes unless explicitly running integration tests.
 * Cache use does not hide missing dependencies.
 * CI commands match documented local commands.
+* Dependency and image scans run and their findings are visible, even before every finding is resolved.
 
 ### Commit boundary
 
@@ -15238,7 +15334,7 @@ git commit -m "Add continuous integration pipeline"
 
 ---
 
-## Stage 28.2 — Create Production Container Builds
+## Stage 29.2 — Create Production Container Builds
 
 ### Objective
 
@@ -15279,24 +15375,42 @@ git commit -m "Add production container builds"
 
 ---
 
-## Stage 28.3 — Add Infrastructure as Code
+## Stage 29.3 — AWS Architecture Decision and Infrastructure as Code
 
 ### Objective
 
-Define production infrastructure under infrastructure/terraform.
+Decide, record and provision the intended AWS deployment topology under
+infrastructure/terraform, reflecting a genuine multi-service AWS architecture
+rather than one all-in-one VM.
 
 ### Status
 
 Not yet executed.
 
-### Planned infrastructure
+### Required ADR — binding before any AWS resource is provisioned
 
-Exact provider and deployment platform must be confirmed before implementation.
+`docs/adr/ADR-XXX-production-deployment-platform.md` must cover, at minimum:
 
-Potential resources include:
+* the deployment topology (the containerised-services direction using
+  ECS/Fargate and load balancing, where this ADR confirms it);
+* service-ownership boundaries between the web, API, AI, database, object
+  storage, queue and vector-store components;
+* cost/resilience trade-offs, stated honestly — deliberately cost-conscious
+  initial capacity, not a premature commitment to multi-AZ or high-availability
+  guarantees that are not yet funded or implemented;
+* the scaling path toward more tenants and greater resilience, without
+  building it prematurely;
+* which environments (local, CI, staging, production) the topology applies to
+  and where they are deliberately allowed to differ.
+
+This ADR must not be silently assumed by planning prose in this guide; if it
+has not been accepted, this stage has not started.
+
+### Planned infrastructure (subject to the ADR above)
 
 * networking;
-* compute/container runtime;
+* compute/container runtime (ECS/Fargate and load balancing, where the ADR
+  confirms this direction);
 * PostgreSQL;
 * object storage;
 * queues and dead-letter queues;
@@ -15307,20 +15421,20 @@ Potential resources include:
 * IAM roles and policies;
 * container registry.
 
-### Required ADR
-
-docs/adr/ADR-XXX-production-deployment-platform.md
-
 ### Acceptance criteria
 
-* Deployment platform is documented.
+* The ADR above is accepted before any resource in this stage is provisioned.
+* Deployment platform and topology are documented and match the ADR.
 * Infrastructure is reproducible.
 * Environments are separated.
 * Remote state is protected.
 * IAM follows least privilege.
 * Secrets are not stored in Terraform source.
 * Destructive changes are reviewable.
-* Cost implications are documented.
+* Cost implications are documented and deliberately bounded for initial
+  capacity.
+* No claim of multi-AZ or high-availability guarantees appears unless the ADR
+  explicitly funds and this stage explicitly implements them.
 
 ### Commit boundary
 
@@ -15329,7 +15443,7 @@ git commit -m "Define production infrastructure"
 
 ---
 
-## Stage 28.4 — Configure Secrets and Environment Management
+## Stage 29.4 — Configure Secrets and Environment Management
 
 ### Objective
 
@@ -15366,7 +15480,7 @@ git commit -m "Harden environment and secret management"
 
 ---
 
-## Stage 28.5 — Add Database Backup and Recovery
+## Stage 29.5 — Add Database Backup and Recovery
 
 ### Objective
 
@@ -15393,11 +15507,12 @@ git commit -m "Add database backup and recovery plan"
 
 ---
 
-## Stage 28.6 — Define Vector Index Recovery
+## Stage 29.6 — Define Vector, Object-Storage and Queue Recovery
 
 ### Objective
 
-Define whether vector data is backed up, recreated or both.
+Define whether vector data is backed up, recreated or both, and record the
+equivalent recovery posture for object storage and queues alongside it.
 
 ### Status
 
@@ -15411,6 +15526,8 @@ Not yet executed.
 * embedding model version;
 * full re-index duration;
 * Qdrant snapshots;
+* object-storage versioning/replication posture;
+* queue/dead-letter-queue redrive and retention posture;
 * disaster recovery;
 * zero-downtime re-indexing.
 
@@ -15422,6 +15539,8 @@ Not yet executed.
 * Recovery duration is estimated.
 * Snapshot or rebuild procedures are tested.
 * Active retrieval is protected during re-indexing.
+* Object-storage and queue recovery posture is documented alongside the
+  vector-store decision, not left implicit.
 
 ### Commit boundary
 
@@ -15430,11 +15549,11 @@ git commit -m "Define vector index recovery"
 
 ---
 
-## Stage 28.7 — Perform Security Hardening
+## Stage 29.7 — Perform Security Hardening
 
 ### Objective
 
-Review and harden the complete platform before public deployment.
+Review and harden the complete platform before staging deployment.
 
 ### Status
 
@@ -15480,11 +15599,13 @@ git commit -m "Harden platform security"
 
 ---
 
-## Stage 28.8 — Create Staging Deployment
+## Stage 29.8 — Create Staging Deployment
 
 ### Objective
 
-Deploy the complete platform to a production-like staging environment.
+Deploy the complete platform to an AWS staging environment that resembles the
+intended production topology closely enough to provide meaningful evidence —
+not a placeholder environment that only superficially resembles it.
 
 ### Status
 
@@ -15492,15 +15613,19 @@ Not yet executed.
 
 ### Acceptance criteria
 
-* Staging is provisioned from infrastructure code.
+* Staging is provisioned from the infrastructure code and topology the
+  Stage 29.3 ADR defines.
 * Production container images are used.
 * Managed secrets are used.
-* Migrations run safely.
+* Migrations run safely, including a tested migration-rollback path.
 * Upload and ingestion work.
 * Retrieval and chat work.
 * Observability is available.
-* Failure and rollback procedures are exercised.
+* Failure and rollback procedures are exercised and their recovery verified,
+  not merely attempted.
 * End-to-end tests run against staging.
+* Cost visibility exists for the staging environment, with a budget alarm
+  configured before the environment is left running unattended.
 
 ### Commit boundary
 
@@ -15508,11 +15633,212 @@ To be defined based on the deployment platform.
 
 ---
 
-## Stage 28.9 — Production Readiness Review
+## Stage 29.9 — Staging Readiness Review
 
 ### Objective
 
-Perform a formal go-live review against technical and operational criteria.
+Perform a formal review confirming staging is genuinely representative and
+safe to keep running, before any production-deployment work begins. This
+review is scoped to staging only; it is not, and must not be read as, a
+production go-live decision — that decision belongs to Phase 30.
+
+### Status
+
+Not yet executed.
+
+### Required review areas
+
+* functionality;
+* security;
+* tenancy;
+* data protection;
+* backups (tested in staging);
+* recovery (tested in staging);
+* cost visibility and budget alarms;
+* observability;
+* alerting;
+* deployment;
+* rollback;
+* fidelity of staging to the intended production topology.
+
+### Acceptance criteria
+
+* All critical user journeys pass in staging.
+* No unresolved critical security finding remains.
+* Backup restoration has been tested in staging.
+* Rollback has been tested in staging.
+* Alerts exist for the staging environment.
+* Cost assumptions are documented and a budget alarm is active.
+* Known limitations of staging relative to the intended production topology
+  are documented explicitly.
+* This review does not assert production deployment, public availability, or
+  any high-availability guarantee.
+
+### Commit boundary
+
+git add docs
+git commit -m "Complete staging readiness review"
+
+## Phase 29 gate
+
+Staging is deployed, tested and reviewed under the Stage 29.3 ADR's own
+topology. No claim of production deployment, public availability, multi-AZ or
+high-availability guarantee is made at this gate.
+
+---
+
+# Phase 30 — Production Deployment and Operational Validation
+
+## Phase objective
+
+Deploy Dolved as an actual production service and prove that it can be
+operated safely, subject to the deployment ADR Phase 29 required and
+accepted. This phase must distinguish clearly between deployment success,
+technical production readiness, public/customer launch, high availability and
+scale-out — it claims only what its own sessions actually implement and
+verify. It does not claim multi-AZ, zero downtime, disaster recovery or
+production-scale capacity unless a session below actually proves them.
+
+## Stage 30.1 — Production environment, IAM, secrets, domain and ingress
+
+### Objective
+
+Create the production AWS environment under the Phase 29 ADR's topology,
+isolated from staging: its own IAM roles and secret store, domain, DNS, TLS
+and ingress.
+
+### Status
+
+Not yet executed.
+
+### Acceptance criteria
+
+* Production IAM roles and secrets are isolated from staging and from every
+  developer credential.
+* Domain, DNS and TLS are provisioned and verified.
+* Ingress is configured to the intended topology, not a temporary shortcut.
+* No production credential is available to a non-production service.
+
+### Commit boundary
+
+git add infrastructure docs
+git commit -m "Establish production environment, IAM and ingress"
+
+---
+
+## Stage 30.2 — Production data infrastructure, migrations and initialisation
+
+### Objective
+
+Provision production database, object-storage, queue and vector-store
+infrastructure, and run controlled initial migrations.
+
+### Status
+
+Not yet executed.
+
+### Acceptance criteria
+
+* Production database, object storage, queue and vector-store infrastructure
+  match the accepted topology.
+* Migrations run safely against production with a documented rollback path.
+* Initial data/state is genuinely production, not copied staging fixtures
+  presented as production evidence.
+
+### Commit boundary
+
+git add infrastructure docs
+git commit -m "Provision production data infrastructure and run initial migrations"
+
+---
+
+## Stage 30.3 — Deployment, rollback and backup-restoration drill
+
+### Objective
+
+Prove the production deployment and rollback path, and run a genuine backup-
+restoration drill against production infrastructure.
+
+### Status
+
+Not yet executed.
+
+### Acceptance criteria
+
+* A production deployment completes successfully.
+* A rollback has actually been exercised against production infrastructure,
+  not only staging.
+* A backup-restoration drill has been run and its result recorded, including
+  recovery time actually observed.
+
+### Commit boundary
+
+git add docs infrastructure
+git commit -m "Prove production deployment, rollback and backup restoration"
+
+---
+
+## Stage 30.4 — Monitoring, alerting, cost budgets and scaling thresholds
+
+### Objective
+
+Stand up production observability, alerting, cost budgets and documented
+scaling thresholds.
+
+### Status
+
+Not yet executed.
+
+### Acceptance criteria
+
+* Production monitoring and operational dashboards exist.
+* Alerting is configured for the failure modes this platform actually has.
+* Cost budgets and alarms are active for production.
+* Scaling thresholds are documented, distinguishing what will actually
+  auto-scale from what requires a manual/planned change.
+
+### Commit boundary
+
+git add docs infrastructure
+git commit -m "Add production monitoring, alerting and cost controls"
+
+---
+
+## Stage 30.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification
+
+### Objective
+
+Prove production works end-to-end without treating a real customer or an
+uncontrolled provider bill as acceptable collateral damage.
+
+### Status
+
+Not yet executed.
+
+### Acceptance criteria
+
+* Production-safe smoke tests pass against the real production environment.
+* Any live-provider call made against production during this stage is
+  explicitly, individually approved beforehand — never an incidental side
+  effect of a smoke test.
+* Tenant-isolation verification passes against production infrastructure,
+  not only against a staging or local proxy for it.
+* Security verification specific to the production environment (network
+  exposure, IAM, secret access) passes.
+
+### Commit boundary
+
+git add docs tests
+git commit -m "Verify production smoke tests, provider behaviour and tenant isolation"
+
+---
+
+## Stage 30.6 — Incident readiness and final go/no-go review
+
+### Objective
+
+Confirm operational readiness to run the service, and record a formal go/
+no-go decision distinguishing deployment success from any broader claim.
 
 ### Status
 
@@ -15526,7 +15852,6 @@ Not yet executed.
 * data protection;
 * backups;
 * recovery;
-* scalability;
 * cost;
 * observability;
 * alerting;
@@ -15538,33 +15863,49 @@ Not yet executed.
 
 ### Acceptance criteria
 
-* All critical user journeys pass.
+* All critical user journeys pass in production.
 * No unresolved critical security finding remains.
-* Backup restoration has been tested.
-* Rollback has been tested.
-* Alerts and runbooks exist.
-* Capacity assumptions are documented.
-* Cost assumptions are documented.
+* Backup restoration has been tested in production (Stage 30.3).
+* Rollback has been tested in production (Stage 30.3).
+* Alerts and runbooks exist and name an owner.
+* Capacity and cost assumptions are documented.
 * Data retention and deletion are documented.
-* Known limitations are visible.
-* A go/no-go decision is recorded.
+* Known limitations are visible, explicitly including whether multi-AZ, high
+  availability, disaster recovery or scale-out capacity have or have not been
+  implemented.
+* The go/no-go decision explicitly distinguishes "deployed and technically
+  operable" from "publicly launched to customers" — this phase's own
+  completion is the former; the latter is a separate business decision this
+  phase does not make on David's behalf.
 
 ### Commit boundary
 
 git add docs
-git commit -m "Complete production readiness review"
+git commit -m "Complete production go/no-go review"
+
+## Phase 30 gate
+
+Dolved is genuinely deployed to production with verified deployment,
+rollback, backup-restoration, monitoring and security evidence. No claim of
+multi-AZ, zero downtime, disaster recovery, production-scale capacity or
+public customer launch is made beyond what a session above actually proved.
 
 ---
 
-# Phase 29 — Documentation and Demonstration Readiness
+# Phase 31 — Documentation and Demonstration Readiness
 
 ## Phase objective
 
-Document the platform clearly and provide a reproducible way to demonstrate its capabilities, without letting presentation work substitute for engineering substance.
+Document the platform clearly and provide a reproducible way to demonstrate
+its capabilities, without letting presentation work substitute for
+engineering or deployment evidence. This phase documents Dolved's actual final
+product and deployed architecture — including the outcomes of Phase 28's
+product-wide acceptance and Phases 29–30's staging and production deployment
+— not an earlier local-only state.
 
 ---
 
-## Stage 29.1 — Write Architecture Documentation
+## Stage 31.1 — Write Architecture Documentation
 
 ### Objective
 
@@ -15582,13 +15923,14 @@ Not yet executed.
 * retrieval and generation sequence diagram;
 * trust boundaries;
 * tenancy model;
-* deployment architecture;
+* deployment architecture, reflecting the accepted Phase 29 ADR and the
+  actual Phase 30 production outcome;
 * key ADR index;
 * technology choices and trade-offs.
 
 ### Acceptance criteria
 
-* Diagrams match the implemented system.
+* Diagrams match the implemented system and its actual deployed architecture.
 * Service responsibilities are clear.
 * Data flows are clear.
 * Security boundaries are visible.
@@ -15602,7 +15944,7 @@ git commit -m "Document platform architecture"
 
 ---
 
-## Stage 29.2 — Create Demonstration Dataset and Scenario
+## Stage 31.2 — Create Demonstration Dataset and Scenario
 
 ### Objective
 
@@ -15629,7 +15971,7 @@ git commit -m "Add repeatable platform demonstration"
 
 ---
 
-## Stage 29.3 — Finalise Repository README
+## Stage 31.3 — Finalise Repository README
 
 ### Objective
 
@@ -15659,7 +16001,7 @@ Not yet executed.
 
 * Setup works from a clean clone.
 * Commands match the Makefile.
-* Architecture claims are accurate.
+* Architecture claims are accurate, including deployment status.
 * Current limitations are explicit.
 * No secrets or private endpoints appear.
 * Screenshots contain no sensitive data.
