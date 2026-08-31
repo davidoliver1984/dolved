@@ -30,4 +30,9 @@ return [
         'lease_seconds' => max(60, (int) env('IMPORT_PROMOTION_LEASE_SECONDS', 600)),
         'failure_ceiling' => max(1, (int) env('IMPORT_PROMOTION_FAILURE_CEILING', 3)),
     ],
+
+    'legacy_cutover' => [
+        'max_batch_size' => (int) env('IMPORT_LEGACY_CUTOVER_MAX_BATCH_SIZE', 500),
+        'drain_window_hours' => (int) env('IMPORT_LEGACY_DRAIN_WINDOW_HOURS', 72),
+    ],
 ];

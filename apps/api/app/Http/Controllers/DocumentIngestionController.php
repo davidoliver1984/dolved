@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\Documents\RequestDocumentIngestion;
+use App\Actions\Documents\RequestLegacyDocumentIngestion;
 use App\Http\Resources\DocumentResource;
 use App\Models\User;
 use App\Queries\Documents\FindDocumentForWorkspace;
@@ -22,7 +22,7 @@ class DocumentIngestionController extends Controller
         string $documentPublicId,
         FindWorkspaceForUser $workspaces,
         FindDocumentForWorkspace $documents,
-        RequestDocumentIngestion $requestIngestion,
+        RequestLegacyDocumentIngestion $requestIngestion,
     ): JsonResponse {
         /** @var User $user */
         $user = $request->user();

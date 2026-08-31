@@ -15045,6 +15045,31 @@ version/reuse/pinned-read/cleanup checks, Pint, shell validation and
 
 ## Stage 25.5 — Legacy cutover and drain
 
+Completed on 2026-08-31. The legacy browser-upload boundary now has a
+PostgreSQL-enforced, forward-only cutover identity and singleton gate. Upload
+initialisation serializes on that gate; transition-window and bounded-backfill
+rows receive the same server-owned marker and append-only audit identity;
+closure atomically handles the final bounded remainder and proves that no
+pending legacy upload is unmarked.
+
+The browser-facing completion and ingestion-request actions are now separate
+legacy continuations that accept only the exact marked cutover population and
+close after the bounded drain. The shared internal ingestion action remains
+available to documents committed by the import workflow. The narrowly scoped
+drain reconciler may move only marked, stalled `UPLOADING`/`UPLOADED` rows to
+`FAILED` with `legacy_upload_drain_expired`; queued and ordinary ingestion
+states remain owned by the existing pipeline.
+
+The local cutover ran once under operation
+`d09cc97a-68e7-4f4f-aee2-f9a5fc755ccb`: 15 pending rows were marked, zero
+eligible rows remained unmarked, 15 per-row audit facts were recorded and one
+gate-closure event was persisted. The drain remains open and no row was
+expired during this stage. Provider-free verification passed with 502 Laravel
+tests / 2,694 assertions, a clean fresh-PostgreSQL migration, six database
+serialization/immutability assertions, PostgreSQL catalog inspection, Pint
+and `git diff --check`. Evidence is recorded in
+`docs/journal/2026-08-31-r25-s05-legacy-upload-cutover.md`.
+
 ## Stage 25.6 — Import workflow and progress UI
 
 This stage must present every ADR-0034 visual checkpoint for David's explicit

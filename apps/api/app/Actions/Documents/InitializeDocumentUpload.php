@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Actions\Documents;
 
+use App\Exceptions\LegacyUploadCutoverException;
 use App\Models\Document;
+use App\Models\LegacyUploadInitializationGate;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Services\Documents\DocumentObjectStorage;
+use App\Support\Imports\LegacyUploadCutoverAudit;
 use Illuminate\Support\Facades\DB;
 
 class InitializeDocumentUpload
@@ -15,6 +18,7 @@ class InitializeDocumentUpload
     public function __construct(
         private readonly CreateDocument $createDocument,
         private readonly DocumentObjectStorage $storage,
+        private readonly LegacyUploadCutoverAudit $cutoverAudits,
     ) {}
 
     /**
@@ -48,6 +52,10 @@ class InitializeDocumentUpload
             $publisherLabel,
             $sourceUrl,
         ): array {
+            $gate = LegacyUploadInitializationGate::query()->lockForUpdate()->findOrFail(1);
+            if ($gate->closed) {
+                throw LegacyUploadCutoverException::routeClosed();
+            }
             $document = $this->createDocument->handle(
                 $workspace,
                 $creator,
@@ -58,6 +66,12 @@ class InitializeDocumentUpload
                 $publisherLabel,
                 $sourceUrl,
             );
+            $document->legacy_upload_initiated_before_cutover = true;
+            $document->legacy_upload_cutover_operation_id = $gate->cutover_operation_id;
+            $document->save();
+            $this->cutoverAudits->recordHuman($document, $gate, $creator);
+            $gate->total_marked_count++;
+            $gate->save();
 
             return [
                 'document' => $document,

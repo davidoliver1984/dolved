@@ -54,6 +54,12 @@ class Document extends Model
                 throw new LogicException('A document storage identity is immutable.');
             }
 
+            if ($document->exists
+                && $document->getRawOriginal('legacy_upload_cutover_operation_id') !== null
+                && $document->isDirty(['legacy_upload_initiated_before_cutover', 'legacy_upload_cutover_operation_id'])) {
+                throw new LogicException('A legacy upload cutover identity is immutable.');
+            }
+
             if (
                 $document->exists
                 && $document->isDirty([
@@ -111,6 +117,7 @@ class Document extends Model
             'effective_from' => 'immutable_datetime',
             'approved_at' => 'immutable_datetime',
             'withdrawn_at' => 'immutable_datetime',
+            'legacy_upload_initiated_before_cutover' => 'boolean',
         ];
     }
 

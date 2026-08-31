@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\Documents\CompleteDocumentUpload;
+use App\Actions\Documents\CompleteLegacyDocumentUpload;
 use App\Actions\Documents\InitializeDocumentUpload;
 use App\Http\Requests\InitializeDocumentUploadRequest;
 use App\Http\Resources\DocumentResource;
@@ -72,7 +72,7 @@ class DocumentUploadController extends Controller
         string $documentPublicId,
         FindWorkspaceForUser $workspaces,
         FindDocumentForWorkspace $documents,
-        CompleteDocumentUpload $complete,
+        CompleteLegacyDocumentUpload $complete,
     ): DocumentResource {
         /** @var User $user */
         $user = $request->user();
