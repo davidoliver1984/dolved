@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.dolved.internal/http/import-preflight-worker/v1/complete-request.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "event_id", "workspace_id", "import_item_id", "staged_object_key", "lease_token", "lease_generation", "result", "diagnostic_code"],
+  "properties": {
+    "contract_version": {"const": "import-preflight-v1"},
+    "event_id": {"type": "string", "format": "uuid"},
+    "workspace_id": {"type": "string", "format": "uuid"},
+    "import_item_id": {"type": "string", "format": "uuid"},
+    "staged_object_key": {"type": "string", "minLength": 1},
+    "lease_token": {"type": "string", "format": "uuid"},
+    "lease_generation": {"type": "integer", "minimum": 1},
+    "result": {"enum": ["readable", "password_protected", "encrypted", "corrupt_structure", "mime_mismatch"]},
+    "diagnostic_code": {"enum": ["readable", "pdf_password_required", "office_encrypted", "invalid_container", "declared_type_mismatch"]},
+    "source_checksum_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "media_type": {"type": "string", "minLength": 1, "maxLength": 255},
+    "size_bytes": {"type": "integer", "minimum": 1}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"result": {"const": "readable"}}},
+      "then": {"required": ["source_checksum_sha256", "media_type", "size_bytes"]},
+      "else": {"not": {"anyOf": [{"required": ["source_checksum_sha256"]}, {"required": ["media_type"]}, {"required": ["size_bytes"]}]}}
+    },
+    {
+      "oneOf": [
+        {"properties": {"result": {"const": "readable"}, "diagnostic_code": {"const": "readable"}}},
+        {"properties": {"result": {"const": "password_protected"}, "diagnostic_code": {"const": "pdf_password_required"}}},
+        {"properties": {"result": {"const": "encrypted"}, "diagnostic_code": {"const": "office_encrypted"}}},
+        {"properties": {"result": {"const": "corrupt_structure"}, "diagnostic_code": {"const": "invalid_container"}}},
+        {"properties": {"result": {"const": "mime_mismatch"}, "diagnostic_code": {"const": "declared_type_mismatch"}}}
+      ]
+    }
+  ]
+}

@@ -14954,6 +14954,33 @@ execution, legacy cutover or import UI was implemented in this stage.
 
 ## Stage 25.2 — Preflight contract and lease reconciliation
 
+**Completed 2026-08-31.** Import preflight now follows ADR-0034's existing
+worker topology without introducing a synchronous Laravel-to-Python path.
+Laravel atomically creates an immutable, generation-bound
+`ImportPreflightAttempt` and `import.preflight.requested` outbox event whose
+short-lived read authority is limited to the exact staged object. Python
+consumes that event through the existing queue, reports only the bounded
+technical result vocabulary and signs its purpose-specific callback with the
+existing worker HMAC scheme. No extraction artefact, retrieval data or
+provider call is produced.
+
+Laravel remains the authority for zero-byte and configured-size rejection and
+for every `ImportItem` transition. Callback incorporation locks the attempt,
+requires the exact event, workspace, item, object key, token and generation,
+and treats an identical terminal callback as idempotent while conflicting,
+expired and stale callbacks fail closed. PostgreSQL protects attempt identity,
+terminal immutability, result shape, generation uniqueness and the one-open-
+attempt invariant. The scheduled reconciler terminalises an expired lease
+before dispatching a successor generation; if successor dispatch is
+temporarily unavailable, the terminal attempt remains discoverable for the
+next reconciliation pass rather than stranding the item.
+
+The complete Laravel and Python suites, contract/schema validation, PostgreSQL
+catalog inspection, Ruff, Mypy, Pint and deterministic recovery tests passed.
+R25-S03 now owns only deterministic duplicate/family matching and the shared
+checksum-serialization behavior; no matching or promotion behavior was added
+here.
+
 ## Stage 25.3 — Deterministic matching
 
 ## Stage 25.4 — Promotion state machine

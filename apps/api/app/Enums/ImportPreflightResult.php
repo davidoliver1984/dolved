@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
-enum ImportPreflightRejectionReason: string
+enum ImportPreflightResult: string
 {
+    case Readable = 'readable';
     case PasswordProtected = 'password_protected';
     case Encrypted = 'encrypted';
     case CorruptStructure = 'corrupt_structure';
     case MimeMismatch = 'mime_mismatch';
-    case EmptySource = 'empty_source';
-    case SizeLimitExceeded = 'size_limit_exceeded';
 }

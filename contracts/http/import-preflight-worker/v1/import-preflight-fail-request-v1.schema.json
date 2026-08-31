@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.dolved.internal/http/import-preflight-worker/v1/fail-request.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "event_id", "workspace_id", "import_item_id", "staged_object_key", "lease_token", "lease_generation", "diagnostic_code"],
+  "properties": {
+    "contract_version": {"const": "import-preflight-v1"},
+    "event_id": {"type": "string", "format": "uuid"},
+    "workspace_id": {"type": "string", "format": "uuid"},
+    "import_item_id": {"type": "string", "format": "uuid"},
+    "staged_object_key": {"type": "string", "minLength": 1},
+    "lease_token": {"type": "string", "format": "uuid"},
+    "lease_generation": {"type": "integer", "minimum": 1},
+    "diagnostic_code": {"enum": ["source_unavailable", "read_timeout", "internal_failure"]}
+  }
+}

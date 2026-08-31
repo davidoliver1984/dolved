@@ -9,6 +9,8 @@ import boto3  # type: ignore[import-untyped]
 from app.deletion.client import DocumentDeletionClient
 from app.deletion.orchestrator import DocumentDeletionOrchestrator
 from app.embedding.factory import create_deferred_embedder, embedding_profile
+from app.import_preflight.client import ImportPreflightClient
+from app.import_preflight.orchestrator import ImportPreflightOrchestrator
 from app.ingestion.artifact_upload import HttpxArtifactUploader
 from app.ingestion.claim_client import IngestionClaimClient
 from app.ingestion.orchestrator import IngestionOrchestrator
@@ -92,6 +94,14 @@ def build_worker(
         ),
         vector_store=vector_store,
     )
+    import_preflight_orchestrator = ImportPreflightOrchestrator(
+        client=ImportPreflightClient(
+            base_url=settings.ingestion_worker_api_url,
+            timeout_seconds=settings.ingestion_worker_api_timeout_seconds,
+            signer=signer,
+        ),
+        timeout_seconds=settings.ingestion_worker_api_timeout_seconds,
+    )
 
     return IngestionWorker(
         queue=queue,
@@ -100,6 +110,7 @@ def build_worker(
         error_wait_seconds=settings.ingestion_worker_error_wait_seconds,
         orchestrator=orchestrator,
         deletion_orchestrator=deletion_orchestrator,
+        import_preflight_orchestrator=import_preflight_orchestrator,
         reconcile_dlq=reconcile_dlq,
     )
 

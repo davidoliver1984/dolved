@@ -11,4 +11,11 @@ return [
         60,
         (int) env('IMPORT_PRESIGNED_URL_LIFETIME_SECONDS', 600),
     ),
+    'preflight' => [
+        'contract_path' => base_path('../../contracts/events/import-preflight-requested/v1.schema.json'),
+        'complete_contract_path' => base_path('../../contracts/http/import-preflight-worker/v1/import-preflight-complete-request-v1.schema.json'),
+        'fail_contract_path' => base_path('../../contracts/http/import-preflight-worker/v1/import-preflight-fail-request-v1.schema.json'),
+        'lease_seconds' => max(60, (int) env('IMPORT_PREFLIGHT_LEASE_SECONDS', 600)),
+        'reclaim_batch_size' => max(1, (int) env('IMPORT_PREFLIGHT_RECLAIM_BATCH_SIZE', 25)),
+    ],
 ];

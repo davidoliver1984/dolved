@@ -8,6 +8,7 @@ use App\Contracts\Ingestion\IngestionEventPublisher;
 use App\Exceptions\InvalidIngestionEvent;
 use App\Models\OutboxEvent;
 use App\Services\Documents\DocumentDeletionContractValidator;
+use App\Services\Imports\ImportPreflightContractValidator;
 use App\Services\Ingestion\DocumentIngestionContractValidator;
 use App\Telemetry\TelemetryAttributeAllowlist;
 use App\Telemetry\TelemetryLifecycle;
@@ -37,6 +38,7 @@ class PublishIngestionOutbox
     public function __construct(
         private readonly DocumentIngestionContractValidator $ingestionValidator,
         private readonly DocumentDeletionContractValidator $deletionValidator,
+        private readonly ImportPreflightContractValidator $importPreflightValidator,
         private readonly IngestionEventPublisher $publisher,
         TracerProviderInterface $tracerProvider,
         MeterProviderInterface $meterProvider,
@@ -129,6 +131,7 @@ class PublishIngestionOutbox
                 match ($event->event_type) {
                     'document.ingestion.requested' => $this->ingestionValidator->validate($event->payload),
                     'document.deletion.requested' => $this->deletionValidator->validate($event->payload),
+                    'import.preflight.requested' => $this->importPreflightValidator->validateDispatch($event->payload),
                     default => throw new InvalidIngestionEvent('The outbox event type is unsupported.'),
                 };
             } catch (InvalidIngestionEvent $exception) {

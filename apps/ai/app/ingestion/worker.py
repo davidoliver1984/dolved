@@ -12,6 +12,11 @@ from app.deletion.contract import (
     parse_and_validate_deletion_event,
 )
 from app.deletion.orchestrator import DocumentDeletionOrchestrator
+from app.import_preflight.contract import (
+    InvalidImportPreflightEvent,
+    parse_and_validate_preflight_event,
+)
+from app.import_preflight.orchestrator import ImportPreflightOrchestrator
 from app.ingestion.claim_client import ClaimDisposition, IngestionClaimClient
 from app.ingestion.contract import InvalidIngestionEvent, parse_and_validate_event
 from app.ingestion.orchestrator import IngestionOrchestrator
@@ -31,6 +36,7 @@ class IngestionWorker:
         error_wait_seconds: float,
         orchestrator: IngestionOrchestrator | None = None,
         deletion_orchestrator: DocumentDeletionOrchestrator | None = None,
+        import_preflight_orchestrator: ImportPreflightOrchestrator | None = None,
         reconcile_dlq: bool = False,
     ) -> None:
         self._queue = queue
@@ -39,6 +45,7 @@ class IngestionWorker:
         self._error_wait_seconds = error_wait_seconds
         self._orchestrator = orchestrator
         self._deletion_orchestrator = deletion_orchestrator
+        self._import_preflight_orchestrator = import_preflight_orchestrator
         self._reconcile_dlq = reconcile_dlq
 
     def run_once(self) -> int:
@@ -156,6 +163,23 @@ class IngestionWorker:
             if deletion_result.acknowledge:
                 self._queue.acknowledge(message)
             return deletion_result.code
+
+        if (
+            isinstance(discriminator, dict)
+            and discriminator.get("event_type") == "import.preflight.requested"
+        ):
+            try:
+                preflight_event = parse_and_validate_preflight_event(message.body)
+            except InvalidImportPreflightEvent:
+                return "invalid_import_preflight_event"
+            if self._import_preflight_orchestrator is None:
+                return "import_preflight_orchestrator_unavailable"
+            preflight_result = self._import_preflight_orchestrator.process(
+                preflight_event
+            )
+            if preflight_result.acknowledge:
+                self._queue.acknowledge(message)
+            return preflight_result.code
 
         try:
             event = parse_and_validate_event(message.body)

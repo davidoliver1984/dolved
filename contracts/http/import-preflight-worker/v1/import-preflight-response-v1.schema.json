@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.dolved.internal/http/import-preflight-worker/v1/response.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["data"],
+  "properties": {
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome"],
+      "properties": {"outcome": {"enum": ["recorded", "duplicate"]}}
+    }
+  }
+}

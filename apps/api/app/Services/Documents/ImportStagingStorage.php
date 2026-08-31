@@ -64,4 +64,41 @@ final class ImportStagingStorage
             throw DocumentUploadException::storageUnavailable();
         }
     }
+
+    /** @return array{key: string, read_url: string, expires_at: string} */
+    public function createPreflightReadRequest(Workspace $workspace, ImportItem $item): array
+    {
+        $key = $this->keys->assertExact($workspace, $item);
+        $expiresAt = CarbonImmutable::now()->addSeconds(
+            (int) config('imports.preflight.lease_seconds'),
+        );
+
+        try {
+            $url = $this->filesystems
+                ->disk((string) config('imports.storage_disk'))
+                ->temporaryUrl($key, $expiresAt);
+        } catch (Throwable $exception) {
+            report($exception);
+            throw DocumentUploadException::storageUnavailable();
+        }
+
+        return [
+            'key' => $key,
+            'read_url' => $url,
+            'expires_at' => $expiresAt->toIso8601String(),
+        ];
+    }
+
+    public function exactSize(Workspace $workspace, ImportItem $item): int
+    {
+        $key = $this->keys->assertExact($workspace, $item);
+        try {
+            return $this->filesystems
+                ->disk((string) config('imports.storage_disk'))
+                ->size($key);
+        } catch (Throwable $exception) {
+            report($exception);
+            throw DocumentUploadException::storageUnavailable();
+        }
+    }
 }

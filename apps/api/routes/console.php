@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Conversation\ReconcileStaleGenerationRuns;
+use App\Actions\Imports\ReconcileExpiredImportPreflights;
 use App\Actions\Telemetry\RecordOperationalSnapshot;
 use App\Actions\Workspaces\ExpireWorkspaceInvitations;
 use App\Models\ChatDeliveryEvent;
@@ -41,3 +42,9 @@ Schedule::command('observability:record-operational-snapshot')->everyMinute()->w
 Schedule::command('ingestion:extraction-artifacts:sweep')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('ingestion:content-clone-manifests:sweep')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('documents:sweep-extraction-projections')->everyFiveMinutes()->withoutOverlapping();
+
+Artisan::command('imports:reconcile-expired-preflights', function (ReconcileExpiredImportPreflights $reconcile): void {
+    $this->info("Reclaimed {$reconcile->handle()} expired import preflight attempts.");
+})->purpose('Expire stale import preflight leases and dispatch their successor generation');
+
+Schedule::command('imports:reconcile-expired-preflights')->everyMinute()->withoutOverlapping();

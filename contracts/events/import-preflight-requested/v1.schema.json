@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.dolved.internal/events/import-preflight-requested/v1.schema.json",
+  "title": "Import Preflight Requested (v1)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_id", "event_type", "event_version", "contract_version", "occurred_at", "workspace_id", "import_batch_id", "import_item_id", "staged_object", "declared_media_type", "lease_token", "lease_generation", "correlation_id"],
+  "properties": {
+    "event_id": {"type": "string", "format": "uuid"},
+    "event_type": {"const": "import.preflight.requested"},
+    "event_version": {"const": 1},
+    "contract_version": {"const": "import-preflight-v1"},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "workspace_id": {"type": "string", "format": "uuid"},
+    "import_batch_id": {"type": "string", "format": "uuid"},
+    "import_item_id": {"type": "string", "format": "uuid"},
+    "staged_object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "read_url", "expires_at"],
+      "properties": {
+        "key": {"type": "string", "pattern": "^imports/workspaces/[0-9a-f-]{36}/items/[0-9a-f-]{36}/source$"},
+        "read_url": {"type": "string", "format": "uri"},
+        "expires_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "declared_media_type": {"type": "string", "minLength": 1, "maxLength": 255},
+    "lease_token": {"type": "string", "format": "uuid"},
+    "lease_generation": {"type": "integer", "minimum": 1},
+    "correlation_id": {"type": "string", "format": "uuid"}
+  }
+}

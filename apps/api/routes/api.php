@@ -13,6 +13,7 @@ use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\DocumentVersionGovernanceController;
 use App\Http\Controllers\Internal\DocumentDeletionOperationController;
 use App\Http\Controllers\Internal\DocumentIngestionClaimController;
+use App\Http\Controllers\Internal\ImportPreflightController;
 use App\Http\Controllers\Internal\IngestionOperationController;
 use App\Http\Controllers\Internal\ObservabilityReconciliationController;
 use App\Http\Controllers\PlatformOperationsController;
@@ -128,6 +129,13 @@ Route::prefix('/internal/document-deletions/{eventId}')->group(function (): void
         ->middleware('ingestion.worker:document.deletion.complete')->name('document.deletion.complete');
     Route::post('/fail', [DocumentDeletionOperationController::class, 'fail'])
         ->middleware('ingestion.worker:document.deletion.fail')->name('document.deletion.fail');
+});
+
+Route::prefix('/internal/import-preflights/{eventId}')->group(function (): void {
+    Route::post('/complete', [ImportPreflightController::class, 'complete'])
+        ->middleware('ingestion.worker:import.preflight.complete')->name('import.preflight.complete');
+    Route::post('/fail', [ImportPreflightController::class, 'fail'])
+        ->middleware('ingestion.worker:import.preflight.fail')->name('import.preflight.fail');
 });
 
 Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(function (): void {

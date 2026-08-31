@@ -85,6 +85,30 @@ final class ImportStagingPrivacyTest extends TestCase
         $this->assertSame(7, config('imports.retention_days'));
     }
 
+    public function test_preflight_read_is_exact_key_and_lease_time_bounded(): void
+    {
+        CarbonImmutable::setTestNow('2026-08-31T12:00:00Z');
+        config()->set('imports.storage_disk', 'private-storage');
+        config()->set('imports.preflight.lease_seconds', 600);
+        $workspace = $this->workspace(10, '41b20555-55d4-474f-a3df-87a64f0318aa');
+        $item = $this->item(20, 10, '754615ff-5590-4f80-b485-534970045ddd');
+        $item->staged_object_key = (new ImportStagingObjectKey)->for($workspace, $item);
+        $disk = Mockery::mock(FilesystemAdapter::class);
+        $disk->shouldReceive('temporaryUrl')->once()->with(
+            $item->staged_object_key,
+            Mockery::on(fn (CarbonImmutable $expires): bool => $expires->equalTo(CarbonImmutable::now()->addMinutes(10))),
+        )->andReturn('https://storage.example/exact-read');
+        $filesystems = Mockery::mock(FilesystemFactory::class);
+        $filesystems->shouldReceive('disk')->once()->with('private-storage')->andReturn($disk);
+
+        $request = (new ImportStagingStorage($filesystems, new ImportStagingObjectKey))
+            ->createPreflightReadRequest($workspace, $item);
+
+        $this->assertSame($item->staged_object_key, $request['key']);
+        $this->assertSame('https://storage.example/exact-read', $request['read_url']);
+        $this->assertSame('2026-08-31T12:10:00+00:00', $request['expires_at']);
+    }
+
     public function test_cleanup_addresses_only_the_bound_exact_key(): void
     {
         config()->set('imports.storage_disk', 'private-storage');
