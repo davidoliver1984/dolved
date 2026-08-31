@@ -25,4 +25,9 @@ return [
         'maximum_exact_matches' => 5,
         'maximum_normalised_characters' => 200,
     ],
+    'promotion' => [
+        'decision_schema_version' => 1,
+        'lease_seconds' => max(60, (int) env('IMPORT_PROMOTION_LEASE_SECONDS', 600)),
+        'failure_ceiling' => max(1, (int) env('IMPORT_PROMOTION_FAILURE_CEILING', 3)),
+    ],
 ];

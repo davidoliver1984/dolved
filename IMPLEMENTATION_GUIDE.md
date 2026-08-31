@@ -15014,6 +15014,35 @@ recorded in
 
 ## Stage 25.4 — Promotion state machine
 
+**Completed 2026-08-31.** Promotion now consumes an immutable, canonical
+decision snapshot and progresses through durable reservation, version-bound
+object materialisation, source verification and one atomic Laravel commit.
+Commit rechecks the current decision, live actor membership, predecessor and
+family validity, metadata/applicability references and same-workspace verified
+checksum reservation. Duplicate content, invalidated predecessors, changed
+authorization and changed decisions terminalise as typed conflicts rather than
+being repaired or silently retried. Document creation remains owned by the
+existing ADR-0031 `CreateDocumentVersion` action through its verified-promotion
+entry point rather than being reimplemented by the import finalizer.
+
+The committed `Document` records the exact S3 object version that was verified.
+Local object storage now enables versioning, document reads request that exact
+version, and PostgreSQL prevents later mutation of the stored version identity.
+A copied object is reused only after its version, checksum and size are
+reverified; terminal uncommitted versions are removable while a committed
+document makes the object application-owned. Cancellation, lease reclaim,
+failure ceilings, reconciliation and owner/administrator adoption retain the
+original attempt and decision lineage.
+
+Provider-free verification passed with the complete Laravel suite (494 passed,
+5 skipped, 2,655 assertions), the focused promotion/matching/clone/ingestion
+regression set (39 passed, 214 assertions), a clean PostgreSQL promotion run
+(9 passed, 49 assertions), the existing PostgreSQL checksum-serialization
+profile (2 passed, 9 assertions), PostgreSQL catalog inspection, real LocalStack
+version/reuse/pinned-read/cleanup checks, Pint, shell validation and
+`git diff --check`. Evidence is recorded in
+`docs/journal/2026-08-31-r25-s04-import-promotion.md`.
+
 ## Stage 25.5 — Legacy cutover and drain
 
 ## Stage 25.6 — Import workflow and progress UI

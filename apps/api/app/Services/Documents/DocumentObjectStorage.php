@@ -8,6 +8,7 @@ use App\Exceptions\DocumentUploadException;
 use App\Models\Document;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
+use Illuminate\Filesystem\AwsS3V3Adapter;
 use Throwable;
 
 class DocumentObjectStorage
@@ -56,6 +57,9 @@ class DocumentObjectStorage
     public function streamedIdentity(Document $document): ?array
     {
         try {
+            if (is_string($document->storage_version_id) && $document->storage_version_id !== '') {
+                return $this->versionedIdentity($document);
+            }
             $disk = $this->filesystems->disk(
                 (string) config('documents.storage_disk'),
             );
@@ -105,6 +109,11 @@ class DocumentObjectStorage
     public function metadata(Document $document): ?array
     {
         try {
+            if (is_string($document->storage_version_id) && $document->storage_version_id !== '') {
+                $identity = $this->versionedHead($document);
+
+                return ['size_bytes' => $identity['size_bytes'], 'content_type' => $identity['content_type']];
+            }
             $disk = $this->filesystems->disk((string) config('documents.storage_disk'));
 
             if (! $disk->exists($document->storage_key)) {
@@ -126,6 +135,9 @@ class DocumentObjectStorage
     public function readStream(Document $document)
     {
         try {
+            if (is_string($document->storage_version_id) && $document->storage_version_id !== '') {
+                return $this->versionedReadStream($document);
+            }
             $stream = $this->filesystems
                 ->disk((string) config('documents.storage_disk'))
                 ->readStream($document->storage_key);
@@ -173,6 +185,15 @@ class DocumentObjectStorage
     public function delete(Document $document): void
     {
         try {
+            if (is_string($document->storage_version_id) && $document->storage_version_id !== '') {
+                $this->s3Disk()->getClient()->deleteObject([
+                    'Bucket' => (string) config('filesystems.disks.s3.bucket'),
+                    'Key' => $document->storage_key,
+                    'VersionId' => $document->storage_version_id,
+                ]);
+
+                return;
+            }
             $disk = $this->filesystems->disk(
                 (string) config('documents.storage_disk'),
             );
@@ -239,5 +260,68 @@ class DocumentObjectStorage
         }
 
         return $browserHeaders;
+    }
+
+    /** @return array{size_bytes: int, sha256: string} */
+    private function versionedIdentity(Document $document): array
+    {
+        $stream = $this->versionedReadStream($document);
+        $hash = hash_init('sha256');
+        $size = 0;
+        try {
+            while (! feof($stream)) {
+                $chunk = fread($stream, 1024 * 1024);
+                if ($chunk === false) {
+                    throw DocumentUploadException::storageUnavailable();
+                }
+                $size += strlen($chunk);
+                hash_update($hash, $chunk);
+            }
+        } finally {
+            fclose($stream);
+        }
+
+        return ['size_bytes' => $size, 'sha256' => hash_final($hash)];
+    }
+
+    /** @return array{size_bytes: int, content_type: string} */
+    private function versionedHead(Document $document): array
+    {
+        $result = $this->s3Disk()->getClient()->headObject([
+            'Bucket' => (string) config('filesystems.disks.s3.bucket'),
+            'Key' => $document->storage_key,
+            'VersionId' => $document->storage_version_id,
+        ]);
+
+        return [
+            'size_bytes' => (int) $result['ContentLength'],
+            'content_type' => (string) ($result['ContentType'] ?? $document->media_type),
+        ];
+    }
+
+    /** @return resource */
+    private function versionedReadStream(Document $document)
+    {
+        $result = $this->s3Disk()->getClient()->getObject([
+            'Bucket' => (string) config('filesystems.disks.s3.bucket'),
+            'Key' => $document->storage_key,
+            'VersionId' => $document->storage_version_id,
+        ]);
+        $stream = $result['Body']->detach();
+        if (! is_resource($stream)) {
+            throw DocumentUploadException::storageUnavailable();
+        }
+
+        return $stream;
+    }
+
+    private function s3Disk(): AwsS3V3Adapter
+    {
+        $disk = $this->filesystems->disk((string) config('documents.storage_disk'));
+        if (! $disk instanceof AwsS3V3Adapter) {
+            throw DocumentUploadException::storageUnavailable();
+        }
+
+        return $disk;
     }
 }

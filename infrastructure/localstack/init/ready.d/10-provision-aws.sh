@@ -40,6 +40,10 @@ awslocal s3api put-bucket-encryption \
     --bucket "$DOCUMENT_UPLOAD_BUCKET" \
     --server-side-encryption-configuration "file://$bucket_encryption_file"
 
+awslocal s3api put-bucket-versioning \
+    --bucket "$DOCUMENT_UPLOAD_BUCKET" \
+    --versioning-configuration Status=Enabled
+
 rm -f "$bucket_encryption_file"
 
 cors_configuration_file="/tmp/rag-platform-document-upload-cors.json"

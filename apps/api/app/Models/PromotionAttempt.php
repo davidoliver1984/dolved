@@ -71,4 +71,9 @@ final class PromotionAttempt extends Model
     {
         return $this->hasMany(PromotionAttemptFailure::class);
     }
+
+    public function committedDocument(): BelongsTo
+    {
+        return $this->belongsTo(Document::class, 'committed_document_id');
+    }
 }

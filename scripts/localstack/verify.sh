@@ -45,6 +45,23 @@ case "$bucket_encryption" in
         ;;
 esac
 
+bucket_versioning="$(
+    awslocal s3api get-bucket-versioning \
+        --bucket "$DOCUMENT_UPLOAD_BUCKET" \
+        --output json
+)"
+
+case "$bucket_versioning" in
+    *'"Status": "Enabled"'*)
+        ;;
+    *)
+        printf 'Document-upload bucket versioning is not enabled: %s\n' \
+            "$bucket_versioning" \
+            >&2
+        exit 1
+        ;;
+esac
+
 cors_configuration="$(
     awslocal s3api get-bucket-cors \
         --bucket "$DOCUMENT_UPLOAD_BUCKET" \
@@ -107,6 +124,7 @@ printf 'Local AWS resources verified:\n'
 printf '  bucket: %s\n' "$DOCUMENT_UPLOAD_BUCKET"
 printf '  bucket public access: blocked\n'
 printf '  bucket encryption: AES256\n'
+printf '  bucket versioning: enabled\n'
 printf '  upload CORS origin: %s\n' "$DOCUMENT_UPLOAD_CORS_ALLOWED_ORIGIN"
 printf '  queue:  %s\n' "$queue_url"
 printf '  dlq:    %s\n' "$dlq_url"

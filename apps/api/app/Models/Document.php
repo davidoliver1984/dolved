@@ -50,8 +50,8 @@ class Document extends Model
                 throw new LogicException('Document creation provenance is immutable.');
             }
 
-            if ($document->exists && $document->isDirty('storage_key')) {
-                throw new LogicException('A document storage key is immutable.');
+            if ($document->exists && $document->isDirty(['storage_key', 'storage_version_id'])) {
+                throw new LogicException('A document storage identity is immutable.');
             }
 
             if (
