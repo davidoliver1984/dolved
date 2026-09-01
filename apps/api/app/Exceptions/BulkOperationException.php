@@ -22,4 +22,19 @@ final class BulkOperationException extends RuntimeException
     {
         return new self('The selected bulk-operation target was not found.', 404);
     }
+
+    public static function confirmationActorMismatch(): self
+    {
+        return new self('Only the initiating actor may confirm this bulk operation.', 403);
+    }
+
+    public static function notConfirmable(): self
+    {
+        return new self('This bulk operation can no longer be confirmed.', 409);
+    }
+
+    public static function notCancellable(): self
+    {
+        return new self('This bulk operation is already terminal.', 409);
+    }
 }

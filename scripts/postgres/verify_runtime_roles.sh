@@ -106,7 +106,8 @@ WHERE n.nspname = 'public'
     'bulk_operations',
     'bulk_operation_items',
     'bulk_operation_item_attempts',
-    'bulk_operation_item_subordinate_transitions'
+    'bulk_operation_item_subordinate_transitions',
+    'bulk_operation_audit_events'
   )
   AND (
     (c.relkind IN ('r', 'p', 'v', 'm') AND NOT (
@@ -150,10 +151,14 @@ SELECT concat_ws('|',
   has_table_privilege('rag_platform_app', 'bulk_operation_item_subordinate_transitions', 'SELECT'),
   has_table_privilege('rag_platform_app', 'bulk_operation_item_subordinate_transitions', 'INSERT'),
   has_table_privilege('rag_platform_app', 'bulk_operation_item_subordinate_transitions', 'UPDATE'),
-  has_table_privilege('rag_platform_app', 'bulk_operation_item_subordinate_transitions', 'DELETE')
+  has_table_privilege('rag_platform_app', 'bulk_operation_item_subordinate_transitions', 'DELETE'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_audit_events', 'SELECT'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_audit_events', 'INSERT'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_audit_events', 'UPDATE'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_audit_events', 'DELETE')
 );
 ")"
-expected_bulk_privileges='t|t|f|t|f|t|f|t|f|f|t|f|f|t|t|f|t|f|f|t|t|f|f'
+expected_bulk_privileges='t|t|f|t|f|t|f|t|f|f|t|f|f|t|t|f|t|f|f|t|t|f|f|t|t|f|f'
 [[ "$bulk_privilege_boundary" == "$expected_bulk_privileges" ]] || {
   printf 'Unexpected protected bulk-operation privilege boundary: %s\n' "$bulk_privilege_boundary" >&2
   exit 1

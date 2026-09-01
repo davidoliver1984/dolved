@@ -1,9 +1,12 @@
 <?php
 
+use App\Actions\BulkOperations\ReclaimExpiredBulkAttempts;
 use App\Actions\Conversation\ReconcileStaleGenerationRuns;
 use App\Actions\Imports\ReconcileExpiredImportPreflights;
 use App\Actions\Telemetry\RecordOperationalSnapshot;
 use App\Actions\Workspaces\ExpireWorkspaceInvitations;
+use App\Jobs\ExecuteBulkOperation;
+use App\Models\BulkOperation;
 use App\Models\ChatDeliveryEvent;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -48,3 +51,16 @@ Artisan::command('imports:reconcile-expired-preflights', function (ReconcileExpi
 })->purpose('Expire stale import preflight leases and dispatch their successor generation');
 
 Schedule::command('imports:reconcile-expired-preflights')->everyMinute()->withoutOverlapping();
+
+Artisan::command('bulk-operations:reconcile', function (ReclaimExpiredBulkAttempts $reclaim): void {
+    $reclaimed = $reclaim->handle();
+    $dispatched = 0;
+    BulkOperation::query()->whereIn('status', ['queued', 'running'])->orderBy('id')->limit(100)
+        ->each(function (BulkOperation $operation) use (&$dispatched): void {
+            ExecuteBulkOperation::dispatch($operation->id);
+            $dispatched++;
+        });
+    $this->info("Reclaimed {$reclaimed} expired attempts and dispatched {$dispatched} active bulk operations.");
+})->purpose('Reclaim fenced attempts and resume bounded bulk-operation convergence');
+
+Schedule::command('bulk-operations:reconcile')->everyMinute()->withoutOverlapping();

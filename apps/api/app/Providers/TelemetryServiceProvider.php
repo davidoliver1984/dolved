@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Enums\DocumentDeletionStatus;
 use App\Http\Middleware\TraceHttpRequests;
+use App\Models\BulkOperation;
 use App\Models\DocumentDeletionOperation;
 use App\Models\GenerationRun;
 use App\Models\IngestionEventClaim;
@@ -94,6 +95,22 @@ final class TelemetryServiceProvider extends ServiceProvider
                     $operation->status->value,
                     max(0.0, ($operation->completed_at ?? now())->diffInMilliseconds($operation->created_at, absolute: true) / 1_000),
                     $operation->failure_code,
+                );
+            }
+        });
+        BulkOperation::updated(function (BulkOperation $operation): void {
+            if ($operation->wasChanged('status') && $operation->status->value === 'running') {
+                $this->app->make(OperationalTelemetry::class)->operation(
+                    'bulk_operation_queue_delay',
+                    $operation->operation_type->value,
+                    max(0.0, now()->diffInMilliseconds($operation->confirmed_at ?? $operation->created_at, absolute: true) / 1_000),
+                );
+            }
+            if ($operation->wasChanged('status') && $operation->status->isTerminal()) {
+                $this->app->make(OperationalTelemetry::class)->operation(
+                    'bulk_operation_'.$operation->operation_type->value,
+                    $operation->status->value,
+                    max(0.0, now()->diffInMilliseconds($operation->confirmed_at ?? $operation->created_at, absolute: true) / 1_000),
                 );
             }
         });

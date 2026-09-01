@@ -1099,7 +1099,9 @@ exist.
   PostgreSQL effective-privilege verification.
 - R26-S02: bulk domain, constrained schema, shared-query frozen membership and
   provider-free APIs. Completed 1 September 2026.
-- R26-S03: queue execution, locking, retry, cancellation and audit.
+- R26-S03: queue execution, locking, retry, cancellation and audit. Completed
+  1 September 2026 with generation-fenced attempts, subordinate reconciliation,
+  immutable audit and PostgreSQL privilege verification.
 - R26-S04: selection, preflight, progress/result UI and Playwright journey.
 
 R26-S04 includes all ADR-0035 visual checkpoints and requires David's explicit

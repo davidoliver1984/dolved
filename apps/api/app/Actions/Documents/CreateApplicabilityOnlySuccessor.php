@@ -163,9 +163,10 @@ final readonly class CreateApplicabilityOnlySuccessor
         ?DocumentContentCloneOperation $operation,
         ?string $leaseToken,
         string $correlationId,
+        ?string $fallbackEventId = null,
     ): Document {
         if ($operation === null) {
-            return $this->copySourceAndRequestIngestion($predecessor, $target, $correlationId);
+            return $this->copySourceAndRequestIngestion($predecessor, $target, $correlationId, $fallbackEventId);
         }
         if ($leaseToken === null) {
             throw new DocumentGovernanceException('The authorised clone lease is unavailable.');
@@ -176,7 +177,7 @@ final readonly class CreateApplicabilityOnlySuccessor
         } catch (Throwable $error) {
             $fallback = $this->materialise->cleanupForFallback($operation);
             $fallback->forceFill(['status' => DocumentStatus::Uploaded])->save();
-            $this->requestIngestion->handle($fallback, $correlationId);
+            $this->requestIngestion->handle($fallback, $correlationId, $fallbackEventId);
             report($error);
 
             return $fallback->refresh();
@@ -187,6 +188,7 @@ final readonly class CreateApplicabilityOnlySuccessor
         Document $source,
         Document $target,
         string $correlationId,
+        ?string $fallbackEventId = null,
     ): Document {
         $storage = app(DocumentObjectStorage::class);
         $identity = $storage->copy($source, $target);
@@ -201,6 +203,6 @@ final readonly class CreateApplicabilityOnlySuccessor
             'status' => DocumentStatus::Uploaded,
         ])->save();
 
-        return $this->requestIngestion->handle($target, $correlationId);
+        return $this->requestIngestion->handle($target, $correlationId, $fallbackEventId);
     }
 }

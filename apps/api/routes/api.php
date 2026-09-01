@@ -156,6 +156,9 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::get('/workspaces/{workspacePublicId}/documents', [DocumentAdministrationController::class, 'index']);
     Route::post('/workspaces/{workspacePublicId}/bulk-operations', [BulkOperationController::class, 'store']);
     Route::get('/workspaces/{workspacePublicId}/bulk-operations/{operationPublicId}', [BulkOperationController::class, 'show']);
+    Route::post('/workspaces/{workspacePublicId}/bulk-operations/{operationPublicId}/confirm', [BulkOperationController::class, 'confirm']);
+    Route::post('/workspaces/{workspacePublicId}/bulk-operations/{operationPublicId}/cancel', [BulkOperationController::class, 'cancel']);
+    Route::post('/workspaces/{workspacePublicId}/bulk-operations/{operationPublicId}/retry', [BulkOperationController::class, 'retry']);
     Route::get('/workspaces/{workspacePublicId}/imports/configuration', [ImportWorkflowController::class, 'configuration']);
     Route::get('/workspaces/{workspacePublicId}/imports', [ImportWorkflowController::class, 'index']);
     Route::post('/workspaces/{workspacePublicId}/imports', [ImportWorkflowController::class, 'store']);

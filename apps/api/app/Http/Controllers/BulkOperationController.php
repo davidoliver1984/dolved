@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\BulkOperations\CancelBulkOperation;
+use App\Actions\BulkOperations\ConfirmBulkOperation;
 use App\Actions\BulkOperations\CreateBulkOperation;
 use App\Enums\BulkOperationType;
 use App\Enums\BulkSelectionMode;
 use App\Exceptions\BulkOperationException;
 use App\Http\Requests\CreateBulkOperationRequest;
+use App\Jobs\ExecuteBulkOperation;
 use App\Models\BulkOperation;
 use App\Models\User;
 use App\Queries\Workspaces\FindWorkspaceForUser;
@@ -64,6 +67,52 @@ final class BulkOperationController extends Controller
         return response()->json(['data' => $this->serialize($operation)]);
     }
 
+    public function confirm(
+        Request $request,
+        string $workspacePublicId,
+        string $operationPublicId,
+        FindWorkspaceForUser $workspaces,
+        ConfirmBulkOperation $confirm,
+    ): JsonResponse {
+        [$user, $operation] = $this->authorisedOperation($request, $workspacePublicId, $operationPublicId, $workspaces);
+        try {
+            $operation = $confirm->handle($operation, $user);
+        } catch (BulkOperationException $exception) {
+            abort($exception->getCode(), $exception->getMessage());
+        }
+
+        return response()->json(['data' => $this->serialize($operation)]);
+    }
+
+    public function cancel(
+        Request $request,
+        string $workspacePublicId,
+        string $operationPublicId,
+        FindWorkspaceForUser $workspaces,
+        CancelBulkOperation $cancel,
+    ): JsonResponse {
+        [$user, $operation] = $this->authorisedOperation($request, $workspacePublicId, $operationPublicId, $workspaces);
+        try {
+            $operation = $cancel->handle($operation, $user);
+        } catch (BulkOperationException $exception) {
+            abort($exception->getCode(), $exception->getMessage());
+        }
+
+        return response()->json(['data' => $this->serialize($operation)]);
+    }
+
+    public function retry(
+        Request $request,
+        string $workspacePublicId,
+        string $operationPublicId,
+        FindWorkspaceForUser $workspaces,
+    ): JsonResponse {
+        [, $operation] = $this->authorisedOperation($request, $workspacePublicId, $operationPublicId, $workspaces);
+        ExecuteBulkOperation::dispatch($operation->id);
+
+        return response()->json(['data' => $this->serialize($operation->refresh())], 202);
+    }
+
     /** @return array<string, mixed> */
     private function serialize(BulkOperation $operation): array
     {
@@ -80,10 +129,18 @@ final class BulkOperationController extends Controller
             'filters' => json_decode($operation->filter_explanation, true, flags: JSON_THROW_ON_ERROR),
             'membership_digest' => $operation->membership_digest,
             'confirmed_at' => $operation->confirmed_at,
+            'cancellation_requested_at' => $operation->cancellation_requested_at,
             'counts' => [
                 'total' => $operation->items->count(),
                 'eligible' => (int) ($counts['eligible'] ?? 0),
                 'excluded' => (int) ($counts['excluded'] ?? 0),
+                'open_attempts' => $operation->items()->whereHas('attempts', fn ($query) => $query->where('status', 'open'))->count(),
+                'waiting_on_subordinate' => (int) ($counts['waiting_on_subordinate'] ?? 0),
+                'succeeded' => (int) ($counts['succeeded'] ?? 0),
+                'skipped' => (int) ($counts['skipped'] ?? 0),
+                'failed_retryable' => (int) ($counts['failed_retryable'] ?? 0),
+                'failed_permanent' => (int) ($counts['failed_permanent'] ?? 0),
+                'cancelled' => (int) ($counts['cancelled'] ?? 0),
             ],
             'exclusions' => $operation->items->whereNotNull('exclusion_reason')
                 ->groupBy('exclusion_reason')->map->count()->sortKeys(),
@@ -95,7 +152,26 @@ final class BulkOperationController extends Controller
                 'eligibility_status' => $item->eligibility_status->value,
                 'exclusion_reason' => $item->exclusion_reason,
                 'execution_status' => $item->execution_status->value,
+                'terminal_reason' => $item->terminal_reason,
+                'result_identity' => $item->result_identity,
             ])->values(),
         ];
+    }
+
+    /** @return array{User, BulkOperation} */
+    private function authorisedOperation(
+        Request $request,
+        string $workspacePublicId,
+        string $operationPublicId,
+        FindWorkspaceForUser $workspaces,
+    ): array {
+        /** @var User $user */
+        $user = $request->user();
+        $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
+        Gate::authorize('manageDocumentGovernance', $workspace);
+        $operation = BulkOperation::query()->where('workspace_id', $workspace->id)
+            ->where('public_id', $operationPublicId)->with('items')->firstOrFail();
+
+        return [$user, $operation];
     }
 }

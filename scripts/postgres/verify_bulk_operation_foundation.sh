@@ -33,12 +33,13 @@ FROM unnest(ARRAY[
   'bulk_attempts_shape_check',
   'bulk_attempts_not_applied_reason_check',
   'bulk_attempts_subordinate_shape_check',
-  'bulk_subordinate_transition_category_check'
+  'bulk_subordinate_transition_category_check',
+  'bulk_operation_items_audit_event_foreign'
 ]) expected(name)
 WHERE EXISTS (SELECT 1 FROM pg_constraint WHERE conname = expected.name AND convalidated);
 ")"
-[[ "$required_constraints" == '17' ]] || {
-  printf 'Expected 17 validated bulk-operation constraints, found %s.\n' "$required_constraints" >&2
+[[ "$required_constraints" == '18' ]] || {
+  printf 'Expected 18 validated bulk-operation constraints, found %s.\n' "$required_constraints" >&2
   exit 1
 }
 
@@ -66,12 +67,13 @@ FROM unnest(ARRAY[
   'bulk_operation_items_update_guard',
   'bulk_operation_items_incorporation_guard',
   'bulk_attempts_update_guard',
-  'bulk_subordinate_transitions_immutable_guard'
+  'bulk_subordinate_transitions_immutable_guard',
+  'bulk_operation_audit_immutable_guard'
 ]) expected(name)
 WHERE EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = expected.name AND NOT tgisinternal);
 ")"
-[[ "$required_triggers" == '7' ]] || {
-  printf 'Expected seven bulk-operation integrity triggers, found %s.\n' "$required_triggers" >&2
+[[ "$required_triggers" == '8' ]] || {
+  printf 'Expected eight bulk-operation integrity triggers, found %s.\n' "$required_triggers" >&2
   exit 1
 }
 

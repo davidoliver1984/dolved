@@ -26,10 +26,12 @@ class RequestDocumentIngestion
     public function handle(
         Document $document,
         string $correlationId,
+        ?string $eventId = null,
     ): Document {
         return DB::transaction(function () use (
             $document,
             $correlationId,
+            $eventId,
         ): Document {
             $lockedDocument = Document::query()
                 ->with('workspace')
@@ -50,7 +52,7 @@ class RequestDocumentIngestion
                 );
             }
 
-            $eventId = (string) Str::uuid();
+            $eventId ??= (string) Str::uuid();
             $occurredAt = CarbonImmutable::now();
             $payload = $this->payloads->build(
                 $lockedDocument,
