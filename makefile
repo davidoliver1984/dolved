@@ -206,6 +206,9 @@ migrate:
 postgres-roles-verify:
 	./scripts/postgres/verify_runtime_roles.sh
 
+postgres-bulk-verify:
+	./scripts/postgres/verify_bulk_operation_foundation.sh
+
 seed:
 	$(EXEC) api php artisan db:seed --force
 

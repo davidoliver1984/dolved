@@ -15150,7 +15150,7 @@ the complete current application and fresh deterministic E2E stack passed
 under the runtime role. Protected ADR-0035/0036 migrations may now proceed.
 
 ## Stage 26.2 — Bulk domain, schema, frozen membership and APIs
-
+Completed 1 September 2026: all four constrained bulk-operation records, exact parent/item state domains, typed V1 preflight, idempotent bounded membership freezing for library and import targets, shared library-query semantics, tenant-safe provider-free APIs, protected PostgreSQL grants and direct catalog/negative constraint probes are in place. Confirmation and execution remain deliberately owned by Stage 26.3.
 ## Stage 26.3 — Queue execution, concurrency, cancellation, retry and audit
 
 ## Stage 26.4 — Selection, preflight, progress/result UI and Playwright

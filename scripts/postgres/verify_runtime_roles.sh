@@ -102,6 +102,12 @@ SELECT count(*)
 FROM pg_class c
 JOIN pg_namespace n ON n.oid = c.relnamespace
 WHERE n.nspname = 'public'
+  AND c.relname NOT IN (
+    'bulk_operations',
+    'bulk_operation_items',
+    'bulk_operation_item_attempts',
+    'bulk_operation_item_subordinate_transitions'
+  )
   AND (
     (c.relkind IN ('r', 'p', 'v', 'm') AND NOT (
       has_table_privilege('rag_platform_app', c.oid, 'SELECT')
@@ -117,6 +123,53 @@ WHERE n.nspname = 'public'
 ")"
 [[ "$privilege_drift" == '0' ]] || {
   printf 'Runtime privilege drift count: %s\n' "$privilege_drift" >&2
+  exit 1
+}
+
+bulk_privilege_boundary="$(admin_psql --tuples-only --no-align --command="
+SELECT concat_ws('|',
+  has_table_privilege('rag_platform_app', 'bulk_operations', 'SELECT'),
+  has_table_privilege('rag_platform_app', 'bulk_operations', 'INSERT'),
+  has_table_privilege('rag_platform_app', 'bulk_operations', 'UPDATE'),
+  has_column_privilege('rag_platform_app', 'bulk_operations', 'status', 'UPDATE'),
+  has_table_privilege('rag_platform_app', 'bulk_operations', 'DELETE'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_items', 'SELECT'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_items', 'INSERT'),
+  has_column_privilege('rag_platform_app', 'bulk_operation_items', 'target_document_id', 'INSERT'),
+  has_column_privilege('rag_platform_app', 'bulk_operation_items', 'target_reference_status', 'INSERT'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_items', 'UPDATE'),
+  has_column_privilege('rag_platform_app', 'bulk_operation_items', 'execution_status', 'UPDATE'),
+  has_column_privilege('rag_platform_app', 'bulk_operation_items', 'target_document_id', 'UPDATE'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_items', 'DELETE'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_item_attempts', 'SELECT'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_item_attempts', 'INSERT'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_item_attempts', 'UPDATE'),
+  has_column_privilege('rag_platform_app', 'bulk_operation_item_attempts', 'status', 'UPDATE'),
+  has_column_privilege('rag_platform_app', 'bulk_operation_item_attempts', 'attempt_token', 'UPDATE'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_item_attempts', 'DELETE'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_item_subordinate_transitions', 'SELECT'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_item_subordinate_transitions', 'INSERT'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_item_subordinate_transitions', 'UPDATE'),
+  has_table_privilege('rag_platform_app', 'bulk_operation_item_subordinate_transitions', 'DELETE')
+);
+")"
+expected_bulk_privileges='t|t|f|t|f|t|f|t|f|f|t|f|f|t|t|f|t|f|f|t|t|f|f'
+[[ "$bulk_privilege_boundary" == "$expected_bulk_privileges" ]] || {
+  printf 'Unexpected protected bulk-operation privilege boundary: %s\n' "$bulk_privilege_boundary" >&2
+  exit 1
+}
+
+bulk_function_boundary="$(admin_psql --tuples-only --no-align --command="
+SELECT count(*)
+FROM pg_proc p
+JOIN pg_namespace n ON n.oid = p.pronamespace
+WHERE n.nspname = 'public'
+  AND p.proname IN ('retire_bulk_operation_item_targets')
+  AND p.prosecdef
+  AND pg_get_userbyid(p.proowner) = 'rag_platform_owner';
+")"
+[[ "$bulk_function_boundary" == '1' ]] || {
+  printf 'Bulk target-retirement function ownership/security drift: %s\n' "$bulk_function_boundary" >&2
   exit 1
 }
 

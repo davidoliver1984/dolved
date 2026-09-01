@@ -1097,8 +1097,8 @@ exist.
   `rag_platform_app`; this precedes every protected migration in ADR-0035 and
   ADR-0036. Completed 31 August 2026 with fresh-database E2E and live
   PostgreSQL effective-privilege verification.
-- R26-S02: bulk domain, constrained schema, frozen membership and provider-free
-  APIs.
+- R26-S02: bulk domain, constrained schema, shared-query frozen membership and
+  provider-free APIs. Completed 1 September 2026.
 - R26-S03: queue execution, locking, retry, cancellation and audit.
 - R26-S04: selection, preflight, progress/result UI and Playwright journey.
 

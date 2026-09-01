@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\Queries\Documents;
 
-use App\Enums\DocumentFamilyDeletionStatus;
 use App\Enums\DocumentGovernanceStatus;
 use App\Enums\DocumentStatus;
 use App\Models\Document;
 use App\Models\DocumentFamily;
 use App\Models\Workspace;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 final class PaginateDocumentLibrary
 {
-    public function __construct(private BuildCurrentDocumentForFamily $currentDocument) {}
+    public function __construct(
+        private BuildCurrentDocumentForFamily $currentDocument,
+        private BuildDocumentFamilyLibraryQuery $libraryQuery,
+    ) {}
 
     /** @param array<string, mixed> $filters */
     public function handle(Workspace $workspace, array $filters): LengthAwarePaginator
@@ -47,7 +48,7 @@ final class PaginateDocumentLibrary
             ->where('governance_status', DocumentGovernanceStatus::Draft->value)
             ->limit(1);
 
-        $query = DocumentFamily::query()
+        $query = $this->libraryQuery->handle($workspace, $filters)
             ->select('document_families.*')
             ->selectRaw('COALESCE(document_family_activity_summary.last_meaningful_update, document_families.created_at) AS last_meaningful_update')
             ->selectSub($current, 'current_document_id')
@@ -56,58 +57,7 @@ final class PaginateDocumentLibrary
             ->selectSub(Document::query()->selectRaw('COUNT(*)')->whereColumn('document_family_id', 'document_families.id'), 'version_count')
             ->selectSub(Document::query()->selectRaw('COUNT(*)')->whereColumn('document_family_id', 'document_families.id')->where('governance_status', DocumentGovernanceStatus::Draft->value), 'draft_count')
             ->leftJoin('document_family_activity_summary', 'document_family_activity_summary.family_id', '=', 'document_families.id')
-            ->where('document_families.workspace_id', $workspace->id)
-            ->whereNull('document_families.tombstoned_at')
-            ->whereDoesntHave('deletionOperations', fn (Builder $delete): Builder => $delete->whereIn('status', [
-                DocumentFamilyDeletionStatus::Pending->value,
-                DocumentFamilyDeletionStatus::Processing->value,
-                DocumentFamilyDeletionStatus::PartiallyFailed->value,
-            ]))
-            ->with(['category', 'owner', 'tags'])
-            ->when($filters['search'] ?? null, function (Builder $query, string $search): void {
-                $needle = '%'.mb_strtolower($search).'%';
-                $query->where(fn (Builder $match): Builder => $match
-                    ->whereRaw('LOWER(document_families.name) LIKE ?', [$needle])
-                    ->orWhereExists(fn ($documents) => $documents->selectRaw('1')->from('documents')
-                        ->whereColumn('documents.document_family_id', 'document_families.id')
-                        ->whereRaw('LOWER(documents.source_filename) LIKE ?', [$needle])));
-            })
-            ->when($filters['category'] ?? null, fn (Builder $query, string $id): Builder => $query->whereHas('category', fn (Builder $category): Builder => $category->where('public_id', $id)))
-            ->when($filters['owner'] ?? null, fn (Builder $query, string $id): Builder => $query->whereHas('owner', fn (Builder $owner): Builder => $owner->where('public_id', $id)))
-            ->when($filters['applicability'] ?? null, function (Builder $query, string $id): void {
-                $query->whereExists(fn ($locations) => $locations->selectRaw('1')
-                    ->from('documents')
-                    ->join('document_applicability_snapshots', 'document_applicability_snapshots.document_id', '=', 'documents.id')
-                    ->join('document_applicability_locations', 'document_applicability_locations.document_applicability_snapshot_id', '=', 'document_applicability_snapshots.id')
-                    ->join('organisational_locations', 'organisational_locations.id', '=', 'document_applicability_locations.organisational_location_id')
-                    ->whereColumn('documents.document_family_id', 'document_families.id')
-                    ->where('organisational_locations.public_id', $id));
-            })
-            ->when($filters['review_status'] ?? null, function (Builder $query, string $state): void {
-                if ($state === 'unassigned') {
-                    $query->whereNull('owner_user_id');
-                } elseif ($state === 'overdue') {
-                    $query->whereDate('review_due_date', '<', today());
-                } else {
-                    $query->whereBetween('review_due_date', [today(), today()->addDays(30)]);
-                }
-            });
-
-        if ($filters['searchable'] ?? false) {
-            $query->whereExists(clone $current);
-        }
-
-        if (($filters['status'] ?? null) !== null) {
-            $query->whereIn('document_families.id', Document::query()->select('document_family_id')->where('status', $filters['status']));
-        }
-        if (! ($filters['historical'] ?? false)) {
-            $query->where(function (Builder $visible) use ($current, $draft, $pendingStatus, $scheduled): void {
-                $visible->whereExists(clone $current)
-                    ->orWhereExists(clone $scheduled)
-                    ->orWhereExists(clone $draft)
-                    ->orWhereExists(clone $pendingStatus);
-            });
-        }
+            ->with(['category', 'owner', 'tags']);
 
         $sort = match ($filters['sort']) {
             'title' => 'document_families.name',

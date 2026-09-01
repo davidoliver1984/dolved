@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BulkOperationController;
 use App\Http\Controllers\ChatStreamController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DeletedDocumentFamilyController;
@@ -153,6 +154,8 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::delete('/workspaces/{workspacePublicId}/membership', [WorkspaceAdministrationController::class, 'leave']);
     Route::post('/workspace-invitations/accept', [WorkspaceAdministrationController::class, 'accept']);
     Route::get('/workspaces/{workspacePublicId}/documents', [DocumentAdministrationController::class, 'index']);
+    Route::post('/workspaces/{workspacePublicId}/bulk-operations', [BulkOperationController::class, 'store']);
+    Route::get('/workspaces/{workspacePublicId}/bulk-operations/{operationPublicId}', [BulkOperationController::class, 'show']);
     Route::get('/workspaces/{workspacePublicId}/imports/configuration', [ImportWorkflowController::class, 'configuration']);
     Route::get('/workspaces/{workspacePublicId}/imports', [ImportWorkflowController::class, 'index']);
     Route::post('/workspaces/{workspacePublicId}/imports', [ImportWorkflowController::class, 'store']);

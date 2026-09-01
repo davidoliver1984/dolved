@@ -39,9 +39,9 @@
   },
   "progress": {
     "current_phase": "R26",
-    "current_session": "R26-S02",
-    "next_action": "Begin R26-S02 — build ADR-0035's constrained bulk domain, frozen membership and provider-free APIs on the verified PostgreSQL privilege foundation.",
-    "completed_through": "R26-S01",
+    "current_session": "R26-S03",
+    "next_action": "Begin R26-S03 — implement ADR-0035's fenced queue execution, incorporation, subordinate reconciliation, cancellation, retry and audit over the frozen R26-S02 domain.",
+    "completed_through": "R26-S02",
     "completed_phase_count": 26,
     "total_phase_count": 32
   },
@@ -5226,9 +5226,17 @@
           "id": "R26-S02",
           "guide_stage": "Stage 26.2 — Bulk domain, schema, frozen membership and APIs",
           "title": "Build Frozen Bulk Domain",
-          "status": "not_started",
+          "status": "completed",
           "depends_on": [
             "R26-S01"
+          ],
+          "completion_evidence": [
+            "Four-table BulkOperation domain with PostgreSQL-enforced target, lifecycle, attempt-generation and subordinate-lineage constraints",
+            "Bounded idempotent membership freeze for library families/versions and ADR-0034 ImportItems using the shared document-library query contract",
+            "Typed preflight and exclusion results exercised for all seven ADR-0035 V1 operations with tenant-safe owner/admin APIs",
+            "Protected runtime grants, validated catalog constraints/indexes/triggers and transaction-rolled-back PostgreSQL negative probes passed",
+            "Complete Laravel suite passed: 524 tests with six documented skips",
+            "docs/journal/2026-09-01-r26-s02-frozen-bulk-domain.md"
           ]
         },
         {
