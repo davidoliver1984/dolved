@@ -177,9 +177,32 @@ test("imports a representative corpus and proves genuine searchable grounded-ans
     expect(document, `promoted document ${filename}`).toBeDefined();
     return document!;
   });
-  for (const document of imported) approveDocument(primary, document.public_id);
   const representative = imported.find((item) => item.source_filename === "representative-policy.txt");
   expect(representative).toBeDefined();
+  approveDocument(primary, representative!.public_id);
+
+  // Exercise ADR-0035 through its real frozen all-filtered membership. The one
+  // pre-approved version makes exclusion detail genuine while the remaining
+  // nine versions prove durable bulk approval and downstream readiness.
+  await page.goto(`/app/workspaces/${primary.workspace_public_id}/documents`);
+  await page.getByPlaceholder("Title or filename").fill("policy");
+  await page.getByRole("button", { name: "Apply filters" }).click();
+  await page.getByRole("button", { name: "Select current page" }).click();
+  await page.getByRole("button", { name: "Select all 10 filtered results" }).click();
+  await page.getByLabel("Bulk action").selectOption("bulk_approval");
+  await page.getByRole("button", { name: "Review eligibility" }).click();
+  await expect(page.getByRole("heading", { name: "Confirm Approve latest draft versions" })).toBeVisible();
+  await expect(page.getByText("Membership is now frozen at 10 items.", { exact: false })).toBeVisible();
+  await page.getByText("Review excluded items", { exact: true }).click();
+  const exclusions = page.locator("details").filter({ hasText: "Review excluded items" });
+  await expect(exclusions.getByText("representative-policy.txt", { exact: true })).toBeVisible();
+  await expect(exclusions.getByText("Already approved or current", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Confirm and start" }).click();
+  await expect(page).toHaveURL(/\/documents\/bulk\/[^/]+$/);
+  await expect(page.getByText("Completed with exclusions", { exact: true }).first()).toBeVisible({ timeout: 120_000 });
+  await expect(page.getByText("Succeeded", { exact: true }).locator("..").getByText("9", { exact: true })).toBeVisible();
+  await page.locator("details").filter({ hasText: "Succeeded" }).first().locator("summary").click();
+  await expect(page.getByRole("link", { name: "View affected version" }).first()).toBeVisible();
 
   await page.goto(`/app/workspaces/${primary.workspace_public_id}`);
   await expect(page.getByText(

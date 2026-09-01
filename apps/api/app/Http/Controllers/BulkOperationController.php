@@ -21,6 +21,43 @@ use Illuminate\Support\Facades\Gate;
 
 final class BulkOperationController extends Controller
 {
+    public function index(
+        Request $request,
+        string $workspacePublicId,
+        FindWorkspaceForUser $workspaces,
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $request->user();
+        $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
+        Gate::authorize('manageDocumentGovernance', $workspace);
+        $page = BulkOperation::query()
+            ->where('workspace_id', $workspace->id)
+            ->withCount([
+                'items as item_count',
+                'items as eligible_count' => fn ($query) => $query->where('execution_status', 'eligible'),
+                'items as excluded_count' => fn ($query) => $query->where('execution_status', 'excluded'),
+                'items as open_attempt_count' => fn ($query) => $query->whereHas('attempts', fn ($attempts) => $attempts->where('status', 'open')),
+                'items as waiting_on_subordinate_count' => fn ($query) => $query->where('execution_status', 'waiting_on_subordinate'),
+                'items as succeeded_count' => fn ($query) => $query->where('execution_status', 'succeeded'),
+                'items as skipped_count' => fn ($query) => $query->where('execution_status', 'skipped'),
+                'items as failed_retryable_count' => fn ($query) => $query->where('execution_status', 'failed_retryable'),
+                'items as failed_permanent_count' => fn ($query) => $query->where('execution_status', 'failed_permanent'),
+                'items as cancelled_count' => fn ($query) => $query->where('execution_status', 'cancelled'),
+            ])
+            ->latest('id')
+            ->paginate(25);
+
+        return response()->json([
+            'data' => collect($page->items())->map(fn (BulkOperation $operation): array => $this->serializeSummary($operation))->all(),
+            'meta' => [
+                'current_page' => $page->currentPage(),
+                'last_page' => $page->lastPage(),
+                'per_page' => $page->perPage(),
+                'total' => $page->total(),
+            ],
+        ]);
+    }
+
     public function store(
         CreateBulkOperationRequest $request,
         string $workspacePublicId,
@@ -155,6 +192,31 @@ final class BulkOperationController extends Controller
                 'terminal_reason' => $item->terminal_reason,
                 'result_identity' => $item->result_identity,
             ])->values(),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function serializeSummary(BulkOperation $operation): array
+    {
+        return [
+            'public_id' => $operation->public_id,
+            'operation_type' => $operation->operation_type->value,
+            'status' => $operation->status->value,
+            'selection_mode' => $operation->selection_mode->value,
+            'created_at' => $operation->created_at?->toIso8601String(),
+            'confirmed_at' => $operation->confirmed_at?->toIso8601String(),
+            'counts' => [
+                'total' => (int) $operation->item_count,
+                'eligible' => (int) $operation->eligible_count,
+                'excluded' => (int) $operation->excluded_count,
+                'open_attempts' => (int) $operation->open_attempt_count,
+                'waiting_on_subordinate' => (int) $operation->waiting_on_subordinate_count,
+                'succeeded' => (int) $operation->succeeded_count,
+                'skipped' => (int) $operation->skipped_count,
+                'failed_retryable' => (int) $operation->failed_retryable_count,
+                'failed_permanent' => (int) $operation->failed_permanent_count,
+                'cancelled' => (int) $operation->cancelled_count,
+            ],
         ];
     }
 

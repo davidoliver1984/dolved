@@ -43,6 +43,16 @@ final class DocumentMetadataController extends Controller
             'tags' => DocumentTagResource::collection(
                 $workspace->documentTags()->orderBy('normalised_name')->get(),
             )->resolve($request),
+            'owners' => $workspace->memberships()
+                ->with('user')->whereHas('user', fn ($query) => $query->whereNull('disabled_at'))
+                ->orderBy('id')->get()->map(fn ($membership): array => [
+                    'public_id' => $membership->user->public_id,
+                    'name' => $membership->user->name,
+                ])->values()->all(),
+            'locations' => $workspace->organisationalLocations()
+                ->orderBy('name')->get(['public_id', 'name'])
+                ->map(fn ($location): array => ['public_id' => $location->public_id, 'name' => $location->name])
+                ->values()->all(),
         ]]);
     }
 

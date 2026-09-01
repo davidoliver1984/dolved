@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R26",
-    "current_session": "R26-S04",
-    "next_action": "Begin R26-S04 — build and visually verify ADR-0035 selection, preflight, progress and result surfaces plus the required Playwright journey.",
-    "completed_through": "R26-S03",
-    "completed_phase_count": 26,
+    "current_phase": "R27",
+    "current_session": "R27-S01",
+    "next_action": "Begin R27-S01 — build ADR-0036 governance events, projections, owner controls and provider-free APIs.",
+    "completed_through": "R26-GATE",
+    "completed_phase_count": 27,
     "total_phase_count": 32
   },
   "phases": [
@@ -5198,8 +5198,8 @@
       "guide_phase": "Phase 26 — Frozen Bulk Document Operations",
       "title": "Frozen Bulk Document Operations",
       "guide_start_line": 15138,
-      "guide_end_line": 15171,
-      "status": "in_progress",
+      "guide_end_line": 15180,
+      "status": "completed",
       "objective": "Implement ADR-0035's frozen, auditable bulk operations after ADR-0034.",
       "accepted_adrs": [
         "ADR-0035"
@@ -5260,27 +5260,40 @@
           "id": "R26-S04",
           "guide_stage": "Stage 26.4 — Selection, preflight, progress/result UI and Playwright",
           "title": "Build and Verify Bulk Operations UI",
-          "status": "in_progress",
+          "status": "completed",
           "depends_on": [
             "R26-S03"
           ],
           "requires_visual_review": true,
-          "visual_review_policy": "All ADR-0035 checkpoints require David's explicit approval."
+          "visual_review_policy": "All ADR-0035 checkpoints require David's explicit approval.",
+          "completion_evidence": [
+            "Responsive selection, all-filtered membership, typed bulk actions, frozen preflight, exclusion disclosure and high-consequence applicability confirmation",
+            "Durable operation history and progress/result detail with polling, cancellation, retry, searchable item outcomes and affected-target links",
+            "David explicitly approved the complete ADR-0035 development fixture surface on 1 September 2026",
+            "Real ImportBatch-to-bulk-approval Playwright journey passed with ten frozen versions, nine successes and one truthful already-approved exclusion",
+            "Complete Laravel and web suites, Pint, ESLint, TypeScript, focused tests and the isolated two-journey E2E suite passed",
+            "docs/journal/2026-09-01-r26-s04-phase-closure.md"
+          ]
         }
       ],
       "gate": {
         "id": "R26-GATE",
         "title": "Frozen Bulk Document Operations Acceptance Gate",
-        "status": "not_started",
-        "completion_evidence": []
+        "status": "completed",
+        "completion_evidence": [
+          "All four ADR-0035 implementation sessions completed",
+          "Frozen membership, durable execution, recovery, audit and reviewed product surfaces passed their acceptance boundaries",
+          "The complete isolated Playwright suite passed without legacy-upload substitution or provider calls",
+          "docs/journal/2026-09-01-r26-s04-phase-closure.md"
+        ]
       }
     },
     {
       "id": "R27",
       "guide_phase": "Phase 27 — Document Governance Notifications and Reminders",
       "title": "Document Governance Notifications and Reminders",
-      "guide_start_line": 15175,
-      "guide_end_line": 15199,
+      "guide_start_line": 15184,
+      "guide_end_line": 15208,
       "status": "not_started",
       "objective": "Implement ADR-0036 after ADR-0030 through ADR-0035 and the PostgreSQL role foundation.",
       "accepted_adrs": [
@@ -5349,8 +5362,8 @@
       "id": "R28",
       "guide_phase": "Phase 28 — Product-wide Integration and Visual Acceptance",
       "title": "Product-wide Integration and Visual Acceptance",
-      "guide_start_line": 15203,
-      "guide_end_line": 15284,
+      "guide_start_line": 15212,
+      "guide_end_line": 15293,
       "status": "not_started",
       "objective": "Review Dolved as one connected product across the knowledge library, import workflow, bulk operations and governance notifications; correct accumulated design and cross-feature flow issues; obtain the first product-wide visual acceptance.",
       "sessions": [
@@ -5418,8 +5431,8 @@
       "id": "R29",
       "guide_phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
       "title": "CI/CD, AWS Foundation and Staging",
-      "guide_start_line": 15288,
-      "guide_end_line": 15696,
+      "guide_start_line": 15297,
+      "guide_end_line": 15705,
       "status": "not_started",
       "objective": "Make Dolved reproducibly buildable and deployable, then prove the intended AWS architecture in a real staging environment, without claiming production deployment.",
       "sessions": [
@@ -5827,8 +5840,8 @@
       "id": "R30",
       "guide_phase": "Phase 30 — Production Deployment and Operational Validation",
       "title": "Production Deployment and Operational Validation",
-      "guide_start_line": 15700,
-      "guide_end_line": 15901,
+      "guide_start_line": 15709,
+      "guide_end_line": 15910,
       "status": "not_started",
       "objective": "Deploy Dolved as an actual production service, subject to the Phase 29 deployment ADR, and prove it can be operated safely — distinguishing deployment success from public launch, high availability and scale-out.",
       "sessions": [
@@ -6110,8 +6123,8 @@
       "id": "R31",
       "guide_phase": "Phase 31 — Documentation and Demonstration Readiness",
       "title": "Documentation and Demonstration Readiness",
-      "guide_start_line": 15905,
-      "guide_end_line": 16023,
+      "guide_start_line": 15914,
+      "guide_end_line": 16032,
       "status": "not_started",
       "objective": "Document the platform clearly and provide a reproducible demonstration, reflecting the actual final product and deployed architecture from Phases 28-30 rather than an earlier local-only state.",
       "sessions": [

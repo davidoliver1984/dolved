@@ -172,6 +172,33 @@ final class BulkOperationFoundationTest extends TestCase
         $this->actingAs($owner)->postJson($this->url($workspace), $request)->assertNotFound();
     }
 
+    public function test_owner_can_read_bounded_workspace_history_and_members_cannot(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $member = User::factory()->create();
+        WorkspaceMembership::factory()->member()->for($workspace)->for($member)->create();
+        $document = Document::factory()->for($workspace)->indexed()->create();
+
+        $created = $this->actingAs($owner)->postJson($this->url($workspace), [
+            'operation_type' => 'bulk_approval',
+            'selection_mode' => 'current_page',
+            'target_public_ids' => [$document->public_id],
+            'filters' => [],
+            'payload' => [],
+            'idempotency_key' => (string) Str::uuid(),
+        ])->assertCreated();
+
+        $this->actingAs($owner)->getJson($this->url($workspace))
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.public_id', $created->json('data.public_id'))
+            ->assertJsonPath('data.0.counts.total', 1)
+            ->assertJsonPath('data.0.counts.eligible', 1)
+            ->assertJsonPath('meta.per_page', 25)
+            ->assertJsonPath('meta.total', 1);
+        $this->actingAs($member)->getJson($this->url($workspace))->assertForbidden();
+    }
+
     public function test_every_v1_operation_has_a_frozen_typed_preflight_result(): void
     {
         [$owner, $workspace] = $this->ownerWorkspace();

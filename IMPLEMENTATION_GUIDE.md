@@ -15165,10 +15165,19 @@ skips; focused execution coverage passed with nine tests and 65 assertions.
 
 ## Stage 26.4 — Selection, preflight, progress/result UI and Playwright
 
-Stage 26.4 includes every ADR-0035 named visual checkpoint and requires David's
-explicit approval before closure. All stages preserve the accepted lock order,
+Completed 1 September 2026: the library supports page and all-filtered
+selection, all seven typed bulk actions, immutable preflight review, searchable
+exclusions, explicit high-consequence applicability confirmation and durable
+operation history. Progress/result pages expose truthful aggregate counts,
+polling, cancellation, retry, searchable per-item outcomes and affected-target
+links without inventing percentages.
+
+David explicitly approved every ADR-0035 development fixture checkpoint. The
+complete isolated Playwright suite then passed the real ImportBatch-to-bulk-
+approval path with ten frozen versions, nine successes and one truthful
+already-approved exclusion. All stages preserve the accepted lock order,
 attempt-generation incorporation, database privilege and no-duplicate-mutation
-rules.
+rules. Phase 26 is complete; Stage 27.1 is ready to begin.
 
 ---
 

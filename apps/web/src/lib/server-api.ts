@@ -2,6 +2,8 @@ import "server-only";
 
 import type {
   AdminDocument,
+  BulkOperationSnapshot,
+  BulkOperationPage,
   DocumentPage,
   DocumentFamilyPage,
   DocumentMetadata,
@@ -259,6 +261,20 @@ export async function initialDocumentLibrary(
   );
   if (!response.ok) throw new Error("The knowledge library is unavailable.");
   return (await response.json()) as DocumentFamilyPage;
+}
+
+export async function initialBulkOperation(workspacePublicId: string, operationPublicId: string): Promise<BulkOperationSnapshot | null> {
+  const response = await serverFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/bulk-operations/${encodeURIComponent(operationPublicId)}`);
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error("The bulk operation is unavailable.");
+  const payload = (await response.json()) as { data: BulkOperationSnapshot };
+  return payload.data;
+}
+
+export async function initialBulkOperations(workspacePublicId: string, page = 1): Promise<BulkOperationPage> {
+  const response = await serverFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/bulk-operations?page=${page}`);
+  if (!response.ok) throw new Error("Bulk operation history is unavailable.");
+  return (await response.json()) as BulkOperationPage;
 }
 
 export async function initialSavedViews(workspacePublicId: string): Promise<SavedView[]> {

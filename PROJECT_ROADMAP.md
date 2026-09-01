@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 26 of 32 (Frozen Bulk Document Operations) |
+| Project status | In Progress — Phase 27 of 32 (Document Governance Notifications and Reminders) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -1103,14 +1103,17 @@ exist.
   1 September 2026 with generation-fenced attempts, subordinate reconciliation,
   immutable audit and PostgreSQL privilege verification.
 - R26-S04: selection, preflight, progress/result UI and Playwright journey.
+  Completed 1 September 2026 with David's explicit visual approval and the
+  isolated two-journey E2E suite.
 
-R26-S04 includes all ADR-0035 visual checkpoints and requires David's explicit
-review before closure.
+R26-S04 included all ADR-0035 visual checkpoints. David approved the complete
+development fixture surface on 1 September 2026; the real frozen bulk-approval
+journey then passed with nine successes and one truthful exclusion.
 
 ### Deliverable
 
-Frozen, auditable and recoverable bulk operations with a reviewed product
-surface.
+Completed 1 September 2026: frozen, auditable and recoverable bulk operations
+with a reviewed responsive product surface and genuine end-to-end evidence.
 
 ---
 

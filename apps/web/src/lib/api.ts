@@ -200,6 +200,8 @@ export type DocumentCategory = {
 export type DocumentMetadata = {
   categories: DocumentCategory[];
   tags: Array<{ public_id: string; name: string }>;
+  owners: Array<{ public_id: string; name: string }>;
+  locations: Array<{ public_id: string; name: string }>;
 };
 
 export type SavedViewDefinition = {
@@ -260,6 +262,42 @@ export type DocumentFamilyPage = {
   meta: { current_page: number; last_page: number; per_page: number; total: number };
 };
 
+export type BulkOperationType = "bulk_approval" | "bulk_applicability_change" | "bulk_category_assignment" | "bulk_owner_assignment" | "bulk_tag_change" | "bulk_review_date_assignment";
+
+export type BulkOperationSnapshot = {
+  public_id: string;
+  operation_type: string;
+  status: string;
+  selection_mode: "current_page" | "all_filtered";
+  payload: Record<string, unknown>;
+  filters: Record<string, unknown>;
+  membership_digest: string;
+  confirmed_at: string | null;
+  cancellation_requested_at: string | null;
+  counts: {
+    total: number; eligible: number; excluded: number; open_attempts: number;
+    waiting_on_subordinate: number; succeeded: number; skipped: number;
+    failed_retryable: number; failed_permanent: number; cancelled: number;
+  };
+  exclusions: Record<string, number>;
+  items: Array<{
+    ordinal: number; target_kind: string; target_public_id: string;
+    target_display_label: string; eligibility_status: string;
+    exclusion_reason: string | null; execution_status: string;
+    terminal_reason: string | null; result_identity: string | null;
+  }>;
+};
+
+export type BulkOperationSummary = Pick<BulkOperationSnapshot, "public_id" | "operation_type" | "status" | "selection_mode" | "counts"> & {
+  created_at: string | null;
+  confirmed_at: string | null;
+};
+
+export type BulkOperationPage = {
+  data: BulkOperationSummary[];
+  meta: { current_page: number; last_page: number; per_page: number; total: number };
+};
+
 export type DocumentVersion = {
   public_id: string;
   family_public_id: string;
@@ -299,6 +337,39 @@ export type DocumentVersionHistory = {
 
 export function workspaceDocumentLibrary(workspacePublicId: string, query = ""): Promise<DocumentFamilyPage> {
   return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/document-library${query ? `?${query}` : ""}`);
+}
+
+export function createBulkOperation(workspacePublicId: string, values: {
+  operation_type: BulkOperationType;
+  selection_mode: "current_page" | "all_filtered";
+  target_public_ids: string[];
+  filters: Record<string, unknown>;
+  payload: Record<string, unknown>;
+}): Promise<{ data: BulkOperationSnapshot }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/bulk-operations`, {
+    method: "POST",
+    body: JSON.stringify({ ...values, idempotency_key: crypto.randomUUID() }),
+  });
+}
+
+export function bulkOperation(workspacePublicId: string, operationPublicId: string): Promise<{ data: BulkOperationSnapshot }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/bulk-operations/${encodeURIComponent(operationPublicId)}`);
+}
+
+export function bulkOperations(workspacePublicId: string, page = 1): Promise<BulkOperationPage> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/bulk-operations?page=${page}`);
+}
+
+export function confirmBulkOperation(workspacePublicId: string, operationPublicId: string): Promise<{ data: BulkOperationSnapshot }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/bulk-operations/${encodeURIComponent(operationPublicId)}/confirm`, { method: "POST" });
+}
+
+export function cancelBulkOperation(workspacePublicId: string, operationPublicId: string): Promise<{ data: BulkOperationSnapshot }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/bulk-operations/${encodeURIComponent(operationPublicId)}/cancel`, { method: "POST" });
+}
+
+export function retryBulkOperation(workspacePublicId: string, operationPublicId: string): Promise<{ data: BulkOperationSnapshot }> {
+  return apiFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/bulk-operations/${encodeURIComponent(operationPublicId)}/retry`, { method: "POST" });
 }
 
 function governancePath(workspacePublicId: string, documentPublicId: string, action: string): string {
