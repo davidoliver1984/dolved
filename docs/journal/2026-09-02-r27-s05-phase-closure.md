@@ -55,3 +55,21 @@ No external provider was called.
 
 R27-S05 and R27-GATE pass. Phase 27 is complete. R28-S01 may begin only as a
 separate task; no Phase 28 provider activity is included in this closure.
+
+## Post-closure correctness correction
+
+An independent review after closure identified that generation-one email
+preflight had applied one arbitrarily selected member's document-family
+authority result to an entire digest. The bounded correction now evaluates
+every sealed member independently, persists one immutable included-or-
+suppressed decision per member, constructs the dispatch digest from the full
+ordinal-ordered decision set and renders only included members. A digest with
+no included members still becomes terminally suppressed without opening an
+attempt. Retry generations continue to reuse the frozen decisions and digest
+without re-resolving per-member authority, exactly as ADR-0036 requires.
+
+Provider-free regression coverage uses genuine two-family digests for both-
+included, either-family-suppressed, both-suppressed, reversed assembly order,
+retry freezing and malformed cross-workspace lineage. This correction extends
+the Phase 27 acceptance evidence without rewriting its original history or
+changing any settled ADR-0036 behaviour.

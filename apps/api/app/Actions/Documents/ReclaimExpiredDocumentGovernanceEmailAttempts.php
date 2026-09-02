@@ -15,7 +15,7 @@ final class ReclaimExpiredDocumentGovernanceEmailAttempts
     public function handle(): int
     {
         $reclaimed = 0;
-        DocumentGovernanceEmailEnvelopeAttempt::query()->where('status', 'open')
+        DocumentGovernanceEmailEnvelopeAttempt::query()->where('status', GovernanceEmailAttemptStatus::Open->value)
             ->where('lease_expires_at', '<', now())->orderBy('id')->limit(100)->pluck('id')
             ->each(function (int $attemptId) use (&$reclaimed): void {
                 $changed = DB::transaction(function () use ($attemptId): bool {

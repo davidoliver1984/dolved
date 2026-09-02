@@ -324,9 +324,15 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-09-02 16:00:00', 'UTC'));
         [$owner, $workspace] = $this->ownerWorkspace();
         $assemble = app(AssembleDocumentGovernanceEmailEnvelope::class);
+        $familyA = DocumentFamily::factory()->for($workspace)->create(['owner_user_id' => $owner->id]);
+        $familyB = DocumentFamily::factory()->for($workspace)->create(['owner_user_id' => $owner->id]);
         CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-09-02 10:00:00', 'UTC'));
-        $envelope = $assemble->handle($this->notification($owner, $workspace, DocumentGovernanceEventKey::GovernanceReviewDueSoon));
-        $assemble->handle($this->notification($owner, $workspace, DocumentGovernanceEventKey::GovernanceReviewOverdue));
+        $dueSoon = $this->notification($owner, $workspace, DocumentGovernanceEventKey::GovernanceReviewDueSoon);
+        $dueSoon->forceFill(['parameters' => ['document_family_public_id' => $familyA->public_id]])->save();
+        $overdue = $this->notification($owner, $workspace, DocumentGovernanceEventKey::GovernanceReviewOverdue);
+        $overdue->forceFill(['parameters' => ['document_family_public_id' => $familyB->public_id]])->save();
+        $envelope = $assemble->handle($dueSoon);
+        $assemble->handle($overdue);
         CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-09-02 16:00:00', 'UTC'));
 
         $this->assertSame(1, app(SealDueDocumentGovernanceEmailDigests::class)->handle());
@@ -337,6 +343,118 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         $this->assertSame('Document reviews need attention', $mail->heading);
         $this->assertSame(['Review due soon', 'Review overdue'], array_column($mail->items, 'title'));
         $this->assertStringContainsString('/documents/attention', $mail->actionUrl);
+    }
+
+    public function test_multi_family_digest_includes_and_renders_every_authorised_member(): void
+    {
+        [$envelope] = $this->multiFamilyDigest([]);
+
+        $claim = app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+
+        $this->assertNotNull($claim);
+        $this->assertSame(['included', 'included'], $this->memberDecisions($envelope));
+        $this->assertSame(
+            ['Review due soon', 'Review overdue'],
+            array_column(app(BuildDocumentGovernanceEmail::class)->handle($claim['envelope'])->items, 'title'),
+        );
+    }
+
+    public function test_multi_family_digest_suppresses_only_family_a_when_its_authority_is_lost(): void
+    {
+        [$envelope] = $this->multiFamilyDigest(['a']);
+
+        $claim = app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+
+        $this->assertNotNull($claim);
+        $this->assertSame(['suppressed:authority_lost', 'included'], $this->memberDecisions($envelope));
+        $this->assertSame(
+            ['Review overdue'],
+            array_column(app(BuildDocumentGovernanceEmail::class)->handle($claim['envelope'])->items, 'title'),
+        );
+    }
+
+    public function test_multi_family_digest_suppresses_only_family_b_regardless_of_member_order(): void
+    {
+        [$envelope] = $this->multiFamilyDigest(['b'], reverseAssemblyOrder: true);
+
+        $claim = app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+
+        $this->assertNotNull($claim);
+        $this->assertSame(['included', 'suppressed:authority_lost'], $this->memberDecisionsByEvent($envelope));
+        $this->assertSame(
+            ['Review due soon'],
+            array_column(app(BuildDocumentGovernanceEmail::class)->handle($claim['envelope'])->items, 'title'),
+        );
+        $digest = $envelope->refresh()->dispatch_decision_digest;
+        $envelope->members()->with(['notification', 'decision'])->orderByDesc('ordinal')->get();
+        $this->assertNull(app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id));
+        $this->assertSame($digest, $envelope->refresh()->dispatch_decision_digest);
+    }
+
+    public function test_multi_family_digest_with_no_authorised_members_is_terminally_suppressed_without_attempt(): void
+    {
+        [$envelope] = $this->multiFamilyDigest(['a', 'b']);
+
+        $this->assertNull(app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id));
+
+        $this->assertSame(['suppressed:authority_lost', 'suppressed:authority_lost'], $this->memberDecisions($envelope));
+        $this->assertSame(GovernanceEmailEnvelopeStatus::Suppressed, $envelope->refresh()->assembly_status);
+        $this->assertSame('no_deliverable_members', $envelope->suppression_reason);
+        $this->assertNotNull($envelope->dispatch_decision_digest);
+        $this->assertDatabaseMissing('document_governance_email_envelope_attempts', ['envelope_id' => $envelope->id]);
+    }
+
+    public function test_retry_reuses_frozen_multi_family_decisions_after_authority_changes(): void
+    {
+        [$envelope, $families, $replacementOwner] = $this->multiFamilyDigest([]);
+        $first = app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+        $digest = $envelope->refresh()->dispatch_decision_digest;
+        $decisions = $this->memberDecisions($envelope);
+        foreach ($families as $family) {
+            $family->refresh();
+            $family->forceFill([
+                'owner_user_id' => $replacementOwner->id,
+                'owner_assignment_generation' => $family->owner_assignment_generation + 1,
+            ])->save();
+        }
+        DocumentGovernanceEmailEnvelopeAttempt::query()->whereKey($first['attempt']->id)
+            ->update(['lease_expires_at' => now()->subSecond()]);
+        $this->assertSame(1, app(ReclaimExpiredDocumentGovernanceEmailAttempts::class)->handle());
+
+        $retry = app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+
+        $this->assertSame(2, $retry['attempt']->generation);
+        $this->assertSame($digest, $envelope->refresh()->dispatch_decision_digest);
+        $this->assertSame($decisions, $this->memberDecisions($envelope));
+        $this->assertDatabaseCount('document_governance_email_envelope_member_decisions', 2);
+    }
+
+    public function test_cross_workspace_member_lineage_fails_closed_at_generation_one_preflight(): void
+    {
+        [$recipient, $workspace] = $this->ownerWorkspace();
+        [, $otherWorkspace] = $this->ownerWorkspace();
+        WorkspaceMembership::factory()->for($otherWorkspace)->for($recipient)->member()->create();
+        $notification = $this->notification($recipient, $otherWorkspace, DocumentGovernanceEventKey::GovernanceReviewDueSoon);
+        $envelope = DocumentGovernanceEmailEnvelope::query()->create([
+            'public_id' => (string) Str::uuid(),
+            'workspace_id' => $workspace->id,
+            'recipient_user_public_id' => $recipient->public_id,
+            'category_group' => 'review_reminders',
+            'digest_date' => today(),
+            'envelope_key' => hash('sha256', (string) Str::uuid()),
+            'assembly_status' => GovernanceEmailEnvelopeStatus::Assembling,
+        ]);
+        $envelope->members()->create([
+            'notification_id' => $notification->id,
+            'source_event_id' => $notification->source_event_id,
+            'recipient_user_public_id' => $recipient->public_id,
+            'added_at' => now(),
+        ]);
+        $envelope = app(SealDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+
+        $this->assertNull(app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id));
+        $this->assertSame(['suppressed:authority_lost'], $this->memberDecisions($envelope));
+        $this->assertDatabaseMissing('document_governance_email_envelope_attempts', ['envelope_id' => $envelope->id]);
     }
 
     public function test_preferences_are_scoped_and_workspace_settings_require_an_administrator(): void
@@ -416,6 +534,63 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
             'severity' => 'info',
             'expires_at' => now()->addDays(90),
         ]);
+    }
+
+    /**
+     * @param  list<'a'|'b'>  $lostAuthority
+     * @return array{DocumentGovernanceEmailEnvelope, array{DocumentFamily, DocumentFamily}, User}
+     */
+    private function multiFamilyDigest(array $lostAuthority, bool $reverseAssemblyOrder = false): array
+    {
+        [$replacementOwner, $workspace] = $this->ownerWorkspace();
+        $recipient = User::factory()->create(['email_verified_at' => now()]);
+        WorkspaceMembership::factory()->for($workspace)->for($recipient)->member()->create();
+        $familyA = DocumentFamily::factory()->for($workspace)->create(['owner_user_id' => $recipient->id]);
+        $familyB = DocumentFamily::factory()->for($workspace)->create(['owner_user_id' => $recipient->id]);
+        $notificationA = $this->notification($recipient, $workspace, DocumentGovernanceEventKey::GovernanceReviewDueSoon);
+        $notificationA->forceFill(['parameters' => ['document_family_public_id' => $familyA->public_id]])->save();
+        $notificationB = $this->notification($recipient, $workspace, DocumentGovernanceEventKey::GovernanceReviewOverdue);
+        $notificationB->forceFill(['parameters' => ['document_family_public_id' => $familyB->public_id]])->save();
+        $ordered = $reverseAssemblyOrder ? [$notificationB, $notificationA] : [$notificationA, $notificationB];
+        $assemble = app(AssembleDocumentGovernanceEmailEnvelope::class);
+        $envelope = $assemble->handle($ordered[0]);
+        $assemble->handle($ordered[1]);
+        $envelope = app(SealDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+        if (in_array('a', $lostAuthority, true)) {
+            $familyA->refresh();
+            $familyA->forceFill([
+                'owner_user_id' => $replacementOwner->id,
+                'owner_assignment_generation' => $familyA->owner_assignment_generation + 1,
+            ])->save();
+        }
+        if (in_array('b', $lostAuthority, true)) {
+            $familyB->refresh();
+            $familyB->forceFill([
+                'owner_user_id' => $replacementOwner->id,
+                'owner_assignment_generation' => $familyB->owner_assignment_generation + 1,
+            ])->save();
+        }
+
+        return [$envelope, [$familyA, $familyB], $replacementOwner];
+    }
+
+    /** @return list<string> */
+    private function memberDecisions(DocumentGovernanceEmailEnvelope $envelope): array
+    {
+        return $envelope->members()->with('decision')->orderBy('ordinal')->get()->map(
+            fn ($member): string => $member->decision->decision
+                .($member->decision->suppression_reason ? ':'.$member->decision->suppression_reason : ''),
+        )->all();
+    }
+
+    /** @return list<string> */
+    private function memberDecisionsByEvent(DocumentGovernanceEmailEnvelope $envelope): array
+    {
+        return $envelope->members()->with(['decision', 'notification'])->get()
+            ->sortBy(fn ($member): int => $member->notification->event_key === DocumentGovernanceEventKey::GovernanceReviewDueSoon ? 0 : 1)
+            ->map(fn ($member): string => $member->decision->decision
+                .($member->decision->suppression_reason ? ':'.$member->decision->suppression_reason : ''))
+            ->values()->all();
     }
 
     /** @return array{User, Workspace} */

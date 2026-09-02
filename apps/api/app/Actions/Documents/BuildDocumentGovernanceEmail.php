@@ -26,7 +26,7 @@ final readonly class BuildDocumentGovernanceEmail
     {
         $this->validateSealedIdentity($envelope);
         $workspace = Workspace::query()->findOrFail($envelope->workspace_id);
-        $members = $envelope->members()->with('notification')->get();
+        $members = $envelope->members()->with(['notification', 'decision'])->orderBy('ordinal')->get();
         $included = $members->filter(fn ($member): bool => $member->decision?->decision === 'included');
         if ($included->isEmpty() || $included->contains(fn ($member): bool => $member->notification === null)) {
             throw new LogicException('A governance email requires every included notification to remain available at dispatch time.');
