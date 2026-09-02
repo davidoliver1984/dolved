@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 28 of 32 (Product-wide Integration and Visual Acceptance) |
+| Project status | In Progress — Phase 28 of 33 (Live-provider and Realistic-corpus Quality Evaluation) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -98,12 +98,12 @@ Every architectural decision should favour:
 
 ---
 
-### Cloud (allocated to Phases 29–30, not yet implemented)
+### Cloud (allocated to Phases 30–31, not yet implemented)
 
 Genuine multi-service AWS architecture, deliberately cost-conscious for
 initial capacity and extensible toward more tenants and resilience — not one
 all-in-one VM, and not yet built. The exact topology is decided by the
-pre-implementation ADR Phase 29 requires before any of the following is
+pre-implementation ADR Phase 30 requires before any of the following is
 provisioned.
 
 - AWS ECS/Fargate and load balancing (direction, subject to that ADR)
@@ -1144,7 +1144,92 @@ presentation.
 
 ---
 
-## Phase 28 — Product-wide Integration and Visual Acceptance
+## Phase 28 — Live-provider and Realistic-corpus Quality Evaluation
+
+### Objectives
+
+Produce the first current-code, live-provider body of evidence for how
+Dolved performs on retrieval and grounded generation, separately and end to
+end, over a realistic versioned organisational corpus, after ADR-0030
+through ADR-0036 are implemented and before Phase 29 reviews the connected
+product visually. All existing engineering/calibration/held-out
+evaluation-independence rules carry forward unchanged; this phase adds a
+live, current-commit run on top of that governance rather than relaxing it.
+No AWS resource may be provisioned before this phase's gate and Phase 29's
+gate both pass.
+
+### Sessions
+
+R28-S01 through R28-S07 freeze the live-evaluation protocol and safety
+boundary (including determining whether ADR-0019/ADR-0029 already govern a
+required gate or a narrow new ADR is needed) and freeze the approved
+realistic corpus source — archive
+`checkpoint-19-application-evidence-corrections.tar.gz` (SHA-256
+`6fa6602935efe8379cc2a7de4ba85af17aa8d8827082ae6de8df959f6e19a06e`), verdict
+`V4_CORPUS_READY_TO_FREEZE`, 300 primary version documents across
+PDF/DOCX/TXT with versioned families, foreign-tenant material,
+prompt-injection material and negative fixtures — as the immutable V4
+corpus of record before any evaluation-population authoring or provider
+call.
+
+R28-S01 also owns the complete pre-provider population boundary end to
+end: it discovers, verifies and records R28-S02's exact pre-existing
+evaluation population (identity/checksum, counts, split, purpose,
+compatibility, case types) as its own bound population, distinct from and
+never merged with the new V4 population; produces a restricted
+question-author view (frozen rendered sources, ordinary metadata, and only
+the minimum fictional organisation/applicability facts a real user could
+know) that excludes authoring prompts/conversations, authoring plans,
+hidden messiness labels, comparison contracts, intended traps, generator
+internals, calibration material, held-out material and prior system
+output; hands that view to a genuinely fresh authoring context to author
+questions, variants, expected evidence and expected outcomes independently
+of Dolved's output; hands the result to a separate fresh audit context for
+correction and re-audit without exposing system output; and freezes the
+accepted population under its own immutable identity and checksum as
+mandatory completion evidence. Contamination of the view or either context
+invalidates the affected population and requires clean re-authoring. R28-S02
+through R28-S04 may not begin until this entire boundary is accepted.
+
+R28-S02 then runs the approved current-code live retrieval/generation
+baseline against one exact clean commit, strictly over the pre-existing
+population R28-S01 already bound — never discovering or choosing its own
+population, and never merged with or compared as identical to the V4
+population. R28-S03 materialises the V4 corpus's four governed scopes
+separately — the 300-document primary corpus into the primary evaluation
+tenant; the 12-document foreign-tenant pack into its own isolated
+workspace, never eligible for the primary tenant; the 6 additional
+prompt-injection documents (beyond the 3 already inside the 300) under
+their governed security-test boundary; and the 13 negative/import fixtures
+through their rejection/failure/recovery paths, never promoted as ordinary
+primary material — each scope with its own separate counts, outcomes and
+lineage. R28-S04 runs end-to-end live retrieval and grounded generation
+over the frozen V4 evaluation population and the primary corpus only,
+recording retrieval and answer-quality evidence separately; R28-S05
+diagnoses failures by layer and obtains David's explicit review of any
+bounded correction; R28-S06 repeats the exact-commit live evaluation and
+closes the quality gate with an honest before/after comparison; and R28-S07
+reconciles each of the four scopes' final realised format, scale and
+coverage against what checkpoint 19 promised at freeze — without merging
+their counts, tenants or outcomes — assessing residual gaps actually
+observed rather than planning any further expansion, since the approved V4
+corpus already exists and was evaluated and there is no future
+300-document goal left to plan toward.
+
+This phase does not certify production accuracy, guarantee performance over
+an arbitrary tenant's corpus, or substitute for Phase 29's visual/product
+review. Its evidence supports an explicit pilot-readiness decision scoped
+to the evaluated V4 corpus and commit.
+
+### Deliverable
+
+A current-code, lineage-bound body of live-provider evidence showing how
+Dolved performs over the frozen V4 realistic, versioned organisational
+corpus, with failures, costs and limitations reported honestly.
+
+---
+
+## Phase 29 — Product-wide Integration and Visual Acceptance
 
 ### Objectives
 
@@ -1157,7 +1242,7 @@ in the project.
 
 ### Sessions
 
-R28-S01 through R28-S05 review and classify the design-correction register;
+R29-S01 through R29-S05 review and classify the design-correction register;
 correct cross-product navigation, information hierarchy and flow; correct
 visual-system consistency across existing surfaces; review responsive,
 theme, accessibility and state coverage; and run integrated Playwright
@@ -1166,7 +1251,7 @@ workflow data.
 
 Every prior per-session visual approval (Phase 21 onward) was a valid staged
 checkpoint for the surface it reviewed at the time — this phase does not
-reopen or invalidate any of them. R28-S05 requires David's explicit, final
+reopen or invalidate any of them. R29-S05 requires David's explicit, final
 product-wide visual sign-off, the first in the project scoped to the
 connected product rather than one feature or session.
 
@@ -1183,7 +1268,7 @@ every implemented Dolved workflow.
 
 ---
 
-## Phase 29 — CI/CD, AWS Foundation and Staging
+## Phase 30 — CI/CD, AWS Foundation and Staging
 
 ### Objectives
 
@@ -1194,11 +1279,11 @@ deployed.
 
 ### Sessions
 
-R29-S01 through R29-S09 add continuous integration; production container
+R30-S01 through R30-S09 add continuous integration; production container
 builds; the pre-implementation AWS deployment ADR and infrastructure as code;
 secrets and environment management; database backup/recovery; vector,
 object-storage and queue recovery; security hardening; staging deployment;
-and a staging readiness review. Stage 29.3's ADR must cover deployment
+and a staging readiness review. Stage 30.3's ADR must cover deployment
 topology, ownership boundaries, cost/resilience trade-offs and scaling path —
 reflecting genuine AWS architecture, deliberately cost-conscious initial
 capacity, and no false claim of multi-AZ/high-availability guarantees until
@@ -1212,16 +1297,16 @@ AWS with tested deployment, recovery, security and observability controls.
 
 ---
 
-## Phase 30 — Production Deployment and Operational Validation
+## Phase 31 — Production Deployment and Operational Validation
 
 ### Objectives
 
-Deploy Dolved as an actual production service, subject to the Phase 29
+Deploy Dolved as an actual production service, subject to the Phase 30
 deployment ADR, and prove it can be operated safely.
 
 ### Sessions
 
-R30-S01 through R30-S06 establish the production environment, IAM and
+R31-S01 through R31-S06 establish the production environment, IAM and
 ingress; provision production data infrastructure and run initial
 migrations; prove deployment, rollback and a genuine backup-restoration
 drill; add monitoring, alerting and cost controls; verify production-safe
@@ -1240,19 +1325,19 @@ operational, recovery, security, monitoring and rollback evidence.
 
 ---
 
-## Phase 31 — Documentation and Demonstration Readiness
+## Phase 32 — Documentation and Demonstration Readiness
 
 ### Objectives
 
 Document the platform clearly and provide a reproducible way to demonstrate
 its capabilities, without letting presentation work substitute for
 engineering or deployment evidence. Documentation reflects the actual final
-product and deployed architecture from Phases 28–30, not an earlier
+product and deployed architecture from Phases 29–31, not an earlier
 local-only state.
 
 ### Sessions
 
-R31-S01 through R31-S03 write architecture documentation, create a
+R32-S01 through R32-S03 write architecture documentation, create a
 demonstration dataset and scenario, and finalise the repository README.
 
 ### Deliverable
@@ -1323,12 +1408,15 @@ A phase is complete only when:
 | Observability and Operations | ✅ Complete |
 | Product Experience and Interface Design | ✅ Complete |
 | Testing and Quality Strategy | ✅ Complete |
-| Document Metadata, Governance and Structured Content | 🟨 In Progress |
-| Knowledge Library Product Interface | ⬜ Not Started |
-| Import Staging and Promotion | ⬜ Not Started |
-| Frozen Bulk Document Operations | ⬜ Not Started |
+| Document Metadata, Governance and Structured Content | ✅ Complete |
+| Knowledge Library Product Interface | ✅ Complete |
+| Import Staging and Promotion | ✅ Complete |
+| Frozen Bulk Document Operations | ✅ Complete |
 | Document Governance Notifications and Reminders | ✅ Complete |
-| CI/CD and Production Readiness | ⬜ Not Started |
+| Live-provider and Realistic-corpus Quality Evaluation | ⬜ Not Started |
+| Product-wide Integration and Visual Acceptance | ⬜ Not Started |
+| CI/CD, AWS Foundation and Staging | ⬜ Not Started |
+| Production Deployment and Operational Validation | ⬜ Not Started |
 | Documentation and Demonstration Readiness | ⬜ Not Started |
 
 ---

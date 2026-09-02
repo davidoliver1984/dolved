@@ -15209,7 +15209,269 @@ theme and responsive-navigation behaviour. No external provider was called.
 
 ---
 
-# Phase 28 — Product-wide Integration and Visual Acceptance
+
+# Phase 28 — Live-provider and Realistic-corpus Quality Evaluation
+
+## Phase objective
+
+Produce the first current-code, live-provider body of evidence for how
+Dolved actually performs — retrieval and grounded generation, separately and
+end to end — over a realistic, versioned organisational corpus, after ADR-0030
+through ADR-0036 are all implemented and before Phase 29 reviews the connected
+product visually. Every accepted evaluation-independence rule (engineering,
+calibration, held-out) carries forward unchanged; this phase adds a live,
+current-commit run on top of that governance, it does not relax it. No AWS
+resource may be provisioned before this phase's own gate and Phase 29's gate
+both pass. This phase does not certify production accuracy, guarantee
+performance over an arbitrary tenant's corpus, or substitute for Phase 29's
+visual/product review.
+
+## Stage 28.1 — Freeze the live-evaluation protocol and safety boundary
+
+Before any paid provider call, fix in writing: the exact populations and
+permitted splits (engineering only; calibration remains historical/spent;
+held-out remains inaccessible); the exact repository SHA and clean-worktree
+requirement each run executes against; provider/model/prompt/retrieval
+lineage capture; immutable run identity; predetermined quality thresholds and
+which failures are absolute (never waived by a later rerun); cost, token,
+request and wall-clock ceilings; provider-rate-limit backoff behaviour;
+honest skip/fail semantics when a ceiling or credential is unavailable;
+controls preventing any held-out access; the artefact/checksum schema every
+run commits; and the rules governing a correction and rerun. This stage must
+also determine — explicitly, not by assumption — whether ADR-0019 and
+ADR-0029 already govern a required, gating body of live-provider evidence, or
+whether this phase's gate needs a narrow new ADR or post-acceptance
+clarification first, since ADR-0029 currently states live-provider evaluation
+is optional and non-gating for ordinary phase completion. No paid run occurs
+until this protocol is approved.
+
+This stage also freezes the approved realistic corpus source: archive
+`checkpoint-19-application-evidence-corrections.tar.gz` (SHA-256
+`6fa6602935efe8379cc2a7de4ba85af17aa8d8827082ae6de8df959f6e19a06e`), verdict
+`V4_CORPUS_READY_TO_FREEZE`, comprising 300 primary version documents across
+PDF/DOCX/TXT with versioned families, foreign-tenant material,
+prompt-injection material and negative fixtures under their documented
+boundaries. This exact checkpoint becomes the immutable V4 corpus source of
+record before any evaluation-population authoring within this stage or any
+provider call begins; a later checkpoint may only replace it through this
+same explicit, written freeze process, never silently.
+
+Before any provider call, this stage must also discover, verify and record
+— as completion evidence, never invented in planning prose — the exact
+pre-existing evaluation population Stage 28.2's current-code live baseline
+will run against: its immutable identity and checksum/digest; verified case
+and variant counts; its split classification (engineering/calibration/
+held-out); its permitted purpose; its compatibility with the current code
+and live wrappers; and whether it contains retrieval cases, generation
+cases, or both. This pre-existing population is distinct from the new V4
+evaluation population produced below: Stage 28.2 is the current-code live
+baseline over this pre-existing bound population, while Stage 28.4 is the
+end-to-end evaluation over the frozen V4 corpus and the newly authored V4
+evaluation population. Results from the two populations are never silently
+merged, compared as if identical, or substituted for one another. If this
+pre-existing population cannot be verified before this stage closes, Stage
+28.2 remains blocked; Stage 28.2 must not discover or choose its population
+after provider execution begins.
+
+This stage also owns the complete pre-provider V4 evaluation-population
+boundary, end to end. After the checkpoint 19 corpus freeze above, it
+produces a restricted question-author view containing only the frozen
+rendered source documents, ordinary user-visible metadata, and the minimum
+fictional organisation/applicability facts a real user could know —
+excluding corpus-authoring prompts or conversations, authoring plans,
+hidden messiness labels, comparison contracts, intended traps, generator
+implementation details, calibration material, held-out material, and any
+prior system answer or relevance judgement. This restricted view is handed
+to a genuinely fresh authoring context, which authors questions, variants,
+expected evidence and expected outcomes independently of any Dolved output.
+The resulting population is handed to a separate fresh audit context; any
+population defect is corrected and re-audited without exposing system
+output. The accepted population is then frozen under its own immutable
+identity and checksum. Any contamination of the restricted view, the
+authoring context or the audit context invalidates the affected population
+and requires clean re-authoring from an unexposed view — it is never
+patched around. Stage 28.2, Stage 28.3 and Stage 28.4 may not begin until
+this complete boundary — protocol, corpus freeze, Stage 28.2 population
+binding, and V4 population authoring, audit and freeze — is accepted.
+
+This stage's completion evidence must include: the approved protocol
+document; the ADR-0019/ADR-0029 determination; the checkpoint 19 freeze
+record; the Stage 28.2 pre-existing population's verified identity,
+checksum, counts, split and compatibility record; and the accepted V4
+evaluation population's immutable identity and checksum.
+
+## Stage 28.2 — Run the approved current-code live baseline
+
+Run the existing approved live retrieval and generation wrappers, over the
+pre-existing evaluation population whose identity, checksum, counts, split
+classification and compatibility were already verified and recorded by
+Stage 28.1, against one exact clean commit, keeping retrieval and generation
+identities distinct throughout. Record full provider/model/prompt/
+configuration lineage, enforce every hard ceiling from Stage 28.1, capture
+immutable artefacts and costs, and report any failure honestly rather than
+tuning mid-run. This stage is the current-code live baseline over that
+pre-existing bound population only — it is distinct from, and never merged
+or compared as identical with, the newly authored V4 evaluation population
+run in Stage 28.4. This stage must not discover or choose its population
+after provider execution begins; if Stage 28.1 could not verify the
+population, this stage remains blocked.
+
+## Stage 28.3 — Materialise the realistic versioned corpus through the real product path
+
+Provision the frozen V4 corpus's four governed scopes from the Stage 28.1
+frozen checkpoint 19 archive separately, never merging their counts,
+tenants or outcomes:
+
+**Primary corpus.** Exactly 300 primary version documents (PDF/DOCX/TXT,
+versioned families, including the 3 prompt-injection documents that already
+belong to the primary 300 under their existing governed identity) are
+materialised through the real Phase 25 `ImportBatch` workflow — batch
+creation, preflight, matching, family/version decisions, promotion,
+ingestion, structured extraction, chunking and vectorisation — into the
+primary evaluation tenant, never a fixture-only database shortcut and never
+the retired direct-upload path. Verify version authority, applicability,
+scheduled and historical versions, indexing completeness and truthful
+failure/recovery behaviour, ending with confirmed final searchable
+family/version counts for exactly these 300 documents.
+
+**Foreign-tenant pack.** The 12 physically separate foreign-tenant
+documents are provisioned only into a distinct, isolated foreign
+workspace/tenant, never indexed into or made eligible for the primary
+evaluation tenant. Their materialisation proves cross-tenant exclusion and
+canary behaviour; their counts and outcomes are reported separately from
+the primary corpus.
+
+**Prompt-injection material.** Beyond the 3 documents already counted
+within the primary 300, the 6 additional prompt-injection documents in the
+physically separate prompt-injection pack are provisioned only under their
+explicitly governed security-test boundary — never silently counted as
+part of the 300 and never provisioned as ordinary primary material, unless
+their frozen contract explicitly requires a particular isolated test
+workspace/path, in which case that exact requirement is followed. Their
+outcomes are reported under the security-test boundary, separately from
+the primary corpus's searchable counts.
+
+**Negative/import fixtures.** The 13 separate negative/import fixtures are
+exercised through rejection, failure, recovery and unsupported/
+corrupt-input paths as their frozen contract requires, and are never
+promoted or indexed as ordinary searchable primary documents merely to
+simplify setup. An expected rejection or failure that the contract defines
+as correct is not counted as an ingestion completeness defect against the
+primary corpus.
+
+Each of the four scopes above produces its own separate counts, outcomes,
+lineage and acceptance evidence — no scope's counts, tenant or outcome may
+leak into another's. Real providers are used only where the approved
+protocol from Stage 28.1 requires them. Successful ingestion of any scope
+alone proves nothing about generation quality — that is Stage 28.4's job,
+which runs only over the primary evaluation tenant's materialised corpus
+and the frozen V4 evaluation population.
+
+## Stage 28.4 — Run end-to-end live retrieval and grounded-generation evaluation
+
+Using only the V4 evaluation population authored, audited and frozen
+entirely within Stage 28.1 — independently of, and after, the checkpoint 19
+corpus freeze, with no calibration or held-out material exposed during
+authoring or audit — exercise the complete current path over the primary
+evaluation tenant's corpus materialised in Stage 28.3: contextualisation/planning; eligibility and
+organisational applicability; temporal/current/historical/valid-at-date
+resolution; comparison retrieval; dense/sparse retrieval, fusion and
+reranking; evidence thresholds and controlled no-answer outcomes; grounded
+generation with citations and `EvidenceSnapshot` behaviour; clarification,
+insufficiency and failure distinctions; version-conflation resistance; and
+over-refusal/leakage controls. Retrieval metrics and answer-quality metrics
+are recorded separately, never blended into one score, and every case
+produces an inspectable per-case artefact, not only an aggregate number.
+
+## Stage 28.5 — Diagnose failures and approve bounded corrections
+
+Classify every failure by the layer that actually caused it — corpus or
+expectation defect, import/ingestion defect, extraction/chunking defect,
+eligibility/authority defect, planner defect, retrieval/reranking defect,
+generation/grounding defect, citation/presentation defect,
+infrastructure/provider failure, or honest insufficiency rather than a
+failure at all. Corrections obey existing split governance: engineering-owned
+evidence may support diagnosis and bounded correction; calibration remains
+historical/spent unless the accepted process explicitly permits its stated
+reuse; held-out remains inaccessible; any corpus correction creates new
+immutable lineage rather than editing frozen material in place; expectations
+are never weakened merely to obtain a pass; and any product-code change goes
+through normal implementation review and testing outside this evaluation
+phase. David must explicitly review proposed corrections before a rerun is
+scheduled.
+
+## Stage 28.6 — Repeat the exact-commit live evaluation and close the quality gate
+
+After approved corrections land, rerun the live evaluation against one clean
+exact commit. Produce an immutable before/after comparison with complete
+lineage and cost accounting, apply the predetermined policy from Stage 28.1
+including its absolute failures, and allow no hidden retries or quietly
+discarded cases. Both retrieval and generation results are reported, honest
+residual limitations are documented rather than smoothed over, and every
+committed artefact must verify provider-free afterward. The gate this stage
+closes does not claim universal accuracy or production-scale evidence — only
+that this specific, lineage-bound evaluation ran and is honestly reported.
+
+## Stage 28.7 — Reconcile corpus format, scale and coverage and assess residual gaps
+
+Using the V4 corpus's four governed scopes actually materialised in Stage
+28.3 and evaluated in Stages 28.4–28.6 — the 300-document primary corpus,
+the 12-document foreign-tenant pack, the 6-document separate
+prompt-injection pack (in addition to the 3 prompt-injection documents
+already inside the primary 300), and the 13 negative/import fixtures —
+confirm and record each scope's final realised format mix, count,
+tenant/workspace placement and outcome against what checkpoint 19 promised
+at freeze, without merging their counts, tenants or outcomes into a single
+combined figure. This stage does not plan or fabricate any further
+expansion toward a document-count target — the approved V4 corpus already exists and was
+evaluated, so there is no future 300-document goal left to plan toward.
+Instead, it honestly assesses residual gaps actually observed during Stages
+28.3–28.6: any format, structure, scale or coverage limitation the
+evaluation surfaced, any corrupt/password-protected/unsupported case
+encountered, and any category of format, family type or edge case the
+frozen corpus and evaluation did not exercise. Any residual gap is recorded
+as a reported limitation or an honestly-scoped future session — never
+smuggled back in as more corpus authoring inside this phase. The
+calibration/engineering/held-out split boundary remains preserved
+throughout, and this stage must never claim a broader evaluation occurred
+than the one actually run in Stages 28.4–28.6.
+
+## Phase 28 gate
+
+The gate requires evidence that: the live protocol was approved before any
+provider call; the frozen checkpoint 19 V4 corpus source was recorded before
+evaluation-population authoring or provider use; the pre-existing Stage
+28.2 population's identity, checksum, counts, split classification and
+compatibility were verified and bound before its provider call, distinct
+from and never merged with the V4 evaluation population; the V4 evaluation
+population was authored, audited and frozen under its own immutable
+identity and checksum — independently of any Dolved output — entirely
+within Stage 28.1, before Stage 28.4's provider call; the current exact
+commit was tested; provider identities and costs are recorded; the real
+`ImportBatch` path materialised the four V4 corpus scopes (the 300-document
+primary corpus into the primary evaluation tenant, the 12-document
+foreign-tenant pack into its own isolated tenant, the 6-document separate
+prompt-injection pack under its governed security-test boundary, and the 13
+negative/import fixtures through their rejection/failure/recovery paths)
+with separate counts, outcomes and lineage and no cross-scope or
+cross-tenant leakage; retrieval and generation were evaluated separately
+and end to end over the primary corpus and the frozen V4 evaluation
+population; version-aware current/historical/comparison cases were
+exercised; no held-out boundary was crossed; failures were diagnosed
+honestly; any correction and rerun carries immutable lineage; committed
+evaluation artefacts verify provider-free afterward; residual limitations
+are documented; and no AWS deployment work began. This gate blocks Phase
+29's product-wide acceptance and all AWS work. Its deliverable is a
+current-code, lineage-bound body of live-provider evidence showing how
+Dolved performs over the frozen V4 realistic, versioned organisational
+corpus, with failures, costs and limitations reported honestly —
+supporting an explicit pilot-readiness decision scoped to this corpus and
+commit, never phrased as guaranteed accuracy, production certification, or
+proof over an arbitrary tenant's corpus.
+
+---
+
+# Phase 29 — Product-wide Integration and Visual Acceptance
 
 ## Phase objective
 
@@ -15233,7 +15495,7 @@ an architectural change discovered while reviewing the connected product is
 reported and allocated to its own future session or ADR — it is never
 smuggled into this phase as "visual polish."
 
-## Stage 28.1 — Consolidated correction-register review and classification
+## Stage 29.1 — Consolidated correction-register review and classification
 
 Review the canonical design-correction register
 (`docs/design-corrections-register.md`) together with David's own evolving
@@ -15241,9 +15503,9 @@ manual list once he provides it. Classify every entry as one of: a cosmetic or
 interaction correction, an ordinary implementation defect, a genuinely new
 capability, or an architectural change. Record the classification and the
 session it is allocated to. Only cosmetic/interaction corrections and ordinary
-defects are corrected inside Phase 28 itself.
+defects are corrected inside Phase 29 itself.
 
-## Stage 28.2 — Cross-product navigation, information hierarchy and flow corrections
+## Stage 29.2 — Cross-product navigation, information hierarchy and flow corrections
 
 Review end-to-end navigation and hand-off across chat, Library, family/version
 detail, comparison, import, bulk operations, administration, platform
@@ -15252,7 +15514,7 @@ the register identifies. Do not introduce a new navigation concept, information
 architecture change or route structure here — that is an architectural change
 and belongs to its own ADR-backed session.
 
-## Stage 28.3 — Visual-system consistency across existing surfaces
+## Stage 29.3 — Visual-system consistency across existing surfaces
 
 Correct inconsistent buttons, cards, tables, forms, dialogs, spacing,
 typography and status treatment across every implemented surface. Add or
@@ -15262,7 +15524,7 @@ decision (Phase 21's approved chat shell, slate palette and component
 language); this stage corrects drift and gaps against that system, it does not
 replace it.
 
-## Stage 28.4 — Responsive, theme, accessibility and complete state review
+## Stage 29.4 — Responsive, theme, accessibility and complete state review
 
 Review every implemented surface for its loading, empty, warning, error,
 unavailable, partial and permission-concealed states; keyboard navigation,
@@ -15271,7 +15533,7 @@ mobile layout; and light/dark theme correctness. Record any gap found as a
 register entry and correct it within this stage where it is a defect or
 cosmetic correction.
 
-## Stage 28.5 — Integrated Playwright journeys and final product-wide sign-off
+## Stage 29.5 — Integrated Playwright journeys and final product-wide sign-off
 
 Run integrated Playwright journeys that cross feature boundaries (for example:
 import a document, find it in the Library, compare two versions, run a bulk
@@ -15280,38 +15542,38 @@ connected production components, using representative real workflow data —
 never dev-only fixtures as the sole acceptance evidence. Capture staged browser
 evidence for the corrected surfaces.
 
-Stage 28.5 requires David's explicit, final product-wide visual sign-off
+Stage 29.5 requires David's explicit, final product-wide visual sign-off
 before closure. This is the first sign-off in the project scoped to the
 connected product as a whole rather than to one feature or session, and it
 does not retroactively withdraw any earlier staged approval.
 
-## Phase 28 gate
+## Phase 29 gate
 
 The design-correction register must show every entry classified and either
 corrected, explicitly deferred with a reason, or reallocated to a future
 session/ADR — never silently dropped. David's final product-wide visual
-sign-off from Stage 28.5 is the phase's own closing acceptance evidence.
+sign-off from Stage 29.5 is the phase's own closing acceptance evidence.
 
 ---
 
-# Phase 29 — CI/CD, AWS Foundation and Staging
+# Phase 30 — CI/CD, AWS Foundation and Staging
 
 ## Phase objective
 
 Make Dolved reproducibly buildable and deployable, then prove the intended
-cloud architecture in a real AWS staging environment. Phase 29 delivers a
+cloud architecture in a real AWS staging environment. Phase 30 delivers a
 staging environment only. It must not claim, imply or be read as claiming
-that Dolved is publicly or production deployed — that is Phase 30's own,
+that Dolved is publicly or production deployed — that is Phase 31's own,
 separately gated, deliverable.
 
 No unresolved AWS architecture decision is locked in by planning prose alone.
-Stage 29.3 requires a pre-implementation ADR covering the deployment topology,
+Stage 30.3 requires a pre-implementation ADR covering the deployment topology,
 service-ownership boundaries, cost/resilience trade-offs and scaling path
 before any AWS infrastructure is provisioned.
 
 ---
 
-## Stage 29.1 — Add Continuous Integration
+## Stage 30.1 — Add Continuous Integration
 
 ### Objective
 
@@ -15353,7 +15615,7 @@ git commit -m "Add continuous integration pipeline"
 
 ---
 
-## Stage 29.2 — Create Production Container Builds
+## Stage 30.2 — Create Production Container Builds
 
 ### Objective
 
@@ -15394,7 +15656,7 @@ git commit -m "Add production container builds"
 
 ---
 
-## Stage 29.3 — AWS Architecture Decision and Infrastructure as Code
+## Stage 30.3 — AWS Architecture Decision and Infrastructure as Code
 
 ### Objective
 
@@ -15462,7 +15724,7 @@ git commit -m "Define production infrastructure"
 
 ---
 
-## Stage 29.4 — Configure Secrets and Environment Management
+## Stage 30.4 — Configure Secrets and Environment Management
 
 ### Objective
 
@@ -15499,7 +15761,7 @@ git commit -m "Harden environment and secret management"
 
 ---
 
-## Stage 29.5 — Add Database Backup and Recovery
+## Stage 30.5 — Add Database Backup and Recovery
 
 ### Objective
 
@@ -15526,7 +15788,7 @@ git commit -m "Add database backup and recovery plan"
 
 ---
 
-## Stage 29.6 — Define Vector, Object-Storage and Queue Recovery
+## Stage 30.6 — Define Vector, Object-Storage and Queue Recovery
 
 ### Objective
 
@@ -15568,7 +15830,7 @@ git commit -m "Define vector index recovery"
 
 ---
 
-## Stage 29.7 — Perform Security Hardening
+## Stage 30.7 — Perform Security Hardening
 
 ### Objective
 
@@ -15618,7 +15880,7 @@ git commit -m "Harden platform security"
 
 ---
 
-## Stage 29.8 — Create Staging Deployment
+## Stage 30.8 — Create Staging Deployment
 
 ### Objective
 
@@ -15633,7 +15895,7 @@ Not yet executed.
 ### Acceptance criteria
 
 * Staging is provisioned from the infrastructure code and topology the
-  Stage 29.3 ADR defines.
+  Stage 30.3 ADR defines.
 * Production container images are used.
 * Managed secrets are used.
 * Migrations run safely, including a tested migration-rollback path.
@@ -15652,14 +15914,14 @@ To be defined based on the deployment platform.
 
 ---
 
-## Stage 29.9 — Staging Readiness Review
+## Stage 30.9 — Staging Readiness Review
 
 ### Objective
 
 Perform a formal review confirming staging is genuinely representative and
 safe to keep running, before any production-deployment work begins. This
 review is scoped to staging only; it is not, and must not be read as, a
-production go-live decision — that decision belongs to Phase 30.
+production go-live decision — that decision belongs to Phase 31.
 
 ### Status
 
@@ -15698,31 +15960,31 @@ Not yet executed.
 git add docs
 git commit -m "Complete staging readiness review"
 
-## Phase 29 gate
+## Phase 30 gate
 
-Staging is deployed, tested and reviewed under the Stage 29.3 ADR's own
+Staging is deployed, tested and reviewed under the Stage 30.3 ADR's own
 topology. No claim of production deployment, public availability, multi-AZ or
 high-availability guarantee is made at this gate.
 
 ---
 
-# Phase 30 — Production Deployment and Operational Validation
+# Phase 31 — Production Deployment and Operational Validation
 
 ## Phase objective
 
 Deploy Dolved as an actual production service and prove that it can be
-operated safely, subject to the deployment ADR Phase 29 required and
+operated safely, subject to the deployment ADR Phase 30 required and
 accepted. This phase must distinguish clearly between deployment success,
 technical production readiness, public/customer launch, high availability and
 scale-out — it claims only what its own sessions actually implement and
 verify. It does not claim multi-AZ, zero downtime, disaster recovery or
 production-scale capacity unless a session below actually proves them.
 
-## Stage 30.1 — Production environment, IAM, secrets, domain and ingress
+## Stage 31.1 — Production environment, IAM, secrets, domain and ingress
 
 ### Objective
 
-Create the production AWS environment under the Phase 29 ADR's topology,
+Create the production AWS environment under the Phase 30 ADR's topology,
 isolated from staging: its own IAM roles and secret store, domain, DNS, TLS
 and ingress.
 
@@ -15745,7 +16007,7 @@ git commit -m "Establish production environment, IAM and ingress"
 
 ---
 
-## Stage 30.2 — Production data infrastructure, migrations and initialisation
+## Stage 31.2 — Production data infrastructure, migrations and initialisation
 
 ### Objective
 
@@ -15771,7 +16033,7 @@ git commit -m "Provision production data infrastructure and run initial migratio
 
 ---
 
-## Stage 30.3 — Deployment, rollback and backup-restoration drill
+## Stage 31.3 — Deployment, rollback and backup-restoration drill
 
 ### Objective
 
@@ -15797,7 +16059,7 @@ git commit -m "Prove production deployment, rollback and backup restoration"
 
 ---
 
-## Stage 30.4 — Monitoring, alerting, cost budgets and scaling thresholds
+## Stage 31.4 — Monitoring, alerting, cost budgets and scaling thresholds
 
 ### Objective
 
@@ -15823,7 +16085,7 @@ git commit -m "Add production monitoring, alerting and cost controls"
 
 ---
 
-## Stage 30.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification
+## Stage 31.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification
 
 ### Objective
 
@@ -15852,7 +16114,7 @@ git commit -m "Verify production smoke tests, provider behaviour and tenant isol
 
 ---
 
-## Stage 30.6 — Incident readiness and final go/no-go review
+## Stage 31.6 — Incident readiness and final go/no-go review
 
 ### Objective
 
@@ -15884,8 +16146,8 @@ Not yet executed.
 
 * All critical user journeys pass in production.
 * No unresolved critical security finding remains.
-* Backup restoration has been tested in production (Stage 30.3).
-* Rollback has been tested in production (Stage 30.3).
+* Backup restoration has been tested in production (Stage 31.3).
+* Rollback has been tested in production (Stage 31.3).
 * Alerts and runbooks exist and name an owner.
 * Capacity and cost assumptions are documented.
 * Data retention and deletion are documented.
@@ -15902,7 +16164,7 @@ Not yet executed.
 git add docs
 git commit -m "Complete production go/no-go review"
 
-## Phase 30 gate
+## Phase 31 gate
 
 Dolved is genuinely deployed to production with verified deployment,
 rollback, backup-restoration, monitoring and security evidence. No claim of
@@ -15911,20 +16173,20 @@ public customer launch is made beyond what a session above actually proved.
 
 ---
 
-# Phase 31 — Documentation and Demonstration Readiness
+# Phase 32 — Documentation and Demonstration Readiness
 
 ## Phase objective
 
 Document the platform clearly and provide a reproducible way to demonstrate
 its capabilities, without letting presentation work substitute for
 engineering or deployment evidence. This phase documents Dolved's actual final
-product and deployed architecture — including the outcomes of Phase 28's
-product-wide acceptance and Phases 29–30's staging and production deployment
+product and deployed architecture — including the outcomes of Phase 29's
+product-wide acceptance and Phases 30–31's staging and production deployment
 — not an earlier local-only state.
 
 ---
 
-## Stage 31.1 — Write Architecture Documentation
+## Stage 32.1 — Write Architecture Documentation
 
 ### Objective
 
@@ -15942,8 +16204,8 @@ Not yet executed.
 * retrieval and generation sequence diagram;
 * trust boundaries;
 * tenancy model;
-* deployment architecture, reflecting the accepted Phase 29 ADR and the
-  actual Phase 30 production outcome;
+* deployment architecture, reflecting the accepted Phase 30 ADR and the
+  actual Phase 31 production outcome;
 * key ADR index;
 * technology choices and trade-offs.
 
@@ -15963,7 +16225,7 @@ git commit -m "Document platform architecture"
 
 ---
 
-## Stage 31.2 — Create Demonstration Dataset and Scenario
+## Stage 32.2 — Create Demonstration Dataset and Scenario
 
 ### Objective
 
@@ -15990,7 +16252,7 @@ git commit -m "Add repeatable platform demonstration"
 
 ---
 
-## Stage 31.3 — Finalise Repository README
+## Stage 32.3 — Finalise Repository README
 
 ### Objective
 

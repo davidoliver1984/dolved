@@ -40,10 +40,10 @@
   "progress": {
     "current_phase": "R28",
     "current_session": "R28-S01",
-    "next_action": "Begin R28-S01 separately — review and classify the product-wide design-correction register.",
+    "next_action": "Begin R28-S01 separately — freeze the live-evaluation protocol and safety boundary before any provider call.",
     "completed_through": "R27-GATE",
     "completed_phase_count": 28,
-    "total_phase_count": 32
+    "total_phase_count": 33
   },
   "phases": [
     {
@@ -5365,98 +5365,190 @@
     },
     {
       "id": "R28",
-      "guide_phase": "Phase 28 — Product-wide Integration and Visual Acceptance",
-      "title": "Product-wide Integration and Visual Acceptance",
-      "guide_start_line": 15212,
-      "guide_end_line": 15293,
+      "guide_phase": "Phase 28 — Live-provider and Realistic-corpus Quality Evaluation",
+      "title": "Live-provider and Realistic-corpus Quality Evaluation",
+      "guide_start_line": 15213,
+      "guide_end_line": 15470,
       "status": "not_started",
-      "objective": "Review Dolved as one connected product across the knowledge library, import workflow, bulk operations and governance notifications; correct accumulated design and cross-feature flow issues; obtain the first product-wide visual acceptance.",
+      "objective": "Produce the first current-code, live-provider body of evidence for how Dolved performs on retrieval and grounded generation, separately and end to end, over a realistic versioned organisational corpus, after ADR-0030 through ADR-0036 are implemented and before Phase 29 reviews the connected product visually. Preserves all existing engineering/calibration/held-out split governance; adds a live current-commit run on top of it rather than relaxing it.",
       "sessions": [
         {
           "id": "R28-S01",
-          "guide_stage": "Stage 28.1 — Consolidated correction-register review and classification",
-          "title": "Review and Classify the Design-Correction Register",
+          "guide_stage": "Stage 28.1 — Freeze the live-evaluation protocol and safety boundary",
+          "title": "Freeze the Live-Evaluation Protocol and Safety Boundary",
           "status": "not_started",
           "depends_on": [
             "R27-GATE"
           ],
-          "objective": "Classify every design-corrections-register.md entry and David's manual list as cosmetic/interaction, ordinary defect, new capability, or architectural change; only the first two are corrected in this phase."
+          "objective": "Fix the exact populations/splits, clean-commit requirement, lineage capture, immutable run identity, predetermined quality thresholds and absolute failures, cost/token/request/time ceilings, honest skip/fail behaviour, no-held-out-access controls, artefact/checksum schema and correction/rerun rules in writing before any paid provider call. Explicitly determine whether ADR-0019/ADR-0029 already govern a required, gating body of live-provider evidence or whether a narrow new ADR/post-acceptance clarification is needed first, since ADR-0029 currently states live-provider evaluation is optional and non-gating for ordinary phase completion — do not assume either answer. Also freeze the approved realistic corpus source as the immutable V4 corpus of record before any evaluation-population authoring or provider call: archive checkpoint-19-application-evidence-corrections.tar.gz (SHA-256 6fa6602935efe8379cc2a7de4ba85af17aa8d8827082ae6de8df959f6e19a06e), verdict V4_CORPUS_READY_TO_FREEZE, 300 primary version documents across PDF/DOCX/TXT with versioned families, foreign-tenant material, prompt-injection material and negative fixtures under their documented boundaries. This session owns the complete pre-provider population boundary end to end. Before any provider call it must also discover, verify and record R28-S02's exact pre-existing evaluation population — its immutable identity/checksum, verified case/variant counts, split classification, permitted purpose, compatibility with current code and live wrappers, and whether it holds retrieval, generation or both case types — distinct from and never merged with the new V4 population; R28-S02 remains blocked if this cannot be verified. It must then produce a restricted question-author view (frozen rendered source documents, ordinary user-visible metadata, and only the minimum fictional organisation/applicability facts a real user could know) that excludes corpus-authoring prompts/conversations, authoring plans, hidden messiness labels, comparison contracts, intended traps, generator implementation details, calibration material, held-out material and any prior system answer or relevance judgement; hand that view to a genuinely fresh authoring context to author questions, variants, expected evidence and expected outcomes independently of any Dolved output; hand the result to a separate fresh audit context; correct and re-audit any defect without exposing system output; and freeze the accepted population under its own immutable identity and checksum. Contamination of the view, authoring context or audit context invalidates the affected population and requires clean re-authoring, never a patch. R28-S02, R28-S03 and R28-S04 may not begin until this entire boundary is accepted. Mandatory completion evidence: the approved protocol; the ADR-0019/ADR-0029 determination; the checkpoint 19 freeze record; R28-S02's verified pre-existing population identity/checksum/counts/split/compatibility record; and the accepted V4 evaluation population's immutable identity and checksum."
         },
         {
           "id": "R28-S02",
-          "guide_stage": "Stage 28.2 — Cross-product navigation, information hierarchy and flow corrections",
-          "title": "Correct Cross-Product Navigation and Flow",
+          "guide_stage": "Stage 28.2 — Run the approved current-code live baseline",
+          "title": "Run the Approved Current-Code Live Baseline",
           "status": "not_started",
           "depends_on": [
             "R28-S01"
-          ]
+          ],
+          "objective": "Run the existing approved live retrieval and generation wrappers, over the pre-existing evaluation population whose identity, checksum, counts, split classification and compatibility were already verified and recorded by R28-S01, against one exact clean commit under the frozen protocol, keeping retrieval and generation identities distinct, recording complete provider/model/prompt/configuration lineage and enforcing every hard ceiling. This session is the current-code live baseline over that pre-existing bound population only — distinct from, and never merged or compared as identical with, the newly authored V4 evaluation population run in R28-S04. This session must not discover or choose its population after provider execution begins; if R28-S01 could not verify the population, this session remains blocked."
         },
         {
           "id": "R28-S03",
-          "guide_stage": "Stage 28.3 — Visual-system consistency across existing surfaces",
-          "title": "Correct Visual-System Consistency",
+          "guide_stage": "Stage 28.3 — Materialise the realistic versioned corpus through the real product path",
+          "title": "Materialise the Realistic Versioned Corpus Through the Real Product Path",
           "status": "not_started",
           "depends_on": [
-            "R28-S02"
-          ]
+            "R28-S01"
+          ],
+          "objective": "Provision the frozen V4 corpus's four governed scopes from the R28-S01 frozen checkpoint 19 archive separately, never merging their counts, tenants or outcomes. Primary corpus: exactly 300 primary version documents (PDF/DOCX/TXT, versioned families, including the 3 prompt-injection documents already inside the 300 under their existing governed identity) materialised through the real Phase 25 ImportBatch workflow (batch creation, preflight, matching, family/version decisions, promotion, ingestion, structured extraction, chunking and vectorisation) into the primary evaluation tenant — never a fixture-only database shortcut and never the retired direct-upload path — with verified version authority, applicability, scheduled/historical versions, indexing completeness and truthful failure/recovery behaviour, ending in confirmed final searchable family/version counts for exactly these 300 documents. Foreign-tenant pack: the 12 physically separate foreign-tenant documents are provisioned only into a distinct isolated foreign workspace/tenant, never indexed into or eligible for the primary tenant, proving cross-tenant exclusion and canary behaviour with separately reported counts/outcomes. Prompt-injection material: beyond the 3 already inside the 300, the 6 additional documents in the separate prompt-injection pack are provisioned only under their governed security-test boundary — never silently counted as part of the 300 or provisioned as ordinary primary material unless their frozen contract requires a specific isolated test workspace/path — with outcomes reported separately. Negative/import fixtures: the 13 separate fixtures are exercised through rejection/failure/recovery/unsupported-corrupt-input paths as their contract requires, never promoted or indexed as ordinary searchable primary documents; an expected, contract-correct rejection or failure is not an ingestion completeness defect. Each scope produces its own separate counts, outcomes, lineage and acceptance evidence. Ingestion success alone proves nothing about generation quality."
         },
         {
           "id": "R28-S04",
-          "guide_stage": "Stage 28.4 — Responsive, theme, accessibility and complete state review",
-          "title": "Review Responsive, Theme, Accessibility and State Coverage",
+          "guide_stage": "Stage 28.4 — Run end-to-end live retrieval and grounded-generation evaluation",
+          "title": "Run End-to-End Live Retrieval and Grounded-Generation Evaluation",
           "status": "not_started",
           "depends_on": [
+            "R28-S02",
             "R28-S03"
-          ]
+          ],
+          "objective": "Using only the V4 evaluation population authored, audited and frozen entirely within R28-S01 — independently of, and after, the checkpoint 19 corpus freeze, with no calibration or held-out material exposed during authoring or audit — exercise the complete current path over the primary evaluation tenant's corpus materialised in R28-S03: contextualisation/planning, eligibility and applicability, temporal/current/historical/valid-at-date resolution, comparison retrieval, dense/sparse retrieval, fusion and reranking, evidence thresholds and controlled no-answer outcomes, grounded generation with citations and EvidenceSnapshot behaviour, clarification/insufficiency distinctions, version-conflation resistance and over-refusal/leakage controls — recording retrieval and answer-quality metrics separately with inspectable per-case artefacts, not only aggregate scores."
         },
         {
           "id": "R28-S05",
-          "guide_stage": "Stage 28.5 — Integrated Playwright journeys and final product-wide sign-off",
-          "title": "Run Integrated Journeys and Obtain Product-Wide Sign-Off",
+          "guide_stage": "Stage 28.5 — Diagnose failures and approve bounded corrections",
+          "title": "Diagnose Failures and Approve Bounded Corrections",
           "status": "not_started",
           "depends_on": [
             "R28-S04"
+          ],
+          "objective": "Classify every failure by the layer that actually caused it (corpus/expectation, import/ingestion, extraction/chunking, eligibility/authority, planner, retrieval/reranking, generation/grounding, citation/presentation, infrastructure/provider, or honest insufficiency), obtain David's explicit review of proposed corrections before any rerun, and preserve engineering/calibration/held-out split governance and immutable corpus lineage throughout — never weakening an expectation merely to obtain a pass."
+        },
+        {
+          "id": "R28-S06",
+          "guide_stage": "Stage 28.6 — Repeat the exact-commit live evaluation and close the quality gate",
+          "title": "Repeat the Exact-Commit Live Evaluation and Close the Quality Gate",
+          "status": "not_started",
+          "depends_on": [
+            "R28-S05"
+          ],
+          "objective": "Rerun the live evaluation against one clean exact commit after approved corrections, producing an immutable before/after comparison with complete lineage and cost accounting, enforcing the predetermined policy and absolute failures with no hidden retries or discarded cases, reporting retrieval and generation results separately, and documenting honest residual limitations. Committed artefacts must verify provider-free afterward; the gate makes no claim of universal accuracy or production-scale evidence."
+        },
+        {
+          "id": "R28-S07",
+          "guide_stage": "Stage 28.7 — Reconcile corpus format, scale and coverage and assess residual gaps",
+          "title": "Reconcile Corpus Format, Scale and Coverage and Assess Residual Gaps",
+          "status": "not_started",
+          "depends_on": [
+            "R28-S06"
+          ],
+          "objective": "Using the V4 corpus's four governed scopes actually materialised in R28-S03 and evaluated in R28-S04 through R28-S06 — the 300-document primary corpus, the 12-document foreign-tenant pack, the 6-document separate prompt-injection pack (in addition to the 3 prompt-injection documents already inside the primary 300), and the 13 negative/import fixtures — confirm and record each scope's final realised format mix, count, tenant/workspace placement and outcome against what checkpoint 19 promised at freeze, without merging their counts, tenants or outcomes into a single combined figure. Does not plan or fabricate any further expansion toward a document-count target — the approved V4 corpus already exists and was evaluated. Instead honestly assesses residual gaps actually observed during R28-S03 through R28-S06 (format, structure, scale or coverage limitations, unsupported/corrupt cases, unexercised categories) and records each as a reported limitation or an honestly-scoped future session, never as more corpus authoring inside this phase, preserving the calibration/engineering/held-out split throughout."
+        }
+      ],
+      "gate": {
+        "id": "R28-GATE",
+        "title": "Live-provider and Realistic-corpus Quality Evaluation Acceptance Gate",
+        "status": "not_started",
+        "depends_on": [
+          "R28-S07"
+        ],
+        "acceptance_scope": "Evidence exists that: the live protocol was approved before any provider call; the frozen checkpoint 19 V4 corpus source was recorded before evaluation-population authoring or provider use; R28-S02's pre-existing population identity, checksum, counts, split classification and compatibility were verified and bound before its provider call, distinct from and never merged with the V4 evaluation population; the V4 evaluation population was authored, audited and frozen under its own immutable identity and checksum, independently of any Dolved output, entirely within R28-S01, before R28-S04's provider call; the current exact commit was tested; provider identities and costs are recorded; the real ImportBatch path materialised the four V4 corpus scopes (the 300-document primary corpus into the primary evaluation tenant, the 12-document foreign-tenant pack into its own isolated tenant, the 6-document separate prompt-injection pack under its governed security-test boundary, and the 13 negative/import fixtures through their rejection/failure/recovery paths) with separate counts, outcomes and lineage and no cross-scope or cross-tenant leakage; retrieval and generation were evaluated separately and end to end over the primary corpus and the frozen V4 evaluation population; version-aware current/historical/comparison cases were exercised; no held-out boundary was crossed; failures were diagnosed honestly; any correction and rerun carries immutable lineage; committed evaluation artefacts verify provider-free afterward; residual limitations are documented; and no AWS deployment work began. This gate blocks Phase 29's product-wide acceptance and all AWS work. Its deliverable is a current-code, lineage-bound body of live-provider evidence showing how Dolved performs over the frozen V4 realistic, versioned organisational corpus, with failures, costs and limitations reported honestly — supporting an explicit pilot-readiness decision scoped to this corpus and commit, never phrased as guaranteed accuracy, production certification, or proof over an arbitrary tenant's corpus.",
+        "completion_evidence": []
+      }
+    },
+    {
+      "id": "R29",
+      "guide_phase": "Phase 29 — Product-wide Integration and Visual Acceptance",
+      "title": "Product-wide Integration and Visual Acceptance",
+      "guide_start_line": 15474,
+      "guide_end_line": 15555,
+      "status": "not_started",
+      "objective": "Review Dolved as one connected product across the knowledge library, import workflow, bulk operations and governance notifications; correct accumulated design and cross-feature flow issues; obtain the first product-wide visual acceptance.",
+      "sessions": [
+        {
+          "id": "R29-S01",
+          "guide_stage": "Stage 29.1 — Consolidated correction-register review and classification",
+          "title": "Review and Classify the Design-Correction Register",
+          "status": "not_started",
+          "depends_on": [
+            "R28-GATE"
+          ],
+          "objective": "Classify every design-corrections-register.md entry and David's manual list as cosmetic/interaction, ordinary defect, new capability, or architectural change; only the first two are corrected in this phase."
+        },
+        {
+          "id": "R29-S02",
+          "guide_stage": "Stage 29.2 — Cross-product navigation, information hierarchy and flow corrections",
+          "title": "Correct Cross-Product Navigation and Flow",
+          "status": "not_started",
+          "depends_on": [
+            "R29-S01"
+          ]
+        },
+        {
+          "id": "R29-S03",
+          "guide_stage": "Stage 29.3 — Visual-system consistency across existing surfaces",
+          "title": "Correct Visual-System Consistency",
+          "status": "not_started",
+          "depends_on": [
+            "R29-S02"
+          ]
+        },
+        {
+          "id": "R29-S04",
+          "guide_stage": "Stage 29.4 — Responsive, theme, accessibility and complete state review",
+          "title": "Review Responsive, Theme, Accessibility and State Coverage",
+          "status": "not_started",
+          "depends_on": [
+            "R29-S03"
+          ]
+        },
+        {
+          "id": "R29-S05",
+          "guide_stage": "Stage 29.5 — Integrated Playwright journeys and final product-wide sign-off",
+          "title": "Run Integrated Journeys and Obtain Product-Wide Sign-Off",
+          "status": "not_started",
+          "depends_on": [
+            "R29-S04"
           ],
           "requires_visual_review": true,
           "visual_review_policy": "Requires David's explicit, final product-wide visual sign-off — the first sign-off scoped to the connected product rather than one feature or session. This does not retroactively withdraw any earlier staged approval."
         }
       ],
       "gate": {
-        "id": "R28-GATE",
+        "id": "R29-GATE",
         "title": "Product-wide Integration and Visual Acceptance Gate",
         "status": "not_started",
         "depends_on": [
-          "R28-S05"
+          "R29-S05"
         ],
         "acceptance_scope": "Every design-correction-register entry is classified and either corrected, explicitly deferred with a reason, or reallocated to a future session/ADR. Prior per-session visual approvals remain valid staged checkpoints; this gate adds final product-wide sign-off, it does not reopen them.",
         "completion_evidence": []
       }
     },
     {
-      "id": "R29",
-      "guide_phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
+      "id": "R30",
+      "guide_phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
       "title": "CI/CD, AWS Foundation and Staging",
-      "guide_start_line": 15297,
-      "guide_end_line": 15705,
+      "guide_start_line": 15559,
+      "guide_end_line": 15967,
       "status": "not_started",
       "objective": "Make Dolved reproducibly buildable and deployable, then prove the intended AWS architecture in a real staging environment, without claiming production deployment.",
       "sessions": [
         {
-          "id": "R29-S01",
-          "guide_stage": "Stage 29.1 — Add Continuous Integration",
+          "id": "R30-S01",
+          "guide_stage": "Stage 30.1 — Add Continuous Integration",
           "title": "Add Continuous Integration",
-          "guide_start_line": 15305,
-          "guide_end_line": 15343,
+          "guide_start_line": 15576,
+          "guide_end_line": 15614,
           "status": "not_started",
           "objective": "Run quality and test checks automatically for every relevant change.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 29.1 — Add Continuous Integration",
+            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 30.1 — Add Continuous Integration",
             "source_lines": {
-              "start": 15295,
-              "end": 15333
+              "start": 15566,
+              "end": 15604
             }
           },
           "workflow": [
@@ -5478,416 +5570,7 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r29-s01-add-continuous-integration.md",
-            "status": "not_started"
-          },
-          "completion_evidence": [],
-          "depends_on": [
-            "R28-GATE"
-          ]
-        },
-        {
-          "id": "R29-S02",
-          "guide_stage": "Stage 29.2 — Create Production Container Builds",
-          "title": "Create Production Container Builds",
-          "guide_start_line": 15347,
-          "guide_end_line": 15384,
-          "status": "not_started",
-          "objective": "Create minimal, immutable runtime images distinct from development behaviour.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 29.2 — Create Production Container Builds",
-            "source_lines": {
-              "start": 15337,
-              "end": 15374
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r29-s02-create-production-container-builds.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R29-S03",
-          "guide_stage": "Stage 29.3 — AWS Architecture Decision and Infrastructure as Code",
-          "title": "Decide AWS Architecture and Add Infrastructure as Code",
-          "guide_start_line": 15388,
-          "guide_end_line": 15452,
-          "status": "not_started",
-          "objective": "Record the deployment topology, ownership boundaries, cost/resilience trade-offs and scaling path in a binding ADR, then provision infrastructure under infrastructure/terraform accordingly.",
-          "session_mode": "architecture",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 29.3 — AWS Architecture Decision and Infrastructure as Code",
-            "source_lines": {
-              "start": 15378,
-              "end": 15442
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": true,
-          "requires_adr": true,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r29-s03-aws-architecture-decision-and-infrastructure-as-code.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R29-S04",
-          "guide_stage": "Stage 29.4 — Configure Secrets and Environment Management",
-          "title": "Configure Secrets and Environment Management",
-          "guide_start_line": 15456,
-          "guide_end_line": 15489,
-          "status": "not_started",
-          "objective": "Create a secure configuration contract across local, CI, staging and production environments.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 29.4 — Configure Secrets and Environment Management",
-            "source_lines": {
-              "start": 15446,
-              "end": 15479
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r29-s04-configure-secrets-and-environment-management.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R29-S05",
-          "guide_stage": "Stage 29.5 — Add Database Backup and Recovery",
-          "title": "Add Database Backup and Recovery",
-          "guide_start_line": 15493,
-          "guide_end_line": 15516,
-          "status": "not_started",
-          "objective": "Define and test relational database backup and restoration.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 29.5 — Add Database Backup and Recovery",
-            "source_lines": {
-              "start": 15483,
-              "end": 15506
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r29-s05-add-database-backup-and-recovery.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R29-S06",
-          "guide_stage": "Stage 29.6 — Define Vector, Object-Storage and Queue Recovery",
-          "title": "Define Vector, Object-Storage and Queue Recovery",
-          "guide_start_line": 15520,
-          "guide_end_line": 15558,
-          "status": "not_started",
-          "objective": "Define whether vector data is backed up, recreated or both, and record the equivalent recovery posture for object storage and queues.",
-          "session_mode": "architecture",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 29.6 — Define Vector, Object-Storage and Queue Recovery",
-            "source_lines": {
-              "start": 15510,
-              "end": 15548
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": true,
-          "requires_adr": true,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r29-s06-define-vector-object-storage-and-queue-recovery.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R29-S07",
-          "guide_stage": "Stage 29.7 — Perform Security Hardening",
-          "title": "Perform Security Hardening",
-          "guide_start_line": 15562,
-          "guide_end_line": 15608,
-          "status": "not_started",
-          "objective": "Review and harden the complete platform before staging deployment.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 29.7 — Perform Security Hardening",
-            "source_lines": {
-              "start": 15552,
-              "end": 15598
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r29-s07-perform-security-hardening.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R29-S08",
-          "guide_stage": "Stage 29.8 — Create Staging Deployment",
-          "title": "Create Staging Deployment",
-          "guide_start_line": 15612,
-          "guide_end_line": 15642,
-          "status": "not_started",
-          "objective": "Deploy the complete platform to an AWS staging environment that resembles the intended production topology closely enough to provide meaningful evidence.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 29.8 — Create Staging Deployment",
-            "source_lines": {
-              "start": 15602,
-              "end": 15632
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r29-s08-create-staging-deployment.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R29-S09",
-          "guide_stage": "Stage 29.9 — Staging Readiness Review",
-          "title": "Staging Readiness Review",
-          "guide_start_line": 15646,
-          "guide_end_line": 15690,
-          "status": "not_started",
-          "objective": "Perform a formal review confirming staging is genuinely representative and safe to keep running. This review does not decide production go-live.",
-          "session_mode": "architecture",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 29 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 29.9 — Staging Readiness Review",
-            "source_lines": {
-              "start": 15636,
-              "end": 15680
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": true,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r29-s09-staging-readiness-review.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        }
-      ],
-      "gate": {
-        "id": "R29-GATE",
-        "title": "CI/CD, AWS Foundation and Staging Acceptance Gate",
-        "status": "not_started",
-        "depends_on": [
-          "R29-S09"
-        ],
-        "acceptance_scope": "Staging is deployed, tested and reviewed under the Stage 29.3 ADR's own topology. No claim of production deployment, public availability, multi-AZ or high-availability guarantee is made at this gate.",
-        "requirements": [
-          "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
-          "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
-          "Ensure relevant ADRs and the ADR index are current.",
-          "Commit the completed phase.",
-          "Create annotated Git tag phase-29 where required by the guide."
-        ],
-        "completion_evidence": []
-      }
-    },
-    {
-      "id": "R30",
-      "guide_phase": "Phase 30 — Production Deployment and Operational Validation",
-      "title": "Production Deployment and Operational Validation",
-      "guide_start_line": 15709,
-      "guide_end_line": 15910,
-      "status": "not_started",
-      "objective": "Deploy Dolved as an actual production service, subject to the Phase 29 deployment ADR, and prove it can be operated safely — distinguishing deployment success from public launch, high availability and scale-out.",
-      "sessions": [
-        {
-          "id": "R30-S01",
-          "guide_stage": "Stage 30.1 — Production environment, IAM, secrets, domain and ingress",
-          "title": "Establish Production Environment, IAM and Ingress",
-          "guide_start_line": 15712,
-          "guide_end_line": 15735,
-          "status": "not_started",
-          "objective": "Create the production AWS environment under the Phase 29 ADR's topology, isolated from staging: its own IAM roles and secret store, domain, DNS, TLS and ingress.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — Production Deployment and Operational Validation",
-            "stage": "Stage 30.1 — Production environment, IAM, secrets, domain and ingress",
-            "source_lines": {
-              "start": 15702,
-              "end": 15725
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s01-production-environment-iam-and-ingress.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s01-add-continuous-integration.md",
             "status": "not_started"
           },
           "completion_evidence": [],
@@ -5897,20 +5580,20 @@
         },
         {
           "id": "R30-S02",
-          "guide_stage": "Stage 30.2 — Production data infrastructure, migrations and initialisation",
-          "title": "Provision Production Data Infrastructure and Run Initial Migrations",
-          "guide_start_line": 15739,
-          "guide_end_line": 15761,
+          "guide_stage": "Stage 30.2 — Create Production Container Builds",
+          "title": "Create Production Container Builds",
+          "guide_start_line": 15618,
+          "guide_end_line": 15655,
           "status": "not_started",
-          "objective": "Provision production database, object-storage, queue and vector-store infrastructure, and run controlled initial migrations.",
+          "objective": "Create minimal, immutable runtime images distinct from development behaviour.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — Production Deployment and Operational Validation",
-            "stage": "Stage 30.2 — Production data infrastructure, migrations and initialisation",
+            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 30.2 — Create Production Container Builds",
             "source_lines": {
-              "start": 15729,
-              "end": 15751
+              "start": 15608,
+              "end": 15645
             }
           },
           "workflow": [
@@ -5932,26 +5615,110 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s02-production-data-infrastructure-and-migrations.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s02-create-production-container-builds.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R30-S03",
-          "guide_stage": "Stage 30.3 — Deployment, rollback and backup-restoration drill",
-          "title": "Prove Production Deployment, Rollback and Backup Restoration",
-          "guide_start_line": 15765,
-          "guide_end_line": 15787,
+          "guide_stage": "Stage 30.3 — AWS Architecture Decision and Infrastructure as Code",
+          "title": "Decide AWS Architecture and Add Infrastructure as Code",
+          "guide_start_line": 15659,
+          "guide_end_line": 15723,
           "status": "not_started",
-          "objective": "Prove the production deployment and rollback path, and run a genuine backup-restoration drill against production infrastructure.",
+          "objective": "Record the deployment topology, ownership boundaries, cost/resilience trade-offs and scaling path in a binding ADR, then provision infrastructure under infrastructure/terraform accordingly.",
+          "session_mode": "architecture",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 30.3 — AWS Architecture Decision and Infrastructure as Code",
+            "source_lines": {
+              "start": 15649,
+              "end": 15713
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": true,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s03-aws-architecture-decision-and-infrastructure-as-code.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R30-S04",
+          "guide_stage": "Stage 30.4 — Configure Secrets and Environment Management",
+          "title": "Configure Secrets and Environment Management",
+          "guide_start_line": 15727,
+          "guide_end_line": 15760,
+          "status": "not_started",
+          "objective": "Create a secure configuration contract across local, CI, staging and production environments.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — Production Deployment and Operational Validation",
-            "stage": "Stage 30.3 — Deployment, rollback and backup-restoration drill",
+            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 30.4 — Configure Secrets and Environment Management",
             "source_lines": {
-              "start": 15755,
+              "start": 15717,
+              "end": 15750
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s04-configure-secrets-and-environment-management.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R30-S05",
+          "guide_stage": "Stage 30.5 — Add Database Backup and Recovery",
+          "title": "Add Database Backup and Recovery",
+          "guide_start_line": 15764,
+          "guide_end_line": 15787,
+          "status": "not_started",
+          "objective": "Define and test relational database backup and restoration.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 30.5 — Add Database Backup and Recovery",
+            "source_lines": {
+              "start": 15754,
               "end": 15777
             }
           },
@@ -5974,181 +5741,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s03-deployment-rollback-and-backup-restoration-drill.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R30-S04",
-          "guide_stage": "Stage 30.4 — Monitoring, alerting, cost budgets and scaling thresholds",
-          "title": "Add Production Monitoring, Alerting and Cost Controls",
-          "guide_start_line": 15791,
-          "guide_end_line": 15813,
-          "status": "not_started",
-          "objective": "Stand up production observability, alerting, cost budgets and documented scaling thresholds.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — Production Deployment and Operational Validation",
-            "stage": "Stage 30.4 — Monitoring, alerting, cost budgets and scaling thresholds",
-            "source_lines": {
-              "start": 15781,
-              "end": 15803
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s04-monitoring-alerting-and-cost-controls.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        },
-        {
-          "id": "R30-S05",
-          "guide_stage": "Stage 30.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification",
-          "title": "Verify Production Smoke Tests, Provider Behaviour and Tenant Isolation",
-          "guide_start_line": 15817,
-          "guide_end_line": 15842,
-          "status": "not_started",
-          "objective": "Prove production works end-to-end without treating a real customer or an uncontrolled provider bill as acceptable collateral damage; any live-provider call is individually pre-approved.",
-          "session_mode": "implementation",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — Production Deployment and Operational Validation",
-            "stage": "Stage 30.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification",
-            "source_lines": {
-              "start": 15807,
-              "end": 15832
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": false,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s05-production-smoke-provider-and-tenant-isolation-verification.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s05-add-database-backup-and-recovery.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R30-S06",
-          "guide_stage": "Stage 30.6 — Incident readiness and final go/no-go review",
-          "title": "Complete Incident Readiness and Final Go/No-Go Review",
-          "guide_start_line": 15846,
-          "guide_end_line": 15894,
+          "guide_stage": "Stage 30.6 — Define Vector, Object-Storage and Queue Recovery",
+          "title": "Define Vector, Object-Storage and Queue Recovery",
+          "guide_start_line": 15791,
+          "guide_end_line": 15829,
           "status": "not_started",
-          "objective": "Confirm operational readiness to run the service, and record a formal go/no-go decision distinguishing deployment success from any broader claim of public launch, high availability or scale-out.",
+          "objective": "Define whether vector data is backed up, recreated or both, and record the equivalent recovery posture for object storage and queues.",
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — Production Deployment and Operational Validation",
-            "stage": "Stage 30.6 — Incident readiness and final go/no-go review",
+            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 30.6 — Define Vector, Object-Storage and Queue Recovery",
             "source_lines": {
-              "start": 15836,
-              "end": 15884
-            }
-          },
-          "workflow": [
-            "Read the current tasks.json session.",
-            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
-            "Agree a bounded Codex implementation brief.",
-            "Implement with Codex in teaching mode.",
-            "Run the session verification and repository-wide checks required by the guide.",
-            "Return to Ralph for review, questions and Important Takeaways.",
-            "Apply any agreed corrections with Codex.",
-            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
-            "Create or update an ADR only when the session makes a durable architecture decision.",
-            "Write the factual session journal entry.",
-            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
-            "Commit the verified session or phase boundary.",
-            "Mark the session complete and advance current_session."
-          ],
-          "requires_architecture_review": true,
-          "requires_adr": false,
-          "journal": {
-            "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s06-incident-readiness-and-go-no-go-review.md",
-            "status": "not_started"
-          },
-          "completion_evidence": []
-        }
-      ],
-      "gate": {
-        "id": "R30-GATE",
-        "title": "Production Deployment and Operational Validation Acceptance Gate",
-        "status": "not_started",
-        "depends_on": [
-          "R30-S06"
-        ],
-        "acceptance_scope": "Dolved is genuinely deployed to production with verified deployment, rollback, backup-restoration, monitoring and security evidence. No claim of multi-AZ, zero downtime, disaster recovery, production-scale capacity or public customer launch is made beyond what a session actually proved.",
-        "requirements": [
-          "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
-          "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
-          "Ensure relevant ADRs and the ADR index are current.",
-          "Commit the completed phase.",
-          "Create annotated Git tag phase-30 where required by the guide."
-        ],
-        "completion_evidence": []
-      }
-    },
-    {
-      "id": "R31",
-      "guide_phase": "Phase 31 — Documentation and Demonstration Readiness",
-      "title": "Documentation and Demonstration Readiness",
-      "guide_start_line": 15914,
-      "guide_end_line": 16032,
-      "status": "not_started",
-      "objective": "Document the platform clearly and provide a reproducible demonstration, reflecting the actual final product and deployed architecture from Phases 28-30 rather than an earlier local-only state.",
-      "sessions": [
-        {
-          "id": "R31-S01",
-          "guide_stage": "Stage 31.1 — Write Architecture Documentation",
-          "title": "Write Architecture Documentation",
-          "guide_start_line": 15918,
-          "guide_end_line": 15953,
-          "status": "not_started",
-          "objective": "Explain the system clearly to reviewers, collaborators, clients and future contributors.",
-          "session_mode": "architecture",
-          "implementation_guide_reference": {
-            "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 31 — Documentation and Demonstration Readiness",
-            "stage": "Stage 31.1 — Write Architecture Documentation",
-            "source_lines": {
-              "start": 15908,
-              "end": 15943
+              "start": 15781,
+              "end": 15819
             }
           },
           "workflow": [
@@ -6170,7 +5783,203 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r31-s01-write-architecture-documentation.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s06-define-vector-object-storage-and-queue-recovery.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R30-S07",
+          "guide_stage": "Stage 30.7 — Perform Security Hardening",
+          "title": "Perform Security Hardening",
+          "guide_start_line": 15833,
+          "guide_end_line": 15879,
+          "status": "not_started",
+          "objective": "Review and harden the complete platform before staging deployment.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 30.7 — Perform Security Hardening",
+            "source_lines": {
+              "start": 15823,
+              "end": 15869
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s07-perform-security-hardening.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R30-S08",
+          "guide_stage": "Stage 30.8 — Create Staging Deployment",
+          "title": "Create Staging Deployment",
+          "guide_start_line": 15883,
+          "guide_end_line": 15913,
+          "status": "not_started",
+          "objective": "Deploy the complete platform to an AWS staging environment that resembles the intended production topology closely enough to provide meaningful evidence.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 30.8 — Create Staging Deployment",
+            "source_lines": {
+              "start": 15873,
+              "end": 15903
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s08-create-staging-deployment.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R30-S09",
+          "guide_stage": "Stage 30.9 — Staging Readiness Review",
+          "title": "Staging Readiness Review",
+          "guide_start_line": 15917,
+          "guide_end_line": 15961,
+          "status": "not_started",
+          "objective": "Perform a formal review confirming staging is genuinely representative and safe to keep running. This review does not decide production go-live.",
+          "session_mode": "architecture",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 30.9 — Staging Readiness Review",
+            "source_lines": {
+              "start": 15907,
+              "end": 15951
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s09-staging-readiness-review.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        }
+      ],
+      "gate": {
+        "id": "R30-GATE",
+        "title": "CI/CD, AWS Foundation and Staging Acceptance Gate",
+        "status": "not_started",
+        "depends_on": [
+          "R30-S09"
+        ],
+        "acceptance_scope": "Staging is deployed, tested and reviewed under the Stage 30.3 ADR's own topology. No claim of production deployment, public availability, multi-AZ or high-availability guarantee is made at this gate.",
+        "requirements": [
+          "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
+          "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
+          "Ensure relevant ADRs and the ADR index are current.",
+          "Commit the completed phase.",
+          "Create annotated Git tag phase-30 where required by the guide."
+        ],
+        "completion_evidence": []
+      }
+    },
+    {
+      "id": "R31",
+      "guide_phase": "Phase 31 — Production Deployment and Operational Validation",
+      "title": "Production Deployment and Operational Validation",
+      "guide_start_line": 15971,
+      "guide_end_line": 16172,
+      "status": "not_started",
+      "objective": "Deploy Dolved as an actual production service, subject to the Phase 30 deployment ADR, and prove it can be operated safely — distinguishing deployment success from public launch, high availability and scale-out.",
+      "sessions": [
+        {
+          "id": "R31-S01",
+          "guide_stage": "Stage 31.1 — Production environment, IAM, secrets, domain and ingress",
+          "title": "Establish Production Environment, IAM and Ingress",
+          "guide_start_line": 15983,
+          "guide_end_line": 16006,
+          "status": "not_started",
+          "objective": "Create the production AWS environment under the Phase 30 ADR's topology, isolated from staging: its own IAM roles and secret store, domain, DNS, TLS and ingress.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 31 — Production Deployment and Operational Validation",
+            "stage": "Stage 31.1 — Production environment, IAM, secrets, domain and ingress",
+            "source_lines": {
+              "start": 15973,
+              "end": 15996
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r31-s01-production-environment-iam-and-ingress.md",
             "status": "not_started"
           },
           "completion_evidence": [],
@@ -6180,20 +5989,20 @@
         },
         {
           "id": "R31-S02",
-          "guide_stage": "Stage 31.2 — Create Demonstration Dataset and Scenario",
-          "title": "Create Demonstration Dataset and Scenario",
-          "guide_start_line": 15957,
-          "guide_end_line": 15980,
+          "guide_stage": "Stage 31.2 — Production data infrastructure, migrations and initialisation",
+          "title": "Provision Production Data Infrastructure and Run Initial Migrations",
+          "guide_start_line": 16010,
+          "guide_end_line": 16032,
           "status": "not_started",
-          "objective": "Provide a safe, repeatable demonstration of ingestion, retrieval, citations and tenant isolation.",
+          "objective": "Provision production database, object-storage, queue and vector-store infrastructure, and run controlled initial migrations.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 31 — Documentation and Demonstration Readiness",
-            "stage": "Stage 31.2 — Create Demonstration Dataset and Scenario",
+            "phase": "Phase 31 — Production Deployment and Operational Validation",
+            "stage": "Stage 31.2 — Production data infrastructure, migrations and initialisation",
             "source_lines": {
-              "start": 15947,
-              "end": 15970
+              "start": 16000,
+              "end": 16022
             }
           },
           "workflow": [
@@ -6215,27 +6024,27 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r31-s02-create-demonstration-dataset-and-scenario.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r31-s02-production-data-infrastructure-and-migrations.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
           "id": "R31-S03",
-          "guide_stage": "Stage 31.3 — Finalise Repository README",
-          "title": "Finalise Repository README",
-          "guide_start_line": 15984,
-          "guide_end_line": 16023,
+          "guide_stage": "Stage 31.3 — Deployment, rollback and backup-restoration drill",
+          "title": "Prove Production Deployment, Rollback and Backup Restoration",
+          "guide_start_line": 16036,
+          "guide_end_line": 16058,
           "status": "not_started",
-          "objective": "Make the root README an accurate entry point for technical reviewers.",
+          "objective": "Prove the production deployment and rollback path, and run a genuine backup-restoration drill against production infrastructure.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 31 — Documentation and Demonstration Readiness",
-            "stage": "Stage 31.3 — Finalise Repository README",
+            "phase": "Phase 31 — Production Deployment and Operational Validation",
+            "stage": "Stage 31.3 — Deployment, rollback and backup-restoration drill",
             "source_lines": {
-              "start": 15974,
-              "end": 16013
+              "start": 16026,
+              "end": 16048
             }
           },
           "workflow": [
@@ -6257,7 +6066,133 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r31-s03-finalise-repository-readme.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r31-s03-deployment-rollback-and-backup-restoration-drill.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R31-S04",
+          "guide_stage": "Stage 31.4 — Monitoring, alerting, cost budgets and scaling thresholds",
+          "title": "Add Production Monitoring, Alerting and Cost Controls",
+          "guide_start_line": 16062,
+          "guide_end_line": 16084,
+          "status": "not_started",
+          "objective": "Stand up production observability, alerting, cost budgets and documented scaling thresholds.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 31 — Production Deployment and Operational Validation",
+            "stage": "Stage 31.4 — Monitoring, alerting, cost budgets and scaling thresholds",
+            "source_lines": {
+              "start": 16052,
+              "end": 16074
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r31-s04-monitoring-alerting-and-cost-controls.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R31-S05",
+          "guide_stage": "Stage 31.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification",
+          "title": "Verify Production Smoke Tests, Provider Behaviour and Tenant Isolation",
+          "guide_start_line": 16088,
+          "guide_end_line": 16113,
+          "status": "not_started",
+          "objective": "Prove production works end-to-end without treating a real customer or an uncontrolled provider bill as acceptable collateral damage; any live-provider call is individually pre-approved.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 31 — Production Deployment and Operational Validation",
+            "stage": "Stage 31.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification",
+            "source_lines": {
+              "start": 16078,
+              "end": 16103
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r31-s05-production-smoke-provider-and-tenant-isolation-verification.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R31-S06",
+          "guide_stage": "Stage 31.6 — Incident readiness and final go/no-go review",
+          "title": "Complete Incident Readiness and Final Go/No-Go Review",
+          "guide_start_line": 16117,
+          "guide_end_line": 16165,
+          "status": "not_started",
+          "objective": "Confirm operational readiness to run the service, and record a formal go/no-go decision distinguishing deployment success from any broader claim of public launch, high availability or scale-out.",
+          "session_mode": "architecture",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 31 — Production Deployment and Operational Validation",
+            "stage": "Stage 31.6 — Incident readiness and final go/no-go review",
+            "source_lines": {
+              "start": 16107,
+              "end": 16155
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r31-s06-incident-readiness-and-go-no-go-review.md",
             "status": "not_started"
           },
           "completion_evidence": []
@@ -6265,17 +6200,174 @@
       ],
       "gate": {
         "id": "R31-GATE",
-        "title": "Documentation and Demonstration Readiness Acceptance Gate",
+        "title": "Production Deployment and Operational Validation Acceptance Gate",
         "status": "not_started",
         "depends_on": [
-          "R31-S03"
+          "R31-S06"
         ],
+        "acceptance_scope": "Dolved is genuinely deployed to production with verified deployment, rollback, backup-restoration, monitoring and security evidence. No claim of multi-AZ, zero downtime, disaster recovery, production-scale capacity or public customer launch is made beyond what a session actually proved.",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
           "Ensure relevant ADRs and the ADR index are current.",
           "Commit the completed phase.",
           "Create annotated Git tag phase-31 where required by the guide."
+        ],
+        "completion_evidence": []
+      }
+    },
+    {
+      "id": "R32",
+      "guide_phase": "Phase 32 — Documentation and Demonstration Readiness",
+      "title": "Documentation and Demonstration Readiness",
+      "guide_start_line": 16176,
+      "guide_end_line": 16294,
+      "status": "not_started",
+      "objective": "Document the platform clearly and provide a reproducible demonstration, reflecting the actual final product and deployed architecture from Phases 29-31 rather than an earlier local-only state.",
+      "sessions": [
+        {
+          "id": "R32-S01",
+          "guide_stage": "Stage 32.1 — Write Architecture Documentation",
+          "title": "Write Architecture Documentation",
+          "guide_start_line": 16189,
+          "guide_end_line": 16224,
+          "status": "not_started",
+          "objective": "Explain the system clearly to reviewers, collaborators, clients and future contributors.",
+          "session_mode": "architecture",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 32 — Documentation and Demonstration Readiness",
+            "stage": "Stage 32.1 — Write Architecture Documentation",
+            "source_lines": {
+              "start": 16179,
+              "end": 16214
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": true,
+          "requires_adr": true,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s01-write-architecture-documentation.md",
+            "status": "not_started"
+          },
+          "completion_evidence": [],
+          "depends_on": [
+            "R31-GATE"
+          ]
+        },
+        {
+          "id": "R32-S02",
+          "guide_stage": "Stage 32.2 — Create Demonstration Dataset and Scenario",
+          "title": "Create Demonstration Dataset and Scenario",
+          "guide_start_line": 16228,
+          "guide_end_line": 16251,
+          "status": "not_started",
+          "objective": "Provide a safe, repeatable demonstration of ingestion, retrieval, citations and tenant isolation.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 32 — Documentation and Demonstration Readiness",
+            "stage": "Stage 32.2 — Create Demonstration Dataset and Scenario",
+            "source_lines": {
+              "start": 16218,
+              "end": 16241
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s02-create-demonstration-dataset-and-scenario.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R32-S03",
+          "guide_stage": "Stage 32.3 — Finalise Repository README",
+          "title": "Finalise Repository README",
+          "guide_start_line": 16255,
+          "guide_end_line": 16294,
+          "status": "not_started",
+          "objective": "Make the root README an accurate entry point for technical reviewers.",
+          "session_mode": "implementation",
+          "implementation_guide_reference": {
+            "document": "IMPLEMENTATION_GUIDE.md",
+            "phase": "Phase 32 — Documentation and Demonstration Readiness",
+            "stage": "Stage 32.3 — Finalise Repository README",
+            "source_lines": {
+              "start": 16245,
+              "end": 16284
+            }
+          },
+          "workflow": [
+            "Read the current tasks.json session.",
+            "Discuss architecture, concepts, alternatives and trade-offs with Ralph.",
+            "Agree a bounded Codex implementation brief.",
+            "Implement with Codex in teaching mode.",
+            "Run the session verification and repository-wide checks required by the guide.",
+            "Return to Ralph for review, questions and Important Takeaways.",
+            "Apply any agreed corrections with Codex.",
+            "Update IMPLEMENTATION_GUIDE.md with actual commands, changes and evidence.",
+            "Create or update an ADR only when the session makes a durable architecture decision.",
+            "Write the factual session journal entry.",
+            "Update PROJECT_JOURNEY.md with a plain-language account of what changed and why, when this session completes a stage or phase boundary worth telling that story about. Skip for minor or purely internal sessions.",
+            "Commit the verified session or phase boundary.",
+            "Mark the session complete and advance current_session."
+          ],
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s03-finalise-repository-readme.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        }
+      ],
+      "gate": {
+        "id": "R32-GATE",
+        "title": "Documentation and Demonstration Readiness Acceptance Gate",
+        "status": "not_started",
+        "depends_on": [
+          "R32-S03"
+        ],
+        "requirements": [
+          "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
+          "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
+          "Ensure relevant ADRs and the ADR index are current.",
+          "Commit the completed phase.",
+          "Create annotated Git tag phase-32 where required by the guide."
         ],
         "completion_evidence": []
       }
