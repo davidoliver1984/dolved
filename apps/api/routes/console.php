@@ -6,6 +6,7 @@ use App\Actions\Documents\DetectStuckOrFailedDocumentDeletions;
 use App\Actions\Documents\PurgeExpiredDocumentGovernanceNotificationData;
 use App\Actions\Documents\ReclaimExpiredDocumentGovernanceEmailAttempts;
 use App\Actions\Documents\ScanDocumentGovernanceRemindersAndAuthorityTransitions;
+use App\Actions\Documents\SealDueDocumentGovernanceEmailDigests;
 use App\Actions\Imports\ReconcileExpiredImportPreflights;
 use App\Actions\Telemetry\RecordOperationalSnapshot;
 use App\Actions\Workspaces\ExpireWorkspaceInvitations;
@@ -80,6 +81,14 @@ Artisan::command('governance:scan-reminders-and-authority-transitions', function
 })->purpose('Record idempotent review reminders and authority-transition occurrences');
 
 Schedule::command('governance:scan-reminders-and-authority-transitions')->dailyAt('00:15')->withoutOverlapping();
+
+Artisan::command('governance:seal-email-digests', function (SealDueDocumentGovernanceEmailDigests $seal): void {
+    $this->info("Sealed and dispatched {$seal->handle()} due governance email digests.");
+})->purpose('Seal due governance email digests and dispatch their immutable envelopes');
+
+Schedule::command('governance:seal-email-digests')
+    ->dailyAt((string) config('documents.governance_digest_cutoff_utc', '16:00'))
+    ->withoutOverlapping();
 
 Artisan::command('governance:reclaim-email-attempts', function (ReclaimExpiredDocumentGovernanceEmailAttempts $reclaim): void {
     $this->info("Reclaimed {$reclaim->handle()} expired governance email attempts.");

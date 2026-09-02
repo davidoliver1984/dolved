@@ -34,6 +34,7 @@ final class ClaimDocumentGovernanceEmailEnvelope
         return DB::transaction(function () use ($envelopeId): ?array {
             $envelope = DocumentGovernanceEmailEnvelope::query()->lockForUpdate()->findOrFail($envelopeId);
             if ($envelope->assembly_status !== GovernanceEmailEnvelopeStatus::Ready
+                || ($envelope->next_attempt_at !== null && $envelope->next_attempt_at->isFuture())
                 || DocumentGovernanceEmailEnvelopeAttempt::query()->where('envelope_id', $envelope->id)->where('status', 'open')->exists()) {
                 return null;
             }

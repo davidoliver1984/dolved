@@ -5,17 +5,23 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Actions\Documents\AssembleDocumentGovernanceEmailEnvelope;
+use App\Actions\Documents\BuildDocumentGovernanceEmail;
 use App\Actions\Documents\ClaimDocumentGovernanceEmailEnvelope;
 use App\Actions\Documents\CompleteDocumentGovernanceEmailAttempt;
 use App\Actions\Documents\ReclaimExpiredDocumentGovernanceEmailAttempts;
 use App\Actions\Documents\ScanDocumentGovernanceRemindersAndAuthorityTransitions;
 use App\Actions\Documents\SealDocumentGovernanceEmailEnvelope;
+use App\Actions\Documents\SealDueDocumentGovernanceEmailDigests;
 use App\Actions\Documents\VerifyDocumentGovernanceEmailAttempt;
+use App\Contracts\Documents\DocumentGovernanceEmailTransport;
 use App\Enums\DocumentGovernanceEventKey;
 use App\Enums\DocumentGovernanceStatus;
 use App\Enums\DocumentStatus;
 use App\Enums\GovernanceEmailAttemptStatus;
 use App\Enums\GovernanceEmailEnvelopeStatus;
+use App\Exceptions\GovernanceEmailTransportException;
+use App\Jobs\DispatchDocumentGovernanceEmailEnvelope;
+use App\Mail\DocumentGovernanceMail;
 use App\Models\Document;
 use App\Models\DocumentFamily;
 use App\Models\DocumentGovernanceEmailEnvelope;
@@ -132,6 +138,152 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         $this->assertSame(GovernanceEmailAttemptStatus::FailedPermanent, $attempt->refresh()->status);
         $this->assertSame(GovernanceEmailEnvelopeStatus::FailedPermanent, $envelope->refresh()->assembly_status);
         $this->assertSame('rendering_integrity_failure', $envelope->terminal_failure_category);
+    }
+
+    public function test_immediate_email_uses_dolved_fallback_safe_copy_and_a_live_allowlisted_route(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $document = Document::factory()->for($workspace)->create();
+        $notification = $this->notification($owner, $workspace, DocumentGovernanceEventKey::ImportBatchCompleted);
+        $notification->forceFill([
+            'target_kind' => 'document',
+            'target_public_id' => $document->public_id,
+            'target_display_label' => '<script>unsafe-file.pdf</script>',
+            'parameters' => ['storage_url' => 'https://storage.invalid/signed-secret'],
+        ])->save();
+        $envelope = app(AssembleDocumentGovernanceEmailEnvelope::class)->handle($notification);
+        $claim = app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+
+        $mail = app(BuildDocumentGovernanceEmail::class)->handle($claim['envelope']->refresh());
+        $html = $mail->render();
+        $text = view('mail.governance.text', get_object_vars($mail))->render();
+
+        $this->assertStringContainsString('Dolved', $html);
+        $this->assertStringContainsString($workspace->name, $html);
+        $this->assertStringContainsString("/app/workspaces/{$workspace->public_id}/documents/{$document->public_id}", $html);
+        $this->assertStringContainsString('Manage notification preferences', $html);
+        $this->assertStringContainsString('Import complete', $text);
+        $this->assertStringNotContainsString('unsafe-file.pdf', $html);
+        $this->assertStringNotContainsString('storage.invalid', $html);
+        $this->assertSame($envelope->envelope_key, $mail->idempotencyKey);
+    }
+
+    public function test_fenced_dispatch_records_transport_acceptance_once(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $document = Document::factory()->for($workspace)->create();
+        $notification = $this->notification($owner, $workspace, DocumentGovernanceEventKey::ImportBatchCompleted);
+        $notification->forceFill(['target_kind' => 'document', 'target_public_id' => $document->public_id])->save();
+        $envelope = app(AssembleDocumentGovernanceEmailEnvelope::class)->handle($notification);
+        $transport = new class implements DocumentGovernanceEmailTransport
+        {
+            public ?DocumentGovernanceMail $mail = null;
+
+            public function send(User $recipient, DocumentGovernanceMail $mail): string
+            {
+                $this->mail = $mail;
+
+                return 'provider-message-1';
+            }
+        };
+        $this->app->instance(DocumentGovernanceEmailTransport::class, $transport);
+
+        $this->app->call([new DispatchDocumentGovernanceEmailEnvelope($envelope->id), 'handle']);
+        $this->assertNotNull($transport->mail);
+        $this->assertSame(GovernanceEmailEnvelopeStatus::Sent, $envelope->refresh()->assembly_status);
+        $this->assertSame('provider-message-1', $envelope->provider_message_id);
+        $this->assertDatabaseHas('document_governance_email_envelope_attempts', [
+            'envelope_id' => $envelope->id,
+            'generation' => 1,
+            'status' => GovernanceEmailAttemptStatus::Accepted->value,
+            'provider_message_id' => 'provider-message-1',
+        ]);
+
+        $this->app->call([new DispatchDocumentGovernanceEmailEnvelope($envelope->id), 'handle']);
+        $this->assertDatabaseCount('document_governance_email_envelope_attempts', 1);
+    }
+
+    public function test_retryable_transport_failure_is_recorded_without_retry_to_success(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $document = Document::factory()->for($workspace)->create();
+        $notification = $this->notification($owner, $workspace, DocumentGovernanceEventKey::ImportBatchCompleted);
+        $notification->forceFill(['target_kind' => 'document', 'target_public_id' => $document->public_id])->save();
+        $envelope = app(AssembleDocumentGovernanceEmailEnvelope::class)->handle($notification);
+        $transport = new class implements DocumentGovernanceEmailTransport
+        {
+            public int $calls = 0;
+
+            public function send(User $recipient, DocumentGovernanceMail $mail): string
+            {
+                $this->calls++;
+                throw new GovernanceEmailTransportException('temporary refusal');
+            }
+        };
+        $this->app->instance(DocumentGovernanceEmailTransport::class, $transport);
+
+        try {
+            $this->app->call([new DispatchDocumentGovernanceEmailEnvelope($envelope->id), 'handle']);
+            $this->fail('The retryable transport failure should escape to the queue.');
+        } catch (GovernanceEmailTransportException) {
+            $this->assertSame(1, $transport->calls);
+        }
+
+        $this->assertSame(GovernanceEmailEnvelopeStatus::Ready, $envelope->refresh()->assembly_status);
+        $this->assertNotNull($envelope->next_attempt_at);
+        $this->assertDatabaseHas('document_governance_email_envelope_attempts', [
+            'envelope_id' => $envelope->id,
+            'status' => GovernanceEmailAttemptStatus::FailedRetryable->value,
+            'failure_category' => 'mail_transport_failure',
+        ]);
+        $this->assertNull(app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id));
+    }
+
+    public function test_unknown_template_identity_fails_permanently_before_transport(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $envelope = app(AssembleDocumentGovernanceEmailEnvelope::class)
+            ->handle($this->notification($owner, $workspace, DocumentGovernanceEventKey::ImportBatchCompleted));
+        DocumentGovernanceEmailEnvelope::query()->whereKey($envelope->id)->update(['template_version' => 99]);
+        $transport = new class implements DocumentGovernanceEmailTransport
+        {
+            public int $calls = 0;
+
+            public function send(User $recipient, DocumentGovernanceMail $mail): string
+            {
+                $this->calls++;
+
+                return 'must-not-send';
+            }
+        };
+        $this->app->instance(DocumentGovernanceEmailTransport::class, $transport);
+
+        $this->app->call([new DispatchDocumentGovernanceEmailEnvelope($envelope->id), 'handle']);
+
+        $this->assertSame(0, $transport->calls);
+        $this->assertSame(GovernanceEmailEnvelopeStatus::FailedPermanent, $envelope->refresh()->assembly_status);
+        $this->assertSame('rendering_or_dispatch_contract_failure', $envelope->last_error);
+    }
+
+    public function test_due_digest_is_sealed_once_and_queued_with_ordered_safe_members(): void
+    {
+        Queue::fake();
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-09-02 16:00:00', 'UTC'));
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $assemble = app(AssembleDocumentGovernanceEmailEnvelope::class);
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-09-02 10:00:00', 'UTC'));
+        $envelope = $assemble->handle($this->notification($owner, $workspace, DocumentGovernanceEventKey::GovernanceReviewDueSoon));
+        $assemble->handle($this->notification($owner, $workspace, DocumentGovernanceEventKey::GovernanceReviewOverdue));
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-09-02 16:00:00', 'UTC'));
+
+        $this->assertSame(1, app(SealDueDocumentGovernanceEmailDigests::class)->handle());
+        $this->assertSame(0, app(SealDueDocumentGovernanceEmailDigests::class)->handle());
+        Queue::assertPushed(DispatchDocumentGovernanceEmailEnvelope::class, 1);
+        $claim = app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+        $mail = app(BuildDocumentGovernanceEmail::class)->handle($claim['envelope']->refresh());
+        $this->assertSame('Document reviews need attention', $mail->heading);
+        $this->assertSame(['Review due soon', 'Review overdue'], array_column($mail->items, 'title'));
+        $this->assertStringContainsString('/documents/attention', $mail->actionUrl);
     }
 
     public function test_preferences_are_scoped_and_workspace_settings_require_an_administrator(): void

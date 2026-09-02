@@ -26,4 +26,9 @@ final class DocumentGovernanceEmailEnvelopeMember extends Model
     {
         return $this->hasOne(DocumentGovernanceEmailEnvelopeMemberDecision::class, 'envelope_member_id');
     }
+
+    public function notification(): BelongsTo
+    {
+        return $this->belongsTo(DocumentGovernanceNotification::class, 'notification_id');
+    }
 }

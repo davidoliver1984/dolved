@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Actions\Documents\AssembleDocumentGovernanceEmailEnvelope;
+use App\Enums\GovernanceEmailEnvelopeStatus;
 use App\Models\DocumentGovernanceNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,6 +31,9 @@ final class DispatchDocumentGovernanceEmail implements ShouldQueue
 
     public function handle(AssembleDocumentGovernanceEmailEnvelope $assemble): void
     {
-        $assemble->handle(DocumentGovernanceNotification::query()->findOrFail($this->notificationId));
+        $envelope = $assemble->handle(DocumentGovernanceNotification::query()->findOrFail($this->notificationId));
+        if ($envelope?->assembly_status === GovernanceEmailEnvelopeStatus::Ready) {
+            DispatchDocumentGovernanceEmailEnvelope::dispatch($envelope->id);
+        }
     }
 }
