@@ -8,6 +8,7 @@ import type {
   DocumentFamilyPage,
   DocumentMetadata,
   DocumentVersionHistory,
+  GovernanceActionableWork,
   PlatformOperationsSnapshot,
   SavedView,
   User,
@@ -215,6 +216,15 @@ export async function workspaceStarterQuestions(workspacePublicId: string): Prom
   const response = await serverFetch(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/starter-questions`);
   if (!response.ok) throw new Error("Starter questions are unavailable.");
   const payload = (await response.json()) as { data: StarterQuestion[] };
+  return payload.data;
+}
+
+export async function workspaceGovernanceActionableWork(workspacePublicId: string): Promise<GovernanceActionableWork> {
+  const response = await serverFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/governance-actionable-work`,
+  );
+  if (!response.ok) throw new Error("Governance work is unavailable.");
+  const payload = (await response.json()) as { data: GovernanceActionableWork };
   return payload.data;
 }
 

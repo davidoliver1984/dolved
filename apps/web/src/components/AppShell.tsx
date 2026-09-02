@@ -31,6 +31,7 @@ import type { User, Workspace } from "@/lib/api";
 import { listConversations, type Conversation } from "@/lib/conversations";
 import { cn } from "@/lib/utils";
 import { LogoutButton } from "@/components/LogoutButton";
+import { GovernanceInbox } from "@/components/GovernanceInbox";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -216,6 +217,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
               <DropdownMenuItem asChild><LogoutButton className="w-full text-left" /></DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <GovernanceInbox workspacePublicId={workspaceId} />
           <ThemeToggle />
         </div>
       </div>

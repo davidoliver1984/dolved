@@ -6,6 +6,7 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DeletedDocumentFamilyController;
 use App\Http\Controllers\DocumentAdministrationController;
 use App\Http\Controllers\DocumentContentController;
+use App\Http\Controllers\DocumentGovernanceNotificationController;
 use App\Http\Controllers\DocumentFamilyDeletionController;
 use App\Http\Controllers\DocumentIngestionController;
 use App\Http\Controllers\DocumentLibraryController;
@@ -154,6 +155,10 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::delete('/workspaces/{workspacePublicId}/membership', [WorkspaceAdministrationController::class, 'leave']);
     Route::post('/workspace-invitations/accept', [WorkspaceAdministrationController::class, 'accept']);
     Route::get('/workspaces/{workspacePublicId}/documents', [DocumentAdministrationController::class, 'index']);
+    Route::get('/workspaces/{workspacePublicId}/governance-notifications', [DocumentGovernanceNotificationController::class, 'index']);
+    Route::get('/workspaces/{workspacePublicId}/governance-actionable-work', [DocumentGovernanceNotificationController::class, 'actionableWork']);
+    Route::post('/workspaces/{workspacePublicId}/governance-notifications/{notificationPublicId}/read', [DocumentGovernanceNotificationController::class, 'read']);
+    Route::post('/workspaces/{workspacePublicId}/governance-notifications/{notificationPublicId}/dismiss', [DocumentGovernanceNotificationController::class, 'dismiss']);
     Route::post('/workspaces/{workspacePublicId}/bulk-operations', [BulkOperationController::class, 'store']);
     Route::get('/workspaces/{workspacePublicId}/bulk-operations', [BulkOperationController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}/bulk-operations/{operationPublicId}', [BulkOperationController::class, 'show']);

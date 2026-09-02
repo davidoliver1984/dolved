@@ -101,6 +101,52 @@ export type Workspace = {
   role: WorkspaceRole;
 };
 
+export type GovernanceNotification = {
+  public_id: string;
+  title: string;
+  message: string;
+  severity: "info" | "action_required" | "warning";
+  target_label: string | null;
+  target_route: string | null;
+  read_at: string | null;
+  dismissed_at: string | null;
+  created_at: string;
+};
+
+export type GovernanceNotificationPage = {
+  data: GovernanceNotification[];
+  meta: { unread_count: number; next_cursor: string | null };
+};
+
+export type GovernanceActionableWork = {
+  awaiting_approval: number;
+  imports_processing: number;
+  imports_warning: number;
+  scheduled_changes: number;
+  review_due_soon: number;
+  review_overdue: number;
+};
+
+export async function governanceNotifications(workspacePublicId: string): Promise<GovernanceNotificationPage> {
+  return apiFetch<GovernanceNotificationPage>(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/governance-notifications`,
+  );
+}
+
+export async function markGovernanceNotificationRead(workspacePublicId: string, notificationPublicId: string): Promise<void> {
+  await apiFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/governance-notifications/${encodeURIComponent(notificationPublicId)}/read`,
+    { method: "POST" },
+  );
+}
+
+export async function dismissGovernanceNotification(workspacePublicId: string, notificationPublicId: string): Promise<void> {
+  await apiFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/governance-notifications/${encodeURIComponent(notificationPublicId)}/dismiss`,
+    { method: "POST" },
+  );
+}
+
 export type WorkspaceMembership = {
   public_id: string;
   user: { name: string; email: string };
