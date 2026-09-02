@@ -185,6 +185,69 @@ SELECT format(
     :'application_schema'
 )
 \gexec
+
+-- ADR-0036 protected-table reconciliation must run after every broad/default
+-- grant pass. PostgreSQL privileges are additive: omitting a column grant does
+-- not neutralise a table-level grant.
+-- Preserve ADR-0035's existing protected bulk boundary for the same reason.
+SELECT format(
+    'REVOKE INSERT, UPDATE, DELETE ON TABLE %1$I.bulk_operations, %1$I.bulk_operation_items, %1$I.bulk_operation_item_attempts, %1$I.bulk_operation_item_subordinate_transitions, %1$I.bulk_operation_audit_events FROM rag_platform_app',
+    :'application_schema'
+)
+\gexec
+SELECT format('GRANT SELECT, INSERT ON TABLE %I.bulk_operations TO rag_platform_app', :'application_schema')
+\gexec
+SELECT format(
+    'GRANT UPDATE (status, membership_digest, confirmed_at, cancellation_requested_at, updated_at) ON TABLE %I.bulk_operations TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+SELECT format(
+    'GRANT SELECT ON TABLE %1$I.bulk_operation_items, %1$I.bulk_operation_item_attempts, %1$I.bulk_operation_item_subordinate_transitions TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+SELECT format(
+    'GRANT INSERT (bulk_operation_id, workspace_id, operation_type, ordinal, target_family_id, target_document_id, target_import_item_id, target_kind, target_public_id, target_display_label, expected_state_snapshot, eligibility_status, exclusion_reason, execution_status, terminal_reason, started_at, completed_at, subordinate_kind, subordinate_identity_kind, subordinate_identity_value, subordinate_awaited_since, result_identity, audit_event_id, incorporated_attempt_generation, created_at, updated_at) ON TABLE %I.bulk_operation_items TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+SELECT format(
+    'GRANT UPDATE (execution_status, terminal_reason, started_at, completed_at, subordinate_kind, subordinate_identity_kind, subordinate_identity_value, subordinate_awaited_since, result_identity, audit_event_id, incorporated_attempt_generation, updated_at) ON TABLE %I.bulk_operation_items TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+SELECT format('GRANT INSERT ON TABLE %I.bulk_operation_item_attempts TO rag_platform_app', :'application_schema')
+\gexec
+SELECT format(
+    'GRANT UPDATE (status, failure_category, not_applied_reason, completed_at, success_kind, result_digest, result_subordinate_kind, result_identity_kind, result_identity_value, updated_at) ON TABLE %I.bulk_operation_item_attempts TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+SELECT format('GRANT INSERT ON TABLE %I.bulk_operation_item_subordinate_transitions TO rag_platform_app', :'application_schema')
+\gexec
+SELECT format('GRANT SELECT, INSERT ON TABLE %I.bulk_operation_audit_events TO rag_platform_app', :'application_schema')
+\gexec
+
+SELECT format('REVOKE UPDATE, INSERT ON TABLE %I.document_families FROM rag_platform_app', :'application_schema')
+\gexec
+SELECT format(
+    'GRANT INSERT (public_id, workspace_id, name, description, category_id, owner_user_id, review_due_date, tombstoned_at, created_at, updated_at) ON TABLE %I.document_families TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+SELECT format(
+    'GRANT UPDATE (name, description, category_id, review_due_date, tombstoned_at, updated_at) ON TABLE %I.document_families TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+SELECT format('REVOKE UPDATE ON TABLE %I.document_governance_commands FROM rag_platform_app', :'application_schema')
+\gexec
+SELECT format(
+    'GRANT EXECUTE ON FUNCTION %I.apply_document_family_owner_change(bigint) TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
 SQL
 done
 

@@ -53,6 +53,15 @@ return [
             'after_commit' => true,
         ],
 
+        'governance' => [
+            'driver' => 'database',
+            'connection' => env('DB_QUEUE_CONNECTION'),
+            'table' => env('DB_QUEUE_TABLE', 'jobs'),
+            'queue' => env('DOCUMENT_GOVERNANCE_QUEUE', 'document-governance'),
+            'retry_after' => (int) env('DOCUMENT_GOVERNANCE_QUEUE_RETRY_AFTER', 300),
+            'after_commit' => true,
+        ],
+
         'beanstalkd' => [
             'driver' => 'beanstalkd',
             'host' => env('BEANSTALKD_QUEUE_HOST', 'localhost'),

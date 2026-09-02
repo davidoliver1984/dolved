@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Documents\ArchiveDocumentCategory;
+use App\Actions\Documents\ChangeDocumentFamilyOwner;
 use App\Actions\Documents\CreateDocumentCategory;
 use App\Actions\Documents\CreateDocumentTag;
 use App\Actions\Documents\RenameDocumentCategory;
@@ -12,6 +13,8 @@ use App\Actions\Documents\RenameDocumentFamily;
 use App\Actions\Documents\SyncDocumentFamilyTags;
 use App\Actions\Documents\UpdateDocumentFamilyMetadata;
 use App\Enums\DocumentCategoryStatus;
+use App\Exceptions\DocumentFamilyOwnerChangeException;
+use App\Http\Requests\ChangeDocumentFamilyOwnerRequest;
 use App\Http\Requests\StoreDocumentTagRequest;
 use App\Http\Requests\StoreDocumentTaxonomyRequest;
 use App\Http\Requests\SyncDocumentFamilyTagsRequest;
@@ -29,6 +32,45 @@ use Illuminate\Support\Facades\Gate;
 
 final class DocumentMetadataController extends Controller
 {
+    public function changeOwner(
+        ChangeDocumentFamilyOwnerRequest $request,
+        string $workspacePublicId,
+        string $familyPublicId,
+        FindWorkspaceForUser $workspaces,
+        FindDocumentFamilyForWorkspace $families,
+        ChangeDocumentFamilyOwner $change,
+    ): DocumentFamilyMetadataResource {
+        /** @var User $actor */
+        $actor = $request->user();
+        $workspace = $workspaces->handle($actor, $workspacePublicId)->workspace;
+        Gate::authorize('manageDocumentMetadata', $workspace);
+        $family = $families->handle($workspace, $familyPublicId);
+        $expectedOwner = User::query()->where('public_id', $request->string('expected_owner_public_id')->value())->firstOrFail();
+        $intendedOwner = User::query()
+            ->where('public_id', $request->string('intended_owner_public_id')->value())
+            ->whereNull('disabled_at')
+            ->whereHas('workspaceMemberships', fn ($query) => $query->where('workspace_id', $workspace->id))
+            ->firstOrFail();
+        try {
+            $result = $change->handle(
+                $family,
+                $actor,
+                $intendedOwner,
+                $request->integer('expected_owner_assignment_generation'),
+                $expectedOwner->id,
+                $request->string('idempotency_key')->value(),
+            );
+        } catch (DocumentFamilyOwnerChangeException $exception) {
+            abort(in_array($exception->reason, [
+                'owner_change_precondition_stale',
+                'idempotency_key_conflict',
+                'owner_change_command_incomplete',
+            ], true) ? 409 : 404);
+        }
+
+        return new DocumentFamilyMetadataResource($result['family']->load(['category', 'owner', 'tags']));
+    }
+
     public function index(Request $request, string $workspacePublicId, FindWorkspaceForUser $workspaces): JsonResponse
     {
         /** @var User $user */
@@ -111,13 +153,9 @@ final class DocumentMetadataController extends Controller
             ->where('public_id', $categoryPublicId)
             ->where('status', DocumentCategoryStatus::Active->value)
             ->firstOrFail();
-        $owner = User::query()
-            ->where('public_id', $request->validated('owner_public_id'))
-            ->whereNull('disabled_at')
-            ->whereHas('workspaceMemberships', fn ($query) => $query->where('workspace_id', $workspace->id))
-            ->firstOrFail();
+        abort_unless($family->owner?->public_id === $request->validated('owner_public_id'), 409);
 
-        $family = DB::transaction(function () use ($rename, $family, $user, $request, $update, $category, $owner) {
+        $family = DB::transaction(function () use ($rename, $family, $user, $request, $update, $category) {
             $renamed = $rename->handle($family, $user, $request->string('name')->value());
 
             return $update->handle(
@@ -125,7 +163,6 @@ final class DocumentMetadataController extends Controller
                 $user,
                 $request->validated('description'),
                 $category,
-                $owner,
                 $request->validated('review_due_date'),
             );
         });

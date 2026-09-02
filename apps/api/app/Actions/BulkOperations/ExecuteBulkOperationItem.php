@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\BulkOperations;
 
 use App\Actions\Documents\ApproveDocumentVersion;
+use App\Actions\Documents\ChangeDocumentFamilyOwner;
 use App\Actions\Documents\CreateApplicabilityOnlySuccessor;
 use App\Actions\Documents\ExecuteDocumentGovernanceCommand;
 use App\Actions\Documents\SyncDocumentFamilyTags;
@@ -46,6 +47,7 @@ final readonly class ExecuteBulkOperationItem
         private ApproveDocumentVersion $approve,
         private ExecuteDocumentGovernanceCommand $governanceCommand,
         private UpdateDocumentFamilyMetadata $metadata,
+        private ChangeDocumentFamilyOwner $ownerChange,
         private SyncDocumentFamilyTags $tags,
         private ReserveImportPromotion $promotion,
         private CreateApplicabilityOnlySuccessor $applicability,
@@ -99,7 +101,7 @@ final readonly class ExecuteBulkOperationItem
 
         return match ($operation->operation_type) {
             BulkOperationType::Approval => $this->completeLocal($lockedAttempt, fn () => $this->approve($target, $actor, $lockedAttempt)),
-            BulkOperationType::OwnerAssignment => $this->completeLocal($lockedAttempt, fn () => $this->assignOwner($target, $actor, $payload)),
+            BulkOperationType::OwnerAssignment => $this->completeLocal($lockedAttempt, fn () => $this->assignOwner($target, $actor, $payload, $lockedAttempt)),
             BulkOperationType::CategoryAssignment => $this->completeLocal($lockedAttempt, fn () => $this->assignCategory($target, $actor, $payload)),
             BulkOperationType::TagChange => $this->completeLocal($lockedAttempt, fn () => $this->changeTags($target, $actor, $payload)),
             BulkOperationType::ReviewDateAssignment => $this->completeLocal($lockedAttempt, fn () => $this->assignReviewDate($target, $actor, $payload)),
@@ -188,11 +190,18 @@ final readonly class ExecuteBulkOperationItem
         return $attempt;
     }
 
-    private function assignOwner(DocumentFamily $family, User $actor, array $payload): DocumentFamily
+    private function assignOwner(DocumentFamily $family, User $actor, array $payload, BulkOperationItemAttempt $attempt): DocumentFamily
     {
         $owner = User::query()->where('public_id', $payload['owner_user_public_id'])->firstOrFail();
 
-        return $this->metadata->handle($family, $actor, $family->description, $family->category, $owner, $family->review_due_date?->toDateString());
+        return $this->ownerChange->handle(
+            $family,
+            $actor,
+            $owner,
+            (int) $family->owner_assignment_generation,
+            (int) $family->owner_user_id,
+            $attempt->invocation_idempotency_key,
+        )['family'];
     }
 
     private function assignCategory(DocumentFamily $family, User $actor, array $payload): DocumentFamily
@@ -201,7 +210,7 @@ final readonly class ExecuteBulkOperationItem
             ? DocumentCategory::query()->where('workspace_id', $family->workspace_id)->where('public_id', $payload['category_public_id'])->firstOrFail()
             : null;
 
-        return $this->metadata->handle($family, $actor, $family->description, $category, $family->owner()->firstOrFail(), $family->review_due_date?->toDateString());
+        return $this->metadata->handle($family, $actor, $family->description, $category, $family->review_due_date?->toDateString());
     }
 
     private function changeTags(DocumentFamily $family, User $actor, array $payload): DocumentFamily
@@ -225,7 +234,6 @@ final readonly class ExecuteBulkOperationItem
             $actor,
             $family->description,
             $family->category,
-            $family->owner()->firstOrFail(),
             $payload['review_due_date'] ?? null,
         );
     }

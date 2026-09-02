@@ -22,30 +22,18 @@ final readonly class UpdateDocumentFamilyMetadata
         User $actor,
         ?string $description,
         ?DocumentCategory $category,
-        User $owner,
         ?string $reviewDueDate,
     ): DocumentFamily {
-        return DB::transaction(function () use ($family, $actor, $description, $category, $owner, $reviewDueDate): DocumentFamily {
+        return DB::transaction(function () use ($family, $actor, $description, $category, $reviewDueDate): DocumentFamily {
             $locked = DocumentFamily::query()->lockForUpdate()->findOrFail($family->id);
 
             if ($category !== null && ($category->workspace_id !== $locked->workspace_id || $category->status !== DocumentCategoryStatus::Active)) {
                 throw new DocumentGovernanceException('The selected category is not available in this workspace.');
             }
 
-            $eligibleOwner = User::query()
-                ->whereKey($owner->id)
-                ->whereNull('disabled_at')
-                ->whereHas('workspaceMemberships', fn ($query) => $query->where('workspace_id', $locked->workspace_id))
-                ->exists();
-
-            if (! $eligibleOwner) {
-                throw new DocumentGovernanceException('The selected owner is not an active workspace member.');
-            }
-
             $before = $this->values($locked);
             $locked->description = $description === null ? null : trim($description);
             $locked->category_id = $category?->id;
-            $locked->owner_user_id = $owner->id;
             $locked->review_due_date = $reviewDueDate === null ? null : CarbonImmutable::parse($reviewDueDate)->toDateString();
             $locked->save();
             $after = $this->values($locked->refresh());

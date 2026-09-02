@@ -7,11 +7,13 @@ namespace Tests\Feature;
 use App\Actions\Imports\ReconcileExpiredImportPreflights;
 use App\Actions\Imports\RecordImportPreflightCallback;
 use App\Actions\Imports\StartImportPreflight;
+use App\Enums\DocumentGovernanceEventKey;
 use App\Enums\ImportBatchStatus;
 use App\Enums\ImportMatchStatus;
 use App\Enums\ImportPreflightAttemptStatus;
 use App\Enums\ImportPreflightStatus;
 use App\Exceptions\ImportPreflightException;
+use App\Models\DocumentGovernanceEvent;
 use App\Models\ImportBatch;
 use App\Models\ImportItem;
 use App\Models\ImportPreflightAttempt;
@@ -25,6 +27,7 @@ use App\Support\Documents\ImportStagingObjectKey;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Mockery;
 use Tests\TestCase;
@@ -138,6 +141,7 @@ final class ImportPreflightBoundaryTest extends TestCase
 
     public function test_detected_rejection_maps_to_rejected_but_operational_failure_remains_pending(): void
     {
+        Queue::fake();
         [, , $rejected] = $this->domain();
         $rejectedAttempt = $this->starter()->handle($rejected);
         $rejection = $this->basePayload($rejectedAttempt) + [
@@ -146,6 +150,10 @@ final class ImportPreflightBoundaryTest extends TestCase
         ];
         app(RecordImportPreflightCallback::class)->complete($rejectedAttempt->event_id, $rejection);
         $this->assertSame(ImportPreflightStatus::Rejected, $rejected->fresh()->preflight_status);
+        $this->assertDatabaseHas('document_governance_events', [
+            'event_key' => DocumentGovernanceEventKey::ImportItemRequiresUserAction->value,
+            'correlation_id' => $rejected->public_id,
+        ]);
 
         [, , $pending] = $this->domain();
         $failedAttempt = $this->starter()->handle($pending);
@@ -153,6 +161,11 @@ final class ImportPreflightBoundaryTest extends TestCase
         app(RecordImportPreflightCallback::class)->fail($failedAttempt->event_id, $failure);
         $this->assertSame(ImportPreflightStatus::Pending, $pending->fresh()->preflight_status);
         $this->assertSame(ImportPreflightAttemptStatus::Failed, $failedAttempt->fresh()->status);
+        $this->assertDatabaseHas('document_governance_events', [
+            'event_key' => DocumentGovernanceEventKey::ImportItemProcessingFailed->value,
+            'correlation_id' => $pending->public_id,
+        ]);
+        $this->assertSame(2, DocumentGovernanceEvent::query()->count());
     }
 
     public function test_inbound_callback_requires_the_exact_purpose_scoped_hmac(): void

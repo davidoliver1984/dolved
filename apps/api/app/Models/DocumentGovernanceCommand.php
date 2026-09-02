@@ -24,6 +24,11 @@ class DocumentGovernanceCommand extends Model
                 'target_kind',
                 'target_document_id',
                 'target_state_at_creation',
+                'target_document_family_id',
+                'target_document_family_public_id',
+                'expected_current_owner_user_id',
+                'expected_current_generation',
+                'intended_new_owner_user_id',
                 'request_payload_digest',
             ])) {
                 throw new LogicException('Document governance command identity is immutable.');
@@ -33,6 +38,11 @@ class DocumentGovernanceCommand extends Model
                 throw new LogicException('A completed document governance command is immutable.');
             }
         });
+    }
+
+    protected function casts(): array
+    {
+        return ['result' => 'array', 'completed_at' => 'immutable_datetime'];
     }
 
     /** @return BelongsTo<Document, $this> */

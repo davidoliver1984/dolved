@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
+use App\Jobs\FanOutUserDisablementReconciliation;
 use App\Models\User;
+use App\Models\UserDisablementReconciliationSource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 final class UserAccessObserver
 {
@@ -14,6 +17,12 @@ final class UserAccessObserver
     {
         if ($user->wasChanged('disabled_at') && $user->disabled_at !== null) {
             $this->invalidateSessions($user);
+            $source = UserDisablementReconciliationSource::query()->create([
+                'public_id' => (string) Str::uuid(),
+                'user_id' => $user->id,
+                'disabled_at' => $user->disabled_at,
+            ]);
+            FanOutUserDisablementReconciliation::dispatch($source->id);
         }
     }
 

@@ -17,6 +17,7 @@ final class DocumentFamilyMetadataResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'review_due_date' => $this->review_due_date?->toDateString(),
+            'owner_assignment_generation' => $this->owner_assignment_generation,
             'category' => $this->category === null ? null : new DocumentCategoryResource($this->category),
             'owner' => $this->owner === null ? null : [
                 'public_id' => $this->owner->public_id,

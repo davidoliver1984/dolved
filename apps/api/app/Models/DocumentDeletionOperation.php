@@ -40,4 +40,9 @@ class DocumentDeletionOperation extends Model
     {
         return $this->belongsTo(DocumentFamilyDeletionOperation::class, 'document_family_deletion_operation_id');
     }
+
+    public function requestedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requested_by_user_id');
+    }
 }

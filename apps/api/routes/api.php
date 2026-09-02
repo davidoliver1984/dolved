@@ -191,6 +191,7 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::post('/workspaces/{workspacePublicId}/document-tags', [DocumentMetadataController::class, 'storeTag']);
     Route::get('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/metadata', [DocumentMetadataController::class, 'showFamily']);
     Route::put('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/metadata', [DocumentMetadataController::class, 'updateFamily']);
+    Route::patch('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/owner', [DocumentMetadataController::class, 'changeOwner']);
     Route::put('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/tags', [DocumentMetadataController::class, 'syncTags']);
     Route::get('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/versions', [DocumentVersionGovernanceController::class, 'index']);
     Route::post('/workspaces/{workspacePublicId}/document-families/{familyPublicId}/deletion-preview', [DocumentFamilyDeletionController::class, 'preview']);

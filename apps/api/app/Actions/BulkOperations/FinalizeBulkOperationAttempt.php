@@ -6,10 +6,13 @@ namespace App\Actions\BulkOperations;
 
 use App\Enums\BulkAttemptStatus;
 use App\Enums\BulkItemStatus;
+use App\Enums\BulkOperationStatus;
+use App\Enums\DocumentGovernanceEventKey;
 use App\Models\BulkOperation;
 use App\Models\BulkOperationItem;
 use App\Models\BulkOperationItemAttempt;
 use App\Support\BulkOperations\RecordBulkOperationAudit;
+use App\Support\Documents\RecordDocumentGovernanceEvent;
 use Illuminate\Support\Facades\DB;
 
 final readonly class FinalizeBulkOperationAttempt
@@ -17,6 +20,7 @@ final readonly class FinalizeBulkOperationAttempt
     public function __construct(
         private RecordBulkOperationAudit $audit,
         private ResolveBulkOperationTerminalState $terminalState,
+        private RecordDocumentGovernanceEvent $events,
     ) {}
 
     public function handle(BulkOperationItemAttempt $attempt): BulkOperationItem
@@ -104,6 +108,26 @@ final readonly class FinalizeBulkOperationAttempt
                 'operation_type' => $parent->operation_type->value,
                 'terminal_status' => $resolved->value,
             ]);
+            $eventKey = match ($resolved) {
+                BulkOperationStatus::Completed => DocumentGovernanceEventKey::BulkOperationCompleted,
+                BulkOperationStatus::CompletedWithExceptions => DocumentGovernanceEventKey::BulkOperationCompletedWithExceptions,
+                BulkOperationStatus::FailedBeforeExecution => DocumentGovernanceEventKey::BulkOperationFailedBeforeExecution,
+                default => null,
+            };
+            if ($eventKey !== null) {
+                $this->events->record(
+                    $parent->workspace()->firstOrFail(),
+                    $eventKey,
+                    $parent->public_id,
+                    $parent->public_id,
+                    [
+                        'initiating_user_public_id' => $parent->actor()->value('public_id'),
+                        'target_kind' => 'bulk_operation',
+                        'target_public_id' => $parent->public_id,
+                        'target_display_label' => 'Bulk document operation',
+                    ],
+                );
+            }
         }
 
         return $parent;

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Actions\Imports;
 
+use App\Actions\Documents\ChangeDocumentFamilyOwner;
 use App\Actions\Documents\CreateDocumentVersion;
 use App\Actions\Documents\RequestDocumentIngestion;
 use App\Enums\ChecksumVerificationStatus;
 use App\Enums\DocumentCategoryStatus;
+use App\Enums\DocumentGovernanceEventKey;
 use App\Enums\DocumentStatus;
 use App\Enums\PromotionAttemptStatus;
 use App\Exceptions\ImportPromotionException;
@@ -19,6 +21,7 @@ use App\Models\ImportItem;
 use App\Models\OrganisationalLocation;
 use App\Models\PromotionAttempt;
 use App\Models\User;
+use App\Support\Documents\RecordDocumentGovernanceEvent;
 use App\Support\Documents\SafeDocumentSourceUrl;
 use App\Support\Imports\WorkspaceChecksumLock;
 use Carbon\CarbonImmutable;
@@ -31,6 +34,8 @@ final readonly class FinalizeImportPromotion
         private WorkspaceChecksumLock $checksumLocks,
         private CreateDocumentVersion $createVersion,
         private RequestDocumentIngestion $ingestion,
+        private RecordDocumentGovernanceEvent $events,
+        private ChangeDocumentFamilyOwner $ownerChange,
     ) {}
 
     public function handle(PromotionAttempt $attempt, string $leaseToken, int $leaseGeneration): PromotionAttempt
@@ -78,7 +83,7 @@ final readonly class FinalizeImportPromotion
                 }
                 throw $exception;
             }
-            $this->applyFamilyMetadata($family, $locked->actor, $definition);
+            $this->applyFamilyMetadata($family, $locked->actor, $definition, $locked);
             $locations = $this->resolveLocations($item, $definition);
             $document = $this->createDocument($item, $locked, $family, $predecessor, $definition, $locations);
 
@@ -89,6 +94,18 @@ final readonly class FinalizeImportPromotion
             $locked->lease_expires_at = null;
             $locked->save();
             $this->ingestion->handle($document, (string) Str::uuid());
+            $this->events->record(
+                $locked->workspace()->firstOrFail(),
+                DocumentGovernanceEventKey::PromotionCompleted,
+                $locked->public_id,
+                $locked->public_id,
+                [
+                    'initiating_user_public_id' => $locked->actor?->public_id,
+                    'target_kind' => 'document',
+                    'target_public_id' => $document->public_id,
+                    'target_display_label' => mb_substr($document->source_filename, 0, 255),
+                ],
+            );
 
             return $locked->refresh()->load('committedDocument');
         });
@@ -112,6 +129,19 @@ final readonly class FinalizeImportPromotion
         $attempt->lease_token_hash = null;
         $attempt->lease_expires_at = null;
         $attempt->save();
+        $attempt->loadMissing('actor');
+        $this->events->record(
+            $attempt->workspace()->firstOrFail(),
+            DocumentGovernanceEventKey::PromotionFailed,
+            $attempt->public_id,
+            $attempt->public_id,
+            [
+                'initiating_user_public_id' => $attempt->actor?->public_id,
+                'target_kind' => 'import_item',
+                'target_public_id' => $attempt->item()->value('public_id'),
+                'target_display_label' => 'Import promotion',
+            ],
+        );
 
         return $attempt;
     }
@@ -146,7 +176,7 @@ final readonly class FinalizeImportPromotion
     }
 
     /** @param array<string, mixed> $definition */
-    private function applyFamilyMetadata(DocumentFamily $family, User $actor, array $definition): void
+    private function applyFamilyMetadata(DocumentFamily $family, User $actor, array $definition, PromotionAttempt $attempt): void
     {
         $metadata = $definition['metadata'];
         $owner = User::query()->where('public_id', $metadata['owner_user_public_id'])
@@ -160,9 +190,18 @@ final readonly class FinalizeImportPromotion
         if ($metadata['category_public_id'] !== null && $category === null) {
             throw ImportPromotionException::conflict('metadata_invalid');
         }
+        if ($family->owner_user_id !== $owner->id) {
+            $family = $this->ownerChange->handle(
+                $family,
+                $actor,
+                $owner,
+                (int) $family->owner_assignment_generation,
+                (int) $family->owner_user_id,
+                $attempt->public_id,
+            )['family'];
+        }
         $family->description = $metadata['description'];
         $family->category_id = $category?->id;
-        $family->owner_user_id = $owner->id;
         $family->review_due_date = $metadata['review_due_date'];
         $family->save();
         $tags = DocumentTag::query()->where('workspace_id', $family->workspace_id)

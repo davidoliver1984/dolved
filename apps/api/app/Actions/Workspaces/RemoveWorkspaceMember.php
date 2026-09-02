@@ -9,6 +9,7 @@ use App\Exceptions\WorkspaceAdministrationException;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceMembership;
+use App\Support\Documents\RecordOwnershipEligibilityReconciliation;
 use App\Support\Workspaces\RecordWorkspaceAdministrationAudit;
 use App\Support\Workspaces\WorkspaceAdministrationCommandGuard;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ class RemoveWorkspaceMember
     public function __construct(
         private readonly WorkspaceAdministrationCommandGuard $commands,
         private readonly RecordWorkspaceAdministrationAudit $audit,
+        private readonly RecordOwnershipEligibilityReconciliation $ownershipEligibility,
     ) {}
 
     /** @return array{removed: bool, membership_public_id: string} */
@@ -47,9 +49,11 @@ class RemoveWorkspaceMember
             }
             $before = ['role' => $target->role->value];
             $targetPublicId = $target->public_id;
+            $affectedUser = $target->user;
             $target->delete();
             $this->commands->complete($command, ['membership_public_id' => $targetPublicId, 'removed' => true]);
-            $this->audit->record($workspace, $actor, 'member_removed', 'membership', $targetPublicId, $before, ['status' => 'removed'], $correlationId);
+            $audit = $this->audit->record($workspace, $actor, 'member_removed', 'membership', $targetPublicId, $before, ['status' => 'removed'], $correlationId);
+            $this->ownershipEligibility->record($workspace, $affectedUser, $targetPublicId, $audit);
 
             return ['removed' => true, 'membership_public_id' => $targetPublicId];
         });

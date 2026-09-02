@@ -14,6 +14,7 @@ use App\Models\WorkspaceMembership;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 final class DocumentMetadataApiTest extends TestCase
@@ -54,7 +55,7 @@ final class DocumentMetadataApiTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_administrator_updates_family_metadata_with_separate_rename_and_metadata_audits(): void
+    public function test_administrator_updates_family_metadata_and_owner_through_their_separate_boundaries(): void
     {
         [$owner, $workspace] = $this->ownerWorkspace();
         $newOwner = User::factory()->create();
@@ -63,7 +64,7 @@ final class DocumentMetadataApiTest extends TestCase
         $family = DocumentFamily::factory()->for($workspace)->create(['owner_user_id' => $owner->id]);
 
         $this->actingAs($owner)
-            ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($newOwner, [
+            ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($owner, [
                 'name' => 'Medication safety',
                 'description' => 'Current medication governance documents.',
                 'category_public_id' => $category->public_id,
@@ -72,8 +73,13 @@ final class DocumentMetadataApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.name', 'Medication safety')
             ->assertJsonPath('data.category.public_id', $category->public_id)
-            ->assertJsonPath('data.owner.public_id', $newOwner->public_id)
+            ->assertJsonPath('data.owner.public_id', $owner->public_id)
             ->assertJsonPath('data.review_due_date', '2027-03-31');
+        $this->actingAs($owner)
+            ->patchJson($this->ownerUrl($workspace, $family), $this->ownerPayload($owner, $newOwner))
+            ->assertOk()
+            ->assertJsonPath('data.owner.public_id', $newOwner->public_id)
+            ->assertJsonPath('data.owner_assignment_generation', 2);
 
         $this->assertDatabaseHas('document_governance_audit_events', [
             'document_family_id' => $family->id,
@@ -99,16 +105,16 @@ final class DocumentMetadataApiTest extends TestCase
         WorkspaceMembership::factory()->for($workspace)->for($eligible)->member()->create();
 
         $this->actingAs($owner)
-            ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($disabled))
+            ->patchJson($this->ownerUrl($workspace, $family), $this->ownerPayload($owner, $disabled))
             ->assertNotFound();
         $this->actingAs($owner)
-            ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($outsider))
+            ->patchJson($this->ownerUrl($workspace, $family), $this->ownerPayload($owner, $outsider))
             ->assertNotFound();
         $this->actingAs($owner)
-            ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($disabledOutsider))
+            ->patchJson($this->ownerUrl($workspace, $family), $this->ownerPayload($owner, $disabledOutsider))
             ->assertNotFound();
         $this->actingAs($owner)
-            ->putJson($this->familyUrl($workspace, $family), $this->familyPayload($eligible))
+            ->patchJson($this->ownerUrl($workspace, $family), $this->ownerPayload($owner, $eligible))
             ->assertOk()
             ->assertJsonPath('data.owner.public_id', $eligible->public_id);
 
@@ -247,5 +253,21 @@ final class DocumentMetadataApiTest extends TestCase
     private function tagsUrl(Workspace $workspace, DocumentFamily $family): string
     {
         return "/api/workspaces/{$workspace->public_id}/document-families/{$family->public_id}/tags";
+    }
+
+    /** @return array<string, mixed> */
+    private function ownerPayload(User $expected, User $intended): array
+    {
+        return [
+            'idempotency_key' => (string) Str::uuid(),
+            'expected_owner_public_id' => $expected->public_id,
+            'expected_owner_assignment_generation' => 1,
+            'intended_owner_public_id' => $intended->public_id,
+        ];
+    }
+
+    private function ownerUrl(Workspace $workspace, DocumentFamily $family): string
+    {
+        return "/api/workspaces/{$workspace->public_id}/document-families/{$family->public_id}/owner";
     }
 }

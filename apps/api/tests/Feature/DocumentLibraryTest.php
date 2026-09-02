@@ -153,7 +153,7 @@ final class DocumentLibraryTest extends TestCase
         $this->assertSame(now()->toIso8601String(), $family->activitySummary()->firstOrFail()->last_meaningful_update->toIso8601String());
 
         $this->travelTo('2026-08-03 09:00:00');
-        app(UpdateDocumentFamilyMetadata::class)->handle($family, $owner, 'Reviewed family metadata.', null, $owner, null);
+        app(UpdateDocumentFamilyMetadata::class)->handle($family, $owner, 'Reviewed family metadata.', null, null);
         $this->assertSame(now()->toIso8601String(), $family->activitySummary()->firstOrFail()->last_meaningful_update->toIso8601String());
 
         $this->travelTo('2026-08-04 09:00:00');

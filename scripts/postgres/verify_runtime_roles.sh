@@ -107,7 +107,9 @@ WHERE n.nspname = 'public'
     'bulk_operation_items',
     'bulk_operation_item_attempts',
     'bulk_operation_item_subordinate_transitions',
-    'bulk_operation_audit_events'
+    'bulk_operation_audit_events',
+    'document_families',
+    'document_governance_commands'
   )
   AND (
     (c.relkind IN ('r', 'p', 'v', 'm') AND NOT (
@@ -161,6 +163,44 @@ SELECT concat_ws('|',
 expected_bulk_privileges='t|t|f|t|f|t|f|t|f|f|t|f|f|t|t|f|t|f|f|t|t|f|f|t|t|f|f'
 [[ "$bulk_privilege_boundary" == "$expected_bulk_privileges" ]] || {
   printf 'Unexpected protected bulk-operation privilege boundary: %s\n' "$bulk_privilege_boundary" >&2
+  exit 1
+}
+
+governance_privilege_boundary="$(admin_psql --tuples-only --no-align --command="
+SELECT concat_ws('|',
+  has_table_privilege('rag_platform_app', 'document_families', 'SELECT'),
+  has_table_privilege('rag_platform_app', 'document_families', 'INSERT'),
+  has_column_privilege('rag_platform_app', 'document_families', 'owner_user_id', 'INSERT'),
+  has_column_privilege('rag_platform_app', 'document_families', 'owner_assignment_generation', 'INSERT'),
+  has_table_privilege('rag_platform_app', 'document_families', 'UPDATE'),
+  has_column_privilege('rag_platform_app', 'document_families', 'name', 'UPDATE'),
+  has_column_privilege('rag_platform_app', 'document_families', 'owner_user_id', 'UPDATE'),
+  has_column_privilege('rag_platform_app', 'document_families', 'owner_assignment_generation', 'UPDATE'),
+  has_table_privilege('rag_platform_app', 'document_families', 'DELETE'),
+  has_table_privilege('rag_platform_app', 'document_governance_commands', 'SELECT'),
+  has_table_privilege('rag_platform_app', 'document_governance_commands', 'INSERT'),
+  has_column_privilege('rag_platform_app', 'document_governance_commands', 'target_document_family_id', 'INSERT'),
+  has_table_privilege('rag_platform_app', 'document_governance_commands', 'UPDATE'),
+  has_table_privilege('rag_platform_app', 'document_governance_commands', 'DELETE'),
+  has_function_privilege('rag_platform_app', 'apply_document_family_owner_change(bigint)', 'EXECUTE')
+);
+")"
+expected_governance_privileges='t|f|t|f|f|t|f|f|t|t|t|t|f|t|t'
+[[ "$governance_privilege_boundary" == "$expected_governance_privileges" ]] || {
+  printf 'Unexpected document-governance privilege boundary: %s\n' "$governance_privilege_boundary" >&2
+  exit 1
+}
+
+governance_function_boundary="$(admin_psql --tuples-only --no-align --command="
+SELECT concat_ws('|', count(*), bool_and(p.prosecdef), bool_and(pg_get_userbyid(p.proowner) = 'rag_platform_owner'))
+FROM pg_proc p
+JOIN pg_namespace n ON n.oid = p.pronamespace
+WHERE n.nspname = 'public'
+  AND p.proname = 'apply_document_family_owner_change'
+  AND pg_get_function_identity_arguments(p.oid) = 'p_command_id bigint';
+")"
+[[ "$governance_function_boundary" == '1|t|t' ]] || {
+  printf 'Owner-change function ownership/security drift: %s\n' "$governance_function_boundary" >&2
   exit 1
 }
 

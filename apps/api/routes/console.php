@@ -2,6 +2,7 @@
 
 use App\Actions\BulkOperations\ReclaimExpiredBulkAttempts;
 use App\Actions\Conversation\ReconcileStaleGenerationRuns;
+use App\Actions\Documents\DetectStuckOrFailedDocumentDeletions;
 use App\Actions\Imports\ReconcileExpiredImportPreflights;
 use App\Actions\Telemetry\RecordOperationalSnapshot;
 use App\Actions\Workspaces\ExpireWorkspaceInvitations;
@@ -64,3 +65,9 @@ Artisan::command('bulk-operations:reconcile', function (ReclaimExpiredBulkAttemp
 })->purpose('Reclaim fenced attempts and resume bounded bulk-operation convergence');
 
 Schedule::command('bulk-operations:reconcile')->everyMinute()->withoutOverlapping();
+
+Artisan::command('documents:detect-stuck-or-failed-deletions', function (DetectStuckOrFailedDocumentDeletions $detect): void {
+    $this->info("Recorded {$detect->handle()} new stuck or permanently failed deletion occurrences.");
+})->purpose('Project durable governance events for visibly stuck or permanently failed document deletion operations');
+
+Schedule::command('documents:detect-stuck-or-failed-deletions')->daily()->withoutOverlapping();

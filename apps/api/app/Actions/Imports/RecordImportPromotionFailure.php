@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace App\Actions\Imports;
 
+use App\Enums\DocumentGovernanceEventKey;
 use App\Enums\PromotionAttemptStatus;
 use App\Exceptions\ImportPromotionException;
 use App\Models\PromotionAttempt;
 use App\Models\PromotionAttemptFailure;
+use App\Support\Documents\RecordDocumentGovernanceEvent;
 use Illuminate\Support\Facades\DB;
 
-final class RecordImportPromotionFailure
+final readonly class RecordImportPromotionFailure
 {
+    public function __construct(private RecordDocumentGovernanceEvent $events) {}
+
     /** @param array<string, scalar|null> $safeContext */
     public function handle(PromotionAttempt $attempt, string $leaseToken, int $leaseGeneration, string $failureCode, array $safeContext = []): PromotionAttempt
     {
@@ -36,6 +40,21 @@ final class RecordImportPromotionFailure
                 $locked->terminal_reason = 'technical_exhaustion';
             }
             $locked->save();
+            if ($locked->status === PromotionAttemptStatus::Failed) {
+                $locked->loadMissing('actor');
+                $this->events->record(
+                    $locked->workspace()->firstOrFail(),
+                    DocumentGovernanceEventKey::PromotionFailed,
+                    $locked->public_id,
+                    $locked->public_id,
+                    [
+                        'initiating_user_public_id' => $locked->actor?->public_id,
+                        'target_kind' => 'import_item',
+                        'target_public_id' => $locked->item()->value('public_id'),
+                        'target_display_label' => 'Import promotion',
+                    ],
+                );
+            }
 
             return $locked;
         });

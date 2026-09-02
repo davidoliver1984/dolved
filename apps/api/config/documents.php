@@ -5,6 +5,7 @@ declare(strict_types=1);
 $maxUploadMegabytes = max(1, (int) env('DOCUMENT_MAX_UPLOAD_MB', 25));
 
 return [
+    'deletion_stuck_after_seconds' => max(60, (int) env('DOCUMENT_DELETION_STUCK_AFTER_SECONDS', 300)),
     'storage_disk' => env('DOCUMENT_STORAGE_DISK', 's3'),
     'upload_disk' => env('DOCUMENT_UPLOAD_DISK', 's3_uploads'),
     'max_upload_mb' => $maxUploadMegabytes,
@@ -18,6 +19,7 @@ return [
         (int) env('DOCUMENT_UPLOAD_CONCURRENCY', 3),
     ),
     'administration_queue' => env('DOCUMENT_ADMINISTRATION_QUEUE', 'document-administration'),
+    'governance_queue' => env('DOCUMENT_GOVERNANCE_QUEUE', 'document-governance'),
     'deletion_quiescence_retry_seconds' => max(
         1,
         (int) env('DOCUMENT_DELETION_QUIESCENCE_RETRY_SECONDS', 5),

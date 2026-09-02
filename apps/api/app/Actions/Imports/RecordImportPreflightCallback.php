@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Imports;
 
+use App\Enums\DocumentGovernanceEventKey;
 use App\Enums\ImportBatchStatus;
 use App\Enums\ImportPreflightAttemptStatus;
 use App\Enums\ImportPreflightRejectionReason;
@@ -12,6 +13,7 @@ use App\Enums\ImportPreflightStatus;
 use App\Exceptions\ImportPreflightException;
 use App\Models\ImportPreflightAttempt;
 use App\Services\Imports\ImportPreflightContractValidator;
+use App\Support\Documents\RecordDocumentGovernanceEvent;
 use App\Support\Imports\ImportPreflightPayloadDigest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +23,7 @@ final class RecordImportPreflightCallback
     public function __construct(
         private readonly ImportPreflightContractValidator $contracts,
         private readonly ImportPreflightPayloadDigest $digests,
+        private readonly RecordDocumentGovernanceEvent $events,
     ) {}
 
     /** @param array<string, mixed> $payload */
@@ -45,7 +48,7 @@ final class RecordImportPreflightCallback
         $digest = $this->digests->hash($payload);
 
         return DB::transaction(function () use ($eventId, $payload, $failure, $digest): string {
-            $attempt = ImportPreflightAttempt::query()->with(['item.batch', 'item.workspace'])->where('event_id', $eventId)->lockForUpdate()->first();
+            $attempt = ImportPreflightAttempt::query()->with(['item.batch.initiatedBy', 'item.workspace'])->where('event_id', $eventId)->lockForUpdate()->first();
             if ($attempt === null) {
                 throw ImportPreflightException::conflict('unknown_event');
             }
@@ -87,6 +90,35 @@ final class RecordImportPreflightCallback
                         'preflight_rejection_reason' => ImportPreflightRejectionReason::from($result->value),
                     ])->save();
                 }
+            }
+
+            if ($failure) {
+                $this->events->record(
+                    $item->workspace,
+                    DocumentGovernanceEventKey::ImportItemProcessingFailed,
+                    $item->public_id,
+                    "{$item->public_id}:{$attempt->event_id}:processing_failed",
+                    [
+                        'initiating_user_public_id' => $item->batch->initiatedBy?->public_id,
+                        'target_kind' => 'import_item',
+                        'target_public_id' => $item->public_id,
+                        'target_display_label' => mb_substr($item->source_filename ?? 'Staged import', 0, 255),
+                    ],
+                );
+            } elseif ($actionable && isset($result) && $result !== ImportPreflightResult::Readable) {
+                $this->events->record(
+                    $item->workspace,
+                    DocumentGovernanceEventKey::ImportItemRequiresUserAction,
+                    $item->public_id,
+                    "{$item->public_id}:{$result->value}:{$attempt->event_id}",
+                    [
+                        'action_category' => $result->value,
+                        'initiating_user_public_id' => $item->batch->initiatedBy?->public_id,
+                        'target_kind' => 'import_item',
+                        'target_public_id' => $item->public_id,
+                        'target_display_label' => mb_substr($item->source_filename ?? 'Staged import', 0, 255),
+                    ],
+                );
             }
 
             Log::info('Import preflight callback recorded.', [

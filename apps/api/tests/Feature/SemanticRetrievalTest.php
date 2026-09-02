@@ -110,7 +110,6 @@ class SemanticRetrievalTest extends TestCase
             $actor,
             'Advisory library metadata only.',
             $category,
-            $recordedOwner,
             '2027-03-31',
         );
         app(SyncDocumentFamilyTags::class)->handle($family, $actor, [$tag->public_id]);

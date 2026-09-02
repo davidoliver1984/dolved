@@ -39,6 +39,7 @@ class DocumentFamily extends Model
     {
         return [
             'review_due_date' => 'immutable_date',
+            'owner_assignment_generation' => 'integer',
             'tombstoned_at' => 'immutable_datetime',
         ];
     }
