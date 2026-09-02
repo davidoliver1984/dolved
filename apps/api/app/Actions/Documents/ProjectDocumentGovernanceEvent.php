@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Actions\Documents;
 
 use App\Enums\DocumentGovernanceEventKey;
+use App\Jobs\DispatchDocumentGovernanceEmail;
 use App\Models\DocumentGovernanceEvent;
 use App\Models\DocumentGovernanceEventProjection;
 use App\Models\DocumentGovernanceNotification;
 use App\Models\DocumentGovernanceNotificationProjectionReceipt;
 use App\Models\User;
+use App\Support\Documents\GovernanceEmailCategories;
 use App\Support\Documents\ResolveDocumentGovernanceRecipients;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -132,6 +134,10 @@ final readonly class ProjectDocumentGovernanceEvent
                     ->where('recipient_user_public_id', $user->public_id)
                     ->where('source_event_id', $event->event_id)
                     ->value('public_id');
+                $notification = DocumentGovernanceNotification::query()->where('public_id', $notificationId)->firstOrFail();
+                if (GovernanceEmailCategories::eligible($event->event_key)) {
+                    DispatchDocumentGovernanceEmail::dispatch($notification->id);
+                }
                 $receipt->forceFill([
                     'outcome' => 'notification_created',
                     'notification_public_id' => $notificationId,

@@ -3,6 +3,9 @@
 use App\Actions\BulkOperations\ReclaimExpiredBulkAttempts;
 use App\Actions\Conversation\ReconcileStaleGenerationRuns;
 use App\Actions\Documents\DetectStuckOrFailedDocumentDeletions;
+use App\Actions\Documents\PurgeExpiredDocumentGovernanceNotificationData;
+use App\Actions\Documents\ReclaimExpiredDocumentGovernanceEmailAttempts;
+use App\Actions\Documents\ScanDocumentGovernanceRemindersAndAuthorityTransitions;
 use App\Actions\Imports\ReconcileExpiredImportPreflights;
 use App\Actions\Telemetry\RecordOperationalSnapshot;
 use App\Actions\Workspaces\ExpireWorkspaceInvitations;
@@ -71,3 +74,22 @@ Artisan::command('documents:detect-stuck-or-failed-deletions', function (DetectS
 })->purpose('Project durable governance events for visibly stuck or permanently failed document deletion operations');
 
 Schedule::command('documents:detect-stuck-or-failed-deletions')->daily()->withoutOverlapping();
+
+Artisan::command('governance:scan-reminders-and-authority-transitions', function (ScanDocumentGovernanceRemindersAndAuthorityTransitions $scan): void {
+    $this->info("Recorded {$scan->handle()} qualifying governance reminder and authority occurrences.");
+})->purpose('Record idempotent review reminders and authority-transition occurrences');
+
+Schedule::command('governance:scan-reminders-and-authority-transitions')->dailyAt('00:15')->withoutOverlapping();
+
+Artisan::command('governance:reclaim-email-attempts', function (ReclaimExpiredDocumentGovernanceEmailAttempts $reclaim): void {
+    $this->info("Reclaimed {$reclaim->handle()} expired governance email attempts.");
+})->purpose('Fence expired email workers and converge their envelopes');
+
+Schedule::command('governance:reclaim-email-attempts')->everyMinute()->withoutOverlapping();
+
+Artisan::command('governance:purge-expired-notification-data', function (PurgeExpiredDocumentGovernanceNotificationData $purge): void {
+    $result = $purge->handle();
+    $this->info("Purged {$result['notifications']} notifications, {$result['envelopes']} envelopes, and {$result['events']} events.");
+})->purpose('Apply bounded governance notification, delivery and event retention');
+
+Schedule::command('governance:purge-expired-notification-data')->dailyAt('01:15')->withoutOverlapping();

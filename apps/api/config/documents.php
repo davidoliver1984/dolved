@@ -20,6 +20,12 @@ return [
     ),
     'administration_queue' => env('DOCUMENT_ADMINISTRATION_QUEUE', 'document-administration'),
     'governance_queue' => env('DOCUMENT_GOVERNANCE_QUEUE', 'document-governance'),
+    'governance_digest_cutoff_utc' => env('DOCUMENT_GOVERNANCE_DIGEST_CUTOFF_UTC', '16:00'),
+    'governance_email_attempt_lease_seconds' => max(60, (int) env('DOCUMENT_GOVERNANCE_EMAIL_ATTEMPT_LEASE_SECONDS', 120)),
+    'governance_email_provider_timeout_seconds' => max(1, (int) env('DOCUMENT_GOVERNANCE_EMAIL_PROVIDER_TIMEOUT_SECONDS', 30)),
+    'governance_email_result_margin_seconds' => max(1, (int) env('DOCUMENT_GOVERNANCE_EMAIL_RESULT_MARGIN_SECONDS', 30)),
+    'governance_email_retry_ceiling' => max(1, (int) env('DOCUMENT_GOVERNANCE_EMAIL_RETRY_CEILING', 5)),
+    'review_due_soon_lead_days' => max(1, (int) env('REVIEW_DUE_SOON_LEAD_DAYS', 14)),
     'deletion_quiescence_retry_seconds' => max(
         1,
         (int) env('DOCUMENT_DELETION_QUIESCENCE_RETRY_SECONDS', 5),
