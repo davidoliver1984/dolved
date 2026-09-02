@@ -53,11 +53,17 @@ final readonly class ExecuteApplicabilityOnlySuccessorCommand
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            $command = DocumentGovernanceCommand::query()
+            $commandQuery = DocumentGovernanceCommand::query()
                 ->where('workspace_id', $predecessor->workspace_id)
                 ->where('purpose', 'applicability_successor')
-                ->where('idempotency_key', $idempotencyKey)
-                ->lockForUpdate()->firstOrFail();
+                ->where('idempotency_key', $idempotencyKey);
+            $command = $commandQuery->firstOrFail();
+            if (DB::getDriverName() === 'pgsql') {
+                DB::select('SELECT lock_document_version_governance_command(?)', [$command->id]);
+                $command = $commandQuery->firstOrFail();
+            } else {
+                $command = $commandQuery->lockForUpdate()->firstOrFail();
+            }
             if (
                 $command->actor_user_id !== $actor->id
                 || $command->target_document_id !== $predecessor->id
@@ -75,7 +81,11 @@ final readonly class ExecuteApplicabilityOnlySuccessorCommand
             [$target, $operation, $leaseToken] = $this->successor->prepare(
                 $predecessor, $actor, $effectiveFrom, $locations, $correlationId,
             );
-            $command->forceFill(['result_document_id' => $target->id])->save();
+            if (DB::getDriverName() === 'pgsql') {
+                DB::select('SELECT bind_document_version_governance_command_result(?, ?)', [$command->id, $target->id]);
+            } else {
+                $command->forceFill(['result_document_id' => $target->id])->save();
+            }
 
             return [$target, $command->refresh(), false, $operation, $leaseToken];
         });
@@ -85,6 +95,14 @@ final readonly class ExecuteApplicabilityOnlySuccessorCommand
 
         $result = $this->successor->finish($predecessor, $target, $operation, $leaseToken, $correlationId);
         $command = DB::transaction(function () use ($command, $result): DocumentGovernanceCommand {
+            if (DB::getDriverName() === 'pgsql') {
+                if (! in_array($result->status, [DocumentStatus::Queued, DocumentStatus::Processing, DocumentStatus::Indexed], true)) {
+                    throw new DocumentGovernanceException('The successor did not reach a durable materialisation state.');
+                }
+                DB::select('SELECT complete_document_version_governance_command(?, ?)', [$command->id, $result->id]);
+
+                return $command->refresh();
+            }
             $locked = DocumentGovernanceCommand::query()->whereKey($command->id)->lockForUpdate()->firstOrFail();
             if ($locked->status !== 'completed') {
                 if (! in_array($result->status, [DocumentStatus::Queued, DocumentStatus::Processing, DocumentStatus::Indexed], true)) {

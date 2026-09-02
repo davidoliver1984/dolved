@@ -190,6 +190,9 @@ SELECT format(
 -- grant pass. PostgreSQL privileges are additive: omitting a column grant does
 -- not neutralise a table-level grant.
 -- Preserve ADR-0035's existing protected bulk boundary for the same reason.
+SELECT to_regclass(format('%I.bulk_operations', :'application_schema')) IS NOT NULL AS bulk_tables_exist
+\gset
+\if :bulk_tables_exist
 SELECT format(
     'REVOKE INSERT, UPDATE, DELETE ON TABLE %1$I.bulk_operations, %1$I.bulk_operation_items, %1$I.bulk_operation_item_attempts, %1$I.bulk_operation_item_subordinate_transitions, %1$I.bulk_operation_audit_events FROM rag_platform_app',
     :'application_schema'
@@ -228,7 +231,11 @@ SELECT format('GRANT INSERT ON TABLE %I.bulk_operation_item_subordinate_transiti
 \gexec
 SELECT format('GRANT SELECT, INSERT ON TABLE %I.bulk_operation_audit_events TO rag_platform_app', :'application_schema')
 \gexec
+\endif
 
+SELECT to_regclass(format('%I.document_families', :'application_schema')) IS NOT NULL AS document_families_exist
+\gset
+\if :document_families_exist
 SELECT format('REVOKE UPDATE, INSERT ON TABLE %I.document_families FROM rag_platform_app', :'application_schema')
 \gexec
 SELECT format(
@@ -241,13 +248,61 @@ SELECT format(
     :'application_schema'
 )
 \gexec
-SELECT format('REVOKE UPDATE ON TABLE %I.document_governance_commands FROM rag_platform_app', :'application_schema')
+\endif
+
+SELECT to_regclass(format('%I.document_governance_commands', :'application_schema')) IS NOT NULL AS governance_commands_exist
+\gset
+\if :governance_commands_exist
+SELECT format('REVOKE INSERT, UPDATE, DELETE ON TABLE %I.document_governance_commands FROM rag_platform_app', :'application_schema')
 \gexec
+SELECT format('GRANT SELECT ON TABLE %I.document_governance_commands TO rag_platform_app', :'application_schema')
+\gexec
+SELECT format(
+    'GRANT INSERT (public_id, workspace_id, purpose, idempotency_key, actor_user_id, target_kind, target_document_id, target_state_at_creation, target_document_family_id, target_document_family_public_id, expected_current_owner_user_id, expected_current_generation, intended_new_owner_user_id, request_payload_digest, status, result_document_id, created_at, updated_at) ON TABLE %I.document_governance_commands TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+\endif
+
+SELECT to_regprocedure(format('%I.lock_document_version_governance_command(bigint)', :'application_schema')) IS NOT NULL AS version_command_lock_function_exists
+\gset
+\if :version_command_lock_function_exists
+SELECT format(
+    'GRANT EXECUTE ON FUNCTION %I.lock_document_version_governance_command(bigint) TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+\endif
+
+SELECT to_regprocedure(format('%I.bind_document_version_governance_command_result(bigint,bigint)', :'application_schema')) IS NOT NULL AS version_command_bind_function_exists
+\gset
+\if :version_command_bind_function_exists
+SELECT format(
+    'GRANT EXECUTE ON FUNCTION %I.bind_document_version_governance_command_result(bigint,bigint) TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+\endif
+
+SELECT to_regprocedure(format('%I.apply_document_family_owner_change(bigint)', :'application_schema')) IS NOT NULL AS owner_change_function_exists
+\gset
+\if :owner_change_function_exists
 SELECT format(
     'GRANT EXECUTE ON FUNCTION %I.apply_document_family_owner_change(bigint) TO rag_platform_app',
     :'application_schema'
 )
 \gexec
+\endif
+
+SELECT to_regprocedure(format('%I.complete_document_version_governance_command(bigint,bigint)', :'application_schema')) IS NOT NULL AS version_command_function_exists
+\gset
+\if :version_command_function_exists
+SELECT format(
+    'GRANT EXECUTE ON FUNCTION %I.complete_document_version_governance_command(bigint,bigint) TO rag_platform_app',
+    :'application_schema'
+)
+\gexec
+\endif
 SQL
 done
 

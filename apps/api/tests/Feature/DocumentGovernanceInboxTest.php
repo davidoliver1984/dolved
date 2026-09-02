@@ -10,6 +10,7 @@ use App\Enums\DocumentStatus;
 use App\Models\Document;
 use App\Models\DocumentFamily;
 use App\Models\DocumentGovernanceNotification;
+use App\Models\ImportBatch;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceMembership;
@@ -47,6 +48,31 @@ final class DocumentGovernanceInboxTest extends TestCase
         $family->forceFill(['tombstoned_at' => now()])->save();
         $this->actingAs($owner)->getJson($this->url($workspace))
             ->assertOk()->assertJsonPath('data.0.target_route', null);
+    }
+
+    public function test_import_batch_notification_resolves_to_the_exact_batch_detail(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $batch = ImportBatch::query()->create([
+            'public_id' => (string) Str::uuid(),
+            'workspace_id' => $workspace->id,
+            'initiated_by_user_id' => $owner->id,
+            'status' => 'open',
+            'retention_expires_at' => now()->addDays(7),
+        ]);
+        $this->notification($owner, $workspace, [
+            'event_key' => DocumentGovernanceEventKey::ImportBatchCompletedWithExceptions,
+            'template_key' => DocumentGovernanceEventKey::ImportBatchCompletedWithExceptions->value,
+            'target_kind' => 'import_batch',
+            'target_public_id' => $batch->public_id,
+        ]);
+
+        $this->actingAs($owner)->getJson($this->url($workspace))
+            ->assertOk()
+            ->assertJsonPath(
+                'data.0.target_route',
+                "/app/workspaces/{$workspace->public_id}/documents/imports?batch={$batch->public_id}",
+            );
     }
 
     public function test_read_and_dismiss_are_idempotent_and_do_not_change_actionable_work(): void

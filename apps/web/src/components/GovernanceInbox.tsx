@@ -3,6 +3,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Bell, BellRing, CircleAlert, Info, X } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   dismissGovernanceNotification,
@@ -15,14 +16,23 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
-export function GovernanceInbox({ workspacePublicId }: Readonly<{ workspacePublicId: string | null }>) {
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<GovernanceNotification[]>([]);
-  const [unread, setUnread] = useState(0);
-  const [state, setState] = useState<"idle" | "loading" | "ready" | "error">("idle");
+type GovernanceInboxPreview = {
+  items: GovernanceNotification[];
+  unread: number;
+  initiallyOpen?: boolean;
+  state?: "loading" | "ready" | "error";
+};
+
+export function GovernanceInbox({ workspacePublicId, preview }: Readonly<{ workspacePublicId: string | null; preview?: GovernanceInboxPreview }>) {
+  const router = useRouter();
+  const [open, setOpen] = useState(preview?.initiallyOpen ?? false);
+  const [items, setItems] = useState<GovernanceNotification[]>(preview?.items ?? []);
+  const [unread, setUnread] = useState(preview?.unread ?? 0);
+  const [state, setState] = useState<"idle" | "loading" | "ready" | "error">(preview?.state ?? "idle");
   const itemRefs = useRef<Array<HTMLAnchorElement | HTMLButtonElement | null>>([]);
 
   const load = useCallback(async () => {
+    if (preview) return;
     if (!workspacePublicId) return;
     setState("loading");
     try {
@@ -33,10 +43,10 @@ export function GovernanceInbox({ workspacePublicId }: Readonly<{ workspacePubli
     } catch {
       setState("error");
     }
-  }, [workspacePublicId]);
+  }, [preview, workspacePublicId]);
 
   useEffect(() => {
-    if (!workspacePublicId) return;
+    if (!workspacePublicId || preview) return;
     let active = true;
     void governanceNotifications(workspacePublicId)
       .then((page) => {
@@ -47,18 +57,18 @@ export function GovernanceInbox({ workspacePublicId }: Readonly<{ workspacePubli
       })
       .catch(() => { if (active) setState("error"); });
     return () => { active = false; };
-  }, [workspacePublicId]);
+  }, [preview, workspacePublicId]);
 
   const read = async (notification: GovernanceNotification) => {
     if (!workspacePublicId || notification.read_at) return;
-    await markGovernanceNotificationRead(workspacePublicId, notification.public_id);
+    if (!preview) await markGovernanceNotificationRead(workspacePublicId, notification.public_id);
     setItems((current) => current.map((item) => item.public_id === notification.public_id ? { ...item, read_at: new Date().toISOString() } : item));
     setUnread((current) => Math.max(0, current - 1));
   };
 
   const dismiss = async (notification: GovernanceNotification) => {
     if (!workspacePublicId) return;
-    await dismissGovernanceNotification(workspacePublicId, notification.public_id);
+    if (!preview) await dismissGovernanceNotification(workspacePublicId, notification.public_id);
     setItems((current) => current.filter((item) => item.public_id !== notification.public_id));
     if (!notification.read_at) setUnread((current) => Math.max(0, current - 1));
   };
@@ -93,13 +103,14 @@ export function GovernanceInbox({ workspacePublicId }: Readonly<{ workspacePubli
           <div aria-live="polite" className="sr-only">{state === "ready" ? `${items.length} notifications loaded` : ""}</div>
           <div className="min-h-0 flex-1 overflow-y-auto py-4" role="log">
             {state === "loading" ? <div className="grid gap-3" data-testid="governance-inbox-loading"><Skeleton className="h-24" /><Skeleton className="h-24" /><Skeleton className="h-24" /></div> : null}
-            {state === "error" ? <div className="rounded-xl border border-warning/40 bg-warning/10 p-4"><p className="font-semibold">Some notifications could not be loaded.</p><Button className="mt-3" onClick={() => void load()} size="sm" variant="outline">Try again</Button></div> : null}
+            {state === "error" ? <div className="mb-3 rounded-xl border border-warning/40 bg-warning/10 p-4"><p className="font-semibold">Some notifications could not be loaded.</p><p className="mt-1 text-sm text-foreground-muted">Previously loaded notifications remain available below.</p><Button className="mt-3" onClick={() => void load()} size="sm" variant="outline">Try again</Button></div> : null}
             {state === "ready" && items.length === 0 ? <EmptyState description="Document updates and reminders will appear here." icon={BellRing} title="You’re all caught up" /> : null}
-            {state === "ready" && items.length > 0 ? <ul className="grid gap-3">{items.map((notification, index) => {
+            {(state === "ready" || state === "error") && items.length > 0 ? <ul className="grid gap-3">{items.map((notification, index) => {
               const Icon = notification.severity === "action_required" ? CircleAlert : notification.severity === "warning" ? CircleAlert : Info;
+              const targetRoute = notification.target_route;
               const content = <><span className={cn("mt-0.5 grid size-9 shrink-0 place-items-center rounded-full", notification.severity === "action_required" ? "bg-brand text-brand-foreground" : notification.severity === "warning" ? "bg-warning/15 text-warning" : "bg-surface-raised text-foreground-muted")}><Icon aria-hidden="true" className="size-4" /></span><span className="min-w-0 flex-1"><span className="block font-semibold">{notification.title}</span><span className="mt-1 block text-sm leading-5 text-foreground-muted">{notification.message}</span>{notification.created_at ? <time className="mt-2 block text-xs text-foreground-faint" dateTime={notification.created_at}>{new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(notification.created_at))}</time> : null}</span></>;
               return <li className={cn("rounded-xl border p-3", notification.read_at ? "border-border bg-surface" : "border-brand/40 bg-brand/5")} key={notification.public_id}>
-                {notification.target_route ? <Link className="flex gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring" href={notification.target_route} onClick={() => void read(notification)} onKeyDown={(event) => moveFocus(event, index)} ref={(node) => { itemRefs.current[index] = node; }}>{content}</Link> : <button className="flex w-full gap-3 rounded-md text-left outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void read(notification)} onKeyDown={(event) => moveFocus(event, index)} ref={(node) => { itemRefs.current[index] = node; }} type="button">{content}</button>}
+                {targetRoute ? <Link className="flex gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring" href={targetRoute} onClick={async (event) => { event.preventDefault(); await read(notification); router.push(targetRoute); }} onKeyDown={(event) => moveFocus(event, index)} ref={(node) => { itemRefs.current[index] = node; }}>{content}</Link> : <button className="flex w-full gap-3 rounded-md text-left outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void read(notification)} onKeyDown={(event) => moveFocus(event, index)} ref={(node) => { itemRefs.current[index] = node; }} type="button">{content}</button>}
                 <div className="mt-3 flex justify-end"><Button onClick={() => void dismiss(notification)} size="sm" variant="ghost">Dismiss</Button></div>
               </li>;
             })}</ul> : null}

@@ -127,6 +127,15 @@ export type GovernanceActionableWork = {
   review_overdue: number;
 };
 
+export type GovernanceNotificationPreferences = {
+  workspace: {
+    email_delivery_enabled: boolean;
+    default_email_enabled: boolean;
+    can_manage: boolean;
+  };
+  personal: Array<{ category_group: string; email_enabled: boolean }>;
+};
+
 export async function governanceNotifications(workspacePublicId: string): Promise<GovernanceNotificationPage> {
   return apiFetch<GovernanceNotificationPage>(
     `/api/workspaces/${encodeURIComponent(workspacePublicId)}/governance-notifications`,
@@ -144,6 +153,27 @@ export async function dismissGovernanceNotification(workspacePublicId: string, n
   await apiFetch(
     `/api/workspaces/${encodeURIComponent(workspacePublicId)}/governance-notifications/${encodeURIComponent(notificationPublicId)}/dismiss`,
     { method: "POST" },
+  );
+}
+
+export async function governanceNotificationPreferences(workspacePublicId: string): Promise<GovernanceNotificationPreferences> {
+  const response = await apiFetch<{ data: GovernanceNotificationPreferences }>(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/governance-notification-preferences`,
+  );
+  return response.data;
+}
+
+export async function updatePersonalGovernanceNotificationPreference(workspacePublicId: string, categoryGroup: string, emailEnabled: boolean): Promise<void> {
+  await apiFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/governance-notification-preferences/personal`,
+    { method: "PUT", body: JSON.stringify({ category_group: categoryGroup, email_enabled: emailEnabled }) },
+  );
+}
+
+export async function updateWorkspaceGovernanceNotificationPreferences(workspacePublicId: string, values: { email_delivery_enabled: boolean; default_email_enabled: boolean }): Promise<void> {
+  await apiFetch(
+    `/api/workspaces/${encodeURIComponent(workspacePublicId)}/governance-notification-preferences/workspace`,
+    { method: "PUT", body: JSON.stringify(values) },
   );
 }
 

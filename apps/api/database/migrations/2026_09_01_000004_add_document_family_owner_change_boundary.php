@@ -52,6 +52,9 @@ SQL);
     public function down(): void
     {
         if (DB::getDriverName() === 'pgsql') {
+            DB::statement('DROP FUNCTION IF EXISTS complete_document_version_governance_command(bigint, bigint)');
+            DB::statement('DROP FUNCTION IF EXISTS bind_document_version_governance_command_result(bigint, bigint)');
+            DB::statement('DROP FUNCTION IF EXISTS lock_document_version_governance_command(bigint)');
             DB::statement('DROP FUNCTION IF EXISTS apply_document_family_owner_change(bigint)');
             DB::statement('DROP FUNCTION IF EXISTS enforce_document_governance_command_target_shape() CASCADE');
             DB::statement('ALTER TABLE document_governance_commands DROP CONSTRAINT IF EXISTS document_governance_commands_result_shape_check');
@@ -189,14 +192,144 @@ REVOKE ALL ON FUNCTION apply_document_family_owner_change(bigint) FROM PUBLIC;
 SQL);
 
         DB::unprepared(<<<'SQL'
+CREATE FUNCTION lock_document_version_governance_command(p_command_id bigint) RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  command_row public.document_governance_commands%ROWTYPE;
+BEGIN
+  SELECT * INTO command_row
+  FROM public.document_governance_commands
+  WHERE id = p_command_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_command_missing';
+  END IF;
+  IF command_row.target_kind <> 'document_version'
+     OR command_row.purpose = 'document_family.owner.change' THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_command_target_invalid';
+  END IF;
+END
+$$;
+
+CREATE FUNCTION bind_document_version_governance_command_result(
+  p_command_id bigint,
+  p_result_document_id bigint
+) RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  command_row public.document_governance_commands%ROWTYPE;
+  result_workspace_id bigint;
+BEGIN
+  SELECT * INTO command_row
+  FROM public.document_governance_commands
+  WHERE id = p_command_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_command_missing';
+  END IF;
+  IF command_row.target_kind <> 'document_version'
+     OR command_row.purpose = 'document_family.owner.change' THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_command_target_invalid';
+  END IF;
+  IF command_row.status <> 'processing' THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_command_not_processing';
+  END IF;
+
+  SELECT workspace_id INTO result_workspace_id
+  FROM public.documents
+  WHERE id = p_result_document_id;
+
+  IF NOT FOUND OR result_workspace_id <> command_row.workspace_id THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_result_workspace_mismatch';
+  END IF;
+  IF command_row.result_document_id IS NOT NULL
+     AND command_row.result_document_id <> p_result_document_id THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_result_conflict';
+  END IF;
+
+  UPDATE public.document_governance_commands
+  SET result_document_id = p_result_document_id,
+      updated_at = CURRENT_TIMESTAMP
+  WHERE id = command_row.id;
+END
+$$;
+
+CREATE FUNCTION complete_document_version_governance_command(
+  p_command_id bigint,
+  p_result_document_id bigint
+) RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  command_row public.document_governance_commands%ROWTYPE;
+  result_workspace_id bigint;
+BEGIN
+  SELECT * INTO command_row
+  FROM public.document_governance_commands
+  WHERE id = p_command_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_command_missing';
+  END IF;
+  IF command_row.target_kind <> 'document_version'
+     OR command_row.purpose = 'document_family.owner.change' THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_command_target_invalid';
+  END IF;
+
+  SELECT workspace_id INTO result_workspace_id
+  FROM public.documents
+  WHERE id = p_result_document_id;
+
+  IF NOT FOUND OR result_workspace_id <> command_row.workspace_id THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_result_workspace_mismatch';
+  END IF;
+  IF command_row.result_document_id IS NOT NULL
+     AND command_row.result_document_id <> p_result_document_id THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_result_conflict';
+  END IF;
+  IF command_row.status = 'completed' THEN
+    RETURN;
+  END IF;
+  IF command_row.status <> 'processing' THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'document_governance_command_not_processing';
+  END IF;
+
+  UPDATE public.document_governance_commands
+  SET status = 'completed',
+      result_document_id = p_result_document_id,
+      updated_at = CURRENT_TIMESTAMP
+  WHERE id = command_row.id;
+END
+$$;
+
+REVOKE ALL ON FUNCTION lock_document_version_governance_command(bigint) FROM PUBLIC;
+REVOKE ALL ON FUNCTION bind_document_version_governance_command_result(bigint, bigint) FROM PUBLIC;
+REVOKE ALL ON FUNCTION complete_document_version_governance_command(bigint, bigint) FROM PUBLIC;
+SQL);
+
+        DB::unprepared(<<<'SQL'
 DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'rag_platform_owner') THEN
     ALTER FUNCTION enforce_document_governance_command_target_shape() OWNER TO rag_platform_owner;
     ALTER FUNCTION apply_document_family_owner_change(bigint) OWNER TO rag_platform_owner;
+    ALTER FUNCTION lock_document_version_governance_command(bigint) OWNER TO rag_platform_owner;
+    ALTER FUNCTION bind_document_version_governance_command_result(bigint, bigint) OWNER TO rag_platform_owner;
+    ALTER FUNCTION complete_document_version_governance_command(bigint, bigint) OWNER TO rag_platform_owner;
   END IF;
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'rag_platform_app') THEN
-    REVOKE UPDATE ON document_governance_commands FROM rag_platform_app;
+    REVOKE INSERT, UPDATE, DELETE ON document_governance_commands FROM rag_platform_app;
     REVOKE UPDATE, INSERT ON document_families FROM rag_platform_app;
     GRANT SELECT ON document_governance_commands TO rag_platform_app;
     GRANT INSERT (public_id, workspace_id, purpose, idempotency_key, actor_user_id,
@@ -213,6 +346,9 @@ BEGIN
       tombstoned_at, updated_at)
       ON document_families TO rag_platform_app;
     GRANT EXECUTE ON FUNCTION apply_document_family_owner_change(bigint) TO rag_platform_app;
+    GRANT EXECUTE ON FUNCTION lock_document_version_governance_command(bigint) TO rag_platform_app;
+    GRANT EXECUTE ON FUNCTION bind_document_version_governance_command_result(bigint, bigint) TO rag_platform_app;
+    GRANT EXECUTE ON FUNCTION complete_document_version_governance_command(bigint, bigint) TO rag_platform_app;
   END IF;
 END
 $$;

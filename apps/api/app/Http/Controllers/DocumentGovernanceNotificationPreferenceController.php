@@ -9,8 +9,10 @@ use App\Models\User;
 use App\Models\UserNotificationPreference;
 use App\Models\WorkspaceNotificationSetting;
 use App\Queries\Workspaces\FindWorkspaceForUser;
+use App\Support\Documents\GovernanceEmailCategories;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 final class DocumentGovernanceNotificationPreferenceController extends Controller
 {
@@ -59,7 +61,7 @@ final class DocumentGovernanceNotificationPreferenceController extends Controlle
         $user = $request->user();
         $workspaces->handle($user, $workspacePublicId);
         $data = $request->validate([
-            'category_group' => ['required', 'string', 'max:96'],
+            'category_group' => ['required', 'string', Rule::in(GovernanceEmailCategories::groups())],
             'email_enabled' => ['required', 'boolean'],
         ]);
         $preference = UserNotificationPreference::query()->updateOrCreate(

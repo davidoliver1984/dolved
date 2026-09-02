@@ -14,6 +14,8 @@ use App\Actions\Documents\SealDocumentGovernanceEmailEnvelope;
 use App\Actions\Documents\SealDueDocumentGovernanceEmailDigests;
 use App\Actions\Documents\VerifyDocumentGovernanceEmailAttempt;
 use App\Contracts\Documents\DocumentGovernanceEmailTransport;
+use App\Contracts\Documents\ResolveDocumentGovernanceEmailBranding;
+use App\Data\Documents\ResolvedGovernanceEmailBranding;
 use App\Enums\DocumentGovernanceEventKey;
 use App\Enums\DocumentGovernanceStatus;
 use App\Enums\DocumentStatus;
@@ -265,6 +267,57 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         $this->assertSame('rendering_or_dispatch_contract_failure', $envelope->last_error);
     }
 
+    public function test_valid_resolved_tenant_branding_uses_the_same_safe_template(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $document = Document::factory()->for($workspace)->create();
+        $notification = $this->notification($owner, $workspace, DocumentGovernanceEventKey::ImportBatchCompleted);
+        $notification->forceFill(['target_kind' => 'document', 'target_public_id' => $document->public_id])->save();
+        $envelope = app(AssembleDocumentGovernanceEmailEnvelope::class)
+            ->handle($notification);
+        $claim = app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+        $this->app->instance(ResolveDocumentGovernanceEmailBranding::class, new class implements ResolveDocumentGovernanceEmailBranding
+        {
+            public function resolve(string $configurationIdentity, string $accentIdentity): ResolvedGovernanceEmailBranding
+            {
+                return new ResolvedGovernanceEmailBranding('Alderbridge Care', '#6B2D84', 'https://assets.example.test/alderbridge.png');
+            }
+        });
+
+        $mail = app(BuildDocumentGovernanceEmail::class)->handle($claim['envelope']->refresh());
+        $html = $mail->render();
+        $this->assertStringContainsString('Alderbridge Care', $html);
+        $this->assertStringContainsString('https://assets.example.test/alderbridge.png', $html);
+        $this->assertStringContainsString('background:#6B2D84', $html);
+        $this->assertStringContainsString('Sent by Dolved', $html);
+    }
+
+    public function test_invalid_logo_and_low_contrast_accent_fall_back_without_delaying_rendering(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $document = Document::factory()->for($workspace)->create();
+        $notification = $this->notification($owner, $workspace, DocumentGovernanceEventKey::ImportBatchCompleted);
+        $notification->forceFill(['target_kind' => 'document', 'target_public_id' => $document->public_id])->save();
+        $envelope = app(AssembleDocumentGovernanceEmailEnvelope::class)
+            ->handle($notification);
+        $claim = app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
+        $this->app->instance(ResolveDocumentGovernanceEmailBranding::class, new class implements ResolveDocumentGovernanceEmailBranding
+        {
+            public function resolve(string $configurationIdentity, string $accentIdentity): ResolvedGovernanceEmailBranding
+            {
+                return new ResolvedGovernanceEmailBranding('Unsafe tenant', '#F5F5F5', 'javascript:alert(1)');
+            }
+        });
+
+        $mail = app(BuildDocumentGovernanceEmail::class)->handle($claim['envelope']->refresh());
+        $html = $mail->render();
+        $this->assertSame('Dolved', $mail->brandName);
+        $this->assertSame('#008466', $mail->accentColour);
+        $this->assertNull($mail->logoUrl);
+        $this->assertStringNotContainsString('javascript:', $html);
+        $this->assertStringNotContainsString('Unsafe tenant', $html);
+    }
+
     public function test_due_digest_is_sealed_once_and_queued_with_ordered_safe_members(): void
     {
         Queue::fake();
@@ -305,6 +358,10 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
             'category_group' => 'review_reminders',
             'email_enabled' => false,
         ])->assertOk();
+        $this->actingAs($member)->putJson($url.'/personal', [
+            'category_group' => 'invented.future.channel',
+            'email_enabled' => true,
+        ])->assertUnprocessable();
         $this->actingAs($member)->getJson($url)->assertOk()
             ->assertJsonPath('data.workspace.can_manage', false)
             ->assertJsonPath('data.personal.0.category_group', 'review_reminders');

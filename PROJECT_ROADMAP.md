@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 27 of 32 (Document Governance Notifications and Reminders) |
+| Project status | In Progress — Phase 28 of 32 (Product-wide Integration and Visual Acceptance) |
 | Version | 0.1 |
 | Owner | David Oliver |
 
@@ -1138,8 +1138,9 @@ R27-S05 requires David's explicit review at every named ADR-0036 checkpoint.
 
 ### Deliverable
 
-Durable document-governance notifications, reminders and controlled email
-delivery with reviewed in-product and email presentation.
+Completed 2 September 2026: durable document-governance notifications,
+reminders and controlled email delivery with reviewed in-product and email
+presentation.
 
 ---
 
@@ -1326,7 +1327,7 @@ A phase is complete only when:
 | Knowledge Library Product Interface | ⬜ Not Started |
 | Import Staging and Promotion | ⬜ Not Started |
 | Frozen Bulk Document Operations | ⬜ Not Started |
-| Document Governance Notifications and Reminders | ⬜ Not Started |
+| Document Governance Notifications and Reminders | ✅ Complete |
 | CI/CD and Production Readiness | ⬜ Not Started |
 | Documentation and Demonstration Readiness | ⬜ Not Started |
 

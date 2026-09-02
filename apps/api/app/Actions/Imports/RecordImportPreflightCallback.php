@@ -24,6 +24,7 @@ final class RecordImportPreflightCallback
         private readonly ImportPreflightContractValidator $contracts,
         private readonly ImportPreflightPayloadDigest $digests,
         private readonly RecordDocumentGovernanceEvent $events,
+        private readonly RecordImportBatchProcessingOutcome $batchOutcome,
     ) {}
 
     /** @param array<string, mixed> $payload */
@@ -47,7 +48,7 @@ final class RecordImportPreflightCallback
     {
         $digest = $this->digests->hash($payload);
 
-        return DB::transaction(function () use ($eventId, $payload, $failure, $digest): string {
+        $outcome = DB::transaction(function () use ($eventId, $payload, $failure, $digest): string {
             $attempt = ImportPreflightAttempt::query()->with(['item.batch.initiatedBy', 'item.workspace'])->where('event_id', $eventId)->lockForUpdate()->first();
             if ($attempt === null) {
                 throw ImportPreflightException::conflict('unknown_event');
@@ -133,6 +134,13 @@ final class RecordImportPreflightCallback
 
             return 'recorded';
         });
+
+        if ($outcome === 'recorded') {
+            $attempt = ImportPreflightAttempt::query()->with('item.batch')->where('event_id', $eventId)->firstOrFail();
+            $this->batchOutcome->handle($attempt->item->batch);
+        }
+
+        return $outcome;
     }
 
     /** @param array<string, mixed> $payload */

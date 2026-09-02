@@ -8,6 +8,7 @@ use App\Models\BulkOperation;
 use App\Models\Document;
 use App\Models\DocumentFamily;
 use App\Models\DocumentGovernanceNotification;
+use App\Models\ImportBatch;
 use App\Models\ImportItem;
 use App\Models\Workspace;
 
@@ -33,6 +34,9 @@ final class ResolveDocumentGovernanceNotificationRoute
                 ->whereBelongsTo($workspace)->where('public_id', $notification->target_public_id)->exists()
                     ? "{$base}/documents/bulk/{$notification->target_public_id}" : null,
             'import_item' => $this->importRoute($workspace, $notification->target_public_id, $base),
+            'import_batch' => ImportBatch::query()
+                ->whereBelongsTo($workspace)->where('public_id', $notification->target_public_id)->exists()
+                    ? "{$base}/documents/imports?batch={$notification->target_public_id}" : null,
             default => null,
         };
     }

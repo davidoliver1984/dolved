@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use App\Contracts\Documents\DocumentGovernanceEmailTransport;
 use App\Contracts\Documents\ExportSourceHold;
+use App\Contracts\Documents\ResolveDocumentGovernanceEmailBranding;
 use App\Contracts\Ingestion\ContentCloneVectorGateway;
 use App\Contracts\Ingestion\IngestionEventPublisher;
 use App\Contracts\Platform\OperationalMetricsReader;
 use App\Models\User;
 use App\Observers\UserAccessObserver;
+use App\Services\Documents\DolvedGovernanceEmailBrandingResolver;
 use App\Services\Documents\LaravelDocumentGovernanceEmailTransport;
 use App\Services\Documents\NoopExportSourceHold;
 use App\Services\Ingestion\AiContentCloneVectorGateway;
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(DocumentGovernanceEmailTransport::class, LaravelDocumentGovernanceEmailTransport::class);
+        $this->app->bind(ResolveDocumentGovernanceEmailBranding::class, DolvedGovernanceEmailBrandingResolver::class);
         $this->app->bind(ExportSourceHold::class, NoopExportSourceHold::class);
         $this->app->bind(
             IngestionEventPublisher::class,

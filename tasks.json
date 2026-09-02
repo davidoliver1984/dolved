@@ -38,11 +38,11 @@
     ]
   },
   "progress": {
-    "current_phase": "R27",
-    "current_session": "R27-S01",
-    "next_action": "Begin R27-S01 — build ADR-0036 governance events, projections, owner controls and provider-free APIs.",
-    "completed_through": "R26-GATE",
-    "completed_phase_count": 27,
+    "current_phase": "R28",
+    "current_session": "R28-S01",
+    "next_action": "Begin R28-S01 separately — review and classify the product-wide design-correction register.",
+    "completed_through": "R27-GATE",
+    "completed_phase_count": 28,
     "total_phase_count": 32
   },
   "phases": [
@@ -5294,7 +5294,7 @@
       "title": "Document Governance Notifications and Reminders",
       "guide_start_line": 15184,
       "guide_end_line": 15208,
-      "status": "not_started",
+      "status": "completed",
       "objective": "Implement ADR-0036 after ADR-0030 through ADR-0035 and the PostgreSQL role foundation.",
       "accepted_adrs": [
         "ADR-0036"
@@ -5304,7 +5304,7 @@
           "id": "R27-S01",
           "guide_stage": "Stage 27.1 — Events, projections, owner controls and provider-free APIs",
           "title": "Build Governance Event Foundation",
-          "status": "not_started",
+          "status": "completed",
           "depends_on": [
             "R26-GATE",
             "R26-S01"
@@ -5314,7 +5314,7 @@
           "id": "R27-S02",
           "guide_stage": "Stage 27.2 — Inbox and actionable-work projections",
           "title": "Build Governance Inbox",
-          "status": "not_started",
+          "status": "completed",
           "depends_on": [
             "R27-S01"
           ]
@@ -5323,7 +5323,7 @@
           "id": "R27-S03",
           "guide_stage": "Stage 27.3 — Schedulers, reminders, preferences, envelopes and delivery",
           "title": "Build Governance Reminder Delivery",
-          "status": "not_started",
+          "status": "completed",
           "depends_on": [
             "R27-S01"
           ]
@@ -5332,7 +5332,7 @@
           "id": "R27-S04",
           "guide_stage": "Stage 27.4 — Email templates and tenant-branding seam",
           "title": "Build Governance Email Templates",
-          "status": "not_started",
+          "status": "completed",
           "depends_on": [
             "R27-S03"
           ]
@@ -5341,7 +5341,7 @@
           "id": "R27-S05",
           "guide_stage": "Stage 27.5 — Visual, accessibility and Playwright acceptance",
           "title": "Verify Governance Notifications",
-          "status": "not_started",
+          "status": "completed",
           "depends_on": [
             "R27-S02",
             "R27-S03",
@@ -5354,8 +5354,13 @@
       "gate": {
         "id": "R27-GATE",
         "title": "Document Governance Notifications and Reminders Acceptance Gate",
-        "status": "not_started",
-        "completion_evidence": []
+        "status": "completed",
+        "completion_evidence": [
+          "ADR-0036 event, projection, owner-control, inbox, reminder, preference, delivery and email boundaries completed",
+          "David explicitly approved all 15 product states in light and dark themes and all 6 governance-email states",
+          "The isolated governance Playwright journey passed the real import-exception, promotion, reminder, inbox, keyboard, dismissal, theme and responsive-navigation flow without provider calls",
+          "docs/journal/2026-09-02-r27-s05-phase-closure.md"
+        ]
       }
     },
     {

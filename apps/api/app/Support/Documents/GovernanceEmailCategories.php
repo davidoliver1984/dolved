@@ -8,6 +8,15 @@ use App\Enums\DocumentGovernanceEventKey;
 
 final class GovernanceEmailCategories
 {
+    /** @return list<string> */
+    public static function groups(): array
+    {
+        return array_values(array_unique(array_map(
+            fn (DocumentGovernanceEventKey $key): string => self::group($key),
+            array_filter(DocumentGovernanceEventKey::cases(), self::eligible(...)),
+        )));
+    }
+
     public static function eligible(DocumentGovernanceEventKey $key): bool
     {
         return ! in_array($key, [

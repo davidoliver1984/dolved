@@ -53,7 +53,6 @@ final readonly class ExecuteDocumentGovernanceCommand
                 ->where('workspace_id', $currentTarget->workspace_id)
                 ->where('purpose', $purpose)
                 ->where('idempotency_key', $idempotencyKey)
-                ->lockForUpdate()
                 ->firstOrFail();
 
             if (
@@ -69,10 +68,11 @@ final readonly class ExecuteDocumentGovernanceCommand
             }
 
             $result = $execute();
-            $command->forceFill([
-                'status' => 'completed',
-                'result_document_id' => $result->id,
-            ])->save();
+            if (DB::getDriverName() === 'pgsql') {
+                DB::select('SELECT complete_document_version_governance_command(?, ?)', [$command->id, $result->id]);
+            } else {
+                $command->forceFill(['status' => 'completed', 'result_document_id' => $result->id])->save();
+            }
 
             return [$result, $command->refresh(), false];
         });

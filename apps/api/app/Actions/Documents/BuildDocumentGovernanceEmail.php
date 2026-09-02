@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Documents;
 
+use App\Contracts\Documents\ResolveDocumentGovernanceEmailBranding;
+use App\Data\Documents\ResolvedGovernanceEmailBranding;
 use App\Enums\DocumentGovernanceEventKey;
 use App\Mail\DocumentGovernanceMail;
 use App\Models\DocumentGovernanceEmailEnvelope;
@@ -15,7 +17,10 @@ use LogicException;
 
 final readonly class BuildDocumentGovernanceEmail
 {
-    public function __construct(private ResolveDocumentGovernanceNotificationRoute $resolveRoute) {}
+    public function __construct(
+        private ResolveDocumentGovernanceNotificationRoute $resolveRoute,
+        private ResolveDocumentGovernanceEmailBranding $resolveBranding,
+    ) {}
 
     public function handle(DocumentGovernanceEmailEnvelope $envelope): DocumentGovernanceMail
     {
@@ -42,6 +47,10 @@ final readonly class BuildDocumentGovernanceEmail
         $summary = $digest
             ? 'Review the document governance reminders waiting in your workspace.'
             : $items[0]['message'];
+        $branding = $this->safeBranding($this->resolveBranding->resolve(
+            (string) $envelope->branding_configuration_identity,
+            (string) $envelope->resolved_accent_identity,
+        ));
 
         return new DocumentGovernanceMail(
             mailSubject: "{$heading} · {$envelope->workspace_display_name_snapshot}",
@@ -53,14 +62,17 @@ final readonly class BuildDocumentGovernanceEmail
             preferenceUrl: $frontend."/app/workspaces/{$workspace->public_id}/settings/notifications",
             items: $digest ? $items : [],
             idempotencyKey: $envelope->envelope_key,
+            brandName: $branding->brandName,
+            accentColour: $branding->accentColour,
+            logoUrl: $branding->logoUrl,
         );
     }
 
     private function validateSealedIdentity(DocumentGovernanceEmailEnvelope $envelope): void
     {
         if ($envelope->template_version !== 1
-            || $envelope->branding_configuration_identity !== 'dolved-default-v1'
-            || $envelope->resolved_accent_identity !== 'dolved-green-v1'
+            || $envelope->branding_configuration_identity === null
+            || $envelope->resolved_accent_identity === null
             || $envelope->workspace_display_name_snapshot === null
             || $envelope->sealed_rendering_basis_digest === null) {
             throw new LogicException('The governance email rendering identity is unsupported or incomplete.');
@@ -80,6 +92,45 @@ final readonly class BuildDocumentGovernanceEmail
             || GovernanceEmailCategories::group($notification->event_key) !== $envelope->category_group) {
             throw new LogicException('The immediate governance email template is incompatible with its notification.');
         }
+    }
+
+    private function safeBranding(ResolvedGovernanceEmailBranding $branding): ResolvedGovernanceEmailBranding
+    {
+        $logoValid = $branding->logoUrl === null
+            || filter_var($branding->logoUrl, FILTER_VALIDATE_URL) !== false
+                && parse_url($branding->logoUrl, PHP_URL_SCHEME) === 'https';
+        if (! $logoValid || trim($branding->brandName) === '' || mb_strlen($branding->brandName) > 100) {
+            return $this->dolvedBranding();
+        }
+
+        $accent = strtoupper($branding->accentColour);
+        if (! preg_match('/^#[0-9A-F]{6}$/', $accent) || $this->contrastAgainstWhite($accent) < 4.5) {
+            $accent = '#008466';
+        }
+
+        return new ResolvedGovernanceEmailBranding(
+            brandName: $branding->brandName,
+            accentColour: $accent,
+            logoUrl: $branding->logoUrl,
+        );
+    }
+
+    private function dolvedBranding(): ResolvedGovernanceEmailBranding
+    {
+        return new ResolvedGovernanceEmailBranding('Dolved', '#008466');
+    }
+
+    private function contrastAgainstWhite(string $hex): float
+    {
+        $components = [substr($hex, 1, 2), substr($hex, 3, 2), substr($hex, 5, 2)];
+        $linear = array_map(function (string $component): float {
+            $value = hexdec($component) / 255;
+
+            return $value <= 0.03928 ? $value / 12.92 : (($value + 0.055) / 1.055) ** 2.4;
+        }, $components);
+        $luminance = 0.2126 * $linear[0] + 0.7152 * $linear[1] + 0.0722 * $linear[2];
+
+        return 1.05 / ($luminance + 0.05);
     }
 
     /** @return array{title: string, message: string} */

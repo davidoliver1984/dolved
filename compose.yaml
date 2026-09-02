@@ -287,7 +287,7 @@ services:
       target: development
     image: rag-platform-api:development
     init: true
-    command: php artisan queue:work conversation --queue=conversation-generation,document-administration --tries=1 --timeout=900 --sleep=1
+    command: php artisan queue:work conversation --queue=conversation-generation,document-administration,document-governance --tries=1 --timeout=900 --sleep=1
     environment:
       APP_NAME: Dolved
       APP_ENV: ${APP_ENV:-local}

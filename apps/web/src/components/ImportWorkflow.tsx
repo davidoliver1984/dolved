@@ -60,7 +60,7 @@ function itemStatus(item: ImportItem): { label: string; tone: "success" | "pendi
   return { label: "Verifying", tone: "pending" };
 }
 
-export function ImportWorkflow({ workspacePublicId }: Readonly<{ workspacePublicId: string }>) {
+export function ImportWorkflow({ workspacePublicId, initialBatchPublicId }: Readonly<{ workspacePublicId: string; initialBatchPublicId?: string }>) {
   const [configuration, setConfiguration] = useState<ImportConfiguration | null>(null);
   const [batches, setBatches] = useState<ImportBatch[]>([]);
   const [batch, setBatch] = useState<ImportBatch | null>(null);
@@ -76,10 +76,14 @@ export function ImportWorkflow({ workspacePublicId }: Readonly<{ workspacePublic
   }, [batch, workspacePublicId]);
 
   useEffect(() => {
-    void Promise.all([importConfiguration(workspacePublicId), listImportBatches(workspacePublicId)])
-      .then(([nextConfiguration, recent]) => { setConfiguration(nextConfiguration); setBatches(recent); })
+    void Promise.all([
+      importConfiguration(workspacePublicId),
+      listImportBatches(workspacePublicId),
+      initialBatchPublicId ? getImportBatch(workspacePublicId, initialBatchPublicId) : Promise.resolve(null),
+    ])
+      .then(([nextConfiguration, recent, initialBatch]) => { setConfiguration(nextConfiguration); setBatches(recent); setBatch(initialBatch); })
       .catch(() => setError("The import workspace could not be loaded."));
-  }, [workspacePublicId]);
+  }, [initialBatchPublicId, workspacePublicId]);
 
   useEffect(() => {
     if (!batch || batch.items.every((item) => item.preflight_status !== "pending" && (!item.promotion || item.promotion.status === "committed") && (!item.document || ["indexed", "failed"].includes(item.document.status)))) return;

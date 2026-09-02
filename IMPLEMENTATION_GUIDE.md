@@ -15188,24 +15188,24 @@ rules. Phase 26 is complete; Stage 27.1 is ready to begin.
 Implement ADR-0036 after ADR-0030–0035 event-producing lifecycles and the
 R26-S01 PostgreSQL privilege foundation exist.
 
-## Stage 27.1 — Events, projections, owner controls and provider-free APIs
+## Stage 27.1 — Events, projections, owner controls and provider-free APIs — Complete
 
 Implement Session A from ADR-0036, including its exact event vocabulary,
 occurrence identities, producer ownership, outbox/projector, protected-column
 privileges and owner-change function.
 
-## Stage 27.2 — Inbox and actionable-work projections
+## Stage 27.2 — Inbox and actionable-work projections — Complete
 
-## Stage 27.3 — Schedulers, reminders, preferences, envelopes and delivery
+## Stage 27.3 — Schedulers, reminders, preferences, envelopes and delivery — Complete
 
-## Stage 27.4 — Email templates and tenant-branding seam
+## Stage 27.4 — Email templates and tenant-branding seam — Complete
 
-## Stage 27.5 — Visual, accessibility and Playwright acceptance
+## Stage 27.5 — Visual, accessibility and Playwright acceptance — Complete
 
-Run the product-surface and email checkpoints in ADR-0036's required order.
-Each checkpoint requires a direct browser preview or screenshot and David's
-explicit approval before proceeding. Provider deliverability remains governed
-by its existing separate smoke-test boundary.
+Completed 2 September 2026. David explicitly approved every named product and
+email checkpoint in light and dark themes. The isolated governance journey
+passed import exception, promotion, reminder, inbox, keyboard, dismissal,
+theme and responsive-navigation behaviour. No external provider was called.
 
 ---
 

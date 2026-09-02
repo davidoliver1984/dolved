@@ -141,7 +141,11 @@ LANGUAGE plpgsql AS $$
 DECLARE parent_status text; parent_terminal_at timestamptz;
 BEGIN
   IF TG_OP = 'UPDATE' THEN
-    RAISE EXCEPTION 'governance email envelope membership is append-only';
+    IF OLD.ordinal IS NULL AND NEW.ordinal IS NOT NULL
+       AND (to_jsonb(NEW) - 'ordinal' - 'updated_at') = (to_jsonb(OLD) - 'ordinal' - 'updated_at') THEN
+      RETURN NEW;
+    END IF;
+    RAISE EXCEPTION 'governance email envelope membership is append-only after its sealing ordinal is assigned';
   END IF;
   SELECT assembly_status, terminal_at INTO parent_status, parent_terminal_at
   FROM document_governance_email_envelopes

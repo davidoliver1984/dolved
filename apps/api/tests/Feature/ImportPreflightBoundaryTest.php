@@ -165,7 +165,48 @@ final class ImportPreflightBoundaryTest extends TestCase
             'event_key' => DocumentGovernanceEventKey::ImportItemProcessingFailed->value,
             'correlation_id' => $pending->public_id,
         ]);
-        $this->assertSame(2, DocumentGovernanceEvent::query()->count());
+        $this->assertSame(3, DocumentGovernanceEvent::query()->count());
+        $this->assertDatabaseHas('document_governance_events', [
+            'event_key' => DocumentGovernanceEventKey::ImportBatchCompletedWithExceptions->value,
+            'correlation_id' => $rejected->batch->public_id,
+        ]);
+    }
+
+    public function test_batch_outcome_is_recorded_only_after_every_active_item_finishes_preflight(): void
+    {
+        Queue::fake();
+        [, $batch, $first] = $this->domain();
+        $secondPublicId = (string) Str::uuid();
+        $second = ImportItem::query()->create([
+            'public_id' => $secondPublicId,
+            'import_batch_id' => $batch->id,
+            'workspace_id' => $batch->workspace_id,
+            'staged_object_key' => "imports/workspaces/{$batch->workspace->public_id}/items/{$secondPublicId}/source",
+            'declared_media_type' => 'application/pdf',
+            'preflight_status' => ImportPreflightStatus::Pending,
+            'match_status' => ImportMatchStatus::Pending,
+        ]);
+
+        $firstAttempt = $this->starter()->handle($first);
+        app(RecordImportPreflightCallback::class)->complete($firstAttempt->event_id, $this->completePayload($firstAttempt));
+        $this->assertDatabaseMissing('document_governance_events', [
+            'correlation_id' => $batch->public_id,
+        ]);
+
+        $secondAttempt = $this->starter()->handle($second);
+        $rejection = $this->basePayload($secondAttempt) + [
+            'result' => 'corrupt_structure',
+            'diagnostic_code' => 'invalid_container',
+        ];
+        app(RecordImportPreflightCallback::class)->complete($secondAttempt->event_id, $rejection);
+
+        $event = DocumentGovernanceEvent::query()->where('correlation_id', $batch->public_id)->firstOrFail();
+        $this->assertSame(DocumentGovernanceEventKey::ImportBatchCompletedWithExceptions, $event->event_key);
+        $this->assertSame(2, $event->payload['item_count']);
+        $this->assertSame(1, $event->payload['exception_count']);
+
+        app(RecordImportPreflightCallback::class)->complete($secondAttempt->event_id, $rejection);
+        $this->assertSame(1, DocumentGovernanceEvent::query()->where('correlation_id', $batch->public_id)->count());
     }
 
     public function test_inbound_callback_requires_the_exact_purpose_scoped_hmac(): void

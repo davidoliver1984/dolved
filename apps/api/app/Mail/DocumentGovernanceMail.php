@@ -28,6 +28,9 @@ final class DocumentGovernanceMail extends Mailable
         public readonly string $preferenceUrl,
         public readonly array $items,
         public readonly string $idempotencyKey,
+        public readonly string $brandName = 'Dolved',
+        public readonly string $accentColour = '#008466',
+        public readonly ?string $logoUrl = null,
     ) {}
 
     public function envelope(): Envelope

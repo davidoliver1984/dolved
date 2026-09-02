@@ -182,10 +182,13 @@ SELECT concat_ws('|',
   has_column_privilege('rag_platform_app', 'document_governance_commands', 'target_document_family_id', 'INSERT'),
   has_table_privilege('rag_platform_app', 'document_governance_commands', 'UPDATE'),
   has_table_privilege('rag_platform_app', 'document_governance_commands', 'DELETE'),
-  has_function_privilege('rag_platform_app', 'apply_document_family_owner_change(bigint)', 'EXECUTE')
+  has_function_privilege('rag_platform_app', 'apply_document_family_owner_change(bigint)', 'EXECUTE'),
+  has_function_privilege('rag_platform_app', 'lock_document_version_governance_command(bigint)', 'EXECUTE'),
+  has_function_privilege('rag_platform_app', 'bind_document_version_governance_command_result(bigint,bigint)', 'EXECUTE'),
+  has_function_privilege('rag_platform_app', 'complete_document_version_governance_command(bigint,bigint)', 'EXECUTE')
 );
 ")"
-expected_governance_privileges='t|f|t|f|f|t|f|f|t|t|t|t|f|t|t'
+expected_governance_privileges='t|f|t|f|f|t|f|f|t|t|f|t|f|f|t|t|t|t'
 [[ "$governance_privilege_boundary" == "$expected_governance_privileges" ]] || {
   printf 'Unexpected document-governance privilege boundary: %s\n' "$governance_privilege_boundary" >&2
   exit 1
@@ -196,10 +199,18 @@ SELECT concat_ws('|', count(*), bool_and(p.prosecdef), bool_and(pg_get_userbyid(
 FROM pg_proc p
 JOIN pg_namespace n ON n.oid = p.pronamespace
 WHERE n.nspname = 'public'
-  AND p.proname = 'apply_document_family_owner_change'
-  AND pg_get_function_identity_arguments(p.oid) = 'p_command_id bigint';
+  AND (
+    (p.proname = 'apply_document_family_owner_change'
+      AND pg_get_function_identity_arguments(p.oid) = 'p_command_id bigint')
+    OR (p.proname = 'lock_document_version_governance_command'
+      AND pg_get_function_identity_arguments(p.oid) = 'p_command_id bigint')
+    OR (p.proname = 'bind_document_version_governance_command_result'
+      AND pg_get_function_identity_arguments(p.oid) = 'p_command_id bigint, p_result_document_id bigint')
+    OR (p.proname = 'complete_document_version_governance_command'
+      AND pg_get_function_identity_arguments(p.oid) = 'p_command_id bigint, p_result_document_id bigint')
+  );
 ")"
-[[ "$governance_function_boundary" == '1|t|t' ]] || {
+[[ "$governance_function_boundary" == '4|t|t' ]] || {
   printf 'Owner-change function ownership/security drift: %s\n' "$governance_function_boundary" >&2
   exit 1
 }
