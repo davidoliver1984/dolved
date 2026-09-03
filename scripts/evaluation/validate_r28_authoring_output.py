@@ -31,8 +31,8 @@ from r28_authoring_access import (
     classify_r28_authoring_input,
 )
 
-SCHEMA_VERSION = "r28-independent-authoring-output-v2"
-CONTRACT_ID = "dolved-v4-independent-authoring-output-v2"
+SCHEMA_VERSION = "r28-independent-authoring-output-v3"
+CONTRACT_ID = "dolved-v4-independent-authoring-output-v3"
 COVERAGE_VERSION = "r28-authoring-coverage-matrix-v1"
 DECLARATION_VERSION = "r28-author-declaration-v1"
 VIEW_ID = "dolved-care-v4-question-author-view-v1"
@@ -620,14 +620,21 @@ def validate_population(
             "invalid location context",
         )
         require(context["temporal_mode"] in TEMPORAL_MODES, "invalid temporal mode")
-        if context["as_of_date"] is not None:
-            dt.date.fromisoformat(context["as_of_date"])
-        require(
-            (context["temporal_mode"] == "VALID_AT_DATE")
-            == (context["as_of_date"] is not None),
-            "VALID_AT_DATE requires exactly one date",
-        )
-        bounded(context["requester_role"], 1, 120, "requester role")
+        as_of_date = context["as_of_date"]
+        if as_of_date is not None:
+            require(
+                isinstance(as_of_date, str), "as_of_date must be an ISO date or null"
+            )
+            try:
+                dt.date.fromisoformat(as_of_date)
+            except ValueError as error:
+                raise Invalid("as_of_date must be a valid ISO date") from error
+        temporal_mode = context["temporal_mode"]
+        if temporal_mode == "VALID_AT_DATE":
+            require(as_of_date is not None, "VALID_AT_DATE requires a date")
+        elif temporal_mode in {"CURRENT", "COMPARE"}:
+            require(as_of_date is None, f"{temporal_mode} prohibits a date")
+        bounded(context["requester_role"], 1, 200, "requester role")
         outcome = case["expected_outcome"]
         exact_keys(outcome, {"retrieval", "generation"}, "expected_outcome")
         require(
@@ -685,7 +692,7 @@ def validate_population(
                 and view_files[relative] == item["source_sha256"],
                 "evidence source hash mismatch",
             )
-            bounded(item["quotation"], 1, 500, "evidence quotation")
+            bounded(item["quotation"], 1, 2000, "evidence quotation")
         if (
             context["temporal_mode"] == "COMPARE"
             and outcome["retrieval"] == "EVIDENCE_FOUND"

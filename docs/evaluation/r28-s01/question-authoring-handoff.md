@@ -32,8 +32,8 @@ Expected SHA-256:
 > generator code, or comparison/trap contracts. If any additional material is
 > visible, stop and report contamination.
 >
-> Follow contract `dolved-v4-independent-authoring-output-v2`, aggregate
-> SHA-256 `57ebb52ae6814f4912583c90ec399c60a65e82dc872cfdb21afe10f57871df68`.
+> Follow contract `dolved-v4-independent-authoring-output-v3`, aggregate
+> SHA-256 `58e4d4b3ebbde74118bbbd287240ef861fea9035aa291642e2be2a97c6ae1624`.
 > Author exactly 74 semantic cases and exactly 148 total utterances, split
 > exactly as 62 primary, 6 foreign-tenant and 6 security-test cases: every case
 > must have exactly two independently written, textually distinct wording

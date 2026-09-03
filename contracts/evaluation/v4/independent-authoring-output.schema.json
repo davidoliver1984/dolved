@@ -13,8 +13,8 @@
         "cases"
     ],
     "properties": {
-        "schema_version": {"const": "r28-independent-authoring-output-v2"},
-        "contract_id": {"const": "dolved-v4-independent-authoring-output-v2"},
+        "schema_version": {"const": "r28-independent-authoring-output-v3"},
+        "contract_id": {"const": "dolved-v4-independent-authoring-output-v3"},
         "population_id": {
             "type": "string",
             "pattern": "^dolved-v4-independent-[a-z0-9][a-z0-9-]{2,47}$"
@@ -132,9 +132,41 @@
                         "requester_role": {
                             "type": "string",
                             "minLength": 1,
-                            "maxLength": 120
+                            "maxLength": 200
                         }
-                    }
+                    },
+                    "oneOf": [
+                        {
+                            "properties": {
+                                "temporal_mode": {"const": "CURRENT"},
+                                "as_of_date": {"type": "null"}
+                            }
+                        },
+                        {
+                            "properties": {
+                                "temporal_mode": {"const": "VALID_AT_DATE"},
+                                "as_of_date": {"type": "string", "format": "date"}
+                            }
+                        },
+                        {
+                            "properties": {
+                                "temporal_mode": {"const": "COMPARE"},
+                                "as_of_date": {"type": "null"}
+                            }
+                        },
+                        {
+                            "properties": {
+                                "temporal_mode": {"const": "HISTORICAL_REFERENCE"},
+                                "as_of_date": {"type": ["string", "null"], "format": "date"}
+                            }
+                        },
+                        {
+                            "properties": {
+                                "temporal_mode": {"const": "CLARIFICATION_REQUIRED"},
+                                "as_of_date": {"type": ["string", "null"], "format": "date"}
+                            }
+                        }
+                    ]
                 },
                 "expected_outcome": {
                     "type": "object",
@@ -193,7 +225,7 @@
                             "quotation": {
                                 "type": "string",
                                 "minLength": 1,
-                                "maxLength": 500
+                                "maxLength": 2000
                             }
                         }
                     }

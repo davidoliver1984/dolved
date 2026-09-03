@@ -288,6 +288,26 @@ def test_smaller_coverage_json_cannot_influence_population_count() -> None:
             "dolved-v4-independent-authoring-output-v1",
         ),
         (
+            "r28-independent-authoring-output-v2",
+            "dolved-v4-independent-authoring-output-v2",
+        ),
+        (
+            "r28-independent-authoring-output-v1",
+            "dolved-v4-independent-authoring-output-v3",
+        ),
+        (
+            "r28-independent-authoring-output-v2",
+            "dolved-v4-independent-authoring-output-v3",
+        ),
+        (
+            "r28-independent-authoring-output-v3",
+            "dolved-v4-independent-authoring-output-v1",
+        ),
+        (
+            "r28-independent-authoring-output-v3",
+            "dolved-v4-independent-authoring-output-v2",
+        ),
+        (
             "r28-independent-authoring-output-v1",
             "dolved-v4-independent-authoring-output-v2",
         ),
@@ -408,7 +428,7 @@ def test_rejects_legacy_and_mixed_coverage_identities(
         VALIDATOR.validate_coverage_contract(coverage)
 
 
-def test_v2_contract_aggregate_recomputes_exactly() -> None:
+def test_v3_contract_aggregate_recomputes_exactly() -> None:
     ordered = [
         "docs/evaluation/r28-s01/access-manifest.json",
         "contracts/evaluation/v4/independent-authoring-output.schema.json",
@@ -424,7 +444,7 @@ def test_v2_contract_aggregate_recomputes_exactly() -> None:
         digest.update((SCRIPT_ROOT / relative).read_bytes())
         digest.update(b"\0")
     assert digest.hexdigest() == (
-        "57ebb52ae6814f4912583c90ec399c60a65e82dc872cfdb21afe10f57871df68"
+        "58e4d4b3ebbde74118bbbd287240ef861fea9035aa291642e2be2a97c6ae1624"
     )
 
 
@@ -676,6 +696,96 @@ def test_schema_rejects_invalid_datetime_location_and_unknown_fields() -> None:
     population["unexpected"] = True
     with pytest.raises(VALIDATOR.Invalid, match="JSON Schema"):
         VALIDATOR.validate_population_schema(population, schema())
+
+
+@pytest.mark.parametrize("length", [133, 200])
+def test_requester_role_compatibility_lengths_pass(length: int) -> None:
+    population = valid_population()
+    population["cases"][0]["context"]["requester_role"] = "r" * length
+    VALIDATOR.validate_population_schema(population, schema())
+    validate_population(population)
+
+
+def test_requester_role_above_v3_bound_fails_schema_and_validator() -> None:
+    population = valid_population()
+    population["cases"][0]["context"]["requester_role"] = "r" * 201
+    with pytest.raises(VALIDATOR.Invalid, match="JSON Schema.*requester_role"):
+        VALIDATOR.validate_population_schema(population, schema())
+    with pytest.raises(VALIDATOR.Invalid, match="requester role is out of bounds"):
+        validate_population(population)
+
+
+@pytest.mark.parametrize("length", [1175, 2000])
+def test_evidence_quotation_compatibility_lengths_pass(length: int) -> None:
+    population = valid_population()
+    population["cases"][0]["expected_evidence"][0]["quotation"] = "q" * length
+    VALIDATOR.validate_population_schema(population, schema())
+    validate_population(population)
+
+
+def test_evidence_quotation_above_v3_bound_fails_schema_and_validator() -> None:
+    population = valid_population()
+    population["cases"][0]["expected_evidence"][0]["quotation"] = "q" * 2001
+    with pytest.raises(VALIDATOR.Invalid, match="JSON Schema.*quotation"):
+        VALIDATOR.validate_population_schema(population, schema())
+    with pytest.raises(VALIDATOR.Invalid, match="evidence quotation is out of bounds"):
+        validate_population(population)
+
+
+def test_question_utterance_bound_remains_500() -> None:
+    population = valid_population()
+    population["cases"][0]["variants"][0]["utterance"] = "u" * 500
+    VALIDATOR.validate_population_schema(population, schema())
+    validate_population(population)
+
+    population["cases"][0]["variants"][0]["utterance"] = "u" * 501
+    with pytest.raises(VALIDATOR.Invalid, match="JSON Schema.*utterance"):
+        VALIDATOR.validate_population_schema(population, schema())
+    with pytest.raises(VALIDATOR.Invalid, match="utterance is out of bounds"):
+        validate_population(population)
+
+
+@pytest.mark.parametrize(
+    ("temporal_mode", "as_of_date", "accepted"),
+    [
+        ("CURRENT", None, True),
+        ("CURRENT", "2026-01-01", False),
+        ("CURRENT", "2026-02-30", False),
+        ("VALID_AT_DATE", None, False),
+        ("VALID_AT_DATE", "2026-01-01", True),
+        ("VALID_AT_DATE", "2026-02-30", False),
+        ("COMPARE", None, True),
+        ("COMPARE", "2026-01-01", False),
+        ("COMPARE", "2026-02-30", False),
+        ("HISTORICAL_REFERENCE", None, True),
+        ("HISTORICAL_REFERENCE", "2026-01-01", True),
+        ("HISTORICAL_REFERENCE", "2026-02-30", False),
+        ("CLARIFICATION_REQUIRED", None, True),
+        ("CLARIFICATION_REQUIRED", "2026-01-01", True),
+        ("CLARIFICATION_REQUIRED", "2026-02-30", False),
+    ],
+)
+def test_temporal_mode_date_matrix(
+    temporal_mode: str, as_of_date: str | None, accepted: bool
+) -> None:
+    population = valid_population()
+    population["cases"][0]["context"].update(
+        {"temporal_mode": temporal_mode, "as_of_date": as_of_date}
+    )
+    if accepted:
+        if temporal_mode == "COMPARE":
+            comparison_evidence = population["cases"][0]["expected_evidence"][0].copy()
+            comparison_evidence.update(
+                {"evidence_id": "ev-synthetic-000-comparison", "side": "COMPARISON"}
+            )
+            population["cases"][0]["expected_evidence"].append(comparison_evidence)
+        VALIDATOR.validate_population_schema(population, schema())
+        validate_population(population)
+        return
+    with pytest.raises(VALIDATOR.Invalid):
+        VALIDATOR.validate_population_schema(population, schema())
+    with pytest.raises(VALIDATOR.Invalid):
+        validate_population(population)
 
 
 @pytest.mark.parametrize(

@@ -1,16 +1,19 @@
 # Independent authoring output contract
 
-Contract identity: `dolved-v4-independent-authoring-output-v2`
+Contract identity: `dolved-v4-independent-authoring-output-v3`
 
 Version 1 required 72 semantic cases, 144 utterances and exact scopes 60/6/6.
 It was not used for a final accepted population. Five independently audited
 batches produced 60 accepted cases, after which the final feasibility audit
 proved that two more primary cases were the minimum necessary extension. This
-v2 contract supersedes v1 for final serialization. The existing 60 accepted
+v2 contract superseded v1 for final serialization. The existing 60 accepted
 semantic cases remain valid because no schema shape, closed vocabulary,
 coverage minimum or evidence rule was weakened. The final population must be
-validated entirely under v2; v1 and v2 outputs must never be mixed or presented
-as one identity.
+validated entirely under v3. Version 3 is a compatibility-only amendment: it
+does not change population counts, scopes, coverage minima, vocabulary or case
+semantics. Versions 1 and 2 remain historical, superseded identities. An output
+must use the v3 schema and contract identities together; legacy or mixed-version
+identity pairs fail closed.
 
 The contract is the ordered identity of:
 
@@ -21,8 +24,8 @@ The contract is the ordered identity of:
 5. `scripts/evaluation/r28_access_guard.py`
 6. `scripts/evaluation/validate_r28_authoring_output.py`
 
-Its v2 aggregate SHA-256 is
-`57ebb52ae6814f4912583c90ec399c60a65e82dc872cfdb21afe10f57871df68`,
+Its active v3 aggregate SHA-256 is
+`58e4d4b3ebbde74118bbbd287240ef861fea9035aa291642e2be2a97c6ae1624`,
 computed by hashing, in the order above, each UTF-8 repository-relative path,
 one NUL byte, its file bytes and one NUL byte.
 
@@ -60,6 +63,32 @@ This contract does not prescribe authored wording or expected answers.
 
 Historical superseded v1 aggregate:
 `c7e4f6bce57be48e69bb6f3c57e6cb34f5130859efd782e9ad5db7503a163e3c`.
+
+Historical superseded v2 aggregate:
+`57ebb52ae6814f4912583c90ec399c60a65e82dc872cfdb21afe10f57871df68`.
+
+The independently versioned coverage contract remains
+`r28-authoring-coverage-contract-v2`: its 74 cases, 148 utterances, exact scopes
+62/6/6 and all 36 minimum coverage values are unchanged.
+
+The v3 compatibility bounds are explicit. `requester_role` is a non-empty
+string of at most 200 characters. An expected-evidence `quotation` is a bounded
+exact-source excerpt of at most 2,000 characters, not an unlimited document
+payload. Question `utterance` remains capped at 500 characters.
+
+The normative temporal-mode/date matrix is:
+
+| `temporal_mode` | Permitted `as_of_date` |
+| --- | --- |
+| `CURRENT` | `null` only |
+| `VALID_AT_DATE` | valid, non-null ISO date only |
+| `COMPARE` | `null` only |
+| `HISTORICAL_REFERENCE` | `null` or a valid ISO date |
+| `CLARIFICATION_REQUIRED` | `null` or a valid ISO date |
+
+Every non-null date must be a real ISO calendar date. A retained date does not
+force `VALID_AT_DATE` when historical interpretation applies or another planner
+dimension legitimately requires clarification.
 
 The JSON Schema defines the machine shape and closed platform outcome enums.
 The validator executes that exact local Draft 2020-12 schema with format
