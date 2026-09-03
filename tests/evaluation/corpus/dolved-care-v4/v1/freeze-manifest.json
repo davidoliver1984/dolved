@@ -1,0 +1,52 @@
+{
+  "schema_version": "r28-corpus-freeze-v1",
+  "corpus_id": "dolved-care-v4-checkpoint-19",
+  "corpus_version": "4.0.0",
+  "status": "IMMUTABLE_FROZEN",
+  "source_verdict": "V4_CORPUS_READY_TO_FREEZE",
+  "archive": {
+    "filename": "checkpoint-19-application-evidence-corrections.tar.gz",
+    "sha256": "6fa6602935efe8379cc2a7de4ba85af17aa8d8827082ae6de8df959f6e19a06e",
+    "regular_members": 752,
+    "checksum_inventory_entries": 751
+  },
+  "governed_scopes": {
+    "primary": {
+      "source_manifest": "source-manifest.json",
+      "source_identity": "dolved-care-alderbridge-v4",
+      "document_count": 300,
+      "family_count": 185,
+      "formats": {"pdf": 94, "docx": 103, "txt": 103},
+      "in_corpus_prompt_injection_count": 3,
+      "execution_boundary": "primary evaluation tenant through ImportBatch"
+    },
+    "foreign_tenant": {
+      "source_manifest": "foreign-tenant/source-manifest.json",
+      "source_identity": "dolved-foreign-tenant-thornfield-v4",
+      "document_count": 12,
+      "execution_boundary": "distinct isolated foreign workspace only"
+    },
+    "additional_prompt_injection": {
+      "source_manifest": "prompt-injection-pack/source-manifest.json",
+      "source_identity": "dolved-prompt-injection-pack-v4",
+      "document_count": 6,
+      "execution_boundary": "separate security-test boundary"
+    },
+    "negative_import_fixtures": {
+      "source_manifest": "negative-fixtures/negative-fixtures-manifest.json",
+      "source_identity": "dolved-care-alderbridge-v4",
+      "fixture_count": 13,
+      "execution_boundary": "rejection, failure and recovery paths only"
+    }
+  },
+  "source_runtime": {
+    "corpus_local_profile": "CPython 3.13.7 plus authoring-governance/requirements.lock",
+    "application_source_commit": "f27ff1b1d49b6eb7c555ffce3e278e22ad2eb6a4",
+    "application_source_aggregate_sha256": "378655950b2fa79c3dfe6530fbc191698b2eeb30dc3b34b4cbafeadcd06a6156",
+    "application_image_id": "sha256:c5ab90de8d23e73d5b6cf78b4987189947957513c5531be8d8db5895e2509202",
+    "aggregate_build_sha256": "1464082d5096e7123f475d2b32b819ece7d1c7e7b8c1462ec2bda77da2e1b776"
+  },
+  "known_limitation": "Formatting-only differences are not semantically detectable under the accepted structured-extraction contract.",
+  "mutation_policy": "Never edit this archive or manifest in place. Every correction creates a new corpus identity with explicit lineage.",
+  "verification": "python3 scripts/evaluation/verify_r28_freeze.py"
+}

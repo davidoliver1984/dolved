@@ -1,0 +1,212 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dolved.local/contracts/evaluation/v4/independent-authoring-output.schema.json",
+    "title": "Dolved V4 independent authoring population",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "schema_version",
+        "contract_id",
+        "population_id",
+        "restricted_view",
+        "author_provenance",
+        "cases"
+    ],
+    "properties": {
+        "schema_version": {"const": "r28-independent-authoring-output-v1"},
+        "contract_id": {"const": "dolved-v4-independent-authoring-output-v1"},
+        "population_id": {
+            "type": "string",
+            "pattern": "^dolved-v4-independent-[a-z0-9][a-z0-9-]{2,47}$"
+        },
+        "restricted_view": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["view_id", "sha256"],
+            "properties": {
+                "view_id": {"const": "dolved-care-v4-question-author-view-v1"},
+                "sha256": {
+                    "const": "8f73c9c12a843be9641698f39db60243a977e6c1c700a3f89f72dbbb890e44b9"
+                }
+            }
+        },
+        "author_provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "authoring_run_id",
+                "author_identity",
+                "authored_at_utc",
+                "method"
+            ],
+            "properties": {
+                "authoring_run_id": {
+                    "type": "string",
+                    "pattern": "^AUTHOR-V4-[0-9]{8}-[A-Z0-9]{8}$",
+                    "description": "UTC authoring date as a valid YYYYMMDD calendar date, followed by exactly eight uppercase ASCII letters or decimal digits."
+                },
+                "author_identity": {"type": "string", "minLength": 1, "maxLength": 200},
+        "authored_at_utc": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(?:Z|\\+00:00)$"
+        },
+                "method": {
+                    "const": "fresh-independent-authoring-without-system-output"
+                }
+            }
+        },
+        "cases": {
+            "type": "array",
+            "minItems": 72,
+            "maxItems": 72,
+            "items": {"$ref": "#/$defs/case"}
+        }
+    },
+    "$defs": {
+        "boundedText": {"type": "string", "minLength": 1, "maxLength": 1000},
+        "case": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "case_id",
+                "scope",
+                "variants",
+                "context",
+                "expected_outcome",
+                "expected_evidence",
+                "rationale",
+                "slices"
+            ],
+            "properties": {
+                "case_id": {
+                    "type": "string",
+                    "pattern": "^v4\\.case\\.[a-z0-9][a-z0-9-]{2,47}$"
+                },
+                "scope": {"enum": ["primary", "foreign_tenant", "security_test"]},
+                "variants": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["variant_id", "utterance"],
+                        "properties": {
+                            "variant_id": {"type": "string", "pattern": "^v[12]$"},
+                            "utterance": {
+                                "type": "string",
+                                "minLength": 3,
+                                "maxLength": 500
+                            }
+                        }
+                    }
+                },
+                "context": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                        "organisation",
+                        "location_id",
+                        "temporal_mode",
+                        "as_of_date",
+                        "requester_role"
+                    ],
+                    "properties": {
+                        "organisation": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200
+                        },
+                        "location_id": {"type": ["string", "null"], "maxLength": 160},
+                        "temporal_mode": {
+                            "enum": [
+                                "CURRENT",
+                                "HISTORICAL_REFERENCE",
+                                "VALID_AT_DATE",
+                                "COMPARE",
+                                "CLARIFICATION_REQUIRED"
+                            ]
+                        },
+                        "as_of_date": {"type": ["string", "null"], "format": "date"},
+                        "requester_role": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                        }
+                    }
+                },
+                "expected_outcome": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["retrieval", "generation"],
+                    "properties": {
+                        "retrieval": {
+                            "enum": [
+                                "EVIDENCE_FOUND",
+                                "INSUFFICIENT_EVIDENCE",
+                                "CLARIFICATION_REQUIRED",
+                                "NO_ELIGIBLE_EVIDENCE",
+                                "NO_RETRIEVAL_CANDIDATES",
+                                "COMPARISON_SCOPE_INCOMPLETE",
+                                "TEMPORAL_SCOPE_UNRESOLVED"
+                            ]
+                        },
+                        "generation": {
+                            "enum": [
+                                "answered",
+                                "qualified",
+                                "insufficient_evidence",
+                                null
+                            ]
+                        }
+                    }
+                },
+                "expected_evidence": {
+                    "type": "array",
+                    "maxItems": 12,
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "evidence_id",
+                            "side",
+                            "restricted_view_path",
+                            "source_sha256",
+                            "quotation"
+                        ],
+                        "properties": {
+                            "evidence_id": {
+                                "type": "string",
+                                "pattern": "^ev-[a-z0-9][a-z0-9-]{2,63}$"
+                            },
+                            "side": {"enum": ["PRIMARY", "COMPARISON"]},
+                            "restricted_view_path": {
+                                "type": "string",
+                                "pattern": "^documents/(primary|foreign_tenant|security_test)/[^/]+$",
+                                "maxLength": 300
+                            },
+                            "source_sha256": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{64}$"
+                            },
+                            "quotation": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 500
+                            }
+                        }
+                    }
+                },
+                "rationale": {"$ref": "#/$defs/boundedText"},
+                "slices": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 24,
+                    "uniqueItems": true,
+                    "items": {"type": "string", "minLength": 3, "maxLength": 80}
+                }
+            }
+        }
+    }
+}

@@ -403,6 +403,8 @@ evaluation-generation-live:
 evaluation-live-hybrid:
 	@test "$${RUN_LIVE_HYBRID_EVALUATION:-}" = "1" || \
 		{ printf '%s\n' 'Set RUN_LIVE_HYBRID_EVALUATION=1 to permit paid live-provider calls.'; exit 1; }
+	@test -z "$$(git status --porcelain --untracked-files=no)" || \
+		{ printf '%s\n' 'The tracked worktree must be clean before live retrieval evaluation.'; exit 1; }
 	@mkdir -p /tmp/rag-platform-evaluation
 	$(COMPOSE) run --rm --no-deps \
 		--volume "$(CURDIR):/workspace" \
@@ -413,7 +415,8 @@ evaluation-live-hybrid:
 		ai python scripts/evaluation/run.py live-hybrid \
 			--corpus tests/evaluation/corpus/$(EVALUATION_CORPUS_VERSION)/corpus.json \
 			--policy tests/evaluation/policies/v1/policy.json \
-			--repository-commit "$$(git rev-parse HEAD)-dirty" \
+			--repository-root /workspace \
+			--repository-commit "$$(git rev-parse HEAD)" \
 			--evidence-threshold 0.337890625 \
 			--text-capture-mode BENCHMARK_TEXT \
 			--output /output/live-hybrid-result.json

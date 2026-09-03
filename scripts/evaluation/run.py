@@ -5,6 +5,8 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import re
+import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -47,6 +49,8 @@ from app.evaluation.reporting import comparison_report, deterministic_candidate_
 from app.retrieval.models import HybridRetrievalConfiguration
 from app.settings import get_settings
 
+EXACT_COMMIT = re.compile(r"^[0-9a-f]{40}$")
+
 
 def load_json(path: Path) -> Any:
     return json.loads(path.read_text())
@@ -55,6 +59,39 @@ def load_json(path: Path) -> Any:
 def write_model(path: Path, model: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(model.model_dump_json(indent=2) + "\n")
+
+
+def verify_live_repository_identity(
+    repository_root: Path, supplied_commit: str
+) -> None:
+    if not EXACT_COMMIT.fullmatch(supplied_commit):
+        raise ValueError("live retrieval requires one exact 40-character commit SHA")
+    repository = repository_root.resolve()
+    head = subprocess.run(
+        ["git", "-C", str(repository), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    ).stdout.strip()
+    tracked_status = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(repository),
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=no",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    ).stdout.strip()
+    if head != supplied_commit:
+        raise ValueError("live retrieval commit does not match repository HEAD")
+    if tracked_status:
+        raise ValueError("live retrieval requires a clean tracked worktree")
 
 
 def run(args: argparse.Namespace) -> None:
@@ -140,6 +177,7 @@ def gate(args: argparse.Namespace) -> None:
 
 
 def live_hybrid(args: argparse.Namespace) -> None:
+    verify_live_repository_identity(args.repository_root, args.repository_commit)
     corpus_data = load_json(args.corpus)
     policy_data = load_json(args.policy)
     result = evaluate_live_hybrid_retrieval(
@@ -330,6 +368,7 @@ def parser() -> argparse.ArgumentParser:
     live_parser.add_argument("--policy", type=Path, required=True)
     live_parser.add_argument("--output", type=Path, required=True)
     live_parser.add_argument("--repository-commit", required=True)
+    live_parser.add_argument("--repository-root", type=Path, default=Path("."))
     live_parser.add_argument("--evidence-threshold", type=float, required=True)
     live_parser.add_argument("--rerank-delay-seconds", type=float, default=25)
     live_parser.add_argument(

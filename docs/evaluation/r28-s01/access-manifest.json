@@ -1,0 +1,123 @@
+{
+    "schema_version": "1.0.0",
+    "session": "R28-S01",
+    "policy": "fail_closed",
+    "invalidated_attempt": {
+        "identifier": "R28-S01-invalidated-predecessor",
+        "reason": "Protected calibration case definitions were displayed.",
+        "use": "provenance_only",
+        "evaluation_judgement_contribution": false
+    },
+    "classifications": [
+        {
+            "classification": "allowed_policy_schema",
+            "paths": [
+                "docs/adr/0019-define-retrieval-evaluation-and-quality-gates.md",
+                "docs/adr/0020-clarify-retrieval-evaluation-evidence-and-model-assisted-evaluation-semantics.md",
+                "docs/adr/0029-define-the-platform-testing-and-contract-verification-strategy.md",
+                "docs/evaluation/README.md",
+                "docs/evaluation/CALIBRATION_COMPATIBILITY.md",
+                "docs/evaluation/EVIDENCE_THRESHOLD_CALIBRATION_POLICY.md",
+                "docs/evaluation/generation/README.md",
+                "tests/evaluation/policies/**",
+                "tests/evaluation/schemas/**"
+            ]
+        },
+        {
+            "classification": "allowed_runner_source_code",
+            "paths": [
+                "apps/ai/app/evaluation/**.py",
+                "scripts/evaluation/**.py",
+                "apps/ai/tests/test_*evaluation*.py",
+                "apps/ai/tests/test_*calibration_compatibility.py",
+                "apps/ai/tests/test_*run*.py"
+            ],
+            "condition": "Read source only; never execute a default that loads population or result data."
+        },
+        {
+            "classification": "allowed_engineering_population",
+            "paths": [
+                "tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/README.md",
+                "tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/population-manifest.json",
+                "tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/independence.json",
+                "tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/provisioning-definition.json",
+                "docs/evaluation/generation/populations/grounded-generation-v1.json",
+                "docs/evaluation/generation/populations/prompt-injection-v1.json",
+                "tests/evaluation/corpus/v2/corpus.json",
+                "tests/evaluation/security/v1/live-generation-policy.json"
+            ],
+            "condition": "Split established by docs/evaluation/README.md and the path's engineering designation. Case content remains unapproved; only governance, identity and provisioning metadata may be opened."
+        },
+        {
+            "classification": "allowed_r28_authoring_neutral_inputs",
+      "paths": [
+        "docs/evaluation/r28-s01/access-manifest.json",
+        "tests/evaluation/authoring-views/dolved-care-v4/v1/question-author-view.tar.gz",
+                "contracts/evaluation/v4/independent-authoring-output.schema.json",
+                "docs/evaluation/r28-s01/authoring-coverage-contract.json",
+        "docs/evaluation/r28-s01/authoring-output-contract.md",
+        "scripts/evaluation/r28_authoring_access.py",
+        "scripts/evaluation/r28_access_guard.py",
+        "scripts/evaluation/validate_r28_authoring_output.py",
+                "docs/evaluation/r28-s01/question-authoring-handoff.md"
+            ],
+            "condition": "Exact neutral authoring inputs only. Archive member access is separately confined to the signed restricted-view membership; no wildcard or alias is allowed."
+        },
+        {
+            "classification": "forbidden_calibration",
+            "paths": [
+                "tests/evaluation/hybrid/v1/live-calibration-input.json",
+                "tests/evaluation/hybrid/v1/offline-calibration.json",
+                "tests/evaluation/calibration-populations/**",
+                "tests/evaluation/fixtures/calibration-compatibility/**",
+                "tests/evaluation/population-specifications/evidence-threshold-calibration/**",
+                "docs/evaluation/retrieval-experiments/CAL-EXP-*/**"
+            ]
+        },
+        {
+            "classification": "forbidden_held_out",
+            "paths": [
+                "**/held-out/**",
+                "**/held_out/**",
+                "**/*held-out*",
+                "**/*held_out*"
+            ]
+        },
+        {
+            "classification": "forbidden_previous_outputs",
+            "paths": [
+                "docs/evaluation/runs/**",
+                "docs/evaluation/baselines/**",
+                "docs/evaluation/planner-experiments/**/result.json",
+                "docs/evaluation/planner-experiments/**/report.*",
+                "docs/evaluation/retrieval-experiments/**/result.json",
+                "docs/evaluation/retrieval-experiments/**/report.*",
+                "tests/evaluation/observations/**"
+            ]
+        },
+        {
+            "classification": "uncertain_do_not_access",
+            "paths": ["tests/evaluation/**", "docs/evaluation/**"],
+            "condition": "Catch-all applies except where a more specific allowed classification above has been established."
+        }
+    ],
+    "opened_evaluation_data_paths": [
+        "docs/evaluation/README.md",
+        "docs/evaluation/CALIBRATION_COMPATIBILITY.md",
+        "docs/evaluation/EVIDENCE_THRESHOLD_CALIBRATION_POLICY.md",
+        "tests/evaluation/policies/v1/policy.json",
+        "tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/README.md",
+        "tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/population-manifest.json",
+        "tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/independence.json",
+        "tests/evaluation/engineering-populations/dolved-care-engineering/v3/v1/provisioning-definition.json",
+        "docs/evaluation/generation/README.md",
+        "docs/evaluation/generation/populations/grounded-generation-v1.json",
+        "docs/evaluation/generation/populations/prompt-injection-v1.json",
+        "tests/evaluation/corpus/v2/corpus.json",
+        "tests/evaluation/security/v1/live-generation-policy.json"
+    ],
+    "notes": [
+        "Filename-only inventories are not content access and are recorded separately in the R28-S01 safety record.",
+        "The protected live calibration input must not be hashed because no governing policy permission has yet been established."
+    ]
+}

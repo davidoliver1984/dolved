@@ -1,0 +1,182 @@
+[
+  {
+    "package": "certifi",
+    "version": "2026.7.22",
+    "filename": "certifi-2026.7.22-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  },
+  {
+    "package": "cffi",
+    "version": "2.1.1",
+    "filename": "cffi-2.1.1-cp313-cp313-macosx_11_0_arm64.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "19ee6127ee34de7d83ce3d371ebc5ed91addbdcc39f9ab15ce4eb35a4e534971",
+    "distribution_type": "wheel",
+    "wheel_tags": "cp313-cp313-macosx_11_0_arm64"
+  },
+  {
+    "package": "charset-normalizer",
+    "version": "3.5.1",
+    "filename": "charset_normalizer-3.5.1-cp313-cp313-macosx_10_13_universal2.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "e90251c0c7bdd54a100a0dce3c07b7e637278c93af29dbf78ebb89a58c4bac7d",
+    "distribution_type": "wheel",
+    "wheel_tags": "cp313-cp313-macosx_10_13_universal2"
+  },
+  {
+    "package": "cryptography",
+    "version": "50.0.1",
+    "filename": "cryptography-50.0.1-cp311-abi3-macosx_11_0_arm64.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "b8f852c65863251b9e3a1b8c150ce21e59b522dbb6a7d4bc80e680d38388e986",
+    "distribution_type": "wheel",
+    "wheel_tags": "cp311-abi3-macosx_11_0_arm64"
+  },
+  {
+    "package": "idna",
+    "version": "3.19",
+    "filename": "idna-3.19-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "815e7be7a7806d54abb586dc943addc79e8b2ee16915059658cbeff4b1b43bf4",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  },
+  {
+    "package": "lxml",
+    "version": "6.1.2",
+    "filename": "lxml-6.1.2-cp313-cp313-macosx_10_13_universal2.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "351318f5c0eb7fcab5b4fdb507c6f88fb2c4b5e67784c7e5911448c91fffb5d4",
+    "distribution_type": "wheel",
+    "wheel_tags": "cp313-cp313-macosx_10_13_universal2"
+  },
+  {
+    "package": "packaging",
+    "version": "26.3",
+    "filename": "packaging-26.3-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  },
+  {
+    "package": "pdfminer-six",
+    "version": "20260107",
+    "filename": "pdfminer_six-20260107-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "366585ba97e80dffa8f00cebe303d2f381884d8637af4ce422f1df3ef38111a9",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  },
+  {
+    "package": "pdfplumber",
+    "version": "0.11.10",
+    "filename": "pdfplumber-0.11.10-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "7741ea81bf165b474b153e6789d10d18e06b6ddcf3ec84289c3ef2fed6802580",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  },
+  {
+    "package": "pikepdf",
+    "version": "10.12.0",
+    "filename": "pikepdf-10.12.0-cp313-cp313-macosx_14_0_arm64.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "73eb00406edb59b62a97081ba6b3746f5c8c79435b01523a5ad80b570045d7ef",
+    "distribution_type": "wheel",
+    "wheel_tags": "cp313-cp313-macosx_14_0_arm64"
+  },
+  {
+    "package": "pillow",
+    "version": "12.3.0",
+    "filename": "pillow-12.3.0-cp313-cp313-macosx_11_0_arm64.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "d69141514cc30b774ceea5e3ed3a6635c8d8a96edf664689b890f4089111fb35",
+    "distribution_type": "wheel",
+    "wheel_tags": "cp313-cp313-macosx_11_0_arm64"
+  },
+  {
+    "package": "pycparser",
+    "version": "3.0",
+    "filename": "pycparser-3.0-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  },
+  {
+    "package": "pypdfium2",
+    "version": "5.13.0",
+    "filename": "pypdfium2-5.13.0-py3-none-macosx_13_0_arm64.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "da5c7b74eebf40b5c1fbe1de01aa1edc8827a79fb1efd999616bc20dcaf77ba4",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-macosx_13_0_arm64"
+  },
+  {
+    "package": "python-docx",
+    "version": "1.2.0",
+    "filename": "python_docx-1.2.0-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "3fd478f3250fbbbfd3b94fe1e985955737c145627498896a8a6bf81f4baf66c7",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  },
+  {
+    "package": "regex",
+    "version": "2026.9.3",
+    "filename": "regex-2026.9.3-cp313-cp313-macosx_11_0_arm64.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "e33dfc13c02d9c4e55bcf3f3b2eb448537823a6f6f30bf737b2974b63a530bc9",
+    "distribution_type": "wheel",
+    "wheel_tags": "cp313-cp313-macosx_11_0_arm64"
+  },
+  {
+    "package": "reportlab",
+    "version": "5.0.1",
+    "filename": "reportlab-5.0.1-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "1c36e6bb0e71780c72331eba60da7f602e8d4389a8723825af71342e49d791e8",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  },
+  {
+    "package": "requests",
+    "version": "2.34.2",
+    "filename": "requests-2.34.2-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  },
+  {
+    "package": "tiktoken",
+    "version": "0.13.0",
+    "filename": "tiktoken-0.13.0-cp313-cp313-macosx_11_0_arm64.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "8fe806a50664e83a6ffd56cbd1e4f5dcc6cd32a3e7538f70dc38b1a271384545",
+    "distribution_type": "wheel",
+    "wheel_tags": "cp313-cp313-macosx_11_0_arm64"
+  },
+  {
+    "package": "typing-extensions",
+    "version": "4.16.0",
+    "filename": "typing_extensions-4.16.0-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  },
+  {
+    "package": "urllib3",
+    "version": "2.7.0",
+    "filename": "urllib3-2.7.0-py3-none-any.whl",
+    "source_index": "https://pypi.org/simple (files served by files.pythonhosted.org)",
+    "sha256": "9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897",
+    "distribution_type": "wheel",
+    "wheel_tags": "py3-none-any"
+  }
+]
