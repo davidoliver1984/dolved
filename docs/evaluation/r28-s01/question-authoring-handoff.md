@@ -32,16 +32,17 @@ Expected SHA-256:
 > generator code, or comparison/trap contracts. If any additional material is
 > visible, stop and report contamination.
 >
-> Follow contract `dolved-v4-independent-authoring-output-v1`, aggregate
-> SHA-256 `c7e4f6bce57be48e69bb6f3c57e6cb34f5130859efd782e9ad5db7503a163e3c`.
-> Author exactly 72 semantic cases and exactly 144 total utterances: every case
+> Follow contract `dolved-v4-independent-authoring-output-v2`, aggregate
+> SHA-256 `57ebb52ae6814f4912583c90ec399c60a65e82dc872cfdb21afe10f57871df68`.
+> Author exactly 74 semantic cases and exactly 148 total utterances, split
+> exactly as 62 primary, 6 foreign-tenant and 6 security-test cases: every case
 > must have exactly two independently written, textually distinct wording
 > variants named `v1` and `v2`. Each case must include a stable case ID, one or
 > more natural employee questions, its evaluation layer and slices, applicable
 > organisation/location/date context, exact expected outcome, independently
 > quoted source evidence with restricted-view path and source SHA-256, and a
 > concise rationale. Never infer evidence that is not visibly present.
-> All 144 utterance texts must be globally distinct after Unicode NFC,
+> All 148 utterance texts must be globally distinct after Unicode NFC,
 > leading/trailing whitespace trimming, internal Unicode-whitespace collapse to
 > one ASCII space, and Unicode case-folding. This comparison must not rewrite
 > the submitted text. Record `authored_at_utc` as a valid UTC date-time ending
@@ -82,6 +83,13 @@ Expected SHA-256:
 The neutral contract is supplied separately, so the restricted archive remains
 unchanged. It contains no questions, expected evidence, judgements or hidden
 authoring material and is within the approved restricted-input boundary.
+
+The final two primary cases are a source-backed, non-weakening extension needed
+to complete inherited-applicability coverage, using distinct legitimate needs
+governed respectively by the Midlands-wide Key Safe Procedure v2 at Oakfield
+Lodge and the North-West-only Key Holder Procedure v1 at Riverside House or
+Moorland View. This handoff deliberately supplies no final authored wording or
+expected answers.
 
 R28-S01 pauses after this handoff. David must launch the fresh task and return
 its artefacts for a different fresh audit task. This task must not author or

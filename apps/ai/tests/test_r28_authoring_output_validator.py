@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import inspect
 import os
 import shutil
 import stat
@@ -89,7 +90,7 @@ def valid_population() -> dict:
             "authored_at_utc": "2026-09-03T00:00:00+00:00",
             "method": "fresh-independent-authoring-without-system-output",
         },
-        "cases": [valid_case(index) for index in range(72)],
+        "cases": [valid_case(index) for index in range(74)],
     }
 
 
@@ -118,6 +119,73 @@ def access_manifest() -> dict:
     return json.loads(
         (SCRIPT_ROOT / "docs/evaluation/r28-s01/access-manifest.json").read_text()
     )
+
+
+def coverage_contract() -> dict:
+    import json
+
+    return json.loads(
+        (
+            SCRIPT_ROOT / "docs/evaluation/r28-s01/authoring-coverage-contract.json"
+        ).read_text()
+    )
+
+
+def population_with_scope_distribution(
+    primary: int, foreign: int, security: int
+) -> dict:
+    population = valid_population()
+    scopes = (
+        ["primary"] * primary
+        + ["foreign_tenant"] * foreign
+        + ["security_test"] * security
+    )
+    outcomes = list(VALIDATOR.OUTCOMES - {"EVIDENCE_FOUND"})
+    for index, (case, scope) in enumerate(zip(population["cases"], scopes)):
+        outcome = outcomes[index % len(outcomes)] if index < 30 else "EVIDENCE_FOUND"
+        case["scope"] = scope
+        case["expected_outcome"]["retrieval"] = outcome
+        case["expected_outcome"]["generation"] = (
+            "answered" if outcome == "EVIDENCE_FOUND" else None
+        )
+        case["expected_evidence"] = (
+            [
+                {
+                    "evidence_id": f"ev-synthetic-{index:03d}",
+                    "side": "PRIMARY",
+                    "restricted_view_path": f"documents/{scope}/synthetic.txt",
+                    "source_sha256": "a" * 64,
+                    "quotation": "Synthetic quotation",
+                }
+            ]
+            if outcome == "EVIDENCE_FOUND"
+            else []
+        )
+        case["slices"] = [f"scope.{scope}", f"outcome.{outcome}"]
+    population["cases"] = population["cases"][: len(scopes)]
+    case_count = len(population["cases"])
+    for offset, (label, minimum) in enumerate(
+        item
+        for item in VALIDATOR.EXPECTED_MINIMUM_CASE_COUNTS.items()
+        if not item[0].startswith("outcome.")
+    ):
+        for step in range(minimum):
+            population["cases"][(offset + step) % case_count]["slices"].append(label)
+    return population
+
+
+def coverage_matrix(population: dict, slices: dict[str, set[str]]) -> dict:
+    coverage = coverage_contract()
+    return {
+        "schema_version": VALIDATOR.COVERAGE_VERSION,
+        "contract_id": coverage["contract_id"],
+        "population_id": population["population_id"],
+        "counting_rule": coverage["counting_rule"],
+        "slices": [
+            {"slice": label, "case_count": len(ids), "case_ids": sorted(ids)}
+            for label, ids in sorted(slices.items())
+        ],
+    }
 
 
 def test_rejects_absolute_and_traversal_paths() -> None:
@@ -172,30 +240,208 @@ def test_rejects_wrong_case_and_utterance_counts() -> None:
         },
         "cases": [],
     }
-    with pytest.raises(VALIDATOR.Invalid, match="exactly 72"):
+    with pytest.raises(VALIDATOR.Invalid, match="exactly 74"):
         VALIDATOR.validate_population(population, set(), {})
 
     assert coverage["scope_exact_counts"] == {}
 
 
+def test_rejects_72_cases_and_144_utterances_under_v2() -> None:
+    population = valid_population()
+    population["cases"] = population["cases"][:72]
+    assert sum(len(case["variants"]) for case in population["cases"]) == 144
+    with pytest.raises(VALIDATOR.Invalid, match="exactly 74"):
+        validate_population(population)
+
+
+def test_population_count_contract_is_not_caller_selectable() -> None:
+    signature = inspect.signature(VALIDATOR.validate_population)
+    assert tuple(signature.parameters) == ("population", "allowed_slices", "view_files")
+    one_case = valid_population()
+    one_case["cases"] = one_case["cases"][:1]
+    with pytest.raises(TypeError, match="unexpected keyword"):
+        VALIDATOR.validate_population(one_case, set(), {}, semantic_case_count=1)
+    with pytest.raises(TypeError, match="positional arguments"):
+        VALIDATOR.validate_population(one_case, set(), {}, 1, 2)
+    with pytest.raises(VALIDATOR.Invalid, match="exactly 74"):
+        VALIDATOR.validate_population(one_case, set(), {})
+
+
+def test_smaller_coverage_json_cannot_influence_population_count() -> None:
+    coverage = coverage_contract()
+    coverage.update(
+        {"semantic_case_count": 1, "variants_per_case": 2, "utterance_count": 2}
+    )
+    with pytest.raises(VALIDATOR.Invalid, match="population arithmetic"):
+        VALIDATOR.validate_coverage_contract(coverage)
+    one_case = valid_population()
+    one_case["cases"] = one_case["cases"][:1]
+    with pytest.raises(VALIDATOR.Invalid, match="exactly 74"):
+        VALIDATOR.validate_population(one_case, set(), {})
+
+
+@pytest.mark.parametrize(
+    ("schema_version", "contract_id"),
+    [
+        (
+            "r28-independent-authoring-output-v1",
+            "dolved-v4-independent-authoring-output-v1",
+        ),
+        (
+            "r28-independent-authoring-output-v1",
+            "dolved-v4-independent-authoring-output-v2",
+        ),
+        (
+            "r28-independent-authoring-output-v2",
+            "dolved-v4-independent-authoring-output-v1",
+        ),
+    ],
+)
+def test_rejects_legacy_and_mixed_population_identities(
+    schema_version: str, contract_id: str
+) -> None:
+    population = valid_population()
+    population["schema_version"] = schema_version
+    population["contract_id"] = contract_id
+    with pytest.raises(VALIDATOR.Invalid, match="version mismatch|contract mismatch"):
+        validate_population(population)
+
+
+def test_v2_coverage_contract_preserves_all_36_minima_and_exact_62_6_6_scopes() -> None:
+    coverage = coverage_contract()
+    assert coverage["minimum_case_counts"] == VALIDATOR.EXPECTED_MINIMUM_CASE_COUNTS
+    assert len(coverage["minimum_case_counts"]) == 36
+    assert coverage["scope_exact_counts"] == VALIDATOR.EXPECTED_SCOPE_COUNTS
+    assert sum(coverage["scope_exact_counts"].values()) == 74
+    assert VALIDATOR.validate_coverage_contract(coverage)
+
+
+def test_actual_62_6_6_population_and_coverage_matrix_pass() -> None:
+    coverage = coverage_contract()
+    allowed = VALIDATOR.validate_coverage_contract(coverage)
+    population = population_with_scope_distribution(62, 6, 6)
+    view = {f"documents/{scope}/synthetic.txt": "a" * 64 for scope in VALIDATOR.SCOPES}
+    slices = VALIDATOR.validate_population(population, allowed, view)
+    VALIDATOR.validate_coverage(
+        coverage_matrix(population, slices),
+        population["population_id"],
+        slices,
+        coverage,
+    )
+
+
+def test_actual_60_6_6_population_fails_fixed_case_count() -> None:
+    coverage = coverage_contract()
+    allowed = VALIDATOR.validate_coverage_contract(coverage)
+    population = population_with_scope_distribution(60, 6, 6)
+    view = {f"documents/{scope}/synthetic.txt": "a" * 64 for scope in VALIDATOR.SCOPES}
+    with pytest.raises(VALIDATOR.Invalid, match="exactly 74"):
+        VALIDATOR.validate_population(population, allowed, view)
+
+
+def test_actual_compensating_61_7_6_distribution_fails_scope_validation() -> None:
+    coverage = coverage_contract()
+    allowed = VALIDATOR.validate_coverage_contract(coverage)
+    population = population_with_scope_distribution(61, 7, 6)
+    view = {f"documents/{scope}/synthetic.txt": "a" * 64 for scope in VALIDATOR.SCOPES}
+    slices = VALIDATOR.validate_population(population, allowed, view)
+    with pytest.raises(VALIDATOR.Invalid, match="scope count failed: scope.primary"):
+        VALIDATOR.validate_coverage(
+            coverage_matrix(population, slices),
+            population["population_id"],
+            slices,
+            coverage,
+        )
+
+
+@pytest.mark.parametrize(
+    ("field", "replacement", "message"),
+    [
+        (
+            "scope_exact_counts",
+            {"scope.primary": 60, "scope.foreign_tenant": 6, "scope.security_test": 6},
+            "scope",
+        ),
+        ("utterance_count", 144, "population arithmetic"),
+    ],
+)
+def test_rejects_weaker_v2_counts(
+    field: str, replacement: object, message: str
+) -> None:
+    coverage = coverage_contract()
+    coverage[field] = replacement
+    with pytest.raises(VALIDATOR.Invalid, match=message):
+        VALIDATOR.validate_coverage_contract(coverage)
+
+
+def test_rejects_changed_or_weakened_minimum() -> None:
+    coverage = coverage_contract()
+    coverage["minimum_case_counts"]["applicability.inherited"] = 7
+    with pytest.raises(VALIDATOR.Invalid, match="approved coverage minima"):
+        VALIDATOR.validate_coverage_contract(coverage)
+
+
+@pytest.mark.parametrize(
+    ("schema_version", "contract_id"),
+    [
+        (
+            "r28-authoring-coverage-contract-v1",
+            "dolved-v4-independent-authoring-coverage-v1",
+        ),
+        (
+            "r28-authoring-coverage-contract-v1",
+            "dolved-v4-independent-authoring-coverage-v2",
+        ),
+        (
+            "r28-authoring-coverage-contract-v2",
+            "dolved-v4-independent-authoring-coverage-v1",
+        ),
+    ],
+)
+def test_rejects_legacy_and_mixed_coverage_identities(
+    schema_version: str, contract_id: str
+) -> None:
+    coverage = coverage_contract()
+    coverage["schema_version"] = schema_version
+    coverage["contract_id"] = contract_id
+    with pytest.raises(VALIDATOR.Invalid, match="version mismatch|identity mismatch"):
+        VALIDATOR.validate_coverage_contract(coverage)
+
+
+def test_v2_contract_aggregate_recomputes_exactly() -> None:
+    ordered = [
+        "docs/evaluation/r28-s01/access-manifest.json",
+        "contracts/evaluation/v4/independent-authoring-output.schema.json",
+        "docs/evaluation/r28-s01/authoring-coverage-contract.json",
+        "scripts/evaluation/r28_authoring_access.py",
+        "scripts/evaluation/r28_access_guard.py",
+        "scripts/evaluation/validate_r28_authoring_output.py",
+    ]
+    digest = hashlib.sha256()
+    for relative in ordered:
+        digest.update(relative.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update((SCRIPT_ROOT / relative).read_bytes())
+        digest.update(b"\0")
+    assert digest.hexdigest() == (
+        "57ebb52ae6814f4912583c90ec399c60a65e82dc872cfdb21afe10f57871df68"
+    )
+
+
 def test_rejects_impossible_coverage_arithmetic() -> None:
-    impossible = {
-        "schema_version": "r28-authoring-coverage-contract-v1",
-        "contract_id": "dolved-v4-independent-authoring-coverage-v1",
-        "semantic_case_count": 72,
-        "variants_per_case": 2,
-        "utterance_count": 144,
-        "scope_exact_counts": {"scope.primary": 72, "scope.foreign_tenant": 1},
-        "minimum_case_counts": {
-            "outcome.EVIDENCE_FOUND": 72,
-            "outcome.CLARIFICATION_REQUIRED": 5,
-            "safety.cross_tenant": 5,
-            "safety.prompt_injection": 5,
-        },
-        "arithmetic": {},
+    impossible = coverage_contract()
+    impossible["arithmetic"] = {
+        "exclusive_scope_total": 73,
+        "largest_mutually_exclusive_outcome_minimum_total": 65,
+        "overlap_required": True,
+        "feasible": True,
     }
-    with pytest.raises(VALIDATOR.Invalid, match="scope counts"):
+    with pytest.raises(VALIDATOR.Invalid, match="coverage arithmetic record mismatch"):
         VALIDATOR.validate_coverage_contract(impossible)
+
+
+def test_accepts_valid_coverage_arithmetic() -> None:
+    assert VALIDATOR.validate_coverage_contract(coverage_contract())
 
 
 def test_accepts_only_one_direct_well_named_output_child() -> None:
@@ -454,15 +700,15 @@ def test_rejects_global_normalized_utterance_duplicates(duplicate: str) -> None:
         validate_population(population)
 
 
-def test_exactly_144_globally_distinct_utterances_pass() -> None:
+def test_exactly_74_cases_and_148_globally_distinct_utterances_pass() -> None:
     population = valid_population()
     slices = VALIDATOR.validate_population(
         population,
         {"scope.primary", "outcome.EVIDENCE_FOUND"},
         {"documents/primary/synthetic.txt": "a" * 64},
     )
-    assert len(population["cases"]) == 72
-    assert sum(len(case["variants"]) for case in population["cases"]) == 144
+    assert len(population["cases"]) == 74
+    assert sum(len(case["variants"]) for case in population["cases"]) == 148
     assert slices["scope.primary"] == {case["case_id"] for case in population["cases"]}
 
 

@@ -1,19 +1,27 @@
 # R28-S01 live-evaluation protocol draft
 
-Status: **IN PROGRESS — intermediate decisions approved by David on 2026-09-03;
-independent population authoring/audit, accepted population freeze, the required
-ADR-0029 clarification, the R28-S04 ceiling, final protocol identity and final
-R28-S01 approval remain pending.**
+Status: **IN PROGRESS — intermediate decisions and the v2 authoring-contract
+amendment approved by David on 2026-09-03; population completion, independent
+final population audit, final population freeze, the required ADR-0029
+clarification, the R28-S04 ceiling, final protocol identity and final R28-S01
+approval remain pending. R28-S02 remains blocked.**
 
 ## Intermediate approval record
 
 David approved on 2026-09-03 the strict thresholds and absolute failures below,
 the USD 15 R28-S02 maximum, separate reporting of its retrieval and prompt-
-injection components, the clean exact-commit lineage correction, the 72-case/
-144-utterance independent-authoring design, and the determination that a narrow
+injection components, the clean exact-commit lineage correction, the then-current
+72-case/144-utterance independent-authoring design, and the determination that a narrow
 ADR-0029 clarification is required. This is not approval of an R28-S04 ceiling,
 provider execution, the unwritten clarification, final protocol identity or
 R28-S01 closure.
+
+That 72/144 design is now historical and superseded. After independent
+feasibility evidence proved that a minimum non-weakening extension was required
+and the independent contract audit completed, David approved the v2 authoring
+amendment on 2026-09-03: 74 semantic cases, 148 utterances and exact scopes 62
+primary / 6 foreign / 6 security. This approval authorises final population
+authoring; it does not close or finally freeze R28-S01.
 
 ## Governance determination
 

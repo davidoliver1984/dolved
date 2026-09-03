@@ -1,12 +1,12 @@
 {
-  "schema_version": "r28-authoring-coverage-contract-v1",
-  "contract_id": "dolved-v4-independent-authoring-coverage-v1",
-  "semantic_case_count": 72,
+  "schema_version": "r28-authoring-coverage-contract-v2",
+  "contract_id": "dolved-v4-independent-authoring-coverage-v2",
+  "semantic_case_count": 74,
   "variants_per_case": 2,
-  "utterance_count": 144,
+  "utterance_count": 148,
   "counting_rule": "A semantic case counts once for each distinct compatible slice it declares. A case may satisfy multiple slices, but repeated variants and repeated labels never add coverage. Scope is exclusive: every case belongs to exactly one of primary, foreign_tenant or security_test.",
   "scope_exact_counts": {
-    "scope.primary": 60,
+    "scope.primary": 62,
     "scope.foreign_tenant": 6,
     "scope.security_test": 6
   },
@@ -50,7 +50,7 @@
   },
   "directional_rule": "Any reported slice with fewer than five semantic cases is directional only and cannot independently establish readiness.",
   "arithmetic": {
-    "exclusive_scope_total": 72,
+    "exclusive_scope_total": 74,
     "largest_mutually_exclusive_outcome_minimum_total": 65,
     "overlap_required": true,
     "feasible": true

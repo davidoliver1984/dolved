@@ -13,8 +13,8 @@
         "cases"
     ],
     "properties": {
-        "schema_version": {"const": "r28-independent-authoring-output-v1"},
-        "contract_id": {"const": "dolved-v4-independent-authoring-output-v1"},
+        "schema_version": {"const": "r28-independent-authoring-output-v2"},
+        "contract_id": {"const": "dolved-v4-independent-authoring-output-v2"},
         "population_id": {
             "type": "string",
             "pattern": "^dolved-v4-independent-[a-z0-9][a-z0-9-]{2,47}$"
@@ -58,8 +58,8 @@
         },
         "cases": {
             "type": "array",
-            "minItems": 72,
-            "maxItems": 72,
+            "minItems": 74,
+            "maxItems": 74,
             "items": {"$ref": "#/$defs/case"}
         }
     },

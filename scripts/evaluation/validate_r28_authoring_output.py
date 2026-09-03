@@ -31,8 +31,8 @@ from r28_authoring_access import (
     classify_r28_authoring_input,
 )
 
-SCHEMA_VERSION = "r28-independent-authoring-output-v1"
-CONTRACT_ID = "dolved-v4-independent-authoring-output-v1"
+SCHEMA_VERSION = "r28-independent-authoring-output-v2"
+CONTRACT_ID = "dolved-v4-independent-authoring-output-v2"
 COVERAGE_VERSION = "r28-authoring-coverage-matrix-v1"
 DECLARATION_VERSION = "r28-author-declaration-v1"
 VIEW_ID = "dolved-care-v4-question-author-view-v1"
@@ -67,6 +67,52 @@ TEMPORAL_MODES = {
     "CLARIFICATION_REQUIRED",
 }
 SCOPES = {"primary", "foreign_tenant", "security_test"}
+APPROVED_SEMANTIC_CASE_COUNT = 74
+APPROVED_VARIANTS_PER_CASE = 2
+APPROVED_UTTERANCE_COUNT = 148
+EXPECTED_SCOPE_COUNTS = {
+    "scope.primary": 62,
+    "scope.foreign_tenant": 6,
+    "scope.security_test": 6,
+}
+EXPECTED_MINIMUM_CASE_COUNTS = {
+    "wording.ordinary_employee": 30,
+    "wording.concise_vague": 8,
+    "wording.typo_alias": 8,
+    "wording.colloquial": 8,
+    "wording.multi_part": 8,
+    "temporal.current": 20,
+    "temporal.historical": 8,
+    "temporal.valid_at_date": 8,
+    "temporal.comparison": 10,
+    "change.contact": 5,
+    "change.number": 5,
+    "change.date": 5,
+    "change.responsibility": 5,
+    "change.escalation": 5,
+    "change.addition_removal": 5,
+    "change.rename": 5,
+    "change.reorder": 5,
+    "applicability.global": 10,
+    "applicability.local": 10,
+    "applicability.inherited": 8,
+    "outcome.EVIDENCE_FOUND": 35,
+    "outcome.INSUFFICIENT_EVIDENCE": 5,
+    "outcome.CLARIFICATION_REQUIRED": 5,
+    "outcome.NO_ELIGIBLE_EVIDENCE": 5,
+    "outcome.NO_RETRIEVAL_CANDIDATES": 5,
+    "outcome.COMPARISON_SCOPE_INCOMPLETE": 5,
+    "outcome.TEMPORAL_SCOPE_UNRESOLVED": 5,
+    "competition.near_duplicate": 8,
+    "competition.competing_document": 8,
+    "structure.long_document": 8,
+    "structure.boundary_spanning_evidence": 8,
+    "format.pdf": 15,
+    "format.docx": 15,
+    "format.txt": 15,
+    "safety.cross_tenant": 6,
+    "safety.prompt_injection": 6,
+}
 FORBIDDEN_FIELDS = {
     "observed_answer",
     "system_answer",
@@ -386,29 +432,41 @@ def read_confined_output(
 
 def validate_coverage_contract(coverage: dict[str, Any]) -> set[str]:
     require(
-        coverage["schema_version"] == "r28-authoring-coverage-contract-v1",
+        coverage["schema_version"] == "r28-authoring-coverage-contract-v2",
         "coverage contract version mismatch",
     )
     require(
-        coverage["contract_id"] == "dolved-v4-independent-authoring-coverage-v1",
+        coverage["contract_id"] == "dolved-v4-independent-authoring-coverage-v2",
         "coverage contract identity mismatch",
     )
     require(
-        coverage["semantic_case_count"] == 72
-        and coverage["variants_per_case"] == 2
-        and coverage["utterance_count"] == 144,
+        coverage["semantic_case_count"] == APPROVED_SEMANTIC_CASE_COUNT
+        and coverage["variants_per_case"] == APPROVED_VARIANTS_PER_CASE
+        and coverage["utterance_count"] == APPROVED_UTTERANCE_COUNT,
         "coverage population arithmetic mismatch",
     )
     scopes = coverage["scope_exact_counts"]
     minima = coverage["minimum_case_counts"]
-    require(sum(scopes.values()) == 72, "exclusive scope counts must total 72")
+    case_count = coverage["semantic_case_count"]
+    utterance_count = case_count * coverage["variants_per_case"]
+    require(scopes == EXPECTED_SCOPE_COUNTS, "approved exact scope counts mismatch")
+    require(minima == EXPECTED_MINIMUM_CASE_COUNTS, "approved coverage minima mismatch")
     require(
-        sum(value for key, value in minima.items() if key.startswith("outcome.")) <= 72,
-        "mutually exclusive outcome minima exceed 72",
+        coverage["utterance_count"] == utterance_count,
+        "coverage utterance arithmetic mismatch",
+    )
+    require(
+        sum(scopes.values()) == case_count,
+        f"exclusive scope counts must total {case_count}",
+    )
+    require(
+        sum(value for key, value in minima.items() if key.startswith("outcome."))
+        <= case_count,
+        f"mutually exclusive outcome minima exceed {case_count}",
     )
     require(
         all(
-            isinstance(value, int) and 0 <= value <= 72
+            isinstance(value, int) and 0 <= value <= case_count
             for value in (*scopes.values(), *minima.values())
         ),
         "coverage count is out of bounds",
@@ -423,7 +481,7 @@ def validate_coverage_contract(coverage: dict[str, Any]) -> set[str]:
     require(
         coverage["arithmetic"]
         == {
-            "exclusive_scope_total": 72,
+            "exclusive_scope_total": case_count,
             "largest_mutually_exclusive_outcome_minimum_total": 65,
             "overlap_required": True,
             "feasible": True,
@@ -434,7 +492,9 @@ def validate_coverage_contract(coverage: dict[str, Any]) -> set[str]:
 
 
 def validate_population(
-    population: dict[str, Any], allowed_slices: set[str], view_files: dict[str, str]
+    population: dict[str, Any],
+    allowed_slices: set[str],
+    view_files: dict[str, str],
 ) -> dict[str, set[str]]:
     exact_keys(
         population,
@@ -483,8 +543,9 @@ def validate_population(
     )
     cases = population["cases"]
     require(
-        isinstance(cases, list) and len(cases) == 72,
-        "population must contain exactly 72 semantic cases",
+        isinstance(cases, list) and len(cases) == APPROVED_SEMANTIC_CASE_COUNT,
+        "population must contain exactly "
+        f"{APPROVED_SEMANTIC_CASE_COUNT} semantic cases",
     )
     case_ids: set[str] = set()
     slice_cases = {name: set() for name in allowed_slices}
@@ -533,7 +594,7 @@ def validate_population(
             normalized_text = normalized_utterance(text)
             require(
                 normalized_text and normalized_text not in global_texts,
-                "all 144 utterances must be globally distinct after normative normalization",
+                "all utterances must be globally distinct after normative normalization",
             )
             global_texts.add(normalized_text)
             utterances += 1
@@ -649,8 +710,11 @@ def validate_population(
         for label in slices:
             slice_cases[label].add(case_id)
     require(
-        utterances == 144 and len(variant_ids) == 144 and len(global_texts) == 144,
-        "population must contain exactly 144 globally distinct utterances",
+        utterances == APPROVED_UTTERANCE_COUNT
+        and len(variant_ids) == APPROVED_UTTERANCE_COUNT
+        and len(global_texts) == APPROVED_UTTERANCE_COUNT,
+        "population must contain exactly "
+        f"{APPROVED_UTTERANCE_COUNT} globally distinct utterances",
     )
     return slice_cases
 
@@ -843,7 +907,11 @@ def main() -> int:
     )
     report = files["authoring-report.md"].decode("utf-8")
     bounded(report, 40, 100_000, "authoring report")
-    print("PASS 72 semantic cases, 144 utterances, coverage and provenance complete")
+    print(
+        "PASS "
+        f"{coverage['semantic_case_count']} semantic cases, "
+        f"{coverage['utterance_count']} utterances, coverage and provenance complete"
+    )
     return 0
 
 
