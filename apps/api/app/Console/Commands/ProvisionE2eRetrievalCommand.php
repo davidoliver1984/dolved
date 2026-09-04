@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Models\EmbeddingSpaceGeneration;
+use App\Models\SparseSpaceGeneration;
 use App\Support\E2e\DeterministicRetrievalProfile;
 use Illuminate\Console\Command;
 
@@ -35,9 +36,13 @@ class ProvisionE2eRetrievalCommand extends Command
         ]) !== self::SUCCESS) {
             return self::FAILURE;
         }
+        $sparse = SparseSpaceGeneration::query()
+            ->where('embedding_space_generation_id', $dense->id)
+            ->firstOrFail();
 
         $this->line(json_encode([
             'embedding_space_generation_id' => $dense->public_id,
+            'sparse_space_generation_id' => $sparse->public_id,
             'identity' => 'dolved-e2e',
         ], JSON_THROW_ON_ERROR));
 

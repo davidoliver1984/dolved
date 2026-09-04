@@ -18,7 +18,7 @@ services=(postgres qdrant localstack mailpit ai api publisher worker conversatio
 
 "${compose[@]}" up --detach --build --wait --wait-timeout "${WAIT_TIMEOUT:-240}" "${services[@]}"
 "${compose[@]}" run --rm migrator php artisan migrate --force
-"${compose[@]}" exec -T api php artisan e2e:provision-retrieval
+"${compose[@]}" exec -T api php artisan e2e:provision-retrieval > "$runtime_root/retrieval-provisioning.json"
 
 "${compose[@]}" exec -T api php artisan e2e:bootstrap --run r28-s03 --scenario primary > "$runtime_root/primary.json"
 "${compose[@]}" exec -T api php artisan e2e:bootstrap --run r28-s03 --scenario foreign > "$runtime_root/foreign.json"
@@ -26,6 +26,7 @@ services=(postgres qdrant localstack mailpit ai api publisher worker conversatio
 
 primary_workspace="$(jq -r .workspace_public_id "$runtime_root/primary.json")"
 foreign_workspace="$(jq -r .workspace_public_id "$runtime_root/foreign.json")"
+injection_workspace="$(jq -r .workspace_public_id "$runtime_root/injection.json")"
 "${compose[@]}" exec -T api php artisan e2e:provision-organisation --workspace "$primary_workspace" --manifest /r28-corpus/organisation.json > "$runtime_root/primary-locations.json"
 "${compose[@]}" exec -T api php artisan e2e:provision-organisation --workspace "$foreign_workspace" --manifest /r28-corpus/foreign-tenant/organisation.json > "$runtime_root/foreign-locations.json"
 
@@ -39,9 +40,19 @@ python3 scripts/evaluation/materialise_r28_s03.py \
   --primary-locations "$runtime_root/primary-locations.json" \
   --output "$runtime_root/materialisation-result.json"
 
+sparse_space="$(jq -r .sparse_space_generation_id "$runtime_root/retrieval-provisioning.json")"
+"${compose[@]}" exec -T api php artisan retrieval:rebuild-hybrid-corpus \
+  "$primary_workspace" "$sparse_space" \
+  > docs/evaluation/r28-s03/run/primary-hybrid-rebuild.txt
+"${compose[@]}" exec -T api php artisan retrieval:rebuild-hybrid-corpus \
+  "$foreign_workspace" "$sparse_space" \
+  > docs/evaluation/r28-s03/run/foreign-hybrid-rebuild.txt
+"${compose[@]}" exec -T api php artisan retrieval:rebuild-hybrid-corpus \
+  "$injection_workspace" "$sparse_space" \
+  > docs/evaluation/r28-s03/run/injection-hybrid-rebuild.txt
+
 primary_actor="$(jq -r .user_public_id "$runtime_root/primary.json")"
 foreign_actor="$(jq -r .user_public_id "$runtime_root/foreign.json")"
-injection_workspace="$(jq -r .workspace_public_id "$runtime_root/injection.json")"
 injection_actor="$(jq -r .user_public_id "$runtime_root/injection.json")"
 "${compose[@]}" exec -T api php artisan e2e:apply-frozen-governance \
   --workspace "$primary_workspace" --actor "$primary_actor" \
@@ -57,12 +68,17 @@ injection_actor="$(jq -r .user_public_id "$runtime_root/injection.json")"
   > docs/evaluation/r28-s03/run/injection-governance.json
 
 mv "$runtime_root/materialisation-result.json" docs/evaluation/r28-s03/run/materialisation-result.json
+mv "$runtime_root/retrieval-provisioning.json" docs/evaluation/r28-s03/run/retrieval-provisioning.json
 
 "${compose[@]}" ps --format json > docs/evaluation/r28-s03/run/runtime-services.json
 sha256sum docs/evaluation/r28-s03/run/materialisation-result.json \
   docs/evaluation/r28-s03/run/primary-governance.json \
   docs/evaluation/r28-s03/run/foreign-governance.json \
   docs/evaluation/r28-s03/run/injection-governance.json \
+  docs/evaluation/r28-s03/run/retrieval-provisioning.json \
+  docs/evaluation/r28-s03/run/primary-hybrid-rebuild.txt \
+  docs/evaluation/r28-s03/run/foreign-hybrid-rebuild.txt \
+  docs/evaluation/r28-s03/run/injection-hybrid-rebuild.txt \
   docs/evaluation/r28-s03/run/runtime-services.json \
   > docs/evaluation/r28-s03/run/checksums.sha256
 

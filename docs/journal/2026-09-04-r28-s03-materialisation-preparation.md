@@ -2,13 +2,13 @@
 
 ## Status
 
-R28-S03 is in progress. Eight immutable attempts have run; each failed closed
-and remains recorded below. Attempt `0009` is prepared but has not run.
+R28-S03 is in progress. Nine immutable attempts have run; each failed closed
+and remains recorded below. Attempt `0010` is prepared but has not run.
 
 ## Boundary
 
 The active immutable run identity is
-`R28-S03-V4-CORPUS-MATERIALISATION-0009`. It binds the frozen checkpoint 19
+`R28-S03-V4-CORPUS-MATERIALISATION-0010`. It binds the frozen checkpoint 19
 archive and its four governed scopes to a dedicated `dolved-r28-s03` local
 runtime. The primary, foreign-tenant and separate prompt-injection documents
 must pass through the authenticated ADR-0034 ImportBatch workflow. The 13
@@ -135,3 +135,20 @@ verified and two rejected preflight items, 318 indexed documents and all 318
 documents still in draft. No selective rerun, provider call or AWS call
 occurred. Attempt `0009` preserves the request filename as evidence but records
 the result under the exact manifest identity in a fresh isolated runtime.
+
+## Attempt 0009 outcome
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0009` completed all four governed
+scope workflows, leaving 318 indexed searchable documents, 1,000 canonical
+chunks and 13 exact negative-fixture outcomes. Governance replay produced the
+frozen primary distribution of 9 draft, 224 approved and 67 withdrawn; the 12
+foreign and six security documents were approved only in their separate
+workspaces. Post-run verification then found a materialisation blocker: the
+deterministic sparse space existed, but none of the 318 ingestion claims or
+three active workspace corpus generations was bound to it, and Qdrant held only
+1,000 dense points. Attempt `0010` invokes the existing verified hybrid rebuild
+and activation path for each workspace after dense ingestion. No selective
+rerun, provider call or AWS call occurred.
+The immutable result, governance summaries, runtime inventory and checksums are
+preserved in
+`docs/evaluation/r28-s03/failed-runs/R28-S03-V4-CORPUS-MATERIALISATION-0009/`.

@@ -1,6 +1,6 @@
 {
   "schema_version": "r28-s03-materialisation-definition-v1",
-  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0009",
+  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0010",
   "purpose": "Provider-free materialisation of the frozen Dolved V4 corpus through the real ADR-0034 ImportBatch workflow",
   "execution": {
     "provider_calls_permitted": false,
@@ -58,6 +58,7 @@
     "structured extraction",
     "chunking",
     "deterministic dense and sparse vectorisation",
+    "verified hybrid corpus rebuild and activation",
     "governance transition"
   ],
   "limitations": [
@@ -189,6 +190,41 @@
         "documents_remaining_draft": 318,
         "preflight_verified_items": 329,
         "preflight_rejected_items": 2
+      },
+      "provider_calls": 0,
+      "aws_calls": 0,
+      "selective_reruns": 0
+    },
+    {
+      "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0009",
+      "outcome": "failed_post_materialisation_verification_sparse_axis_absent",
+      "cause": "All four governed scopes completed, but the E2E retrieval provisioner created the deterministic sparse space without binding it to each workspace corpus generation. Verification found 1,000 dense-only Qdrant points and zero sparse-bound ingestion claims or active corpus generations.",
+      "durable_state": {
+        "workspaces_created": 3,
+        "import_batches_created": 19,
+        "import_items_created": 331,
+        "documents_created": 318,
+        "documents_indexed": 318,
+        "canonical_chunks_created": 1000,
+        "negative_fixtures_observed": 13,
+        "primary_governance": {
+          "draft": 9,
+          "approved": 224,
+          "withdrawn": 67
+        },
+        "foreign_governance": {
+          "draft": 0,
+          "approved": 12,
+          "withdrawn": 0
+        },
+        "injection_governance": {
+          "draft": 0,
+          "approved": 6,
+          "withdrawn": 0
+        },
+        "qdrant_points": 1000,
+        "sparse_bound_claims": 0,
+        "sparse_bound_active_corpus_generations": 0
       },
       "provider_calls": 0,
       "aws_calls": 0,

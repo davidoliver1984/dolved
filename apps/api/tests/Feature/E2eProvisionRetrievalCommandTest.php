@@ -32,6 +32,9 @@ class E2eProvisionRetrievalCommandTest extends TestCase
     public function test_it_provisions_the_deterministic_dense_and_sparse_profile_idempotently(): void
     {
         $this->assertSame(0, Artisan::call('e2e:provision-retrieval'));
+        $output = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertSame(EmbeddingSpaceGeneration::query()->sole()->public_id, $output['embedding_space_generation_id']);
+        $this->assertSame(SparseSpaceGeneration::query()->sole()->public_id, $output['sparse_space_generation_id']);
         $this->assertSame(0, Artisan::call('e2e:provision-retrieval'));
 
         $this->assertSame(1, EmbeddingProfile::query()->where('provider', 'deterministic')->count());

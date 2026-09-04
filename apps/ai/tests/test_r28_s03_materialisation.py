@@ -22,7 +22,7 @@ def load_materialiser():
 
 def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -> None:
     definition = json.loads(DEFINITION.read_text())
-    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0009"
+    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0010"
     assert definition["prior_attempts"] == [
         {
             "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
@@ -186,6 +186,47 @@ def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -
             "aws_calls": 0,
             "selective_reruns": 0,
         },
+        {
+            "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0009",
+            "outcome": "failed_post_materialisation_verification_sparse_axis_absent",
+            "cause": (
+                "All four governed scopes completed, but the E2E retrieval "
+                "provisioner created the deterministic sparse space without "
+                "binding it to each workspace corpus generation. Verification "
+                "found 1,000 dense-only Qdrant points and zero sparse-bound "
+                "ingestion claims or active corpus generations."
+            ),
+            "durable_state": {
+                "workspaces_created": 3,
+                "import_batches_created": 19,
+                "import_items_created": 331,
+                "documents_created": 318,
+                "documents_indexed": 318,
+                "canonical_chunks_created": 1000,
+                "negative_fixtures_observed": 13,
+                "primary_governance": {
+                    "draft": 9,
+                    "approved": 224,
+                    "withdrawn": 67,
+                },
+                "foreign_governance": {
+                    "draft": 0,
+                    "approved": 12,
+                    "withdrawn": 0,
+                },
+                "injection_governance": {
+                    "draft": 0,
+                    "approved": 6,
+                    "withdrawn": 0,
+                },
+                "qdrant_points": 1000,
+                "sparse_bound_claims": 0,
+                "sparse_bound_active_corpus_generations": 0,
+            },
+            "provider_calls": 0,
+            "aws_calls": 0,
+            "selective_reruns": 0,
+        },
     ]
     assert definition["execution"]["provider_calls_permitted"] is False
     assert definition["execution"]["aws_access_permitted"] is False
@@ -251,6 +292,8 @@ def test_r28_s03_materialiser_uses_import_api_and_frozen_governance_command() ->
     assert "/governance/approve" not in source
     assert "/governance/withdraw" not in source
     assert runner.count("e2e:apply-frozen-governance") == 3
+    assert runner.count("retrieval:rebuild-hybrid-corpus") == 3
+    assert "sparse_space_generation_id" in runner
     assert "/documents/uploads" not in source
     assert "OPENAI" not in source.upper()
     assert "VOYAGE" not in source.upper()
