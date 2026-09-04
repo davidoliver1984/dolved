@@ -21,6 +21,7 @@ from app.generation.errors import (
 from app.generation.models import (
     AnswerPart,
     AnswerPartCandidate,
+    EvidenceId,
     GenerationContextBudgetExceeded,
     GenerationOutcome,
     GenerationProviderError,
@@ -35,7 +36,7 @@ from app.telemetry import trace_attributes
 PROVIDER = "openai"
 MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
-ADAPTER_VERSION = "openai-responses-v1"
+ADAPTER_VERSION = "openai-responses-v2"
 GenerationErrorCategory = Literal[
     "transport_failure",
     "rate_limit",
@@ -51,7 +52,7 @@ class OpenAIAnswerPart(BaseModel):
     text: str = Field(
         description="Natural grounded prose supported by every listed evidence ID."
     )
-    evidence_ids: list[str] = Field(
+    evidence_ids: list[EvidenceId] = Field(
         description="One or more request-scoped evidence IDs supplied in the input."
     )
 

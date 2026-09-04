@@ -7,9 +7,6 @@ from uuid import uuid4
 import httpx
 import openai
 import pytest
-from openai.lib._pydantic import to_strict_json_schema
-from pydantic import ValidationError
-
 from app.generation.errors import (
     GenerationContextBudgetError,
     GenerationProviderFailure,
@@ -27,6 +24,8 @@ from app.generation.openai_adapter import (
     render_openai_request,
 )
 from app.generation.prompt import PROMPT_VERSION, SYSTEM_PROMPT
+from openai.lib._pydantic import to_strict_json_schema
+from pydantic import ValidationError
 
 
 def generation_request(
@@ -463,6 +462,73 @@ def test_unknown_evidence_id_fails_closed_without_semantic_retry() -> None:
     assert len(responses.calls) == 1
 
 
+@pytest.mark.parametrize("evidence_id", ["ev02", "EV-02", "ev-2", "anything", ""])
+def test_provider_output_rejects_noncanonical_evidence_ids(
+    evidence_id: str,
+) -> None:
+    with pytest.raises(ValidationError):
+        OpenAIGenerationOutput.model_validate(
+            {
+                "outcome": "answered",
+                "answer_parts": [
+                    {
+                        "text": "Staff must record the action.",
+                        "evidence_ids": [evidence_id],
+                    }
+                ],
+                "unsupported_aspects": [],
+                "insufficiency_reason": None,
+            }
+        )
+
+
+def test_provider_output_accepts_canonical_evidence_ids() -> None:
+    parsed = OpenAIGenerationOutput.model_validate(
+        {
+            "outcome": "answered",
+            "answer_parts": [
+                {
+                    "text": "Both procedures require a record.",
+                    "evidence_ids": ["ev-01", "ev-02"],
+                }
+            ],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+        }
+    )
+    adapter, responses = generator([response(parsed)])
+    result = adapter.generate(generation_request(comparison=True))
+    assert result.answer_parts[0].evidence_ids == ("ev-01", "ev-02")
+    assert len(responses.calls) == 1
+
+
+def test_duplicate_evidence_ids_fail_in_final_generation_contract() -> None:
+    adapter, responses = generator([response(output(evidence_ids=["ev-01", "ev-01"]))])
+    with pytest.raises(GenerationProviderFailure) as caught:
+        adapter.generate(generation_request())
+    assert caught.value.error.category == "contract_validation_failure"
+    assert len(responses.calls) == 1
+
+
+def test_run_0004_malformed_evidence_shape_fails_before_result_adaptation() -> None:
+    malformed = {
+        "outcome": "answered",
+        "answer_parts": [
+            {
+                "text": "The supplied procedures describe the required action.",
+                "evidence_ids": ["ev02", "ev03", "ev04"],
+            }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": None,
+    }
+    adapter, responses = generator([response(malformed)])
+    with pytest.raises(GenerationProviderFailure) as caught:
+        adapter.generate(generation_request())
+    assert caught.value.error.category == "contract_validation_failure"
+    assert len(responses.calls) == 1
+
+
 def test_malformed_and_refusal_responses_are_typed_and_not_retried() -> None:
     refusal = SimpleNamespace(
         type="message",
@@ -558,6 +624,10 @@ def test_installed_sdk_builds_a_strict_schema_for_nested_parts_and_nullable_reas
     answer_part = schema["$defs"]["OpenAIAnswerPart"]
     assert answer_part["additionalProperties"] is False
     assert answer_part["properties"]["evidence_ids"]["type"] == "array"
+    assert answer_part["properties"]["evidence_ids"]["items"] == {
+        "pattern": "^ev-[0-9]{2,}$",
+        "type": "string",
+    }
     assert schema["properties"]["insufficiency_reason"]["anyOf"] == [
         {"type": "string"},
         {"type": "null"},

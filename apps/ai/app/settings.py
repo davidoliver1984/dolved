@@ -112,7 +112,7 @@ class Settings(BaseSettings):
     generation_scenario_catalogue_path: str = "/e2e-fixtures/v1/scenario-catalogue.json"
     generation_prompt_version: str = "grounded-generation-v2"
     generation_contract_version: str = "generation-result-v1"
-    generation_adapter_version: str = "openai-responses-v1"
+    generation_adapter_version: str = "openai-responses-v2"
     generation_reasoning_effort: str = "low"
     generation_max_output_tokens: int = Field(default=4096, ge=1, le=128_000)
     generation_context_window_tokens: int = Field(default=400_000, ge=1)

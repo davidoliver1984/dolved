@@ -1231,7 +1231,7 @@ class RealProviderAdapters:
                 raise RuntimeError("openai_sdk_retries_not_disabled")
         if (
             self.generator.profile.fingerprint()
-            != "40a18f357fbc864ff54781e607300c3374dd65829563fc2b334a2876de19b2f5"
+            != "e4f2193366616cf3a5d47ce63017e68f23cd8d6b35c2393af92b7f1b60f095d9"
         ):
             raise RuntimeError("generation_profile_identity_mismatch")
         if (
@@ -1349,14 +1349,41 @@ class RecordingProviderAdapters:
                 for rank, item in enumerate(payload["candidates"], 1)
             ]
         elif stage == "generation":
-            value["outcome"] = "answered"
-            value["answer_parts"] = [
+            from app.generation.models import (
+                AnswerPart,
+                GenerationOutcome,
+                GenerationRequest,
+                GenerationResult,
+            )
+            from app.generation.openai_adapter import OpenAIGenerationOutput
+
+            provider_output = OpenAIGenerationOutput.model_validate(
                 {
-                    "text": "Grounded answer.",
-                    "evidence_ids": [payload["evidence"][0]["evidence_id"]],
+                    "outcome": "answered",
+                    "answer_parts": [
+                        {
+                            "text": "Grounded answer.",
+                            "evidence_ids": [payload["evidence"][0]["evidence_id"]],
+                        }
+                    ],
+                    "unsupported_aspects": [],
+                    "insufficiency_reason": None,
                 }
-            ]
-            value["unsupported_aspects"] = []
+            )
+            generation_request = GenerationRequest.model_validate(payload)
+            final_result = GenerationResult(
+                outcome=GenerationOutcome(provider_output.outcome),
+                answer_parts=tuple(
+                    AnswerPart(
+                        text=part.text,
+                        evidence_ids=tuple(part.evidence_ids),
+                    )
+                    for part in provider_output.answer_parts
+                ),
+                unsupported_aspects=tuple(provider_output.unsupported_aspects),
+                insufficiency_reason=provider_output.insufficiency_reason,
+            ).validate_against(generation_request)
+            value = final_result.model_dump(mode="json")
         else:
             value["scores"] = {
                 "ANSWER_PART_GROUNDEDNESS": 1.0,

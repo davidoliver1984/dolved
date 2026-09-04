@@ -48,6 +48,7 @@ def live_settings(**values: object) -> Settings:
     return Settings().model_copy(
         update={
             "generation_openai_api_key": SecretStr("test-only-credential"),
+            "generation_adapter_version": "openai-responses-v1",
             **values,
         }
     )
@@ -249,12 +250,16 @@ def test_live_wrapper_requires_opt_in_and_honestly_skips_without_credentials(
         ],
     )
     monkeypatch.delenv("RUN_LIVE_GENERATION_EVALUATION", raising=False)
+    monkeypatch.setattr(module, "Settings", lambda: live_settings())
     with pytest.raises(SystemExit, match="permit paid live-provider calls"):
         module.main()
 
     monkeypatch.setenv("RUN_LIVE_GENERATION_EVALUATION", "1")
     settings_without_credentials = Settings().model_copy(
-        update={"generation_openai_api_key": SecretStr("")}
+        update={
+            "generation_openai_api_key": SecretStr(""),
+            "generation_adapter_version": "openai-responses-v1",
+        }
     )
     monkeypatch.setattr(
         module,
