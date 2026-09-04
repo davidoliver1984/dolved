@@ -1,6 +1,6 @@
 # R28-S03 V4 corpus materialisation
 
-`R28-S03-V4-CORPUS-MATERIALISATION-0004` materialises the frozen V4 corpus
+`R28-S03-V4-CORPUS-MATERIALISATION-0005` materialises the frozen V4 corpus
 through the real authenticated ADR-0034 import workflow in a dedicated local
 Docker project. It uses only the deterministic provider profile. It does not
 consume the R28-S04 live Voyage allowance and makes no OpenAI, Voyage or AWS
@@ -45,3 +45,12 @@ serialised its empty signed-upload header map as an empty JSON list. The
 database contained one batch, 25 items and zero documents. Attempt `0004` is a
 new immutable identity after allowing only that empty-list wire representation;
 non-empty upload headers must still be a named map and otherwise fail closed.
+
+Attempt `0004` materialised and indexed 209 primary documents before the
+application correctly rejected the second e-bike proposal version. Both frozen
+versions omit an effective date, so the harness had assigned both the same
+default even though v1 declares a supersession date. The promotion exhausted
+after three recorded failures; it was not selectively retried. Attempt `0005`
+uses the general frozen-manifest rule that a null-dated version with a declared
+supersession date is placed one day before that boundary. Null-dated entries
+without a supersession date retain the existing deterministic default.

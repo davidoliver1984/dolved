@@ -15,6 +15,7 @@ import urllib.parse
 import urllib.request
 import uuid
 from collections import defaultdict
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -100,8 +101,14 @@ class ApiClient:
 
 
 def effective_date(entry: dict[str, Any]) -> str:
-    """Return the explicit effective date or the governed default for null/omitted."""
-    return entry.get("effective_date") or "2026-01-01"
+    """Return explicit chronology or a deterministic manifest-derived fallback."""
+    if entry.get("effective_date"):
+        return str(entry["effective_date"])
+    if entry.get("superseded_date"):
+        return (
+            date.fromisoformat(str(entry["superseded_date"])) - timedelta(days=1)
+        ).isoformat()
+    return "2026-01-01"
 
 
 def load_json(path: Path) -> Any:

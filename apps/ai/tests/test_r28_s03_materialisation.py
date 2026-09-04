@@ -22,7 +22,7 @@ def load_materialiser():
 
 def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -> None:
     definition = json.loads(DEFINITION.read_text())
-    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0004"
+    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0005"
     assert definition["prior_attempts"] == [
         {
             "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
@@ -74,6 +74,26 @@ def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -
             "aws_calls": 0,
             "selective_reruns": 0,
         },
+        {
+            "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0004",
+            "outcome": "failed_during_primary_promotion",
+            "cause": (
+                "Two versions with null effective dates received the same fallback "
+                "date, and the application correctly rejected the successor because "
+                "it was not later than its predecessor."
+            ),
+            "durable_state": {
+                "workspaces_created": 3,
+                "import_batches_created": 9,
+                "import_items_created": 210,
+                "documents_created": 209,
+                "documents_indexed": 209,
+                "failed_promotions": 1,
+            },
+            "provider_calls": 0,
+            "aws_calls": 0,
+            "selective_reruns": 0,
+        },
     ]
     assert definition["execution"]["provider_calls_permitted"] is False
     assert definition["execution"]["aws_access_permitted"] is False
@@ -106,6 +126,12 @@ def test_r28_s03_materialiser_defaults_null_and_omitted_effective_dates() -> Non
     )
     assert materialiser.effective_date({"effective_date": None}) == "2026-01-01"
     assert materialiser.effective_date({}) == "2026-01-01"
+    assert (
+        materialiser.effective_date(
+            {"effective_date": None, "superseded_date": "2025-08-01"}
+        )
+        == "2025-07-31"
+    )
 
 
 def test_r28_s03_upload_accepts_only_empty_list_as_header_map_wire_ambiguity() -> None:

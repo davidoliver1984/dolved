@@ -7,7 +7,7 @@ R28-S03 is in progress. No corpus materialisation has run yet.
 ## Boundary
 
 The active immutable run identity is
-`R28-S03-V4-CORPUS-MATERIALISATION-0004`. It binds the frozen checkpoint 19
+`R28-S03-V4-CORPUS-MATERIALISATION-0005`. It binds the frozen checkpoint 19
 archive and its four governed scopes to a dedicated `dolved-r28-s03` local
 runtime. The primary, foreign-tenant and separate prompt-injection documents
 must pass through the authenticated ADR-0034 ImportBatch workflow. The 13
@@ -72,3 +72,17 @@ rows and zero documents. No provider or AWS call occurred and no selective item
 rerun was made. The correction accepts only the empty-list wire representation;
 non-empty upload headers remain required to be a named map. Attempt `0004`
 therefore has a new immutable identity and a fresh isolated runtime.
+
+## Attempt 0004 outcome
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0004` created nine ImportBatch rows,
+210 ImportItem rows and 209 indexed documents before failing during the first
+promotion of `e-bike-pool-proposal-v2.txt`. The frozen e-bike v1 and v2 entries
+both omit an effective date, so the harness assigned both `2026-01-01`. The
+persisted v1 predecessor therefore had that date and the application correctly
+rejected v2 under its strict forward-only version chronology. The promotion
+recorded three failures and terminated as `technical_exhaustion`; no selective
+rerun occurred. No provider or AWS call occurred. Attempt `0005` uses the
+general manifest-derived rule that a null-dated version with a declared
+supersession date receives the preceding calendar day; null-dated entries with
+no supersession date retain the existing deterministic default.
