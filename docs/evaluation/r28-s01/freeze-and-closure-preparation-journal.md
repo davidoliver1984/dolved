@@ -1,9 +1,9 @@
 # R28-S01 freeze and closure-preparation journal
 
 Date: 2026-09-04  
-Repository commit: `d069337b9fc4b1a0da782ea5df04789eb738021e`  
-State: **IN PROGRESS — ADR-0037 and the corrected R28-S04 routing and ceilings
-were approved by David on 2026-09-04; final narrow audit remains pending.**
+Frozen-boundary commit: `d96dc438793e684cd1ebe15cf69aa263361d36d8`
+State: **COMPLETED — the exact frozen boundary passed final independent audit and
+was committed and pushed before this mechanical closure record.**
 
 ## Safety and preflight
 
@@ -52,8 +52,22 @@ identity, and the six-input contract aggregate at the recorded contract commit.
   ceiling arithmetic, alias rejection and authoring-mode separation. Together with
   the complete authoring-validator suite, 156 tests passed.
 
-## Remaining gate
+## Final audit and closure
 
-The bounded correction requires one final narrow independent audit before commit
-and R28-S01 closure. This journal does not mark R28-S01 complete or assert
-`PILOT_READY`.
+- Final independent audit verdict:
+  `R28_S01_FINAL_BOUNDARY_READY_TO_COMMIT`.
+- The exact audited 16-file boundary was committed and pushed as
+  `d96dc438793e684cd1ebe15cf69aa263361d36d8`.
+- Frozen identity: `dolved-care-v4-evaluation-population-v1`; frozen digest:
+  `6254188d7fc7a698641750a81d436eac97eb425244704b64b1daac0c92803161`.
+- Population: 74 semantic cases, 148 utterances and exact scopes 62 primary / 6
+  foreign tenant / 6 security test.
+- ADR-0037 was Accepted on 2026-09-04. The R28-S04 controlling monetary hard
+  ceiling is USD 30.
+- The canonical frozen-population verifier and embedded v3 validation passed;
+  the relevant provider-free R28 suite passed 156 tests.
+- No provider, network or AWS execution occurred.
+
+R28-S01 is complete. R28-S02 remains `not_started`; its dependency is now
+satisfied, but it was not executed by this closure. Phase 28 and `R28-GATE`
+remain open. This record does not assert `PILOT_READY`.
