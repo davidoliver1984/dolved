@@ -80,3 +80,4 @@ that supersedes the previous record rather than rewriting its historical context
 | [0034](0034-define-import-staging-and-promotion.md) | Accepted | Define tenant-safe import staging, preflight, matching, promotion, legacy drain and recovery semantics |
 | [0035](0035-define-frozen-bulk-document-operations.md) | Accepted | Define frozen, auditable bulk document operations with durable attempt fencing and bounded execution |
 | [0036](0036-define-document-governance-notifications-and-reminders.md) | Accepted | Define document-governance events, notifications, reminders, email delivery and owner-change controls |
+| [0037](0037-require-live-provider-evidence-for-phase-28-pilot-readiness.md) | Accepted | Require identity-bound live-provider evidence specifically for the Phase 28 pilot-readiness decision |

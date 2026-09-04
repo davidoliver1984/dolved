@@ -7,6 +7,12 @@ R28-S01 is fully closed.**
 R28-S02 has two distinct, narrowly scoped population components. They are not
 one population and their results must never be blended.
 
+Neither component is the R28-S04 V4 population. R28-S04 is bound only to
+`tests/evaluation/engineering-populations/dolved-care-v4/v1`, identity
+`dolved-care-v4-evaluation-population-v1`, digest
+`6254188d7fc7a698641750a81d436eac97eb425244704b64b1daac0c92803161`.
+Substitution in either direction fails closed.
+
 ## Retrieval component
 
 - Path: `tests/evaluation/corpus/v2/corpus.json`

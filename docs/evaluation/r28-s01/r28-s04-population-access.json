@@ -1,0 +1,54 @@
+{
+  "schema_version": "r28-s04-population-access-v1",
+  "session": "R28-S04",
+  "policy": "fail_closed",
+  "sole_authorised_population": {
+    "path": "tests/evaluation/engineering-populations/dolved-care-v4/v1",
+    "identity": "dolved-care-v4-evaluation-population-v1",
+    "digest": "6254188d7fc7a698641750a81d436eac97eb425244704b64b1daac0c92803161",
+    "immutable": true
+  },
+  "substitution": {
+    "r28_s02_population_permitted": false,
+    "calibration_population_permitted": false,
+    "held_out_population_permitted": false,
+    "historical_population_permitted": false,
+    "missing_or_mismatched_identity_result": "FAIL"
+  },
+  "provider_execution_authorised": false,
+  "correction_rule": "Any correction requires a new population identity and version.",
+  "execution_protocol": {
+    "routing": {
+      "all_utterances": 148,
+      "retrieval_utterances": 106,
+      "maximum_reranking_utterances": 96,
+      "generation_utterances": 86,
+      "judging_utterances": 86,
+      "deterministic_termination_utterances": 62,
+      "outcomes": {
+        "EVIDENCE_FOUND": 86,
+        "INSUFFICIENT_EVIDENCE": 10,
+        "NO_RETRIEVAL_CANDIDATES": 10,
+        "NO_ELIGIBLE_EVIDENCE": 12,
+        "CLARIFICATION_REQUIRED": 10,
+        "COMPARISON_SCOPE_INCOMPLETE": 10,
+        "TEMPORAL_SCOPE_UNRESOLVED": 10
+      }
+    },
+    "ceilings": {
+      "query_embedding_items": 106,
+      "reranker_base_http_requests": 140,
+      "reranker_maximum_attempts": 280,
+      "total_base_provider_requests": 314,
+      "total_maximum_physical_attempts": 628,
+      "total_input_tokens": 7416320,
+      "total_output_tokens": 1056768,
+      "generation_calls": 86,
+      "judge_calls": 86,
+      "concurrency": 1,
+      "wall_clock_minutes": 180,
+      "maximum_retries_per_logical_request": 1,
+      "total_usd": 30
+    }
+  }
+}
