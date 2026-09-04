@@ -1,6 +1,6 @@
 # R28-S03 V4 corpus materialisation
 
-`R28-S03-V4-CORPUS-MATERIALISATION-0003` materialises the frozen V4 corpus
+`R28-S03-V4-CORPUS-MATERIALISATION-0004` materialises the frozen V4 corpus
 through the real authenticated ADR-0034 import workflow in a dedicated local
 Docker project. It uses only the deterministic provider profile. It does not
 consume the R28-S04 live Voyage allowance and makes no OpenAI, Voyage or AWS
@@ -38,3 +38,10 @@ omitted. Read-only database evidence again showed three isolated workspaces,
 zero import batches and zero documents. Attempt `0003` is a new immutable run
 identity after making the existing default apply consistently to null and
 omitted values and binding result identity to the active run definition.
+
+Attempt `0003` reached the first real ImportBatch and created 25 staged item
+identities, then failed before uploading or promoting a document because PHP
+serialised its empty signed-upload header map as an empty JSON list. The
+database contained one batch, 25 items and zero documents. Attempt `0004` is a
+new immutable identity after allowing only that empty-list wire representation;
+non-empty upload headers must still be a named map and otherwise fail closed.

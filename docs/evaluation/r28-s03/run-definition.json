@@ -1,6 +1,6 @@
 {
   "schema_version": "r28-s03-materialisation-definition-v1",
-  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0003",
+  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0004",
   "purpose": "Provider-free materialisation of the frozen Dolved V4 corpus through the real ADR-0034 ImportBatch workflow",
   "execution": {
     "provider_calls_permitted": false,
@@ -86,6 +86,20 @@
       "durable_state": {
         "workspaces_created": 3,
         "import_batches_created": 0,
+        "documents_created": 0
+      },
+      "provider_calls": 0,
+      "aws_calls": 0,
+      "selective_reruns": 0
+    },
+    {
+      "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0003",
+      "outcome": "failed_during_first_import_batch_upload",
+      "cause": "The harness did not account for PHP serialising an empty signed-upload header map as an empty JSON list.",
+      "durable_state": {
+        "workspaces_created": 3,
+        "import_batches_created": 1,
+        "import_items_created": 25,
         "documents_created": 0
       },
       "provider_calls": 0,

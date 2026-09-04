@@ -7,7 +7,7 @@ R28-S03 is in progress. No corpus materialisation has run yet.
 ## Boundary
 
 The active immutable run identity is
-`R28-S03-V4-CORPUS-MATERIALISATION-0003`. It binds the frozen checkpoint 19
+`R28-S03-V4-CORPUS-MATERIALISATION-0004`. It binds the frozen checkpoint 19
 archive and its four governed scopes to a dedicated `dolved-r28-s03` local
 runtime. The primary, foreign-tenant and separate prompt-injection documents
 must pass through the authenticated ADR-0034 ImportBatch workflow. The 13
@@ -60,3 +60,15 @@ AWS call occurred and no corpus item was attempted. The correction applies the
 same existing default to null and omitted values and derives the persisted run
 identity from the immutable run definition. Attempt `0003` therefore has a new
 immutable identity.
+
+## Attempt 0003 outcome
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0003` reached the first authenticated
+ImportBatch and created 25 staging items, then failed before any upload or
+document promotion. PHP serialised the empty associative signed-upload header
+map as an empty JSON list, while the Python harness accepted only a map.
+Read-only inspection confirmed three workspaces, one ImportBatch, 25 ImportItem
+rows and zero documents. No provider or AWS call occurred and no selective item
+rerun was made. The correction accepts only the empty-list wire representation;
+non-empty upload headers remain required to be a named map. Attempt `0004`
+therefore has a new immutable identity and a fresh isolated runtime.

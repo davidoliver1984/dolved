@@ -3,6 +3,9 @@ from __future__ import annotations
 import importlib.util
 import json
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
 DEFINITION = ROOT / "docs/evaluation/r28-s03/run-definition.json"
@@ -19,7 +22,7 @@ def load_materialiser():
 
 def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -> None:
     definition = json.loads(DEFINITION.read_text())
-    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0003"
+    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0004"
     assert definition["prior_attempts"] == [
         {
             "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
@@ -48,6 +51,23 @@ def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -
             "durable_state": {
                 "workspaces_created": 3,
                 "import_batches_created": 0,
+                "documents_created": 0,
+            },
+            "provider_calls": 0,
+            "aws_calls": 0,
+            "selective_reruns": 0,
+        },
+        {
+            "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0003",
+            "outcome": "failed_during_first_import_batch_upload",
+            "cause": (
+                "The harness did not account for PHP serialising an empty "
+                "signed-upload header map as an empty JSON list."
+            ),
+            "durable_state": {
+                "workspaces_created": 3,
+                "import_batches_created": 1,
+                "import_items_created": 25,
                 "documents_created": 0,
             },
             "provider_calls": 0,
@@ -86,6 +106,22 @@ def test_r28_s03_materialiser_defaults_null_and_omitted_effective_dates() -> Non
     )
     assert materialiser.effective_date({"effective_date": None}) == "2026-01-01"
     assert materialiser.effective_date({}) == "2026-01-01"
+
+
+def test_r28_s03_upload_accepts_only_empty_list_as_header_map_wire_ambiguity() -> None:
+    materialiser = load_materialiser()
+    client = materialiser.ApiClient("http://api.test", "http://web.test")
+    response = MagicMock()
+    response.status = 200
+    response.__enter__.return_value = response
+    with patch.object(materialiser.urllib.request, "urlopen", return_value=response):
+        client.put_bytes("http://storage.test/object", b"content", [])
+    with pytest.raises(TypeError, match="named map or an empty list"):
+        client.put_bytes(
+            "http://storage.test/object",
+            b"content",
+            [{"name": "Content-Type", "value": "text/plain"}],
+        )
 
 
 def test_r28_s03_materialiser_calls_import_and_governance_apis() -> None:

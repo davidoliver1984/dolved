@@ -47,8 +47,16 @@ class ApiClient:
     def post(self, path: str, payload: dict[str, Any] | None = None) -> Any:
         return self._request("POST", path, payload or {})
 
-    def put_bytes(self, url: str, content: bytes, headers: dict[str, str]) -> None:
+    def put_bytes(
+        self, url: str, content: bytes, headers: dict[str, str] | list[Any]
+    ) -> None:
         request = urllib.request.Request(url, data=content, method="PUT")
+        # PHP serialises an empty associative array as JSON `[]`. Accept only that
+        # representation; non-empty upload headers must retain their named map.
+        if isinstance(headers, list):
+            if headers:
+                raise TypeError("Upload headers must be a named map or an empty list")
+            headers = {}
         for name, value in headers.items():
             request.add_header(name, value)
         try:
