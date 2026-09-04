@@ -1,0 +1,68 @@
+{
+  "schema_version": "r28-s03-materialisation-definition-v1",
+  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
+  "purpose": "Provider-free materialisation of the frozen Dolved V4 corpus through the real ADR-0034 ImportBatch workflow",
+  "execution": {
+    "provider_calls_permitted": false,
+    "aws_access_permitted": false,
+    "selective_reruns_permitted": false,
+    "require_clean_head_equal_origin_main": true,
+    "runtime_identity": "dolved-r28-s03",
+    "application_environment": "e2e"
+  },
+  "source": {
+    "archive_path": "tests/evaluation/corpus/dolved-care-v4/v1/checkpoint-19-application-evidence-corrections.tar.gz",
+    "archive_sha256": "6fa6602935efe8379cc2a7de4ba85af17aa8d8827082ae6de8df959f6e19a06e",
+    "freeze_manifest_path": "tests/evaluation/corpus/dolved-care-v4/v1/freeze-manifest.json",
+    "freeze_manifest_sha256": "78621db7735759fcba677f8087122dcc0fb4481bdf9dbdadf5bb8bd77cfdf208"
+  },
+  "scopes": {
+    "primary": {
+      "expected_documents": 300,
+      "expected_families": 185,
+      "workspace": "isolated-primary-evaluation-tenant",
+      "includes_primary_prompt_injection_documents": 3
+    },
+    "foreign_tenant": {
+      "expected_documents": 12,
+      "workspace": "isolated-foreign-evaluation-tenant"
+    },
+    "prompt_injection_pack": {
+      "expected_documents": 6,
+      "workspace": "isolated-security-evaluation-tenant"
+    },
+    "negative_import_fixtures": {
+      "expected_fixtures": 13,
+      "ordinary_searchable_promotions_permitted": false
+    }
+  },
+  "retrieval_materialisation_profile": {
+    "profile_path": "contracts/testing/deterministic-retrieval-profile-v1.json",
+    "profile_sha256": "d8beb2324318a18f0a6de62bcc41e83c097439d177a520f3a7a9a3df1b246c24",
+    "dense_provider": "deterministic",
+    "dense_model": "token-hash-unit-vector-v3",
+    "dense_fingerprint": "d5a56dffa5539ac2c7b1582fcdcc0658855399532e9484868fd2f7c97e1b8218",
+    "dense_dimensions": 1024,
+    "sparse_provider": "deterministic",
+    "sparse_model": "token-hash-sparse-v4",
+    "sparse_fingerprint": "d4f361438791330c05d1e8125fc4f16df00280de1db9cbb8f8fb0325c756b9d7"
+  },
+  "workflow": [
+    "ImportBatch creation",
+    "presigned staging upload",
+    "preflight",
+    "matching",
+    "immutable decision snapshot",
+    "promotion",
+    "ingestion",
+    "structured extraction",
+    "chunking",
+    "deterministic dense and sparse vectorisation",
+    "governance transition"
+  ],
+  "limitations": [
+    "This run proves product-workflow materialisation and isolation, not live-provider retrieval quality.",
+    "The S04 live Voyage corpus embedding allowance remains unused by this run.",
+    "Authority state is verified against the frozen evaluation clock separately from wall-clock UI presentation."
+  ]
+}

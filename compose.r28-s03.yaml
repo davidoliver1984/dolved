@@ -1,0 +1,26 @@
+services:
+  api:
+    environment:
+      AWS_UPLOAD_ENDPOINT: http://localhost:${LOCALSTACK_PORT}
+    volumes:
+      - ${R28_CORPUS_ROOT:?R28_CORPUS_ROOT is required}:/r28-corpus:ro
+
+  publisher:
+    volumes:
+      - ${R28_CORPUS_ROOT:?R28_CORPUS_ROOT is required}:/r28-corpus:ro
+
+  ai:
+    environment:
+      OPENAI_API_KEY: ""
+      VOYAGE_API_KEY: ""
+      RETRIEVAL_PLANNER_API_KEY: ""
+      CONTEXTUALISER_API_KEY: ""
+      GENERATION_OPENAI_API_KEY: ""
+
+  worker:
+    environment:
+      OPENAI_API_KEY: ""
+      VOYAGE_API_KEY: ""
+      RETRIEVAL_PLANNER_API_KEY: ""
+      CONTEXTUALISER_API_KEY: ""
+      GENERATION_OPENAI_API_KEY: ""

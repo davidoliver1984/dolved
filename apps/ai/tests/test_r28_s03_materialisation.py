@@ -1,0 +1,56 @@
+from __future__ import annotations
+
+import importlib.util
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+DEFINITION = ROOT / "docs/evaluation/r28-s03/run-definition.json"
+SCRIPT = ROOT / "scripts/evaluation/materialise_r28_s03.py"
+
+
+def load_materialiser():
+    spec = importlib.util.spec_from_file_location("r28_s03_materialiser", SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -> None:
+    definition = json.loads(DEFINITION.read_text())
+    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0001"
+    assert definition["execution"]["provider_calls_permitted"] is False
+    assert definition["execution"]["aws_access_permitted"] is False
+    assert definition["scopes"]["primary"]["expected_documents"] == 300
+    assert definition["scopes"]["foreign_tenant"]["expected_documents"] == 12
+    assert definition["scopes"]["prompt_injection_pack"]["expected_documents"] == 6
+    assert definition["scopes"]["negative_import_fixtures"]["expected_fixtures"] == 13
+    assert (
+        definition["scopes"]["negative_import_fixtures"][
+            "ordinary_searchable_promotions_permitted"
+        ]
+        is False
+    )
+
+
+def test_r28_s03_materialiser_uses_governed_media_types() -> None:
+    materialiser = load_materialiser()
+    assert materialiser.media_type("policy.pdf") == "application/pdf"
+    assert (
+        materialiser.media_type("policy.docx")
+        == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+    assert materialiser.media_type("policy.txt") == "text/plain"
+
+
+def test_r28_s03_materialiser_calls_import_and_governance_apis() -> None:
+    source = SCRIPT.read_text()
+    assert "/imports" in source
+    assert "/decision" in source
+    assert "/promotions" in source
+    assert "/governance/approve" in source
+    assert "/governance/withdraw" in source
+    assert "/documents/uploads" not in source
+    assert "OPENAI" not in source.upper()
+    assert "VOYAGE" not in source.upper()

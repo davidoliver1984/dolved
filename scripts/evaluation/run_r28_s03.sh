@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+cd "$repository_root"
+
+runtime_root="$(mktemp -d /tmp/dolved-r28-s03.XXXXXX)"
+corpus_parent="$runtime_root/corpus"
+mkdir -p "$corpus_parent"
+tar -xzf tests/evaluation/corpus/dolved-care-v4/v1/checkpoint-19-application-evidence-corrections.tar.gz -C "$corpus_parent"
+corpus_root="$corpus_parent/eval-corpus-v4-authoring"
+export R28_CORPUS_ROOT="$corpus_root"
+
+python3 scripts/evaluation/preflight_r28_s03.py
+
+compose=(docker compose --env-file .env.r28-s03 -p dolved-r28-s03 -f compose.yaml -f compose.e2e.yaml -f compose.r28-s03.yaml)
+services=(postgres qdrant localstack mailpit ai api publisher worker conversation-worker)
+
+"${compose[@]}" up --detach --build --wait --wait-timeout "${WAIT_TIMEOUT:-240}" "${services[@]}"
+"${compose[@]}" run --rm migrator php artisan migrate --force
+"${compose[@]}" exec -T api php artisan e2e:provision-retrieval
+
+"${compose[@]}" exec -T api php artisan e2e:bootstrap --run r28-s03 --scenario primary > "$runtime_root/primary.json"
+"${compose[@]}" exec -T api php artisan e2e:bootstrap --run r28-s03 --scenario foreign > "$runtime_root/foreign.json"
+"${compose[@]}" exec -T api php artisan e2e:bootstrap --run r28-s03 --scenario injection > "$runtime_root/injection.json"
+
+primary_workspace="$(jq -r .workspace_public_id "$runtime_root/primary.json")"
+foreign_workspace="$(jq -r .workspace_public_id "$runtime_root/foreign.json")"
+"${compose[@]}" exec -T api php artisan e2e:provision-organisation --workspace "$primary_workspace" --manifest /r28-corpus/organisation.json > "$runtime_root/primary-locations.json"
+"${compose[@]}" exec -T api php artisan e2e:provision-organisation --workspace "$foreign_workspace" --manifest /r28-corpus/foreign-tenant/organisation.json > "$runtime_root/foreign-locations.json"
+
+mkdir -p docs/evaluation/r28-s03/run
+python3 scripts/evaluation/materialise_r28_s03.py \
+  --corpus-root "$corpus_root" \
+  --password 'Dolved-R28-S03-Only-42!' \
+  --primary-identity "$runtime_root/primary.json" \
+  --foreign-identity "$runtime_root/foreign.json" \
+  --injection-identity "$runtime_root/injection.json" \
+  --primary-locations "$runtime_root/primary-locations.json" \
+  --output docs/evaluation/r28-s03/run/materialisation-result.json
+
+"${compose[@]}" ps --format json > docs/evaluation/r28-s03/run/runtime-services.json
+sha256sum docs/evaluation/r28-s03/run/materialisation-result.json \
+  docs/evaluation/r28-s03/run/runtime-services.json \
+  > docs/evaluation/r28-s03/run/checksums.sha256
+
+printf 'R28-S03 materialisation completed. Runtime retained for verification: %s\n' "$runtime_root"
