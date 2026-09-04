@@ -5,6 +5,8 @@ import json
 import sys
 from collections import Counter
 from pathlib import Path
+from types import SimpleNamespace
+from uuid import UUID
 
 import pytest
 from jsonschema import Draft202012Validator, FormatChecker
@@ -113,6 +115,204 @@ def test_zero_provider_dry_run_accounts_for_all_routes_and_limits() -> None:
         "maximum_planned_cost_usd": "3.30086400",
         "provider_calls": 0,
     }
+
+
+def test_local_sparse_batches_are_stable_complete_and_bounded() -> None:
+    runner = module()
+    items = [
+        {"chunk_id": str(UUID(int=index + 1)), "text": f"chunk {index}"}
+        for index in range(1000)
+    ]
+    batches = runner.local_sparse_batches(items)
+    assert len(batches) == 63
+    assert [len(batch) for batch in batches] == ([16] * 62) + [8]
+    assert [item for batch in batches for item in batch] == items
+    assert all(len(batch) <= runner.LOCAL_SPARSE_BATCH_SIZE for batch in batches)
+
+
+def test_local_sparse_batches_reject_empty_and_duplicate_sources() -> None:
+    runner = module()
+    with pytest.raises(ValueError, match="at least one"):
+        runner.local_sparse_batches([])
+    duplicate = str(UUID(int=1))
+    with pytest.raises(ValueError, match="unique"):
+        runner.local_sparse_batches(
+            [
+                {"chunk_id": duplicate, "text": "one"},
+                {"chunk_id": duplicate, "text": "two"},
+            ]
+        )
+
+
+def sparse_result(*, source_ids, profile, purpose, indices=(1,), values=(0.5,)):
+    return SimpleNamespace(
+        profile=profile,
+        profile_fingerprint=profile.fingerprint(),
+        purpose=purpose,
+        encodings=tuple(
+            SimpleNamespace(
+                source_id=source_id,
+                vector=SimpleNamespace(indices=indices, values=values),
+            )
+            for source_id in source_ids
+        ),
+    )
+
+
+def test_sparse_batch_validation_preserves_exact_vector_order() -> None:
+    runner = module()
+    profile = SimpleNamespace(fingerprint=lambda: "profile")
+    source_ids = [UUID(int=1), UUID(int=2)]
+    result = sparse_result(
+        source_ids=source_ids,
+        profile=profile,
+        purpose="document",
+        indices=(4, 9),
+        values=(0.25, 0.75),
+    )
+    assert runner.validate_sparse_batch_result(
+        source_ids,
+        result,
+        expected_profile=profile,
+        expected_purpose="document",
+    ) == [{4: 0.25, 9: 0.75}, {4: 0.25, 9: 0.75}]
+
+
+@pytest.mark.parametrize("mutation", ["missing", "reordered", "duplicate"])
+def test_sparse_batch_validation_rejects_identity_mutations(mutation) -> None:
+    runner = module()
+    profile = SimpleNamespace(fingerprint=lambda: "profile")
+    expected = [UUID(int=1), UUID(int=2)]
+    actual = {
+        "missing": expected[:1],
+        "reordered": list(reversed(expected)),
+        "duplicate": [expected[0], expected[0]],
+    }[mutation]
+    result = sparse_result(source_ids=actual, profile=profile, purpose="document")
+    with pytest.raises(ValueError, match="ordering/identity"):
+        runner.validate_sparse_batch_result(
+            expected,
+            result,
+            expected_profile=profile,
+            expected_purpose="document",
+        )
+
+
+def test_sparse_batch_validation_rejects_profile_purpose_and_vector_drift() -> None:
+    runner = module()
+    profile = SimpleNamespace(fingerprint=lambda: "profile")
+    source_ids = [UUID(int=1)]
+    wrong_purpose = sparse_result(
+        source_ids=source_ids, profile=profile, purpose="query"
+    )
+    with pytest.raises(ValueError, match="profile or purpose"):
+        runner.validate_sparse_batch_result(
+            source_ids,
+            wrong_purpose,
+            expected_profile=profile,
+            expected_purpose="document",
+        )
+    malformed = sparse_result(
+        source_ids=source_ids,
+        profile=profile,
+        purpose="document",
+        indices=(1, 2),
+        values=(0.5,),
+    )
+    with pytest.raises(ValueError, match="vector shape"):
+        runner.validate_sparse_batch_result(
+            source_ids,
+            malformed,
+            expected_profile=profile,
+            expected_purpose="document",
+        )
+
+
+def test_local_sparse_encoding_batches_and_recombines_deterministically() -> None:
+    runner = module()
+    profile = SimpleNamespace(fingerprint=lambda: "profile")
+    items = [
+        {"chunk_id": str(UUID(int=index + 1)), "text": f"chunk {index}"}
+        for index in range(33)
+    ]
+
+    class Encoder:
+        def __init__(self):
+            self.requests = []
+
+        def encode(self, sparse_request):
+            self.requests.append(sparse_request)
+            return SimpleNamespace(
+                profile=profile,
+                profile_fingerprint="profile",
+                purpose=sparse_request.purpose,
+                encodings=tuple(
+                    SimpleNamespace(
+                        source_id=item.source_id,
+                        vector=SimpleNamespace(
+                            indices=(item.source_id.int,), values=(1.0,)
+                        ),
+                    )
+                    for item in sparse_request.items
+                ),
+            )
+
+    encoder = Encoder()
+    vectors = runner.encode_local_sparse_items(
+        items,
+        encoder=encoder,
+        profile=profile,
+        purpose="document",
+        subject="documents",
+        workspace_id=UUID(int=100),
+        input_type=SimpleNamespace,
+        request_type=SimpleNamespace,
+    )
+    assert [len(request.items) for request in encoder.requests] == [16, 16, 1]
+    assert [next(iter(vector)) for vector in vectors] == list(range(1, 34))
+    assert [request.correlation_id for request in encoder.requests] == [
+        runner.uuid5(
+            runner.NAMESPACE_URL,
+            f"r28-s04:sparse:documents:batch-{number:04d}",
+        )
+        for number in range(1, 4)
+    ]
+
+
+def test_local_sparse_encoding_stops_on_partial_batch_failure() -> None:
+    runner = module()
+    profile = SimpleNamespace(fingerprint=lambda: "profile")
+    items = [
+        {"chunk_id": str(UUID(int=index + 1)), "text": f"chunk {index}"}
+        for index in range(17)
+    ]
+
+    class Encoder:
+        calls = 0
+
+        def encode(self, sparse_request):
+            self.calls += 1
+            if self.calls == 2:
+                raise RuntimeError("local sparse batch failed")
+            return sparse_result(
+                source_ids=[item.source_id for item in sparse_request.items],
+                profile=profile,
+                purpose=sparse_request.purpose,
+            )
+
+    encoder = Encoder()
+    with pytest.raises(RuntimeError, match="local sparse batch failed"):
+        runner.encode_local_sparse_items(
+            items,
+            encoder=encoder,
+            profile=profile,
+            purpose="document",
+            subject="documents",
+            workspace_id=UUID(int=100),
+            input_type=SimpleNamespace,
+            request_type=SimpleNamespace,
+        )
+    assert encoder.calls == 2
 
 
 @pytest.mark.parametrize(

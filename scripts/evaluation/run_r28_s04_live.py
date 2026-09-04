@@ -45,6 +45,7 @@ HEX40 = re.compile(r"^[0-9a-f]{40}$")
 CORPUS_CHUNK_COUNT = 1000
 CORPUS_BATCH_SIZE = 128
 CORPUS_BATCH_SIZES = (128, 128, 128, 128, 128, 128, 128, 104)
+LOCAL_SPARSE_BATCH_SIZE = 16
 SAFE_PROVIDER_ERROR_CODES = {
     "authentication_failed",
     "configuration_failed",
@@ -1590,6 +1591,98 @@ def _lexical_score(query: str, text: str) -> float:
     return len(terms & haystack) / max(len(terms), 1)
 
 
+def local_sparse_batches(items: list[dict[str, Any]]) -> list[list[dict[str, Any]]]:
+    """Partition local SPLADE work deterministically without changing its order."""
+    if not items:
+        raise ValueError("local sparse encoding requires at least one item")
+    source_ids = [item["chunk_id"] for item in items]
+    if len(set(source_ids)) != len(source_ids):
+        raise ValueError("local sparse encoding source IDs must be unique")
+    return [
+        items[start : start + LOCAL_SPARSE_BATCH_SIZE]
+        for start in range(0, len(items), LOCAL_SPARSE_BATCH_SIZE)
+    ]
+
+
+def validate_sparse_batch_result(
+    expected_source_ids: list[UUID],
+    result: Any,
+    *,
+    expected_profile: Any,
+    expected_purpose: Any,
+) -> list[dict[int, float]]:
+    """Validate and convert one local sparse batch without tolerating drift."""
+    if (
+        result.profile != expected_profile
+        or result.profile_fingerprint != expected_profile.fingerprint()
+        or result.purpose != expected_purpose
+    ):
+        raise ValueError("local sparse result profile or purpose mismatch")
+    actual_source_ids = [item.source_id for item in result.encodings]
+    if actual_source_ids != expected_source_ids:
+        raise ValueError("local sparse result source ordering/identity mismatch")
+    if len(set(actual_source_ids)) != len(expected_source_ids):
+        raise ValueError("local sparse result contains duplicate source IDs")
+    vectors: list[dict[int, float]] = []
+    for item in result.encodings:
+        if len(item.vector.indices) != len(item.vector.values):
+            raise ValueError("local sparse result vector shape mismatch")
+        if (
+            not item.vector.indices
+            or len(set(item.vector.indices)) != len(item.vector.indices)
+            or any(index < 0 for index in item.vector.indices)
+            or any(
+                not math.isfinite(value) or value == 0 for value in item.vector.values
+            )
+        ):
+            raise ValueError("local sparse result vector is malformed")
+        vectors.append(dict(zip(item.vector.indices, item.vector.values, strict=True)))
+    return vectors
+
+
+def encode_local_sparse_items(
+    items: list[dict[str, Any]],
+    *,
+    encoder: Any,
+    profile: Any,
+    purpose: Any,
+    subject: str,
+    workspace_id: UUID,
+    input_type: Any,
+    request_type: Any,
+) -> list[dict[int, float]]:
+    """Encode deterministic local batches and fail closed before recombination."""
+    vectors: list[dict[int, float]] = []
+    for batch_number, batch in enumerate(local_sparse_batches(items), start=1):
+        expected_ids = [UUID(item["chunk_id"]) for item in batch]
+        result = encoder.encode(
+            request_type(
+                correlation_id=uuid5(
+                    NAMESPACE_URL,
+                    f"r28-s04:sparse:{subject}:batch-{batch_number:04d}",
+                ),
+                workspace_id=workspace_id,
+                profile=profile,
+                purpose=purpose,
+                items=tuple(
+                    input_type(source_id=UUID(item["chunk_id"]), text=item["text"])
+                    for item in batch
+                ),
+            )
+        )
+        vectors.extend(
+            validate_sparse_batch_result(
+                expected_ids,
+                result,
+                expected_profile=profile,
+                expected_purpose=purpose,
+            )
+        )
+    if len(vectors) != len(items):
+        raise ValueError("local sparse batch recombination mismatch")
+    return vectors
+
+
 def sparse_scores(
     root: Path,
     chunks: list[dict[str, Any]],
@@ -1605,6 +1698,8 @@ def sparse_scores(
     # Sparse inference is local. A missing S03 model cache must fail closed
     # rather than creating an unbudgeted network path.
     application_import_path(root)
+    from huggingface_hub import snapshot_download
+
     from app.settings import Settings
     from app.sparse.factory import create_sparse_encoder, sparse_embedding_profile
     from app.sparse.models import (
@@ -1612,7 +1707,6 @@ def sparse_scores(
         SparseEncodingPurpose,
         SparseEncodingRequest,
     )
-    from huggingface_hub import snapshot_download
 
     settings = Settings()
     # Prove the exact pinned model revision is already available from the S03
@@ -1628,45 +1722,33 @@ def sparse_scores(
     encoder = create_sparse_encoder(settings)
     profile = sparse_embedding_profile(settings)
     workspace_id = uuid5(NAMESPACE_URL, "dolved-v4-corpus")
-    document_result = encoder.encode(
-        SparseEncodingRequest(
-            correlation_id=uuid5(NAMESPACE_URL, "r28-s04:sparse:documents"),
-            workspace_id=workspace_id,
-            profile=profile,
-            purpose=SparseEncodingPurpose.DOCUMENT,
-            items=tuple(
-                SparseEncodingInput(source_id=UUID(item["chunk_id"]), text=item["text"])
-                for item in chunks
-            ),
-        )
+
+    document_vectors = encode_local_sparse_items(
+        chunks,
+        encoder=encoder,
+        profile=profile,
+        purpose=SparseEncodingPurpose.DOCUMENT,
+        subject="documents",
+        workspace_id=workspace_id,
+        input_type=SparseEncodingInput,
+        request_type=SparseEncodingRequest,
     )
-    query_result = encoder.encode(
-        SparseEncodingRequest(
-            correlation_id=uuid5(NAMESPACE_URL, "r28-s04:sparse:queries"),
-            workspace_id=workspace_id,
-            profile=profile,
-            purpose=SparseEncodingPurpose.QUERY,
-            items=tuple(
-                SparseEncodingInput(source_id=UUID(item["chunk_id"]), text=item["text"])
-                for item in queries
-            ),
-        )
+    query_vectors = encode_local_sparse_items(
+        queries,
+        encoder=encoder,
+        profile=profile,
+        purpose=SparseEncodingPurpose.QUERY,
+        subject="queries",
+        workspace_id=workspace_id,
+        input_type=SparseEncodingInput,
+        request_type=SparseEncodingRequest,
     )
-    document_vectors = [
-        dict(zip(item.vector.indices, item.vector.values, strict=True))
-        for item in document_result.encodings
-    ]
     return [
         [
-            sum(
-                weight * document.get(index, 0.0)
-                for index, weight in zip(
-                    query.vector.indices, query.vector.values, strict=True
-                )
-            )
+            sum(weight * document.get(index, 0.0) for index, weight in query.items())
             for document in document_vectors
         ]
-        for query in query_result.encodings
+        for query in query_vectors
     ]
 
 
