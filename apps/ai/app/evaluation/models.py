@@ -518,6 +518,7 @@ class ModelAssistedMetricObservation(StrictModel):
     failure_code: Identifier | None = None
     retry_count: Annotated[int, Field(ge=0)] | None = None
     input_tokens: Annotated[int, Field(ge=0)] | None = None
+    cached_input_tokens: Annotated[int, Field(ge=0)] | None = None
     output_tokens: Annotated[int, Field(ge=0)] | None = None
     cost_usd: Annotated[float, Field(ge=0)] | None = None
     provider_status: Annotated[int, Field(ge=100, le=599)] | None = None
@@ -566,6 +567,7 @@ class ModelAssistedEvaluationResult(StrictModel):
     latency_ms: Annotated[float, Field(ge=0)] | None = None
     retry_count: Annotated[int, Field(ge=0)] | None = None
     input_tokens: Annotated[int, Field(ge=0)] | None = None
+    cached_input_tokens: Annotated[int, Field(ge=0)] | None = None
     output_tokens: Annotated[int, Field(ge=0)] | None = None
     cost_usd: Annotated[float, Field(ge=0)] | None = None
 

@@ -58,6 +58,18 @@ SAFE_PROVIDER_ERROR_CODES = {
     "rate_limited",
     "timeout",
     "transport_failure",
+    "part_indices_mismatch",
+    "qualification_usefulness_missing",
+    "insufficiency_correctness_missing",
+    "factual_precision_missing",
+    "completeness_missing",
+}
+JUDGE_RETRYABLE_INVARIANT_FAILURES = {
+    "part_indices_mismatch",
+    "qualification_usefulness_missing",
+    "insufficiency_correctness_missing",
+    "factual_precision_missing",
+    "completeness_missing",
 }
 
 
@@ -151,10 +163,12 @@ class RetryableDispatchError(RuntimeError):
         *,
         provider_status: int | None = None,
         provider_error_code: str | None = None,
+        receipt: DispatchReceipt | None = None,
     ) -> None:
         super().__init__(category)
         self.provider_status = provider_status
         self.provider_error_code = provider_error_code
+        self.receipt = receipt
 
 
 def safe_provider_failure(error: Exception) -> dict[str, int | str | None]:
@@ -515,6 +529,51 @@ class BudgetedDispatchGateway:
             },
         )
 
+    def _record_retryable_failure(
+        self,
+        request: DispatchRequest,
+        error: RetryableDispatchError,
+        *,
+        attempt_id: str,
+        attempt: int,
+    ) -> None:
+        value: dict[str, Any] = {
+            "request_id": request.request_id,
+            "attempt_id": attempt_id,
+            "attempt": attempt,
+            "failure_type": type(error).__name__,
+            **safe_provider_failure(error),
+            "retryable": True,
+        }
+        if error.receipt is None:
+            self.budget.record_attempt_without_usage()
+            value.update(
+                {
+                    "input_tokens": None,
+                    "cached_input_tokens": None,
+                    "output_tokens": None,
+                    "actual_cost_usd": None,
+                }
+            )
+        else:
+            self._validate_receipt(request, error.receipt)
+            cost = self._price(request, error.receipt)
+            self.budget.record_actual(
+                input_tokens=error.receipt.input_tokens,
+                output_tokens=error.receipt.output_tokens,
+                cost_usd=cost,
+            )
+            value.update(
+                {
+                    "receipt": asdict(error.receipt),
+                    "input_tokens": error.receipt.input_tokens,
+                    "cached_input_tokens": error.receipt.cached_input_tokens,
+                    "output_tokens": error.receipt.output_tokens,
+                    "actual_cost_usd": str(cost),
+                }
+            )
+        self.ledger.append("attempt_failed", value)
+
     def dispatch(
         self, request: DispatchRequest, call: Callable[[], ProviderResult]
     ) -> ProviderResult:
@@ -581,20 +640,8 @@ class BudgetedDispatchGateway:
                 )
                 return result
             except RetryableDispatchError as error:
-                self.budget.record_attempt_without_usage()
-                self.ledger.append(
-                    "attempt_failed",
-                    {
-                        "request_id": request.request_id,
-                        "attempt_id": attempt_id,
-                        "attempt": attempt,
-                        "failure_type": type(error).__name__,
-                        **safe_provider_failure(error),
-                        "retryable": True,
-                        "input_tokens": None,
-                        "output_tokens": None,
-                        "actual_cost_usd": None,
-                    },
+                self._record_retryable_failure(
+                    request, error, attempt_id=attempt_id, attempt=attempt
                 )
                 if attempt == request.maximum_attempts:
                     raise
@@ -685,20 +732,8 @@ class BudgetedDispatchGateway:
                 )
                 return result
             except RetryableDispatchError as error:
-                self.budget.record_attempt_without_usage()
-                self.ledger.append(
-                    "attempt_failed",
-                    {
-                        "request_id": request.request_id,
-                        "attempt_id": attempt_id,
-                        "attempt": attempt,
-                        "failure_type": type(error).__name__,
-                        **safe_provider_failure(error),
-                        "retryable": True,
-                        "input_tokens": None,
-                        "output_tokens": None,
-                        "actual_cost_usd": None,
-                    },
+                self._record_retryable_failure(
+                    request, error, attempt_id=attempt_id, attempt=attempt
                 )
                 if attempt == request.maximum_attempts:
                     raise
@@ -1152,7 +1187,7 @@ def _usage_receipt(
         "provider_input_tokens", payload.get("input_tokens", usage.get("input_tokens"))
     )
     outputs = payload.get("output_tokens", usage.get("output_tokens", 0))
-    cached = usage.get("cached_input_tokens", 0)
+    cached = payload.get("cached_input_tokens", usage.get("cached_input_tokens", 0))
     if inputs is None:
         raise RuntimeError("provider_usage_unavailable")
     return DispatchReceipt(
@@ -1236,7 +1271,7 @@ class RealProviderAdapters:
             raise RuntimeError("generation_profile_identity_mismatch")
         if (
             self.evaluator.identity.get("fingerprint")
-            != "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7"
+            != "a555562fb0bbe848a9e04cd15511cd9cf41c6dceb02cfa1d823197bcc97cb60d"
         ):
             raise RuntimeError("judge_profile_identity_mismatch")
 
@@ -1302,6 +1337,13 @@ class RealProviderAdapters:
             ModelAssistedEvaluationRequest.model_validate(payload)
         )
         if value.status.value != "COMPLETED":
+            if value.failure_code in JUDGE_RETRYABLE_INVARIANT_FAILURES:
+                failed = self._result(value)
+                raise RetryableDispatchError(
+                    "judge_contract_invariant",
+                    provider_error_code=value.failure_code,
+                    receipt=failed.receipt,
+                )
             if value.failure_code in {
                 "rate_limit",
                 "timeout",
@@ -1384,12 +1426,55 @@ class RecordingProviderAdapters:
                 insufficiency_reason=provider_output.insufficiency_reason,
             ).validate_against(generation_request)
             value = final_result.model_dump(mode="json")
-        else:
+        elif stage == "judge":
+            from app.evaluation.models import (
+                ModelAssistedEvaluationRequest,
+                ModelAssistedMetric,
+            )
+            from app.evaluation.openai_answer_evaluator import (
+                OpenAIAnswerEvaluator,
+                output_model_for_request,
+            )
+
+            evaluation_request = ModelAssistedEvaluationRequest.model_validate(payload)
+            generated = evaluation_request.generated_result
+            if generated is None:
+                raise ValueError("recording judge requires a generated result")
+            output = output_model_for_request(evaluation_request).model_validate(
+                {
+                    "part_judgements": [
+                        {
+                            "part_index": part.part_index,
+                            "grounded": True,
+                            "unsupported_categories": [],
+                        }
+                        for part in generated.answer_parts
+                    ],
+                    "factual_precision": 1.0
+                    if ModelAssistedMetric.ANSWER_FACTUAL_PRECISION
+                    in evaluation_request.metrics
+                    else None,
+                    "completeness": 1.0
+                    if ModelAssistedMetric.ANSWER_COMPLETENESS
+                    in evaluation_request.metrics
+                    else None,
+                    "qualification_useful": True
+                    if generated.outcome == "qualified"
+                    else None,
+                    "insufficiency_correct": True
+                    if generated.outcome == "insufficient_evidence"
+                    else None,
+                }
+            )
+            evaluator = object.__new__(OpenAIAnswerEvaluator)
+            evaluator._validate_output(evaluation_request, output)
             value["scores"] = {
                 "ANSWER_PART_GROUNDEDNESS": 1.0,
                 "ANSWER_FACTUAL_PRECISION": 1.0,
                 "ANSWER_COMPLETENESS": 1.0,
             }
+        else:
+            raise ValueError(f"unknown recording-provider stage: {stage}")
         receipt = DispatchReceipt(
             response_digest=digest_value(value),
             input_tokens=1,

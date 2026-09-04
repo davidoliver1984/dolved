@@ -389,6 +389,108 @@ async def test_judge_path_is_budgeted_and_recorded(tmp_path) -> None:
     )
 
 
+@pytest.mark.asyncio
+async def test_judge_invariant_failure_retries_once_and_accounts_both_responses(
+    tmp_path,
+) -> None:
+    runner, policy = policy_value()
+    gate, ledger = gateway(tmp_path, runner, policy)
+    attempts = 0
+
+    async def provider():
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            failed_value = {"status": "FAILED", "failure_code": "part_indices_mismatch"}
+            failed_receipt = runner.DispatchReceipt(
+                response_digest=runner.digest_value(failed_value),
+                input_tokens=321,
+                cached_input_tokens=21,
+                output_tokens=45,
+            )
+            raise runner.RetryableDispatchError(
+                "judge_contract_invariant",
+                provider_error_code="part_indices_mismatch",
+                receipt=failed_receipt,
+            )
+        return receipt(runner, inputs=300, outputs=40)
+
+    item = request(runner, policy, "judge", "judge-invariant")
+    await gate.judge(item, provider)
+    assert attempts == 2
+    assert gate.budget.actual_attempts == 2
+    assert gate.budget.actual_input_tokens == 621
+    assert gate.budget.actual_output_tokens == 85
+    failure = next(
+        event for event in ledger.events if event["event_type"] == "attempt_failed"
+    )
+    assert failure["provider_error_code"] == "part_indices_mismatch"
+    assert failure["receipt"]["input_tokens"] == 321
+    assert failure["receipt"]["cached_input_tokens"] == 21
+    assert failure["receipt"]["output_tokens"] == 45
+    ledger_text = ledger.events_path.read_text()
+    assert "judge_contract_invariant" not in ledger_text
+    assert "raw_response" not in ledger_text
+
+
+@pytest.mark.asyncio
+async def test_two_judge_invariant_failures_stop_after_governed_retry(tmp_path) -> None:
+    runner, policy = policy_value()
+    gate, ledger = gateway(tmp_path, runner, policy)
+    attempts = 0
+
+    async def provider():
+        nonlocal attempts
+        attempts += 1
+        failed_value = {
+            "status": "FAILED",
+            "failure_code": "completeness_missing",
+            "attempt": attempts,
+        }
+        raise runner.RetryableDispatchError(
+            "judge_contract_invariant",
+            provider_error_code="completeness_missing",
+            receipt=runner.DispatchReceipt(
+                response_digest=runner.digest_value(failed_value),
+                input_tokens=100,
+                output_tokens=10,
+            ),
+        )
+
+    with pytest.raises(runner.RetryableDispatchError):
+        await gate.judge(request(runner, policy, "judge", "twice-invalid"), provider)
+    assert attempts == 2
+    assert gate.budget.actual_attempts == 2
+    assert gate.budget.actual_input_tokens == 200
+    assert gate.budget.actual_output_tokens == 20
+    assert [event["event_type"] for event in ledger.events].count("attempt_failed") == 2
+
+
+@pytest.mark.asyncio
+async def test_valid_low_judge_scores_are_not_retried(tmp_path) -> None:
+    runner, policy = policy_value()
+    gate, ledger = gateway(tmp_path, runner, policy)
+    calls = 0
+
+    async def provider():
+        nonlocal calls
+        calls += 1
+        value = {"status": "COMPLETED", "scores": {"ANSWER_COMPLETENESS": 0}}
+        return runner.ProviderResult(
+            value,
+            runner.DispatchReceipt(
+                response_digest=runner.digest_value(value),
+                input_tokens=100,
+                output_tokens=10,
+            ),
+        )
+
+    await gate.judge(request(runner, policy, "judge", "valid-low-score"), provider)
+    assert calls == 1
+    assert gate.budget.actual_attempts == 1
+    assert not any(event["event_type"] == "attempt_failed" for event in ledger.events)
+
+
 def test_comparison_sides_are_independent_dispatches() -> None:
     runner, policy = policy_value()
     population = json.loads((ROOT / policy["population_path"]).read_text())

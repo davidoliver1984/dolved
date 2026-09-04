@@ -5,11 +5,11 @@ from __future__ import annotations
 import hashlib
 import json
 import time
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 import openai
 import tiktoken
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, create_model
 
 from app.evaluation.models import (
     ModelAssistedEvaluationRequest,
@@ -20,9 +20,9 @@ from app.evaluation.models import (
 )
 
 EVALUATOR_IMPLEMENTATION = "openai-grounded-answer-evaluator"
-EVALUATOR_VERSION = "v1"
+EVALUATOR_VERSION = "v2"
 EVALUATOR_PROMPT_VERSION = "grounded-answer-evaluator-v1"
-EVALUATOR_REPRESENTATION_VERSION = "generation-result-evaluation-v1"
+EVALUATOR_REPRESENTATION_VERSION = "generation-result-evaluation-v2"
 
 SYSTEM_PROMPT = """You evaluate a generated answer against supplied evidence and an authored reference contract.
 
@@ -63,6 +63,73 @@ class AnswerEvaluationOutput(BaseModel):
     completeness: float | None = Field(default=None, ge=0, le=1)
     qualification_useful: bool | None
     insufficiency_correct: bool | None
+
+
+JudgeInvariantFailureCode = Literal[
+    "part_indices_mismatch",
+    "qualification_usefulness_missing",
+    "insufficiency_correctness_missing",
+    "factual_precision_missing",
+    "completeness_missing",
+]
+
+
+class JudgeOutputInvariantError(ValueError):
+    """Closed request-dependent failure safe for durable reporting."""
+
+    def __init__(self, code: JudgeInvariantFailureCode) -> None:
+        super().__init__(code)
+        self.code = code
+
+
+def output_model_for_request(
+    request: ModelAssistedEvaluationRequest,
+) -> type[AnswerEvaluationOutput]:
+    """Build the tightest provider-visible schema for this request shape."""
+    result = request.generated_result
+    assert result is not None
+    part_count = len(result.answer_parts)
+    part_judgements = Annotated[
+        list[PartJudgement], Field(min_length=part_count, max_length=part_count)
+    ]
+    score = Annotated[float, Field(ge=0, le=1)]
+    factual_type: Any = (
+        score
+        if ModelAssistedMetric.ANSWER_FACTUAL_PRECISION in request.metrics
+        else float | None
+    )
+    completeness_type: Any = (
+        score
+        if ModelAssistedMetric.ANSWER_COMPLETENESS in request.metrics
+        else float | None
+    )
+    qualification_type: Any = bool if result.outcome == "qualified" else bool | None
+    insufficiency_type: Any = (
+        bool if result.outcome == "insufficient_evidence" else bool | None
+    )
+    return create_model(
+        "RequestBoundAnswerEvaluationOutput",
+        __base__=AnswerEvaluationOutput,
+        part_judgements=(part_judgements, ...),
+        factual_precision=(
+            factual_type,
+            ...
+            if ModelAssistedMetric.ANSWER_FACTUAL_PRECISION in request.metrics
+            else None,
+        ),
+        completeness=(
+            completeness_type,
+            ... if ModelAssistedMetric.ANSWER_COMPLETENESS in request.metrics else None,
+        ),
+        qualification_useful=(
+            qualification_type,
+            ... if result.outcome == "qualified" else None,
+        ),
+        insufficiency_correct=(
+            insufficiency_type,
+            ... if result.outcome == "insufficient_evidence" else None,
+        ),
+    )
 
 
 class OpenAIAnswerEvaluator:
@@ -146,7 +213,8 @@ class OpenAIAnswerEvaluator:
         if request.generated_result is None:
             return self._failure(request, "structured_generation_result_required", 0, 0)
         rendered = self._render(request)
-        measured_input_tokens = self._measure(rendered)
+        output_model = output_model_for_request(request)
+        measured_input_tokens = self._measure(rendered, output_model)
         started = time.monotonic()
         for attempt in range(1, self._max_attempts + 1):
             projected_cost = self._estimated_cost(
@@ -174,7 +242,7 @@ class OpenAIAnswerEvaluator:
                     model=self._model,
                     instructions=SYSTEM_PROMPT,
                     input=rendered,
-                    text_format=AnswerEvaluationOutput,
+                    text_format=output_model,
                     reasoning={"effort": "low"},
                     max_output_tokens=self._max_output_tokens,
                     store=False,
@@ -188,7 +256,17 @@ class OpenAIAnswerEvaluator:
                         attempt - 1,
                         (time.monotonic() - started) * 1000,
                     )
-                self._validate_output(request, output)
+                try:
+                    self._validate_output(request, output)
+                except JudgeOutputInvariantError as exception:
+                    return self._failure(
+                        request,
+                        exception.code,
+                        attempt - 1,
+                        (time.monotonic() - started) * 1000,
+                        response=response,
+                        details={"validation_reason": exception.code},
+                    )
                 return self._success(
                     request,
                     output,
@@ -246,9 +324,11 @@ class OpenAIAnswerEvaluator:
             value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
         )
 
-    def _measure(self, rendered: str) -> int:
+    def _measure(
+        self, rendered: str, output_model: type[AnswerEvaluationOutput]
+    ) -> int:
         schema = json.dumps(
-            AnswerEvaluationOutput.model_json_schema(),
+            output_model.model_json_schema(),
             sort_keys=True,
             separators=(",", ":"),
         )
@@ -291,24 +371,24 @@ class OpenAIAnswerEvaluator:
         expected_indices = [part.part_index for part in result.answer_parts]
         actual_indices = [part.part_index for part in output.part_judgements]
         if actual_indices != expected_indices:
-            raise ValueError("evaluator part judgements do not match generated parts")
+            raise JudgeOutputInvariantError("part_indices_mismatch")
         if result.outcome == "qualified" and output.qualification_useful is None:
-            raise ValueError("qualified evaluation requires usefulness judgement")
+            raise JudgeOutputInvariantError("qualification_usefulness_missing")
         if (
             result.outcome == "insufficient_evidence"
             and output.insufficiency_correct is None
         ):
-            raise ValueError("insufficiency evaluation requires correctness judgement")
+            raise JudgeOutputInvariantError("insufficiency_correctness_missing")
         if (
             ModelAssistedMetric.ANSWER_FACTUAL_PRECISION in request.metrics
             and output.factual_precision is None
         ):
-            raise ValueError("factual precision metric requires a score")
+            raise JudgeOutputInvariantError("factual_precision_missing")
         if (
             ModelAssistedMetric.ANSWER_COMPLETENESS in request.metrics
             and output.completeness is None
         ):
-            raise ValueError("completeness metric requires a score")
+            raise JudgeOutputInvariantError("completeness_missing")
 
     def _success(
         self,
@@ -378,6 +458,7 @@ class OpenAIAnswerEvaluator:
                     latency_ms=latency_ms,
                     retry_count=retry_count,
                     input_tokens=input_tokens,
+                    cached_input_tokens=cached_input_tokens,
                     output_tokens=output_tokens,
                     cost_usd=cost,
                 )
@@ -393,6 +474,7 @@ class OpenAIAnswerEvaluator:
             latency_ms=latency_ms,
             retry_count=retry_count,
             input_tokens=input_tokens,
+            cached_input_tokens=cached_input_tokens,
             output_tokens=output_tokens,
             cost_usd=cost,
         )
@@ -404,12 +486,20 @@ class OpenAIAnswerEvaluator:
         retry_count: int,
         latency_ms: float,
         provider_status: int | None = None,
+        response: Any | None = None,
+        details: dict[str, Any] | None = None,
     ) -> ModelAssistedEvaluationResult:
         part_indices = (
             tuple(part.part_index for part in request.generated_result.answer_parts)
             if request.generated_result is not None
             else ()
         )
+        usage = getattr(response, "usage", None)
+        input_tokens = getattr(usage, "input_tokens", None)
+        output_tokens = getattr(usage, "output_tokens", None)
+        input_details = getattr(usage, "input_tokens_details", None)
+        cached_input_tokens = getattr(input_details, "cached_tokens", None)
+        cost = self._estimated_cost(input_tokens, cached_input_tokens, output_tokens)
         return ModelAssistedEvaluationResult(
             case_id=request.case_id,
             variant_id=request.variant_id,
@@ -417,6 +507,7 @@ class OpenAIAnswerEvaluator:
             scores={},
             evaluator_identity=self._identity,
             failure_code=failure_code,
+            details=details or {},
             metric_observations=tuple(
                 ModelAssistedMetricObservation(
                     metric=metric,
@@ -427,16 +518,18 @@ class OpenAIAnswerEvaluator:
                     failure_code=failure_code,
                     latency_ms=latency_ms,
                     retry_count=retry_count,
-                    input_tokens=None,
-                    output_tokens=None,
-                    cost_usd=None,
+                    input_tokens=input_tokens,
+                    cached_input_tokens=cached_input_tokens,
+                    output_tokens=output_tokens,
+                    cost_usd=cost,
                     provider_status=provider_status,
                 )
                 for metric in request.metrics
             ),
             latency_ms=latency_ms,
             retry_count=retry_count,
-            input_tokens=None,
-            output_tokens=None,
-            cost_usd=None,
+            input_tokens=input_tokens,
+            cached_input_tokens=cached_input_tokens,
+            output_tokens=output_tokens,
+            cost_usd=cost,
         )
