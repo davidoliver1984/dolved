@@ -1,6 +1,6 @@
 # R28-S03 V4 corpus materialisation
 
-`R28-S03-V4-CORPUS-MATERIALISATION-0002` materialises the frozen V4 corpus
+`R28-S03-V4-CORPUS-MATERIALISATION-0003` materialises the frozen V4 corpus
 through the real authenticated ADR-0034 import workflow in a dedicated local
 Docker project. It uses only the deterministic provider profile. It does not
 consume the R28-S04 live Voyage allowance and makes no OpenAI, Voyage or AWS
@@ -30,3 +30,11 @@ the isolated organisation provisioner treated the optional foreign-tenant
 workspaces, zero import batches and zero documents. Attempt `0002` is a new
 immutable run identity after the provider-free provisioner correction; it is
 not a selective retry of any corpus item.
+
+Attempt `0002` also failed before any ImportBatch or document was created. A
+valid corpus manifest entry explicitly uses a null effective date, while the
+materialisation harness applied its governed default only when the field was
+omitted. Read-only database evidence again showed three isolated workspaces,
+zero import batches and zero documents. Attempt `0003` is a new immutable run
+identity after making the existing default apply consistently to null and
+omitted values and binding result identity to the active run definition.

@@ -1,6 +1,6 @@
 {
   "schema_version": "r28-s03-materialisation-definition-v1",
-  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0002",
+  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0003",
   "purpose": "Provider-free materialisation of the frozen Dolved V4 corpus through the real ADR-0034 ImportBatch workflow",
   "execution": {
     "provider_calls_permitted": false,
@@ -70,6 +70,19 @@
       "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
       "outcome": "failed_before_import_batch_creation",
       "cause": "The E2E organisation provisioner incorrectly required an aliases array that the valid foreign-tenant organisation manifest omits.",
+      "durable_state": {
+        "workspaces_created": 3,
+        "import_batches_created": 0,
+        "documents_created": 0
+      },
+      "provider_calls": 0,
+      "aws_calls": 0,
+      "selective_reruns": 0
+    },
+    {
+      "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0002",
+      "outcome": "failed_before_import_batch_creation",
+      "cause": "The materialisation harness did not apply its governed effective-date fallback when a valid manifest entry explicitly contained null.",
       "durable_state": {
         "workspaces_created": 3,
         "import_batches_created": 0,

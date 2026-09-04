@@ -18,6 +18,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+RUN_DEFINITION = Path("docs/evaluation/r28-s03/run-definition.json")
+
 
 class ApiFailure(RuntimeError):
     def __init__(self, status: int, body: str) -> None:
@@ -87,6 +89,11 @@ class ApiClient:
                 return None if not raw else json.loads(raw)
         except urllib.error.HTTPError as exc:
             raise ApiFailure(exc.code, exc.read().decode(errors="replace")) from exc
+
+
+def effective_date(entry: dict[str, Any]) -> str:
+    """Return the explicit effective date or the governed default for null/omitted."""
+    return entry.get("effective_date") or "2026-01-01"
 
 
 def load_json(path: Path) -> Any:
@@ -233,7 +240,7 @@ def materialise_round(
                         for key in entry.get("applicability_locations", [])
                     ]
                 },
-                "effective_from": entry.get("effective_date", "2026-01-01"),
+                "effective_from": effective_date(entry),
             }
             client.post(
                 f"/api/workspaces/{workspace}/imports/{batch_id}/items/"
@@ -337,7 +344,7 @@ def materialise_scope(
     for entries in grouped.values():
         entries.sort(
             key=lambda item: (
-                item.get("effective_date", "2026-01-01"),
+                effective_date(item),
                 item["version_id"],
             )
         )
@@ -665,6 +672,7 @@ def main() -> int:
     parser.add_argument("--primary-locations", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    run_definition = load_json(RUN_DEFINITION)
 
     identities = {
         "primary": load_json(args.primary_identity),
@@ -710,13 +718,11 @@ def main() -> int:
     )
     result = {
         "schema_version": "r28-s03-materialisation-result-v1",
-        "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
+        "run_id": run_definition["run_id"],
         "repository_commit": subprocess.check_output(
             ["git", "rev-parse", "HEAD"], text=True
         ).strip(),
-        "run_definition_sha256": sha256(
-            Path("docs/evaluation/r28-s03/run-definition.json")
-        ),
+        "run_definition_sha256": sha256(RUN_DEFINITION),
         "provider_calls": 0,
         "aws_calls": 0,
         "materialisation_profile": {

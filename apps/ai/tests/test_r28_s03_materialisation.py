@@ -19,7 +19,7 @@ def load_materialiser():
 
 def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -> None:
     definition = json.loads(DEFINITION.read_text())
-    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0002"
+    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0003"
     assert definition["prior_attempts"] == [
         {
             "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
@@ -36,7 +36,24 @@ def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -
             "provider_calls": 0,
             "aws_calls": 0,
             "selective_reruns": 0,
-        }
+        },
+        {
+            "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0002",
+            "outcome": "failed_before_import_batch_creation",
+            "cause": (
+                "The materialisation harness did not apply its governed "
+                "effective-date fallback when a valid manifest entry explicitly "
+                "contained null."
+            ),
+            "durable_state": {
+                "workspaces_created": 3,
+                "import_batches_created": 0,
+                "documents_created": 0,
+            },
+            "provider_calls": 0,
+            "aws_calls": 0,
+            "selective_reruns": 0,
+        },
     ]
     assert definition["execution"]["provider_calls_permitted"] is False
     assert definition["execution"]["aws_access_permitted"] is False
@@ -60,6 +77,15 @@ def test_r28_s03_materialiser_uses_governed_media_types() -> None:
         == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
     assert materialiser.media_type("policy.txt") == "text/plain"
+
+
+def test_r28_s03_materialiser_defaults_null_and_omitted_effective_dates() -> None:
+    materialiser = load_materialiser()
+    assert materialiser.effective_date({"effective_date": "2025-06-15"}) == (
+        "2025-06-15"
+    )
+    assert materialiser.effective_date({"effective_date": None}) == "2026-01-01"
+    assert materialiser.effective_date({}) == "2026-01-01"
 
 
 def test_r28_s03_materialiser_calls_import_and_governance_apis() -> None:

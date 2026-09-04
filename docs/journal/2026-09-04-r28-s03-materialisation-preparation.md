@@ -7,7 +7,7 @@ R28-S03 is in progress. No corpus materialisation has run yet.
 ## Boundary
 
 The active immutable run identity is
-`R28-S03-V4-CORPUS-MATERIALISATION-0002`. It binds the frozen checkpoint 19
+`R28-S03-V4-CORPUS-MATERIALISATION-0003`. It binds the frozen checkpoint 19
 archive and its four governed scopes to a dedicated `dolved-r28-s03` local
 runtime. The primary, foreign-tenant and separate prompt-injection documents
 must pass through the authenticated ADR-0034 ImportBatch workflow. The 13
@@ -48,3 +48,15 @@ workspaces, zero ImportBatch rows and zero documents. No provider or AWS call
 occurred and no corpus item was attempted. The provisioner correction accepts
 an omitted aliases member as an empty list while continuing to validate any
 present aliases array. Attempt `0002` therefore has a new immutable identity.
+
+## Attempt 0002 outcome
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0002` failed before corpus
+materialisation. A valid primary manifest entry explicitly records a null
+effective date, while the harness applied the governed `2026-01-01` default
+only to an omitted field. Read-only database inspection again confirmed three
+isolated workspaces, zero ImportBatch rows and zero documents. No provider or
+AWS call occurred and no corpus item was attempted. The correction applies the
+same existing default to null and omitted values and derives the persisted run
+identity from the immutable run definition. Attempt `0003` therefore has a new
+immutable identity.
