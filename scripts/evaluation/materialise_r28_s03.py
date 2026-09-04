@@ -396,12 +396,12 @@ def materialise_scope(
             if status in {"approved", "withdrawn"}:
                 client.post(
                     f"/api/workspaces/{workspace}/documents/{document_id}/governance/approve",
-                    {"idempotency_key": f"r28-s03-approve-{uuid.uuid4()}"},
+                    {"idempotency_key": str(uuid.uuid4())},
                 )
             if status == "withdrawn":
                 client.post(
                     f"/api/workspaces/{workspace}/documents/{document_id}/governance/withdraw",
-                    {"idempotency_key": f"r28-s03-withdraw-{uuid.uuid4()}"},
+                    {"idempotency_key": str(uuid.uuid4())},
                 )
 
     final_documents = documents(client, workspace)

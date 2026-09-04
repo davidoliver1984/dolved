@@ -1,6 +1,6 @@
 {
   "schema_version": "r28-s03-materialisation-definition-v1",
-  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0006",
+  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0007",
   "purpose": "Provider-free materialisation of the frozen Dolved V4 corpus through the real ADR-0034 ImportBatch workflow",
   "execution": {
     "provider_calls_permitted": false,
@@ -126,6 +126,23 @@
       "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0005",
       "outcome": "failed_after_primary_ingestion_before_governance_transition",
       "cause": "The materialisation harness used the import-workflow field name filename when indexing the canonical document-administration response, whose reviewed field is source_filename.",
+      "durable_state": {
+        "workspaces_created": 3,
+        "import_batches_created": 14,
+        "import_items_created": 300,
+        "documents_created": 300,
+        "documents_indexed": 300,
+        "canonical_chunks_created": 982,
+        "documents_remaining_draft": 300
+      },
+      "provider_calls": 0,
+      "aws_calls": 0,
+      "selective_reruns": 0
+    },
+    {
+      "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0006",
+      "outcome": "failed_after_primary_ingestion_at_first_governance_transition",
+      "cause": "The materialisation harness prefixed its governance idempotency value, while the canonical governance request contract requires a UUID.",
       "durable_state": {
         "workspaces_created": 3,
         "import_batches_created": 14,

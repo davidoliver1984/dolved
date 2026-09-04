@@ -22,7 +22,7 @@ def load_materialiser():
 
 def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -> None:
     definition = json.loads(DEFINITION.read_text())
-    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0006"
+    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0007"
     assert definition["prior_attempts"] == [
         {
             "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
@@ -115,6 +115,27 @@ def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -
             "aws_calls": 0,
             "selective_reruns": 0,
         },
+        {
+            "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0006",
+            "outcome": "failed_after_primary_ingestion_at_first_governance_transition",
+            "cause": (
+                "The materialisation harness prefixed its governance idempotency "
+                "value, while the canonical governance request contract requires "
+                "a UUID."
+            ),
+            "durable_state": {
+                "workspaces_created": 3,
+                "import_batches_created": 14,
+                "import_items_created": 300,
+                "documents_created": 300,
+                "documents_indexed": 300,
+                "canonical_chunks_created": 982,
+                "documents_remaining_draft": 300,
+            },
+            "provider_calls": 0,
+            "aws_calls": 0,
+            "selective_reruns": 0,
+        },
     ]
     assert definition["execution"]["provider_calls_permitted"] is False
     assert definition["execution"]["aws_access_permitted"] is False
@@ -186,3 +207,10 @@ def test_r28_s03_materialiser_calls_import_and_governance_apis() -> None:
 def test_r28_s03_materialiser_uses_canonical_document_response_field() -> None:
     source = SCRIPT.read_text()
     assert 'item["source_filename"]: item["public_id"]' in source
+
+
+def test_r28_s03_governance_commands_use_uuid_idempotency_keys() -> None:
+    source = SCRIPT.read_text()
+    assert source.count('{"idempotency_key": str(uuid.uuid4())}') == 2
+    assert "r28-s03-approve-" not in source
+    assert "r28-s03-withdraw-" not in source

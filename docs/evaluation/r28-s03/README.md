@@ -1,6 +1,6 @@
 # R28-S03 V4 corpus materialisation
 
-`R28-S03-V4-CORPUS-MATERIALISATION-0006` materialises the frozen V4 corpus
+`R28-S03-V4-CORPUS-MATERIALISATION-0007` materialises the frozen V4 corpus
 through the real authenticated ADR-0034 import workflow in a dedicated local
 Docker project. It uses only the deterministic provider profile. It does not
 consume the R28-S04 live Voyage allowance and makes no OpenAI, Voyage or AWS
@@ -62,3 +62,10 @@ administration response using the import-workflow field name `filename`; that
 response truthfully exposes `source_filename`. All 300 primary documents
 therefore remained draft. No corpus item was selectively rerun. Attempt `0006`
 uses the canonical response field and begins from a fresh isolated runtime.
+
+Attempt `0006` again materialised and indexed all 300 primary documents and
+982 canonical chunks, then the application correctly rejected the first
+governance transition because the harness supplied a prefixed idempotency
+value rather than the UUID required by the canonical request contract. All
+documents remained draft and neither separate tenant had begun. Attempt
+`0007` supplies a plain UUID and begins from a fresh isolated runtime.
