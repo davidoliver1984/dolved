@@ -386,7 +386,8 @@ def materialise_scope(
         )
 
     document_ids = {
-        item["filename"]: item["public_id"] for item in documents(client, workspace)
+        item["source_filename"]: item["public_id"]
+        for item in documents(client, workspace)
     }
     for entries in grouped.values():
         for entry in entries:

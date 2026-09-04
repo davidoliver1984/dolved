@@ -7,7 +7,7 @@ R28-S03 is in progress. No corpus materialisation has run yet.
 ## Boundary
 
 The active immutable run identity is
-`R28-S03-V4-CORPUS-MATERIALISATION-0005`. It binds the frozen checkpoint 19
+`R28-S03-V4-CORPUS-MATERIALISATION-0006`. It binds the frozen checkpoint 19
 archive and its four governed scopes to a dedicated `dolved-r28-s03` local
 runtime. The primary, foreign-tenant and separate prompt-injection documents
 must pass through the authenticated ADR-0034 ImportBatch workflow. The 13
@@ -86,3 +86,14 @@ rerun occurred. No provider or AWS call occurred. Attempt `0005` uses the
 general manifest-derived rule that a null-dated version with a declared
 supersession date receives the preceding calendar day; null-dated entries with
 no supersession date retain the existing deterministic default.
+
+## Attempt 0005 outcome
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0005` created 14 ImportBatch rows,
+300 ImportItem rows, 300 indexed primary documents and 982 canonical chunks.
+It then failed before any governance transition or separate-scope
+materialisation because the harness indexed the canonical document
+administration response by the import-workflow field name `filename`; the
+response exposes `source_filename`. All 300 documents remained draft. No
+provider or AWS call occurred and no selective item rerun was made. Attempt
+`0006` uses the canonical response field and a fresh isolated runtime.
