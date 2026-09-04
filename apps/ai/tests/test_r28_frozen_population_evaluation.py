@@ -131,9 +131,12 @@ def test_routing_and_ceiling_arithmetic_is_closed_and_exact() -> None:
     ("section", "field"),
     [
         ("routing", "retrieval_utterances"),
+        ("routing", "corpus_embedding_requests"),
         ("routing", "maximum_reranking_utterances"),
         ("routing", "deterministic_termination_utterances"),
         ("ceilings", "query_embedding_items"),
+        ("ceilings", "corpus_embedding_maximum_attempts"),
+        ("ceilings", "corpus_embedding_maximum_items_per_request"),
         ("ceilings", "reranker_base_http_requests"),
         ("ceilings", "total_base_provider_requests"),
         ("ceilings", "total_input_tokens"),

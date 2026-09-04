@@ -3,7 +3,7 @@
   "policy_id": "r28-s04-v4-live-evaluation-v1",
   "execution_commit_source": "separate-immutable-run-authorization",
   "population_access_path": "docs/evaluation/r28-s01/r28-s04-population-access.json",
-  "population_access_sha256": "8956b9287ec39a3d21ad82994ef64ee8c89ab0c66e1b3b3e350e41599754400b",
+  "population_access_sha256": "6a4e01c4fdcf9bb41820be3c7c01adad79ea1444ee17105d48c8490bb8c89989",
   "population_path": "tests/evaluation/engineering-populations/dolved-care-v4/v2/population.json",
   "population_identity": "dolved-care-v4-evaluation-population-v2",
   "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
@@ -14,6 +14,7 @@
   "output_root": "/tmp/rag-platform-r28-s04",
   "routing": {
     "utterances": 148,
+    "corpus_embedding_requests": 8,
     "retrieval_utterances": 106,
     "reranking_utterances": 96,
     "reranker_base_requests": 140,
@@ -46,8 +47,8 @@
     "final_evidence_k": 5
   },
   "ceilings": {
-    "base_provider_requests": 314,
-    "physical_attempts": 628,
+    "base_provider_requests": 321,
+    "physical_attempts": 642,
     "input_tokens": 7416320,
     "output_tokens": 1056768,
     "cost_usd": "30.00000000",
@@ -56,7 +57,7 @@
     "maximum_retries_per_logical_request": 1
   },
   "stage_limits": {
-    "corpus_embedding": {"base_requests": 1, "maximum_attempts": 2, "input_tokens_per_attempt": 750000, "output_tokens_per_attempt": 0, "pricing_key": "voyage_embedding"},
+    "corpus_embedding": {"base_requests": 8, "maximum_attempts": 16, "input_tokens_per_attempt": 93750, "output_tokens_per_attempt": 0, "maximum_items_per_request": 128, "maximum_request_bytes_per_attempt": 524288, "pricing_key": "voyage_embedding"},
     "query_embedding": {"base_requests": 1, "maximum_attempts": 2, "input_tokens_per_attempt": 50000, "output_tokens_per_attempt": 0, "pricing_key": "voyage_embedding"},
     "reranker": {"base_requests": 140, "maximum_attempts": 280, "input_tokens_per_attempt": 8192, "output_tokens_per_attempt": 0, "pricing_key": "voyage_reranker"},
     "generation": {"base_requests": 86, "maximum_attempts": 172, "input_tokens_per_attempt": 8192, "output_tokens_per_attempt": 4096, "pricing_key": "openai_generation"},
@@ -126,6 +127,6 @@
       "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7"
     }
   },
-  "execution_profile_digest": "9960166d45c0a9301ad69cb8cc56577c285cbe5b8442fa6f9d0f3b7912fa10ba",
+  "execution_profile_digest": "d47dfb66e184cbc2e2b05f0cef11bac8c2c905fd93eb0aa7c54cff81b49785ca",
   "authorization_schema_path": "contracts/evaluation/v4/r28-s04-run-authorization.schema.json"
 }

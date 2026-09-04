@@ -130,6 +130,14 @@ Approved R28-S02 hard ceilings (2026-09-03):
 
 ### Approved R28-S04 routing and ceilings — 2026-09-04
 
+David approved a provider-input compatibility correction on 2026-09-04 after
+immutable Run `R28-S04-LIVE-V4-RUN-0001` failed before retrieval quality could
+be measured. The 1,000 non-empty corpus inputs measured approximately 349,426
+diagnostic tokens in aggregate, above Voyage's 120,000-token physical-request
+limit, while no individual chunk was oversized. Run 0001 remains immutable
+failure evidence. The corrected corpus route uses eight original-order batches
+of at most 128 chunks; no retrieval threshold or non-corpus route changes.
+
 The real repository boundaries establish this execution graph. Provider-backed
 planning is not part of it: plans are frozen provider-free inputs, so any planner
 provider call is hidden/out-of-scope and fails. The closed routing for all 148
@@ -162,9 +170,11 @@ execution; their absence today does not block freezing this R28-S01 protocol
 because provider execution is not authorised. Any graph change requires a revised
 proposal and David's approval; it must not be improvised during execution.
 
-- dense corpus/index embedding: one base Voyage `voyage-4-large` request over
-  the frozen checkpoint chunks; at most two physical attempts; 750,000 input
-  tokens per attempt and 1,500,000 total; zero output tokens; USD 0.20;
+- dense corpus/index embedding: eight base Voyage `voyage-4-large` requests over
+  the frozen checkpoint chunks in deterministic original order, with batch sizes
+  128/128/128/128/128/128/128/104; at most 16 physical attempts; 93,750 input
+  tokens per attempt and 1,500,000 total; at most 128 inputs and 524,288 request
+  bytes per physical request; zero output tokens; USD 0.18 planning estimate;
 - dense query embedding: one base request containing all 106 retrieval utterances
   (the current adapter sends one all-items HTTP request and does not consume the
   general `embedding_batch_size` setting); at most two physical attempts;
@@ -183,7 +193,7 @@ proposal and David's approval; it must not be improvised during execution.
   2,048 output tokens per attempt, 2,113,536 input and 352,256 output total;
   USD 1.50.
 
-The approved whole-run ceiling is 314 base provider requests, 628 physical
+The approved whole-run ceiling is 321 base provider requests, 642 physical
 attempts, 7,416,320 input tokens, 1,056,768 output tokens, USD 30, concurrency 1
 and 180 minutes wall clock. It includes 106 query-embedding items, 140 base
 reranker requests (280 maximum attempts), 86 generation calls and 86 judge calls.
@@ -202,6 +212,10 @@ route counts, request/token/time/USD admission, the one-retry maximum, actual
 usage/cost capture, immediate hard stop and immutable run identity. It must enforce
 the aggregate counters and refuse to start any request whose worst-case authorised
 attempt could exceed the remaining request, token, time or monetary authority.
+Each corpus batch must also pass a pre-dispatch measurement enforcing at most
+128 items, 93,750 governed diagnostic input tokens and 524,288 serialized
+provider-request bytes. Missing, duplicated, reordered or incorrectly
+dimensioned returned vectors fail closed before recombination.
 Voyage embedding usage/cost and
 OpenAI generation usage/estimated cost are already captured; reranker tokens and
 attempts are captured but require the approved price snapshot, and evaluator

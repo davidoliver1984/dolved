@@ -25,6 +25,7 @@ from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
 from functools import partial
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any, Protocol
 from uuid import NAMESPACE_URL, UUID, uuid5
@@ -41,6 +42,22 @@ RUN_ID = re.compile(r"^R28-S04-LIVE-V4-[A-Z0-9][A-Z0-9-]{7,80}$")
 AUTHORIZATION_ID = re.compile(r"^R28-S04-AUTH-[A-Z0-9][A-Z0-9-]{7,80}$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
+CORPUS_CHUNK_COUNT = 1000
+CORPUS_BATCH_SIZE = 128
+CORPUS_BATCH_SIZES = (128, 128, 128, 128, 128, 128, 128, 104)
+SAFE_PROVIDER_ERROR_CODES = {
+    "authentication_failed",
+    "configuration_failed",
+    "dimension_mismatch",
+    "input_too_large",
+    "invalid_input",
+    "malformed_response",
+    "profile_mismatch",
+    "provider_unavailable",
+    "rate_limited",
+    "timeout",
+    "transport_failure",
+}
 
 
 def canonical_bytes(value: Any) -> bytes:
@@ -126,6 +143,50 @@ class ProviderAdapters(Protocol):
 
 class RetryableDispatchError(RuntimeError):
     """Typed transport, timeout, 429 or 5xx failure eligible for one retry."""
+
+    def __init__(
+        self,
+        category: str,
+        *,
+        provider_status: int | None = None,
+        provider_error_code: str | None = None,
+    ) -> None:
+        super().__init__(category)
+        self.provider_status = provider_status
+        self.provider_error_code = provider_error_code
+
+
+def safe_provider_failure(error: Exception) -> dict[str, int | str | None]:
+    """Return only allowlisted provider diagnostics suitable for durable evidence."""
+    source = error.__cause__ if error.__cause__ is not None else error
+    status = getattr(error, "provider_status", None)
+    if status is None:
+        status = getattr(source, "provider_status", None)
+    if status is None:
+        status = getattr(source, "status_code", None)
+    if not isinstance(status, int) or not 100 <= status <= 599:
+        status = None
+    code = getattr(error, "provider_error_code", None)
+    if code is None:
+        code = getattr(source, "code", None)
+    if code not in SAFE_PROVIDER_ERROR_CODES:
+        code = (
+            {
+                400: "invalid_input",
+                401: "authentication_failed",
+                403: "authentication_failed",
+                413: "input_too_large",
+                422: "invalid_input",
+                429: "rate_limited",
+            }.get(status)
+            if status is not None
+            else None
+        )
+        if code is None and status is not None and status >= 500:
+            code = "provider_unavailable"
+    if code not in SAFE_PROVIDER_ERROR_CODES:
+        code = None
+    return {"provider_status": status, "provider_error_code": code}
 
 
 class HardBudget:
@@ -256,7 +317,9 @@ class AppendOnlyRunLedger:
                 raise ValueError("run identity mismatch")
         self.events = self._read_events()
 
-    def completed_result(self, request_id: str) -> ProviderResult | None:
+    def completed_result(
+        self, request_id: str, expected_request: DispatchRequest | None = None
+    ) -> ProviderResult | None:
         completed = [
             event
             for event in self.events
@@ -267,6 +330,17 @@ class AppendOnlyRunLedger:
             return None
         if len(completed) != 1:
             raise ValueError("request has duplicate completion events")
+        if expected_request is not None:
+            reservations = [
+                event
+                for event in self.events
+                if event.get("request_id") == request_id
+                and event["event_type"] == "request_reserved"
+            ]
+            if len(reservations) != 1 or reservations[0].get("request") != asdict(
+                expected_request
+            ):
+                raise ValueError("completed request identity changed on resume")
         event = completed[0]
         path = self.responses_dir / f"{request_id}.json"
         raw = path.read_bytes()
@@ -443,7 +517,7 @@ class BudgetedDispatchGateway:
     def dispatch(
         self, request: DispatchRequest, call: Callable[[], ProviderResult]
     ) -> ProviderResult:
-        completed = self.ledger.completed_result(request.request_id)
+        completed = self.ledger.completed_result(request.request_id, request)
         if completed is not None:
             if not self.resume:
                 raise RuntimeError("duplicate_completed_dispatch")
@@ -514,6 +588,7 @@ class BudgetedDispatchGateway:
                         "attempt_id": attempt_id,
                         "attempt": attempt,
                         "failure_type": type(error).__name__,
+                        **safe_provider_failure(error),
                         "retryable": True,
                         "input_tokens": None,
                         "output_tokens": None,
@@ -531,6 +606,7 @@ class BudgetedDispatchGateway:
                         "attempt_id": attempt_id,
                         "attempt": attempt,
                         "failure_type": type(error).__name__,
+                        **safe_provider_failure(error),
                         "retryable": False,
                         "input_tokens": None,
                         "output_tokens": None,
@@ -543,7 +619,7 @@ class BudgetedDispatchGateway:
     async def dispatch_async(
         self, request: DispatchRequest, call: Callable[[], Awaitable[ProviderResult]]
     ) -> ProviderResult:
-        completed = self.ledger.completed_result(request.request_id)
+        completed = self.ledger.completed_result(request.request_id, request)
         if completed is not None:
             if not self.resume:
                 raise RuntimeError("duplicate_completed_dispatch")
@@ -616,6 +692,7 @@ class BudgetedDispatchGateway:
                         "attempt_id": attempt_id,
                         "attempt": attempt,
                         "failure_type": type(error).__name__,
+                        **safe_provider_failure(error),
                         "retryable": True,
                         "input_tokens": None,
                         "output_tokens": None,
@@ -633,6 +710,7 @@ class BudgetedDispatchGateway:
                         "attempt_id": attempt_id,
                         "attempt": attempt,
                         "failure_type": type(error).__name__,
+                        **safe_provider_failure(error),
                         "retryable": False,
                         "input_tokens": None,
                         "output_tokens": None,
@@ -711,8 +789,8 @@ def load_policy(path: Path) -> dict[str, Any]:
             "tracked policy must not contain self-referential authorization"
         )
     expected_ceilings = {
-        "base_provider_requests": 314,
-        "physical_attempts": 628,
+        "base_provider_requests": 321,
+        "physical_attempts": 642,
         "input_tokens": 7416320,
         "output_tokens": 1056768,
         "cost_usd": "30.00000000",
@@ -722,12 +800,28 @@ def load_policy(path: Path) -> dict[str, Any]:
     }
     if value["ceilings"] != expected_ceilings:
         raise ValueError("R28-S04 ceilings differ from the approved protocol")
+    if value["routing"].get("corpus_embedding_requests") != len(CORPUS_BATCH_SIZES):
+        raise ValueError("R28-S04 corpus routing differs from approved batching")
+    corpus_limit = value["stage_limits"].get("corpus_embedding")
+    if corpus_limit != {
+        "base_requests": 8,
+        "maximum_attempts": 16,
+        "input_tokens_per_attempt": 93750,
+        "output_tokens_per_attempt": 0,
+        "maximum_items_per_request": 128,
+        "maximum_request_bytes_per_attempt": 524288,
+        "pricing_key": "voyage_embedding",
+    }:
+        raise ValueError("R28-S04 corpus batch authority differs from approval")
+    if corpus_limit["input_tokens_per_attempt"] >= 120000:
+        raise ValueError("corpus batch token allowance is not below provider limit")
     profile_binding = {
         "provider_profiles": value["provider_profiles"],
         "retrieval_configuration": value["retrieval_configuration"],
         "routing": value["routing"],
         "required_evaluation_routes": value["required_evaluation_routes"],
         "ceilings": value["ceilings"],
+        "stage_limits": value["stage_limits"],
     }
     if value["execution_profile_digest"] != digest_value(profile_binding):
         raise ValueError("R28-S04 execution-profile digest is invalid")
@@ -825,7 +919,13 @@ def request_id(run_id: str, stage: str, subject: str) -> str:
 def route_plan(
     population: Mapping[str, Any], policy: Mapping[str, Any], run_id: str
 ) -> list[dict[str, str]]:
-    routes = [{"stage": "corpus_embedding", "subject": "frozen-primary-corpus"}]
+    routes = [
+        {
+            "stage": "corpus_embedding",
+            "subject": f"frozen-primary-corpus:batch-{batch:04d}",
+        }
+        for batch in range(1, len(CORPUS_BATCH_SIZES) + 1)
+    ]
     retrieval_subjects: list[str] = []
     route_by_case = {
         case_id: route
@@ -858,7 +958,8 @@ def route_plan(
                     )
                 )
     routes.insert(
-        1, {"stage": "query_embedding", "subject": digest_value(retrieval_subjects)}
+        len(CORPUS_BATCH_SIZES),
+        {"stage": "query_embedding", "subject": digest_value(retrieval_subjects)},
     )
     for route in routes:
         route["request_id"] = request_id(run_id, route["stage"], route["subject"])
@@ -1124,7 +1225,11 @@ class RealProviderAdapters:
                 "APIConnectionError",
                 "InternalServerError",
             }:
-                raise RetryableDispatchError(type(error).__name__) from error
+                raise RetryableDispatchError(
+                    type(error).__name__,
+                    provider_status=getattr(error, "provider_status", None),
+                    provider_error_code=getattr(error, "code", None),
+                ) from error
             raise
 
     def corpus_embedding(self, payload: Mapping[str, Any]) -> ProviderResult:
@@ -1178,6 +1283,7 @@ class RecordingProviderAdapters:
 
     def __init__(self) -> None:
         self.calls: list[tuple[str, str]] = []
+        self.payloads: list[tuple[str, Mapping[str, Any]]] = []
         self.internal_attempts = 1
 
     def assert_internal_retries_disabled(self) -> None:
@@ -1187,9 +1293,14 @@ class RecordingProviderAdapters:
     def _call(self, stage: str, payload: Mapping[str, Any]) -> ProviderResult:
         request_digest = digest_value(payload)
         self.calls.append((stage, request_digest))
+        self.payloads.append((stage, payload))
         value: dict[str, Any] = {"stage": stage, "request_digest": request_digest}
         if stage in {"corpus_embedding", "query_embedding"}:
-            value["vectors"] = [[1.0, 0.0]] * len(payload["items"])
+            dimensions = payload["profile"]["dimensions"]
+            value["source_ids"] = [item["source_id"] for item in payload["items"]]
+            value["vectors"] = [[1.0] + [0.0] * (dimensions - 1)] * len(
+                payload["items"]
+            )
         elif stage == "reranker":
             value["candidates"] = [
                 {
@@ -1328,9 +1439,14 @@ def build_corpus_chunks(root: Path) -> list[dict[str, Any]]:
                 )
                 chunked = chunker.chunk(normaliser.normalise(extracted))
                 for item in chunked.chunks:
+                    stable_chunk_id = uuid5(
+                        NAMESPACE_URL,
+                        f"r28-s04:{tenant}:{document['family_id']}:"
+                        f"{document['version_id']}:{item.ordinal}",
+                    )
                     records.append(
                         {
-                            "chunk_id": str(item.id),
+                            "chunk_id": str(stable_chunk_id),
                             "document_id": str(document_id),
                             "family_id": document["family_id"],
                             "version_id": document["version_id"],
@@ -1352,10 +1468,19 @@ def build_corpus_chunks(root: Path) -> list[dict[str, Any]]:
 
 
 def embedding_payload(
-    records: list[dict[str, Any]], *, purpose: str, workspace_id: UUID
+    records: list[dict[str, Any]],
+    *,
+    purpose: str,
+    workspace_id: UUID,
+    correlation_subject: str | None = None,
 ) -> dict[str, Any]:
     return {
-        "correlation_id": str(uuid5(NAMESPACE_URL, f"r28-s04:{purpose}")),
+        "correlation_id": str(
+            uuid5(
+                NAMESPACE_URL,
+                f"r28-s04:{purpose}:{correlation_subject or 'complete'}",
+            )
+        ),
         "workspace_id": str(workspace_id),
         "document_id": None,
         "profile": {
@@ -1377,10 +1502,78 @@ def embedding_payload(
     }
 
 
-def _vectors(value: Mapping[str, Any]) -> list[list[float]]:
+def corpus_batches(records: list[dict[str, Any]]) -> list[list[dict[str, Any]]]:
+    if len(records) != CORPUS_CHUNK_COUNT:
+        raise ValueError("corpus batching requires exactly 1,000 chunks")
+    batches = [
+        records[start : start + CORPUS_BATCH_SIZE]
+        for start in range(0, len(records), CORPUS_BATCH_SIZE)
+    ]
+    if tuple(len(batch) for batch in batches) != CORPUS_BATCH_SIZES:
+        raise ValueError("corpus batch shape differs from approved routing")
+    return batches
+
+
+def embedding_provider_body(payload: Mapping[str, Any]) -> dict[str, Any]:
+    profile = payload["profile"]
+    return {
+        "input": [item["text"] for item in payload["items"]],
+        "model": profile["model"],
+        "input_type": (
+            profile["document_input_type"]
+            if payload["purpose"] == "document"
+            else profile["query_input_type"]
+        ),
+        "truncation": profile["truncation"],
+        "output_dimension": profile["dimensions"],
+        "output_dtype": profile["output_dtype"],
+    }
+
+
+def measure_corpus_batch(
+    root: Path, payload: Mapping[str, Any], limit: Mapping[str, Any]
+) -> dict[str, int]:
+    del root
+    import tiktoken
+
+    item_count = len(payload["items"])
+    if version("tiktoken") != "0.13.0":
+        raise RuntimeError("governed tokenizer version mismatch")
+    tokenizer = tiktoken.get_encoding("o200k_base")
+    token_count = sum(len(tokenizer.encode(item["text"])) for item in payload["items"])
+    request_bytes = len(canonical_bytes(embedding_provider_body(payload)))
+    if item_count > limit["maximum_items_per_request"]:
+        raise ValueError("corpus_batch_item_limit_exceeded")
+    if token_count > limit["input_tokens_per_attempt"]:
+        raise ValueError("corpus_batch_token_allowance_exceeded")
+    if request_bytes > limit["maximum_request_bytes_per_attempt"]:
+        raise ValueError("corpus_batch_request_byte_allowance_exceeded")
+    return {
+        "items": item_count,
+        "diagnostic_tokens": token_count,
+        "request_bytes": request_bytes,
+    }
+
+
+def _vectors(payload: Mapping[str, Any], value: Mapping[str, Any]) -> list[list[float]]:
+    expected_ids = [item["source_id"] for item in payload["items"]]
+    dimensions = payload["profile"]["dimensions"]
     if "vectors" in value:
-        return value["vectors"]
-    return [item["values"] for item in value["embeddings"]]
+        actual_ids = value.get("source_ids")
+        vectors = value["vectors"]
+    else:
+        embeddings = value["embeddings"]
+        actual_ids = [item["source_id"] for item in embeddings]
+        vectors = [item["values"] for item in embeddings]
+        if any(item.get("dimensions") != dimensions for item in embeddings):
+            raise ValueError("embedding result dimensions differ from request")
+    if actual_ids != expected_ids or len(set(actual_ids or [])) != len(expected_ids):
+        raise ValueError("embedding result source ordering/identity mismatch")
+    if len(vectors) != len(expected_ids):
+        raise ValueError("embedding result count mismatch")
+    if any(len(vector) != dimensions for vector in vectors):
+        raise ValueError("embedding vector dimension mismatch")
+    return vectors
 
 
 def _cosine(left: list[float], right: list[float]) -> float:
@@ -1676,20 +1869,36 @@ class LiveExecutionEngine:
         else:
             chunks = build_corpus_chunks(self.root)
         chunks_by_id = {item["chunk_id"]: item for item in chunks}
-        corpus_payload = embedding_payload(
-            chunks, purpose="document", workspace_id=self.workspace_id
-        )
-        corpus_result = self.gateway.corpus_embedding(
-            dispatch_request_for(
-                self.policy,
-                self.run_id,
-                "corpus_embedding",
-                "frozen-primary-corpus",
+        corpus_vectors: list[list[float]] = []
+        corpus_measurements: list[dict[str, int | str]] = []
+        for batch_number, batch in enumerate(corpus_batches(chunks), 1):
+            subject = f"frozen-primary-corpus:batch-{batch_number:04d}"
+            corpus_payload = embedding_payload(
+                batch,
+                purpose="document",
+                workspace_id=self.workspace_id,
+                correlation_subject=subject,
+            )
+            measurement = measure_corpus_batch(
+                self.root,
                 corpus_payload,
-            ),
-            lambda: self.adapters.corpus_embedding(corpus_payload),
-        )
-        corpus_vectors = _vectors(corpus_result.value)
+                self.policy["stage_limits"]["corpus_embedding"],
+            )
+            corpus_measurements.append({"subject": subject, **measurement})
+            bound_corpus_payload: Mapping[str, Any] = corpus_payload
+            corpus_result = self.gateway.corpus_embedding(
+                dispatch_request_for(
+                    self.policy,
+                    self.run_id,
+                    "corpus_embedding",
+                    subject,
+                    corpus_payload,
+                ),
+                partial(self.adapters.corpus_embedding, bound_corpus_payload),
+            )
+            corpus_vectors.extend(_vectors(corpus_payload, corpus_result.value))
+        if len(corpus_vectors) != len(chunks):
+            raise ValueError("recombined corpus embedding count mismatch")
         retrieval: list[tuple[dict[str, Any], dict[str, Any], str]] = []
         for case in population["cases"]:
             for variant in case["variants"]:
@@ -1717,7 +1926,7 @@ class LiveExecutionEngine:
             ),
             lambda: self.adapters.query_embedding(query_payload),
         )
-        query_vectors = _vectors(query_result.value)
+        query_vectors = _vectors(query_payload, query_result.value)
         sparse_matrix = sparse_scores(
             self.root,
             chunks,
@@ -1999,6 +2208,7 @@ class LiveExecutionEngine:
                 for _variant in case["variants"]
             ),
             "actual_deterministic_terminations": deterministic,
+            "corpus_embedding_batches": corpus_measurements,
             "observations": observations,
         }
 

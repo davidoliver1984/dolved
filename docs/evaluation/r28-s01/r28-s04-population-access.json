@@ -32,6 +32,7 @@
   "execution_protocol": {
     "routing": {
       "all_utterances": 148,
+      "corpus_embedding_requests": 8,
       "retrieval_utterances": 106,
       "maximum_reranking_utterances": 96,
       "generation_utterances": 86,
@@ -51,8 +52,12 @@
       "query_embedding_items": 106,
       "reranker_base_http_requests": 140,
       "reranker_maximum_attempts": 280,
-      "total_base_provider_requests": 314,
-      "total_maximum_physical_attempts": 628,
+      "corpus_embedding_maximum_attempts": 16,
+      "corpus_embedding_maximum_items_per_request": 128,
+      "corpus_embedding_input_tokens_per_attempt": 93750,
+      "corpus_embedding_request_bytes_per_attempt": 524288,
+      "total_base_provider_requests": 321,
+      "total_maximum_physical_attempts": 642,
       "total_input_tokens": 7416320,
       "total_output_tokens": 1056768,
       "generation_calls": 86,

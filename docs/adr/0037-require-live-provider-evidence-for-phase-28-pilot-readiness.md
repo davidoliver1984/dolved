@@ -12,6 +12,20 @@ Accepted
 
 David approved this decision on 2026-09-04.
 
+### Post-acceptance provider-input compatibility clarification — 2026-09-04
+
+David approved a narrow execution-routing correction after immutable Run 0001
+demonstrated that sending all 1,000 corpus chunks in one Voyage
+`voyage-4-large` request exceeded the provider's 120,000 aggregate-token request
+limit. Corpus embedding is therefore eight deterministic, original-order
+batches of at most 128 chunks (128/128/128/128/128/128/128/104), each with its
+own governed logical-request and attempt lineage. This changes the Phase 28
+whole-run authority from 314 to 321 logical requests and from 628 to 642 maximum
+physical attempts. The approved input-token, output-token, USD, concurrency,
+retry and wall-clock ceilings remain unchanged. This clarification repairs
+provider-input compatibility only; it does not alter the live-evidence decision
+or any evaluation threshold.
+
 ## Relationship to ADR-0029
 
 ADR-0029 remains historically correct and authoritative for ordinary development

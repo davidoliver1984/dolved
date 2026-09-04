@@ -63,7 +63,8 @@ environment evidence rather than canonical distribution hashes.
 - David approved ADR-0037 and the corrected R28-S04 routing and ceilings.
 - All 148 utterances are now assigned to their required route: 106 retrieval,
   at most 96 reranking, 86 generation/judging and 62 deterministic termination.
-- The hard ceilings are 314 base provider requests, 628 maximum physical attempts,
+- As amended by David's approved 2026-09-04 provider-input compatibility
+  correction, the hard ceilings are 321 base provider requests, 642 maximum physical attempts,
   7,416,320 input tokens, 1,056,768 output tokens, USD 30, concurrency 1 and 180
   minutes.
 - The canonical freeze verifier enforces immutable/correction/replacement metadata,

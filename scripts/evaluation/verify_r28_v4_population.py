@@ -65,6 +65,7 @@ REPLACEMENT_RULE = "No later run may silently replace this population."
 EXPECTED_SCOPES = {"primary": 62, "foreign_tenant": 6, "security_test": 6}
 EXPECTED_ROUTING = {
     "all_utterances": 148,
+    "corpus_embedding_requests": 8,
     "retrieval_utterances": 106,
     "maximum_reranking_utterances": 96,
     "generation_utterances": 86,
@@ -82,10 +83,14 @@ EXPECTED_ROUTING = {
 }
 EXPECTED_CEILINGS = {
     "query_embedding_items": 106,
+    "corpus_embedding_maximum_attempts": 16,
+    "corpus_embedding_maximum_items_per_request": 128,
+    "corpus_embedding_input_tokens_per_attempt": 93_750,
+    "corpus_embedding_request_bytes_per_attempt": 524_288,
     "reranker_base_http_requests": 140,
     "reranker_maximum_attempts": 280,
-    "total_base_provider_requests": 314,
-    "total_maximum_physical_attempts": 628,
+    "total_base_provider_requests": 321,
+    "total_maximum_physical_attempts": 642,
     "total_input_tokens": 7_416_320,
     "total_output_tokens": 1_056_768,
     "generation_calls": 86,
@@ -525,7 +530,7 @@ def validate_execution_protocol(protocol: dict[str, Any]) -> None:
         "deterministic termination mismatch",
     )
     require(
-        1
+        routing["corpus_embedding_requests"]
         + 1
         + ceilings["reranker_base_http_requests"]
         + ceilings["generation_calls"]
@@ -534,7 +539,11 @@ def validate_execution_protocol(protocol: dict[str, Any]) -> None:
         "base provider request arithmetic mismatch",
     )
     require(
-        ceilings["total_base_provider_requests"] * 2
+        ceilings["corpus_embedding_maximum_attempts"]
+        + 2
+        + ceilings["reranker_maximum_attempts"]
+        + ceilings["generation_calls"] * 2
+        + ceilings["judge_calls"] * 2
         == ceilings["total_maximum_physical_attempts"],
         "maximum attempt arithmetic mismatch",
     )

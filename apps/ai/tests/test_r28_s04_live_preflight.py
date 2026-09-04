@@ -99,15 +99,15 @@ def test_zero_provider_dry_run_accounts_for_all_routes_and_limits() -> None:
         "TEMPORAL_SCOPE_UNRESOLVED": 10,
     }
     assert result["routing"] == {
-        "corpus_embedding": 1,
+        "corpus_embedding": 8,
         "query_embedding": 1,
         "reranker": 140,
         "generation": 86,
         "judge": 86,
     }
     assert result["budget"] | {"provider_calls": result["provider_calls"]} == {
-        "base_provider_requests": 314,
-        "physical_attempts": 628,
+        "base_provider_requests": 321,
+        "physical_attempts": 642,
         "input_tokens": 7_416_320,
         "output_tokens": 1_056_768,
         "maximum_planned_cost_usd": "3.30086400",
@@ -199,6 +199,112 @@ def test_comparison_sides_are_independent_dispatches() -> None:
     assert any(subject.endswith(":PRIMARY") for subject in subjects)
     assert any(subject.endswith(":COMPARISON") for subject in subjects)
     assert len({route["request_id"] for route in rerank}) == 140
+
+
+def lightweight_chunks(runner):
+    return [
+        {
+            "chunk_id": str(runner.uuid5(runner.NAMESPACE_URL, f"batch-proof:{index}")),
+            "text": f"bounded corpus batch proof {index}",
+        }
+        for index in range(1000)
+    ]
+
+
+def test_corpus_batches_have_exact_approved_shape_and_stable_request_ids() -> None:
+    runner, policy = policy_value()
+    batches = runner.corpus_batches(lightweight_chunks(runner))
+    assert tuple(map(len, batches)) == (128, 128, 128, 128, 128, 128, 128, 104)
+    population = json.loads((ROOT / policy["population_path"]).read_text())
+    first = runner.route_plan(population, policy, RUN_ID)
+    second = runner.route_plan(population, policy, RUN_ID)
+    corpus = [item for item in first if item["stage"] == "corpus_embedding"]
+    assert first == second
+    assert [item["subject"] for item in corpus] == [
+        f"frozen-primary-corpus:batch-{number:04d}" for number in range(1, 9)
+    ]
+    assert len({item["request_id"] for item in corpus}) == 8
+
+
+@pytest.mark.parametrize(
+    ("limit_name", "limit_value", "message"),
+    [
+        ("maximum_items_per_request", 127, "item_limit"),
+        ("input_tokens_per_attempt", 1, "token_allowance"),
+        ("maximum_request_bytes_per_attempt", 1, "byte_allowance"),
+    ],
+)
+def test_corpus_batch_preflight_fails_closed_before_dispatch(
+    limit_name, limit_value, message
+) -> None:
+    runner, policy = policy_value()
+    payload = runner.embedding_payload(
+        runner.corpus_batches(lightweight_chunks(runner))[0],
+        purpose="document",
+        workspace_id=runner.uuid5(runner.NAMESPACE_URL, "workspace"),
+        correlation_subject="batch-0001",
+    )
+    limits = copy.deepcopy(policy["stage_limits"]["corpus_embedding"])
+    limits[limit_name] = limit_value
+    with pytest.raises(ValueError, match=message):
+        runner.measure_corpus_batch(ROOT, payload, limits)
+
+
+@pytest.mark.parametrize("mutation", ["missing", "duplicate", "reordered", "dimension"])
+def test_embedding_recombination_rejects_invalid_provider_vectors(mutation) -> None:
+    runner = module()
+    records = lightweight_chunks(runner)[:3]
+    payload = runner.embedding_payload(
+        records,
+        purpose="document",
+        workspace_id=runner.uuid5(runner.NAMESPACE_URL, "workspace"),
+    )
+    ids = [item["source_id"] for item in payload["items"]]
+    vectors = [[1.0] + [0.0] * 1023 for _ in ids]
+    if mutation == "missing":
+        ids, vectors = ids[:-1], vectors[:-1]
+    elif mutation == "duplicate":
+        ids[1] = ids[0]
+    elif mutation == "reordered":
+        ids[0], ids[1] = ids[1], ids[0]
+    else:
+        vectors[0] = [1.0, 0.0]
+    with pytest.raises(ValueError):
+        runner._vectors(payload, {"source_ids": ids, "vectors": vectors})
+
+
+@pytest.mark.parametrize(
+    ("status", "expected_code"),
+    [
+        (400, "invalid_input"),
+        (401, "authentication_failed"),
+        (403, "authentication_failed"),
+        (413, "input_too_large"),
+        (422, "invalid_input"),
+        (429, "rate_limited"),
+        (503, "provider_unavailable"),
+    ],
+)
+def test_safe_provider_failure_records_only_allowlisted_status_and_code(
+    tmp_path, status, expected_code
+) -> None:
+    runner, policy = policy_value()
+    gate, ledger = gateway(tmp_path, runner, policy)
+
+    class SafeFailure(RuntimeError):
+        provider_status = status
+
+    with pytest.raises(SafeFailure):
+        gate.corpus_embedding(
+            request(runner, policy, "corpus_embedding", "safe-failure"),
+            lambda: (_ for _ in ()).throw(SafeFailure("sensitive provider body")),
+        )
+    failure = next(
+        item for item in ledger.events if item["event_type"] == "attempt_failed"
+    )
+    assert failure["provider_status"] == status
+    assert failure["provider_error_code"] == expected_code
+    assert "sensitive provider body" not in ledger.events_path.read_text()
 
 
 def test_retry_is_one_only_and_has_durable_lineage(tmp_path) -> None:
@@ -531,14 +637,36 @@ async def test_complete_148_utterance_execution_uses_gateway_only(tmp_path) -> N
         == 42
     )
     assert Counter(stage for stage, _ in adapters.calls) == {
-        "corpus_embedding": 1,
+        "corpus_embedding": 8,
         "query_embedding": 1,
         "reranker": 140,
         "generation": 86,
         "judge": 86,
     }
-    assert budget.actual_attempts == 314
-    assert len(list(ledger.responses_dir.glob("*.json"))) == 314
+    execution = json.loads((ledger.run_dir / "execution-observations.json").read_text())
+    assert [item["items"] for item in execution["corpus_embedding_batches"]] == [
+        128,
+        128,
+        128,
+        128,
+        128,
+        128,
+        128,
+        104,
+    ]
+    corpus_payloads = [
+        payload for stage, payload in adapters.payloads if stage == "corpus_embedding"
+    ]
+    assert [
+        source_id
+        for payload in corpus_payloads
+        for source_id in [item["source_id"] for item in payload["items"]]
+    ] == [
+        str(runner.uuid5(runner.NAMESPACE_URL, f"proof:{index}"))
+        for index in range(1000)
+    ]
+    assert budget.actual_attempts == 321
+    assert len(list(ledger.responses_dir.glob("*.json"))) == 321
     assert (ledger.run_dir / "execution-observations.json").is_file()
     assert (ledger.run_dir / "answer-judgements.json").is_file()
     assert result["execution_observations_sha256"] == runner.sha256(
@@ -558,7 +686,109 @@ async def test_complete_148_utterance_execution_uses_gateway_only(tmp_path) -> N
     )
     assert resumed == result
     assert resumed_adapters.calls == []
-    assert resumed_budget.actual_attempts == 314
+    assert resumed_budget.actual_attempts == 321
+
+
+@pytest.mark.asyncio
+async def test_partial_corpus_batch_failure_stops_before_later_batches(
+    tmp_path,
+) -> None:
+    runner, policy = policy_value()
+
+    class FourthBatchFailure(runner.RecordingProviderAdapters):  # type: ignore[name-defined]
+        def __init__(self):
+            super().__init__()
+            self.corpus_calls = 0
+
+        def corpus_embedding(self, payload):
+            self.corpus_calls += 1
+            if self.corpus_calls == 4:
+                raise ValueError("deliberate batch failure")
+            return super().corpus_embedding(payload)
+
+    adapters = FourthBatchFailure()
+    identity = runner.run_identity(policy, RUN_ID, POLICY, "1" * 40, "2" * 64)
+    ledger = runner.AppendOnlyRunLedger(tmp_path / RUN_ID, identity, create=True)
+    budget = runner.HardBudget(policy["ceilings"], monotonic=lambda: 0.0)
+    gate = runner.BudgetedDispatchGateway(policy, budget, ledger)
+    with pytest.raises(ValueError, match="deliberate batch failure"):
+        await runner.LiveExecutionEngine(ROOT, policy, RUN_ID, gate, adapters).execute(
+            lightweight_corpus=True
+        )
+    corpus_events = [
+        event
+        for event in ledger.events
+        if event.get("request", {}).get("stage") == "corpus_embedding"
+        or (
+            event.get("request_id")
+            and event.get("request_id")
+            in {
+                runner.request_id(
+                    RUN_ID, "corpus_embedding", f"frozen-primary-corpus:batch-{n:04d}"
+                )
+                for n in range(1, 9)
+            }
+        )
+    ]
+    assert adapters.corpus_calls == 4
+    assert (
+        sum(event["event_type"] == "request_completed" for event in corpus_events) == 3
+    )
+    assert not any(
+        event.get("request_id")
+        == runner.request_id(
+            RUN_ID, "corpus_embedding", "frozen-primary-corpus:batch-0005"
+        )
+        for event in ledger.events
+    )
+
+
+def test_retry_authority_is_isolated_to_one_corpus_batch(tmp_path) -> None:
+    runner, policy = policy_value()
+    gate, ledger = gateway(tmp_path, runner, policy)
+    payload = runner.embedding_payload(
+        runner.corpus_batches(lightweight_chunks(runner))[3],
+        purpose="document",
+        workspace_id=runner.uuid5(runner.NAMESPACE_URL, "workspace"),
+        correlation_subject="frozen-primary-corpus:batch-0004",
+    )
+    item = runner.dispatch_request_for(
+        policy,
+        RUN_ID,
+        "corpus_embedding",
+        "frozen-primary-corpus:batch-0004",
+        payload,
+    )
+    calls = 0
+
+    def provider():
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise runner.RetryableDispatchError(
+                "rate_limited", provider_status=429, provider_error_code="rate_limited"
+            )
+        value = {
+            "source_ids": [entry["source_id"] for entry in payload["items"]],
+            "vectors": [[1.0] + [0.0] * 1023] * len(payload["items"]),
+        }
+        return runner.ProviderResult(
+            value,
+            runner.DispatchReceipt(
+                response_digest=runner.digest_value(value),
+                input_tokens=1,
+                output_tokens=0,
+            ),
+        )
+
+    result = gate.corpus_embedding(item, provider)
+    assert calls == 2
+    assert len(runner._vectors(payload, result.value)) == 128
+    failed = next(
+        event for event in ledger.events if event["event_type"] == "attempt_failed"
+    )
+    assert failed["provider_status"] == 429
+    assert failed["provider_error_code"] == "rate_limited"
 
 
 @pytest.mark.asyncio
@@ -628,7 +858,7 @@ async def test_no_selected_evidence_is_preserved_without_generation_or_judging(
     assert scored["system_correctness"]["outcome_accuracy"] < 1.0
     assert scored["preliminary_pilot_readiness"] == "NOT_PILOT_READY"
     assert Counter(stage for stage, _ in adapters.calls) == {
-        "corpus_embedding": 1,
+        "corpus_embedding": 8,
         "query_embedding": 1,
         "reranker": 140,
     }
@@ -833,7 +1063,7 @@ async def test_execution_completes_when_expectations_are_unavailable(tmp_path) -
     _, execution, adapters = await execute_with_population(tmp_path, population)
     assert len(execution["observations"]) == 148
     assert Counter(stage for stage, _ in adapters.calls) == {
-        "corpus_embedding": 1,
+        "corpus_embedding": 8,
         "query_embedding": 1,
         "reranker": 140,
         "generation": 86,
