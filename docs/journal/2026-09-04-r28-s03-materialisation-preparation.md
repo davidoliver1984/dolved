@@ -2,13 +2,13 @@
 
 ## Status
 
-R28-S03 is in progress. Seven immutable attempts have run; each failed closed
-and remains recorded below. Attempt `0008` is prepared but has not run.
+R28-S03 is in progress. Eight immutable attempts have run; each failed closed
+and remains recorded below. Attempt `0009` is prepared but has not run.
 
 ## Boundary
 
 The active immutable run identity is
-`R28-S03-V4-CORPUS-MATERIALISATION-0008`. It binds the frozen checkpoint 19
+`R28-S03-V4-CORPUS-MATERIALISATION-0009`. It binds the frozen checkpoint 19
 archive and its four governed scopes to a dedicated `dolved-r28-s03` local
 runtime. The primary, foreign-tenant and separate prompt-injection documents
 must pass through the authenticated ADR-0034 ImportBatch workflow. The 13
@@ -122,3 +122,16 @@ versions in one family to share an authority start. No selective rerun,
 provider call or AWS call occurred. Attempt `0008` applies the real governance
 actions through an E2E-only command at each frozen effective/supersession date,
 then begins from a fresh isolated runtime.
+
+## Attempt 0008 outcome
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0008` materialised and indexed all
+318 searchable documents across the three isolated workspaces and produced
+1,000 canonical chunks. It then failed closed before governance replay because
+the negative-fixture harness keyed the oversized-file validation result by the
+simulated request filename rather than the governed manifest fixture filename.
+Read-only inspection recorded 19 ImportBatch rows, 331 ImportItem rows, 329
+verified and two rejected preflight items, 318 indexed documents and all 318
+documents still in draft. No selective rerun, provider call or AWS call
+occurred. Attempt `0009` preserves the request filename as evidence but records
+the result under the exact manifest identity in a fresh isolated runtime.

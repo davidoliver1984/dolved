@@ -449,39 +449,50 @@ def exercise_negative_fixtures(
     validation_cases = [
         (
             "old-policy-export.pages",
+            "old-policy-export.pages",
             "application/octet-stream",
             175,
             "unsupported_extension",
         ),
         (
             "annual-company-report-2026-full.pdf",
+            "oversized-file-simulation.json",
             "application/pdf",
             31_457_280,
             "oversized_file_simulation",
         ),
     ]
-    for filename, declared_type, size, category in validation_cases:
+    for (
+        request_filename,
+        fixture_filename,
+        declared_type,
+        size,
+        category,
+    ) in validation_cases:
         try:
             client.post(
                 f"/api/workspaces/{workspace}/imports",
                 {
                     "files": [
                         {
-                            "filename": filename,
+                            "filename": request_filename,
                             "media_type": declared_type,
                             "size_bytes": size,
                         }
                     ]
                 },
             )
-            raise RuntimeError(f"Negative validation unexpectedly accepted {filename}")
+            raise RuntimeError(
+                f"Negative validation unexpectedly accepted {request_filename}"
+            )
         except ApiFailure as exc:
             if exc.status != 422:
                 raise
-            outcomes[filename] = {
+            outcomes[fixture_filename] = {
                 "category": category,
                 "outcome": "validation_rejected",
                 "http_status": 422,
+                "request_filename": request_filename,
             }
 
     corrupt_files = [

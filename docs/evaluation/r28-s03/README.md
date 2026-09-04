@@ -1,6 +1,6 @@
 # R28-S03 V4 corpus materialisation
 
-`R28-S03-V4-CORPUS-MATERIALISATION-0008` materialises the frozen V4 corpus
+`R28-S03-V4-CORPUS-MATERIALISATION-0009` materialises the frozen V4 corpus
 through the real authenticated ADR-0034 import workflow in a dedicated local
 Docker project. It uses only the deterministic provider profile. It does not
 consume the R28-S04 live Voyage allowance and makes no OpenAI, Voyage or AWS
@@ -81,3 +81,16 @@ call occurred. Attempt `0008` moves governance replay to an isolated E2E-only
 command that calls the real approval and withdrawal actions at the frozen
 manifest dates. This preserves historical authority semantics without changing
 production governance behavior.
+
+Attempt `0008` materialised and indexed all 318 searchable documents across
+the three isolated workspaces, producing 1,000 canonical chunks. It then
+failed closed at the exact negative-fixture inventory check before governance
+replay. The oversized-file simulation is represented in the governed manifest
+by `oversized-file-simulation.json`, while the harness necessarily submitted a
+simulated oversized PDF request and incorrectly used that request filename as
+the outcome identity. The database retained 19 batches, 331 items, 329 verified
+preflight items, two rejected preflight items, 318 indexed documents and all
+318 documents in draft. No selective rerun, provider call or AWS call occurred.
+Attempt `0009` records the outcome under the governed fixture identity while
+retaining the submitted request filename as evidence, and begins from a fresh
+isolated runtime.
