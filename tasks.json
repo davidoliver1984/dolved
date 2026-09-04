@@ -5394,11 +5394,19 @@
           "id": "R28-S02",
           "guide_stage": "Stage 28.2 — Run the approved current-code live baseline",
           "title": "Run the Approved Current-Code Live Baseline",
-          "status": "in_progress",
+          "status": "completed",
           "depends_on": [
             "R28-S01"
           ],
-          "objective": "Run the existing approved live retrieval and generation wrappers, over the pre-existing evaluation population whose identity, checksum, counts, split classification and compatibility were already verified and recorded by R28-S01, against one exact clean commit under the frozen protocol, keeping retrieval and generation identities distinct, recording complete provider/model/prompt/configuration lineage and enforcing every hard ceiling. This session is the current-code live baseline over that pre-existing bound population only — distinct from, and never merged or compared as identical with, the newly authored V4 evaluation population run in R28-S04. This session must not discover or choose its population after provider execution begins; if R28-S01 could not verify the population, this session remains blocked."
+          "objective": "Run the existing approved live retrieval and generation wrappers, over the pre-existing evaluation population whose identity, checksum, counts, split classification and compatibility were already verified and recorded by R28-S01, against one exact clean commit under the frozen protocol, keeping retrieval and generation identities distinct, recording complete provider/model/prompt/configuration lineage and enforcing every hard ceiling. This session is the current-code live baseline over that pre-existing bound population only — distinct from, and never merged or compared as identical with, the newly authored V4 evaluation population run in R28-S04. This session must not discover or choose its population after provider execution begins; if R28-S01 could not verify the population, this session remains blocked.",
+          "completion_evidence": [
+            "David approved the completed first-pass baseline for durable recording and session closure on 2026-09-04",
+            "Exact execution commit b8366fc5711eb253a9b69e366120267216417153; one pass; zero retries; zero selective reruns; zero held-out access",
+            "Retrieval R28-S02-LIVE-RETRIEVAL-BASELINE-0001: legacy V2 23 cases / 25 variants; hybrid Recall@K 1.0000, Precision@K 0.1130, MRR 0.5014, nDCG@K 0.9516; absolute failures 0",
+            "Generation GEN-SEC-LIVE-R28-S02-BASELINE-0001: 3/3 hostile-evidence smoke cases passed; unsupported claims and unsafe injection compliance 0",
+            "Combined usage: 24/33 attempts; 7,768/600,000 input tokens; 1,565/18,432 output tokens; estimated USD 0.00458887/15",
+            "docs/journal/2026-09-04-r28-s02-live-baseline.md"
+          ]
         },
         {
           "id": "R28-S03",

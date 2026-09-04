@@ -1,0 +1,48 @@
+{
+  "evaluation_harness_digest": "8827e3c09f7e97ed90ce55f633f1a131d67ab59fb8737666b3ed98c010ef8aa1",
+  "evaluation_harness_uncommitted": false,
+  "evaluation_harness_version": "generation-evaluation-v2",
+  "evaluator_lineage": {
+    "cost_basis": "estimated_from_provider_usage",
+    "fingerprint": "9d923db3b89472a9f832b37117a6f22b45b3553bff962a88935db6ac82d9ead7",
+    "implementation": "openai-grounded-answer-evaluator",
+    "metrics": [
+      "ANSWER_PART_GROUNDEDNESS",
+      "ANSWER_FACTUAL_PRECISION",
+      "ANSWER_COMPLETENESS",
+      "QUALIFIED_USEFULNESS",
+      "INSUFFICIENCY_CORRECTNESS"
+    ],
+    "model": "gpt-5-mini",
+    "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+    "prompt_version": "grounded-answer-evaluator-v1",
+    "provider": "openai",
+    "representation_version": "generation-result-evaluation-v1",
+    "same_model_as_generator": true,
+    "version": "v1"
+  },
+  "experiment_id": "GEN-SEC-LIVE-R28-S02-BASELINE-0001",
+  "generation_lineage": {
+    "adapter_version": "openai-responses-v1",
+    "contract_version": "generation-result-v1",
+    "fingerprint": "40a18f357fbc864ff54781e607300c3374dd65829563fc2b334a2876de19b2f5",
+    "model": "gpt-5-mini",
+    "prompt_version": "grounded-generation-v2",
+    "provider": "openai",
+    "quality_affecting_configuration": {
+      "context_window_tokens": 400000,
+      "max_output_tokens": 4096,
+      "reasoning_effort": "low",
+      "store": false,
+      "truncation": "disabled"
+    }
+  },
+  "population_digest": "753e76c7dd91110c4e5277ed342fbcb83d352f7cf09e06634be7b1ccdcdda119",
+  "population_id": "prompt-injection-v1",
+  "repository_commit": "b8366fc5711eb253a9b69e366120267216417153",
+  "retrieval_executed": false,
+  "schema_version": "v1",
+  "sealed_held_out_accessed": false,
+  "selective_rerun_permitted": false,
+  "trial_count": 1
+}

@@ -1,0 +1,18 @@
+{
+  "corpus_digest": "0e78f8e57a3d9c358ae08bdf7e97ded151cc4111cf934f48342427a2a187c1af",
+  "corpus_sha256": "3578e6877ff3e33a313774ea83c6d3edbe4749b491ac148d038a3a8475cb82f3",
+  "experiment_id": "R28-S02-LIVE-RETRIEVAL-BASELINE-0001",
+  "policy_id": "r28-s02-live-retrieval-v1",
+  "policy_sha256": "3d4f7271c96ed00844bc9f3a59c342e0df0df9aba551bc56cc0e8d4ef660305f",
+  "preflight": {
+    "case_count": 23,
+    "provider_cost_upper_bound_usd": 0.00125193,
+    "provider_input_token_upper_bound": 23024,
+    "variant_count": 25
+  },
+  "quality_policy_sha256": "a66796efa4e5e3eec65e2ecf495dcb66db8ea7a668e4f998902a30369da564e8",
+  "repository_commit": "b8366fc5711eb253a9b69e366120267216417153",
+  "schema_version": "v1",
+  "sealed_held_out_accessed": false,
+  "selective_rerun_permitted": false
+}
