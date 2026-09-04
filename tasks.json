@@ -40,7 +40,7 @@
   "progress": {
     "current_phase": "R28",
     "current_session": "R28-S02",
-    "next_action": "Begin R28-S02 separately under the frozen protocol; do not make any provider call without its explicit execution approval.",
+    "next_action": "Review the provider-free R28-S02 execution preflight and explicitly approve or reject the single live baseline; no provider call is authorised yet.",
     "completed_through": "R27-GATE",
     "completed_phase_count": 28,
     "total_phase_count": 33
@@ -5394,7 +5394,7 @@
           "id": "R28-S02",
           "guide_stage": "Stage 28.2 — Run the approved current-code live baseline",
           "title": "Run the Approved Current-Code Live Baseline",
-          "status": "not_started",
+          "status": "in_progress",
           "depends_on": [
             "R28-S01"
           ],

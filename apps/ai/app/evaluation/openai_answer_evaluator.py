@@ -8,6 +8,7 @@ import time
 from typing import Any, Literal
 
 import openai
+import tiktoken
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.evaluation.models import (
@@ -73,6 +74,12 @@ class OpenAIAnswerEvaluator:
         max_attempts: int = 2,
         max_output_tokens: int = 2048,
         timeout_seconds: float = 120,
+        maximum_total_input_tokens: int | None = None,
+        maximum_total_cost_usd: float | None = None,
+        input_cost_per_million_tokens_usd: float = 0.25,
+        cached_input_cost_per_million_tokens_usd: float = 0.025,
+        output_cost_per_million_tokens_usd: float = 2.0,
+        pricing_snapshot: str = "openai-gpt-5-mini-pricing-2026-08-19",
         client: Any | None = None,
     ) -> None:
         if not api_key.strip():
@@ -81,12 +88,28 @@ class OpenAIAnswerEvaluator:
             raise ValueError("answer evaluator attempts must be positive")
         if max_output_tokens < 1:
             raise ValueError("answer evaluator output tokens must be positive")
+        if maximum_total_input_tokens is not None and maximum_total_input_tokens < 1:
+            raise ValueError("answer evaluator input-token ceiling must be positive")
+        if maximum_total_cost_usd is not None and maximum_total_cost_usd <= 0:
+            raise ValueError("answer evaluator cost ceiling must be positive")
         self._client = client or openai.AsyncOpenAI(
             api_key=api_key, max_retries=0, timeout=timeout_seconds
         )
         self._model = model
         self._max_attempts = max_attempts
         self._max_output_tokens = max_output_tokens
+        self._maximum_total_input_tokens = maximum_total_input_tokens
+        self._maximum_total_cost_usd = maximum_total_cost_usd
+        self._reserved_input_tokens = 0
+        self._reserved_cost_usd = 0.0
+        self._input_cost_per_million = input_cost_per_million_tokens_usd
+        self._cached_input_cost_per_million = cached_input_cost_per_million_tokens_usd
+        self._output_cost_per_million = output_cost_per_million_tokens_usd
+        self._pricing_snapshot = pricing_snapshot
+        try:
+            self._encoding = tiktoken.encoding_for_model(model)
+        except KeyError:
+            self._encoding = tiktoken.get_encoding("o200k_base")
         self._identity = {
             "implementation": EVALUATOR_IMPLEMENTATION,
             "version": EVALUATOR_VERSION,
@@ -95,6 +118,7 @@ class OpenAIAnswerEvaluator:
             "prompt_version": EVALUATOR_PROMPT_VERSION,
             "representation_version": EVALUATOR_REPRESENTATION_VERSION,
             "fingerprint": self.fingerprint(model),
+            "pricing_snapshot": pricing_snapshot,
         }
 
     @staticmethod
@@ -122,8 +146,29 @@ class OpenAIAnswerEvaluator:
         if request.generated_result is None:
             return self._failure(request, "structured_generation_result_required", 0, 0)
         rendered = self._render(request)
+        measured_input_tokens = self._measure(rendered)
         started = time.monotonic()
         for attempt in range(1, self._max_attempts + 1):
+            projected_cost = self._estimated_cost(
+                measured_input_tokens, 0, self._max_output_tokens
+            )
+            assert projected_cost is not None
+            if (
+                self._maximum_total_input_tokens is not None
+                and self._reserved_input_tokens + measured_input_tokens
+                > self._maximum_total_input_tokens
+            ):
+                return self._failure(
+                    request, "input_token_ceiling_exceeded", attempt - 1, 0
+                )
+            if (
+                self._maximum_total_cost_usd is not None
+                and self._reserved_cost_usd + projected_cost
+                > self._maximum_total_cost_usd
+            ):
+                return self._failure(request, "cost_ceiling_exceeded", attempt - 1, 0)
+            self._reserved_input_tokens += measured_input_tokens
+            self._reserved_cost_usd += projected_cost
             try:
                 response = await self._client.responses.parse(
                     model=self._model,
@@ -201,6 +246,41 @@ class OpenAIAnswerEvaluator:
             value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
         )
 
+    def _measure(self, rendered: str) -> int:
+        schema = json.dumps(
+            AnswerEvaluationOutput.model_json_schema(),
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        return (
+            sum(
+                len(self._encoding.encode(value))
+                for value in (SYSTEM_PROMPT, rendered, schema)
+            )
+            + 16
+        )
+
+    def _estimated_cost(
+        self,
+        input_tokens: int | None,
+        cached_input_tokens: int | None,
+        output_tokens: int | None,
+    ) -> float | None:
+        if input_tokens is None or output_tokens is None:
+            return None
+        cached = cached_input_tokens or 0
+        if cached < 0 or cached > input_tokens:
+            return None
+        return round(
+            (
+                (input_tokens - cached) * self._input_cost_per_million
+                + cached * self._cached_input_cost_per_million
+                + output_tokens * self._output_cost_per_million
+            )
+            / 1_000_000,
+            8,
+        )
+
     def _validate_output(
         self,
         request: ModelAssistedEvaluationRequest,
@@ -275,6 +355,9 @@ class OpenAIAnswerEvaluator:
         usage = getattr(response, "usage", None)
         input_tokens = getattr(usage, "input_tokens", None)
         output_tokens = getattr(usage, "output_tokens", None)
+        input_details = getattr(usage, "input_tokens_details", None)
+        cached_input_tokens = getattr(input_details, "cached_tokens", None)
+        cost = self._estimated_cost(input_tokens, cached_input_tokens, output_tokens)
         assert request.generated_result is not None
         part_indices = tuple(
             part.part_index for part in request.generated_result.answer_parts
@@ -296,7 +379,7 @@ class OpenAIAnswerEvaluator:
                     retry_count=retry_count,
                     input_tokens=input_tokens,
                     output_tokens=output_tokens,
-                    cost_usd=None,
+                    cost_usd=cost,
                 )
                 for metric in request.metrics
             ),
@@ -311,7 +394,7 @@ class OpenAIAnswerEvaluator:
             retry_count=retry_count,
             input_tokens=input_tokens,
             output_tokens=output_tokens,
-            cost_usd=None,
+            cost_usd=cost,
         )
 
     def _failure(

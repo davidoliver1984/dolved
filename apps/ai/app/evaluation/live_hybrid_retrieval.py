@@ -287,6 +287,9 @@ def evaluate_live_hybrid_retrieval(
     search_latencies: list[float] = []
     rerank_latencies: list[float] = []
     reranker_tokens = 0
+    reranker_attempts = 0
+    reranker_retries = 0
+    reranker_rate_limits = 0
     try:
         for case in corpus.cases:
             for variant in case.variants:
@@ -441,6 +444,9 @@ def evaluate_live_hybrid_retrieval(
                 rerank_ms = (time.perf_counter() - rerank_started) * 1000
                 rerank_latencies.append(rerank_ms)
                 reranker_tokens += reranked.provider_input_tokens or 0
+                reranker_attempts += reranked.provider_attempt_count
+                reranker_retries += reranked.provider_retry_count
+                reranker_rate_limits += reranked.rate_limit_event_count
                 fused_by_id = {(item.side, item.chunk_id): item for item in fused}
                 qualified = tuple(
                     item
@@ -578,6 +584,17 @@ def evaluate_live_hybrid_retrieval(
     embedding_tokens = (document_embeddings.provider_input_tokens or 0) + (
         query_embeddings.provider_input_tokens or 0
     )
+    embedding_attempts = (
+        document_embeddings.provider_attempt_count
+        + query_embeddings.provider_attempt_count
+    )
+    embedding_retries = (
+        document_embeddings.provider_retry_count + query_embeddings.provider_retry_count
+    )
+    embedding_rate_limits = (
+        document_embeddings.rate_limit_event_count
+        + query_embeddings.rate_limit_event_count
+    )
     return LiveHybridEvaluation(
         dense=dense_result,
         hybrid=hybrid_result,
@@ -600,8 +617,20 @@ def evaluate_live_hybrid_retrieval(
                 * settings.embedding_estimated_cost_per_million_tokens_usd
                 / 1_000_000
             ),
+            "embedding_pricing_snapshot": settings.embedding_pricing_snapshot,
+            "embedding_provider_attempt_count": embedding_attempts,
+            "embedding_provider_retry_count": embedding_retries,
+            "embedding_rate_limit_event_count": embedding_rate_limits,
             "reranker_input_tokens": reranker_tokens,
-            "reranker_cost_usd": None,
+            "reranker_cost_usd": (
+                reranker_tokens
+                * settings.reranker_estimated_cost_per_million_tokens_usd
+                / 1_000_000
+            ),
+            "reranker_pricing_snapshot": settings.reranker_pricing_snapshot,
+            "reranker_provider_attempt_count": reranker_attempts,
+            "reranker_provider_retry_count": reranker_retries,
+            "reranker_rate_limit_event_count": reranker_rate_limits,
             "document_embedding_latency_ms": document_embedding_ms,
             "query_embedding_batch_latency_ms": query_embedding_ms,
             "sparse_document_latency_ms": sparse_document_ms,

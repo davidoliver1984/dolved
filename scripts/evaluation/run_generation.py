@@ -45,6 +45,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--evaluator-model", default="gpt-5-mini")
     parser.add_argument("--evaluator-max-attempts", type=int, default=2)
     parser.add_argument("--evaluator-max-output-tokens", type=int, default=2048)
+    parser.add_argument("--evaluator-input-token-ceiling", type=int)
+    parser.add_argument("--evaluator-cost-ceiling-usd", type=float)
+    parser.add_argument("--evaluator-input-cost-per-million", type=float, default=0.25)
+    parser.add_argument(
+        "--evaluator-cached-input-cost-per-million", type=float, default=0.025
+    )
+    parser.add_argument("--evaluator-output-cost-per-million", type=float, default=2.0)
+    parser.add_argument(
+        "--evaluator-pricing-snapshot",
+        default="openai-gpt-5-mini-pricing-2026-08-19",
+    )
     parser.add_argument("--repository-commit", required=True)
     parser.add_argument("--evaluation-harness-committed", action="store_true")
     return parser.parse_args()
@@ -104,6 +115,14 @@ async def main() -> None:
         model=args.evaluator_model,
         max_attempts=args.evaluator_max_attempts,
         max_output_tokens=args.evaluator_max_output_tokens,
+        maximum_total_input_tokens=args.evaluator_input_token_ceiling,
+        maximum_total_cost_usd=args.evaluator_cost_ceiling_usd,
+        input_cost_per_million_tokens_usd=args.evaluator_input_cost_per_million,
+        cached_input_cost_per_million_tokens_usd=(
+            args.evaluator_cached_input_cost_per_million
+        ),
+        output_cost_per_million_tokens_usd=args.evaluator_output_cost_per_million,
+        pricing_snapshot=args.evaluator_pricing_snapshot,
     )
     generation_lineage: dict[str, Any] = {
         **profile.fingerprint_input(),
@@ -119,7 +138,7 @@ async def main() -> None:
             "INSUFFICIENCY_CORRECTNESS",
         ],
         "same_model_as_generator": args.evaluator_model == profile.model,
-        "cost_basis": "unavailable",
+        "cost_basis": "estimated_from_provider_usage",
     }
     output.mkdir(parents=True, exist_ok=False)
     manifest = {

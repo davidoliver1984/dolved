@@ -2,7 +2,6 @@ from types import SimpleNamespace
 from typing import Literal
 
 import pytest
-
 from app.evaluation.models import (
     ModelAssistedAnswerPart,
     ModelAssistedEvaluationRequest,
@@ -113,7 +112,7 @@ async def test_complete_qualified_representation_is_structured_and_versioned() -
     assert '"evidence_ids":["ev-01"]' in rendered
     assert result.input_tokens == 321
     assert result.output_tokens == 45
-    assert result.cost_usd is None
+    assert result.cost_usd == 0.00017025
     assert result.retry_count == 0
     assert result.evaluator_identity["prompt_version"] == EVALUATOR_PROMPT_VERSION
     grounded = result.metric_observations[0]
@@ -121,7 +120,7 @@ async def test_complete_qualified_representation_is_structured_and_versioned() -
     assert grounded.input_tokens == 321
     assert grounded.output_tokens == 45
     assert grounded.retry_count == 0
-    assert grounded.cost_usd is None
+    assert grounded.cost_usd == 0.00017025
     assert grounded.provider_status is None
 
 
@@ -146,6 +145,38 @@ async def test_invalid_part_identity_fails_closed_without_semantic_repair() -> N
     assert result.failure_code == "contract_validation_failure"
     assert result.scores == {}
     assert all(item.failure_code for item in result.metric_observations)
+
+
+@pytest.mark.asyncio
+async def test_input_and_cost_ceilings_fail_before_provider_call() -> None:
+    output = AnswerEvaluationOutput(
+        part_judgements=[
+            PartJudgement(part_index=1, grounded=True, unsupported_categories=[])
+        ],
+        factual_precision=1,
+        completeness=1,
+        qualification_useful=True,
+        insufficiency_correct=None,
+    )
+    input_limited = FakeResponses(output)
+    evaluator = OpenAIAnswerEvaluator(
+        api_key="test",
+        maximum_total_input_tokens=1,
+        client=SimpleNamespace(responses=input_limited),
+    )
+    result = await evaluator.evaluate(request())
+    assert result.failure_code == "input_token_ceiling_exceeded"
+    assert input_limited.calls == []
+
+    cost_limited = FakeResponses(output)
+    evaluator = OpenAIAnswerEvaluator(
+        api_key="test",
+        maximum_total_cost_usd=0.000001,
+        client=SimpleNamespace(responses=cost_limited),
+    )
+    result = await evaluator.evaluate(request())
+    assert result.failure_code == "cost_ceiling_exceeded"
+    assert cost_limited.calls == []
 
 
 @pytest.mark.asyncio

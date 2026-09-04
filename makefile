@@ -17,6 +17,7 @@ TAIL ?= 100
 	aws-provision aws-status qdrant-status publish-ingestion consume-ingestion \
 	telemetry-smoke telemetry-verify telemetry-outage \
 	evaluation-run evaluation-policy-gate evaluation-generation-verify evaluation-generation-live \
+	evaluation-r28-s02-preflight evaluation-r28-s02-retrieval-live evaluation-r28-s02-generation-live \
 	evaluation-retrieval-current-candidate evaluation-retrieval-current \
 	evaluation-benchmark-sync \
 	evaluation-benchmark-compile \
@@ -61,6 +62,9 @@ help:
 		'  make evaluation-retrieval-current-candidate  Generate a deterministic retrieval candidate for review' \
 		'  make evaluation-generation-verify  Verify immutable generation evidence without providers' \
 		'  make evaluation-generation-live  Run the bounded opt-in live prompt-injection evaluation' \
+		'  make evaluation-r28-s02-preflight  Verify both R28-S02 live boundaries without provider calls' \
+		'  make evaluation-r28-s02-retrieval-live  Run the approved R28-S02 retrieval component' \
+		'  make evaluation-r28-s02-generation-live  Run the approved R28-S02 generation-security component' \
 		'  make evaluation-benchmark-sync  Synchronise authored Markdown paths into the benchmark catalogue' \
 		'  make evaluation-benchmark-compile  Validate and compile the engineering benchmark pilot' \
 		'  make evaluation-exp-0003  Run the post-reliability full V2 engineering baseline' \
@@ -399,6 +403,73 @@ evaluation-generation-live:
 			--repository-root /workspace \
 			--repository-commit "$$(git rev-parse HEAD)" \
 			--experiment-id "$${GENERATION_LIVE_EXPERIMENT_ID}"
+
+evaluation-r28-s02-preflight:
+	@test -z "$$(git status --porcelain --untracked-files=no)" || \
+		{ printf '%s\n' 'The tracked worktree must be clean for R28-S02 preflight.'; exit 1; }
+	@mkdir -p /tmp/rag-platform-r28-s02
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace:ro" \
+		--volume "/tmp/rag-platform-r28-s02:/output" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		--env EMBEDDING_MAX_ATTEMPTS=1 \
+		--env RERANKER_MAX_ATTEMPTS=1 \
+		ai python scripts/evaluation/run_r28_s02_retrieval_live.py \
+			--policy tests/evaluation/policies/v1/r28-s02-live-retrieval-policy.json \
+			--repository-root /workspace \
+			--repository-commit "$$(git rev-parse HEAD)" \
+			--experiment-id R28-S02-LIVE-RETRIEVAL-BASELINE-0001 \
+			--preflight-only
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace:ro" \
+		--volume "/tmp/rag-platform-r28-s02:/output" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		ai python scripts/evaluation/run_generation_live.py \
+			--policy tests/evaluation/security/v1/r28-s02-live-generation-policy.json \
+			--repository-root /workspace \
+			--repository-commit "$$(git rev-parse HEAD)" \
+			--experiment-id GEN-SEC-LIVE-R28-S02-BASELINE-0001 \
+			--preflight-only
+
+evaluation-r28-s02-retrieval-live:
+	@test "$${RUN_R28_S02_LIVE_RETRIEVAL:-}" = "1" || \
+		{ printf '%s\n' 'Set RUN_R28_S02_LIVE_RETRIEVAL=1 to permit paid Voyage calls.'; exit 1; }
+	@test -z "$$(git status --porcelain --untracked-files=no)" || \
+		{ printf '%s\n' 'The tracked worktree must be clean before R28-S02 retrieval.'; exit 1; }
+	@mkdir -p /tmp/rag-platform-r28-s02
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace:ro" \
+		--volume "/tmp/rag-platform-r28-s02:/output" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		--env EMBEDDING_MAX_ATTEMPTS=1 \
+		--env RERANKER_MAX_ATTEMPTS=1 \
+		--env RUN_R28_S02_LIVE_RETRIEVAL=1 \
+		ai python scripts/evaluation/run_r28_s02_retrieval_live.py \
+			--policy tests/evaluation/policies/v1/r28-s02-live-retrieval-policy.json \
+			--repository-root /workspace \
+			--repository-commit "$$(git rev-parse HEAD)" \
+			--experiment-id R28-S02-LIVE-RETRIEVAL-BASELINE-0001
+
+evaluation-r28-s02-generation-live:
+	@test "$${RUN_LIVE_GENERATION_EVALUATION:-}" = "1" || \
+		{ printf '%s\n' 'Set RUN_LIVE_GENERATION_EVALUATION=1 to permit paid OpenAI calls.'; exit 1; }
+	@test -z "$$(git status --porcelain --untracked-files=no)" || \
+		{ printf '%s\n' 'The tracked worktree must be clean before R28-S02 generation.'; exit 1; }
+	@mkdir -p /tmp/rag-platform-r28-s02
+	$(COMPOSE) run --rm --no-deps \
+		--volume "$(CURDIR):/workspace:ro" \
+		--volume "/tmp/rag-platform-r28-s02:/output" \
+		--workdir /workspace \
+		--env PYTHONPATH=/app \
+		--env RUN_LIVE_GENERATION_EVALUATION=1 \
+		ai python scripts/evaluation/run_generation_live.py \
+			--policy tests/evaluation/security/v1/r28-s02-live-generation-policy.json \
+			--repository-root /workspace \
+			--repository-commit "$$(git rev-parse HEAD)" \
+			--experiment-id GEN-SEC-LIVE-R28-S02-BASELINE-0001
 
 evaluation-live-hybrid:
 	@test "$${RUN_LIVE_HYBRID_EVALUATION:-}" = "1" || \

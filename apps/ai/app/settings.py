@@ -75,6 +75,11 @@ class Settings(BaseSettings):
     reranker_initial_backoff_seconds: float = Field(default=15.0, ge=0)
     reranker_max_backoff_seconds: float = Field(default=90.0, ge=0)
     reranker_max_provider_cooldown_seconds: float = Field(default=90.0, gt=0)
+    reranker_estimated_cost_per_million_tokens_usd: float = Field(
+        default=0.05,
+        ge=0,
+    )
+    reranker_pricing_snapshot: str = "voyage-pricing-2026-09-04"
     retrieval_planner_api_url: str = "https://api.openai.com/v1/chat/completions"
     retrieval_planner_api_key: SecretStr = SecretStr("")
     retrieval_planner_provider: str = "openai"

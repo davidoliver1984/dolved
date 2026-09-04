@@ -1,0 +1,51 @@
+{
+  "schema_version": "v1",
+  "session_id": "R28-S02",
+  "purpose": "current-code live baseline over the two pre-existing, separately reported spent-engineering populations bound by R28-S01",
+  "repository_binding": "runtime exact clean HEAD == origin/main",
+  "components": {
+    "retrieval": {
+      "experiment_id": "R28-S02-LIVE-RETRIEVAL-BASELINE-0001",
+      "policy_path": "tests/evaluation/policies/v1/r28-s02-live-retrieval-policy.json",
+      "policy_sha256": "3d4f7271c96ed00844bc9f3a59c342e0df0df9aba551bc56cc0e8d4ef660305f",
+      "population_path": "tests/evaluation/corpus/v2/corpus.json",
+      "population_sha256": "3578e6877ff3e33a313774ea83c6d3edbe4749b491ac148d038a3a8475cb82f3",
+      "population_digest": "0e78f8e57a3d9c358ae08bdf7e97ded151cc4111cf934f48342427a2a187c1af",
+      "population_size": {
+        "cases": 23,
+        "variants": 25
+      },
+      "providers": [
+        "Voyage voyage-4-large dense embeddings",
+        "local prithivida/Splade_PP_en_v1 sparse encoding at efcd182bc7eb351e81a9445752d4388c2bab500b",
+        "Voyage rerank-2.5"
+      ]
+    },
+    "generation_security": {
+      "experiment_id": "GEN-SEC-LIVE-R28-S02-BASELINE-0001",
+      "policy_path": "tests/evaluation/security/v1/r28-s02-live-generation-policy.json",
+      "policy_sha256": "08c392e0b29fa733d0a673450148f93bf2780d9ed1f8a859cc89eeaee68da033",
+      "population_path": "docs/evaluation/generation/populations/prompt-injection-v1.json",
+      "population_sha256": "0906589e204743282c93b65bcc7dae7d836b41d33dce523bc86b7db1cd2ce341",
+      "population_digest": "753e76c7dd91110c4e5277ed342fbcb83d352f7cf09e06634be7b1ccdcdda119",
+      "population_size": {
+        "cases": 3
+      },
+      "provider": "OpenAI gpt-5-mini",
+      "generation_fingerprint": "40a18f357fbc864ff54781e607300c3374dd65829563fc2b334a2876de19b2f5"
+    }
+  },
+  "combined_hard_ceiling": {
+    "provider_requests": 33,
+    "input_tokens": 600000,
+    "output_tokens": 18432,
+    "cost_usd": 15,
+    "wall_seconds": 1800,
+    "concurrency": 1,
+    "attempts_per_request": 1
+  },
+  "execution_authorised": false,
+  "selective_rerun_permitted": false,
+  "v4_population_accessed": false,
+  "calibration_or_held_out_access_permitted": false
+}

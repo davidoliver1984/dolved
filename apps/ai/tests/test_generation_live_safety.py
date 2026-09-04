@@ -10,11 +10,10 @@ from types import ModuleType
 from typing import Any
 
 import pytest
-from pydantic import SecretStr
-
 from app.evaluation.generation_evaluation import build_generation_request
 from app.generation.models import AnswerPart, GenerationOutcome, GenerationResult
 from app.settings import Settings
+from pydantic import SecretStr
 
 SCRIPT_ROOT = Path(os.environ.get("SCRIPT_ROOT", "/workspace"))
 SOURCE_ROOT = (
@@ -25,6 +24,9 @@ POLICY = (
     Path("/evaluation/security/v1/live-generation-policy.json")
     if Path("/evaluation").exists()
     else SOURCE_ROOT / "tests/evaluation/security/v1/live-generation-policy.json"
+)
+R28_POLICY = (
+    SOURCE_ROOT / "tests/evaluation/security/v1/r28-s02-live-generation-policy.json"
 )
 POPULATION = (
     Path("/generation-evaluation/populations/prompt-injection-v1.json")
@@ -51,14 +53,21 @@ def live_settings(**values: object) -> Settings:
     )
 
 
-def materialise_repository(tmp_path: Path, policy: Any) -> Path:
+def materialise_repository(
+    tmp_path: Path, policy: Any, *, policy_source: Path = POLICY
+) -> Path:
     repository = tmp_path / "repository"
     population = repository / policy.population_path
     population.parent.mkdir(parents=True)
     shutil.copyfile(POPULATION, population)
-    live_policy = repository / module_policy_path()
+    policy_relative = (
+        module_policy_path()
+        if policy_source == POLICY
+        else policy_source.relative_to(SOURCE_ROOT)
+    )
+    live_policy = repository / policy_relative
     live_policy.parent.mkdir(parents=True)
-    shutil.copyfile(POLICY, live_policy)
+    shutil.copyfile(policy_source, live_policy)
     return repository
 
 
@@ -75,12 +84,72 @@ def commit_repository(repository: Path) -> str:
         ("commit", "--quiet", "-m", "fixture"),
     ):
         subprocess.run(["git", "-C", str(repository), *arguments], check=True)
-    return subprocess.run(
+    commit = subprocess.run(
         ["git", "-C", str(repository), "rev-parse", "HEAD"],
         check=True,
         capture_output=True,
         text=True,
     ).stdout.strip()
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            str(repository),
+            "update-ref",
+            "refs/remotes/origin/main",
+            commit,
+        ],
+        check=True,
+    )
+    return commit
+
+
+def test_r28_policy_binds_input_cost_and_single_attempt_ceilings(
+    tmp_path: Path,
+) -> None:
+    module = load_script()
+    policy = replace(module.LiveGenerationPolicy.load(R28_POLICY), output_root=tmp_path)
+    repository = materialise_repository(tmp_path, policy, policy_source=R28_POLICY)
+
+    population, output, attempts = module.validate(
+        policy=policy,
+        repository_root=repository,
+        experiment_id="GEN-SEC-LIVE-R28-S02-0001",
+        settings=live_settings(),
+    )
+
+    assert population.name == "prompt-injection-v1.json"
+    assert output == tmp_path / "GEN-SEC-LIVE-R28-S02-0001"
+    assert attempts == 6
+    assert policy.maximum_total_input_tokens == 100_000
+    assert policy.maximum_total_cost_usd == 7
+
+
+def test_r28_policy_fails_closed_for_pricing_or_budget_drift(
+    tmp_path: Path,
+) -> None:
+    module = load_script()
+    policy = replace(module.LiveGenerationPolicy.load(R28_POLICY), output_root=tmp_path)
+    repository = materialise_repository(tmp_path, policy, policy_source=R28_POLICY)
+    arguments = {
+        "policy": policy,
+        "repository_root": repository,
+        "experiment_id": "GEN-SEC-LIVE-R28-S02-0001",
+    }
+
+    with pytest.raises(ValueError, match="input"):
+        module.validate(
+            **{
+                **arguments,
+                "policy": replace(policy, maximum_total_input_tokens=1),
+            },
+            settings=live_settings(),
+        )
+    with pytest.raises(ValueError, match="pricing_snapshot"):
+        module.validate(
+            **arguments,
+            settings=live_settings(generation_pricing_snapshot="drifted"),
+        )
 
 
 def test_live_policy_binds_population_profile_and_attempt_ceiling(

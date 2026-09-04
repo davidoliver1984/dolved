@@ -178,6 +178,10 @@ def gate(args: argparse.Namespace) -> None:
 
 def live_hybrid(args: argparse.Namespace) -> None:
     verify_live_repository_identity(args.repository_root, args.repository_commit)
+    if args.output.exists():
+        raise ValueError(
+            "live retrieval output already exists and cannot be overwritten"
+        )
     corpus_data = load_json(args.corpus)
     policy_data = load_json(args.policy)
     result = evaluate_live_hybrid_retrieval(
@@ -199,6 +203,7 @@ def live_hybrid(args: argparse.Namespace) -> None:
         ),
         rerank_delay_seconds=args.rerank_delay_seconds,
         text_capture_mode=EvaluationTextCaptureMode(args.text_capture_mode),
+        experiment_id_prefix=args.experiment_id_prefix,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result.as_json(), indent=2) + "\n")
@@ -371,6 +376,7 @@ def parser() -> argparse.ArgumentParser:
     live_parser.add_argument("--repository-root", type=Path, default=Path("."))
     live_parser.add_argument("--evidence-threshold", type=float, required=True)
     live_parser.add_argument("--rerank-delay-seconds", type=float, default=25)
+    live_parser.add_argument("--experiment-id-prefix", default="r16-s08-live")
     live_parser.add_argument(
         "--text-capture-mode",
         choices=tuple(EvaluationTextCaptureMode),
