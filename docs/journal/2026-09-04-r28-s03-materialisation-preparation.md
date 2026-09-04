@@ -2,8 +2,9 @@
 
 ## Status
 
-R28-S03 is in progress. Eleven immutable attempts have run; each failed closed
-and remains recorded below. Attempt `0012` is prepared but has not run.
+R28-S03 is complete. Eleven immutable failed attempts remain recorded below.
+Attempt `0012` ran exactly once and completed the provider-free materialisation
+and reconciliation boundary.
 
 ## Boundary
 
@@ -175,3 +176,35 @@ no protected or broad path is exposed. No provider call or AWS call occurred.
 Attempt `0011`'s retrieval provisioning identity and empty command-output
 evidence are preserved under
 `docs/evaluation/r28-s03/failed-runs/R28-S03-V4-CORPUS-MATERIALISATION-0011/`.
+
+## Attempt 0012 outcome and closure
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0012` completed at exact execution
+commit `1781cb241f9fd02e547587a90b08f3e0dec71e27`, with zero provider calls,
+zero AWS calls and zero selective reruns. The real ADR-0034 path produced:
+
+- primary: 300 indexed documents across 185 families and 982 canonical chunks;
+- foreign tenant: 12 indexed documents across 12 families and 12 chunks in a
+  distinct workspace;
+- separate prompt-injection pack: six indexed documents across six families and
+  six chunks in a distinct security workspace;
+- negative/import fixtures: all 13 expected typed outcomes, with none promoted
+  as ordinary searchable primary material;
+- governance: primary 9 draft / 224 approved / 67 withdrawn, foreign 12
+  approved, security pack six approved;
+- ingestion: 318/318 claims completed, no failed jobs, no pending outbox work,
+  empty main queue and empty DLQ;
+- retrieval: 1,000 active hybrid dense+sparse points across three verified
+  active corpus generations, using dense generation
+  `91bd5081-edb5-469a-9802-f35f6a6cb8f9` and sparse generation
+  `cf8588fc-29c8-4ba6-adc1-674e8c23332c`.
+
+Qdrant contains another 1,000 superseded dense-only points retained from the
+normal ingestion generations, so its physical total is 2,000 while the active
+searchable hybrid generation total is exactly 1,000. This is reconciled state,
+not duplicate active evidence. The exact result and post-run state are recorded
+under `docs/evaluation/r28-s03/run/` and verified provider-free by
+`scripts/evaluation/verify_r28_s03_materialisation.py`.
+
+R28-S03 establishes corpus materialisation and tenant isolation only. It makes
+no live-provider quality or pilot-readiness claim. R28-S04 remains unstarted.

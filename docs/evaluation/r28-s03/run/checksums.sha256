@@ -1,0 +1,11 @@
+65afb0dd49e8b18b7c38672d9eb97e666b17dd395c06c0683d084c5afc7e792d  docs/evaluation/r28-s03/run/materialisation-result.json
+2b798bf05b4803c94a33718fefb55f9dda2aa0dd39440d315b08e44e55c8dcf2  docs/evaluation/r28-s03/run/primary-governance.json
+c1ac91eb3376903290779c39318691efb88f2f39146a61cd60a032b6d8f4cba3  docs/evaluation/r28-s03/run/foreign-governance.json
+dec978d27d0fb1e65d70f63e2609218ebdfacd826d47b914b9551051346d7bad  docs/evaluation/r28-s03/run/injection-governance.json
+975ee0e3e9635317aa37177bb3f0c9076a7c86cc17c43a807a9294d669c12065  docs/evaluation/r28-s03/run/retrieval-provisioning.json
+aabbc31d59bb7182946df04a1748709e45bf63a66b6daa2916788d62cd37cbe3  docs/evaluation/r28-s03/run/vector-space-provisioning.json
+83f5298ca9fffc4eda0f95168b6dc6fec239a2a4b500928453babc72a1f223d3  docs/evaluation/r28-s03/run/primary-hybrid-rebuild.txt
+84a68a26c3c5d526c811d7d61b2c41b60df97a48ce046b9eb813a84f21f2a717  docs/evaluation/r28-s03/run/foreign-hybrid-rebuild.txt
+aa43f23fa1014129af3b15a49333bd9f05602d43f29ac7987e736cfca468011b  docs/evaluation/r28-s03/run/injection-hybrid-rebuild.txt
+57bf45116ea25b740ef34549b5122ed01c810d0cc15b5026dcd2cdebb62d1149  docs/evaluation/r28-s03/run/runtime-services.json
+031e560c2d1fbeaa11af8dc527b68cdbaa84efd06164e998615a2d3edee182a8  docs/evaluation/r28-s03/run/verification-evidence.json

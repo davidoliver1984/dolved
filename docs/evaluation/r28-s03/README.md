@@ -20,9 +20,12 @@ clean, `HEAD` equals `origin/main`, the frozen archive identities match, the
 runtime has no provider credentials, and the materialisation project name and
 database are isolated.
 
-The durable result and checksums are written here only after the single run
-finishes. A failed run remains evidence and is not selectively repaired or
-rerun.
+Attempt `0012` completed successfully at execution commit
+`1781cb241f9fd02e547587a90b08f3e0dec71e27`. The durable result, independent
+post-run reconciliation evidence and checksums are recorded in `run/`.
+`scripts/evaluation/verify_r28_s03_materialisation.py` verifies them without
+provider or AWS access. The retained isolated runtime is the exact local state
+bound for R28-S04; it is not production or pilot-readiness evidence.
 
 Attempt `0001` failed before any ImportBatch or document was created because
 the isolated organisation provisioner treated the optional foreign-tenant

@@ -1,0 +1,106 @@
+{
+  "schema_version": "r28-s03-verification-evidence-v1",
+  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0012",
+  "execution_commit": "1781cb241f9fd02e547587a90b08f3e0dec71e27",
+  "provider_calls": 0,
+  "aws_calls": 0,
+  "selective_reruns": 0,
+  "database": {
+    "workspaces": 3,
+    "import_batches": 19,
+    "import_items": 331,
+    "documents": 318,
+    "indexed_documents": 318,
+    "document_families": 203,
+    "canonical_chunks": 1000,
+    "completed_ingestion_claims": 318,
+    "failed_jobs": 0,
+    "pending_outbox_messages": 0,
+    "committed_promotion_attempts": 318,
+    "preflight": {
+      "verified": 329,
+      "rejected": 2
+    },
+    "matching": {
+      "resolved": 318,
+      "pending_negative_fixture_items": 13
+    }
+  },
+  "governance": {
+    "primary": {
+      "draft": 9,
+      "approved": 224,
+      "withdrawn": 67
+    },
+    "foreign_tenant": {
+      "draft": 0,
+      "approved": 12,
+      "withdrawn": 0
+    },
+    "prompt_injection_pack": {
+      "draft": 0,
+      "approved": 6,
+      "withdrawn": 0
+    }
+  },
+  "queues": {
+    "main_visible": 0,
+    "main_in_flight": 0,
+    "main_delayed": 0,
+    "dlq_visible": 0,
+    "dlq_in_flight": 0,
+    "dlq_delayed": 0
+  },
+  "retrieval": {
+    "collection": "dolved-e2e-vectors-v1",
+    "collection_status": "green",
+    "optimizer_status": "ok",
+    "dense_vector": {
+      "name": "dense",
+      "dimensions": 1024,
+      "distance": "Cosine",
+      "embedding_space_generation_id": "91bd5081-edb5-469a-9802-f35f6a6cb8f9"
+    },
+    "sparse_vector": {
+      "name": "sparse",
+      "sparse_space_generation_id": "cf8588fc-29c8-4ba6-adc1-674e8c23332c"
+    },
+    "total_points": 2000,
+    "superseded_dense_only_points": 1000,
+    "active_hybrid_points": 1000,
+    "active_generations": {
+      "primary": {
+        "generation_id": "795fa5fa-2216-4dbf-9a98-94f6a3325765",
+        "expected_points": 982,
+        "assigned_chunks": 982,
+        "dense_points": 982,
+        "sparse_points": 982,
+        "point_manifest_digest": "f731c498b4c301855621e53c65ca223d7e64ba2d6a79c89a1da0161d1919b0e0"
+      },
+      "foreign_tenant": {
+        "generation_id": "f69ee65c-8318-4a41-aefe-bf133e9a25dd",
+        "expected_points": 12,
+        "assigned_chunks": 12,
+        "dense_points": 12,
+        "sparse_points": 12,
+        "point_manifest_digest": "fc97c7b3408e7a2ebcaa71ed5242e48dc4e7fd092349d58bd03bcb205e31eff8"
+      },
+      "prompt_injection_pack": {
+        "generation_id": "f5a32899-4c78-4f2d-940c-96340464a5a4",
+        "expected_points": 6,
+        "assigned_chunks": 6,
+        "dense_points": 6,
+        "sparse_points": 6,
+        "point_manifest_digest": "fe1c5c5b044b08c973980a423176a5afdbf0a7bdd1622ec212bca7cfa9c3f4f8"
+      }
+    }
+  },
+  "isolation": {
+    "runtime_project": "dolved-r28-s03",
+    "database": "dolved_e2e_r28_s03",
+    "calibration_mounted": false,
+    "held_out_mounted": false,
+    "broad_evaluation_mounted": false,
+    "provider_credentials_present": false
+  }
+}
