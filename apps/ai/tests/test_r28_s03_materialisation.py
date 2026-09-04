@@ -10,7 +10,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[3]
 DEFINITION = ROOT / "docs/evaluation/r28-s03/run-definition.json"
 SCRIPT = ROOT / "scripts/evaluation/materialise_r28_s03.py"
-VECTOR_PROVISIONER = ROOT / "scripts/evaluation/provision_r28_s03_vector_space.py"
+VECTOR_PROVISIONER = ROOT / "apps/ai/app/evaluation/r28_s03_vector_space.py"
 
 
 def load_materialiser():
@@ -33,7 +33,7 @@ def load_vector_provisioner():
 
 def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -> None:
     definition = json.loads(DEFINITION.read_text())
-    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0011"
+    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0012"
     assert definition["prior_attempts"] == [
         {
             "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
@@ -261,6 +261,23 @@ def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -
             "aws_calls": 0,
             "selective_reruns": 0,
         },
+        {
+            "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0011",
+            "outcome": "failed_before_workspace_creation",
+            "cause": (
+                "The pre-ingestion vector schema provisioner was placed outside "
+                "the isolated AI container's deliberately narrow source mount."
+            ),
+            "durable_state": {
+                "workspaces_created": 0,
+                "import_batches_created": 0,
+                "documents_created": 0,
+                "vector_collection_created": False,
+            },
+            "provider_calls": 0,
+            "aws_calls": 0,
+            "selective_reruns": 0,
+        },
     ]
     assert definition["execution"]["provider_calls_permitted"] is False
     assert definition["execution"]["aws_access_permitted"] is False
@@ -335,7 +352,7 @@ def test_r28_s03_materialiser_uses_import_api_and_frozen_governance_command() ->
 
 def test_r28_s03_hybrid_schema_is_created_before_materialisation() -> None:
     runner = (ROOT / "scripts/evaluation/run_r28_s03.sh").read_text()
-    provision = runner.index("provision_r28_s03_vector_space.py")
+    provision = runner.index("app.evaluation.r28_s03_vector_space")
     materialise = runner.index("materialise_r28_s03.py")
     rebuild = runner.index("retrieval:rebuild-hybrid-corpus")
     assert provision < materialise < rebuild

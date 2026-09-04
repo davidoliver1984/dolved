@@ -21,7 +21,7 @@ services=(postgres qdrant localstack mailpit ai api publisher worker conversatio
 "${compose[@]}" exec -T api php artisan e2e:provision-retrieval > "$runtime_root/retrieval-provisioning.json"
 embedding_space="$(jq -r .embedding_space_generation_id "$runtime_root/retrieval-provisioning.json")"
 sparse_space="$(jq -r .sparse_space_generation_id "$runtime_root/retrieval-provisioning.json")"
-"${compose[@]}" exec -T ai uv run python /workspace/scripts/evaluation/provision_r28_s03_vector_space.py \
+"${compose[@]}" exec -T ai uv run python -m app.evaluation.r28_s03_vector_space \
   --profile /contracts/testing/deterministic-retrieval-profile-v1.json \
   --embedding-space-generation-id "$embedding_space" \
   --sparse-space-generation-id "$sparse_space" \

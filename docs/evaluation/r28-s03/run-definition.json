@@ -1,6 +1,6 @@
 {
   "schema_version": "r28-s03-materialisation-definition-v1",
-  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0011",
+  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0012",
   "purpose": "Provider-free materialisation of the frozen Dolved V4 corpus through the real ADR-0034 ImportBatch workflow",
   "execution": {
     "provider_calls_permitted": false,
@@ -244,6 +244,20 @@
         "negative_fixtures_observed": 13,
         "qdrant_points": 1000,
         "hybrid_rebuild_batches_completed": 0
+      },
+      "provider_calls": 0,
+      "aws_calls": 0,
+      "selective_reruns": 0
+    },
+    {
+      "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0011",
+      "outcome": "failed_before_workspace_creation",
+      "cause": "The pre-ingestion vector schema provisioner was placed outside the isolated AI container's deliberately narrow source mount.",
+      "durable_state": {
+        "workspaces_created": 0,
+        "import_batches_created": 0,
+        "documents_created": 0,
+        "vector_collection_created": false
       },
       "provider_calls": 0,
       "aws_calls": 0,

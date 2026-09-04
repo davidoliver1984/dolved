@@ -1,6 +1,6 @@
 # R28-S03 V4 corpus materialisation
 
-`R28-S03-V4-CORPUS-MATERIALISATION-0011` materialises the frozen V4 corpus
+`R28-S03-V4-CORPUS-MATERIALISATION-0012` materialises the frozen V4 corpus
 through the real authenticated ADR-0034 import workflow in a dedicated local
 Docker project. It uses only the deterministic provider profile. It does not
 consume the R28-S04 live Voyage allowance and makes no OpenAI, Voyage or AWS
@@ -120,3 +120,11 @@ schema in the fresh isolated collection before ingestion, then retains the
 normal verified hybrid rebuild and activation path. Attempt `0010` evidence is
 preserved under
 `failed-runs/R28-S03-V4-CORPUS-MATERIALISATION-0010/`.
+
+Attempt `0011` stopped before workspace creation. The isolated AI container
+correctly could not see the provisioner placed under the repository-wide
+scripts path, because that broad path is intentionally absent from the S03
+runtime. Attempt `0012` packages the same provider-free provisioner inside the
+existing AI application mount; no mount is widened. Attempt `0011`'s retrieval
+lineage and empty command-output evidence are preserved under
+`failed-runs/R28-S03-V4-CORPUS-MATERIALISATION-0011/`.

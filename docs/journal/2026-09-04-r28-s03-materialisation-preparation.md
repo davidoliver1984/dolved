@@ -2,13 +2,13 @@
 
 ## Status
 
-R28-S03 is in progress. Ten immutable attempts have run; each failed closed
-and remains recorded below. Attempt `0011` is prepared but has not run.
+R28-S03 is in progress. Eleven immutable attempts have run; each failed closed
+and remains recorded below. Attempt `0012` is prepared but has not run.
 
 ## Boundary
 
 The active immutable run identity is
-`R28-S03-V4-CORPUS-MATERIALISATION-0011`. It binds the frozen checkpoint 19
+`R28-S03-V4-CORPUS-MATERIALISATION-0012`. It binds the frozen checkpoint 19
 archive and its four governed scopes to a dedicated `dolved-r28-s03` local
 runtime. The primary, foreign-tenant and separate prompt-injection documents
 must pass through the authenticated ADR-0034 ImportBatch workflow. The 13
@@ -165,3 +165,13 @@ activation path after ingestion. No selective rerun, provider call or AWS call
 occurred. Attempt `0010`'s materialisation result, retrieval lineage, typed
 failure output and checksum inventory are preserved under
 `docs/evaluation/r28-s03/failed-runs/R28-S03-V4-CORPUS-MATERIALISATION-0010/`.
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0011` stopped before workspace,
+ImportBatch, document or vector-collection creation. The isolated AI container
+correctly could not access the repository-wide scripts path, which is
+deliberately absent from its narrow source mounts. Attempt `0012` places the
+unchanged provider-free provisioner inside the existing AI application mount;
+no protected or broad path is exposed. No provider call or AWS call occurred.
+Attempt `0011`'s retrieval provisioning identity and empty command-output
+evidence are preserved under
+`docs/evaluation/r28-s03/failed-runs/R28-S03-V4-CORPUS-MATERIALISATION-0011/`.
