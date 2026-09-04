@@ -1,6 +1,6 @@
 # R28-S03 V4 corpus materialisation
 
-`R28-S03-V4-CORPUS-MATERIALISATION-0010` materialises the frozen V4 corpus
+`R28-S03-V4-CORPUS-MATERIALISATION-0011` materialises the frozen V4 corpus
 through the real authenticated ADR-0034 import workflow in a dedicated local
 Docker project. It uses only the deterministic provider profile. It does not
 consume the R28-S04 live Voyage allowance and makes no OpenAI, Voyage or AWS
@@ -109,3 +109,14 @@ workspace. No selective rerun, provider call or AWS call occurred.
 Attempt `0009`'s immutable result, governance summaries, runtime inventory and
 checksum inventory are preserved under
 `failed-runs/R28-S03-V4-CORPUS-MATERIALISATION-0009/`.
+
+Attempt `0010` materialised and indexed all 318 searchable documents and
+observed all 13 negative fixtures, then failed before the first hybrid rebuild
+batch. Dense ingestion had already created the isolated Qdrant collection
+without a sparse-vector schema, and Qdrant correctly rejected adding a new
+named sparse vector to an existing collection. No rebuild batch completed and
+governance replay had not begun. Attempt `0011` creates the exact dense+sparse
+schema in the fresh isolated collection before ingestion, then retains the
+normal verified hybrid rebuild and activation path. Attempt `0010` evidence is
+preserved under
+`failed-runs/R28-S03-V4-CORPUS-MATERIALISATION-0010/`.

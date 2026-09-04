@@ -2,13 +2,13 @@
 
 ## Status
 
-R28-S03 is in progress. Nine immutable attempts have run; each failed closed
-and remains recorded below. Attempt `0010` is prepared but has not run.
+R28-S03 is in progress. Ten immutable attempts have run; each failed closed
+and remains recorded below. Attempt `0011` is prepared but has not run.
 
 ## Boundary
 
 The active immutable run identity is
-`R28-S03-V4-CORPUS-MATERIALISATION-0010`. It binds the frozen checkpoint 19
+`R28-S03-V4-CORPUS-MATERIALISATION-0011`. It binds the frozen checkpoint 19
 archive and its four governed scopes to a dedicated `dolved-r28-s03` local
 runtime. The primary, foreign-tenant and separate prompt-injection documents
 must pass through the authenticated ADR-0034 ImportBatch workflow. The 13
@@ -152,3 +152,16 @@ rerun, provider call or AWS call occurred.
 The immutable result, governance summaries, runtime inventory and checksums are
 preserved in
 `docs/evaluation/r28-s03/failed-runs/R28-S03-V4-CORPUS-MATERIALISATION-0009/`.
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0010` materialised and indexed all
+318 searchable documents, created 1,000 canonical chunks and observed the exact
+13 negative fixtures. The first hybrid rebuild batch then failed before any
+point was written because dense ingestion had created the collection without a
+sparse-vector schema; Qdrant does not permit a previously absent named sparse
+vector to be added to that existing collection. Governance replay had not
+begun. Attempt `0011` creates the exact deterministic dense+sparse collection
+schema before ingestion and still uses the normal rebuild verification and
+activation path after ingestion. No selective rerun, provider call or AWS call
+occurred. Attempt `0010`'s materialisation result, retrieval lineage, typed
+failure output and checksum inventory are preserved under
+`docs/evaluation/r28-s03/failed-runs/R28-S03-V4-CORPUS-MATERIALISATION-0010/`.

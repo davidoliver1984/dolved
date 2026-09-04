@@ -10,6 +10,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[3]
 DEFINITION = ROOT / "docs/evaluation/r28-s03/run-definition.json"
 SCRIPT = ROOT / "scripts/evaluation/materialise_r28_s03.py"
+VECTOR_PROVISIONER = ROOT / "scripts/evaluation/provision_r28_s03_vector_space.py"
 
 
 def load_materialiser():
@@ -20,9 +21,19 @@ def load_materialiser():
     return module
 
 
+def load_vector_provisioner():
+    spec = importlib.util.spec_from_file_location(
+        "r28_s03_vector_provisioner", VECTOR_PROVISIONER
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -> None:
     definition = json.loads(DEFINITION.read_text())
-    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0010"
+    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0011"
     assert definition["prior_attempts"] == [
         {
             "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
@@ -227,6 +238,29 @@ def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -
             "aws_calls": 0,
             "selective_reruns": 0,
         },
+        {
+            "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0010",
+            "outcome": "failed_before_hybrid_rebuild_first_batch",
+            "cause": (
+                "The isolated collection was first created by dense ingestion. "
+                "Qdrant correctly rejected an attempt to add a previously absent "
+                "named sparse vector to that existing collection."
+            ),
+            "durable_state": {
+                "workspaces_created": 3,
+                "import_batches_created": 19,
+                "import_items_created": 331,
+                "documents_created": 318,
+                "documents_indexed": 318,
+                "canonical_chunks_created": 1000,
+                "negative_fixtures_observed": 13,
+                "qdrant_points": 1000,
+                "hybrid_rebuild_batches_completed": 0,
+            },
+            "provider_calls": 0,
+            "aws_calls": 0,
+            "selective_reruns": 0,
+        },
     ]
     assert definition["execution"]["provider_calls_permitted"] is False
     assert definition["execution"]["aws_access_permitted"] is False
@@ -297,6 +331,38 @@ def test_r28_s03_materialiser_uses_import_api_and_frozen_governance_command() ->
     assert "/documents/uploads" not in source
     assert "OPENAI" not in source.upper()
     assert "VOYAGE" not in source.upper()
+
+
+def test_r28_s03_hybrid_schema_is_created_before_materialisation() -> None:
+    runner = (ROOT / "scripts/evaluation/run_r28_s03.sh").read_text()
+    provision = runner.index("provision_r28_s03_vector_space.py")
+    materialise = runner.index("materialise_r28_s03.py")
+    rebuild = runner.index("retrieval:rebuild-hybrid-corpus")
+    assert provision < materialise < rebuild
+    assert "vector-space-provisioning.json" in runner
+
+
+def test_r28_s03_vector_provisioner_binds_exact_hybrid_lineage() -> None:
+    provisioner = load_vector_provisioner()
+    profile = json.loads(
+        (ROOT / "contracts/testing/deterministic-retrieval-profile-v1.json").read_text()
+    )
+    vector_space = provisioner.vector_space_from_profile(
+        profile,
+        embedding_space_generation_id=provisioner.UUID(
+            "11111111-1111-4111-8111-111111111111"
+        ),
+        sparse_space_generation_id=provisioner.UUID(
+            "22222222-2222-4222-8222-222222222222"
+        ),
+    )
+    assert vector_space.collection_name == "dolved-e2e-vectors-v1"
+    assert vector_space.vector_name == "dense"
+    assert vector_space.dimensions == 1024
+    assert vector_space.profile_fingerprint == profile["dense"]["fingerprint"]
+    assert vector_space.sparse is not None
+    assert vector_space.sparse.vector_name == "sparse"
+    assert vector_space.sparse.profile_fingerprint == profile["sparse"]["fingerprint"]
 
 
 def test_r28_s03_oversized_simulation_uses_governed_fixture_identity() -> None:

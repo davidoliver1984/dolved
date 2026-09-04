@@ -1,6 +1,6 @@
 {
   "schema_version": "r28-s03-materialisation-definition-v1",
-  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0010",
+  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0011",
   "purpose": "Provider-free materialisation of the frozen Dolved V4 corpus through the real ADR-0034 ImportBatch workflow",
   "execution": {
     "provider_calls_permitted": false,
@@ -225,6 +225,25 @@
         "qdrant_points": 1000,
         "sparse_bound_claims": 0,
         "sparse_bound_active_corpus_generations": 0
+      },
+      "provider_calls": 0,
+      "aws_calls": 0,
+      "selective_reruns": 0
+    },
+    {
+      "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0010",
+      "outcome": "failed_before_hybrid_rebuild_first_batch",
+      "cause": "The isolated collection was first created by dense ingestion. Qdrant correctly rejected an attempt to add a previously absent named sparse vector to that existing collection.",
+      "durable_state": {
+        "workspaces_created": 3,
+        "import_batches_created": 19,
+        "import_items_created": 331,
+        "documents_created": 318,
+        "documents_indexed": 318,
+        "canonical_chunks_created": 1000,
+        "negative_fixtures_observed": 13,
+        "qdrant_points": 1000,
+        "hybrid_rebuild_batches_completed": 0
       },
       "provider_calls": 0,
       "aws_calls": 0,

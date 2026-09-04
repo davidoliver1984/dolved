@@ -1,0 +1,21 @@
+
+   App\Exceptions\RetrievalExecutionException
+
+  Retrieval execution failed.
+
+  at app/Services/Retrieval/RetrievalClient.php:450
+    446▕                     } catch (InvalidArgumentException) {
+    447▕                         $last = new RetrievalException('The retrieval service returned an invalid failure observation.');
+    448▕                     }
+    449▕                 } else {
+  ➜ 450▕                     $last = new RetrievalExecutionException(new RetrievalFailureObservation(
+    451▕                         'transport_orchestration',
+    452▕                         'orchestration',
+    453▕                         'ai-service',
+    454▕                         null,
+
+  1   app/Services/Retrieval/RetrievalClient.php:308
+      App\Services\Retrieval\RetrievalClient::call("/api/internal/retrieval/corpus/rebuild-batch", "retrieval.corpus.rebuild", Object(App\Models\Workspace))
+
+  2   app/Actions/Retrieval/RebuildHybridCorpusGeneration.php:104
+      App\Services\Retrieval\RetrievalClient::rebuildCorpusBatch(Object(App\Models\Workspace), Object(App\Models\WorkspaceCorpusGeneration))
