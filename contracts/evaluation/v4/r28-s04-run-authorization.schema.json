@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dolved.example/contracts/evaluation/v4/r28-s04-run-authorization.schema.json",
+  "title": "R28-S04 one-use live run authorization",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "authorization_id", "authorised", "run_id",
+    "execution_commit", "population_identity", "population_digest",
+    "policy_sha256", "execution_profile_digest", "provider_profiles",
+    "ceilings", "approved_by", "approved_on", "selective_rerun_authorised"
+  ],
+  "properties": {
+    "schema_version": {"const": "r28-s04-run-authorization-v1"},
+    "authorization_id": {"type": "string", "pattern": "^R28-S04-AUTH-[A-Z0-9][A-Z0-9-]{7,80}$"},
+    "authorised": {"const": true},
+    "run_id": {"type": "string", "pattern": "^R28-S04-LIVE-V4-[A-Z0-9][A-Z0-9-]{7,80}$"},
+    "execution_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "population_identity": {"const": "dolved-care-v4-evaluation-population-v2"},
+    "population_digest": {"const": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c"},
+    "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "execution_profile_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "provider_profiles": {"type": "object"},
+    "ceilings": {"type": "object"},
+    "approved_by": {"type": "string", "minLength": 1},
+    "approved_on": {"type": "string", "format": "date"},
+    "selective_rerun_authorised": {"const": false}
+  }
+}
