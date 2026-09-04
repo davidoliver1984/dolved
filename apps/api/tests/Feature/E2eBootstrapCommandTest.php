@@ -3,11 +3,13 @@
 namespace Tests\Feature;
 
 use App\Actions\Documents\CreateDocument;
+use App\Actions\Documents\CreateDocumentVersion;
 use App\Actions\Workspaces\CreateWorkspace;
 use App\Enums\DocumentGovernanceStatus;
 use App\Models\Document;
 use App\Models\User;
 use App\Models\Workspace;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -129,5 +131,70 @@ class E2eBootstrapCommandTest extends TestCase
             'restricted to the isolated dolved-e2e identity',
             Artisan::output(),
         );
+    }
+
+    public function test_frozen_governance_replays_version_authority_without_wall_clock_collision(): void
+    {
+        $this->assertSame(0, Artisan::call('e2e:bootstrap', ['--run' => 'run-frozen', '--scenario' => 'primary']));
+        $identity = json_decode(trim(Artisan::output()), true, flags: JSON_THROW_ON_ERROR);
+        $user = User::query()->where('public_id', $identity['user_public_id'])->sole();
+        $workspace = Workspace::query()->where('public_id', $identity['workspace_public_id'])->sole();
+        $first = app(CreateDocument::class)->handle($workspace, $user, 'Policy v1.txt', 'text/plain', 42, 'txt');
+        $first->effective_from = CarbonImmutable::parse('2024-01-01', 'UTC');
+        $first->save();
+        $second = app(CreateDocumentVersion::class)->handle(
+            $first,
+            $user,
+            'Policy v2.txt',
+            'text/plain',
+            42,
+            CarbonImmutable::parse('2026-01-01', 'UTC'),
+            extension: 'txt',
+        );
+
+        $root = sys_get_temp_dir().'/dolved-r28-governance-'.uniqid('', true);
+        mkdir($root);
+        $manifestPath = $root.'/source-manifest.json';
+        file_put_contents($manifestPath, json_encode([
+            'document_count' => 2,
+            'documents' => [
+                [
+                    'family_id' => 'family.policy',
+                    'version_id' => 'v1',
+                    'filename' => 'Policy v1.txt',
+                    'governance_status' => 'withdrawn',
+                    'effective_date' => '2024-01-01',
+                    'superseded_date' => '2025-12-31',
+                ],
+                [
+                    'family_id' => 'family.policy',
+                    'version_id' => 'v2',
+                    'filename' => 'Policy v2.txt',
+                    'governance_status' => 'approved',
+                    'effective_date' => '2026-01-01',
+                ],
+            ],
+        ], JSON_THROW_ON_ERROR));
+        config(['e2e.frozen_corpus_root' => $root]);
+
+        try {
+            $this->assertSame(0, Artisan::call('e2e:apply-frozen-governance', [
+                '--workspace' => $workspace->public_id,
+                '--actor' => $user->public_id,
+                '--manifest' => $manifestPath,
+            ]));
+        } finally {
+            @unlink($manifestPath);
+            @rmdir($root);
+        }
+
+        $first->refresh();
+        $second->refresh();
+        $this->assertSame(DocumentGovernanceStatus::Withdrawn, $first->governance_status);
+        $this->assertSame('2023-12-31 23:59:59', $first->approved_at?->utc()->format('Y-m-d H:i:s'));
+        $this->assertSame('2025-12-31 00:00:00', $first->withdrawn_at?->utc()->format('Y-m-d H:i:s'));
+        $this->assertSame(DocumentGovernanceStatus::Approved, $second->governance_status);
+        $this->assertSame('2025-12-31 23:59:59', $second->approved_at?->utc()->format('Y-m-d H:i:s'));
+        $this->assertNull(CarbonImmutable::getTestNow());
     }
 }

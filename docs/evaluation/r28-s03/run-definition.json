@@ -1,6 +1,6 @@
 {
   "schema_version": "r28-s03-materialisation-definition-v1",
-  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0007",
+  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0008",
   "purpose": "Provider-free materialisation of the frozen Dolved V4 corpus through the real ADR-0034 ImportBatch workflow",
   "execution": {
     "provider_calls_permitted": false,
@@ -151,6 +151,25 @@
         "documents_indexed": 300,
         "canonical_chunks_created": 982,
         "documents_remaining_draft": 300
+      },
+      "provider_calls": 0,
+      "aws_calls": 0,
+      "selective_reruns": 0
+    },
+    {
+      "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0007",
+      "outcome": "failed_during_primary_governance_transition",
+      "cause": "Historical approvals were replayed at the current wall clock. Versions whose effective dates were already past therefore shared an authority-start timestamp, and the application correctly rejected the collision.",
+      "durable_state": {
+        "workspaces_created": 3,
+        "import_batches_created": 14,
+        "import_items_created": 300,
+        "documents_created": 300,
+        "documents_indexed": 300,
+        "canonical_chunks_created": 982,
+        "documents_remaining_draft": 204,
+        "documents_approved": 93,
+        "documents_withdrawn": 3
       },
       "provider_calls": 0,
       "aws_calls": 0,

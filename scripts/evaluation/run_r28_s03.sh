@@ -37,10 +37,32 @@ python3 scripts/evaluation/materialise_r28_s03.py \
   --foreign-identity "$runtime_root/foreign.json" \
   --injection-identity "$runtime_root/injection.json" \
   --primary-locations "$runtime_root/primary-locations.json" \
-  --output docs/evaluation/r28-s03/run/materialisation-result.json
+  --output "$runtime_root/materialisation-result.json"
+
+primary_actor="$(jq -r .user_public_id "$runtime_root/primary.json")"
+foreign_actor="$(jq -r .user_public_id "$runtime_root/foreign.json")"
+injection_workspace="$(jq -r .workspace_public_id "$runtime_root/injection.json")"
+injection_actor="$(jq -r .user_public_id "$runtime_root/injection.json")"
+"${compose[@]}" exec -T api php artisan e2e:apply-frozen-governance \
+  --workspace "$primary_workspace" --actor "$primary_actor" \
+  --manifest /r28-corpus/source-manifest.json \
+  > docs/evaluation/r28-s03/run/primary-governance.json
+"${compose[@]}" exec -T api php artisan e2e:apply-frozen-governance \
+  --workspace "$foreign_workspace" --actor "$foreign_actor" \
+  --manifest /r28-corpus/foreign-tenant/source-manifest.json \
+  > docs/evaluation/r28-s03/run/foreign-governance.json
+"${compose[@]}" exec -T api php artisan e2e:apply-frozen-governance \
+  --workspace "$injection_workspace" --actor "$injection_actor" \
+  --manifest /r28-corpus/prompt-injection-pack/source-manifest.json \
+  > docs/evaluation/r28-s03/run/injection-governance.json
+
+mv "$runtime_root/materialisation-result.json" docs/evaluation/r28-s03/run/materialisation-result.json
 
 "${compose[@]}" ps --format json > docs/evaluation/r28-s03/run/runtime-services.json
 sha256sum docs/evaluation/r28-s03/run/materialisation-result.json \
+  docs/evaluation/r28-s03/run/primary-governance.json \
+  docs/evaluation/r28-s03/run/foreign-governance.json \
+  docs/evaluation/r28-s03/run/injection-governance.json \
   docs/evaluation/r28-s03/run/runtime-services.json \
   > docs/evaluation/r28-s03/run/checksums.sha256
 

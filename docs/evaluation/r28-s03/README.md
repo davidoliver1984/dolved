@@ -1,6 +1,6 @@
 # R28-S03 V4 corpus materialisation
 
-`R28-S03-V4-CORPUS-MATERIALISATION-0007` materialises the frozen V4 corpus
+`R28-S03-V4-CORPUS-MATERIALISATION-0008` materialises the frozen V4 corpus
 through the real authenticated ADR-0034 import workflow in a dedicated local
 Docker project. It uses only the deterministic provider profile. It does not
 consume the R28-S04 live Voyage allowance and makes no OpenAI, Voyage or AWS
@@ -69,3 +69,15 @@ governance transition because the harness supplied a prefixed idempotency
 value rather than the UUID required by the canonical request contract. All
 documents remained draft and neither separate tenant had begun. Attempt
 `0007` supplies a plain UUID and begins from a fresh isolated runtime.
+
+Attempt `0007` materialised and indexed all 300 primary documents and 982
+canonical chunks. During the historical governance replay, 93 documents were
+approved and three were withdrawn before the application correctly rejected
+an authority-start collision; 204 remained draft and the separate tenants had
+not begun. The harness had replayed historical approvals at the current wall
+clock, so past-effective versions in one family could receive the same
+authority start. No corpus item was selectively rerun and no provider or AWS
+call occurred. Attempt `0008` moves governance replay to an isolated E2E-only
+command that calls the real approval and withdrawal actions at the frozen
+manifest dates. This preserves historical authority semantics without changing
+production governance behavior.

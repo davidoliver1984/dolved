@@ -2,12 +2,13 @@
 
 ## Status
 
-R28-S03 is in progress. No corpus materialisation has run yet.
+R28-S03 is in progress. Seven immutable attempts have run; each failed closed
+and remains recorded below. Attempt `0008` is prepared but has not run.
 
 ## Boundary
 
 The active immutable run identity is
-`R28-S03-V4-CORPUS-MATERIALISATION-0007`. It binds the frozen checkpoint 19
+`R28-S03-V4-CORPUS-MATERIALISATION-0008`. It binds the frozen checkpoint 19
 archive and its four governed scopes to a dedicated `dolved-r28-s03` local
 runtime. The primary, foreign-tenant and separate prompt-injection documents
 must pass through the authenticated ADR-0034 ImportBatch workflow. The 13
@@ -108,3 +109,16 @@ required by `DocumentGovernanceCommandRequest`. All documents remained draft
 and neither separate tenant had begun. No provider or AWS call occurred and no
 selective item rerun was made. Attempt `0007` supplies a plain UUID from a
 fresh isolated runtime.
+
+## Attempt 0007 outcome
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0007` created 14 ImportBatch rows,
+300 ImportItem rows, 300 indexed primary documents and 982 canonical chunks.
+It transitioned 93 documents to approved and three to withdrawn before the
+application rejected a duplicate historical authority start; 204 documents
+remained draft and neither separate tenant had begun. The harness had applied
+real governance actions at the current wall clock, causing past-effective
+versions in one family to share an authority start. No selective rerun,
+provider call or AWS call occurred. Attempt `0008` applies the real governance
+actions through an E2E-only command at each frozen effective/supersession date,
+then begins from a fresh isolated runtime.

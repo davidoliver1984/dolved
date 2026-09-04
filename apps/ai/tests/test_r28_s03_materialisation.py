@@ -22,7 +22,7 @@ def load_materialiser():
 
 def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -> None:
     definition = json.loads(DEFINITION.read_text())
-    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0007"
+    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0008"
     assert definition["prior_attempts"] == [
         {
             "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
@@ -136,6 +136,30 @@ def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -
             "aws_calls": 0,
             "selective_reruns": 0,
         },
+        {
+            "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0007",
+            "outcome": "failed_during_primary_governance_transition",
+            "cause": (
+                "Historical approvals were replayed at the current wall clock. "
+                "Versions whose effective dates were already past therefore shared "
+                "an authority-start timestamp, and the application correctly "
+                "rejected the collision."
+            ),
+            "durable_state": {
+                "workspaces_created": 3,
+                "import_batches_created": 14,
+                "import_items_created": 300,
+                "documents_created": 300,
+                "documents_indexed": 300,
+                "canonical_chunks_created": 982,
+                "documents_remaining_draft": 204,
+                "documents_approved": 93,
+                "documents_withdrawn": 3,
+            },
+            "provider_calls": 0,
+            "aws_calls": 0,
+            "selective_reruns": 0,
+        },
     ]
     assert definition["execution"]["provider_calls_permitted"] is False
     assert definition["execution"]["aws_access_permitted"] is False
@@ -192,25 +216,29 @@ def test_r28_s03_upload_accepts_only_empty_list_as_header_map_wire_ambiguity() -
         )
 
 
-def test_r28_s03_materialiser_calls_import_and_governance_apis() -> None:
+def test_r28_s03_materialiser_uses_import_api_and_frozen_governance_command() -> None:
     source = SCRIPT.read_text()
+    runner = (ROOT / "scripts/evaluation/run_r28_s03.sh").read_text()
     assert "/imports" in source
     assert "/decision" in source
     assert "/promotions" in source
-    assert "/governance/approve" in source
-    assert "/governance/withdraw" in source
+    assert "/governance/approve" not in source
+    assert "/governance/withdraw" not in source
+    assert runner.count("e2e:apply-frozen-governance") == 3
     assert "/documents/uploads" not in source
     assert "OPENAI" not in source.upper()
     assert "VOYAGE" not in source.upper()
 
 
-def test_r28_s03_materialiser_uses_canonical_document_response_field() -> None:
-    source = SCRIPT.read_text()
-    assert 'item["source_filename"]: item["public_id"]' in source
+def test_r28_s03_governance_replay_uses_canonical_document_field() -> None:
+    command = (
+        ROOT / "apps/api/app/Console/Commands/ApplyE2eFrozenGovernanceCommand.php"
+    ).read_text()
+    assert "->keyBy('source_filename')" in command
 
 
-def test_r28_s03_governance_commands_use_uuid_idempotency_keys() -> None:
+def test_r28_s03_import_promotions_use_unique_idempotency_keys() -> None:
     source = SCRIPT.read_text()
-    assert source.count('{"idempotency_key": str(uuid.uuid4())}') == 2
+    assert source.count('f"r28-s03-{uuid.uuid4()}"') == 1
     assert "r28-s03-approve-" not in source
     assert "r28-s03-withdraw-" not in source

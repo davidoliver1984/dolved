@@ -385,25 +385,6 @@ def materialise_scope(
             )
         )
 
-    document_ids = {
-        item["source_filename"]: item["public_id"]
-        for item in documents(client, workspace)
-    }
-    for entries in grouped.values():
-        for entry in entries:
-            document_id = document_ids[entry["filename"]]
-            status = entry.get("governance_status", "approved")
-            if status in {"approved", "withdrawn"}:
-                client.post(
-                    f"/api/workspaces/{workspace}/documents/{document_id}/governance/approve",
-                    {"idempotency_key": str(uuid.uuid4())},
-                )
-            if status == "withdrawn":
-                client.post(
-                    f"/api/workspaces/{workspace}/documents/{document_id}/governance/withdraw",
-                    {"idempotency_key": str(uuid.uuid4())},
-                )
-
     final_documents = documents(client, workspace)
     return {
         "corpus_id": manifest["corpus_id"],
