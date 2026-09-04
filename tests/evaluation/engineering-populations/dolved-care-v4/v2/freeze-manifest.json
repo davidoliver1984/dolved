@@ -1,0 +1,103 @@
+{
+  "schema_version": "r28-frozen-evaluation-population-manifest-v2",
+  "frozen_population": {
+    "identity": "dolved-care-v4-evaluation-population-v2",
+    "digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+    "digest_algorithm": "r28-frozen-population-digest-v1",
+    "repository_path": "tests/evaluation/engineering-populations/dolved-care-v4/v2"
+  },
+  "source": {
+    "authoring_run_id": "AUTHOR-V4-20260904-C9W2P6LX",
+    "population_id": "dolved-v4-independent-comparison-compat-v2"
+  },
+  "candidate_files": {
+    "author-declaration.json": "507095440c3ad7bde85896ad2c057b9502eebd6f2f942c09d82537c56268be4f",
+    "authoring-report.md": "cbfd7ba156b4b3d239c3a0350d1df48c625bf1c61ffa4e98a8605771ee625b99",
+    "checksums.sha256": "1dd8c0574bdd352486b240a664bd4f6aa14b378c733de4915090150bb0d3a45b",
+    "coverage-matrix.json": "3c35723afcbcf558a5cb8ddeb05bba9cec9d56f1bd8be960104c2edda7c99448",
+    "population.json": "17e11317d9999056046115e17300c59423c08f0cb0453b636d5abda07ba104b5"
+  },
+  "contracts": {
+    "schema": "r28-independent-authoring-output-v3",
+    "output_contract": "dolved-v4-independent-authoring-output-v3",
+    "coverage_contract": "dolved-v4-independent-authoring-coverage-v2",
+    "aggregate_sha256": "58e4d4b3ebbde74118bbbd287240ef861fea9035aa291642e2be2a97c6ae1624"
+  },
+  "restricted_author_view": {
+    "identity": "dolved-care-v4-question-author-view-v1",
+    "sha256": "8f73c9c12a843be9641698f39db60243a977e6c1c700a3f89f72dbbb890e44b9"
+  },
+  "corpus_checkpoint": {
+    "identity": "checkpoint-19-application-evidence-corrections",
+    "archive_filename": "checkpoint-19-application-evidence-corrections.tar.gz",
+    "sha256": "6fa6602935efe8379cc2a7de4ba85af17aa8d8827082ae6de8df959f6e19a06e"
+  },
+  "compatibility_correction": {
+    "parent_population_identity": "dolved-care-v4-evaluation-population-v1",
+    "parent_population_digest": "6254188d7fc7a698641750a81d436eac97eb425244704b64b1daac0c92803161",
+    "checkpoint_identity": "COMPAT-V2-20260904-R7K3M8QX",
+    "checkpoint_sha256": "40b16d20fab1734ac9cd04e65b66cb63f8423cf864bc8f17be4537c79771d4e1",
+    "corrected_canonical_case_sha256": "442a92d6003738805b38d6a959a4ce44675344130d64ba307e5ddeeb265c9d42",
+    "candidate_identity": "dolved-v4-independent-comparison-compat-v2",
+    "candidate_aggregate_sha256": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+    "accepted_verdict": "R28_V4_COMPARISON_COMPATIBILITY_V2_CANDIDATE_ACCEPTED",
+    "accepted_on": "2026-09-04",
+    "semantic_delta": {
+      "comparison_side_corrections": 63,
+      "fully_replaced_cases": [
+        "v4.case.corrected-b02-09"
+      ],
+      "unchanged_cases": 52
+    },
+    "authority_reference_date": "2026-09-04"
+  },
+  "final_audit": {
+    "verdict": "R28_V4_COMPARISON_COMPATIBILITY_V2_CANDIDATE_ACCEPTED",
+    "independently_authored_and_audited": true
+  },
+  "freeze": {
+    "date": "2026-09-04",
+    "contract_repository_commit": "d069337b9fc4b1a0da782ea5df04789eb738021e",
+    "integration_start_commit": "b9911fc54997360187f380d652c41e8058dd8494",
+    "candidate_copy_rule": "byte-identical",
+    "immutable": true,
+    "correction_rule": "Any correction requires a new population identity and version.",
+    "replacement_rule": "No later run may silently replace this population."
+  },
+  "counts": {
+    "semantic_cases": 74,
+    "variants_per_case": 2,
+    "utterances": 148,
+    "globally_normalization_distinct_utterances": 148,
+    "scopes": {
+      "primary": 62,
+      "foreign_tenant": 6,
+      "security_test": 6
+    },
+    "outcomes": {
+      "CLARIFICATION_REQUIRED": 5,
+      "COMPARISON_SCOPE_INCOMPLETE": 5,
+      "EVIDENCE_FOUND": 43,
+      "INSUFFICIENT_EVIDENCE": 5,
+      "NO_ELIGIBLE_EVIDENCE": 6,
+      "NO_RETRIEVAL_CANDIDATES": 5,
+      "TEMPORAL_SCOPE_UNRESOLVED": 5
+    },
+    "formats": {
+      "DOCX": 23,
+      "PDF": 23,
+      "TXT": 25
+    },
+    "coverage_slices": 39,
+    "answerable_comparison_cases": 22,
+    "scheduled_future_comparison_sides": 0
+  },
+  "separation": {
+    "historical_benchmark_v3_populations_are_distinct": true,
+    "r28_s02_legacy_populations_are_distinct": true,
+    "v1_retained_as_historical_evidence": true,
+    "sole_authorised_r28_s04_population": true
+  },
+  "provider_execution_authorised": false,
+  "verification_command": "apps/ai/.venv/bin/python scripts/evaluation/verify_r28_v4_population.py"
+}

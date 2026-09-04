@@ -4,29 +4,48 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import os
 import stat
 import subprocess
 import sys
+import tarfile
+from copy import deepcopy
+from datetime import date
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
-FREEZE = ROOT / "tests/evaluation/engineering-populations/dolved-care-v4/v1"
+FREEZE = ROOT / "tests/evaluation/engineering-populations/dolved-care-v4/v2"
+HISTORICAL_V1 = ROOT / "tests/evaluation/engineering-populations/dolved-care-v4/v1"
 ACCESS = ROOT / "docs/evaluation/r28-s01/r28-s04-population-access.json"
 SCRIPT_DIR = ROOT / "scripts/evaluation"
 sys.path.insert(0, str(SCRIPT_DIR))
 
 import validate_r28_authoring_output as v3
 
-IDENTITY = "dolved-care-v4-evaluation-population-v1"
-DIGEST = "6254188d7fc7a698641750a81d436eac97eb425244704b64b1daac0c92803161"
+IDENTITY = "dolved-care-v4-evaluation-population-v2"
+DIGEST = "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c"
 DIGEST_ALGORITHM = "r28-frozen-population-digest-v1"
-RUN_ID = "AUTHOR-V4-20260903-H4K9T2MC"
-POPULATION_ID = "dolved-v4-independent-corrected-74case-v3-r2"
+RUN_ID = "AUTHOR-V4-20260904-C9W2P6LX"
+POPULATION_ID = "dolved-v4-independent-comparison-compat-v2"
 CONTRACT_AGGREGATE = "58e4d4b3ebbde74118bbbd287240ef861fea9035aa291642e2be2a97c6ae1624"
 CONTRACT_COMMIT = "d069337b9fc4b1a0da782ea5df04789eb738021e"
+INTEGRATION_START_COMMIT = "b9911fc54997360187f380d652c41e8058dd8494"
+HISTORICAL_V1_IDENTITY = "dolved-care-v4-evaluation-population-v1"
+HISTORICAL_V1_DIGEST = (
+    "6254188d7fc7a698641750a81d436eac97eb425244704b64b1daac0c92803161"
+)
+COMPATIBILITY_CHECKPOINT = "COMPAT-V2-20260904-R7K3M8QX"
+COMPATIBILITY_CHECKPOINT_SHA256 = (
+    "40b16d20fab1734ac9cd04e65b66cb63f8423cf864bc8f17be4537c79771d4e1"
+)
+CORRECTED_CASES_SHA256 = (
+    "442a92d6003738805b38d6a959a4ce44675344130d64ba307e5ddeeb265c9d42"
+)
+ACCEPTED_VERDICT = "R28_V4_COMPARISON_COMPATIBILITY_V2_CANDIDATE_ACCEPTED"
+AUTHORITY_REFERENCE_DATE = date(2026, 9, 4)
 CONTRACT_PATHS = (
     "docs/evaluation/r28-s01/access-manifest.json",
     "contracts/evaluation/v4/independent-authoring-output.schema.json",
@@ -40,7 +59,7 @@ EXPECTED_DIRECTORY_FILES = {
     "freeze-manifest.json",
     "README.md",
 }
-CANONICAL_PATH = "tests/evaluation/engineering-populations/dolved-care-v4/v1"
+CANONICAL_PATH = "tests/evaluation/engineering-populations/dolved-care-v4/v2"
 CORRECTION_RULE = "Any correction requires a new population identity and version."
 REPLACEMENT_RULE = "No later run may silently replace this population."
 EXPECTED_SCOPES = {"primary": 62, "foreign_tenant": 6, "security_test": 6}
@@ -120,6 +139,10 @@ def digest_input(records: dict[str, str]) -> bytes:
 
 
 def validate_manifest_metadata(manifest: dict[str, Any]) -> None:
+    require(
+        manifest["schema_version"] == "r28-frozen-evaluation-population-manifest-v2",
+        "freeze manifest schema drift",
+    )
     population = manifest["frozen_population"]
     require(population["repository_path"] == CANONICAL_PATH, "repository path drift")
     require(
@@ -127,6 +150,7 @@ def validate_manifest_metadata(manifest: dict[str, Any]) -> None:
         == {
             "date": "2026-09-04",
             "contract_repository_commit": CONTRACT_COMMIT,
+            "integration_start_commit": INTEGRATION_START_COMMIT,
             "candidate_copy_rule": "byte-identical",
             "immutable": True,
             "correction_rule": CORRECTION_RULE,
@@ -134,10 +158,41 @@ def validate_manifest_metadata(manifest: dict[str, Any]) -> None:
         },
         "freeze metadata drift",
     )
+    require(
+        manifest["compatibility_correction"]
+        == {
+            "parent_population_identity": HISTORICAL_V1_IDENTITY,
+            "parent_population_digest": HISTORICAL_V1_DIGEST,
+            "checkpoint_identity": COMPATIBILITY_CHECKPOINT,
+            "checkpoint_sha256": COMPATIBILITY_CHECKPOINT_SHA256,
+            "corrected_canonical_case_sha256": CORRECTED_CASES_SHA256,
+            "candidate_identity": POPULATION_ID,
+            "candidate_aggregate_sha256": DIGEST,
+            "accepted_verdict": ACCEPTED_VERDICT,
+            "accepted_on": "2026-09-04",
+            "semantic_delta": {
+                "comparison_side_corrections": 63,
+                "fully_replaced_cases": ["v4.case.corrected-b02-09"],
+                "unchanged_cases": 52,
+            },
+            "authority_reference_date": AUTHORITY_REFERENCE_DATE.isoformat(),
+        },
+        "V2 compatibility lineage drift",
+    )
+    require(
+        manifest["final_audit"]
+        == {"verdict": ACCEPTED_VERDICT, "independently_authored_and_audited": True},
+        "V2 acceptance verdict drift",
+    )
     counts = manifest["counts"]
     require(counts["semantic_cases"] == 74, "semantic case count drift")
     require(counts["utterances"] == 148, "utterance count drift")
     require(counts["scopes"] == EXPECTED_SCOPES, "scope counts drift")
+    require(counts["answerable_comparison_cases"] == 22, "comparison count drift")
+    require(
+        counts["scheduled_future_comparison_sides"] == 0,
+        "scheduled comparison count drift",
+    )
     require(
         manifest["provider_execution_authorised"] is False,
         "freeze manifest authorised provider execution",
@@ -216,6 +271,9 @@ def validate_v3(files: dict[str, bytes], manifest: dict[str, Any]) -> None:
     inventory, view_members = v3.view_inventory(
         v3.trusted_input_bytes(view_path, str(view_path.relative_to(ROOT)))
     )
+    metadata = view_document_metadata(view_path)
+    validate_comparison_authority(population, metadata)
+    validate_v1_delta(population)
     slices = v3.validate_population(population, allowed_slices, inventory)
     v3.validate_coverage(
         v3.load_object(files["coverage-matrix.json"], "coverage-matrix.json"),
@@ -236,7 +294,15 @@ def validate_v3(files: dict[str, bytes], manifest: dict[str, Any]) -> None:
         access,
     )
     report = files["authoring-report.md"].decode("utf-8")
-    require(CONTRACT_AGGREGATE in report, "authoring report contract aggregate drift")
+    for identity in (
+        "r28-independent-authoring-output-v3",
+        "dolved-v4-independent-authoring-output-v3",
+        "r28-authoring-coverage-contract-v2",
+        COMPATIBILITY_CHECKPOINT_SHA256,
+        CORRECTED_CASES_SHA256,
+        HISTORICAL_V1_DIGEST,
+    ):
+        require(identity in report, f"authoring report lineage drift: {identity}")
     require(
         manifest["contracts"]["aggregate_sha256"] == CONTRACT_AGGREGATE,
         "manifest contract aggregate drift",
@@ -248,6 +314,125 @@ def validate_v3(files: dict[str, bytes], manifest: dict[str, Any]) -> None:
     require(
         contract_aggregate() == CONTRACT_AGGREGATE,
         "repository contract aggregate mismatch",
+    )
+
+
+def view_document_metadata(view_path: Path) -> dict[str, dict[str, Any]]:
+    archive = regular_file_bytes(view_path)
+    member_name = "dolved-care-v4-question-author-view-v1/metadata/documents.json"
+    with tarfile.open(fileobj=io.BytesIO(archive), mode="r:gz") as bundle:
+        member = bundle.getmember(member_name)
+        require(member.isfile() and not member.issym(), "view metadata is not regular")
+        stream = bundle.extractfile(member)
+        if stream is None:
+            raise ValueError("view metadata is unreadable")
+        payload = json.loads(stream.read())
+    documents = payload["documents"]
+    by_path = {document["view_path"]: document for document in documents}
+    require(len(by_path) == len(documents), "duplicate view metadata path")
+    return by_path
+
+
+def authority_state(document: dict[str, Any]) -> str:
+    effective = date.fromisoformat(document["effective_date"])
+    superseded_raw = document["superseded_date"]
+    superseded = date.fromisoformat(superseded_raw) if superseded_raw else None
+    governance = document["governance_status"]
+    if effective > AUTHORITY_REFERENCE_DATE:
+        return "scheduled_future"
+    if governance not in {"approved", "withdrawn"}:
+        return "never_authoritative"
+    if superseded is not None and superseded <= AUTHORITY_REFERENCE_DATE:
+        return "historical"
+    return "current"
+
+
+def validate_comparison_authority(
+    population: dict[str, Any], metadata: dict[str, dict[str, Any]]
+) -> None:
+    comparison_cases = 0
+    scheduled_sides = 0
+    for case in population["cases"]:
+        if not (
+            case["context"]["temporal_mode"] == "COMPARE"
+            and case["expected_outcome"]["retrieval"] == "EVIDENCE_FOUND"
+        ):
+            continue
+        comparison_cases += 1
+        for evidence in case["expected_evidence"]:
+            path = evidence["restricted_view_path"]
+            require(path in metadata, f"missing authority metadata: {path}")
+            state = authority_state(metadata[path])
+            if state == "scheduled_future":
+                scheduled_sides += 1
+            expected_state = {
+                "PRIMARY": "current",
+                "COMPARISON": "historical",
+            }[evidence["side"]]
+            require(
+                state == expected_state,
+                f"comparison authority mismatch: {case['case_id']} {evidence['side']} "
+                f"is {state}",
+            )
+        sides = {evidence["side"] for evidence in case["expected_evidence"]}
+        require(
+            sides == {"PRIMARY", "COMPARISON"},
+            f"comparison side coverage mismatch: {case['case_id']}",
+        )
+    require(comparison_cases == 22, "answerable comparison case count drift")
+    require(scheduled_sides == 0, "scheduled-future comparison evidence present")
+
+
+def validate_v1_delta(population: dict[str, Any]) -> None:
+    historical = json.loads(regular_file_bytes(HISTORICAL_V1 / "population.json"))
+    old_cases = {case["case_id"]: case for case in historical["cases"]}
+    new_cases = {case["case_id"]: case for case in population["cases"]}
+    require(set(old_cases) == set(new_cases), "V1/V2 case identity drift")
+    changed: list[str] = []
+    side_corrections = 0
+    replacement = "v4.case.corrected-b02-09"
+    for case_id, old_case in old_cases.items():
+        new_case = new_cases[case_id]
+        if old_case == new_case:
+            continue
+        changed.append(case_id)
+        if case_id == replacement:
+            continue
+        normalised_old = deepcopy(old_case)
+        normalised_new = deepcopy(new_case)
+        require(
+            len(normalised_old["expected_evidence"])
+            == len(normalised_new["expected_evidence"]),
+            f"unexpected V2 evidence delta: {case_id}",
+        )
+        for old_evidence, new_evidence in zip(
+            normalised_old["expected_evidence"],
+            normalised_new["expected_evidence"],
+            strict=True,
+        ):
+            if old_evidence["side"] != new_evidence["side"]:
+                side_corrections += 1
+            old_evidence["side"] = new_evidence["side"]
+        require(
+            normalised_old == normalised_new,
+            f"unexpected non-side V2 delta: {case_id}",
+        )
+    require(len(changed) == 22, "V1/V2 changed case count drift")
+    require(replacement in changed, "accepted replacement case missing")
+    require(side_corrections == 63, "V1/V2 side correction count drift")
+    require(74 - len(changed) == 52, "V1/V2 unchanged case count drift")
+    corrected_bytes = (
+        json.dumps(
+            population["cases"],
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        + b"\n"
+    )
+    require(
+        sha256(corrected_bytes) == CORRECTED_CASES_SHA256,
+        "corrected canonical case hash drift",
     )
 
 
@@ -269,6 +454,26 @@ def validate_access_binding(access: dict[str, Any]) -> None:
             "immutable": True,
         },
         "R28-S04 population access binding drift",
+    )
+    require(
+        access["supersedes_for_execution"]
+        == {
+            "path": "tests/evaluation/engineering-populations/dolved-care-v4/v1",
+            "identity": HISTORICAL_V1_IDENTITY,
+            "digest": HISTORICAL_V1_DIGEST,
+            "disposition": "retained_historical_evidence",
+        },
+        "R28-S04 V1 historical lineage drift",
+    )
+    require(
+        access["compatibility_correction"]
+        == {
+            "checkpoint_identity": COMPATIBILITY_CHECKPOINT,
+            "checkpoint_sha256": COMPATIBILITY_CHECKPOINT_SHA256,
+            "accepted_verdict": ACCEPTED_VERDICT,
+            "accepted_on": "2026-09-04",
+        },
+        "R28-S04 V2 compatibility lineage drift",
     )
     require(
         access["substitution"]
@@ -342,7 +547,8 @@ def main() -> int:
     validate_access_binding(json.loads(regular_file_bytes(ACCESS)))
     print(
         "PASS frozen R28 V4 population: 74 semantic cases, 148 utterances, "
-        "five byte identities, 39 coverage slices, restricted view and contract aggregate complete"
+        "five byte identities, 39 coverage slices, 22 comparison cases, V1/V2 "
+        "delta, restricted view and contract aggregate complete"
     )
     return 0
 

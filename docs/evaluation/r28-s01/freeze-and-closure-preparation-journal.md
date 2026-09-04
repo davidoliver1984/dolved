@@ -71,3 +71,21 @@ identity, and the six-input contract aggregate at the recorded contract commit.
 R28-S01 is complete. R28-S02 remains `not_started`; its dependency is now
 satisfied, but it was not executed by this closure. Phase 28 and `R28-GATE`
 remain open. This record does not assert `PILOT_READY`.
+
+## Superseding pre-execution compatibility correction — 2026-09-04
+
+R28-S04's provider-free preflight later found that V1's comparison-side labels
+were incompatible with ADR-0022 V1. This does not reopen R28-S01 or rewrite its
+historical freeze evidence. V1 remains byte-identical at identity
+`dolved-care-v4-evaluation-population-v1`, digest
+`6254188d7fc7a698641750a81d436eac97eb425244704b64b1daac0c92803161`.
+
+The independently accepted checkpoint `COMPAT-V2-20260904-R7K3M8QX`, SHA-256
+`40b16d20fab1734ac9cd04e65b66cb63f8423cf864bc8f17be4537c79771d4e1`,
+was integrated as `dolved-care-v4-evaluation-population-v2`, digest
+`adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c`.
+Its verdict is `R28_V4_COMPARISON_COMPATIBILITY_V2_CANDIDATE_ACCEPTED`.
+R28-S04 is now bound exclusively to V2. The correction changes 63 side labels
+across 21 comparison cases and fully replaces `v4.case.corrected-b02-09`; 52
+cases, all counts, scopes, coverage, routing and provider ceilings are unchanged.
+No corpus was rematerialised and no provider or AWS action occurred.

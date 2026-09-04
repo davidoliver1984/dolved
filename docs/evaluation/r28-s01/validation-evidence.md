@@ -73,3 +73,25 @@ environment evidence rather than canonical distribution hashes.
   routing/count arithmetic coverage. The canonical verifier and its embedded v3
   population validation passed without changing population content.
 - No provider, network or AWS action occurred. R28-S02 was not started.
+
+## R28-S04 comparison-compatibility V2 integration — 2026-09-04
+
+- The original V1 identity and digest above remain byte-identical historical
+  evidence.
+- Accepted checkpoint `COMPAT-V2-20260904-R7K3M8QX`, SHA-256
+  `40b16d20fab1734ac9cd04e65b66cb63f8423cf864bc8f17be4537c79771d4e1`,
+  was serialized as candidate `dolved-v4-independent-comparison-compat-v2`.
+- All five approved candidate hashes and internal checksums passed; the V3
+  validator returned exactly `PASS 74 semantic cases, 148 utterances, coverage
+  and provenance complete`.
+- Canonical V2 identity is `dolved-care-v4-evaluation-population-v2`, digest
+  `adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c`,
+  under the unchanged `r28-frozen-population-digest-v1` algorithm.
+- The canonical verifier proves 22 answerable comparisons use current authority
+  as PRIMARY and selected historical authority as COMPARISON using restricted-
+  view governance/effective-date metadata, with zero scheduled-future sides.
+- Exact delta verification proves 63 side corrections across 21 cases, full
+  replacement of `v4.case.corrected-b02-09`, and 52 unchanged cases. Counts,
+  scopes, 39 coverage slices, routing and ceilings remain unchanged.
+- No corpus rematerialisation, provider call, network access or AWS action
+  occurred. R28-S04 was not executed.

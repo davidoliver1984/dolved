@@ -39,8 +39,8 @@
   },
   "progress": {
     "current_phase": "R28",
-    "current_session": "R28-S02",
-    "next_action": "Review the provider-free R28-S02 execution preflight and explicitly approve or reject the single live baseline; no provider call is authorised yet.",
+    "current_session": "R28-S04",
+    "next_action": "Independently audit the provider-free R28-S04 comparison-compatible V2 population integration before any separate provider-execution approval.",
     "completed_through": "R27-GATE",
     "completed_phase_count": 28,
     "total_phase_count": 33
@@ -5435,7 +5435,7 @@
             "R28-S02",
             "R28-S03"
           ],
-          "objective": "Using only the V4 evaluation population authored, audited and frozen entirely within R28-S01 — independently of, and after, the checkpoint 19 corpus freeze, with no calibration or held-out material exposed during authoring or audit — exercise the complete current path over the primary evaluation tenant's corpus materialised in R28-S03: contextualisation/planning, eligibility and applicability, temporal/current/historical/valid-at-date resolution, comparison retrieval, dense/sparse retrieval, fusion and reranking, evidence thresholds and controlled no-answer outcomes, grounded generation with citations and EvidenceSnapshot behaviour, clarification/insufficiency distinctions, version-conflation resistance and over-refusal/leakage controls — recording retrieval and answer-quality metrics separately with inspectable per-case artefacts, not only aggregate scores."
+          "objective": "Using only comparison-compatible V2 — the independently accepted, immutable pre-execution correction to the V4 evaluation population originally authored, audited and frozen within R28-S01, while retaining V1 as byte-identical historical evidence and exposing no calibration or held-out material — exercise the complete current path over the primary evaluation tenant's corpus materialised in R28-S03: contextualisation/planning, eligibility and applicability, temporal/current/historical/valid-at-date resolution, comparison retrieval, dense/sparse retrieval, fusion and reranking, evidence thresholds and controlled no-answer outcomes, grounded generation with citations and EvidenceSnapshot behaviour, clarification/insufficiency distinctions, version-conflation resistance and over-refusal/leakage controls — recording retrieval and answer-quality metrics separately with inspectable per-case artefacts, not only aggregate scores."
         },
         {
           "id": "R28-S05",

@@ -3,10 +3,22 @@
   "session": "R28-S04",
   "policy": "fail_closed",
   "sole_authorised_population": {
+    "path": "tests/evaluation/engineering-populations/dolved-care-v4/v2",
+    "identity": "dolved-care-v4-evaluation-population-v2",
+    "digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+    "immutable": true
+  },
+  "supersedes_for_execution": {
     "path": "tests/evaluation/engineering-populations/dolved-care-v4/v1",
     "identity": "dolved-care-v4-evaluation-population-v1",
     "digest": "6254188d7fc7a698641750a81d436eac97eb425244704b64b1daac0c92803161",
-    "immutable": true
+    "disposition": "retained_historical_evidence"
+  },
+  "compatibility_correction": {
+    "checkpoint_identity": "COMPAT-V2-20260904-R7K3M8QX",
+    "checkpoint_sha256": "40b16d20fab1734ac9cd04e65b66cb63f8423cf864bc8f17be4537c79771d4e1",
+    "accepted_verdict": "R28_V4_COMPARISON_COMPATIBILITY_V2_CANDIDATE_ACCEPTED",
+    "accepted_on": "2026-09-04"
   },
   "substitution": {
     "r28_s02_population_permitted": false,

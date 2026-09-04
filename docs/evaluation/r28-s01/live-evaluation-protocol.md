@@ -1,9 +1,9 @@
-# R28-S01 live-evaluation protocol draft
+# R28-S01 live-evaluation protocol
 
-Status: **IN PROGRESS — the independently audited V4 population is frozen.
-ADR-0037 and the exact R28-S04 ceiling below were approved by David on
-2026-09-04. Final independent audit and R28-S01 closure remain pending. R28-S02
-remains blocked.**
+Status: **COMPLETED — the protocol and original V1 population freeze remain
+historical evidence. Before R28-S04 execution, the accepted comparison-
+compatibility correction was integrated as immutable V2 and bound exclusively
+to S04. Provider execution remains separately controlled.**
 
 ## Intermediate approval record
 
@@ -46,9 +46,9 @@ seed support, deterministic-boundary declarations, and unique immutable run,
 attempt and authorised-rerun IDs. Missing identity is a hard stop.
 
 R28-S04 is bound exclusively to
-`tests/evaluation/engineering-populations/dolved-care-v4/v1`, identity
-`dolved-care-v4-evaluation-population-v1`, digest
-`6254188d7fc7a698641750a81d436eac97eb425244704b64b1daac0c92803161`.
+`tests/evaluation/engineering-populations/dolved-care-v4/v2`, identity
+`dolved-care-v4-evaluation-population-v2`, digest
+`adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c`.
 Missing or mismatched path, identity or digest is a hard stop. The population is
 immutable; every correction requires a new population identity/version and no
 later run may silently replace it. R28-S02's two legacy components remain bound
@@ -58,6 +58,24 @@ The machine-readable execution boundary is
 `docs/evaluation/r28-s01/r28-s04-population-access.json`. The independent
 authoring access manifest remains unchanged because it is an input to the
 approved authoring contract aggregate.
+
+### Post-freeze comparison-compatibility correction — 2026-09-04
+
+Provider-free R28-S04 preflight found that V1's answerable comparisons were not
+compatible with ADR-0022 V1's current-as-PRIMARY and selected-history-as-
+COMPARISON contract. V1 remains byte-identical historical evidence at identity
+`dolved-care-v4-evaluation-population-v1`, digest
+`6254188d7fc7a698641750a81d436eac97eb425244704b64b1daac0c92803161`.
+
+The independently accepted correction checkpoint
+`COMPAT-V2-20260904-R7K3M8QX` (SHA-256
+`40b16d20fab1734ac9cd04e65b66cb63f8423cf864bc8f17be4537c79771d4e1`)
+produced candidate `dolved-v4-independent-comparison-compat-v2`, aggregate
+digest `adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c`.
+The accepted verdict is
+`R28_V4_COMPARISON_COMPATIBILITY_V2_CANDIDATE_ACCEPTED`. V2 changes exactly
+63 side labels across 21 cases, fully replaces `v4.case.corrected-b02-09`, and
+leaves the other 52 cases unchanged. Routing and ceilings below are unchanged.
 
 ## Separately reported layers
 
