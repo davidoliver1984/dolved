@@ -65,8 +65,13 @@ final class ProvisionE2eOrganisationCommand extends Command
             throw new RuntimeException('The organisation manifest must come from the read-only R28 corpus mount.');
         }
         $decoded = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
-        if (! is_array($decoded) || ! is_array($decoded['locations'] ?? null) || ! is_array($decoded['aliases'] ?? null)) {
+        if (! is_array($decoded) || ! is_array($decoded['locations'] ?? null)) {
             throw new RuntimeException('The organisation manifest has an invalid shape.');
+        }
+
+        $decoded['aliases'] ??= [];
+        if (! is_array($decoded['aliases'])) {
+            throw new RuntimeException('The organisation aliases must be an array when present.');
         }
 
         return $decoded;

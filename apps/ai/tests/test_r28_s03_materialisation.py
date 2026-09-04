@@ -19,7 +19,25 @@ def load_materialiser():
 
 def test_r28_s03_definition_preserves_four_governed_scopes_without_providers() -> None:
     definition = json.loads(DEFINITION.read_text())
-    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0001"
+    assert definition["run_id"] == "R28-S03-V4-CORPUS-MATERIALISATION-0002"
+    assert definition["prior_attempts"] == [
+        {
+            "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
+            "outcome": "failed_before_import_batch_creation",
+            "cause": (
+                "The E2E organisation provisioner incorrectly required an aliases "
+                "array that the valid foreign-tenant organisation manifest omits."
+            ),
+            "durable_state": {
+                "workspaces_created": 3,
+                "import_batches_created": 0,
+                "documents_created": 0,
+            },
+            "provider_calls": 0,
+            "aws_calls": 0,
+            "selective_reruns": 0,
+        }
+    ]
     assert definition["execution"]["provider_calls_permitted"] is False
     assert definition["execution"]["aws_access_permitted"] is False
     assert definition["scopes"]["primary"]["expected_documents"] == 300

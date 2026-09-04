@@ -1,6 +1,6 @@
 # R28-S03 V4 corpus materialisation
 
-`R28-S03-V4-CORPUS-MATERIALISATION-0001` materialises the frozen V4 corpus
+`R28-S03-V4-CORPUS-MATERIALISATION-0002` materialises the frozen V4 corpus
 through the real authenticated ADR-0034 import workflow in a dedicated local
 Docker project. It uses only the deterministic provider profile. It does not
 consume the R28-S04 live Voyage allowance and makes no OpenAI, Voyage or AWS
@@ -23,3 +23,10 @@ database are isolated.
 The durable result and checksums are written here only after the single run
 finishes. A failed run remains evidence and is not selectively repaired or
 rerun.
+
+Attempt `0001` failed before any ImportBatch or document was created because
+the isolated organisation provisioner treated the optional foreign-tenant
+`aliases` member as required. The database evidence was three isolated
+workspaces, zero import batches and zero documents. Attempt `0002` is a new
+immutable run identity after the provider-free provisioner correction; it is
+not a selective retry of any corpus item.

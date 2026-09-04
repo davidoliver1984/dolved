@@ -6,8 +6,8 @@ R28-S03 is in progress. No corpus materialisation has run yet.
 
 ## Boundary
 
-The immutable run identity is
-`R28-S03-V4-CORPUS-MATERIALISATION-0001`. It binds the frozen checkpoint 19
+The active immutable run identity is
+`R28-S03-V4-CORPUS-MATERIALISATION-0002`. It binds the frozen checkpoint 19
 archive and its four governed scopes to a dedicated `dolved-r28-s03` local
 runtime. The primary, foreign-tenant and separate prompt-injection documents
 must pass through the authenticated ADR-0034 ImportBatch workflow. The 13
@@ -37,3 +37,14 @@ product-path ingestion and isolation evidence, not live-provider quality.
 The preparation boundary must be committed and pushed before its clean exact
 commit is executed. A failed materialisation remains evidence; there is no
 selective retry-to-success.
+
+## Attempt 0001 outcome
+
+Attempt `R28-S03-V4-CORPUS-MATERIALISATION-0001` failed before corpus
+materialisation. The valid foreign-tenant organisation manifest has no
+aliases, while the isolated provisioner incorrectly required an `aliases`
+array. Read-only database inspection after failure confirmed three isolated
+workspaces, zero ImportBatch rows and zero documents. No provider or AWS call
+occurred and no corpus item was attempted. The provisioner correction accepts
+an omitted aliases member as an empty list while continuing to validate any
+present aliases array. Attempt `0002` therefore has a new immutable identity.

@@ -1,6 +1,6 @@
 {
   "schema_version": "r28-s03-materialisation-definition-v1",
-  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
+  "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0002",
   "purpose": "Provider-free materialisation of the frozen Dolved V4 corpus through the real ADR-0034 ImportBatch workflow",
   "execution": {
     "provider_calls_permitted": false,
@@ -64,5 +64,20 @@
     "This run proves product-workflow materialisation and isolation, not live-provider retrieval quality.",
     "The S04 live Voyage corpus embedding allowance remains unused by this run.",
     "Authority state is verified against the frozen evaluation clock separately from wall-clock UI presentation."
+  ],
+  "prior_attempts": [
+    {
+      "run_id": "R28-S03-V4-CORPUS-MATERIALISATION-0001",
+      "outcome": "failed_before_import_batch_creation",
+      "cause": "The E2E organisation provisioner incorrectly required an aliases array that the valid foreign-tenant organisation manifest omits.",
+      "durable_state": {
+        "workspaces_created": 3,
+        "import_batches_created": 0,
+        "documents_created": 0
+      },
+      "provider_calls": 0,
+      "aws_calls": 0,
+      "selective_reruns": 0
+    }
   ]
 }
