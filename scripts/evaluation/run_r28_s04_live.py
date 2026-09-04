@@ -1109,6 +1109,40 @@ def application_import_path(root: Path) -> None:
         sys.path.insert(0, path)
 
 
+def validate_application_request(
+    root: Path, stage: str, payload: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Validate a provider-bound payload through its production request model."""
+    application_import_path(root)
+    if stage in {"corpus_embedding", "query_embedding"}:
+        from app.embedding.models import EmbeddingRequest
+
+        return EmbeddingRequest.model_validate(payload).model_dump(mode="json")
+    elif stage == "reranker":
+        from app.reranking.models import RerankRequest
+
+        return RerankRequest.model_validate(payload).model_dump(mode="json")
+    elif stage == "generation":
+        from app.generation.models import GenerationRequest
+
+        return GenerationRequest.model_validate(payload).model_dump(mode="json")
+    elif stage == "judge":
+        from app.evaluation.models import ModelAssistedEvaluationRequest
+
+        return ModelAssistedEvaluationRequest.model_validate(payload).model_dump(
+            mode="json"
+        )
+    raise ValueError(f"unknown provider stage: {stage}")
+
+
+def application_retrieval_side(side: str) -> str:
+    """Adapt the evaluation vocabulary to the application provider contract."""
+    try:
+        return {"PRIMARY": "primary", "COMPARISON": "comparison"}[side]
+    except KeyError as error:
+        raise ValueError(f"unknown evaluation retrieval side: {side}") from error
+
+
 def _usage_receipt(
     value: Any, *, request_id_value: str | None = None
 ) -> DispatchReceipt:
@@ -1282,7 +1316,8 @@ class RealProviderAdapters:
 class RecordingProviderAdapters:
     """Network-free adapter used to prove the complete production graph."""
 
-    def __init__(self) -> None:
+    def __init__(self, root: Path) -> None:
+        self.root = root
         self.calls: list[tuple[str, str]] = []
         self.payloads: list[tuple[str, Mapping[str, Any]]] = []
         self.internal_attempts = 1
@@ -1292,6 +1327,7 @@ class RecordingProviderAdapters:
             raise RuntimeError("adapter_internal_retries_not_disabled")
 
     def _call(self, stage: str, payload: Mapping[str, Any]) -> ProviderResult:
+        payload = validate_application_request(self.root, stage, payload)
         request_digest = digest_value(payload)
         self.calls.append((stage, request_digest))
         self.payloads.append((stage, payload))
@@ -1698,8 +1734,6 @@ def sparse_scores(
     # Sparse inference is local. A missing S03 model cache must fail closed
     # rather than creating an unbudgeted network path.
     application_import_path(root)
-    from huggingface_hub import snapshot_download
-
     from app.settings import Settings
     from app.sparse.factory import create_sparse_encoder, sparse_embedding_profile
     from app.sparse.models import (
@@ -1707,6 +1741,7 @@ def sparse_scores(
         SparseEncodingPurpose,
         SparseEncodingRequest,
     )
+    from huggingface_hub import snapshot_download
 
     settings = Settings()
     # Prove the exact pinned model revision is already available from the S03
@@ -2126,7 +2161,13 @@ class LiveExecutionEngine:
                             "adapter_version": "1",
                             "truncation": False,
                         },
-                        "candidates": candidates,
+                        "candidates": [
+                            {
+                                **candidate,
+                                "side": application_retrieval_side(candidate["side"]),
+                            }
+                            for candidate in candidates
+                        ],
                         "top_k": 15,
                     }
                     bound_rerank_payload: Mapping[str, Any] = payload
@@ -2240,7 +2281,7 @@ class LiveExecutionEngine:
                         "source_provenance": [{"chunk_id": item["chunk_id"]}],
                         "temporal_authority": {},
                         "applicability_context": {},
-                        "side": item["side"],
+                        "side": application_retrieval_side(item["side"]),
                     }
                     for n, item in enumerate(selected, 1)
                 ]
@@ -3191,7 +3232,7 @@ def main() -> None:
             identity = run_identity(
                 policy, args.run_id, policy_path, args.repository_commit, "0" * 64
             )
-            adapters = RecordingProviderAdapters()
+            adapters = RecordingProviderAdapters(root)
             execution, _, budget = asyncio.run(
                 execute_run(
                     root=root,

@@ -816,7 +816,7 @@ def test_non_dry_execution_requires_separate_authorization(monkeypatch) -> None:
 @pytest.mark.asyncio
 async def test_complete_148_utterance_execution_uses_gateway_only(tmp_path) -> None:
     runner, policy = policy_value()
-    adapters = runner.RecordingProviderAdapters()
+    adapters = runner.RecordingProviderAdapters(ROOT)
     identity = runner.run_identity(policy, RUN_ID, POLICY, "1" * 40, "2" * 64)
     result, ledger, budget = await runner.execute_run(
         root=ROOT,
@@ -843,7 +843,45 @@ async def test_complete_148_utterance_execution_uses_gateway_only(tmp_path) -> N
         "generation": 86,
         "judge": 86,
     }
+    assert len(adapters.calls) == 321
+    reranker_payloads = [
+        payload for stage, payload in adapters.payloads if stage == "reranker"
+    ]
+    assert len(reranker_payloads) == 140
+    assert {
+        candidate["side"]
+        for payload in reranker_payloads
+        for candidate in payload["candidates"]
+    } == {"primary", "comparison"}
+    generation_payloads = [
+        payload for stage, payload in adapters.payloads if stage == "generation"
+    ]
+    assert len(generation_payloads) == 86
+    assert {
+        evidence["side"]
+        for payload in generation_payloads
+        for evidence in payload["evidence"]
+    } == {"primary", "comparison"}
+    assert {
+        side
+        for payload in generation_payloads
+        for side in payload["constraints"]["required_sides"]
+    } == {"primary", "comparison"}
+    judge_payloads = [
+        payload for stage, payload in adapters.payloads if stage == "judge"
+    ]
+    assert len(judge_payloads) == 86
+    assert {
+        evidence["side"]
+        for payload in judge_payloads
+        for evidence in payload["retrieved_evidence"]
+    } == {"PRIMARY", "COMPARISON"}
     execution = json.loads((ledger.run_dir / "execution-observations.json").read_text())
+    assert {
+        evidence["side"]
+        for observation in execution["observations"]
+        for evidence in observation.get("selected_evidence", [])
+    } == {"PRIMARY", "COMPARISON"}
     assert [item["items"] for item in execution["corpus_embedding_batches"]] == [
         128,
         128,
@@ -873,7 +911,7 @@ async def test_complete_148_utterance_execution_uses_gateway_only(tmp_path) -> N
         ledger.run_dir / "execution-observations.json"
     )
 
-    resumed_adapters = runner.RecordingProviderAdapters()
+    resumed_adapters = runner.RecordingProviderAdapters(ROOT)
     resumed, _, resumed_budget = await runner.execute_run(
         root=ROOT,
         policy=policy,
@@ -897,7 +935,7 @@ async def test_partial_corpus_batch_failure_stops_before_later_batches(
 
     class FourthBatchFailure(runner.RecordingProviderAdapters):  # type: ignore[name-defined]
         def __init__(self):
-            super().__init__()
+            super().__init__(ROOT)
             self.corpus_calls = 0
 
         def corpus_embedding(self, payload):
@@ -1015,7 +1053,7 @@ async def test_no_selected_evidence_is_preserved_without_generation_or_judging(
                 ),
             )
 
-    adapters = EmptyRerankerAdapters()
+    adapters = EmptyRerankerAdapters(ROOT)
     identity = runner.run_identity(policy, RUN_ID, POLICY, "1" * 40, "2" * 64)
     ledger = runner.AppendOnlyRunLedger(tmp_path / RUN_ID, identity, create=True)
     budget = runner.HardBudget(policy["ceilings"], monotonic=lambda: 0.0)
@@ -1066,7 +1104,7 @@ async def test_no_selected_evidence_is_preserved_without_generation_or_judging(
 
 def test_adapter_retry_proof_fails_closed() -> None:
     runner = module()
-    adapters = runner.RecordingProviderAdapters()
+    adapters = runner.RecordingProviderAdapters(ROOT)
     adapters.internal_attempts = 2
     with pytest.raises(RuntimeError, match="internal_retries"):
         adapters.assert_internal_retries_disabled()
@@ -1095,7 +1133,7 @@ async def execute_with_population(tmp_path, source_population):
     (root / "population.json").write_text(json.dumps(source_population))
     policy = copy.deepcopy(policy)
     policy["population_path"] = "population.json"
-    adapters = runner.RecordingProviderAdapters()
+    adapters = runner.RecordingProviderAdapters(ROOT)
     identity = runner.run_identity(policy, RUN_ID, POLICY, "1" * 40, "2" * 64)
     ledger = runner.AppendOnlyRunLedger(root / "run", identity, create=True)
     budget = runner.HardBudget(policy["ceilings"], monotonic=lambda: 0.0)
