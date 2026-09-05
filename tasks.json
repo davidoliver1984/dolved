@@ -40,7 +40,7 @@
   "progress": {
     "current_phase": "R28",
     "current_session": "R28-S04",
-    "next_action": "Independently audit the provider-free R28-S04 comparison-compatible V2 population integration before any separate provider-execution approval.",
+    "next_action": "Follow docs/evaluation/r28-s04/production-repair-plan.md: R00 baseline/session reconciliation, R01 minimum slice contract and build-versus-adopt decision, then R01P live production proof before wider repair. Preserve free-text interaction. Routine OpenAI/Voyage use has standing permission within the plan bounds; architecture and expansion gates remain. Do not mark S04 complete from diagnostics.",
     "completed_through": "R27-GATE",
     "completed_phase_count": 28,
     "total_phase_count": 33
