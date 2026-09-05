@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 import time
 from copy import deepcopy
 from dataclasses import dataclass
@@ -10,7 +11,14 @@ from opentelemetry import trace
 from opentelemetry.trace import SpanKind, Status, StatusCode
 from pydantic import SecretStr, ValidationError
 
-from app.retrieval.models import OperationUsage, PlannerLineage, RetrievalPlan
+from app.retrieval.models import (
+    OperationUsage,
+    PlannerLineage,
+    RetrievalPlan,
+    TemporalMode,
+    TemporalReference,
+    TemporalReferenceKind,
+)
 from app.telemetry import trace_attributes
 
 
@@ -189,6 +197,44 @@ def _validation_failure_category(exception: ValidationError) -> str:
     )
 
 
+def _normalise_temporal_plan(question: str, plan: RetrievalPlan) -> RetrievalPlan:
+    """Correct bounded provider classifications without inventing selectors."""
+    if plan.temporal_mode is not TemporalMode.VALID_AT_DATE:
+        return plan
+
+    lowered = question.casefold()
+    historical = re.search(
+        r"\b(earlier|former|historical|old|older|previous|prior)\b", lowered
+    )
+    supplied_date = re.search(
+        r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}\s+[a-z]+\s+\d{4}|[a-z]+\s+\d{1,2},?\s+\d{4}|\d{4})\b",
+        lowered,
+    )
+    personal_record = re.search(
+        r"\b(?:had|have|did|was|were)\s+(?:i|my|we|our)\b",
+        lowered,
+    )
+    if historical is None and personal_record is None:
+        return plan
+    if historical is not None and supplied_date is None:
+        reference = historical.group(1)
+    elif personal_record is not None and plan.explicit_date is not None:
+        reference = plan.explicit_date.isoformat()
+    else:
+        return plan
+
+    return plan.model_copy(
+        update={
+            "temporal_mode": TemporalMode.HISTORICAL_REFERENCE,
+            "explicit_date": None,
+            "temporal_reference": TemporalReference(
+                kind=TemporalReferenceKind.HISTORICAL_REFERENCE,
+                value=reference,
+            ),
+        }
+    )
+
+
 class StructuredChatRetrievalPlanner:
     """Isolated OpenAI-compatible structured-output planner adapter."""
 
@@ -202,8 +248,8 @@ class StructuredChatRetrievalPlanner:
         timeout_seconds: float,
         client: httpx.Client | None = None,
         contract_schema_version: str = "plan-response-v2",
-        prompt_version: str = "adr-0022-v6",
-        adapter_version: str = "structured-chat-v3",
+        prompt_version: str = "adr-0022-v7",
+        adapter_version: str = "structured-chat-v4",
     ) -> None:
         if not api_key.get_secret_value().strip():
             raise RetrievalPlanningError(
@@ -286,7 +332,10 @@ class StructuredChatRetrievalPlanner:
                     ) from None
                 raw_plan = _plan_from_provider_envelope(raw_envelope)
                 try:
-                    plan = RetrievalPlan.model_validate(raw_plan)
+                    plan = _normalise_temporal_plan(
+                        question,
+                        RetrievalPlan.model_validate(raw_plan),
+                    )
                 except ValidationError as exception:
                     raise RetrievalPlanningError(
                         "retrieval planner returned an invalid typed plan",
@@ -455,8 +504,12 @@ applicability and therefore adds no location reference. An organisation name use
 staff, workforce, policy, or procedure is an actor/owner, not an unresolved site. When a named
 region and named descendant site are both explicit, preserve both as separate references so the
 application can reconcile their established hierarchy; do not treat their coexistence as ambiguity.
-An earlier, former, old, or previous policy without an exact date is HISTORICAL_REFERENCE, never
-VALID_AT_DATE: preserve that historical wording and do not invent a calendar selector.
+An earlier, former, historical, old, or previous policy without an exact date is
+HISTORICAL_REFERENCE, never VALID_AT_DATE: preserve that historical wording and do not invent a
+calendar selector. A dated question about whether a person's own record, action, or completion
+had occurred is a historical-reference request, not a request to resolve which governing policy
+was authoritative on that date. VALID_AT_DATE remains for questions about what governing rule,
+policy, procedure, requirement, or operational instruction applied at the supplied date.
 
 The authoritative evaluation instant is """
         + evaluated_at

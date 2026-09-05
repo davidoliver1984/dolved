@@ -72,6 +72,7 @@ final readonly class EligibilityResolver
                     clarificationSource: RetrievalClarificationSource::EligibilityResolver,
                 );
             }
+            [$primary, $comparison] = $this->distinctComparisonVersions($primary, $comparison);
             $primary = $this->eligible($primary, $authorised, $location);
             $comparison = $this->eligible($comparison, $authorised, $location);
             if ($primary->isEmpty() || $comparison->isEmpty()) {
@@ -159,6 +160,32 @@ final readonly class EligibilityResolver
         return $families->map(
             fn (DocumentFamily $family): ?Document => $this->timeline->resolve($family, $at),
         )->filter(fn (mixed $document): bool => $document instanceof Document)->values();
+    }
+
+    /**
+     * Retain only families for which both distinct authority states exist. A
+     * current version is never allowed to stand in for missing history.
+     *
+     * @param  Collection<int, Document>  $primary
+     * @param  Collection<int, Document>  $comparison
+     * @return array{Collection<int, Document>, Collection<int, Document>}
+     */
+    private function distinctComparisonVersions(Collection $primary, Collection $comparison): array
+    {
+        $comparisonByFamily = $comparison->keyBy('document_family_id');
+        $pairedPrimary = $primary->filter(function (Document $document) use ($comparisonByFamily): bool {
+            $historical = $comparisonByFamily->get($document->document_family_id);
+
+            return $historical instanceof Document && ! $historical->is($document);
+        })->values();
+        $primaryByFamily = $pairedPrimary->keyBy('document_family_id');
+        $pairedComparison = $comparison->filter(function (Document $document) use ($primaryByFamily): bool {
+            $current = $primaryByFamily->get($document->document_family_id);
+
+            return $current instanceof Document && ! $current->is($document);
+        })->values();
+
+        return [$pairedPrimary, $pairedComparison];
     }
 
     /**
@@ -251,11 +278,17 @@ final readonly class EligibilityResolver
         }
         $resolved = collect();
         foreach ($references as $reference) {
+            if ($this->isOrganisationReference($authorised, $reference)) {
+                continue;
+            }
             $match = $this->resolveLocationReference($authorised, $reference);
             if ($match instanceof EligibilityClarificationReason) {
                 return $match;
             }
             $resolved->put($match->id, $match);
+        }
+        if ($resolved->isEmpty()) {
+            return null;
         }
         if ($resolved->count() === 1) {
             return $resolved->first();
@@ -281,6 +314,16 @@ final readonly class EligibilityResolver
             }
         }
         if ($matches->isEmpty()) {
+            $withoutScopeSuffix = preg_replace(
+                '/\s+(?:outreach|service|team|site|home|office|region)$/u',
+                '',
+                $normalised,
+            );
+            if (is_string($withoutScopeSuffix) && $withoutScopeSuffix !== $normalised) {
+                $matches = $this->locationMatches($authorised, $withoutScopeSuffix);
+            }
+        }
+        if ($matches->isEmpty()) {
             return EligibilityClarificationReason::UnresolvedLocationReference;
         }
         if ($matches->count() > 1) {
@@ -299,6 +342,37 @@ final readonly class EligibilityResolver
                 $query->whereRaw('LOWER(TRIM(name)) = ?', [$normalised])
                     ->orWhereHas('aliases', fn ($aliases) => $aliases->where('normalised_alias', $normalised));
             })->get();
+    }
+
+    private function isOrganisationReference(
+        AuthorisedKnowledgeScope $authorised,
+        string $reference,
+    ): bool {
+        $reference = $this->normaliseIdentity($reference);
+        $organisation = $this->normaliseIdentity($authorised->workspace->name);
+        if ($reference === $organisation) {
+            return true;
+        }
+
+        $genericSuffixes = [
+            'care', 'group', 'organisation', 'organization', 'services',
+            'limited', 'ltd', 'plc', 'incorporated', 'inc',
+        ];
+        $parts = explode(' ', $organisation);
+        while ($parts !== [] && in_array(end($parts), $genericSuffixes, true)) {
+            array_pop($parts);
+        }
+
+        return $parts !== [] && $reference === implode(' ', $parts);
+    }
+
+    private function normaliseIdentity(string $value): string
+    {
+        return Str::of($value)
+            ->lower()
+            ->replaceMatches('/[^\pL\pN]+/u', ' ')
+            ->squish()
+            ->value();
     }
 
     private function isDescendantOrSame(

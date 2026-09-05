@@ -25,10 +25,10 @@ final class PlannerConfigurationTest extends TestCase
         );
 
         $this->assertSame('plan-response-v2', $lineage['contract_schema_version']);
-        $this->assertSame('adr-0022-v6', $lineage['prompt_version']);
-        $this->assertSame('structured-chat-v3', $lineage['adapter_version']);
+        $this->assertSame('adr-0022-v7', $lineage['prompt_version']);
+        $this->assertSame('structured-chat-v4', $lineage['adapter_version']);
         $this->assertSame(
-            '5a8a28a227d4272e60a3ed67661f1097a3104295232d5f041062031dbf70e0da',
+            '1d66894ef87a7a010ecc7e3cedd5d463cc1ede99c2329839ebaf7d53c51db354',
             $fingerprint,
         );
     }

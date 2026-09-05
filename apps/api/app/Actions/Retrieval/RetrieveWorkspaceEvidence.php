@@ -20,6 +20,7 @@ use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\RetrievalResult;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Collection;
 use RuntimeException;
 
 final readonly class RetrieveWorkspaceEvidence
@@ -334,6 +335,10 @@ final readonly class RetrieveWorkspaceEvidence
             }
 
             $sides = array_keys($eligible->documentPublicIdsBySide);
+            if (count($sides) === 2) {
+                $qualified = $this->validatedComparisonCandidates($qualified);
+                $observe?->__invoke('comparison_validated', $qualified->all());
+            }
             if (count($sides) === 2 && collect($sides)->contains(
                 fn (string $side): bool => ! $qualified->contains(
                     fn (array $candidate): bool => $candidate['side'] === $side
@@ -404,6 +409,30 @@ final readonly class RetrieveWorkspaceEvidence
             ],
             usage: $usage,
         );
+    }
+
+    /**
+     * Enforce the current-versus-historical family pairing again after reranking.
+     * Candidates from an unpaired family or a document repeated on both sides
+     * cannot become final comparison evidence.
+     *
+     * @param  Collection<int, array<string, mixed>>  $candidates
+     * @return Collection<int, array<string, mixed>>
+     */
+    private function validatedComparisonCandidates(Collection $candidates): Collection
+    {
+        $primary = $candidates->where('side', 'primary');
+        $comparison = $candidates->where('side', 'comparison');
+        if ($primary->pluck('document_id')->intersect($comparison->pluck('document_id'))->isNotEmpty()) {
+            return collect();
+        }
+
+        $pairedFamilies = $primary->pluck('document_family_id')->unique()
+            ->intersect($comparison->pluck('document_family_id')->unique());
+
+        return $candidates->filter(
+            fn (array $candidate): bool => $pairedFamilies->contains($candidate['document_family_id'] ?? null),
+        )->values();
     }
 
     /** @return array<string, mixed> */

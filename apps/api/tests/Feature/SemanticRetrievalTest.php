@@ -88,6 +88,45 @@ class SemanticRetrievalTest extends TestCase
         $this->assertSame([$first->public_id], $compare->documentPublicIdsBySide['comparison']);
     }
 
+    public function test_comparison_requires_distinct_paired_authority_states_and_excludes_future_versions(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $first = $this->eligibleDocument($workspace, $generation, '2025-01-01', '2025-01-01');
+        $second = Document::factory()->indexed()->approved()->create([
+            'workspace_id' => $workspace->id,
+            'document_family_id' => $first->document_family_id,
+            'predecessor_document_id' => $first->id,
+            'effective_from' => CarbonImmutable::parse('2026-03-01'),
+            'approved_at' => CarbonImmutable::parse('2026-03-01'),
+        ]);
+        $this->assignChunk($second, $generation);
+        $future = Document::factory()->indexed()->approved()->create([
+            'workspace_id' => $workspace->id,
+            'document_family_id' => $first->document_family_id,
+            'predecessor_document_id' => $second->id,
+            'effective_from' => CarbonImmutable::parse('2027-01-01'),
+            'approved_at' => CarbonImmutable::parse('2026-06-01'),
+        ]);
+        $this->assignChunk($future, $generation);
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+        $resolver = app(EligibilityResolver::class);
+        $evaluatedAt = CarbonImmutable::parse('2026-09-05');
+
+        $valid = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Compare, null, null,
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+        $duplicatedCurrent = $resolver->handle($scope, new RetrievalPlan(
+            'Question', RetrievalTemporalMode::Compare, $evaluatedAt, null,
+            [], null, $this->lineage(), $this->plannerUsage(),
+        ), $evaluatedAt);
+
+        $this->assertSame([$second->public_id], $valid->documentPublicIdsBySide['primary']);
+        $this->assertSame([$first->public_id], $valid->documentPublicIdsBySide['comparison']);
+        $this->assertNotContains($future->public_id, array_merge(...array_values($valid->documentPublicIdsBySide)));
+        $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete, $duplicatedCurrent->outcome);
+    }
+
     public function test_family_metadata_and_owner_eligibility_do_not_change_retrieval_authority(): void
     {
         [$workspace, $actor, $generation] = $this->retrievalWorkspace();
@@ -355,13 +394,8 @@ class SemanticRetrievalTest extends TestCase
 
         $this->assertSame(RetrievalOutcome::EvidenceFound, $period->outcome);
         $this->assertSame([$valid->public_id], $period->documentPublicIdsBySide['primary']);
-        $this->assertSame(RetrievalOutcome::EvidenceFound, $comparison->outcome);
-        $this->assertSame([$valid->public_id], $comparison->documentPublicIdsBySide['comparison']);
-        $this->assertEqualsCanonicalizing([
-            $valid->public_id,
-            $firstAmbiguousSuccessor->public_id,
-            $secondAmbiguousSuccessor->public_id,
-        ], $comparison->documentPublicIdsBySide['primary']);
+        $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete, $comparison->outcome);
+        $this->assertSame([], $comparison->documentPublicIdsBySide);
         foreach ([
             $firstAmbiguousRoot,
             $firstAmbiguousSuccessor,
@@ -370,7 +404,7 @@ class SemanticRetrievalTest extends TestCase
             $foreign,
         ] as $ineligible) {
             $this->assertNotContains($ineligible->public_id, $period->documentPublicIdsBySide['primary']);
-            $this->assertNotContains($ineligible->public_id, $comparison->documentPublicIdsBySide['comparison']);
+            $this->assertNotContains($ineligible->public_id, $comparison->documentPublicIdsBySide['comparison'] ?? []);
         }
     }
 
@@ -634,6 +668,46 @@ class SemanticRetrievalTest extends TestCase
         $this->assertSame(RetrievalOutcome::ClarificationRequired, $ambiguousAlias->outcome);
         $this->assertSame('ambiguous_location_reference', $ambiguousAlias->reason);
         $this->assertNull($ambiguousAlias->resolvedLocationPublicId);
+    }
+
+    public function test_organisation_identity_is_not_a_location_and_registered_site_suffixes_resolve_before_hierarchy(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        $workspace->update(['name' => 'Alderbridge Care Group']);
+        $region = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Midlands Region']);
+        $site = OrganisationalLocation::factory()->for($workspace)->create([
+            'name' => 'Oakfield Lodge',
+            'parent_id' => $region->id,
+        ]);
+        $alias = new OrganisationalLocationAlias(['alias' => 'Midlands']);
+        $alias->workspace()->associate($workspace);
+        $alias->organisationalLocation()->associate($region);
+        $alias->save();
+        $document = $this->eligibleDocument($workspace, $generation, '2026-01-01', '2026-01-01');
+        DB::table('document_applicability_snapshots')->where('document_id', $document->id)
+            ->update(['sealed_at' => null, 'scope' => 'specific']);
+        $document->applicabilitySnapshot->locations()->attach($region->id, ['workspace_id' => $workspace->id]);
+        $document->applicabilitySnapshot->update(['sealed_at' => now()]);
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+        $resolve = fn (array $references) => app(EligibilityResolver::class)->handle(
+            $scope,
+            new RetrievalPlan(
+                'Question', RetrievalTemporalMode::Current, null, null,
+                $references, null, $this->lineage(), $this->plannerUsage(),
+            ),
+            CarbonImmutable::parse('2026-09-05'),
+        );
+
+        $organisation = $resolve(['Alderbridge']);
+        $hierarchy = $resolve(['Midlands', 'Oakfield Lodge outreach']);
+        $unknownPlace = $resolve(['Alderbridge Warehouse']);
+
+        $this->assertSame([$document->public_id], $organisation->documentPublicIdsBySide['primary']);
+        $this->assertNull($organisation->resolvedLocationPublicId);
+        $this->assertSame([$document->public_id], $hierarchy->documentPublicIdsBySide['primary']);
+        $this->assertSame($site->public_id, $hierarchy->resolvedLocationPublicId);
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $unknownPlace->outcome);
+        $this->assertSame('unresolved_location_reference', $unknownPlace->reason);
     }
 
     public function test_location_resolution_is_workspace_scoped_and_unresolved_input_never_broadens_scope(): void
@@ -1008,6 +1082,48 @@ class SemanticRetrievalTest extends TestCase
         }
 
         Http::assertSentCount(1);
+    }
+
+    public function test_reranker_cannot_move_an_eligible_candidate_to_the_wrong_comparison_side(): void
+    {
+        [$workspace, , , $policy] = $this->hybridRetrievalWorkspace();
+        $chunkId = (string) Str::uuid();
+        Http::fake(fn (Request $request) => Http::response([
+            'request_id' => $request->data()['request_id'],
+            'profile' => [
+                'provider' => $policy->reranker_provider,
+                'model' => $policy->reranker_model,
+                'adapter_version' => $policy->reranker_adapter_version,
+                'truncation' => false,
+            ],
+            'candidates' => [[
+                'chunk_id' => $chunkId,
+                'side' => 'comparison',
+                'score' => 0.91,
+                'rank' => 1,
+            ]],
+            'provider_input_tokens' => 12,
+            'provider_attempt_count' => 1,
+            'provider_retry_count' => 0,
+            'rate_limit_event_count' => 0,
+            'retry_delays' => [],
+            'first_provider_attempt_at' => '2026-09-05T12:00:00Z',
+            'final_provider_success_at' => '2026-09-05T12:00:01Z',
+            'provider_retry_elapsed_seconds' => 0,
+        ]));
+
+        $this->expectException(RetrievalException::class);
+        $this->expectExceptionMessage('malformed candidate');
+        app(RetrievalClient::class)->rerank($workspace, 'Compare the versions', [[
+            'chunk_id' => $chunkId,
+            'document_id' => (string) Str::uuid(),
+            'document_family_id' => (string) Str::uuid(),
+            'version_position' => 2,
+            'side' => 'primary',
+            'chunk_text' => 'Current evidence.',
+            'score' => 0.04,
+            'rank' => 1,
+        ]], $policy);
     }
 
     public function test_laravel_preserves_provider_and_outer_attempt_history_when_infrastructure_retry_exhausts(): void

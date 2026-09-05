@@ -26,7 +26,7 @@ final readonly class HistoricalReferenceResolver
         $value = mb_strtolower(trim($reference));
         preg_match_all('/\bversion\s+(\d+)\b/u', $value, $versionMatches);
         preg_match_all('/\b(\d{4})\b/u', $value, $yearMatches);
-        $hasRelative = preg_match('/\b(old|older|previous|prior)\b/u', $value) === 1;
+        $hasRelative = preg_match('/\b(earlier|former|historical|old|older|previous|prior)\b/u', $value) === 1;
         $hasWithdrawal = str_contains($value, 'withdraw');
         $hasVersion = $versionMatches[1] !== [];
         $strategies = (int) $hasVersion + (int) ($yearMatches[1] !== [])

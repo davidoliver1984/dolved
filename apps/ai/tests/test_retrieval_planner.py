@@ -254,13 +254,13 @@ def test_planner_lineage_is_stable_and_excludes_credentials() -> None:
 
     assert lineage.provider == "test-provider"
     assert lineage.contract_schema_version == "plan-response-v2"
-    assert lineage.prompt_version == "adr-0022-v6"
-    assert lineage.adapter_version == "structured-chat-v3"
+    assert lineage.prompt_version == "adr-0022-v7"
+    assert lineage.adapter_version == "structured-chat-v4"
     assert len(lineage.fingerprint) == 64
     assert "test-key" not in lineage.model_dump_json()
 
 
-def test_adr_0022_v6_planner_fingerprint_is_stable() -> None:
+def test_adr_0022_v7_planner_fingerprint_is_stable() -> None:
     lineage = StructuredChatRetrievalPlanner(
         api_url="https://planner.invalid/v1/chat/completions",
         api_key=SecretStr("test-key"),
@@ -273,7 +273,7 @@ def test_adr_0022_v6_planner_fingerprint_is_stable() -> None:
     ).lineage()
 
     assert lineage.fingerprint == (
-        "5a8a28a227d4272e60a3ed67661f1097a3104295232d5f041062031dbf70e0da"
+        "1d66894ef87a7a010ecc7e3cedd5d463cc1ede99c2329839ebaf7d53c51db354"
     )
 
 
@@ -284,7 +284,7 @@ def test_adr_0022_v6_planner_fingerprint_is_stable() -> None:
         ("model", "another-model"),
         ("contract_schema_version", "plan-response-v3"),
         ("prompt_version", "another-prompt"),
-        ("adapter_version", "structured-chat-v4"),
+        ("adapter_version", "structured-chat-v5"),
     ],
 )
 def test_planner_lineage_fingerprint_changes_for_each_semantic_component(
@@ -667,8 +667,62 @@ def test_prompt_closes_production_diagnostic_scope_and_history_ambiguities() -> 
     assert "every-site wording denotes universal" in prompt
     assert "organisation name used to identify its" in prompt
     assert "named\nregion and named descendant site" in prompt
-    assert "without an exact date is HISTORICAL_REFERENCE" in prompt
-    assert "never\nVALID_AT_DATE" in prompt
+    assert "without an exact date is" in prompt
+    assert "HISTORICAL_REFERENCE, never VALID_AT_DATE" in prompt
+    assert "HISTORICAL_REFERENCE, never VALID_AT_DATE" in prompt
+    assert "person's own record, action, or completion" in prompt
+
+
+@pytest.mark.parametrize(
+    ("question", "provider_date", "expected_reference"),
+    [
+        (
+            "Who was the escalation contact under the earlier policy?",
+            "2026-01-01",
+            "earlier",
+        ),
+        (
+            "Had I completed my required refresher by 15 December 2025?",
+            "2025-12-15",
+            "2025-12-15",
+        ),
+    ],
+)
+def test_provider_valid_at_misclassification_is_bounded_to_historical_reference(
+    question: str, provider_date: str, expected_reference: str
+) -> None:
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": "valid_at_date",
+            "explicit_date": provider_date,
+            "temporal_reference": None,
+            "location_references": [],
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2026-09-05T12:00:00Z")
+
+    assert result.temporal_mode.value == "historical_reference"
+    assert result.explicit_date is None
+    assert result.temporal_reference is not None
+    assert result.temporal_reference.value == expected_reference
+
+
+def test_explicit_governing_date_remains_valid_at_date() -> None:
+    question = "Which safeguarding policy applied on 15 December 2025?"
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": "valid_at_date",
+            "explicit_date": "2025-12-15",
+            "temporal_reference": None,
+            "location_references": [],
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2026-09-05T12:00:00Z")
+
+    assert result.temporal_mode.value == "valid_at_date"
+    assert str(result.explicit_date) == "2025-12-15"
 
 
 @pytest.mark.parametrize(
