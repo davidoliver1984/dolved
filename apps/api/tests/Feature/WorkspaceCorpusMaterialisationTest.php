@@ -28,6 +28,12 @@ class WorkspaceCorpusMaterialisationTest extends TestCase
     public function test_materialisation_batches_records_and_atomically_activates_one_workspace(): void
     {
         [$workspace, $source, $dense, $sparse] = $this->fixture(5);
+        $source->load('embeddingSpaceGeneration.embeddingProfile');
+        $this->assertNotSame($source->embedding_space_generation_id, $dense->id);
+        $this->assertNotSame(
+            $source->embeddingSpaceGeneration->embeddingProfile->fingerprint,
+            $dense->embeddingProfile->fingerprint,
+        );
         $this->fakeSuccess();
 
         $target = app(MaterialiseWorkspaceCorpusGeneration::class)->handle($workspace, $dense, $sparse, 2);
@@ -41,9 +47,14 @@ class WorkspaceCorpusMaterialisationTest extends TestCase
         $recorded = collect(Http::recorded())->map(fn (array $entry): array => [
             'kind' => str_ends_with($entry[0]->url(), '/corpus/rebuild-batch') ? 'batch' : 'verify',
             'workspace_id' => $entry[0]->data()['workspace_id'],
+            'embedding_profile_fingerprint' => $entry[0]->data()['vector_space']['profile_fingerprint'],
         ])->all();
         $this->assertCount(3, array_filter($recorded, fn (array $request): bool => $request['kind'] === 'batch'));
         $this->assertSame([$workspace->public_id], array_values(array_unique(array_column($recorded, 'workspace_id'))));
+        $this->assertSame(
+            [$dense->embeddingProfile->fingerprint],
+            array_values(array_unique(array_column($recorded, 'embedding_profile_fingerprint'))),
+        );
     }
 
     public function test_completed_batches_are_skipped_after_middle_batch_failure(): void
