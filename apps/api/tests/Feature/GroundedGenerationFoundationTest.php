@@ -38,6 +38,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class GroundedGenerationFoundationTest extends TestCase
@@ -167,6 +168,87 @@ class GroundedGenerationFoundationTest extends TestCase
         $this->assertNull($snapshot->fresh()->document_chunk_id);
         $this->assertSame($chunk->text, $snapshot->fresh()->cited_text_verbatim);
         $this->assertSame($chunk->public_id, $snapshot->fresh()->source_chunk_public_id);
+    }
+
+    public function test_fractional_provider_latency_persists_with_answer_parts_and_citations(): void
+    {
+        [$input] = $this->assemblyFixture();
+        $request = app(AssembleGenerationRequest::class)->handle($input);
+        $result = new GenerationResult(
+            GenerationOutcome::Answered,
+            [new AnswerPartResult('Persisted with its citation.', ['ev-01'])],
+            [],
+            null,
+            ['latency_ms' => 9528.4155469853, 'input_tokens' => 10, 'output_tokens' => 5, 'cost_usd' => 0.001],
+        );
+        $fingerprint = app(GenerationFingerprint::class)->make(
+            'openai',
+            'gpt-5-mini',
+            'generation-result-v1',
+            'grounded-generation-v2',
+            'openai-responses-v2',
+            ['response_mode' => 'fixture'],
+        );
+
+        $answer = app(PersistGeneratedAnswer::class)->handle(
+            $input->authorisedScope,
+            $input->question,
+            (string) Str::uuid(),
+            $request,
+            $result,
+            $fingerprint,
+        );
+
+        $this->assertSame(9528, $answer->latency_ms);
+        $this->assertSame(9528.4155469853, $answer->usage['latency_ms']);
+        $this->assertCount(1, $answer->answerParts);
+        $this->assertCount(1, $answer->answerParts->firstOrFail()->evidenceSnapshots);
+    }
+
+    #[DataProvider('invalidLatencyValues')]
+    public function test_invalid_provider_latency_is_rejected_without_persisting_an_answer(mixed $latency): void
+    {
+        [$input] = $this->assemblyFixture();
+        $request = app(AssembleGenerationRequest::class)->handle($input);
+        $result = new GenerationResult(
+            GenerationOutcome::Answered,
+            [new AnswerPartResult('Must not persist.', ['ev-01'])],
+            [],
+            null,
+            ['latency_ms' => $latency],
+        );
+        $fingerprint = app(GenerationFingerprint::class)->make(
+            'openai', 'gpt-5-mini', 'generation-result-v1', 'grounded-generation-v2',
+            'openai-responses-v2', ['response_mode' => 'fixture'],
+        );
+
+        try {
+            app(PersistGeneratedAnswer::class)->handle(
+                $input->authorisedScope,
+                $input->question,
+                (string) Str::uuid(),
+                $request,
+                $result,
+                $fingerprint,
+            );
+            $this->fail('Expected invalid latency to fail closed.');
+        } catch (\InvalidArgumentException) {
+            $this->assertDatabaseCount('generated_answers', 0);
+            $this->assertDatabaseCount('answer_parts', 0);
+            $this->assertDatabaseCount('evidence_snapshots', 0);
+        }
+    }
+
+    /** @return array<string, array{mixed}> */
+    public static function invalidLatencyValues(): array
+    {
+        return [
+            'negative' => [-0.1],
+            'positive infinity' => [INF],
+            'not a number' => [NAN],
+            'outside unsigned integer range' => [4_294_967_296.0],
+            'string' => ['9528.4'],
+        ];
     }
 
     public function test_child_persistence_failure_rolls_back_the_complete_answer_graph(): void

@@ -13,6 +13,7 @@ use App\Support\Generation\GenerationResult;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 final class PersistGeneratedAnswer
 {
@@ -40,7 +41,7 @@ final class PersistGeneratedAnswer
                 'adapter_version' => $fingerprint['snapshot']['adapter_version'],
                 'generation_configuration' => $fingerprint['snapshot']['quality_affecting_configuration'],
                 'usage' => $result->usage,
-                'latency_ms' => $result->usage['latency_ms'] ?? null,
+                'latency_ms' => $this->latencyMilliseconds($result->usage['latency_ms'] ?? null),
                 'input_tokens' => $result->usage['input_tokens'] ?? null,
                 'output_tokens' => $result->usage['output_tokens'] ?? null,
                 'cost_usd' => $result->usage['cost_usd'] ?? null,
@@ -98,5 +99,21 @@ final class PersistGeneratedAnswer
 
             return $answer->load(['answerParts.evidenceSnapshots', 'evidenceSnapshots']);
         });
+    }
+
+    private function latencyMilliseconds(mixed $value): ?int
+    {
+        if ($value === null) {
+            return null;
+        }
+        if (! is_int($value) && ! is_float($value)) {
+            throw new InvalidArgumentException('Generation latency must be a finite non-negative number.');
+        }
+        $latency = (float) $value;
+        if (! is_finite($latency) || $latency < 0 || $latency > 4_294_967_295) {
+            throw new InvalidArgumentException('Generation latency is outside the supported millisecond range.');
+        }
+
+        return (int) round($latency, mode: PHP_ROUND_HALF_UP);
     }
 }

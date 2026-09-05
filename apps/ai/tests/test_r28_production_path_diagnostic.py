@@ -6,6 +6,7 @@ if Path("/evaluation").is_dir():
 else:
     EVALUATION = Path(__file__).resolve().parents[3] / "tests/evaluation"
 DIAGNOSTIC = EVALUATION / "diagnostics/r28-production-path-12/v1"
+DIRECTIONAL = EVALUATION / "diagnostics/r28-production-path-8/v1"
 POPULATION = EVALUATION / "engineering-populations/dolved-care-v4/v2/population.json"
 
 
@@ -82,3 +83,67 @@ def test_selection_is_exact_and_proposed_ceilings_reconcile() -> None:
     assert ceilings["wall_seconds"] == 3600
     assert ceilings["concurrency"] == 1
     assert ceilings["maximum_retries_per_logical_request"] == 1
+
+
+def test_directional_execution_input_is_question_only_and_preserves_frozen_selection() -> (
+    None
+):
+    execution = load(DIRECTIONAL / "execution-input.json")
+    selection = load(DIRECTIONAL / "selection-and-ceilings.json")
+    original_execution = load(DIAGNOSTIC / "execution-input.json")
+    original_selection = load(DIAGNOSTIC / "selection-and-ceilings.json")
+    original_questions = {
+        (item["case_id"], item["variant_id"]): item["utterance"]
+        for item in original_execution["items"]
+    }
+
+    assert len(execution["items"]) == 8
+    identities = {
+        f"{item['case_id']}::{item['variant_id']}" for item in execution["items"]
+    }
+    assert identities == {
+        "v4.case.corrected-b02-06::v1",
+        "v4.case.corrected-b01-08::v1",
+        "v4.case.corrected-b02-03::v1",
+        "v4.case.corrected-b01-02::v1",
+        "v4.case.corrected-b02-10::v1",
+        "v4.case.corrected-b01-03::v1",
+        "v4.case.corrected-b01-06::v1",
+        "v4.case.corrected-b03-08::v1",
+    }
+    for item in execution["items"]:
+        assert set(item) == {"case_id", "variant_id", "utterance"}
+        assert (
+            item["utterance"]
+            == original_questions[(item["case_id"], item["variant_id"])]
+        )
+    assert (
+        selection["selection"]["prompt_injection"]
+        == original_selection["selection"]["prompt_injection"]
+    )
+    assert set(selection["execution_scope"]["injection"]) == set(
+        original_selection["selection"]["prompt_injection"]
+    )
+    assert (
+        set(selection["execution_scope"]["primary"])
+        | set(selection["execution_scope"]["injection"])
+        == identities
+    )
+    serialised = json.dumps(execution).lower()
+    for forbidden in (
+        "expected_outcome",
+        "expected_evidence",
+        "reference_answer",
+        "relevance",
+        "judgement",
+    ):
+        assert forbidden not in serialised
+
+    limits = selection["authorised_limits"]
+    assert limits == {
+        "cost_usd": "0.50000000",
+        "wall_seconds": 2700,
+        "concurrency": 1,
+        "automatic_complete_subset_reruns": 0,
+        "provider_retries": "existing-production-native",
+    }

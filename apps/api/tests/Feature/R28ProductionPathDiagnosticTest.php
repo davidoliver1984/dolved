@@ -12,7 +12,9 @@ use App\Models\Workspace;
 use App\Models\WorkspaceMembership;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 final class R28ProductionPathDiagnosticTest extends TestCase
@@ -138,6 +140,93 @@ final class R28ProductionPathDiagnosticTest extends TestCase
         ] as $parallelImplementation) {
             $this->assertStringNotContainsString($parallelImplementation, $source);
         }
+    }
+
+    public function test_command_writes_bounded_resumable_case_records_and_routes_injection_scope(): void
+    {
+        $primary = Workspace::factory()->create();
+        $primaryUser = User::factory()->create(['email_verified_at' => now()]);
+        WorkspaceMembership::factory()->for($primary)->for($primaryUser)->create(['role' => WorkspaceRole::Owner]);
+        $injection = Workspace::factory()->create();
+        $injectionUser = User::factory()->create(['email_verified_at' => now()]);
+        WorkspaceMembership::factory()->for($injection)->for($injectionUser)->create(['role' => WorkspaceRole::Owner]);
+        Http::fake(function (Request $request) {
+            $body = $request->data();
+
+            return Http::response(str_ends_with($request->url(), '/plan')
+                ? $this->planResponse($body)
+                : [
+                    'contract_version' => 1,
+                    'request_id' => $body['request_id'],
+                    'result' => [
+                        'status' => 'resolved', 'resolved_query' => $body['current_message'],
+                        'used_prior_context' => false, 'interpretation_metadata' => ['used_turn_ordinals' => []],
+                        'clarification_question' => null, 'contextualiser_version' => 'recording-contextualiser-v1',
+                        'usage' => ['execution' => 'recording', 'request_count' => 0],
+                    ],
+                ]);
+        });
+        $items = collect(range(1, 12))->map(fn (int $index): array => [
+            'case_id' => sprintf('case-%02d', $index),
+            'variant_id' => 'v1',
+            'utterance' => sprintf('Question %02d?', $index),
+        ])->all();
+        $directory = sys_get_temp_dir().'/r28-report-'.Str::uuid();
+        mkdir($directory, 0700);
+        $inputPath = $directory.'/input.json';
+        $selectionPath = $directory.'/selection.json';
+        $outputPath = $directory.'/observations.json';
+        file_put_contents($inputPath, json_encode([
+            'schema_version' => 'r28-production-path-input-v1',
+            'subset_id' => 'r28-production-path-diagnostic-12-v1',
+            'population_id' => 'dolved-care-v4-evaluation-population-v2',
+            'population_digest' => str_repeat('a', 64),
+            'items' => $items,
+        ], JSON_THROW_ON_ERROR));
+        file_put_contents($selectionPath, json_encode([
+            'selection' => [
+                'primary' => collect(range(1, 10))->map(fn (int $index): string => sprintf('case-%02d::v1', $index))->all(),
+                'prompt_injection' => ['case-11::v1', 'case-12::v1'],
+            ],
+        ], JSON_THROW_ON_ERROR));
+
+        $exit = Artisan::call('evaluation:r28:production-path', [
+            '--input' => $inputPath,
+            '--selection' => $selectionPath,
+            '--output' => $outputPath,
+            '--workspace' => $primary->public_id,
+            '--user' => $primaryUser->id,
+            '--injection-workspace' => $injection->public_id,
+            '--injection-user' => $injectionUser->id,
+        ]);
+        $this->assertSame(0, $exit, Artisan::output());
+
+        $aggregate = json_decode((string) file_get_contents($outputPath), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertLessThan(1_000_000, filesize($outputPath));
+        $this->assertCount(12, $aggregate['items']);
+        $this->assertSame(array_fill(0, 10, 'primary'), array_column(array_slice($aggregate['items'], 0, 10), 'scope_classification'));
+        $this->assertSame(['injection', 'injection'], array_column(array_slice($aggregate['items'], 10), 'scope_classification'));
+        $this->assertSame([(string) $injection->public_id, (string) $injection->public_id], array_column(array_slice($aggregate['items'], 10), 'workspace_id'));
+        $this->assertCount(12, glob($outputPath.'.cases/*.json') ?: []);
+        $this->assertLessThan(10_000_000, array_sum(array_column($aggregate['items'], 'bytes')));
+        $this->assertStringNotContainsString('chunk_text', (string) file_get_contents($outputPath.'.cases/case-01__v1.json'));
+
+        $before = collect($aggregate['items'])->pluck('sha256', 'case_record')->all();
+        $conversationCount = $primary->conversations()->count() + $injection->conversations()->count();
+        unlink($outputPath);
+        $exit = Artisan::call('evaluation:r28:production-path', [
+            '--input' => $inputPath,
+            '--selection' => $selectionPath,
+            '--output' => $outputPath,
+            '--workspace' => $primary->public_id,
+            '--user' => $primaryUser->id,
+            '--injection-workspace' => $injection->public_id,
+            '--injection-user' => $injectionUser->id,
+        ]);
+        $this->assertSame(0, $exit, Artisan::output());
+        $resumed = json_decode((string) file_get_contents($outputPath), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertSame($before, collect($resumed['items'])->pluck('sha256', 'case_record')->all());
+        $this->assertSame($conversationCount, $primary->conversations()->count() + $injection->conversations()->count());
     }
 
     /** @param array<string, mixed> $body */

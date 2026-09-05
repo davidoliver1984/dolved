@@ -202,7 +202,7 @@ class StructuredChatRetrievalPlanner:
         timeout_seconds: float,
         client: httpx.Client | None = None,
         contract_schema_version: str = "plan-response-v2",
-        prompt_version: str = "adr-0022-v5",
+        prompt_version: str = "adr-0022-v6",
         adapter_version: str = "structured-chat-v3",
     ) -> None:
         if not api_key.get_secret_value().strip():
@@ -450,6 +450,13 @@ Named entities are not locations merely because they appear in the question. Act
 departments or functions, regulators, organisations, roles or people, equipment, storage areas
 or containers, objects, documents, and actions are not location references unless the same
 wording independently identifies an applicability place or scope in the question.
+Organisation-wide, global, company-wide, all-location, and every-site wording denotes universal
+applicability and therefore adds no location reference. An organisation name used to identify its
+staff, workforce, policy, or procedure is an actor/owner, not an unresolved site. When a named
+region and named descendant site are both explicit, preserve both as separate references so the
+application can reconcile their established hierarchy; do not treat their coexistence as ambiguity.
+An earlier, former, old, or previous policy without an exact date is HISTORICAL_REFERENCE, never
+VALID_AT_DATE: preserve that historical wording and do not invent a calendar selector.
 
 The authoritative evaluation instant is """
         + evaluated_at

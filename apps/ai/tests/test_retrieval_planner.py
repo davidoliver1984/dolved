@@ -254,13 +254,13 @@ def test_planner_lineage_is_stable_and_excludes_credentials() -> None:
 
     assert lineage.provider == "test-provider"
     assert lineage.contract_schema_version == "plan-response-v2"
-    assert lineage.prompt_version == "adr-0022-v5"
+    assert lineage.prompt_version == "adr-0022-v6"
     assert lineage.adapter_version == "structured-chat-v3"
     assert len(lineage.fingerprint) == 64
     assert "test-key" not in lineage.model_dump_json()
 
 
-def test_adr_0022_v5_planner_fingerprint_is_stable() -> None:
+def test_adr_0022_v6_planner_fingerprint_is_stable() -> None:
     lineage = StructuredChatRetrievalPlanner(
         api_url="https://planner.invalid/v1/chat/completions",
         api_key=SecretStr("test-key"),
@@ -273,7 +273,7 @@ def test_adr_0022_v5_planner_fingerprint_is_stable() -> None:
     ).lineage()
 
     assert lineage.fingerprint == (
-        "b18ce9cfcb769bbe2c2d28e74ba9b1ffa90a62c887de7e9b04d595cc6a1cf690"
+        "5a8a28a227d4272e60a3ed67661f1097a3104295232d5f041062031dbf70e0da"
     )
 
 
@@ -657,6 +657,73 @@ def test_prompt_treats_predecessor_resurrection_question_as_current() -> None:
     assert "became current again" in prompt
     assert "asks about current authority" in prompt
     assert "explicitly asks to compare the content" in prompt
+
+
+def test_prompt_closes_production_diagnostic_scope_and_history_ambiguities() -> None:
+    from app.retrieval.planner import _planner_prompt
+
+    prompt = _planner_prompt("2026-09-05T12:00:00Z")
+
+    assert "every-site wording denotes universal" in prompt
+    assert "organisation name used to identify its" in prompt
+    assert "named\nregion and named descendant site" in prompt
+    assert "without an exact date is HISTORICAL_REFERENCE" in prompt
+    assert "never\nVALID_AT_DATE" in prompt
+
+
+@pytest.mark.parametrize(
+    ("question", "mode", "reference", "locations"),
+    [
+        (
+            "During an emergency affecting every site, who runs the organisation-wide debrief?",
+            "current",
+            None,
+            [],
+        ),
+        (
+            "What phrase summons all on-duty Alderbridge staff?",
+            "current",
+            None,
+            [],
+        ),
+        (
+            "Does the Midlands procedure cover Oakfield Lodge outreach?",
+            "current",
+            None,
+            ["Midlands", "Oakfield Lodge"],
+        ),
+        (
+            "Who was the internal escalation contact under the earlier policy?",
+            "historical_reference",
+            {"kind": "historical_reference", "value": "earlier policy"},
+            [],
+        ),
+    ],
+)
+def test_corrected_diagnostic_plans_pass_the_typed_production_boundary(
+    question: str,
+    mode: str,
+    reference: dict[str, str] | None,
+    locations: list[str],
+) -> None:
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": mode,
+            "explicit_date": None,
+            "temporal_reference": reference,
+            "location_references": locations,
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2026-09-05T12:00:00Z")
+
+    assert result.temporal_mode.value == mode
+    assert list(result.location_references) == locations
+    assert (
+        None
+        if result.temporal_reference is None
+        else result.temporal_reference.model_dump()
+    ) == reference
 
 
 def test_planner_classifies_response_shape_failure_without_retaining_payload() -> None:

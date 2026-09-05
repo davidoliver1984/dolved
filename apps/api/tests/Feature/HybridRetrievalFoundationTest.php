@@ -22,6 +22,7 @@ use App\Models\WorkspaceCorpusGeneration;
 use App\Services\Ingestion\DeterministicVectorPointIdentity;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use LogicException;
@@ -50,6 +51,44 @@ class HybridRetrievalFoundationTest extends TestCase
         $this->assertSame(EmbeddingSpaceGenerationStatus::Available, $space->status);
         $this->assertSame(EvidenceThresholdPolicyStatus::Active, $policy->status);
         $this->assertSame(0.337890625, $policy->fresh()->evidence_threshold);
+    }
+
+    public function test_reviewed_evidence_threshold_policy_provisioning_is_idempotent_and_fingerprint_bound(): void
+    {
+        $arguments = [
+            '--dense-fingerprint' => 'ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c',
+            '--sparse-fingerprint' => 'e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d',
+        ];
+        $this->assertSame(0, Artisan::call('retrieval:provision-evidence-threshold-policy', $arguments), Artisan::output());
+        $this->assertSame(0, Artisan::call('retrieval:provision-evidence-threshold-policy', $arguments), Artisan::output());
+
+        $this->assertDatabaseCount('evidence_threshold_policies', 1);
+        $this->assertDatabaseHas('evidence_threshold_policies', [
+            'fingerprint' => '6626d78bd9445c70fd946a64b0a817b4e77b264a14d945d483ba497f9e681364',
+            'status' => EvidenceThresholdPolicyStatus::Active->value,
+            'evidence_threshold' => 0.337890625,
+        ]);
+        $this->artisan('retrieval:provision-evidence-threshold-policy', [
+            '--dense-fingerprint' => str_repeat('0', 64),
+            '--sparse-fingerprint' => $arguments['--sparse-fingerprint'],
+        ])->assertFailed();
+        $this->assertDatabaseCount('evidence_threshold_policies', 1);
+    }
+
+    public function test_reviewed_policy_provisioning_rejects_incompatible_existing_identity(): void
+    {
+        EvidenceThresholdPolicy::factory()->active()->create([
+            'version' => 'engineering-rrf-k-5-after-exp0004',
+            'fingerprint' => hash('sha256', 'incompatible'),
+            'embedding_profile_fingerprint' => 'ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c',
+            'sparse_profile_fingerprint' => 'e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d',
+        ]);
+
+        $this->artisan('retrieval:provision-evidence-threshold-policy', [
+            '--dense-fingerprint' => 'ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c',
+            '--sparse-fingerprint' => 'e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d',
+        ])->assertFailed();
+        $this->assertDatabaseCount('evidence_threshold_policies', 1);
     }
 
     public function test_hybrid_generation_requires_compatible_available_sparse_space_and_verification(): void

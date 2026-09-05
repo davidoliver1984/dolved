@@ -1,0 +1,48 @@
+{
+  "schema_version": "r28-production-path-input-v1",
+  "subset_id": "r28-production-path-directional-8-v1",
+  "population_id": "dolved-care-v4-evaluation-population-v2",
+  "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b02-06",
+      "variant_id": "v1",
+      "utterance": "During an emergency affecting every site, where should teams get consistent guidance, and who runs the organisation-wide debrief afterwards?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-08",
+      "variant_id": "v1",
+      "utterance": "Does the Midlands key-safe procedure cover Oakfield Lodge outreach, and if a client changes their code, how quickly must we tell the office?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-03",
+      "variant_id": "v1",
+      "utterance": "On 1 July 2025, how many key holders did Riverside House need and what happened if both were away?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-02",
+      "variant_id": "v1",
+      "utterance": "Who was the internal gas-leak escalation contact before March 2026, and who replaced them from that month?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-10",
+      "variant_id": "v1",
+      "utterance": "Had I completed my required manual-handling refresher by 15 December 2025?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-03",
+      "variant_id": "v1",
+      "utterance": "What phrase should I use over the radio to summon all on-duty Alderbridge staff to a life-threatening emergency?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-06",
+      "variant_id": "v1",
+      "utterance": "When will the approved mileage claim from last month be paid?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-08",
+      "variant_id": "v1",
+      "utterance": "What should I write on the drug chart if a dose is withheld and I've told the GP?"
+    }
+  ]
+}

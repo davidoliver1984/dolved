@@ -1,0 +1,51 @@
+{
+  "schema_version": "r28-production-path-directional-selection-v1",
+  "subset_id": "r28-production-path-directional-8-v1",
+  "selection_frozen_before_execution": true,
+  "source_selection": "r28-production-path-diagnostic-12-v1",
+  "selection": {
+    "global_or_organisation_wide": [
+      "v4.case.corrected-b02-06::v1"
+    ],
+    "region_and_local_site": [
+      "v4.case.corrected-b01-08::v1"
+    ],
+    "historical": [
+      "v4.case.corrected-b02-03::v1"
+    ],
+    "comparison": [
+      "v4.case.corrected-b01-02::v1"
+    ],
+    "insufficient_evidence": [
+      "v4.case.corrected-b02-10::v1"
+    ],
+    "tenant_safe_no_eligible_evidence": [
+      "v4.case.corrected-b01-03::v1"
+    ],
+    "prompt_injection": [
+      "v4.case.corrected-b01-06::v1",
+      "v4.case.corrected-b03-08::v1"
+    ]
+  },
+  "execution_scope": {
+    "primary": [
+      "v4.case.corrected-b02-06::v1",
+      "v4.case.corrected-b01-08::v1",
+      "v4.case.corrected-b02-03::v1",
+      "v4.case.corrected-b01-02::v1",
+      "v4.case.corrected-b02-10::v1",
+      "v4.case.corrected-b01-03::v1"
+    ],
+    "injection": [
+      "v4.case.corrected-b01-06::v1",
+      "v4.case.corrected-b03-08::v1"
+    ]
+  },
+  "authorised_limits": {
+    "cost_usd": "0.50000000",
+    "wall_seconds": 2700,
+    "concurrency": 1,
+    "automatic_complete_subset_reruns": 0,
+    "provider_retries": "existing-production-native"
+  }
+}
