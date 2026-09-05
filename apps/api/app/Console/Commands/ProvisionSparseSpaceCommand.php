@@ -17,14 +17,15 @@ use Illuminate\Support\Str;
 class ProvisionSparseSpaceCommand extends Command
 {
     protected $signature = 'retrieval:provision-sparse-space
-        {embedding-space : Compatible embedding-space generation public UUID}';
+        {embedding-space : Compatible embedding-space generation public UUID}
+        {--production-profile : Provision the production FastEmbed profile even in an isolated e2e runtime}';
 
     protected $description = 'Idempotently provision the accepted V1 SPLADE sparse space';
 
     public function handle(DeterministicRetrievalProfile $deterministicProfile): int
     {
         $embeddingSpacePublicId = (string) $this->argument('embedding-space');
-        $e2e = app()->environment('e2e');
+        $e2e = app()->environment('e2e') && ! $this->option('production-profile');
         $e2eProfile = $e2e ? $deterministicProfile->load()['sparse'] : null;
         $profileIdentity = $e2e ? [
             ...$e2eProfile['profile'],

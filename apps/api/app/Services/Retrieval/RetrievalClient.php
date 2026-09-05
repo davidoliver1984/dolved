@@ -293,6 +293,7 @@ final readonly class RetrievalClient
         Workspace $workspace,
         WorkspaceCorpusGeneration $corpus,
         array $chunks,
+        ?string $requestId = null,
     ): array {
         if ($corpus->sparseSpaceGeneration === null || $corpus->rebuild_event_id === null) {
             throw new RetrievalException('A hybrid corpus rebuild requires explicit sparse and event lineage.');
@@ -310,6 +311,7 @@ final readonly class RetrievalClient
             'retrieval.corpus.rebuild',
             $workspace,
             $payload,
+            $requestId,
         );
         $pointIds = $response->json('point_ids');
         if (! is_array($pointIds) || collect($pointIds)->contains(fn (mixed $id): bool => ! is_string($id))) {
@@ -363,6 +365,7 @@ final readonly class RetrievalClient
         string $purpose,
         Workspace $workspace,
         array $payload,
+        ?string $stableRequestId = null,
     ): Response {
         $this->assertTimeoutEnvelope();
         $started = hrtime(true);
@@ -374,7 +377,7 @@ final readonly class RetrievalClient
         $last = null;
         $previousTypedFailure = null;
         for ($attempt = 1; $attempt <= $attempts; $attempt++) {
-            $requestId = (string) Str::uuid();
+            $requestId = $stableRequestId ?? (string) Str::uuid();
             $attemptPayload = ['request_id' => $requestId] + $payload;
             try {
                 $body = json_encode(

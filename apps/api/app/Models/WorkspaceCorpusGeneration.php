@@ -142,6 +142,12 @@ class WorkspaceCorpusGeneration extends Model
         return $this->hasMany(WorkspaceCorpusGenerationChunk::class);
     }
 
+    /** @return HasMany<WorkspaceCorpusMaterialisationBatch, $this> */
+    public function materialisationBatches(): HasMany
+    {
+        return $this->hasMany(WorkspaceCorpusMaterialisationBatch::class);
+    }
+
     /**
      * @return BelongsToMany<DocumentChunk, $this>
      */

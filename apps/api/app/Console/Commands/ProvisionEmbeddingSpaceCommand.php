@@ -15,13 +15,14 @@ use Illuminate\Support\Str;
 
 class ProvisionEmbeddingSpaceCommand extends Command
 {
-    protected $signature = 'ingestion:provision-embedding-space';
+    protected $signature = 'ingestion:provision-embedding-space
+        {--production-profile : Provision the production Voyage profile even in an isolated e2e runtime}';
 
     protected $description = 'Idempotently provision the accepted V1 embedding space';
 
     public function handle(DeterministicRetrievalProfile $deterministicProfile): int
     {
-        $e2e = app()->environment('e2e');
+        $e2e = app()->environment('e2e') && ! $this->option('production-profile');
         $e2eProfile = $e2e ? $deterministicProfile->load()['dense'] : null;
         $profileIdentity = $e2e ? [
             ...$e2eProfile['profile'],
