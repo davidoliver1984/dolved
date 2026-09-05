@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Generation;
 
 use App\Enums\GenerationSide;
+use App\Enums\RequestedEvidenceType;
 use App\Enums\RetrievalOutcome;
 use App\Exceptions\GenerationException;
 use App\Models\DocumentChunk;
@@ -62,6 +63,9 @@ final readonly class AssembleGenerationRequest
         $policyVersion = (string) config('generation.context_policy_version');
         $maximum = (int) config('generation.max_context_characters');
         $packed = $this->packer->pack($evidence, $requiredSides, $maximum, $policyVersion);
+        $requestedEvidenceType = RequestedEvidenceType::tryFrom(
+            (string) ($input->resolvedTemporalAuthority['requested_evidence_type'] ?? '')
+        ) ?? RequestedEvidenceType::PolicyOrProceduralRequirements;
 
         return new GenerationRequest(
             (string) Str::uuid(),
@@ -71,6 +75,7 @@ final readonly class AssembleGenerationRequest
             $policyVersion,
             $maximum,
             $requiredSides,
+            $requestedEvidenceType,
         );
     }
 

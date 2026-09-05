@@ -432,6 +432,12 @@ def evaluate_live_hybrid_retrieval(
                                 ),
                                 version_position=1,
                                 side=candidate.side,
+                                document_title=chunk_by_id[
+                                    candidate.chunk_id
+                                ].document_version_id,
+                                document_family_title=chunk_by_id[
+                                    candidate.chunk_id
+                                ].document_family_id,
                                 text=chunk_by_id[candidate.chunk_id].text,
                                 fused_score=candidate.score,
                                 fused_rank=candidate.rank,

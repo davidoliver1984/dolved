@@ -127,6 +127,40 @@ class SemanticRetrievalTest extends TestCase
         $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete, $duplicatedCurrent->outcome);
     }
 
+    public function test_transition_boundary_selects_immediately_before_and_from_even_with_later_version(): void
+    {
+        [$workspace, $user, $generation] = $this->retrievalWorkspace();
+        [$before, $from] = $this->transitioningFamily($workspace, $generation, '2032-04-01');
+        $later = Document::factory()->indexed()->approved()->create([
+            'workspace_id' => $workspace->id,
+            'document_family_id' => $before->document_family_id,
+            'predecessor_document_id' => $from->id,
+            'effective_from' => CarbonImmutable::parse('2032-11-01'),
+            'approved_at' => CarbonImmutable::parse('2032-11-01'),
+        ]);
+        $this->assignChunk($later, $generation);
+        $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+
+        $result = app(EligibilityResolver::class)->handle($scope, new RetrievalPlan(
+            'Compare the versions around the transition.',
+            RetrievalTemporalMode::Compare,
+            null,
+            null,
+            [],
+            null,
+            $this->lineage(),
+            $this->plannerUsage(),
+            versionTransitionBoundary: [
+                'kind' => RetrievalTemporalReferenceKind::CalendarPeriod,
+                'value' => 'April 2032',
+            ],
+        ), CarbonImmutable::parse('2033-02-01'));
+
+        $this->assertSame([$from->public_id], $result->documentPublicIdsBySide['primary']);
+        $this->assertSame([$before->public_id], $result->documentPublicIdsBySide['comparison']);
+        $this->assertNotContains($later->public_id, array_merge(...array_values($result->documentPublicIdsBySide)));
+    }
+
     public function test_family_metadata_and_owner_eligibility_do_not_change_retrieval_authority(): void
     {
         [$workspace, $actor, $generation] = $this->retrievalWorkspace();
@@ -1068,6 +1102,9 @@ class SemanticRetrievalTest extends TestCase
                 'document_family_id' => (string) Str::uuid(),
                 'version_position' => 1,
                 'side' => 'primary',
+                'document_title' => 'Safety Record v1',
+                'document_family_title' => 'Safety Records',
+                'section_heading' => null,
                 'chunk_text' => 'Canonical candidate text.',
                 'score' => 0.04,
                 'rank' => 1,
@@ -1120,6 +1157,9 @@ class SemanticRetrievalTest extends TestCase
             'document_family_id' => (string) Str::uuid(),
             'version_position' => 2,
             'side' => 'primary',
+            'document_title' => 'Current Policy v2',
+            'document_family_title' => 'Current Policy',
+            'section_heading' => null,
             'chunk_text' => 'Current evidence.',
             'score' => 0.04,
             'rank' => 1,
@@ -1475,6 +1515,37 @@ class SemanticRetrievalTest extends TestCase
             ->assertJsonPath('data.candidates.0.reranker_model', $policy->reranker_model);
     }
 
+    public function test_policy_metadata_cannot_prove_a_personal_record_and_foreign_metadata_is_never_sent(): void
+    {
+        [$workspace, $user, $generation, $policy] = $this->hybridRetrievalWorkspace();
+        $document = $this->eligibleDocument($workspace, $generation, '2025-01-01', '2025-01-02');
+        $document->family->update(['name' => 'Manual Tasks Training Policy']);
+        $chunk = $document->chunks()->firstOrFail();
+        $foreign = Workspace::factory()->create();
+        Document::factory()->for($foreign)->create(['source_filename' => 'Private Foreign Record.txt']);
+        $this->fakeHybridRetrieval($generation, $policy, $document, $chunk, 0.91, false, [
+            'requested_evidence_type' => 'personal_record_status',
+            'fact_date' => '2025-09-30',
+        ]);
+
+        $this->actingAs($user)->postJson(
+            "/api/workspaces/{$workspace->public_id}/retrieval",
+            ['question' => 'Had Jordan completed the course by 30 September 2025?'],
+        )->assertOk()->assertJsonPath('data.outcome', 'insufficient_evidence');
+
+        Http::assertSent(function (Request $request) use ($workspace): bool {
+            if (! str_ends_with($request->url(), '/rerank')) {
+                return false;
+            }
+            $body = $request->data();
+            $encoded = json_encode($body, JSON_THROW_ON_ERROR);
+
+            return ($body['workspace_id'] ?? null) === $workspace->public_id
+                && ($body['candidates'][0]['document_family_title'] ?? null) === 'Manual Tasks Training Policy'
+                && ! str_contains($encoded, 'Private Foreign Record');
+        });
+    }
+
     public function test_hybrid_path_rejects_mismatched_sparse_lineage(): void
     {
         [$workspace, $user, $generation, $policy] = $this->hybridRetrievalWorkspace();
@@ -1599,11 +1670,12 @@ class SemanticRetrievalTest extends TestCase
         DocumentChunk $chunk,
         float $rerankerScore,
         bool $mismatchedLineage = false,
+        array $planOverrides = [],
     ): void {
-        Http::fake(function (Request $request) use ($generation, $policy, $document, $chunk, $rerankerScore, $mismatchedLineage) {
+        Http::fake(function (Request $request) use ($generation, $policy, $document, $chunk, $rerankerScore, $mismatchedLineage, $planOverrides) {
             $body = $request->data();
             if (str_ends_with($request->url(), '/plan')) {
-                return Http::response($this->planResponse($body));
+                return Http::response($this->planResponse($body, $planOverrides));
             }
             if (str_ends_with($request->url(), '/search')) {
                 $hybrid = isset($body['hybrid_configuration']);

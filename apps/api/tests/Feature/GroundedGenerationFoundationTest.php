@@ -341,11 +341,11 @@ class GroundedGenerationFoundationTest extends TestCase
         $this->assertSame('openai', $profile->provider);
         $this->assertSame('gpt-5-mini', $profile->model);
         $this->assertSame('generation-result-v1', $profile->contractVersion);
-        $this->assertSame('grounded-generation-v2', $profile->promptVersion);
-        $this->assertSame('openai-responses-v2', $profile->adapterVersion);
+        $this->assertSame('grounded-generation-v3-claim-type', $profile->promptVersion);
+        $this->assertSame('openai-responses-v3-claim-type', $profile->adapterVersion);
         $this->assertSame(GenerationDeliveryMode::StreamingParts, $profile->deliveryMode);
         $this->assertSame(
-            'e4f2193366616cf3a5d47ce63017e68f23cd8d6b35c2393af92b7f1b60f095d9',
+            '5982f6a7a860056e53a33b9aea23746d8273cda9cdae4c55fc6f0403c4388dbe',
             $fingerprint['generation_fingerprint'],
         );
     }

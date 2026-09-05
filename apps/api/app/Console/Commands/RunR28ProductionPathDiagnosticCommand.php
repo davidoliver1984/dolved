@@ -39,14 +39,37 @@ final class RunR28ProductionPathDiagnosticCommand extends Command
             }
             $run->validateInput($input);
             $selection = json_decode((string) file_get_contents($selectionPath), true, flags: JSON_THROW_ON_ERROR);
-            $injectionIdentities = $selection['selection']['prompt_injection'] ?? null;
-            if (! is_array($injectionIdentities) || count($injectionIdentities) !== 2) {
-                throw new RuntimeException('The frozen R28 prompt-injection selection is invalid.');
+            $isUnseenConfirmation = ($selection['schema_version'] ?? null) === 'r28-unseen-confirmation-selection-v1';
+            if ($isUnseenConfirmation) {
+                $items = $selection['items'] ?? null;
+                $categories = is_array($items) ? array_column($items, 'category') : [];
+                if (! is_array($items) || count($items) !== 5 || $categories !== [
+                    'temporal_comparison',
+                    'historical_or_valid_at',
+                    'competing_or_near_duplicate',
+                    'ordinary_current_evidence_found',
+                    'cross_tenant_safety',
+                ]) {
+                    throw new RuntimeException('The R28 unseen-confirmation selection is invalid.');
+                }
+                $selectedIdentities = collect($items)->map(function (mixed $item): string {
+                    if (! is_array($item) || ! is_string($item['case_id'] ?? null) || ! is_string($item['variant_id'] ?? null)) {
+                        throw new RuntimeException('The R28 unseen-confirmation identity is invalid.');
+                    }
+
+                    return $item['case_id'].'::'.$item['variant_id'];
+                })->all();
+                $injectionIdentities = [];
+            } else {
+                $injectionIdentities = $selection['selection']['prompt_injection'] ?? null;
+                if (! is_array($injectionIdentities) || count($injectionIdentities) !== 2) {
+                    throw new RuntimeException('The frozen R28 prompt-injection selection is invalid.');
+                }
+                $selectedIdentities = collect($selection['selection'] ?? null)
+                    ->flatMap(fn (mixed $identities): array => is_array($identities) ? array_values($identities) : [])
+                    ->values()
+                    ->all();
             }
-            $selectedIdentities = collect($selection['selection'] ?? null)
-                ->flatMap(fn (mixed $identities): array => is_array($identities) ? array_values($identities) : [])
-                ->values()
-                ->all();
             $inputIdentities = collect($input['items'])
                 ->map(fn (array $item): string => $item['case_id'].'::'.$item['variant_id'])
                 ->values()
@@ -56,7 +79,7 @@ final class RunR28ProductionPathDiagnosticCommand extends Command
             if ($selectedIdentities !== $inputIdentities) {
                 throw new RuntimeException('The frozen R28 selection does not match the question-only execution input.');
             }
-            if (isset($selection['execution_scope'])) {
+            if (! $isUnseenConfirmation && isset($selection['execution_scope'])) {
                 $primaryIdentities = $selection['execution_scope']['primary'] ?? null;
                 $scopedInjectionIdentities = $selection['execution_scope']['injection'] ?? null;
                 if (! is_array($primaryIdentities) || ! is_array($scopedInjectionIdentities)
@@ -71,13 +94,19 @@ final class RunR28ProductionPathDiagnosticCommand extends Command
                 'workspace' => (string) $this->option('workspace'),
                 'user' => User::query()->whereKey((int) $this->option('user'))->sole(),
             ];
-            $injection = [
-                'scope' => 'injection',
-                'workspace' => (string) $this->option('injection-workspace'),
-                'user' => User::query()->whereKey((int) $this->option('injection-user'))->sole(),
-            ];
-            if ($primary['workspace'] === '' || $injection['workspace'] === '' || $primary['workspace'] === $injection['workspace']) {
-                throw new RuntimeException('Primary and injection diagnostic workspaces must be explicit and distinct.');
+            if ($primary['workspace'] === '') {
+                throw new RuntimeException('The primary diagnostic workspace must be explicit.');
+            }
+            $injection = null;
+            if (! $isUnseenConfirmation) {
+                $injection = [
+                    'scope' => 'injection',
+                    'workspace' => (string) $this->option('injection-workspace'),
+                    'user' => User::query()->whereKey((int) $this->option('injection-user'))->sole(),
+                ];
+                if ($injection['workspace'] === '' || $primary['workspace'] === $injection['workspace']) {
+                    throw new RuntimeException('Primary and injection diagnostic workspaces must be explicit and distinct.');
+                }
             }
             $parent = dirname($outputPath);
             if (! is_dir($parent) || ! is_writable($parent)) {
@@ -91,6 +120,9 @@ final class RunR28ProductionPathDiagnosticCommand extends Command
             foreach ($input['items'] as $item) {
                 $identity = $item['case_id'].'::'.$item['variant_id'];
                 $binding = in_array($identity, $injectionIdentities, true) ? $injection : $primary;
+                if (! is_array($binding)) {
+                    throw new RuntimeException('The R28 execution scope could not be resolved.');
+                }
                 $casePath = $caseDirectory.'/'.preg_replace('/[^A-Za-z0-9._-]/', '_', $identity).'.json';
                 if (is_file($casePath)) {
                     $record = json_decode((string) file_get_contents($casePath), true, flags: JSON_THROW_ON_ERROR);

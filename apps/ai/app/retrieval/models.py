@@ -34,6 +34,12 @@ class TemporalReferenceKind(StrEnum):
     HISTORICAL_REFERENCE = "historical_reference"
 
 
+class RequestedEvidenceType(StrEnum):
+    POLICY_OR_PROCEDURAL_REQUIREMENTS = "policy_or_procedural_requirements"
+    PERSONAL_RECORD_STATUS = "personal_record_status"
+    CURRENT_VERSUS_HISTORICAL_COMPARISON = "current_versus_historical_comparison"
+
+
 class ClarificationReason(StrEnum):
     UNCLASSIFIABLE_TEMPORAL_INTENT = "unclassifiable_temporal_intent"
 
@@ -53,6 +59,11 @@ class RetrievalPlan(ImmutableModel):
     temporal_mode: TemporalMode
     explicit_date: date | None = None
     temporal_reference: TemporalReference | None = None
+    version_transition_boundary: TemporalReference | None = None
+    fact_date: Reference | None = None
+    requested_evidence_type: RequestedEvidenceType = (
+        RequestedEvidenceType.POLICY_OR_PROCEDURAL_REQUIREMENTS
+    )
     location_references: tuple[Reference, ...] = Field(default=(), max_length=8)
     clarification_reason: ClarificationReason | None = None
 
@@ -62,6 +73,29 @@ class RetrievalPlan(ImmutableModel):
         if self.explicit_date is not None and self.temporal_reference is not None:
             raise ValueError(
                 "explicit_date and temporal_reference are mutually exclusive"
+            )
+        if self.version_transition_boundary is not None and (
+            mode is not TemporalMode.COMPARE
+            or self.version_transition_boundary.kind
+            is not TemporalReferenceKind.CALENDAR_PERIOD
+            or self.explicit_date is not None
+            or self.temporal_reference is not None
+        ):
+            raise ValueError(
+                "a version transition boundary is an independent compare selector"
+            )
+        if (
+            self.requested_evidence_type
+            is RequestedEvidenceType.CURRENT_VERSUS_HISTORICAL_COMPARISON
+            and mode is not TemporalMode.COMPARE
+        ):
+            raise ValueError("comparison evidence requires a comparison plan")
+        if (
+            self.requested_evidence_type is RequestedEvidenceType.PERSONAL_RECORD_STATUS
+            and (self.explicit_date is not None or self.temporal_reference is not None)
+        ):
+            raise ValueError(
+                "a personal fact date cannot be a document-authority selector"
             )
         if mode is TemporalMode.CURRENT and (
             self.explicit_date is not None or self.temporal_reference is not None

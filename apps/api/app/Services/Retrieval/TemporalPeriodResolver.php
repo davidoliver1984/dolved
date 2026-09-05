@@ -38,6 +38,19 @@ final readonly class TemporalPeriodResolver
         );
     }
 
+    public function boundaryStart(string $reference): ?CarbonImmutable
+    {
+        $value = trim($reference);
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/D', $value) === 1) {
+            $exact = CarbonImmutable::createFromFormat('!Y-m-d', $value);
+            if ($exact !== false && $exact->format('Y-m-d') === $value) {
+                return $exact;
+            }
+        }
+
+        return $this->window($reference)[0] ?? null;
+    }
+
     /** @return array{CarbonImmutable, CarbonImmutable}|null */
     private function window(string $reference): ?array
     {

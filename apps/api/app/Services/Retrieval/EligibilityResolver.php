@@ -62,8 +62,21 @@ final readonly class EligibilityResolver
             ->get();
 
         if ($plan->temporalMode === RetrievalTemporalMode::Compare) {
-            $primary = $this->current($families, $evaluatedAt);
-            $comparison = $this->comparison($families, $plan, $evaluatedAt, $primary);
+            $transitionAt = $plan->versionTransitionBoundary === null
+                ? null
+                : $this->periods->boundaryStart($plan->versionTransitionBoundary['value']);
+            if ($plan->versionTransitionBoundary !== null && $transitionAt === null) {
+                return new EligibleRetrievalScope(
+                    RetrievalOutcome::ClarificationRequired,
+                    reason: EligibilityClarificationReason::UnresolvableTemporalPeriod->value,
+                    resolvedLocationPublicId: $location?->public_id,
+                    clarificationSource: RetrievalClarificationSource::EligibilityResolver,
+                );
+            }
+            $primary = $this->current($families, $transitionAt ?? $evaluatedAt);
+            $comparison = $transitionAt === null
+                ? $this->comparison($families, $plan, $evaluatedAt, $primary)
+                : $this->current($families, $transitionAt->subMicrosecond());
             if ($comparison instanceof EligibilityClarificationReason) {
                 return new EligibleRetrievalScope(
                     RetrievalOutcome::ClarificationRequired,

@@ -18,15 +18,15 @@ final class ProvisionEvidenceThresholdPolicyCommand extends Command
 
     private const SPARSE = 'e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d';
 
-    private const FINGERPRINT = '6626d78bd9445c70fd946a64b0a817b4e77b264a14d945d483ba497f9e681364';
+    private const FINGERPRINT = '8adb1a507bda52e7524903b77cc29dea7f602ad8f0d082c9e6421c07ed6227fb';
 
-    private const VERSION = 'engineering-rrf-k-5-after-exp0004';
+    private const VERSION = 'provisional-r28-query-evidence-contract-v1';
 
     protected $signature = 'retrieval:provision-evidence-threshold-policy
         {--dense-fingerprint= : Required dense embedding-profile fingerprint}
         {--sparse-fingerprint= : Required sparse embedding-profile fingerprint}';
 
-    protected $description = 'Provision the reviewed Voyage/SPLADE evidence-threshold policy idempotently';
+    protected $description = 'Provision the provisional R28 document-aware Voyage policy with unchanged reviewed numeric values';
 
     public function handle(): int
     {
@@ -37,46 +37,44 @@ final class ProvisionEvidenceThresholdPolicyCommand extends Command
             }
             DB::transaction(function (): void {
                 $expected = $this->expected();
-                $configuration = array_diff_key($expected, array_flip(['version', 'fingerprint']));
                 $collisions = EvidenceThresholdPolicy::query()
                     ->where(fn ($query) => $query
                         ->where('fingerprint', self::FINGERPRINT)
-                        ->orWhere('version', self::VERSION)
-                        ->orWhere(fn ($lineage) => $lineage
-                            ->where('status', EvidenceThresholdPolicyStatus::Active->value)
-                            ->where('embedding_profile_fingerprint', self::DENSE)
-                            ->where('sparse_profile_fingerprint', self::SPARSE)))
+                        ->orWhere('version', self::VERSION))
                     ->lockForUpdate()
                     ->get();
                 foreach ($collisions as $policy) {
-                    $fields = $policy->fingerprint === self::FINGERPRINT || $policy->version === self::VERSION
-                        ? $expected
-                        : $configuration;
-                    foreach ($fields as $field => $value) {
+                    foreach ($expected as $field => $value) {
                         if ((string) $policy->{$field} !== (string) $value) {
-                            throw new RuntimeException('An incompatible evidence-threshold policy already occupies the reviewed identity.');
+                            throw new RuntimeException('An incompatible evidence-threshold policy already occupies the provisional identity.');
                         }
                     }
                 }
                 $policy = $collisions->firstWhere('fingerprint', self::FINGERPRINT);
                 if (! $policy instanceof EvidenceThresholdPolicy) {
-                    if ($collisions->contains(fn (EvidenceThresholdPolicy $candidate): bool => $candidate->status === EvidenceThresholdPolicyStatus::Active)) {
-                        return;
-                    }
                     $policy = new EvidenceThresholdPolicy;
                     $policy->forceFill($expected + [
                         'public_id' => (string) Str::uuid(),
-                        'status' => EvidenceThresholdPolicyStatus::Active,
-                        'activated_at' => now(),
+                        'status' => EvidenceThresholdPolicyStatus::Calibrating,
+                        'activated_at' => null,
                         'retired_at' => null,
                     ])->save();
-
-                    return;
                 }
                 if ($policy->status === EvidenceThresholdPolicyStatus::Retired) {
-                    throw new RuntimeException('The reviewed evidence-threshold policy has been retired and cannot be silently restored.');
+                    throw new RuntimeException('The provisional evidence-threshold policy has been retired and cannot be silently restored.');
                 }
                 if ($policy->status === EvidenceThresholdPolicyStatus::Calibrating) {
+                    EvidenceThresholdPolicy::query()
+                        ->where('status', EvidenceThresholdPolicyStatus::Active->value)
+                        ->where('embedding_profile_fingerprint', self::DENSE)
+                        ->where('sparse_profile_fingerprint', self::SPARSE)
+                        ->where('id', '!=', $policy->id)
+                        ->lockForUpdate()
+                        ->get()
+                        ->each(fn (EvidenceThresholdPolicy $active) => $active->update([
+                            'status' => EvidenceThresholdPolicyStatus::Retired,
+                            'retired_at' => now(),
+                        ]));
                     $policy->update(['status' => EvidenceThresholdPolicyStatus::Active, 'activated_at' => now()]);
                 }
             });
@@ -85,7 +83,7 @@ final class ProvisionEvidenceThresholdPolicyCommand extends Command
 
             return self::FAILURE;
         }
-        $this->components->info('The reviewed Voyage/SPLADE evidence-threshold policy is active.');
+        $this->components->info('The provisional R28 document-aware Voyage/SPLADE policy is active; reviewed numeric values are unchanged and are not broadly recalibrated.');
 
         return self::SUCCESS;
     }
@@ -98,7 +96,7 @@ final class ProvisionEvidenceThresholdPolicyCommand extends Command
             'fingerprint' => self::FINGERPRINT,
             'reranker_provider' => 'voyage',
             'reranker_model' => 'rerank-2.5',
-            'reranker_adapter_version' => '1',
+            'reranker_adapter_version' => 'document-metadata-v2',
             'embedding_profile_fingerprint' => self::DENSE,
             'sparse_profile_fingerprint' => self::SPARSE,
             'fusion_strategy' => 'rrf',

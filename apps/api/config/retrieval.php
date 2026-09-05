@@ -55,9 +55,9 @@ return [
     'planner' => [
         'provider' => env('RETRIEVAL_PLANNER_PROVIDER', 'openai'),
         'model' => env('RETRIEVAL_PLANNER_MODEL', 'gpt-5-mini'),
-        'contract_schema_version' => 'plan-response-v2',
-        'prompt_version' => 'adr-0022-v7',
-        'adapter_version' => 'structured-chat-v4',
+        'contract_schema_version' => 'plan-response-v3',
+        'prompt_version' => 'query-evidence-contract-v1',
+        'adapter_version' => 'structured-chat-v5',
     ],
     'embedding' => [
         'estimated_cost_per_million_tokens_usd' => (float) env(

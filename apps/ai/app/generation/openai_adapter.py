@@ -36,7 +36,7 @@ from app.telemetry import trace_attributes
 PROVIDER = "openai"
 MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
-ADAPTER_VERSION = "openai-responses-v2"
+ADAPTER_VERSION = "openai-responses-v3-claim-type"
 GenerationErrorCategory = Literal[
     "transport_failure",
     "rate_limit",
@@ -181,6 +181,7 @@ def render_openai_request(
     package = {
         "question": request.question,
         "required_sides": [side.value for side in request.constraints.required_sides],
+        "requested_evidence_type": request.constraints.requested_evidence_type.value,
         "evidence": [
             {
                 "evidence_id": item.evidence_id,

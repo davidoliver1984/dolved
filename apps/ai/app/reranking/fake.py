@@ -7,7 +7,9 @@ class DeterministicReranker:
         query_tokens = set(deterministic_tokens(request.query))
 
         def relevance(candidate) -> float:  # type: ignore[no-untyped-def]
-            candidate_tokens = set(deterministic_tokens(candidate.text))
+            candidate_tokens = set(
+                deterministic_tokens(candidate.provider_representation())
+            )
             if not query_tokens:
                 return 0.0
             return len(query_tokens & candidate_tokens) / len(query_tokens)

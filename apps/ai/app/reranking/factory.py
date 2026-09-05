@@ -11,13 +11,13 @@ def reranker_profile(settings: Settings) -> RerankerProfile:
         return RerankerProfile(
             provider="deterministic",
             model="token-overlap-v2",
-            adapter_version="deterministic-v2",
+            adapter_version="document-metadata-v2",
             truncation=False,
         )
     return RerankerProfile(
         provider="voyage",
         model=settings.reranker_model,
-        adapter_version="1",
+        adapter_version="document-metadata-v2",
         truncation=False,
     )
 

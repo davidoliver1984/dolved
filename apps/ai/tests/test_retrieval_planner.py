@@ -19,6 +19,7 @@ from app.retrieval.planner import (
 def provider_envelope(response_plan: dict[str, object]) -> dict[str, object]:
     if "intent" in response_plan:
         return response_plan
+    mode = response_plan.get("temporal_mode")
     intent_keys = {
         "temporal_mode",
         "explicit_date",
@@ -38,6 +39,14 @@ def provider_envelope(response_plan: dict[str, object]) -> dict[str, object]:
             {"location_references": response_plan["location_references"]}
             if "location_references" in response_plan
             else {}
+        ),
+        "version_transition_boundary": response_plan.get("version_transition_boundary"),
+        "fact_date": response_plan.get("fact_date"),
+        "requested_evidence_type": response_plan.get(
+            "requested_evidence_type",
+            "current_versus_historical_comparison"
+            if mode == "compare"
+            else "policy_or_procedural_requirements",
         ),
     }
 
@@ -253,14 +262,14 @@ def test_planner_lineage_is_stable_and_excludes_credentials() -> None:
     lineage = adapter.lineage()
 
     assert lineage.provider == "test-provider"
-    assert lineage.contract_schema_version == "plan-response-v2"
-    assert lineage.prompt_version == "adr-0022-v7"
-    assert lineage.adapter_version == "structured-chat-v4"
+    assert lineage.contract_schema_version == "plan-response-v3"
+    assert lineage.prompt_version == "query-evidence-contract-v1"
+    assert lineage.adapter_version == "structured-chat-v5"
     assert len(lineage.fingerprint) == 64
     assert "test-key" not in lineage.model_dump_json()
 
 
-def test_adr_0022_v7_planner_fingerprint_is_stable() -> None:
+def test_query_evidence_contract_planner_fingerprint_is_stable() -> None:
     lineage = StructuredChatRetrievalPlanner(
         api_url="https://planner.invalid/v1/chat/completions",
         api_key=SecretStr("test-key"),
@@ -273,7 +282,7 @@ def test_adr_0022_v7_planner_fingerprint_is_stable() -> None:
     ).lineage()
 
     assert lineage.fingerprint == (
-        "1d66894ef87a7a010ecc7e3cedd5d463cc1ede99c2329839ebaf7d53c51db354"
+        "e2c89447ecccae36d2ae8a30ae2f95a0546975b3577a845c28af62c45f880170"
     )
 
 
@@ -282,9 +291,9 @@ def test_adr_0022_v7_planner_fingerprint_is_stable() -> None:
     [
         ("provider_name", "another-provider"),
         ("model", "another-model"),
-        ("contract_schema_version", "plan-response-v3"),
+        ("contract_schema_version", "plan-response-v4"),
         ("prompt_version", "another-prompt"),
-        ("adapter_version", "structured-chat-v5"),
+        ("adapter_version", "structured-chat-v6"),
     ],
 )
 def test_planner_lineage_fingerprint_changes_for_each_semantic_component(
@@ -688,7 +697,7 @@ def test_prompt_closes_production_diagnostic_scope_and_history_ambiguities() -> 
         ),
     ],
 )
-def test_provider_valid_at_misclassification_is_bounded_to_historical_reference(
+def test_provider_valid_at_misclassification_is_bounded_to_the_correct_temporal_concept(
     question: str, provider_date: str, expected_reference: str
 ) -> None:
     result = planner(
@@ -702,10 +711,17 @@ def test_provider_valid_at_misclassification_is_bounded_to_historical_reference(
         }
     ).plan(question, evaluated_at="2026-09-05T12:00:00Z")
 
-    assert result.temporal_mode.value == "historical_reference"
-    assert result.explicit_date is None
-    assert result.temporal_reference is not None
-    assert result.temporal_reference.value == expected_reference
+    if "completed" in question:
+        assert result.temporal_mode.value == "current"
+        assert result.explicit_date is None
+        assert result.temporal_reference is None
+        assert result.fact_date == expected_reference
+        assert result.requested_evidence_type.value == "personal_record_status"
+    else:
+        assert result.temporal_mode.value == "historical_reference"
+        assert result.explicit_date is None
+        assert result.temporal_reference is not None
+        assert result.temporal_reference.value == expected_reference
 
 
 def test_explicit_governing_date_remains_valid_at_date() -> None:
@@ -854,6 +870,33 @@ def test_planner_classifies_cross_field_validation_failure() -> None:
 
     assert captured.value.category == "cross_field_validation_failure"
     assert captured.value.__cause__ is None
+
+
+def test_transition_boundary_is_independent_of_document_authority_period() -> None:
+    question = (
+        "Compare the rule before April 2032 with its replacement from April 2032."
+    )
+    result = planner(
+        {
+            "retrieval_queries": [question],
+            "temporal_mode": "compare",
+            "explicit_date": None,
+            "temporal_reference": {
+                "kind": "calendar_period",
+                "value": "April 2032",
+            },
+            "location_references": [],
+            "clarification_reason": None,
+        }
+    ).plan(question, evaluated_at="2033-02-01T12:00:00Z")
+
+    assert result.explicit_date is None
+    assert result.temporal_reference is None
+    assert result.version_transition_boundary is not None
+    assert result.version_transition_boundary.value == "April 2032"
+    assert result.requested_evidence_type.value == (
+        "current_versus_historical_comparison"
+    )
 
 
 def test_planner_classifies_quota_as_systemic_without_leaking_provider_body() -> None:

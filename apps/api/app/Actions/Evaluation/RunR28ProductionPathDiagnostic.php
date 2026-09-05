@@ -201,6 +201,7 @@ final readonly class RunR28ProductionPathDiagnostic
         if ($stage === 'plan') {
             return collect($value)->only([
                 'temporal_mode', 'explicit_date', 'temporal_reference', 'location_references',
+                'version_transition_boundary', 'fact_date', 'requested_evidence_type',
                 'clarification_reason', 'classifier_lineage', 'usage',
             ])->all();
         }

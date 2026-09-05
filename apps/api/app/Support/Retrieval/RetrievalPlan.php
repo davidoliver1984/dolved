@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support\Retrieval;
 
 use App\Enums\PlannerClarificationReason;
+use App\Enums\RequestedEvidenceType;
 use App\Enums\RetrievalTemporalMode;
 use App\Enums\RetrievalTemporalReferenceKind;
 use Carbon\CarbonImmutable;
@@ -14,6 +15,7 @@ final readonly class RetrievalPlan
 {
     /**
      * @param  array{kind: RetrievalTemporalReferenceKind, value: string}|null  $temporalReference
+     * @param  array{kind: RetrievalTemporalReferenceKind, value: string}|null  $versionTransitionBoundary
      * @param  list<string>  $locationReferences
      */
     public function __construct(
@@ -25,6 +27,9 @@ final readonly class RetrievalPlan
         public ?PlannerClarificationReason $clarificationReason,
         public ClassifierLineage $classifierLineage,
         public PlannerUsage $classifierUsage,
+        public ?array $versionTransitionBoundary = null,
+        public ?string $factDate = null,
+        public RequestedEvidenceType $requestedEvidenceType = RequestedEvidenceType::PolicyOrProceduralRequirements,
     ) {}
 
     /**
@@ -46,6 +51,12 @@ final readonly class RetrievalPlan
 
         $explicitDate = self::date($value['explicit_date'] ?? null);
         $reference = self::reference($value['temporal_reference'] ?? null);
+        $transitionBoundary = self::reference($value['version_transition_boundary'] ?? null);
+        $factDate = self::boundedReference($value['fact_date'] ?? null);
+        $requestedEvidenceType = RequestedEvidenceType::tryFrom((string) ($value['requested_evidence_type'] ?? ''))
+            ?? ($mode === RetrievalTemporalMode::Compare
+                ? RequestedEvidenceType::CurrentVersusHistoricalComparison
+                : RequestedEvidenceType::PolicyOrProceduralRequirements);
         $locations = self::locations($value['location_references'] ?? null);
         $reasonValue = $value['clarification_reason'] ?? null;
         $reason = is_string($reasonValue) ? PlannerClarificationReason::tryFrom($reasonValue) : null;
@@ -53,7 +64,15 @@ final readonly class RetrievalPlan
             throw new InvalidArgumentException('The planner returned an unsupported clarification reason.');
         }
 
-        self::assertConsistent($mode, $explicitDate, $reference, $reason);
+        self::assertConsistent(
+            $mode,
+            $explicitDate,
+            $reference,
+            $transitionBoundary,
+            $factDate,
+            $requestedEvidenceType,
+            $reason,
+        );
 
         return new self(
             $originalQuestion,
@@ -64,6 +83,9 @@ final readonly class RetrievalPlan
             $reason,
             ClassifierLineage::fromArray($lineage),
             PlannerUsage::fromArray($usage),
+            $transitionBoundary,
+            $factDate,
+            $requestedEvidenceType,
         );
     }
 
@@ -118,15 +140,49 @@ final readonly class RetrievalPlan
         return $locations;
     }
 
-    /** @param array{kind: RetrievalTemporalReferenceKind, value: string}|null $reference */
+    private static function boundedReference(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+        if (! is_string($value) || trim($value) === '' || mb_strlen($value) > 255) {
+            throw new InvalidArgumentException('The planner fact date is invalid.');
+        }
+
+        return trim($value);
+    }
+
+    /** @param array{kind: RetrievalTemporalReferenceKind, value: string}|null $reference @param array{kind: RetrievalTemporalReferenceKind, value: string}|null $transitionBoundary */
     private static function assertConsistent(
         RetrievalTemporalMode $mode,
         ?CarbonImmutable $date,
         ?array $reference,
+        ?array $transitionBoundary,
+        ?string $factDate,
+        RequestedEvidenceType $requestedEvidenceType,
         ?PlannerClarificationReason $reason,
     ): void {
         if ($date !== null && $reference !== null) {
             throw new InvalidArgumentException('The planner temporal selectors are mutually exclusive.');
+        }
+        if ($transitionBoundary !== null && (
+            $mode !== RetrievalTemporalMode::Compare
+            || $transitionBoundary['kind'] !== RetrievalTemporalReferenceKind::CalendarPeriod
+            || $date !== null
+            || $reference !== null
+        )) {
+            throw new InvalidArgumentException('A version transition boundary is an independent comparison selector.');
+        }
+        if ($requestedEvidenceType === RequestedEvidenceType::CurrentVersusHistoricalComparison
+            && $mode !== RetrievalTemporalMode::Compare) {
+            throw new InvalidArgumentException('Comparison evidence requires a comparison plan.');
+        }
+        if ($requestedEvidenceType === RequestedEvidenceType::PersonalRecordStatus
+            && ($date !== null || $reference !== null)) {
+            throw new InvalidArgumentException('A personal fact date cannot become a document-authority selector.');
+        }
+        if ($factDate !== null && $requestedEvidenceType !== RequestedEvidenceType::PersonalRecordStatus) {
+            throw new InvalidArgumentException('A fact date requires a personal-record claim type.');
         }
         if ($mode === RetrievalTemporalMode::ValidAtDate && (
             ($date === null) === ($reference === null)

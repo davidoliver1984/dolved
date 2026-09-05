@@ -25,6 +25,8 @@ def test_live_voyage_reranker_requires_explicit_opt_in() -> None:
             document_family_id=uuid4(),
             version_position=index,
             side=RetrievalSide.PRIMARY,
+            document_title=f"Example document v{index}",
+            document_family_title="Example documents",
             text=text,
             fused_score=score,
             fused_rank=index,

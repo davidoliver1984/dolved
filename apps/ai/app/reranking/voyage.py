@@ -302,7 +302,10 @@ class VoyageReranker:
             },
             json={
                 "query": request.query,
-                "documents": [candidate.text for candidate in request.candidates],
+                "documents": [
+                    candidate.provider_representation()
+                    for candidate in request.candidates
+                ],
                 "model": request.profile.model,
                 "top_k": request.top_k,
                 "truncation": False,

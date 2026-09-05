@@ -229,6 +229,75 @@ final class R28ProductionPathDiagnosticTest extends TestCase
         $this->assertSame($conversationCount, $primary->conversations()->count() + $injection->conversations()->count());
     }
 
+    public function test_unseen_confirmation_manifest_routes_all_five_cases_only_to_the_primary_workspace(): void
+    {
+        $primary = Workspace::factory()->create();
+        $primaryUser = User::factory()->create(['email_verified_at' => now()]);
+        WorkspaceMembership::factory()->for($primary)->for($primaryUser)->create(['role' => WorkspaceRole::Owner]);
+        Http::fake(function (Request $request) {
+            $body = $request->data();
+
+            return Http::response(str_ends_with($request->url(), '/plan')
+                ? $this->planResponse($body)
+                : [
+                    'contract_version' => 1,
+                    'request_id' => $body['request_id'],
+                    'result' => [
+                        'status' => 'resolved', 'resolved_query' => $body['current_message'],
+                        'used_prior_context' => false, 'interpretation_metadata' => ['used_turn_ordinals' => []],
+                        'clarification_question' => null, 'contextualiser_version' => 'recording-contextualiser-v1',
+                        'usage' => ['execution' => 'recording', 'request_count' => 0],
+                    ],
+                ]);
+        });
+        $categories = [
+            'temporal_comparison',
+            'historical_or_valid_at',
+            'competing_or_near_duplicate',
+            'ordinary_current_evidence_found',
+            'cross_tenant_safety',
+        ];
+        $items = collect($categories)->map(fn (string $category, int $index): array => [
+            'case_id' => sprintf('synthetic-case-%02d', $index + 1),
+            'variant_id' => 'v1',
+            'utterance' => sprintf('Synthetic independent question %02d?', $index + 1),
+        ])->all();
+        $directory = sys_get_temp_dir().'/r28-unseen-'.Str::uuid();
+        mkdir($directory, 0700);
+        $inputPath = $directory.'/input.json';
+        $selectionPath = $directory.'/selection.json';
+        $outputPath = $directory.'/observations.json';
+        file_put_contents($inputPath, json_encode([
+            'schema_version' => 'r28-production-path-input-v1',
+            'subset_id' => 'synthetic-unseen-five',
+            'population_id' => 'synthetic-population',
+            'population_digest' => str_repeat('b', 64),
+            'items' => $items,
+        ], JSON_THROW_ON_ERROR));
+        file_put_contents($selectionPath, json_encode([
+            'schema_version' => 'r28-unseen-confirmation-selection-v1',
+            'items' => collect($items)->map(fn (array $item, int $index): array => [
+                'category' => $categories[$index],
+                'case_id' => $item['case_id'],
+                'variant_id' => $item['variant_id'],
+            ])->all(),
+        ], JSON_THROW_ON_ERROR));
+
+        $exit = Artisan::call('evaluation:r28:production-path', [
+            '--input' => $inputPath,
+            '--selection' => $selectionPath,
+            '--output' => $outputPath,
+            '--workspace' => $primary->public_id,
+            '--user' => $primaryUser->id,
+        ]);
+
+        $this->assertSame(0, $exit, Artisan::output());
+        $aggregate = json_decode((string) file_get_contents($outputPath), true, flags: JSON_THROW_ON_ERROR);
+        $this->assertCount(5, $aggregate['items']);
+        $this->assertSame(array_fill(0, 5, 'primary'), array_column($aggregate['items'], 'scope_classification'));
+        $this->assertSame(array_fill(0, 5, (string) $primary->public_id), array_column($aggregate['items'], 'workspace_id'));
+    }
+
     /** @param array<string, mixed> $body */
     private function planResponse(array $body): array
     {

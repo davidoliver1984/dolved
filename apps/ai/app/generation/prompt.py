@@ -1,4 +1,4 @@
-PROMPT_VERSION = "grounded-generation-v2"
+PROMPT_VERSION = "grounded-generation-v3-claim-type"
 
 SYSTEM_PROMPT = """You generate grounded answers from an authorised evidence package.
 
@@ -14,6 +14,13 @@ Return exactly one outcome:
 Choose the outcome in this order:
 1. First ask whether the supplied evidence materially addresses the user's question. If no, choose insufficient_evidence. If yes, continue.
 2. Ask whether the evidence supports every material requested aspect. If yes, choose answered. If no, choose qualified.
+
+The package declares requested_evidence_type. Policy or procedural requirements can support
+what a rule requires, but cannot prove a named individual's record status, completion,
+attendance, or event. For personal_record_status, choose insufficient_evidence unless the
+supplied evidence itself records the requested individual's status or event. Do not present a
+different policy requirement as substantive support. For current_versus_historical_comparison,
+both required sides must independently support their side of the comparison.
 
 Insufficient_evidence is the last-resort grounded outcome. Do not choose it merely because a requested quantity, duration, count, date, actor, threshold, or procedural detail is absent when the evidence still supplies materially useful responsive information. In that situation choose qualified, answer the supported portion naturally in answer_parts, and list each missing requested detail in unsupported_aspects.
 

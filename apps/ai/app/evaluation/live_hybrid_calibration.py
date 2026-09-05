@@ -113,6 +113,8 @@ def run_live_calibration(
                     document_family_id=_identity(candidate.source_path, "family"),
                     version_position=1,
                     side=RetrievalSide.PRIMARY,
+                    document_title=candidate.source_path,
+                    document_family_title=candidate.source_path,
                     text=candidate.text,
                     fused_score=1 / rank,
                     fused_rank=rank,

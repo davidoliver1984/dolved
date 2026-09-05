@@ -143,6 +143,8 @@ def test_python_request_models_match_shared_rc1_schemas() -> None:
                 document_family_id=uuid4(),
                 version_position=1,
                 side=RetrievalSide.PRIMARY,
+                document_title="Operations Policy v1",
+                document_family_title="Operations Policy",
                 text="Canonical policy text.",
                 fused_score=0.04,
                 fused_rank=1,

@@ -14,6 +14,7 @@ from pydantic import SecretStr, ValidationError
 from app.retrieval.models import (
     OperationUsage,
     PlannerLineage,
+    RequestedEvidenceType,
     RetrievalPlan,
     TemporalMode,
     TemporalReference,
@@ -131,6 +132,10 @@ def _provider_plan_schema() -> dict[str, Any]:
         "required": ["kind", "value"],
         "additionalProperties": False,
     }
+    requested_evidence_type = {
+        "type": "string",
+        "enum": [item.value for item in RequestedEvidenceType],
+    }
 
     return {
         "type": "object",
@@ -149,8 +154,20 @@ def _provider_plan_schema() -> dict[str, Any]:
                 ]
             },
             "location_references": deepcopy(properties["location_references"]),
+            "version_transition_boundary": deepcopy(
+                properties["version_transition_boundary"]
+            ),
+            "fact_date": deepcopy(properties["fact_date"]),
+            "requested_evidence_type": requested_evidence_type,
         },
-        "required": ["retrieval_queries", "intent", "location_references"],
+        "required": [
+            "retrieval_queries",
+            "intent",
+            "location_references",
+            "version_transition_boundary",
+            "fact_date",
+            "requested_evidence_type",
+        ],
         "additionalProperties": False,
         "$defs": definitions,
     }
@@ -161,6 +178,9 @@ def _plan_from_provider_envelope(value: object) -> dict[str, object]:
         "retrieval_queries",
         "intent",
         "location_references",
+        "version_transition_boundary",
+        "fact_date",
+        "requested_evidence_type",
     }:
         raise RetrievalPlanningError(
             "retrieval planner returned an invalid schema envelope",
@@ -185,6 +205,9 @@ def _plan_from_provider_envelope(value: object) -> dict[str, object]:
         "explicit_date": intent["explicit_date"],
         "temporal_reference": intent["temporal_reference"],
         "location_references": value["location_references"],
+        "version_transition_boundary": value["version_transition_boundary"],
+        "fact_date": value["fact_date"],
+        "requested_evidence_type": value["requested_evidence_type"],
         "clarification_reason": intent["clarification_reason"],
     }
 
@@ -199,10 +222,70 @@ def _validation_failure_category(exception: ValidationError) -> str:
 
 def _normalise_temporal_plan(question: str, plan: RetrievalPlan) -> RetrievalPlan:
     """Correct bounded provider classifications without inventing selectors."""
+    lowered = question.casefold()
+    transition = (
+        plan.temporal_mode is TemporalMode.COMPARE
+        and re.search(r"\bbefore\b", lowered) is not None
+        and re.search(r"\b(?:from|starting|effective)\b", lowered) is not None
+    )
+    if transition and plan.version_transition_boundary is None:
+        if plan.explicit_date is not None:
+            boundary = TemporalReference(
+                kind=TemporalReferenceKind.CALENDAR_PERIOD,
+                value=plan.explicit_date.isoformat(),
+            )
+        elif (
+            plan.temporal_reference is not None
+            and plan.temporal_reference.kind is TemporalReferenceKind.CALENDAR_PERIOD
+        ):
+            boundary = plan.temporal_reference
+        else:
+            boundary = None
+        if boundary is not None:
+            return plan.model_copy(
+                update={
+                    "explicit_date": None,
+                    "temporal_reference": None,
+                    "version_transition_boundary": boundary,
+                    "fact_date": None,
+                    "requested_evidence_type": RequestedEvidenceType.CURRENT_VERSUS_HISTORICAL_COMPARISON,
+                }
+            )
+
+    personal_record = (
+        plan.requested_evidence_type is RequestedEvidenceType.PERSONAL_RECORD_STATUS
+        or re.search(
+            r"\b(?:did|has|had)\s+(?:\S+\s+){0,3}(?:complet(?:e|ed)|finish(?:ed)?|attend(?:ed)?|receive(?:d)?|sign(?:ed)?|submit(?:ted)?)\b",
+            lowered,
+        )
+        is not None
+        or re.search(
+            r"\b(?:my|your|their|his|her|our)\s+(?:record|training|completion|attendance|certificate|status)\b",
+            lowered,
+        )
+        is not None
+    )
+    if personal_record and plan.temporal_mode is TemporalMode.VALID_AT_DATE:
+        fact_date = (
+            plan.explicit_date.isoformat()
+            if plan.explicit_date is not None
+            else plan.temporal_reference.value
+            if plan.temporal_reference is not None
+            else plan.fact_date
+        )
+        return plan.model_copy(
+            update={
+                "temporal_mode": TemporalMode.CURRENT,
+                "explicit_date": None,
+                "temporal_reference": None,
+                "fact_date": fact_date,
+                "requested_evidence_type": RequestedEvidenceType.PERSONAL_RECORD_STATUS,
+            }
+        )
+
     if plan.temporal_mode is not TemporalMode.VALID_AT_DATE:
         return plan
 
-    lowered = question.casefold()
     historical = re.search(
         r"\b(earlier|former|historical|old|older|previous|prior)\b", lowered
     )
@@ -210,16 +293,10 @@ def _normalise_temporal_plan(question: str, plan: RetrievalPlan) -> RetrievalPla
         r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}\s+[a-z]+\s+\d{4}|[a-z]+\s+\d{1,2},?\s+\d{4}|\d{4})\b",
         lowered,
     )
-    personal_record = re.search(
-        r"\b(?:had|have|did|was|were)\s+(?:i|my|we|our)\b",
-        lowered,
-    )
-    if historical is None and personal_record is None:
+    if historical is None:
         return plan
     if historical is not None and supplied_date is None:
         reference = historical.group(1)
-    elif personal_record is not None and plan.explicit_date is not None:
-        reference = plan.explicit_date.isoformat()
     else:
         return plan
 
@@ -247,9 +324,9 @@ class StructuredChatRetrievalPlanner:
         model: str,
         timeout_seconds: float,
         client: httpx.Client | None = None,
-        contract_schema_version: str = "plan-response-v2",
-        prompt_version: str = "adr-0022-v7",
-        adapter_version: str = "structured-chat-v4",
+        contract_schema_version: str = "plan-response-v3",
+        prompt_version: str = "query-evidence-contract-v1",
+        adapter_version: str = "structured-chat-v5",
     ) -> None:
         if not api_key.get_secret_value().strip():
             raise RetrievalPlanningError(
@@ -472,7 +549,11 @@ over time. When the question explicitly names the historical comparison selector
 in explicit_date or temporal_reference; do not discard it merely because the application can
 default to the immediately previous attained version. A null selector remains valid for a
 genuinely relative current-versus-previous comparison that supplies no explicit selector.
-Do not create PRIMARY/COMPARISON objects.
+For explicit "before X / from X", "replaced from X", or equivalent transition wording,
+put X only in version_transition_boundary as a calendar_period reference. It is a boundary,
+not a document-authority period; leave explicit_date and temporal_reference null. Do not
+create PRIMARY/COMPARISON objects. Set requested_evidence_type to
+current_versus_historical_comparison for every COMPARE plan.
 VALID_AT_DATE: what applied on an exact date or calendar period. Use explicit_date only for an
 exact calendar day. When the question explicitly supplies a calendar day, month, and year,
 preserve that calendar date exactly in explicit_date: 1 January 2026 becomes 2026-01-01,
@@ -507,9 +588,14 @@ application can reconcile their established hierarchy; do not treat their coexis
 An earlier, former, historical, old, or previous policy without an exact date is
 HISTORICAL_REFERENCE, never VALID_AT_DATE: preserve that historical wording and do not invent a
 calendar selector. A dated question about whether a person's own record, action, or completion
-had occurred is a historical-reference request, not a request to resolve which governing policy
-was authoritative on that date. VALID_AT_DATE remains for questions about what governing rule,
+had occurred is a personal_record_status request, not a request to resolve which governing
+policy was authoritative on that date. Put its date wording in fact_date, keep document
+authority CURRENT, and leave explicit_date and temporal_reference null. VALID_AT_DATE remains
+for questions about what governing rule,
 policy, procedure, requirement, or operational instruction applied at the supplied date.
+Use policy_or_procedural_requirements for ordinary policy/procedure questions. fact_date is
+otherwise null. version_transition_boundary is otherwise null. These temporal concepts are
+independent and must never be copied into one another.
 
 The authoritative evaluation instant is """
         + evaluated_at

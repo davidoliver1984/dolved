@@ -71,6 +71,9 @@ final class RetrievalContractTest extends TestCase
                 'temporal_mode' => 'current',
                 'explicit_date' => null,
                 'temporal_reference' => null,
+                'version_transition_boundary' => null,
+                'fact_date' => null,
+                'requested_evidence_type' => 'policy_or_procedural_requirements',
                 'location_references' => [],
                 'clarification_reason' => null,
             ],
@@ -162,6 +165,9 @@ final class RetrievalContractTest extends TestCase
                 'document_family_id' => (string) Str::uuid(),
                 'version_position' => 1,
                 'side' => 'primary',
+                'document_title' => 'Operations Policy v1',
+                'document_family_title' => 'Operations Policy',
+                'section_heading' => null,
                 'text' => 'Canonical policy text.',
                 'fused_score' => 0.04,
                 'fused_rank' => 1,
@@ -218,6 +224,7 @@ final class RetrievalContractTest extends TestCase
             'constraints' => [
                 'context_policy_version' => 'whole-evidence-v1',
                 'max_context_characters' => 60000,
+                'requested_evidence_type' => 'policy_or_procedural_requirements',
                 'required_sides' => ['primary'],
             ],
         ];

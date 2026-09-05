@@ -7,7 +7,7 @@ from uuid import UUID
 from pydantic import Field, StringConstraints, model_validator
 
 from app.extraction.models import ImmutableModel
-from app.retrieval.models import RetrievalSide
+from app.retrieval.models import RequestedEvidenceType, RetrievalSide
 
 NonEmptyText = Annotated[str, StringConstraints(min_length=1)]
 BoundedText = Annotated[
@@ -38,6 +38,9 @@ class GenerationConstraints(ImmutableModel):
     context_policy_version: BoundedText
     max_context_characters: int = Field(gt=0)
     required_sides: tuple[RetrievalSide, ...] = Field(min_length=1, max_length=2)
+    requested_evidence_type: RequestedEvidenceType = (
+        RequestedEvidenceType.POLICY_OR_PROCEDURAL_REQUIREMENTS
+    )
 
     @model_validator(mode="after")
     def validate_sides(self) -> GenerationConstraints:

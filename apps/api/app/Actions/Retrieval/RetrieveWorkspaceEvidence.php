@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Actions\Retrieval;
 
 use App\Enums\EvidenceThresholdPolicyStatus;
+use App\Enums\RequestedEvidenceType;
 use App\Enums\RetrievalOutcome;
 use App\Exceptions\RetrievalException;
 use App\Exceptions\RetrievalExecutionException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
+use App\Models\DocumentExtractionProjectionElement;
 use App\Models\EvidenceThresholdPolicy;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Services\Retrieval\ResolveEvidenceThresholdPolicy;
@@ -183,6 +185,12 @@ final readonly class RetrieveWorkspaceEvidence
                     'kind' => $plan->temporalReference['kind']->value,
                     'value' => $plan->temporalReference['value'],
                 ],
+                'version_transition_boundary' => $plan->versionTransitionBoundary === null ? null : [
+                    'kind' => $plan->versionTransitionBoundary['kind']->value,
+                    'value' => $plan->versionTransitionBoundary['value'],
+                ],
+                'fact_date' => $plan->factDate,
+                'requested_evidence_type' => $plan->requestedEvidenceType->value,
                 'location_references' => $plan->locationReferences,
                 'clarification_reason' => $plan->clarificationReason?->value,
                 'classifier_lineage' => $plan->classifierLineage->toArray(),
@@ -339,6 +347,15 @@ final readonly class RetrieveWorkspaceEvidence
                 $qualified = $this->validatedComparisonCandidates($qualified);
                 $observe?->__invoke('comparison_validated', $qualified->all());
             }
+            $qualified = $this->qualifiedForRequestedEvidence($qualified, $plan->requestedEvidenceType);
+            $observe?->__invoke('claim_type_qualified', $qualified->all());
+            if ($qualified->isEmpty()) {
+                return new RetrievalResult(
+                    RetrievalOutcome::InsufficientEvidence,
+                    resolvedTemporalAuthority: $this->resolvedTemporalAuthority($plan, $finalEligible, $evaluatedAt),
+                    usage: $usage,
+                );
+            }
             if (count($sides) === 2 && collect($sides)->contains(
                 fn (string $side): bool => ! $qualified->contains(
                     fn (array $candidate): bool => $candidate['side'] === $side
@@ -435,6 +452,26 @@ final readonly class RetrieveWorkspaceEvidence
         )->values();
     }
 
+    /** @param Collection<int, array<string, mixed>> $candidates @return Collection<int, array<string, mixed>> */
+    private function qualifiedForRequestedEvidence(Collection $candidates, RequestedEvidenceType $type): Collection
+    {
+        if ($type !== RequestedEvidenceType::PersonalRecordStatus) {
+            return $candidates;
+        }
+
+        return $candidates->filter(function (array $candidate): bool {
+            $identity = mb_strtolower(trim(
+                ((string) ($candidate['document_family_title'] ?? '')).' '.
+                ((string) ($candidate['document_title'] ?? ''))
+            ));
+            if (preg_match('/\b(policy|procedure|guidance|handbook|standard|protocol)\b/u', $identity) === 1) {
+                return false;
+            }
+
+            return preg_match('/\b(record|records|register|log|completion|attendance|certificate|transcript|status)\b/u', $identity) === 1;
+        })->values();
+    }
+
     /** @return array<string, mixed> */
     private function resolvedTemporalAuthority(RetrievalPlan $plan, EligibleRetrievalScope $eligible, CarbonImmutable $evaluatedAt): array
     {
@@ -446,6 +483,12 @@ final readonly class RetrieveWorkspaceEvidence
                 'kind' => $plan->temporalReference['kind']->value,
                 'value' => $plan->temporalReference['value'],
             ],
+            'version_transition_boundary' => $plan->versionTransitionBoundary === null ? null : [
+                'kind' => $plan->versionTransitionBoundary['kind']->value,
+                'value' => $plan->versionTransitionBoundary['value'],
+            ],
+            'fact_date' => $plan->factDate,
+            'requested_evidence_type' => $plan->requestedEvidenceType->value,
             'eligible_document_public_ids_by_side' => $eligible->documentPublicIdsBySide,
         ];
     }
@@ -522,6 +565,9 @@ final readonly class RetrieveWorkspaceEvidence
             'document_family_id' => $document->family->public_id,
             'version_position' => is_int($position) ? $position + 1 : null,
             'source_filename' => $document->source_filename,
+            'document_title' => mb_substr($document->source_filename, 0, 500),
+            'document_family_title' => mb_substr($document->family->name, 0, 500),
+            'section_heading' => $this->sectionHeading($chunk),
             'chunk_text' => $chunk->text,
             'provenance' => $chunk->provenance,
             'score' => $candidate['score'],
@@ -536,6 +582,35 @@ final readonly class RetrieveWorkspaceEvidence
             'sparse_score' => $candidate['sparse_score'] ?? null,
             'sparse_rank' => $candidate['sparse_rank'] ?? null,
         ];
+    }
+
+    private function sectionHeading(DocumentChunk $chunk): ?string
+    {
+        $generationId = $chunk->document->active_extraction_projection_generation_id;
+        if ($generationId === null || ! is_array($chunk->provenance)) {
+            return null;
+        }
+        $elementIds = collect($chunk->provenance)
+            ->pluck('normalised_element_id')
+            ->filter(fn (mixed $value): bool => is_string($value))
+            ->unique()
+            ->take(32)
+            ->values();
+        if ($elementIds->isEmpty()) {
+            return null;
+        }
+        $heading = DocumentExtractionProjectionElement::query()
+            ->where('workspace_id', $chunk->workspace_id)
+            ->where('document_id', $chunk->document_id)
+            ->where('projection_generation_id', $generationId)
+            ->where('kind', 'heading')
+            ->whereIn('element_id', $elementIds)
+            ->orderBy('ordinal')
+            ->value('text');
+
+        return is_string($heading) && trim($heading) !== ''
+            ? mb_substr(trim($heading), 0, 500)
+            : null;
     }
 
     /**

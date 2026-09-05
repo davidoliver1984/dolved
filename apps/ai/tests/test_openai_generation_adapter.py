@@ -7,6 +7,9 @@ from uuid import uuid4
 import httpx
 import openai
 import pytest
+from openai.lib._pydantic import to_strict_json_schema
+from pydantic import ValidationError
+
 from app.generation.errors import (
     GenerationContextBudgetError,
     GenerationProviderFailure,
@@ -24,8 +27,6 @@ from app.generation.openai_adapter import (
     render_openai_request,
 )
 from app.generation.prompt import PROMPT_VERSION, SYSTEM_PROMPT
-from openai.lib._pydantic import to_strict_json_schema
-from pydantic import ValidationError
 
 
 def generation_request(
@@ -254,7 +255,7 @@ def test_rendering_is_deterministic_minimal_and_keeps_hostile_evidence_as_data()
     assert "document_chunk_id" not in first.input
     assert "source_provenance" not in first.input
     assert "no tools" not in first.input.lower()
-    assert PROMPT_VERSION == "grounded-generation-v2"
+    assert PROMPT_VERSION == "grounded-generation-v3-claim-type"
 
 
 def test_v2_outcome_boundary_is_ordered_and_general_not_phrase_specific() -> None:

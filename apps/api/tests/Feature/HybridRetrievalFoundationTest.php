@@ -53,7 +53,7 @@ class HybridRetrievalFoundationTest extends TestCase
         $this->assertSame(0.337890625, $policy->fresh()->evidence_threshold);
     }
 
-    public function test_reviewed_evidence_threshold_policy_provisioning_is_idempotent_and_fingerprint_bound(): void
+    public function test_provisional_document_aware_policy_is_idempotent_and_keeps_reviewed_numeric_values(): void
     {
         $arguments = [
             '--dense-fingerprint' => 'ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c',
@@ -64,8 +64,9 @@ class HybridRetrievalFoundationTest extends TestCase
 
         $this->assertDatabaseCount('evidence_threshold_policies', 1);
         $this->assertDatabaseHas('evidence_threshold_policies', [
-            'fingerprint' => '6626d78bd9445c70fd946a64b0a817b4e77b264a14d945d483ba497f9e681364',
+            'fingerprint' => '8adb1a507bda52e7524903b77cc29dea7f602ad8f0d082c9e6421c07ed6227fb',
             'status' => EvidenceThresholdPolicyStatus::Active->value,
+            'reranker_adapter_version' => 'document-metadata-v2',
             'evidence_threshold' => 0.337890625,
         ]);
         $this->artisan('retrieval:provision-evidence-threshold-policy', [
@@ -75,10 +76,10 @@ class HybridRetrievalFoundationTest extends TestCase
         $this->assertDatabaseCount('evidence_threshold_policies', 1);
     }
 
-    public function test_reviewed_policy_provisioning_rejects_incompatible_existing_identity(): void
+    public function test_provisional_policy_provisioning_rejects_incompatible_existing_identity(): void
     {
         EvidenceThresholdPolicy::factory()->active()->create([
-            'version' => 'engineering-rrf-k-5-after-exp0004',
+            'version' => 'provisional-r28-query-evidence-contract-v1',
             'fingerprint' => hash('sha256', 'incompatible'),
             'embedding_profile_fingerprint' => 'ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c',
             'sparse_profile_fingerprint' => 'e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d',
@@ -91,7 +92,7 @@ class HybridRetrievalFoundationTest extends TestCase
         $this->assertDatabaseCount('evidence_threshold_policies', 1);
     }
 
-    public function test_reviewed_policy_provisioning_accepts_equivalent_active_diagnostic_identity_without_replacement(): void
+    public function test_provisional_policy_retires_the_prior_compatible_active_identity(): void
     {
         EvidenceThresholdPolicy::factory()->active()->create([
             'version' => 'r28-production-path-diagnostic-v1',
@@ -120,10 +121,15 @@ class HybridRetrievalFoundationTest extends TestCase
         ]);
 
         $this->assertSame(0, $exit, Artisan::output());
-        $this->assertDatabaseCount('evidence_threshold_policies', 1);
+        $this->assertDatabaseCount('evidence_threshold_policies', 2);
         $this->assertDatabaseHas('evidence_threshold_policies', [
             'version' => 'r28-production-path-diagnostic-v1',
             'fingerprint' => 'f85912b00320582401d9e8f1af0dec1957370fbec4b8b98eb1bb2820f3f4a521',
+            'status' => EvidenceThresholdPolicyStatus::Retired->value,
+        ]);
+        $this->assertDatabaseHas('evidence_threshold_policies', [
+            'version' => 'provisional-r28-query-evidence-contract-v1',
+            'fingerprint' => '8adb1a507bda52e7524903b77cc29dea7f602ad8f0d082c9e6421c07ed6227fb',
             'status' => EvidenceThresholdPolicyStatus::Active->value,
         ]);
     }

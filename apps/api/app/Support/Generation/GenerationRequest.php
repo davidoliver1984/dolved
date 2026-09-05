@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support\Generation;
 
 use App\Enums\GenerationSide;
+use App\Enums\RequestedEvidenceType;
 
 final readonly class GenerationRequest
 {
@@ -17,6 +18,7 @@ final readonly class GenerationRequest
         public string $contextPolicyVersion,
         public int $maxContextCharacters,
         public array $requiredSides,
+        public RequestedEvidenceType $requestedEvidenceType = RequestedEvidenceType::PolicyOrProceduralRequirements,
     ) {}
 
     /** @return array<string, mixed> */
@@ -32,6 +34,7 @@ final readonly class GenerationRequest
                 'context_policy_version' => $this->contextPolicyVersion,
                 'max_context_characters' => $this->maxContextCharacters,
                 'required_sides' => array_map(fn (GenerationSide $side): string => $side->value, $this->requiredSides),
+                'requested_evidence_type' => $this->requestedEvidenceType->value,
             ],
         ];
     }
