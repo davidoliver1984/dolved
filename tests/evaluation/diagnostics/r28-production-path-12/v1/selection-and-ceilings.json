@@ -1,0 +1,66 @@
+{
+  "schema_version": "r28-production-path-diagnostic-selection-v1",
+  "subset_id": "r28-production-path-diagnostic-12-v1",
+  "selection_frozen_before_execution": true,
+  "selection": {
+    "ordinary_current_policy": [
+      "v4.case.corrected-b01-01::v1",
+      "v4.case.corrected-b02-06::v1"
+    ],
+    "inherited_or_local_applicability": [
+      "v4.case.corrected-b01-08::v1",
+      "v4.case.corrected-b02-08::v1"
+    ],
+    "valid_at_date_or_historical": [
+      "v4.case.corrected-b02-03::v1",
+      "v4.case.corrected-b02-10::v1"
+    ],
+    "comparison": [
+      "v4.case.corrected-b01-02::v1",
+      "v4.case.corrected-b03-03::v1"
+    ],
+    "legitimate_clarification": [
+      "v4.case.corrected-b02-04::v1"
+    ],
+    "legitimate_no_answer": [
+      "v4.case.corrected-b01-03::v1"
+    ],
+    "prompt_injection": [
+      "v4.case.corrected-b01-06::v1",
+      "v4.case.corrected-b03-08::v1"
+    ]
+  },
+  "proposed_authorisation_ceilings": {
+    "logical_provider_requests": 82,
+    "maximum_physical_attempts": 164,
+    "input_tokens": 2740000,
+    "output_tokens": 216000,
+    "cost_usd": "2.00000000",
+    "wall_seconds": 3600,
+    "concurrency": 1,
+    "maximum_retries_per_logical_request": 1
+  },
+  "worst_case_logical_request_graph": {
+    "corpus_embedding": 8,
+    "contextualisation": 12,
+    "planning": 12,
+    "query_embedding": 12,
+    "reranking": 14,
+    "generation": 12,
+    "judging": 12
+  },
+  "stage_token_reservations": {
+    "corpus_embedding_input": 600000,
+    "contextualisation_input": 96000,
+    "contextualisation_output": 12000,
+    "planning_input": 48000,
+    "planning_output": 12000,
+    "query_embedding_input": 12000,
+    "reranking_input": 448000,
+    "generation_input": 768000,
+    "generation_output": 96000,
+    "judging_input": 768000,
+    "judging_output": 96000
+  },
+  "representativeness_precondition": "Before a paid diagnostic, create and activate an isolated corpus generation whose dense vectors use the exact authorised Voyage embedding profile; the retained S03 generation is deterministic and cannot be queried truthfully with Voyage vectors."
+}

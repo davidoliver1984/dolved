@@ -61,7 +61,8 @@ final readonly class OrchestrateConversationRun
         private RecordWorkspaceUsage $usageRecorder,
     ) {}
 
-    public function handle(int $runId): void
+    /** @param null|callable(string, mixed): void $observe */
+    public function handle(int $runId, ?callable $observe = null): void
     {
         $stage = GenerationRunStatus::Queued;
         try {
@@ -83,6 +84,14 @@ final readonly class OrchestrateConversationRun
             );
             $contextualised = $this->contextualisation->contextualise($workspace, $request);
             $this->persistContextualisation($run, $contextualised);
+            $observe?->__invoke('contextualisation', [
+                'status' => $contextualised->status->value,
+                'resolved_query' => $contextualised->resolvedQuery,
+                'clarification_question' => $contextualised->clarificationQuestion,
+                'used_prior_context' => $contextualised->usedPriorContext,
+                'contextualiser_version' => $contextualised->contextualiserVersion,
+                'usage' => $contextualised->usage,
+            ]);
             if ($contextualised->status === ContextualisationStatus::ClarificationRequired) {
                 $this->completeContextualisationClarification($run, $contextualised->clarificationQuestion ?? '');
 
@@ -98,6 +107,7 @@ final readonly class OrchestrateConversationRun
                 $scope,
                 $contextualised->resolvedQuery ?? $userMessage->display_text,
                 (int) config('conversation.candidate_k'),
+                $observe,
             );
             $snapshot = $this->persistRetrievalSnapshot($run, $retrieval, $evaluatedAt);
             if ($retrieval->outcome !== RetrievalOutcome::EvidenceFound) {
@@ -113,6 +123,17 @@ final readonly class OrchestrateConversationRun
                 $scope,
                 ['correlation_id' => $run->correlation_id, 'generation_run_id' => $run->public_id],
             );
+            $observe?->__invoke('generation_input', [
+                'question' => $input->question,
+                'evidence' => array_map(
+                    fn (array $candidate): array => [
+                        'chunk_id' => $candidate['chunk_id'] ?? null,
+                        'document_id' => $candidate['document_id'] ?? null,
+                        'side' => $candidate['side'] ?? null,
+                    ],
+                    $retrieval->candidates,
+                ),
+            ]);
             $profile = $this->profiles->configured();
             $run->update([
                 'delivery_mode' => $profile->deliveryMode->value,

@@ -35,12 +35,14 @@ final readonly class RetrieveWorkspaceEvidence
         AuthorisedKnowledgeScope $authorised,
         string $question,
         int $candidateK,
+        ?callable $observe = null,
     ): RetrievalResult {
         return $this->execute(
             $authorised,
             $question,
             $candidateK,
             CarbonImmutable::now(),
+            observe: $observe,
         );
     }
 
