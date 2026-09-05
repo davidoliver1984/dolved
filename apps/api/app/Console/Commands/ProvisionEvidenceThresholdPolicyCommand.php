@@ -37,6 +37,7 @@ final class ProvisionEvidenceThresholdPolicyCommand extends Command
             }
             DB::transaction(function (): void {
                 $expected = $this->expected();
+                $configuration = array_diff_key($expected, array_flip(['version', 'fingerprint']));
                 $collisions = EvidenceThresholdPolicy::query()
                     ->where(fn ($query) => $query
                         ->where('fingerprint', self::FINGERPRINT)
@@ -48,7 +49,10 @@ final class ProvisionEvidenceThresholdPolicyCommand extends Command
                     ->lockForUpdate()
                     ->get();
                 foreach ($collisions as $policy) {
-                    foreach ($expected as $field => $value) {
+                    $fields = $policy->fingerprint === self::FINGERPRINT || $policy->version === self::VERSION
+                        ? $expected
+                        : $configuration;
+                    foreach ($fields as $field => $value) {
                         if ((string) $policy->{$field} !== (string) $value) {
                             throw new RuntimeException('An incompatible evidence-threshold policy already occupies the reviewed identity.');
                         }
@@ -56,6 +60,9 @@ final class ProvisionEvidenceThresholdPolicyCommand extends Command
                 }
                 $policy = $collisions->firstWhere('fingerprint', self::FINGERPRINT);
                 if (! $policy instanceof EvidenceThresholdPolicy) {
+                    if ($collisions->contains(fn (EvidenceThresholdPolicy $candidate): bool => $candidate->status === EvidenceThresholdPolicyStatus::Active)) {
+                        return;
+                    }
                     $policy = new EvidenceThresholdPolicy;
                     $policy->forceFill($expected + [
                         'public_id' => (string) Str::uuid(),

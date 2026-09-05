@@ -91,6 +91,43 @@ class HybridRetrievalFoundationTest extends TestCase
         $this->assertDatabaseCount('evidence_threshold_policies', 1);
     }
 
+    public function test_reviewed_policy_provisioning_accepts_equivalent_active_diagnostic_identity_without_replacement(): void
+    {
+        EvidenceThresholdPolicy::factory()->active()->create([
+            'version' => 'r28-production-path-diagnostic-v1',
+            'fingerprint' => 'f85912b00320582401d9e8f1af0dec1957370fbec4b8b98eb1bb2820f3f4a521',
+            'reranker_provider' => 'voyage',
+            'reranker_model' => 'rerank-2.5',
+            'reranker_adapter_version' => '1',
+            'embedding_profile_fingerprint' => 'ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c',
+            'sparse_profile_fingerprint' => 'e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d',
+            'fusion_strategy' => 'rrf',
+            'fusion_version' => '1',
+            'rrf_k' => 5,
+            'dense_candidate_k' => 40,
+            'sparse_candidate_k' => 40,
+            'fusion_candidate_k' => 15,
+            'reranker_candidate_k' => 15,
+            'evidence_threshold' => 0.337890625,
+            'final_evidence_k' => 5,
+            'calibration_corpus_version' => 'v2-foundation-experimental',
+            'calibration_corpus_digest' => 'aabeb8c444fc5af7642d894e2f786eb684e663efe17bb702512d609a2701286d',
+        ]);
+
+        $exit = Artisan::call('retrieval:provision-evidence-threshold-policy', [
+            '--dense-fingerprint' => 'ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c',
+            '--sparse-fingerprint' => 'e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d',
+        ]);
+
+        $this->assertSame(0, $exit, Artisan::output());
+        $this->assertDatabaseCount('evidence_threshold_policies', 1);
+        $this->assertDatabaseHas('evidence_threshold_policies', [
+            'version' => 'r28-production-path-diagnostic-v1',
+            'fingerprint' => 'f85912b00320582401d9e8f1af0dec1957370fbec4b8b98eb1bb2820f3f4a521',
+            'status' => EvidenceThresholdPolicyStatus::Active->value,
+        ]);
+    }
+
     public function test_hybrid_generation_requires_compatible_available_sparse_space_and_verification(): void
     {
         $workspace = Workspace::factory()->create();
