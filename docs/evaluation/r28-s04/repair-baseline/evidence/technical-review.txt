@@ -1,0 +1,181 @@
+# REPAIR_CURRENT_DESIGN
+
+Dolved is worth repairing. The evidence does **not** justify replacing Laravel, Python, Qdrant, the embedding models or the overall architecture. It does show that the interpretation-to-evidence contract is not yet reliable enough—and several recent corrections made that contract more restrictive or more dependent on particular phrases.
+
+My recommendation is **one coherent repair of planning, scoped evidence selection and answerability**, followed by a different, small production-path confirmation sample. Not another sequence of isolated patches and paid reruns.
+
+## Verified foundation
+
+- `main`, `HEAD` and `origin/main` match `35f5c2d2278b2890cd53f8fbd1a5a4c29ceebb5d`.
+- The three supplied evidence hashes match; all five referenced case-record hashes also match.
+- The isolated API and AI containers mount this repository’s source. The running planner-file hash matches the checkout, and effective planner/model identities match the latest observations.
+- PostgreSQL and Qdrant independently show **982 primary, 12 foreign and 6 injection-pack points**. Each generation has **zero points belonging to another workspace**.
+- Effective retrieval configuration is Voyage `voyage-4-large`, 1,024 dimensions, SPLADE, `rerank-2.5`, RRF `k=5`, candidate limits `40/40 → 15 → 5 per side`, and provisional threshold `0.337890625`.
+
+These findings rule out “we were simply running the wrong project or an empty index” as the explanation for the latest failures.
+
+## 1. Findings
+
+| Failure | Proven cause | Existing or introduced? | Layer | Confidence |
+|---|---|---|---|---|
+| **A: June 2026 comparison** | `0606-06-06` reaches eligibility as a valid date despite having no support in the question. Date syntax is checked; fidelity to the question is not. | Existing validation gap; latest transition correction does not cover this wording. | Planning → temporal eligibility | High for acceptance defect; raw provider origin unproven |
+| **B: Meadow Court feasibility** | Relevant policy is retrieved. Generation supplies grounded procedural information but cannot establish local feasibility. The expected retrieval-level insufficiency label conflates retrieval relevance with answerability. | Existing contract/evaluation mismatch; weak answer presentation remains. | Generation and scoring | High |
+| **C: ROPA multipart question** | Data Protection Policy has no previous version, so comparison eligibility excludes it **before search**. | Restriction introduced by `cbb699e`, exposing the older one-temporal-mode limitation. | Planning/eligibility | High |
+| **D: “workplace hazard”** | Generic “workplace” becomes a location reference; registry resolution correctly cannot resolve it and requests clarification. | Existing extraction weakness, not solved by organisation-name corrections. | Planning → location resolution | High |
+| **Additional reproduced regression** | “What was **our training policy** on 15 December 2031?” is rewritten into a current personal-record request. | Introduced by `35f5c2d`’s broad personal-record regex. | Deterministic planner normalization | High |
+| **E: foreign reference-prefix question** | No foreign candidate or disclosure found. Primary evidence does not answer the prefix question, and generation declines to invent it. | Safety behaviour is appropriate; frozen exact internal label is over-specific. | Evaluation interpretation | High for this case only |
+
+### A. The malformed date: what is established—and what is not
+
+The original question asks how the order of clinical topics **changed in June 2026**. The earliest retained plan already contains `0606-06-06`; eligibility then searches that historical date and reports incomplete comparison scope. [Recorded plan](/private/tmp/r28-unseen-confirmation-20260905-v1/observations.json.cases/v4.case.corrected-b06-02__v2.json:12)
+
+I reproduced that:
+
+- Python accepts the date and leaves it unchanged.
+- PHP accepts and round-trips it unchanged.
+- The transition normalizer does not activate for this question.
+
+The provider envelope is flattened, validated and normalized in [planner.py](/Users/davidoliver/Desktop/RAG/apps/ai/app/retrieval/planner.py:410). PHP subsequently checks only that the date round-trips as `YYYY-MM-DD`. [RetrievalPlan.php](/Users/davidoliver/Desktop/RAG/apps/api/app/Support/Retrieval/RetrievalPlan.php:92)
+
+**Raw planner output was not retained in the supplied observations.** Therefore I cannot honestly identify the original provider bytes or definitively attribute their creation to the model. The first *observable* bad boundary is the normalized plan. No inspected downstream transformation explains changing June 2026 into that ancient date.
+
+The general semantic requirement is to identify the relevant document transition during the named month—not manufacture an exact day or blindly compare today with an arbitrary day in June.
+
+### B. The feasibility answer is not demonstrated fabrication
+
+I checked the actual answer against its three cited chunks. They support:
+
+- the right to request flexible working;
+- compressed-hours arrangements;
+- written requests and consideration;
+- a trial-period example.
+
+The answer does **not** assert that Meadow Court could accommodate the arrangement. Its `unsupported_aspects` explicitly says that cannot be established. [Answer record](/private/tmp/r28-unseen-confirmation-20260905-v1/observations.json.cases/v4.case.corrected-b03-06__v2.json:943)
+
+However, the recorded prose leads with policy detail rather than answering the central question: **“The supplied evidence cannot establish whether Meadow Court could accommodate this.”** That limitation should be unmistakable, not dependent on a separate field being noticed.
+
+ADR-0023 expressly permits useful qualified answers when some requested aspects are unsupported. It distinguishes generation insufficiency from operational and retrieval outcomes. [Accepted outcome contract](/Users/davidoliver/Desktop/RAG/docs/adr/0023-define-the-provider-neutral-grounded-generation-architecture-and-contract.md:339)
+
+Therefore:
+
+- this is not evidence of an unsafe invented approval;
+- it is evidence of weak central-question handling;
+- insisting that retrieval itself must return `INSUFFICIENT_EVIDENCE` is not an adequate product-quality oracle here.
+
+### C. The comparison restriction needs correcting—not simply removing
+
+The current code does **not** impose a single-family limit. It allows multiple families **provided each has two distinct versions**.
+
+That distinction matters. Data Protection Policy is a single-version family, so `distinctComparisonVersions()` removes it from the primary scope. I confirmed that its employment-data passage exists in canonical chunk **245**, but its document is absent from the actual eligibility list and consequently never reaches dense search, sparse search, fusion or reranking. [Pair filtering](/Users/davidoliver/Desktop/RAG/apps/api/app/Services/Retrieval/EligibilityResolver.php:178)
+
+The ROPA pair survives, ranks first on each side, scores `0.8125` and `0.453125`, clears the threshold, and reaches generation. The generator correctly reports that its supplied evidence cannot answer the employment-lawful-basis part.
+
+This is **not a proven ranking failure**.
+
+The recent correction correctly prevents unrelated documents being presented as two versions of one family, but incorrectly applies that requirement to every evidence need in a mixed question. Post-reranking pairing repeats the restriction. [Final comparison filtering](/Users/davidoliver/Desktop/RAG/apps/api/app/Actions/Retrieval/RetrieveWorkspaceEvidence.php:431)
+
+The older contract also explicitly assumes one query with one temporal mode; mixed temporal queries were left as an extension point. That limitation must now be addressed deliberately rather than hidden inside another filter. [ADR-0018](/Users/davidoliver/Desktop/RAG/docs/adr/0018-define-retrieval-planning-eligibility-and-the-retriever-contract.md:335)
+
+### D. Generic nouns must not become restrictive entities
+
+“Workplace” is present in the first retained plan. The normalizer does not change location references. The resolver then requires a registered match and returns `unresolved_location_reference`. [Location resolution](/Users/davidoliver/Desktop/RAG/apps/api/app/Services/Retrieval/EligibilityResolver.php:317)
+
+The registry is doing the conservative thing. The defect is treating a generic workplace adjective as a named applicability scope.
+
+The solution is **not** to ignore every unknown location. That would silently broaden genuinely site-specific questions.
+
+### E. The cross-tenant result is appropriately conservative
+
+All six distinct documents in the safety case’s search candidates resolve to the primary workspace. Its answer neither supplies the foreign prefix nor mentions the foreign organisation or document’s existence.
+
+`NO_ELIGIBLE_EVIDENCE` cannot truthfully be required merely because the expected answer happens to exist elsewhere. The authorised workspace contains eligible, related documents; their failure to answer this particular question is discovered later.
+
+Preserve the frozen record as history. Assess tenant leakage and unsupported claims separately from exact internal outcome-label agreement.
+
+## 2. Architecture and recent corrections
+
+The real path is now:
+
+**Authenticated membership → conversation contextualisation → real Python planner → Laravel authority/applicability resolution → scoped dense/SPLADE search → RRF → reranking → Laravel recheck/threshold/selection → grounded generation → validated citation persistence.**
+
+The production diagnostic invokes that orchestration, with question-only inputs—not expected context injected as the actual plan. [Diagnostic boundary](/Users/davidoliver/Desktop/RAG/apps/api/app/Actions/Evaluation/RunR28ProductionPathDiagnostic.php:67), [production orchestration](/Users/davidoliver/Desktop/RAG/apps/api/app/Actions/Conversation/OrchestrateConversationRun.php:104)
+
+What should remain:
+
+- Membership-based workspace scope and Qdrant scope filters.
+- Canonical chunks, version lineage and authority timelines.
+- Existing verified dense-and-sparse indexes.
+- Real production retrieval and generation adapters.
+- Evidence membership checks and immutable citation snapshots.
+- Bounded per-case diagnostic serialization.
+
+The recent changes have mixed results:
+
+- **`9bd9d2d`:** correctly replaced the parallel evaluation path with production orchestration.
+- **`9d726dd` / `6f0720d`:** added and tested the missing model-change materialisation path. Its batched rebuild, verification and transactional activation are useful foundations. [Materialisation](/Users/davidoliver/Desktop/RAG/apps/api/app/Actions/Retrieval/MaterialiseWorkspaceCorpusGeneration.php:198)
+- **`8d6dd3a`:** addressed report serialization and persistence compatibility. Retain those repairs.
+- **`f2884e7`:** repaired a configuration-identity obstruction; it did not prove retrieval quality.
+- **`cbb699e`:** added useful pairing protection but excluded supporting single-version documents.
+- **`35f5c2d`:** usefully separates fact dates from policy-authority dates and adds reranker metadata, but its regex overrides introduce a reproducible policy-to-personal-record error. [Normalizer](/Users/davidoliver/Desktop/RAG/apps/ai/app/retrieval/planner.py:255)
+
+The document-aware reranker now receives a changed representation. Keeping the old numerical threshold is honestly labelled provisional, but **unchanged numbers do not establish unchanged calibration**.
+
+## 3. Why the tests missed this
+
+The problem is not simply “insufficient test count.”
+
+- Date tests supply the correct date in the fake planner response and assert that it survives. They do not challenge an unsupported date against the question. [Date tests](/Users/davidoliver/Desktop/RAG/apps/ai/tests/test_retrieval_planner.py:403)
+- PHP comparison tests construct an already-correct `RetrievalPlan`, bypassing linguistic interpretation. [Comparison test](/Users/davidoliver/Desktop/RAG/apps/api/tests/Feature/SemanticRetrievalTest.php:91)
+- Pairing tests prove a valid pair but do not prove that a mixed question can also obtain a single-version supporting policy.
+- The diagnostic trims away raw planner output, separate dense/sparse diagnostics, and later selection events. That reduces memory use but weakens causal evidence. [Trace whitelist](/Users/davidoliver/Desktop/RAG/apps/api/app/Actions/Evaluation/RunR28ProductionPathDiagnostic.php:196)
+- Citation validation proves that IDs were authorised—not that their text substantively supports the answer. That is an intentional structural boundary, not a semantic evaluator. [Generation validation](/Users/davidoliver/Desktop/RAG/apps/ai/app/generation/models.py:116)
+
+The reported **3/9 expected-evidence matches** is a useful fixture-coverage observation. It is not comprehensive relevance recall, citation correctness or a product-wide success rate.
+
+## 4. One recommended repair boundary
+
+**Repair the production query-to-evidence contract, including its regression proof and diagnostic observation.**
+
+| Work item | Concrete rule and treatment | Rough effort |
+|---|---|---:|
+| **Ground temporal and location interpretation** | Retain the thin planner and deterministic resolvers. Validate interpreted dates against supplied wording; distinguish exact date, period and transition. Reject unsupported interpretation without guessing. Do not treat generic nouns as named sites. Remove broad phrase overrides such as “our training.” | 2–4 days |
+| **Support mixed evidence scopes** | Correct comparison pairing so it applies to the comparison requirement, while an explicit current-policy requirement can use ordinary current evidence. Preserve multiple relevant families and validate necessary pairs **after final evidence limits**. Update the PHP/Python planning and selection contracts together. | 3–5 days |
+| **Make answerability explicit to users** | Retain `answered`, `qualified` and `insufficient_evidence`. Lead with inability to determine the central fact when appropriate; then provide supported policy guidance. Do not use document-title regexes as the sole proof of whether content is a personal record. | 1–2 days |
+| **Repair regression and diagnostic proof** | Capture bounded raw/normalized planning fields and stage identities/rejection reasons. Exercise real cross-service contracts with fakes only at provider transport boundaries. Keep outcome labels, evidence coverage, citation support and safety separate. | 2–4 days |
+
+**Planning allowance: approximately 8–15 engineering days**, assuming an engineer familiar with the repository, reuse of existing indexes, and no newly discovered infrastructure defect. This is not a promise of pilot readiness within that time.
+
+Mixed-scope support is the one genuine contract extension here. The evidence supports that bounded extension; it does **not** yet support a general agent framework, unrestricted claim decomposition, family-first retrieval redesign or larger-model migration.
+
+## 5. Acceptance and confirmation
+
+Before another paid confirmation:
+
+1. Reproduce the known failures against current code.
+2. Test different names, dates, wording and families:
+   - unsupported but syntactically valid dates;
+   - month-level transitions not occurring on the first day;
+   - generic workplace wording versus an unknown genuinely named site;
+   - “our training policy” versus an actual training-completion record;
+   - comparison plus a current single-version supporting document;
+   - several comparison families surviving final evidence limits;
+   - policy guidance without local operational proof.
+3. Exercise real Python normalization, Laravel eligibility, retrieval request construction, selection, generation adaptation and persistence together.
+4. Verify foreign scope remains inaccessible.
+5. Confirm the recording path preserves enough evidence to identify where a document was excluded.
+
+Then use a **different preselected small confirmation sample**, through `OrchestrateConversationRun`, reusing the existing indexes. Inspect actual answers and cited passages—not just outcome labels. Keep the reviewed cases as regression tests, not independent confirmation evidence.
+
+Do not silently change frozen expectations or invent new numerical pilot thresholds. Any reconciliation of label semantics should remain explicit and versioned.
+
+## 6. Remaining uncertainties
+
+- The raw provider response responsible for `0606-06-06` is unavailable; exact original attribution remains unresolved.
+- The five cases cannot establish general planner reliability, retrieval quality or injection resistance.
+- Reranker-metadata changes have not established fresh calibration.
+- Multipart ranking performance is still unknown once the currently excluded evidence becomes eligible.
+- Earlier eight-case records contain generation-lineage metadata inconsistencies; they should not support precise before/after quality claims without reconciliation.
+
+**Investment decision:** fund the bounded repair above, not a rewrite and not another full certification run yet. The strongest current evidence points to repairable interpretation and evidence-scope defects on top of functioning infrastructure.
+
+No files were edited, no provider or AWS service was called, and no evaluation was executed. The tracked worktree remains clean; unrelated untracked work was preserved.

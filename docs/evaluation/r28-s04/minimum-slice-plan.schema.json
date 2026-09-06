@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:dolved:proposal:evidence-needs-plan-v1",
+  "title": "R01 proposal; not an active wire contract",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "evidence-needs-plan-v1"
+    },
+    "decision": {
+      "enum": [
+        "plan",
+        "clarify"
+      ]
+    },
+    "clarification": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "needs": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/need"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "decision",
+    "clarification",
+    "needs"
+  ],
+  "$defs": {
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "turn_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "turn_id",
+        "quote"
+      ]
+    },
+    "need": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "enum": [
+            "n1",
+            "n2",
+            "n3"
+          ]
+        },
+        "aspect": {
+          "type": "string",
+          "minLength": 1
+        },
+        "central": {
+          "type": "boolean"
+        },
+        "question_span": {
+          "$ref": "#/$defs/span"
+        },
+        "operation": {
+          "enum": [
+            "retrieve",
+            "compare"
+          ]
+        },
+        "authority": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "current",
+                "date",
+                "period",
+                "previous",
+                "historical_reference",
+                "transition_period",
+                "transition_boundary"
+              ]
+            },
+            "value": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "precision": {
+              "enum": [
+                "none",
+                "day",
+                "month",
+                "year",
+                "interval",
+                "named"
+              ]
+            },
+            "source": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/span"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "value",
+            "precision",
+            "source"
+          ]
+        },
+        "fact_reference": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "precision": {
+                  "enum": [
+                    "day",
+                    "month",
+                    "year",
+                    "interval"
+                  ]
+                },
+                "source": {
+                  "$ref": "#/$defs/span"
+                }
+              },
+              "required": [
+                "value",
+                "precision",
+                "source"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "applicability": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "generic",
+                "named",
+                "relational"
+              ]
+            },
+            "source": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/span"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "source"
+          ]
+        },
+        "supports_need_id": {
+          "enum": [
+            null,
+            "n1",
+            "n2",
+            "n3"
+          ]
+        }
+      },
+      "required": [
+        "need_id",
+        "aspect",
+        "central",
+        "question_span",
+        "operation",
+        "authority",
+        "fact_reference",
+        "applicability",
+        "supports_need_id"
+      ]
+    }
+  }
+}

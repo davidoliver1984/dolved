@@ -30,6 +30,7 @@ final readonly class RetrievalPlan
         public ?array $versionTransitionBoundary = null,
         public ?string $factDate = null,
         public RequestedEvidenceType $requestedEvidenceType = RequestedEvidenceType::PolicyOrProceduralRequirements,
+        public ?array $evidenceNeed = null,
     ) {}
 
     /**

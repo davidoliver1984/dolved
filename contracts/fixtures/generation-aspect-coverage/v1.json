@@ -1,0 +1,899 @@
+{
+  "contract": "generation-aspect-coverage-v1",
+  "cases": [
+    {
+      "name": "all-supported",
+      "valid": true,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": {
+        "n1": "supported",
+        "n2": "supported"
+      }
+    },
+    {
+      "name": "qualified-separate-needs",
+      "valid": true,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "qualified",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [
+          "Missing central fact."
+        ],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [],
+          "unsupported_aspect_indices": [
+            0
+          ]
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": {
+        "n1": "unsupported",
+        "n2": "supported"
+      }
+    },
+    {
+      "name": "partial-is-not-supported",
+      "valid": true,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "qualified",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [
+          "Missing detail."
+        ],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": [
+            0
+          ]
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": {
+        "n1": "partial",
+        "n2": "supported"
+      }
+    },
+    {
+      "name": "all-unsupported",
+      "valid": true,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "insufficient_evidence",
+        "answer_parts": [],
+        "unsupported_aspects": [
+          "No source."
+        ],
+        "insufficiency_reason": "No useful evidence."
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [],
+          "unsupported_aspect_indices": [
+            0
+          ]
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [],
+          "unsupported_aspect_indices": [
+            0
+          ]
+        }
+      ],
+      "expected_statuses": {
+        "n1": "unsupported",
+        "n2": "unsupported"
+      }
+    },
+    {
+      "name": "unknown-need",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n3",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "duplicate-need",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "missing-need",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "empty-need",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "negative-index",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            -1
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "out-of-range",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            1
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "duplicate-reference",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0,
+            0
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "boolean-index",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            true
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "string-index",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            "0"
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "float-index",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0.5
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "unmapped-answer",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          },
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "unmapped-gap",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "qualified",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [
+          "Missing central fact.",
+          "Second gap."
+        ],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [],
+          "unsupported_aspect_indices": [
+            0
+          ]
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "model-status-forbidden",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": [],
+          "status": "supported"
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "model-text-forbidden",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": [],
+          "text": "Another representation."
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "contradictory-outcome",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [
+          "Missing central fact."
+        ],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [],
+          "unsupported_aspect_indices": [
+            0
+          ]
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "invalid-request-need",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n1"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "unknown-request-need",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n4"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n4",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "missing-gap-reference",
+      "valid": false,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "qualified",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [
+          "Missing central fact."
+        ],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n1",
+          "answer_part_indices": []
+        },
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": null
+    },
+    {
+      "name": "model-order-does-not-change-request-order",
+      "valid": true,
+      "need_ids": [
+        "n1",
+        "n2"
+      ],
+      "result": {
+        "outcome": "answered",
+        "answer_parts": [
+          {
+            "text": "A supported statement.",
+            "evidence_ids": [
+              "ev-01"
+            ]
+          }
+        ],
+        "unsupported_aspects": [],
+        "insufficiency_reason": null
+      },
+      "links": [
+        {
+          "need_id": "n2",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        },
+        {
+          "need_id": "n1",
+          "answer_part_indices": [
+            0
+          ],
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "expected_statuses": {
+        "n1": "supported",
+        "n2": "supported"
+      }
+    }
+  ]
+}

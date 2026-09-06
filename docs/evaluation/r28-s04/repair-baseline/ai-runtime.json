@@ -1,0 +1,34 @@
+{
+  "settings": {
+    "embedding_provider": "voyage",
+    "embedding_model": "voyage-4-large",
+    "embedding_dimensions": 1024,
+    "sparse_embedding_model": "prithivida/Splade_PP_en_v1",
+    "sparse_embedding_model_revision": "efcd182bc7eb351e81a9445752d4388c2bab500b",
+    "reranker_provider": "voyage",
+    "reranker_model": "rerank-2.5",
+    "retrieval_planner_provider": "openai",
+    "retrieval_planner_model": "gpt-5-mini"
+  },
+  "mounted_planner_sha256": "8f7872610154b0717d433495731d13e70d259d8fbe3d25cdfdfd82b87338cb57",
+  "qdrant": [
+    {
+      "workspace": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+      "generation": "b24a79c2-875e-4f7c-8fa9-3681db92ae73",
+      "matching": 982,
+      "wrong_workspace": 0
+    },
+    {
+      "workspace": "be22830b-ddf1-4de5-b852-f7f4c111cf8e",
+      "generation": "044a9260-b265-4179-8e34-3c0708b55b67",
+      "matching": 12,
+      "wrong_workspace": 0
+    },
+    {
+      "workspace": "4db6ffe2-6974-415d-8fd3-002b8fb05d05",
+      "generation": "461b4f51-c1d7-4a61-aceb-3ddc08581a3c",
+      "matching": 6,
+      "wrong_workspace": 0
+    }
+  ]
+}

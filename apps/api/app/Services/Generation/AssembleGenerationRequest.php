@@ -7,6 +7,7 @@ namespace App\Services\Generation;
 use App\Enums\GenerationSide;
 use App\Enums\RequestedEvidenceType;
 use App\Enums\RetrievalOutcome;
+use App\Exceptions\GenerationContextBudgetExceeded;
 use App\Exceptions\GenerationException;
 use App\Models\DocumentChunk;
 use App\Support\Generation\GenerationAssemblyInput;
@@ -34,6 +35,10 @@ final readonly class AssembleGenerationRequest
             ->whereIn('public_id', $candidateChunkIds)
             ->get()->keyBy('public_id');
         $evidence = [];
+        $needs = collect($input->retrievalResult->evidenceNeeds)->keyBy('need_id');
+        if ($needs->count() !== count($input->retrievalResult->evidenceNeeds) || $needs->count() > 2) {
+            throw new GenerationException('Invalid bounded generation needs.');
+        }
         foreach ($input->retrievalResult->candidates as $index => $candidate) {
             $chunk = $chunks->get($candidate['chunk_id'] ?? null);
             if (! $chunk instanceof DocumentChunk
@@ -47,6 +52,20 @@ final readonly class AssembleGenerationRequest
             if ($side === null) {
                 throw new GenerationException('Final evidence has an invalid generation side.');
             }
+            $authority = $input->resolvedTemporalAuthority;
+            $applicability = $input->resolvedApplicabilityLocation;
+            if ($needs->isNotEmpty()) {
+                $need = $needs->get($candidate['need_id'] ?? null);
+                $familyId = $chunk->document->family->public_id;
+                if ($need === null || ($candidate['document_family_id'] ?? null) !== $familyId) {
+                    throw new GenerationException('Evidence escaped its generation need or family.');
+                }
+                $authority = [...$need['resolved_temporal_authority'], 'need_id' => $need['need_id'],
+                    'document_family_id' => $familyId, 'document_version_id' => $candidate['document_id'],
+                    'document_title' => mb_substr($chunk->document->source_filename, 0, 500),
+                    'document_family_title' => mb_substr($chunk->document->family->name, 0, 500)];
+                $applicability = $need['resolved_applicability_location'];
+            }
             $evidence[] = new GenerationEvidence(
                 sprintf('ev-%02d', $index + 1),
                 $chunk->text,
@@ -54,15 +73,50 @@ final readonly class AssembleGenerationRequest
                 $chunk->document_id,
                 $chunk->ingestion_event_claim_id,
                 $chunk->provenance,
-                $input->resolvedTemporalAuthority,
-                $input->resolvedApplicabilityLocation,
+                $authority,
+                $applicability,
                 $side,
             );
         }
         $requiredSides = collect($evidence)->pluck('side')->unique(fn (GenerationSide $side): string => $side->value)->values()->all();
         $policyVersion = (string) config('generation.context_policy_version');
         $maximum = (int) config('generation.max_context_characters');
-        $packed = $this->packer->pack($evidence, $requiredSides, $maximum, $policyVersion);
+        $generationNeeds = [];
+        if ($needs->isEmpty()) {
+            $packed = $this->packer->pack($evidence, $requiredSides, $maximum, $policyVersion);
+        } else {
+            $policyVersion = 'whole-needs-evidence-v1';
+            $units = array_sum(array_map(fn ($item) => mb_strlen($item->text, 'UTF-8'), $evidence));
+            if (count($evidence) > 5 || $units > $maximum) {
+                throw new GenerationContextBudgetExceeded($policyVersion, $units, $maximum);
+            }
+            // Preserve the already-selected bounded units whole; never split a pair.
+            $packed = $evidence;
+            foreach ($needs as $need) {
+                $items = array_values(array_filter($packed, fn ($item) => $item->temporalAuthority['need_id'] === $need['need_id']));
+                $families = [];
+                foreach ($items as $item) {
+                    $families[$item->temporalAuthority['document_family_id']][$item->side->value][] = $item->documentId;
+                }
+                foreach ($families as $sides) {
+                    if ($need['operation'] === 'compare') {
+                        if (empty($sides['primary']) || empty($sides['comparison'])
+                            || array_intersect($sides['primary'], $sides['comparison']) !== []) {
+                            throw new GenerationException('Generation requires distinct paired versions within each need and family.');
+                        }
+                    } elseif (isset($sides['comparison'])) {
+                        throw new GenerationException('Current supporting evidence cannot borrow a comparison lane.');
+                    }
+                }
+                $generationNeeds[] = array_intersect_key($need, array_flip([
+                    'need_id', 'aspect', 'central', 'operation', 'authority', 'fact_reference', 'applicability',
+                    'retrieval_outcome', 'retrieval_reason',
+                ])) + ['evidence_ids' => array_map(fn ($item) => $item->evidenceId, $items)];
+            }
+            if ($needs->sum(fn ($need) => $need['operation'] === 'compare' ? 2 : 1) > 4) {
+                throw new GenerationException('Generation needs exceed the accepted slice fanout.');
+            }
+        }
         $requestedEvidenceType = RequestedEvidenceType::tryFrom(
             (string) ($input->resolvedTemporalAuthority['requested_evidence_type'] ?? '')
         ) ?? RequestedEvidenceType::PolicyOrProceduralRequirements;
@@ -76,6 +130,7 @@ final readonly class AssembleGenerationRequest
             $maximum,
             $requiredSides,
             $requestedEvidenceType,
+            $generationNeeds,
         );
     }
 

@@ -52,9 +52,22 @@ final readonly class TemporalPeriodResolver
     }
 
     /** @return array{CarbonImmutable, CarbonImmutable}|null */
-    private function window(string $reference): ?array
+    public function window(string $reference): ?array
     {
         $value = trim($reference);
+        if (preg_match('/^\d{4}-\d{2}$/D', $value) === 1) {
+            $start = CarbonImmutable::createFromFormat('!Y-m', $value);
+
+            return $start !== false && $start->format('Y-m') === $value ? [$start, $start->addMonth()] : null;
+        }
+        if (preg_match('/^(\d{4}-\d{2}-\d{2})\/(\d{4}-\d{2}-\d{2})$/D', $value, $matches) === 1) {
+            $start = CarbonImmutable::createFromFormat('!Y-m-d', $matches[1]);
+            $end = CarbonImmutable::createFromFormat('!Y-m-d', $matches[2]);
+
+            return $start !== false && $end !== false && $start->format('Y-m-d') === $matches[1]
+                && $end->format('Y-m-d') === $matches[2] && $start->lte($end)
+                ? [$start, $end->addDay()] : null;
+        }
         if (preg_match('/^(?:(?:in|during)\s+)?(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{4})$/i', $value, $matches) === 1) {
             $start = CarbonImmutable::createFromFormat('!F Y', ucfirst(strtolower($matches[1])).' '.$matches[2]);
 

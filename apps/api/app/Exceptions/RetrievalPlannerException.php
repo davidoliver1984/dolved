@@ -13,6 +13,8 @@ final class RetrievalPlannerException extends RetrievalException
         public readonly int $attemptCount,
         public readonly bool $systemic,
         ?\Throwable $previous = null,
+        public readonly ?array $validation = null,
+        public readonly ?array $completion = null,
     ) {
         parent::__construct($message, 0, $previous);
     }

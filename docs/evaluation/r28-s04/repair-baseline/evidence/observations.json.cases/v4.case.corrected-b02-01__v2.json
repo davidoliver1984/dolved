@@ -1,0 +1,106 @@
+{
+    "case_id": "v4.case.corrected-b02-01",
+    "variant_id": "v2",
+    "run_id": "9018e759-e340-4869-8221-1e0d809895f7",
+    "scope_classification": "primary",
+    "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+    "status": "clarification_required",
+    "failure_code": null,
+    "production_trace": {
+        "plan": {
+            "temporal_mode": "current",
+            "explicit_date": null,
+            "temporal_reference": null,
+            "version_transition_boundary": null,
+            "fact_date": null,
+            "requested_evidence_type": "policy_or_procedural_requirements",
+            "location_references": [
+                "workplace"
+            ],
+            "clarification_reason": null,
+            "classifier_lineage": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "plan-response-v3",
+                "prompt_version": "query-evidence-contract-v1",
+                "adapter_version": "structured-chat-v5",
+                "fingerprint": "e2c89447ecccae36d2ae8a30ae2f95a0546975b3577a845c28af62c45f880170"
+            },
+            "usage": [
+                {
+                    "stage": "planner",
+                    "provider": "openai",
+                    "model": "gpt-5-mini",
+                    "execution": "PROVIDER_API",
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 1806,
+                    "cached_input_tokens": 0,
+                    "output_tokens": 519,
+                    "latency_ms": 6140.002419007942,
+                    "cost_basis": "UNAVAILABLE",
+                    "cost_usd": null,
+                    "pricing_snapshot": null
+                }
+            ]
+        },
+        "eligibility": {
+            "outcome": "clarification_required",
+            "document_public_ids_by_side": [],
+            "reason": "unresolved_location_reference",
+            "resolved_location_public_id": null
+        }
+    },
+    "contextualisation": {
+        "status": "resolved",
+        "resolved_query": null,
+        "clarification_question": null,
+        "used_prior_context": false,
+        "interpretation_metadata": {
+            "used_turn_ordinals": []
+        },
+        "contextualiser_version": "conversation-contextualisation-v1:conversation-contextualisation-v1:structured-chat-v1:gpt-5-mini",
+        "usage": {
+            "execution": "deterministic",
+            "request_count": 0
+        }
+    },
+    "retrieval": {
+        "outcome": "clarification_required",
+        "clarification_source": "eligibility_resolver",
+        "clarification_reason": "unresolved_location_reference",
+        "resolved_temporal_authority": {
+            "temporal_mode": "current",
+            "evaluated_at": "2026-09-05T13:03:21+00:00",
+            "explicit_date": null,
+            "temporal_reference": null,
+            "version_transition_boundary": null,
+            "fact_date": null,
+            "requested_evidence_type": "policy_or_procedural_requirements",
+            "eligible_document_public_ids_by_side": []
+        },
+        "resolved_applicability_location": {
+            "resolved_location_public_id": null
+        },
+        "lineage": {
+            "planner": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "plan-response-v3",
+                "prompt_version": "query-evidence-contract-v1",
+                "adapter_version": "structured-chat-v5",
+                "fingerprint": "e2c89447ecccae36d2ae8a30ae2f95a0546975b3577a845c28af62c45f880170"
+            }
+        },
+        "candidate_count": 0,
+        "evidence_count": 0
+    },
+    "generation": null,
+    "assistant_message_kind": "clarification",
+    "usage": {
+        "contextualisation": {
+            "execution": "deterministic",
+            "request_count": 0
+        }
+    }
+}

@@ -1,0 +1,145 @@
+{
+  "$defs": {
+    "AnswerPart": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "pattern": "^ev-[0-9]{2,}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "text",
+        "evidence_ids"
+      ],
+      "title": "AnswerPart",
+      "type": "object"
+    },
+    "AspectLink": {
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "enum": [
+            "n1",
+            "n2",
+            "n3"
+          ],
+          "title": "Need Id",
+          "type": "string"
+        },
+        "answer_part_indices": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Answer Part Indices",
+          "type": "array"
+        },
+        "unsupported_aspect_indices": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Unsupported Aspect Indices",
+          "type": "array"
+        }
+      },
+      "required": [
+        "need_id",
+        "answer_part_indices",
+        "unsupported_aspect_indices"
+      ],
+      "title": "AspectLink",
+      "type": "object"
+    },
+    "GenerationOutcome": {
+      "enum": [
+        "answered",
+        "qualified",
+        "insufficient_evidence"
+      ],
+      "title": "GenerationOutcome",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "const": 2,
+      "title": "Contract Version",
+      "type": "integer"
+    },
+    "outcome": {
+      "$ref": "#/$defs/GenerationOutcome"
+    },
+    "answer_parts": {
+      "items": {
+        "$ref": "#/$defs/AnswerPart"
+      },
+      "title": "Answer Parts",
+      "type": "array"
+    },
+    "unsupported_aspects": {
+      "items": {
+        "maxLength": 8000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Unsupported Aspects",
+      "type": "array"
+    },
+    "insufficiency_reason": {
+      "anyOf": [
+        {
+          "maxLength": 8000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Insufficiency Reason"
+    },
+    "usage": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Usage"
+    },
+    "aspect_links": {
+      "items": {
+        "$ref": "#/$defs/AspectLink"
+      },
+      "maxItems": 3,
+      "minItems": 1,
+      "title": "Aspect Links",
+      "type": "array"
+    }
+  },
+  "required": [
+    "contract_version",
+    "outcome",
+    "answer_parts",
+    "unsupported_aspects",
+    "insufficiency_reason",
+    "usage",
+    "aspect_links"
+  ],
+  "title": "GenerationNeedsResult",
+  "type": "object"
+}

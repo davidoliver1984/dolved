@@ -174,6 +174,8 @@ final readonly class RunR28ProductionPathDiagnostic
                 'outcome' => $answer->outcome->value,
                 'rendered_text' => $answer->renderedText(),
                 'unsupported_aspects' => $answer->unsupported_aspects,
+                'aspect_links' => $answer->aspect_links,
+                'aspect_results' => $answer->aspect_results,
                 'insufficiency_reason' => $answer->insufficiency_reason,
                 'provider' => $answer->provider,
                 'model' => $answer->model,
@@ -197,6 +199,19 @@ final readonly class RunR28ProductionPathDiagnostic
     {
         if (! is_array($value)) {
             return null;
+        }
+        // Needs prefix each existing production stage; retain its bounded
+        // projection rather than losing the stage or serialising raw models.
+        if (preg_match('/^need\.[^.]+\.(.+)$/', $stage, $matches) === 1) {
+            return $this->boundedStage($matches[1], $value);
+        }
+        if ($stage === 'needs_plan') {
+            return collect($value)->only(['decision', 'clarification', 'needs'])->all();
+        }
+        if ($stage === 'needs_final_evidence') {
+            return array_map(fn (array $candidate): array => collect($candidate)->only([
+                'need_id', 'chunk_id', 'document_id', 'document_family_id', 'side',
+            ])->all(), array_values($value));
         }
         if ($stage === 'plan') {
             return collect($value)->only([

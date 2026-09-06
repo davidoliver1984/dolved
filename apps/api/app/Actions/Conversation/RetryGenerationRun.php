@@ -44,6 +44,7 @@ final readonly class RetryGenerationRun
                 'retry_of_run_id' => $original->id,
                 'retry_idempotency_key' => $idempotencyKey,
                 'status' => GenerationRunStatus::Queued,
+                'needs_profile' => $original->needs_profile,
                 'correlation_id' => (string) Str::uuid(),
             ]), true];
         });

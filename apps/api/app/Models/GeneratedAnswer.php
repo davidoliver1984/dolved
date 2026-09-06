@@ -15,7 +15,7 @@ class GeneratedAnswer extends Model
 
     protected function casts(): array
     {
-        return ['outcome' => GenerationOutcome::class, 'unsupported_aspects' => 'array', 'generation_configuration' => 'array', 'usage' => 'array', 'cost_usd' => 'decimal:8'];
+        return ['outcome' => GenerationOutcome::class, 'unsupported_aspects' => 'array', 'generation_configuration' => 'array', 'usage' => 'array', 'cost_usd' => 'decimal:8', 'aspect_links' => 'array', 'aspect_results' => 'array'];
     }
 
     public function workspace(): BelongsTo

@@ -286,6 +286,8 @@ def test_rerank_endpoint_has_its_own_purpose_and_returns_provider_lineage() -> N
                 "version_position": 1,
                 "side": "primary",
                 "text": "Canonical text supplied by Laravel.",
+                "document_title": "Current policy",
+                "document_family_title": "Policy family",
                 "fused_score": 0.5,
                 "fused_rank": 1,
             }
@@ -350,6 +352,8 @@ def test_rerank_endpoint_preserves_terminal_provider_retry_history() -> None:
                 "version_position": 1,
                 "side": "primary",
                 "text": "Canonical text supplied by Laravel.",
+                "document_title": "Current policy",
+                "document_family_title": "Policy family",
                 "fused_score": 0.5,
                 "fused_rank": 1,
             }

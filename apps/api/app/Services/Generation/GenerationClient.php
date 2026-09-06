@@ -30,15 +30,16 @@ final readonly class GenerationClient
         } catch (JsonException $exception) {
             throw new GenerationException('The generation request could not be encoded.', 0, $exception);
         }
-        $path = '/api/internal/retrieval/generation/answer';
-        $headers = $this->signer->headers('POST', $path, $body, (string) $workspace->public_id, 'generation.answer', $request->requestId)
+        $needs = $request->evidenceNeeds !== [];
+        $path = $needs ? '/api/internal/retrieval/generation/answer-needs' : '/api/internal/retrieval/generation/answer';
+        $headers = $this->signer->headers('POST', $path, $body, (string) $workspace->public_id, $needs ? 'generation.answer-needs' : 'generation.answer', $request->requestId)
             + $this->traceContext->current();
         $response = Http::timeout((float) config('retrieval.timeout_seconds'))->withHeaders($headers)->withBody($body, 'application/json')->post(rtrim((string) config('retrieval.ai_url'), '/').$path);
         if (! $response->successful() || $response->json('request_id') !== $request->requestId) {
             throw new GenerationException('The generation service call failed.');
         }
         $envelope = $response->json();
-        if (! is_array($envelope) || ($envelope['contract_version'] ?? null) !== 1) {
+        if (! is_array($envelope) || ($envelope['contract_version'] ?? null) !== ($needs ? 2 : 1)) {
             throw new GenerationException('The generation response envelope is invalid.');
         }
         $status = $envelope['status'] ?? null;
@@ -76,6 +77,9 @@ final readonly class GenerationClient
     /** @param callable(array<string, mixed>): void $onCandidate @return array<string, mixed> */
     public function stream(Workspace $workspace, GenerationRequest $request, callable $onCandidate): array
     {
+        if ($request->evidenceNeeds !== []) {
+            throw new GenerationStreamException('Needs generation requires its versioned complete-result endpoint.');
+        }
         try {
             $body = json_encode($request->toArray(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         } catch (JsonException $exception) {

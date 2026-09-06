@@ -1,0 +1,86 @@
+{
+    "planner": {
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "contract_schema_version": "plan-response-v3",
+        "prompt_version": "query-evidence-contract-v1",
+        "adapter_version": "structured-chat-v5"
+    },
+    "generation": {
+        "context_policy_version": "whole-evidence-v1",
+        "max_context_characters": 60000,
+        "fingerprint_scheme_version": 1,
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "contract_version": "generation-result-v1",
+        "prompt_version": "grounded-generation-v3-claim-type",
+        "adapter_version": "openai-responses-v3-claim-type",
+        "delivery_mode": "streaming_parts",
+        "quality_affecting_configuration": {
+            "reasoning_effort": "low",
+            "max_output_tokens": 4096,
+            "context_window_tokens": 400000,
+            "store": false,
+            "truncation": "disabled"
+        }
+    },
+    "generations": [
+        {
+            "workspace": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "generation": "b24a79c2-875e-4f7c-8fa9-3681db92ae73",
+            "chunks": 982,
+            "embedding": {
+                "fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                "provider": "voyage",
+                "model": "voyage-4-large",
+                "dimensions": 1024,
+                "adapter_version": "1"
+            }
+        },
+        {
+            "workspace": "be22830b-ddf1-4de5-b852-f7f4c111cf8e",
+            "generation": "044a9260-b265-4179-8e34-3c0708b55b67",
+            "chunks": 12,
+            "embedding": {
+                "fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                "provider": "voyage",
+                "model": "voyage-4-large",
+                "dimensions": 1024,
+                "adapter_version": "1"
+            }
+        },
+        {
+            "workspace": "4db6ffe2-6974-415d-8fd3-002b8fb05d05",
+            "generation": "461b4f51-c1d7-4a61-aceb-3ddc08581a3c",
+            "chunks": 6,
+            "embedding": {
+                "fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                "provider": "voyage",
+                "model": "voyage-4-large",
+                "dimensions": 1024,
+                "adapter_version": "1"
+            }
+        }
+    ],
+    "thresholds": [
+        {
+            "version": "provisional-r28-query-evidence-contract-v1",
+            "fingerprint": "8adb1a507bda52e7524903b77cc29dea7f602ad8f0d082c9e6421c07ed6227fb",
+            "reranker_provider": "voyage",
+            "reranker_model": "rerank-2.5",
+            "reranker_adapter_version": "document-metadata-v2",
+            "rrf_k": 5,
+            "dense_candidate_k": 40,
+            "sparse_candidate_k": 40,
+            "fusion_candidate_k": 15,
+            "reranker_candidate_k": 15,
+            "evidence_threshold": 0.337890625,
+            "final_evidence_k": 5
+        }
+    ],
+    "mounted_sha256": {
+        "app/Services/Retrieval/EligibilityResolver.php": "0780abc652fcb4b6a2ff8cb126775e5ce1c8befd973c49beb85f924086cb8557",
+        "config/retrieval.php": "031c567bb5633be66c63f3cfae4b43bc24265d0238d41db9d4a2950c433c737b",
+        "config/generation.php": "0fc74a641523b8df85e5aa2307b179d7578bede53b99113358e53eb93d081dcb"
+    }
+}

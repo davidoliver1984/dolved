@@ -1,0 +1,130 @@
+{
+  "contract_version": 2,
+  "request_id": "00000000-0000-4000-8000-000000000001",
+  "workspace_id": "00000000-0000-4000-8000-000000000002",
+  "question": "What changed in the ROPA, and what does current policy require for employment records?",
+  "evidence": [
+    {
+      "evidence_id": "ev-01",
+      "text": "Synthetic evidence passage 1.",
+      "document_chunk_id": 1,
+      "document_id": 1,
+      "ingestion_event_claim_id": 1,
+      "source_provenance": [
+        {
+          "kind": "text"
+        }
+      ],
+      "temporal_authority": {
+        "need_id": "n1",
+        "document_family_id": "00000000-0000-4000-8000-000000000010",
+        "document_version_id": "00000000-0000-4000-8000-000000000020"
+      },
+      "applicability_context": {
+        "resolved_location_public_id": null
+      },
+      "side": "primary"
+    },
+    {
+      "evidence_id": "ev-02",
+      "text": "Synthetic evidence passage 2.",
+      "document_chunk_id": 2,
+      "document_id": 2,
+      "ingestion_event_claim_id": 2,
+      "source_provenance": [
+        {
+          "kind": "text"
+        }
+      ],
+      "temporal_authority": {
+        "need_id": "n1",
+        "document_family_id": "00000000-0000-4000-8000-000000000010",
+        "document_version_id": "00000000-0000-4000-8000-000000000021"
+      },
+      "applicability_context": {
+        "resolved_location_public_id": null
+      },
+      "side": "comparison"
+    },
+    {
+      "evidence_id": "ev-03",
+      "text": "Synthetic evidence passage 3.",
+      "document_chunk_id": 3,
+      "document_id": 3,
+      "ingestion_event_claim_id": 3,
+      "source_provenance": [
+        {
+          "kind": "text"
+        }
+      ],
+      "temporal_authority": {
+        "need_id": "n2",
+        "document_family_id": "00000000-0000-4000-8000-000000000011",
+        "document_version_id": "00000000-0000-4000-8000-000000000022"
+      },
+      "applicability_context": {
+        "resolved_location_public_id": null
+      },
+      "side": "primary"
+    }
+  ],
+  "constraints": {
+    "context_policy_version": "whole-needs-evidence-v1",
+    "max_context_characters": 60000,
+    "required_sides": [
+      "primary",
+      "comparison"
+    ],
+    "requested_evidence_type": "policy_or_procedural_requirements"
+  },
+  "evidence_needs": [
+    {
+      "need_id": "n1",
+      "aspect": "ROPA changes",
+      "central": true,
+      "operation": "compare",
+      "authority": {
+        "kind": "previous",
+        "value": "previous",
+        "precision": "named",
+        "source": {
+          "turn_id": "u1",
+          "quote": "What changed in the ROPA"
+        }
+      },
+      "fact_reference": null,
+      "applicability": {
+        "kind": "generic",
+        "source": null
+      },
+      "retrieval_outcome": "EVIDENCE_FOUND",
+      "retrieval_reason": null,
+      "evidence_ids": [
+        "ev-01",
+        "ev-02"
+      ]
+    },
+    {
+      "need_id": "n2",
+      "aspect": "current employment-record requirements",
+      "central": true,
+      "operation": "retrieve",
+      "authority": {
+        "kind": "current",
+        "value": null,
+        "precision": "none",
+        "source": null
+      },
+      "fact_reference": null,
+      "applicability": {
+        "kind": "generic",
+        "source": null
+      },
+      "retrieval_outcome": "EVIDENCE_FOUND",
+      "retrieval_reason": null,
+      "evidence_ids": [
+        "ev-03"
+      ]
+    }
+  ]
+}

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Generation;
 
 use App\Enums\GenerationDeliveryMode;
+use App\Exceptions\GenerationException;
 use App\Models\GeneratedAnswer;
 use App\Services\Generation\AssembleGenerationRequest;
 use App\Services\Generation\GenerationClient;
@@ -45,6 +46,12 @@ final readonly class GenerateGroundedAnswer
     {
         $observeStage?->__invoke('preparing_evidence');
         $request = $this->assembler->handle($input);
+        if ($request->evidenceNeeds !== [] && ($profile->contractVersion !== 'generation-result-v2'
+            || $profile->promptVersion !== 'grounded-generation-needs-v3'
+            || $profile->adapterVersion !== 'openai-responses-needs-v1'
+            || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly)) {
+            throw new GenerationException('Needs generation requires the pinned v2 complete-result profile.');
+        }
         $observeStage?->__invoke('generating');
         $payload = $profile->deliveryMode === GenerationDeliveryMode::StreamingParts
             ? $this->client->stream(
@@ -56,7 +63,8 @@ final readonly class GenerateGroundedAnswer
             )
             : $this->client->generate($input->authorisedScope->workspace, $request);
         $observeStage?->__invoke('validating');
-        $result = $this->validator->handle($request, $payload);
+        $result = $request->evidenceNeeds === [] ? $this->validator->handle($request, $payload)
+            : $this->validator->handleNeeds($request, array_column($request->evidenceNeeds, 'need_id'), $payload);
         $fingerprint = $this->fingerprints->make(
             $profile->provider,
             $profile->model,

@@ -19,13 +19,14 @@ final readonly class GenerationRequest
         public int $maxContextCharacters,
         public array $requiredSides,
         public RequestedEvidenceType $requestedEvidenceType = RequestedEvidenceType::PolicyOrProceduralRequirements,
+        public array $evidenceNeeds = [],
     ) {}
 
     /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [
-            'contract_version' => 1,
+            'contract_version' => $this->evidenceNeeds === [] ? 1 : 2,
             'request_id' => $this->requestId,
             'workspace_id' => $this->workspacePublicId,
             'question' => $this->question,
@@ -36,6 +37,7 @@ final readonly class GenerationRequest
                 'required_sides' => array_map(fn (GenerationSide $side): string => $side->value, $this->requiredSides),
                 'requested_evidence_type' => $this->requestedEvidenceType->value,
             ],
+            ...($this->evidenceNeeds === [] ? [] : ['evidence_needs' => $this->evidenceNeeds]),
         ];
     }
 }

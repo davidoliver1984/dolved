@@ -1,0 +1,274 @@
+{
+  "$defs": {
+    "EvidenceNeed": {
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "enum": [
+            "n1",
+            "n2",
+            "n3"
+          ],
+          "title": "Need Id",
+          "type": "string"
+        },
+        "aspect": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Aspect",
+          "type": "string"
+        },
+        "central": {
+          "title": "Central",
+          "type": "boolean"
+        },
+        "question_span": {
+          "$ref": "#/$defs/QuestionSpan"
+        },
+        "operation": {
+          "enum": [
+            "retrieve",
+            "compare"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "authority": {
+          "$ref": "#/$defs/NeedAuthority"
+        },
+        "fact_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FactReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "applicability": {
+          "$ref": "#/$defs/NeedApplicability"
+        },
+        "supports_need_id": {
+          "anyOf": [
+            {
+              "enum": [
+                "n1",
+                "n2",
+                "n3"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Supports Need Id"
+        }
+      },
+      "required": [
+        "need_id",
+        "aspect",
+        "central",
+        "question_span",
+        "operation",
+        "authority",
+        "fact_reference",
+        "applicability",
+        "supports_need_id"
+      ],
+      "title": "EvidenceNeed",
+      "type": "object"
+    },
+    "FactReference": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Value",
+          "type": "string"
+        },
+        "precision": {
+          "enum": [
+            "day",
+            "month",
+            "year",
+            "interval"
+          ],
+          "title": "Precision",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/QuestionSpan"
+        }
+      },
+      "required": [
+        "value",
+        "precision",
+        "source"
+      ],
+      "title": "FactReference",
+      "type": "object"
+    },
+    "NeedApplicability": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "generic",
+            "named",
+            "relational"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "source"
+      ],
+      "title": "NeedApplicability",
+      "type": "object"
+    },
+    "NeedAuthority": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "current",
+            "date",
+            "period",
+            "previous",
+            "historical_reference",
+            "transition_period",
+            "transition_boundary"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "precision": {
+          "enum": [
+            "none",
+            "day",
+            "month",
+            "year",
+            "interval",
+            "named"
+          ],
+          "title": "Precision",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "value",
+        "precision",
+        "source"
+      ],
+      "title": "NeedAuthority",
+      "type": "object"
+    },
+    "QuestionSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "turn_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Turn Id",
+          "type": "string"
+        },
+        "quote": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "turn_id",
+        "quote"
+      ],
+      "title": "QuestionSpan",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "evidence-needs-plan-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "plan",
+        "clarify"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "clarification": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "pattern": "\\S",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Clarification"
+    },
+    "needs": {
+      "items": {
+        "$ref": "#/$defs/EvidenceNeed"
+      },
+      "maxItems": 3,
+      "title": "Needs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "decision",
+    "clarification",
+    "needs"
+  ],
+  "title": "EvidenceNeedsPlan",
+  "type": "object"
+}

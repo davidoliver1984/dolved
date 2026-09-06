@@ -1,0 +1,409 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature;
+
+use App\Actions\Conversation\CreateConversation;
+use App\Actions\Conversation\OrchestrateConversationRun;
+use App\Actions\Conversation\SubmitConversationMessage;
+use App\Actions\Retrieval\RetrieveWorkspaceEvidence;
+use App\Enums\DocumentStatus;
+use App\Enums\GenerationRunStatus;
+use App\Enums\RetrievalOutcome;
+use App\Enums\WorkspaceRole;
+use App\Models\Document;
+use App\Models\DocumentChunk;
+use App\Models\EmbeddingProfile;
+use App\Models\EmbeddingSpaceGeneration;
+use App\Models\EvidenceThresholdPolicy;
+use App\Models\IngestionEventClaim;
+use App\Models\OrganisationalLocation;
+use App\Models\SparseEmbeddingProfile;
+use App\Models\SparseSpaceGeneration;
+use App\Models\User;
+use App\Models\Workspace;
+use App\Models\WorkspaceCorpusGeneration;
+use App\Models\WorkspaceCorpusGenerationChunk;
+use App\Models\WorkspaceMembership;
+use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
+use App\Services\Retrieval\EligibilityResolver;
+use App\Support\Retrieval\EvidenceNeedsPlan;
+use Carbon\CarbonImmutable;
+use GuzzleHttp\Client;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\TestCase;
+
+final class EvidenceNeedsRetrievalTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public static function crossServiceCases(): array
+    {
+        return [['normal'], ['missing_history'], ['ungrounded']];
+    }
+
+    #[DataProvider('crossServiceCases')]
+    public function test_cross_service_mixed_conversation_uses_real_python_fusion_and_generation_contract(string $case): void
+    {
+        $bridge = getenv('NEEDS_CROSS_SERVICE_BRIDGE');
+        if (! is_string($bridge) || ! str_starts_with($bridge, 'http://ai:')) {
+            $this->markTestSkipped('Opt-in isolated cross-service bridge is not running.');
+        }
+        Queue::fake();
+        [$workspace, $generation] = $this->scope(true, true);
+        $old = $this->document($workspace, $generation, '2026-03-01');
+        $new = $this->document($workspace, $generation, '2026-06-15', $old);
+        $support = $this->document($workspace, $generation, '2026-04-01');
+        if ($case === 'missing_history') {
+            $old->status = DocumentStatus::Deleting;
+            $old->save();
+        }
+        [$foreign, $foreignGeneration] = $this->scope(true);
+        $foreignDocument = $this->document($foreign, $foreignGeneration, '2026-01-01');
+        $example = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/examples.json'), true, flags: JSON_THROW_ON_ERROR)[0];
+        foreach ($example['plan']['needs'] as &$need) {
+            $need['question_span']['turn_id'] = 'user-1';
+            if ($need['authority']['source'] !== null) {
+                $need['authority']['source']['turn_id'] = 'user-1';
+            }
+        }
+        unset($need);
+        if ($case === 'ungrounded') {
+            $example['plan']['needs'][0]['question_span']['quote'] = 'Not present in authorised user text';
+        }
+        $fixtures = ['plan' => $example['plan'], 'chunks' => []];
+        foreach ([$old, $new, $support, $foreignDocument] as $document) {
+            $fixtures['chunks'][] = ['workspace_id' => $document->workspace->public_id,
+                'document_id' => $document->public_id, 'chunk_id' => $document->chunks()->firstOrFail()->public_id];
+        }
+        config(['retrieval.caller.key_id' => 'cross-test', 'retrieval.caller.secret' => base64_encode(str_repeat('x', 32)),
+            'conversation.needs_workspace_ids' => [$workspace->public_id]]);
+        $user = WorkspaceMembership::query()->where('workspace_id', $workspace->id)->firstOrFail()->user;
+        $conversation = app(CreateConversation::class)->handle($workspace, $user);
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user,
+            $example['turns'][0]['text'], (string) Str::uuid());
+        $observations = [];
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) use ($bridge, $fixtures, $case, &$observations) {
+            $headers = array_map(fn ($values) => $values[0], $request->headers());
+            $client = new Client(['timeout' => 30, 'http_errors' => false]);
+            $reply = $client->post($bridge, ['json' => ['path' => parse_url($request->url(), PHP_URL_PATH),
+                'headers' => $headers, 'body' => $request->body(), 'fixtures' => $fixtures]]);
+            $result = json_decode((string) $reply->getBody(), true, flags: JSON_THROW_ON_ERROR);
+            if (isset($result['error'])) {
+                $observations[] = $result;
+                throw new \RuntimeException($result['message']);
+            }
+            if ($result['status'] !== 200) {
+                $observations[] = ['response_failure' => $result];
+            }
+            $observations = [...$observations, ...$result['observations']];
+            if ($case !== 'ungrounded') {
+                $this->assertSame(200, $result['status'], json_encode($result));
+            }
+
+            return Http::response($result['body'], $result['status']);
+        });
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        if ($case === 'ungrounded') {
+            $this->assertSame(GenerationRunStatus::Failed, $run->status);
+            $this->assertSame(['planner_transport'], array_column($observations, 'stage'));
+            $this->assertNull($run->generatedAnswer);
+            Http::assertSentCount(1);
+
+            return;
+        }
+        $this->assertSame(GenerationRunStatus::Completed, $run->status, json_encode($observations));
+        $this->assertSame(['n1' => $case === 'missing_history' ? 'unsupported' : 'supported', 'n2' => 'supported'], $run->generatedAnswer->aspect_results);
+        $ids = $run->generatedAnswer->evidenceSnapshots->pluck('document_id')->all();
+        if ($case === 'missing_history') {
+            $this->assertNotContains($old->id, $ids);
+        } else {
+            $this->assertContains($old->id, $ids);
+        }
+        $this->assertContains($new->id, $ids);
+        $this->assertContains($support->id, $ids);
+        $this->assertNotContains($foreignDocument->id, $ids);
+        $stages = array_count_values(array_column($observations, 'stage'));
+        $this->assertSame(1, $stages['planner_transport']);
+        $this->assertSame($case === 'missing_history' ? 1 : 3, $stages['production_fusion']);
+        $this->assertSame($case === 'missing_history' ? 1 : 3, $stages['reranker_transport']);
+        $this->assertSame(1, $stages['generation_transport']);
+        Http::assertSentCount($case === 'missing_history' ? 4 : 6);
+    }
+
+    private function scope(bool $hybrid = false, bool $voyage = false): array
+    {
+        $workspace = Workspace::factory()->create();
+        $user = User::factory()->create(['email_verified_at' => now()]);
+        WorkspaceMembership::factory()->for($workspace)->for($user)->create(['role' => WorkspaceRole::Owner]);
+        $profile = $voyage ? EmbeddingProfile::factory()->voyageV1()->create() : EmbeddingProfile::factory()->create();
+        $space = EmbeddingSpaceGeneration::factory()->available()->create(['embedding_profile_id' => $profile->id, 'dimensions' => $profile->dimensions]);
+        $policy = null;
+        $sparse = null;
+        if ($hybrid) {
+            $sparseAttributes = SparseEmbeddingProfile::factory()->raw();
+            if ($voyage) {
+                $identity = Arr::except($sparseAttributes, ['public_id', 'fingerprint']);
+                ksort($identity);
+                $sparseAttributes['fingerprint'] = hash('sha256', json_encode($identity, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+            }
+            $sparseProfile = SparseEmbeddingProfile::factory()->create($sparseAttributes);
+            $sparse = SparseSpaceGeneration::factory()->available()->create(['sparse_embedding_profile_id' => $sparseProfile->id, 'embedding_space_generation_id' => $space->id]);
+            $policy = EvidenceThresholdPolicy::factory()->active()->create(['embedding_profile_fingerprint' => $profile->fingerprint,
+                'sparse_profile_fingerprint' => $sparseProfile->fingerprint,
+                ...($voyage ? ['reranker_provider' => 'voyage', 'reranker_model' => 'rerank-2.5', 'reranker_adapter_version' => '1'] : [])]);
+        }
+        $generation = WorkspaceCorpusGeneration::factory()->active()->create(['workspace_id' => $workspace->id,
+            'embedding_space_generation_id' => $space->id, 'sparse_space_generation_id' => $sparse?->id,
+            'verified_at' => $hybrid ? now() : null]);
+        $workspace->active_workspace_corpus_generation_id = $generation->id;
+        $workspace->save();
+
+        return [$workspace, $generation, app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id), $policy];
+    }
+
+    private function document(Workspace $workspace, WorkspaceCorpusGeneration $generation, string $at, ?Document $previous = null): Document
+    {
+        $attributes = ['workspace_id' => $workspace->id, 'effective_from' => $at, 'approved_at' => $at];
+        if ($previous !== null) {
+            $attributes += ['document_family_id' => $previous->document_family_id, 'predecessor_document_id' => $previous->id];
+        }
+        $document = Document::factory()->indexed()->approved()->create($attributes);
+        $claim = IngestionEventClaim::factory()->create(['workspace_id' => $workspace->id, 'document_id' => $document->id]);
+        $chunk = DocumentChunk::factory()->create(['workspace_id' => $workspace->id, 'document_id' => $document->id,
+            'ingestion_event_claim_id' => $claim->id]);
+        WorkspaceCorpusGenerationChunk::factory()->create(['workspace_id' => $workspace->id,
+            'workspace_corpus_generation_id' => $generation->id, 'document_chunk_id' => $chunk->id]);
+
+        return $document;
+    }
+
+    private function plan(int $example = 0, ?callable $mutate = null): EvidenceNeedsPlan
+    {
+        $data = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/examples.json'), true, flags: JSON_THROW_ON_ERROR)[$example];
+        if ($mutate !== null) {
+            $data = $mutate($data);
+        }
+        $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v2',
+            'prompt_version' => 'bounded-evidence-needs-v9', 'adapter_version' => 'structured-chat-needs-v4'];
+        ksort($lineage);
+        $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+
+        return EvidenceNeedsPlan::fromArray($data['plan'], $data['turns'], $lineage,
+            ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini', 'execution' => 'provider_api',
+                'request_count' => 1, 'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable']);
+    }
+
+    public function test_june_pair_is_march_june_while_ordinary_comparison_is_june_september_and_support_remains_current(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $march = $this->document($workspace, $generation, '2026-03-01');
+        $june = $this->document($workspace, $generation, '2026-06-15', $march);
+        $september = $this->document($workspace, $generation, '2026-09-01', $june);
+        $support = $this->document($workspace, $generation, '2026-04-01');
+        $resolver = app(EligibilityResolver::class);
+        $now = CarbonImmutable::parse('2026-09-06');
+        $transition = $resolver->handle($scope, $this->plan(1)->retrievalPlan('n1'), $now);
+        $this->assertSame(['primary' => [$june->public_id], 'comparison' => [$march->public_id]], $transition->documentPublicIdsBySide);
+        $ordinary = $resolver->handle($scope, $this->plan()->retrievalPlan('n1'), $now);
+        $this->assertSame(['primary' => [$september->public_id], 'comparison' => [$june->public_id]], $ordinary->documentPublicIdsBySide);
+        $current = $resolver->handle($scope, $this->plan()->retrievalPlan('n2'), $now);
+        $this->assertContains($support->public_id, $current->documentPublicIdsBySide['primary']);
+        $this->assertContains($september->public_id, $current->documentPublicIdsBySide['primary']);
+    }
+
+    public function test_multiple_transitions_require_clarification_and_missing_history_is_not_fabricated(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $march = $this->document($workspace, $generation, '2026-03-01');
+        $june = $this->document($workspace, $generation, '2026-06-05', $march);
+        $this->document($workspace, $generation, '2026-06-15', $june);
+        $result = app(EligibilityResolver::class)->handle($scope, $this->plan(1)->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+        [$other, $otherGeneration, $otherScope] = $this->scope();
+        $this->document($other, $otherGeneration, '2026-06-12');
+        $missing = app(EligibilityResolver::class)->handle($otherScope, $this->plan(1)->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete, $missing->outcome);
+    }
+
+    public function test_named_scope_cannot_use_a_foreign_location_or_a_stripped_suffix(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $this->document($workspace, $generation, '2026-01-01');
+        OrganisationalLocation::factory()->create(['workspace_id' => Workspace::factory()->create()->id, 'name' => 'Riverside']);
+        $resolver = app(EligibilityResolver::class);
+        $result = $resolver->handle($scope, $this->plan(4)->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+        OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Riverside']);
+        $plan = $this->plan(4, function ($data) {
+            $data['turns'][0]['text'] = 'Which policy applies at Riverside outreach?';
+            $data['plan']['needs'][0]['question_span']['quote'] = $data['turns'][0]['text'];
+            $data['plan']['needs'][0]['applicability']['source']['quote'] = 'Riverside outreach';
+
+            return $data;
+        });
+        $result = $resolver->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+    }
+
+    public function test_bound_subject_cannot_borrow_unrelated_history_and_support_stays_available(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $target = $this->document($workspace, $generation, '2026-04-01');
+        $other = $this->document($workspace, $generation, '2026-01-01');
+        $this->document($workspace, $generation, '2026-06-01', $other);
+        $plan = $this->plan(0, function ($data) use ($target) {
+            $data['plan']['bindings'][0]['subject_status'] = 'matched';
+            $data['plan']['bindings'][0]['family_ids'] = [$target->family->public_id];
+
+            return $data;
+        });
+        Http::preventStrayRequests();
+        $resolver = app(EligibilityResolver::class);
+        $result = $resolver->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete, $result->outcome);
+        $this->assertFalse($result->canSearch());
+        $support = $resolver->handle($scope, $plan->retrievalPlan('n2'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $support->outcome);
+        Http::assertNothingSent();
+    }
+
+    public function test_external_ownership_is_an_unavailable_need_not_a_location_clarification(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $this->document($workspace, $generation, '2026-01-01');
+        $plan = $this->plan(0, function ($data) {
+            $data['plan']['bindings'][0]['ownership'] = 'external_tenant';
+            $data['plan']['bindings'][0]['ownership_source'] = $data['plan']['needs'][0]['question_span'];
+
+            return $data;
+        });
+        Http::preventStrayRequests();
+        $result = app(EligibilityResolver::class)->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $result->outcome);
+        $this->assertSame('requested_subject_unavailable', $result->reason);
+        Http::assertNothingSent();
+    }
+
+    public function test_bound_family_cannot_cross_workspace_even_after_planning(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $this->document($workspace, $generation, '2026-01-01');
+        [$foreign, $foreignGeneration] = $this->scope();
+        $other = $this->document($foreign, $foreignGeneration, '2026-01-01');
+        $this->document($foreign, $foreignGeneration, '2026-06-01', $other);
+        $plan = $this->plan(0, function ($data) use ($other) {
+            $data['plan']['bindings'][0]['subject_status'] = 'matched';
+            $data['plan']['bindings'][0]['family_ids'] = [$other->family->public_id];
+
+            return $data;
+        });
+        $result = app(EligibilityResolver::class)->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertFalse($result->canSearch());
+    }
+
+    public static function retrievalMutations(): array
+    {
+        return [['none'], ['corpus_cutover'], ['comparison_removed']];
+    }
+
+    #[DataProvider('retrievalMutations')]
+    public function test_real_retrieval_action_dispatches_each_need_and_rechecks_final_authority(string $mutation): void
+    {
+        [$workspace, $generation, $scope, $policy] = $this->scope(true);
+        $old = $this->document($workspace, $generation, '2026-03-01');
+        $new = $this->document($workspace, $generation, '2026-06-15', $old);
+        $support = $this->document($workspace, $generation, '2026-04-01');
+        $generation->load(['embeddingSpaceGeneration.embeddingProfile', 'sparseSpaceGeneration']);
+        $searchScopes = [];
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) use ($workspace, $generation, $policy, $old, $mutation, &$searchScopes) {
+            $body = $request->data();
+            if (str_ends_with($request->url(), '/search')) {
+                $this->assertArrayHasKey('hybrid_configuration', $body);
+                $searchScopes[] = $body['scopes'];
+                $candidates = [];
+                foreach ($body['scopes'] as $lane) {
+                    foreach ($lane['eligible_document_ids'] as $documentId) {
+                        $document = Document::query()->where('public_id', $documentId)->firstOrFail();
+                        $chunk = $document->chunks()->firstOrFail();
+                        $candidates[] = ['chunk_id' => $chunk->public_id, 'document_id' => $documentId,
+                            'workspace_corpus_generation_id' => $generation->public_id,
+                            'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
+                            'sparse_space_generation_id' => $generation->sparseSpaceGeneration->public_id,
+                            'score' => 0.04, 'rank' => count($candidates) + 1, 'retrieval_method' => 'hybrid', 'side' => $lane['side']];
+                    }
+                }
+
+                return Http::response(['request_id' => $body['request_id'], 'candidates' => $candidates, 'diagnostics' => [],
+                    'lineage' => ['embedding_profile_fingerprint' => $policy->embedding_profile_fingerprint,
+                        'sparse_profile_fingerprint' => $policy->sparse_profile_fingerprint,
+                        'sparse_space_generation_id' => $generation->sparseSpaceGeneration->public_id,
+                        'fusion_strategy' => $policy->fusion_strategy, 'fusion_version' => $policy->fusion_version,
+                        'rrf_k' => $policy->rrf_k, 'configuration_version' => $policy->version]]);
+            }
+            $this->assertStringEndsWith('/rerank', $request->url());
+            if (count($searchScopes) === 2) {
+                if ($mutation === 'corpus_cutover') {
+                    $workspace->active_workspace_corpus_generation_id = null;
+                    $workspace->save();
+                } elseif ($mutation === 'comparison_removed') {
+                    $old->status = DocumentStatus::Deleting;
+                    $old->save();
+                }
+            }
+            $ranks = [];
+            $reranked = [];
+            foreach ($body['candidates'] as $candidate) {
+                $this->assertNotEmpty($candidate['document_title']);
+                $side = $candidate['side'];
+                $ranks[$side] = ($ranks[$side] ?? 0) + 1;
+                $reranked[] = ['chunk_id' => $candidate['chunk_id'], 'side' => $side,
+                    'score' => 0.95, 'rank' => $ranks[$side]];
+            }
+
+            return Http::response(['request_id' => $body['request_id'], 'profile' => $body['profile'],
+                'candidates' => $reranked,
+                'provider_input_tokens' => 17, 'provider_attempt_count' => 1, 'provider_retry_count' => 0,
+                'rate_limit_event_count' => 0, 'retry_delays' => [], 'first_provider_attempt_at' => '2026-09-06T12:00:00Z',
+                'final_provider_success_at' => '2026-09-06T12:00:01Z', 'provider_retry_elapsed_seconds' => 0]);
+        });
+        $observations = [];
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $this->plan(), 10, CarbonImmutable::parse('2026-09-06'),
+            function ($stage, $value) use (&$observations) {
+                $observations[$stage] = $value;
+            });
+        if ($mutation === 'corpus_cutover') {
+            $this->assertSame(RetrievalOutcome::RetrievalFailed, $result->outcome);
+            $this->assertSame('active_corpus_changed', $result->reason);
+            $this->assertSame([], $result->candidates);
+
+            return;
+        }
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome, json_encode($observations));
+        $this->assertCount(2, $searchScopes);
+        $this->assertNotContains($support->public_id, $searchScopes[0][0]['eligible_document_ids']);
+        $this->assertContains($support->public_id, $searchScopes[1][0]['eligible_document_ids']);
+        $this->assertContains($support->public_id, array_column($result->candidates, 'document_id'));
+        if ($mutation === 'comparison_removed') {
+            $this->assertNotContains($old->public_id, array_column($result->candidates, 'document_id'));
+            $this->assertNotContains('n1', array_column($result->candidates, 'need_id'));
+        } else {
+            $this->assertContains($old->public_id, array_column($result->candidates, 'document_id'));
+            $this->assertContains($new->public_id, array_column($result->candidates, 'document_id'));
+        }
+        $this->assertLessThanOrEqual(5, count($result->candidates));
+        $this->assertCount(1, array_filter($result->usage, fn ($u) => $u['stage'] === 'planner'));
+        $this->assertArrayNotHasKey('supports_need_id', $result->evidenceNeeds[1]);
+        Http::assertSentCount(4);
+    }
+}

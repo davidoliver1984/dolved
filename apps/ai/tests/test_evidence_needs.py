@@ -1,0 +1,459 @@
+import json
+from copy import deepcopy
+from pathlib import Path
+from uuid import uuid4
+
+import httpx
+import pytest
+from fastapi.testclient import TestClient
+from pydantic import SecretStr
+
+from app.main import app
+from app.retrieval.needs import (
+    CatalogueFamily,
+    EvidenceNeedsPlan,
+    NeedsPlanRequest,
+    NeedsPlanResponse,
+    UserTurn,
+)
+from app.retrieval.needs_planner import (
+    NeedsValidationFailure,
+    StructuredChatNeedsPlanner,
+)
+from app.retrieval.planner import RetrievalPlanningError
+from app.retrieval.routes import needs_planner_dependency
+from tests.test_retrieval_routes import signed_headers
+
+ROOT = Path("/contracts/http/retrieval-needs/v2")
+EXAMPLES = json.loads((ROOT / "examples.json").read_text())
+MUTATIONS = json.loads((ROOT / "invalid-mutations.json").read_text())
+
+
+def test_safe_failure_details_exclude_input_exception_context_and_unknown_keys():
+    from pydantic import ValidationError
+
+    from app.retrieval.needs import NeedBinding
+
+    secret = "PRIVATE-CONTENT-MUST-NOT-LEAK"
+    try:
+        NeedBinding.model_validate({"need_id": secret})
+    except ValidationError as exception:
+        failure = NeedsValidationFailure("schema", exception)
+    assert failure.validation == {
+        "stage": "schema",
+        "field": "need_id",
+        "code": "literal_error",
+    }
+    assert secret not in json.dumps(failure.validation)
+    failure = NeedsValidationFailure(
+        "catalogue", ValueError("every need requires exactly one catalogue binding")
+    )
+    assert failure.validation["code"] == "binding_coverage"
+    failure = NeedsValidationFailure("grounding", ValueError(secret))
+    assert failure.validation["code"] == "invalid_value"
+    assert secret not in json.dumps(failure.validation)
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [None, "foreign", "missing", "duplicate", "ownership_location", "ownership_quote"],
+)
+def test_catalogue_binding_is_complete_authorised_and_separate_from_location(fault):
+    example = deepcopy(EXAMPLES[0])
+    family = CatalogueFamily(family_id=uuid4(), title="Records procedure")
+    binding = example["plan"]["bindings"][0]
+    binding.update(subject_status="matched", family_ids=[str(family.family_id)])
+    if fault == "foreign":
+        binding["family_ids"] = [str(uuid4())]
+    elif fault == "missing":
+        example["plan"]["bindings"].pop()
+    elif fault == "duplicate":
+        binding["family_ids"] *= 2
+    elif fault in {"ownership_location", "ownership_quote"}:
+        binding.update(
+            ownership="external_tenant",
+            ownership_source=example["plan"]["needs"][0]["question_span"].copy(),
+        )
+        if fault == "ownership_location":
+            example["plan"]["needs"][0]["applicability"] = {
+                "kind": "relational",
+                "source": binding["ownership_source"],
+            }
+        else:
+            binding["ownership_source"]["quote"] = "invented ownership"
+    calls = []
+    if fault is None:
+        result = adapter(example["plan"], calls).plan_needs(
+            turns(example), evaluated_at="2026-09-06T12:00:00Z", catalogue=(family,)
+        )
+        assert str(result.plan.bindings[0].family_ids[0]) == str(family.family_id)
+        sent = json.loads(calls[0]["messages"][1]["content"])
+        assert sent["catalogue"] == [family.model_dump(mode="json")]
+    else:
+        with pytest.raises(RetrievalPlanningError):
+            adapter(example["plan"], calls).plan_needs(
+                turns(example), evaluated_at="2026-09-06T12:00:00Z", catalogue=(family,)
+            )
+    assert len(calls) == 1
+
+
+def turns(example):
+    return tuple(UserTurn.model_validate(t) for t in example["turns"])
+
+
+@pytest.mark.parametrize("example", EXAMPLES, ids=lambda e: e["name"])
+def test_shared_grounded_examples(example):
+    EvidenceNeedsPlan.model_validate(example["plan"]).validate_grounding(turns(example))
+
+
+@pytest.mark.parametrize("mutation", MUTATIONS, ids=lambda m: m["name"])
+def test_shared_semantic_rejections(mutation):
+    example = deepcopy(EXAMPLES[mutation["example"]])
+    node = example["plan"]
+    for key in mutation["path"][:-1]:
+        node = node[key]
+    node[mutation["path"][-1]] = mutation["value"]
+    with pytest.raises(ValueError):
+        EvidenceNeedsPlan.model_validate(example["plan"]).validate_grounding(
+            turns(example)
+        )
+
+
+@pytest.mark.parametrize(
+    "name,model",
+    [
+        ("plan", EvidenceNeedsPlan),
+        ("request", NeedsPlanRequest),
+        ("response", NeedsPlanResponse),
+    ],
+)
+def test_shared_schema_matches_real_producer(name, model):
+    assert (
+        json.loads((ROOT / f"{name}.schema.json").read_text())
+        == model.model_json_schema()
+    )
+
+
+def adapter(output, calls):
+    def handle(request):
+        calls.append(json.loads(request.content))
+        return httpx.Response(
+            200,
+            json={
+                "choices": [{"message": {"content": json.dumps(output)}}],
+                "usage": {"prompt_tokens": 120, "completion_tokens": 90},
+            },
+        )
+
+    return StructuredChatNeedsPlanner(
+        api_url="https://not-dispatched.invalid",
+        api_key=SecretStr("fake"),
+        provider_name="openai",
+        model="gpt-5-mini",
+        timeout_seconds=1,
+        client=httpx.Client(transport=httpx.MockTransport(handle)),
+    )
+
+
+def test_out_of_order_needs_reconcile_provenance_bindings_and_support_edges():
+    example = deepcopy(EXAMPLES[0])
+    expected = deepcopy(example["plan"])
+    families = tuple(CatalogueFamily(family_id=uuid4(), title=t) for t in ("A", "B"))
+    for binding, family in zip(expected["bindings"], families, strict=True):
+        binding.update(subject_status="matched", family_ids=[str(family.family_id)])
+    raw = deepcopy(expected)
+    raw["needs"].reverse()
+    raw["bindings"].reverse()
+    remap = {"n1": "n2", "n2": "n1"}
+    for need in raw["needs"]:
+        need["need_id"] = remap[need["need_id"]]
+        need["supports_need_id"] = remap.get(need["supports_need_id"])
+    for binding in raw["bindings"]:
+        binding["need_id"] = remap[binding["need_id"]]
+    with pytest.raises(ValueError, match="question order"):
+        EvidenceNeedsPlan.model_validate(raw).validate_grounding(turns(example))
+    result = adapter(raw, []).plan_needs(
+        turns(example), evaluated_at="2026-09-06T12:00:00Z", catalogue=families
+    )
+    assert result.plan.model_dump(mode="json") == expected
+    assert result.plan.in_question_order(turns(example)) == result.plan
+    raw["needs"][0]["question_span"]["quote"] = "not in the user turn"
+    with pytest.raises(NeedsValidationFailure) as caught:
+        adapter(raw, []).plan_needs(
+            turns(example), evaluated_at="2026-09-06T12:00:00Z", catalogue=families
+        )
+    assert caught.value.validation["code"] == "reference_grounding"
+
+
+def test_larger_combined_budget_accepts_output_after_old_reasoning_ceiling():
+    """Fake transport proves parameters/handling, not a model output guarantee."""
+    example = EXAMPLES[0]
+    calls = []
+
+    def handle(request):
+        sent = json.loads(request.content)
+        calls.append(sent)
+        assert sent["max_completion_tokens"] == 25000
+        assert sent["reasoning_effort"] == "low"
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {"content": json.dumps(example["plan"])},
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 120,
+                    "completion_tokens": 6000,
+                    "completion_tokens_details": {"reasoning_tokens": 5000},
+                },
+            },
+        )
+
+    planner = StructuredChatNeedsPlanner(
+        api_url="https://not-dispatched.invalid",
+        api_key=SecretStr("fake"),
+        provider_name="openai",
+        model="gpt-5-mini",
+        timeout_seconds=1,
+        client=httpx.Client(transport=httpx.MockTransport(handle)),
+    )
+    result = planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
+    assert result.plan.model_dump(mode="json") == example["plan"]
+    assert result.usage.output_tokens == 6000
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize(
+    "reason,content,code",
+    [
+        ("length", '{"needs":[', "output_truncated"),
+        ("length", "{}", "output_truncated"),
+        ("stop", '{"needs":[', "json_invalid"),
+        ("content_filter", "", "output_not_completed"),
+    ],
+)
+def test_completion_failure_keeps_safe_usage_without_retry(reason, content, code):
+    calls = []
+
+    def handle(request):
+        calls.append(request)
+        return httpx.Response(
+            200,
+            json={
+                "choices": [{"finish_reason": reason, "message": {"content": content}}],
+                "usage": {
+                    "prompt_tokens": 100,
+                    "completion_tokens": 4096,
+                    "completion_tokens_details": {"reasoning_tokens": 4000},
+                    "secret": "PRIVATE",
+                },
+            },
+        )
+
+    planner = StructuredChatNeedsPlanner(
+        api_url="https://not-dispatched.invalid",
+        api_key=SecretStr("fake"),
+        provider_name="openai",
+        model="gpt-5-mini",
+        timeout_seconds=1,
+        client=httpx.Client(transport=httpx.MockTransport(handle)),
+    )
+    with pytest.raises(NeedsValidationFailure) as caught:
+        planner.plan_needs(turns(EXAMPLES[0]), evaluated_at="2026-09-06T12:00:00Z")
+    assert caught.value.validation["code"] == code
+    assert caught.value.completion == {
+        "finish_reason": reason,
+        "input_tokens": 100,
+        "output_tokens": 4096,
+        "reasoning_tokens": 4000,
+    }
+    assert len(calls) == 1
+    assert caught.value.category == "invalid_grounded_needs_plan"
+
+
+def test_real_transport_preserves_month_and_mixed_needs_without_normalisation():
+    for example in EXAMPLES[:3]:
+        calls = []
+        result = adapter(example["plan"], calls).plan_needs(
+            turns(example), evaluated_at="2026-09-06T12:00:00Z"
+        )
+        assert result.plan.model_dump(mode="json") == example["plan"]
+        assert result.lineage.contract_schema_version == "evidence-needs-plan-v2"
+        assert result.usage.request_count == 1
+        assert result.usage.input_tokens == 120
+        assert len(calls) == 1
+        assert calls[0]["max_completion_tokens"] == 25000
+        assert calls[0]["reasoning_effort"] == "low"
+        assert (
+            json.loads(calls[0]["messages"][1]["content"])["user_turns"]
+            == example["turns"]
+        )
+
+
+@pytest.mark.parametrize(
+    "guidance",
+    [
+        "Which mileage allowance should I enter on my travel form?",
+        "What retention period belongs in the supplier register?",
+        "Which safety classification goes in this inspection checklist?",
+    ],
+)
+def test_topical_guidance_transport_does_not_require_a_form_family(guidance):
+    # Recording output proves contract transport, not live language understanding.
+    sample = deepcopy(EXAMPLES[0])
+    question = "What changed in the form? " + guidance
+    sample["turns"] = [{"turn_id": "user-1", "text": question}]
+    plan = sample["plan"]
+    plan["needs"] = plan["needs"][:2]
+    for i, need in enumerate(plan["needs"]):
+        quote = "What changed in the form?" if i == 0 else guidance
+        need.update(
+            aspect=quote,
+            question_span={"turn_id": "user-1", "quote": quote},
+            fact_reference=None,
+            applicability={"kind": "generic", "source": None},
+            supports_need_id=None,
+        )
+        need["operation"] = "compare" if i == 0 else "retrieve"
+        need["authority"] = (
+            {
+                "kind": "previous",
+                "value": quote,
+                "precision": "named",
+                "source": {"turn_id": "user-1", "quote": quote},
+            }
+            if i == 0
+            else {"kind": "current", "value": None, "precision": "none", "source": None}
+        )
+    plan["bindings"] = [
+        {
+            "need_id": n["need_id"],
+            "subject_status": "topic",
+            "family_ids": [],
+            "ownership": "authorised_workspace",
+            "ownership_source": None,
+        }
+        for n in plan["needs"]
+    ]
+    calls = []
+    result = adapter(plan, calls).plan_needs(
+        turns(sample), evaluated_at="2026-09-06T12:00:00Z"
+    )
+    assert result.plan.bindings[1].family_ids == ()
+    assert result.plan.needs[1].aspect == guidance
+    assert calls[0]["reasoning_effort"] == "low"
+    assert calls[0]["response_format"]["json_schema"]["strict"] is True
+
+
+def test_invalid_grounding_never_falls_back_or_exposes_output():
+    example = deepcopy(EXAMPLES[0])
+    example["plan"]["needs"][0]["question_span"]["quote"] = "private invented text"
+    calls = []
+    with pytest.raises(RetrievalPlanningError) as error:
+        adapter(example["plan"], calls).plan_needs(
+            turns(example), evaluated_at="2026-09-06T12:00:00Z"
+        )
+    assert error.value.category == "invalid_grounded_needs_plan"
+    assert "private" not in str(error.value)
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize(
+    "month,canonical", [("June 2026", "2026-06"), ("February 2025", "2025-02")]
+)
+def test_transition_month_uses_canonical_value_and_verbatim_quote(month, canonical):
+    example = deepcopy(EXAMPLES[1])
+    question = f"What changed during {month}?"
+    example["turns"][0]["text"] = question
+    need = example["plan"]["needs"][0]
+    need["question_span"]["quote"] = question
+    need["authority"]["source"]["quote"] = month
+    need["authority"]["value"] = canonical
+    calls = []
+    result = adapter(example["plan"], calls).plan_needs(
+        turns(example), evaluated_at="2026-09-06T12:00:00Z"
+    )
+    assert result.plan.needs[0].authority.value == canonical
+    assert result.plan.needs[0].authority.precision == "month"
+    assert result.plan.needs[0].authority.source.quote == month
+    assert "month=YYYY-MM" in calls[0]["messages"][0]["content"]
+    assert "Temporal selection precedence" in calls[0]["messages"][0]["content"]
+    # Exact live failure shape remains rejected, never silently repaired.
+    need["authority"]["value"] = month
+    with pytest.raises(RetrievalPlanningError):
+        adapter(example["plan"], []).plan_needs(
+            turns(example), evaluated_at="2026-09-06T12:00:00Z"
+        )
+    # Nor may the planner manufacture an exact day from the month wording.
+    need["authority"].update(
+        kind="transition_boundary", precision="day", value=canonical + "-01"
+    )
+    with pytest.raises(RetrievalPlanningError):
+        adapter(example["plan"], []).plan_needs(
+            turns(example), evaluated_at="2026-09-06T12:00:00Z"
+        )
+
+
+@pytest.mark.parametrize("field", ["value", "precision", "source"])
+def test_non_current_reference_still_rejects_missing_components(field):
+    example = deepcopy(EXAMPLES[0])
+    authority = example["plan"]["needs"][0]["authority"]
+    assert authority["kind"] != "current"
+    authority[field] = "none" if field == "precision" else None
+    calls = []
+    planner = adapter(example["plan"], calls)
+    assert planner.lineage().prompt_version == "bounded-evidence-needs-v9"
+    with pytest.raises(RetrievalPlanningError) as error:
+        planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
+    assert error.value.category == "invalid_grounded_needs_plan"
+    assert len(calls) == 1
+    instructions = calls[0]["messages"][0]["content"]
+    assert 'precision="named"' in instructions
+    assert "Do not leave value or source null" in instructions
+    assert "SELF-CONTAINED retrieval question" in instructions
+    assert "does NOT require a supplied date" in instructions
+    assert "Tenant/account ownership" in instructions
+    assert "must never be widened" in instructions
+
+
+@pytest.mark.parametrize("fault", [None, "purpose", "workspace", "turns"])
+def test_signed_needs_endpoint_isolated_and_replay_safe(fault):
+    example = EXAMPLES[0]
+    workspace, request_id = str(uuid4()), str(uuid4())
+    path = "/api/internal/retrieval/plan-needs"
+    payload = {
+        "contract_version": 2,
+        "request_id": request_id,
+        "workspace_id": workspace,
+        "evaluated_at": "2026-09-06T12:00:00Z",
+        "user_turns": example["turns"],
+    }
+    if fault == "turns":
+        payload["user_turns"] = example["turns"] * 2
+    body = json.dumps(payload).encode()
+    calls = []
+    app.dependency_overrides[needs_planner_dependency] = lambda: adapter(
+        example["plan"], calls
+    )
+    try:
+        headers = signed_headers(
+            path,
+            body,
+            str(uuid4()) if fault == "workspace" else workspace,
+            request_id,
+            "retrieval.plan" if fault == "purpose" else "retrieval.plan-needs",
+        )
+        client = TestClient(app)
+        response = client.post(path, content=body, headers=headers)
+        assert response.status_code == (
+            200 if fault is None else 422 if fault == "turns" else 401
+        )
+        assert len(calls) == (1 if fault is None else 0)
+        if fault is None:
+            NeedsPlanResponse.model_validate(response.json())
+            assert client.post(path, content=body, headers=headers).status_code == 401
+    finally:
+        app.dependency_overrides.clear()

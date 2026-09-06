@@ -6,6 +6,7 @@ namespace App\Actions\Retrieval;
 
 use App\Enums\EvidenceThresholdPolicyStatus;
 use App\Enums\RequestedEvidenceType;
+use App\Enums\RetrievalClarificationSource;
 use App\Enums\RetrievalOutcome;
 use App\Exceptions\RetrievalException;
 use App\Exceptions\RetrievalExecutionException;
@@ -19,6 +20,8 @@ use App\Services\Retrieval\RetrievalClient;
 use App\Support\Documents\DocumentAuthorityTimeline;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\EligibleRetrievalScope;
+use App\Support\Retrieval\EvidenceNeedsPlan;
+use App\Support\Retrieval\NeedsEvidenceSelection;
 use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\RetrievalResult;
 use Carbon\CarbonImmutable;
@@ -47,6 +50,83 @@ final readonly class RetrieveWorkspaceEvidence
             CarbonImmutable::now(),
             observe: $observe,
         );
+    }
+
+    /** Uses the same search, fusion, reranker and final eligibility checks for each need. */
+    public function handleNeeds(
+        AuthorisedKnowledgeScope $authorised,
+        EvidenceNeedsPlan $plan,
+        int $candidateK,
+        CarbonImmutable $evaluatedAt,
+        ?callable $observe = null,
+    ): RetrievalResult {
+        $needs = $plan->value['needs'];
+        $usage = [$plan->usage->toArray()];
+        $observe?->__invoke('needs_plan', $plan->value);
+        if ($plan->value['decision'] === 'clarify' || count($needs) > 2
+            || array_sum(array_map(fn ($need) => $need['operation'] === 'compare' ? 2 : 1, $needs)) > 4) {
+            return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
+                reason: 'evidence_needs_clarification',
+                clarificationSource: RetrievalClarificationSource::Planner, usage: $usage,
+                clarificationQuestion: $plan->value['clarification'] ?? 'Please narrow this question to at most two requested aspects.');
+        }
+        $results = [];
+        $plans = [];
+        foreach ($needs as $need) {
+            $id = $need['need_id'];
+            $plans[$id] = $plan->retrievalPlan($id);
+            $results[$id] = $this->execute($authorised, $need['aspect'], $candidateK, $evaluatedAt,
+                observe: $observe === null ? null : fn ($stage, $value) => $observe('need.'.$id.'.'.$stage, $value),
+                planOverride: $plans[$id], recordPlannerUsage: false);
+            $usage = [...$usage, ...$results[$id]->usage];
+            if ($results[$id]->outcome === RetrievalOutcome::RetrievalFailed) {
+                return new RetrievalResult(RetrievalOutcome::RetrievalFailed, reason: $results[$id]->reason, usage: $usage);
+            }
+            if ($results[$id]->outcome === RetrievalOutcome::ClarificationRequired) {
+                return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
+                    reason: $results[$id]->reason, clarificationSource: $results[$id]->clarificationSource,
+                    usage: $usage);
+            }
+        }
+        // A corpus cutover during multi-need execution must not mix generations.
+        if (! $authorised->workspace->newQuery()->whereKey($authorised->workspace->id)
+            ->where('active_workspace_corpus_generation_id', $authorised->activeCorpusGeneration?->id)->exists()) {
+            return new RetrievalResult(RetrievalOutcome::RetrievalFailed, reason: 'active_corpus_changed', usage: $usage);
+        }
+        // Revalidate every need after all provider work, before the global allocation.
+        foreach ($results as $id => $result) {
+            $eligible = $this->eligibility->handle($authorised, $plans[$id], $evaluatedAt);
+            if ($eligible->outcome === RetrievalOutcome::ClarificationRequired) {
+                return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
+                    reason: $eligible->reason, clarificationSource: $eligible->clarificationSource, usage: $usage);
+            }
+            $candidates = $this->hydrateAndRecheck($result->candidates,
+                $eligible->canSearch() ? $eligible->documentPublicIdsBySide : [], $authorised);
+            $byKey = collect($result->candidates)->keyBy(fn ($c) => $c['side'].':'.$c['chunk_id']);
+            $candidates = array_map(fn ($c) => [...($byKey[$c['side'].':'.$c['chunk_id']]), ...$c], $candidates);
+            $results[$id] = new RetrievalResult($eligible->canSearch() ? $result->outcome : $eligible->outcome,
+                $candidates, reason: $eligible->reason ?? $result->reason,
+                resolvedTemporalAuthority: $this->resolvedTemporalAuthority($plans[$id], $eligible, $evaluatedAt),
+                resolvedApplicabilityLocation: ['resolved_location_public_id' => $eligible->resolvedLocationPublicId],
+                lineage: $result->lineage);
+        }
+        $selected = (new NeedsEvidenceSelection)->select($needs, $results);
+        $coverage = [];
+        foreach ($needs as $need) {
+            $id = $need['need_id'];
+            unset($need['supports_need_id']);
+            $result = $results[$id];
+            $coverage[] = [...$need, 'retrieval_outcome' => $result->outcome->value,
+                'retrieval_reason' => $result->reason,
+                'selected_chunk_ids' => array_column(array_values(array_filter($selected, fn ($c) => $c['need_id'] === $id)), 'chunk_id'),
+                'resolved_temporal_authority' => $result->resolvedTemporalAuthority,
+                'resolved_applicability_location' => $result->resolvedApplicabilityLocation];
+        }
+        $observe?->__invoke('needs_final_evidence', $selected);
+
+        return new RetrievalResult($selected === [] ? RetrievalOutcome::InsufficientEvidence : RetrievalOutcome::EvidenceFound,
+            $selected, lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v2',
+                'needs' => array_map(fn ($r) => $r->lineage, $results)], usage: $usage, evidenceNeeds: $coverage);
     }
 
     /**
@@ -171,12 +251,15 @@ final readonly class RetrieveWorkspaceEvidence
         bool $denseOnly = false,
         ?callable $observe = null,
         ?RetrievalPlan $planOverride = null,
+        bool $recordPlannerUsage = true,
     ): RetrievalResult {
         $currentStage = 'transport_orchestration';
         $usage = [];
         try {
             $plan = $planOverride ?? $this->client->plan($authorised->workspace, $question, $evaluatedAt);
-            $usage[] = $plan->classifierUsage->toArray();
+            if ($recordPlannerUsage) {
+                $usage[] = $plan->classifierUsage->toArray();
+            }
             $observe?->__invoke('plan', [
                 'query' => $plan->query,
                 'temporal_mode' => $plan->temporalMode->value,
@@ -194,7 +277,7 @@ final readonly class RetrieveWorkspaceEvidence
                 'location_references' => $plan->locationReferences,
                 'clarification_reason' => $plan->clarificationReason?->value,
                 'classifier_lineage' => $plan->classifierLineage->toArray(),
-                'usage' => [$plan->classifierUsage->toArray()],
+                'usage' => $recordPlannerUsage ? [$plan->classifierUsage->toArray()] : [],
             ]);
             $eligible = $this->eligibility->handle($authorised, $plan, $evaluatedAt);
             $observe?->__invoke('eligibility', [
@@ -347,7 +430,8 @@ final readonly class RetrieveWorkspaceEvidence
                 $qualified = $this->validatedComparisonCandidates($qualified);
                 $observe?->__invoke('comparison_validated', $qualified->all());
             }
-            $qualified = $this->qualifiedForRequestedEvidence($qualified, $plan->requestedEvidenceType);
+            $qualified = $plan->evidenceNeed === null
+                ? $this->qualifiedForRequestedEvidence($qualified, $plan->requestedEvidenceType) : $qualified;
             $observe?->__invoke('claim_type_qualified', $qualified->all());
             if ($qualified->isEmpty()) {
                 return new RetrievalResult(
@@ -490,6 +574,7 @@ final readonly class RetrieveWorkspaceEvidence
             'fact_date' => $plan->factDate,
             'requested_evidence_type' => $plan->requestedEvidenceType->value,
             'eligible_document_public_ids_by_side' => $eligible->documentPublicIdsBySide,
+            ...($plan->evidenceNeed === null ? [] : ['need_id' => $plan->evidenceNeed['need_id'], 'authority' => $plan->evidenceNeed['authority']]),
         ];
     }
 

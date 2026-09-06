@@ -45,6 +45,191 @@ class GroundedGenerationFoundationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public static function needsAssemblyMutations(): array
+    {
+        return [['valid'], ['budget'], ['missing_side'], ['wrong_family']];
+    }
+
+    #[DataProvider('needsAssemblyMutations')]
+    public function test_needs_assembly_preserves_owned_pairs_and_current_support(string $mutation): void
+    {
+        [$base, $first] = $this->assemblyFixture();
+        $workspace = $base->authorisedScope->workspace;
+        $previous = Document::factory()->indexed()->create(['workspace_id' => $workspace->id,
+            'document_family_id' => $first->document->document_family_id, 'predecessor_document_id' => $first->document_id]);
+        $support = Document::factory()->indexed()->create(['workspace_id' => $workspace->id]);
+        $chunks = [$first];
+        foreach ([$previous, $support] as $document) {
+            $claim = IngestionEventClaim::factory()->create(['workspace_id' => $workspace->id, 'document_id' => $document->id]);
+            $chunks[] = DocumentChunk::factory()->create(['workspace_id' => $workspace->id,
+                'document_id' => $document->id, 'ingestion_event_claim_id' => $claim->id, 'text' => 'Synthetic supporting evidence.']);
+        }
+        $candidates = [];
+        foreach ($chunks as $i => $chunk) {
+            $candidates[] = ['chunk_id' => $chunk->public_id, 'document_id' => $chunk->document->public_id,
+                'document_family_id' => $chunk->document->family->public_id, 'chunk_text' => $chunk->text,
+                'side' => $i === 1 ? 'comparison' : 'primary', 'need_id' => $i === 2 ? 'n2' : 'n1'];
+        }
+        $examples = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/examples.json'), true, flags: JSON_THROW_ON_ERROR);
+        $needs = array_map(fn ($need) => [...$need, 'retrieval_outcome' => 'EVIDENCE_FOUND', 'retrieval_reason' => null,
+            'resolved_temporal_authority' => ['mode' => $need['operation']],
+            'resolved_applicability_location' => ['resolved_location_public_id' => null]], $examples[0]['plan']['needs']);
+        if ($mutation === 'budget') {
+            config(['generation.max_context_characters' => 1]);
+            $this->expectException(GenerationContextBudgetExceeded::class);
+        } elseif ($mutation === 'missing_side') {
+            unset($candidates[1]);
+            $candidates = array_values($candidates);
+            $this->expectException(GenerationException::class);
+        } elseif ($mutation === 'wrong_family') {
+            $candidates[1]['document_family_id'] = (string) Str::uuid();
+            $this->expectException(GenerationException::class);
+        }
+        $input = new GenerationAssemblyInput($base->question,
+            new RetrievalResult(RetrievalOutcome::EvidenceFound, $candidates, evidenceNeeds: $needs),
+            [], [], $base->authorisedScope, []);
+        $request = app(AssembleGenerationRequest::class)->handle($input);
+        $wire = $request->toArray();
+        $this->assertSame(2, $wire['contract_version']);
+        $this->assertCount(3, $wire['evidence']);
+        $this->assertSame(['ev-01', 'ev-02'], $wire['evidence_needs'][0]['evidence_ids']);
+        $this->assertSame(['ev-03'], $wire['evidence_needs'][1]['evidence_ids']);
+        $this->assertSame('n2', $wire['evidence'][2]['temporal_authority']['need_id']);
+        $this->assertSame($first->document->source_filename, $wire['evidence'][0]['temporal_authority']['document_title']);
+        $this->assertSame($first->document->family->name, $wire['evidence'][0]['temporal_authority']['document_family_title']);
+        $this->assertArrayNotHasKey('supports_need_id', $wire['evidence_needs'][1]);
+        unset($needs[1]['supports_need_id']);
+        $withoutEdge = app(AssembleGenerationRequest::class)->handle(new GenerationAssemblyInput($base->question,
+            new RetrievalResult(RetrievalOutcome::EvidenceFound, $candidates, evidenceNeeds: $needs), [], [], $base->authorisedScope, []))->toArray();
+        unset($wire['request_id'], $withoutEdge['request_id']);
+        $this->assertSame($wire, $withoutEdge);
+        Http::preventStrayRequests();
+        Http::fake(function ($sent) {
+            $this->assertStringEndsWith('/generation/answer-needs', $sent->url());
+            $this->assertSame(['generation.answer-needs'], $sent->header('X-Retrieval-Caller-Purpose'));
+            $this->assertSame(2, $sent->data()['contract_version']);
+
+            return Http::response(['contract_version' => 2, 'request_id' => $sent->data()['request_id'],
+                'status' => 'completed', 'result' => ['contract_version' => 2, 'outcome' => 'answered',
+                    'answer_parts' => [['text' => 'Synthetic paired answer.', 'evidence_ids' => ['ev-01', 'ev-02']],
+                        ['text' => 'Independent current guidance.', 'evidence_ids' => ['ev-03']]],
+                    'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+                    'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []],
+                        ['need_id' => 'n2', 'answer_part_indices' => [1], 'unsupported_aspect_indices' => []]]]]);
+        });
+        $answer = app(GenerateGroundedAnswer::class)->handle($input, app(GenerationProfileFactory::class)->configuredNeeds());
+        $this->assertSame(['n1' => 'supported', 'n2' => 'supported'], $answer->aspect_results);
+        $this->assertCount(3, $answer->evidenceSnapshots);
+        Http::assertSentCount(1);
+    }
+
+    public static function needsCases(): iterable
+    {
+        $fixtures = json_decode((string) file_get_contents('/contracts/fixtures/generation-aspect-coverage/v1.json'), true, flags: JSON_THROW_ON_ERROR);
+        foreach ($fixtures['cases'] as $case) {
+            yield $case['name'] => [$case];
+        }
+    }
+
+    #[DataProvider('needsCases')]
+    public function test_v2_consumer_validates_shared_coverage_and_derives_status(array $case): void
+    {
+        if (! $case['valid']) {
+            $this->expectException(GenerationException::class);
+        }
+        $result = app(ValidateGenerationResult::class)->handleNeeds($this->simpleRequest(), $case['need_ids'],
+            [...$case['result'], 'contract_version' => 2, 'usage' => null, 'aspect_links' => $case['links']]);
+        $this->assertSame($case['expected_statuses'], $result->aspectResults);
+    }
+
+    public function test_v2_coverage_persists_with_the_authoritative_text_and_citation(): void
+    {
+        [$input] = $this->assemblyFixture();
+        $request = app(AssembleGenerationRequest::class)->handle($input);
+        $result = app(ValidateGenerationResult::class)->handleNeeds($request, ['n1', 'n2'], [
+            'contract_version' => 2, 'outcome' => 'qualified',
+            'answer_parts' => [['text' => 'The historical change is not established. The current procedure requires recording the assessment.', 'evidence_ids' => ['ev-01']]],
+            'unsupported_aspects' => ['The historical change is not established.'], 'insufficiency_reason' => null, 'usage' => null,
+            'aspect_links' => [
+                ['need_id' => 'n1', 'answer_part_indices' => [], 'unsupported_aspect_indices' => [0]],
+                ['need_id' => 'n2', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []],
+            ],
+        ]);
+        $fingerprint = app(GenerationFingerprint::class)->make('deterministic', 'contract-fake', 'generation-result-v2', 'test-only', 'test-only', []);
+        $answer = app(PersistGeneratedAnswer::class)->handle($input->authorisedScope, $input->question,
+            (string) Str::uuid(), $request, $result, $fingerprint)->fresh();
+        $this->assertSame($result->aspectLinks, $answer->aspect_links);
+        $this->assertSame($result->aspectResults, $answer->aspect_results);
+        $this->assertSame($result->renderedText(), $answer->renderedText());
+        $this->assertCount(1, $answer->evidenceSnapshots);
+    }
+
+    public static function invalidNeedsCitations(): array
+    {
+        return [[['ev02']], [['ev-99']], [['ev-01', 'ev-01']], [[]]];
+    }
+
+    public function test_missing_need_cannot_borrow_another_needs_answer(): void
+    {
+        $base = $this->simpleRequest();
+        $request = new GenerationRequest($base->requestId, $base->workspacePublicId, $base->question,
+            $base->evidence, $base->contextPolicyVersion, $base->maxContextCharacters,
+            $base->requiredSides, $base->requestedEvidenceType, [
+                ['need_id' => 'n1', 'evidence_ids' => []],
+                ['need_id' => 'n2', 'evidence_ids' => ['ev-01']],
+            ]);
+        $payload = ['contract_version' => 2, 'outcome' => 'answered',
+            'answer_parts' => [['text' => 'Current guidance.', 'evidence_ids' => ['ev-01']]],
+            'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+            'aspect_links' => [
+                ['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []],
+                ['need_id' => 'n2', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []],
+            ]];
+        try {
+            app(ValidateGenerationResult::class)->handleNeeds($request, ['n1', 'n2'], $payload);
+            $this->fail('Cross-need citation accepted.');
+        } catch (GenerationException $exception) {
+            $this->assertStringContainsString('coverage', $exception->getMessage());
+        }
+        $payload['outcome'] = 'qualified';
+        $payload['unsupported_aspects'] = ['The requested history is unavailable in this evidence.'];
+        $payload['aspect_links'][0] = ['need_id' => 'n1', 'answer_part_indices' => [], 'unsupported_aspect_indices' => [0]];
+        $result = app(ValidateGenerationResult::class)->handleNeeds($request, ['n1', 'n2'], $payload);
+        $this->assertSame(['n1' => 'unsupported', 'n2' => 'supported'], $result->aspectResults);
+    }
+
+    #[DataProvider('invalidNeedsCitations')]
+    public function test_v2_does_not_relax_citation_validation(array $ids): void
+    {
+        $this->expectException(GenerationException::class);
+        app(ValidateGenerationResult::class)->handleNeeds($this->simpleRequest(), ['n1'], [
+            'contract_version' => 2, 'outcome' => 'answered',
+            'answer_parts' => [['text' => 'A claim.', 'evidence_ids' => $ids]],
+            'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+            'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]],
+        ]);
+    }
+
+    public function test_v2_result_cannot_be_persisted_under_a_legacy_profile(): void
+    {
+        [$input] = $this->assemblyFixture();
+        $request = app(AssembleGenerationRequest::class)->handle($input);
+        $result = app(ValidateGenerationResult::class)->handleNeeds($request, ['n1'], [
+            'contract_version' => 2, 'outcome' => 'answered',
+            'answer_parts' => [['text' => 'A grounded claim.', 'evidence_ids' => ['ev-01']]],
+            'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+            'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]],
+        ]);
+        $fingerprint = app(GenerationFingerprint::class)->make('deterministic', 'contract-fake', 'generation-result-v1', 'test-only', 'test-only', []);
+        try {
+            app(PersistGeneratedAnswer::class)->handle($input->authorisedScope, $input->question,
+                (string) Str::uuid(), $request, $result, $fingerprint);
+            $this->fail('A v2 result must not use a legacy profile.');
+        } catch (GenerationException) {
+            $this->assertDatabaseCount('generated_answers', 0);
+        }
+    }
+
     public function test_outcome_and_citation_validation_fail_closed(): void
     {
         $request = $this->simpleRequest();
@@ -152,6 +337,8 @@ class GroundedGenerationFoundationTest extends TestCase
         $answer = app(GenerateGroundedAnswer::class)->handle($input, $profile);
 
         $this->assertCount(2, $answer->answerParts);
+        $this->assertNull($answer->aspect_links);
+        $this->assertNull($answer->aspect_results);
         $this->assertSame("First grounded part.\n\nSecond grounded part.", $answer->renderedText());
         $this->assertCount(1, $answer->evidenceSnapshots);
         $snapshot = $answer->evidenceSnapshots->firstOrFail();

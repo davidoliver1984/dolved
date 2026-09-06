@@ -125,6 +125,27 @@ final class R28ProductionPathDiagnosticTest extends TestCase
         );
     }
 
+    public function test_needs_diagnostic_keeps_per_need_stages_without_raw_chunk_payloads(): void
+    {
+        $action = app(RunR28ProductionPathDiagnostic::class);
+        $project = new \ReflectionMethod($action, 'boundedStage');
+        $candidate = ['need_id' => 'n1', 'chunk_id' => 'chunk-1', 'document_id' => 'doc-1',
+            'document_family_id' => 'family-1', 'side' => 'PRIMARY', 'score' => 0.9,
+            'chunk_text' => str_repeat('Do not retain raw search text.', 1000)];
+        $search = $project->invoke($action, 'need.n1.search', [
+            'candidates' => [$candidate], 'usage' => ['request_count' => 1],
+        ]);
+        $this->assertSame('chunk-1', $search['candidates'][0]['chunk_id']);
+        $this->assertSame(1, $search['usage']['request_count']);
+        $this->assertArrayNotHasKey('chunk_text', $search['candidates'][0]);
+        $selected = $project->invoke($action, 'needs_final_evidence', [$candidate]);
+        $this->assertSame('n1', $selected[0]['need_id']);
+        $this->assertArrayNotHasKey('chunk_text', $selected[0]);
+        $plan = ['decision' => 'answer', 'clarification' => null, 'needs' => [['need_id' => 'n1']]];
+        $this->assertSame($plan, $project->invoke($action, 'needs_plan', $plan));
+        $this->assertNull($project->invoke($action, 'unrecognised_stage', ['raw' => 'data']));
+    }
+
     public function test_diagnostic_boundary_delegates_instead_of_reimplementing_retrieval(): void
     {
         $source = file_get_contents(app_path('Actions/Evaluation/RunR28ProductionPathDiagnostic.php'));

@@ -2,13 +2,13 @@ from collections.abc import Iterator
 from typing import Annotated, cast
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
 from app.generation.errors import (
     GenerationContextBudgetError,
     GenerationProviderFailure,
 )
-from app.generation.factory import build_generator
+from app.generation.factory import build_generator, build_needs_generator
 from app.generation.models import (
     GenerationProviderError,
     GenerationRequest,
@@ -16,6 +16,9 @@ from app.generation.models import (
     GenerationResult,
     GenerationStreamEvent,
 )
+from app.generation.needs_output import NEEDS_RESPONSE
+from app.generation.needs_request import GenerationNeedsRequest
+from app.generation.openai_adapter import OpenAIGenerator
 from app.generation.protocol import Generator, StreamingGenerator
 from app.retrieval.routes import authenticate
 from app.settings import get_settings
@@ -49,6 +52,59 @@ def generator_dependency() -> Generator:
         return build_generator(settings)
     except ValueError:
         return UnconfiguredGenerator()
+
+
+def needs_generator_dependency() -> OpenAIGenerator:
+    try:
+        return build_needs_generator(get_settings())
+    except (ValueError, TypeError) as exception:
+        raise HTTPException(503, "Needs generation is not configured.") from exception
+
+
+def needs_response(payload: dict[str, object]) -> JSONResponse:
+    return JSONResponse(NEEDS_RESPONSE.validate_python(payload).model_dump(mode="json"))
+
+
+@router.post("/answer-needs")
+async def answer_needs(
+    request: Request,
+    generator: Annotated[OpenAIGenerator, Depends(needs_generator_dependency)],
+) -> JSONResponse:
+    body = await authenticate(request, "generation.answer-needs", get_settings())
+    try:
+        incoming = GenerationNeedsRequest.model_validate_json(body)
+    except ValueError as exception:
+        raise HTTPException(422, "Invalid needs generation request.") from exception
+    if str(incoming.workspace_id) != request.headers.get(
+        "X-Retrieval-Caller-Workspace-ID"
+    ) or str(incoming.request_id) != request.headers.get(
+        "X-Retrieval-Caller-Request-ID"
+    ):
+        raise HTTPException(401, "Signed identity does not match body.")
+    envelope = {"contract_version": 2, "request_id": str(incoming.request_id)}
+    try:
+        result = generator.generate_needs(incoming).validate_for_needs_request(incoming)
+    except GenerationContextBudgetError as exception:
+        return needs_response(
+            {
+                **envelope,
+                "status": "context_budget_exceeded",
+                "failure": exception.failure.model_dump(mode="json"),
+            }
+        )
+    except GenerationProviderFailure as exception:
+        return needs_response(
+            {
+                **envelope,
+                "status": "provider_error",
+                "error": exception.error.model_dump(mode="json"),
+            }
+        )
+    except ValueError as exception:
+        raise HTTPException(422, "Invalid needs generation result.") from exception
+    return needs_response(
+        {**envelope, "status": "completed", "result": result.model_dump(mode="json")}
+    )
 
 
 @router.post("/answer", response_model=GenerationResponse)

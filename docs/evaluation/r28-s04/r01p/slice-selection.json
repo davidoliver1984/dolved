@@ -1,0 +1,69 @@
+{
+  "identity": "R28-R01P-SELECTION-20260906-V1",
+  "selected_at": "2026-09-06",
+  "code_head_at_selection": "f1c7e69f3798558ddeef3e1f43aa6df2d0dacc9a",
+  "population_identity": "dolved-care-v4-evaluation-population-v2",
+  "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+  "scope": "development slice; no held-out or certification claim; do not load this file during execution",
+  "items": [
+    {
+      "id": "R01P-01",
+      "source": "v4.case.corrected-b06-05/v1",
+      "purpose": "known regression: ROPA pair plus current data-protection policy"
+    },
+    {
+      "id": "R01P-02",
+      "source": "v4.case.corrected-b06-05/v2",
+      "purpose": "previously authored variant, not independent held-out"
+    },
+    {
+      "id": "R01P-03",
+      "source": "supplemental-development",
+      "purpose": "reversed order, same intended source combination"
+    },
+    {
+      "id": "R01P-04",
+      "source": "supplemental-development",
+      "purpose": "second family combination: end-of-life pair plus current data-protection support"
+    },
+    {
+      "id": "R01P-05",
+      "source": "v4.case.corrected-b06-02/v2",
+      "purpose": "known transition-date regression, same-family multiple aspects"
+    },
+    {
+      "id": "R01P-06",
+      "source": "supplemental-development",
+      "purpose": "data-protection single-version missing-history control; current support can remain useful"
+    },
+    {
+      "id": "R01P-07",
+      "source": "supplemental-development",
+      "purpose": "no personal record supplied: comparison cannot establish personal completion"
+    },
+    {
+      "id": "R01P-08",
+      "source": "supplemental-development",
+      "purpose": "no cross-tenant retrieval; current primary-tenant guidance must not imply access to that record"
+    }
+  ],
+  "acceptance": [
+    "no unsupported facts or cross-tenant evidence",
+    "actual temporal pair and retained independent current support",
+    "explicit visible central limitation for missing history/personal evidence",
+    "valid persisted citations and per-need coverage",
+    "inspect every answer and citation before expansion"
+  ],
+  "limitations": [
+    "Five supplemental development utterances; not a new frozen population.",
+    "No clarification/reply pair in this initial eight-input slice. Conversation resolution remains later R02 work; do not claim it tested.",
+    "Second combination uses existing end-of-life/data-protection sources; inspect coverage, do not invent expected factual wording."
+  ],
+  "live_dispatch": "not_ready; requires complete production integration, transport-fake proof, verified runtime profiles and recorded request/token/retry/time envelope",
+  "operating_bounds": {
+    "experiment_usd": 5,
+    "cumulative_plan_usd": 30,
+    "concurrency": 1
+  },
+  "execution_guard": "Exact runtime commit/working-tree identity and retry envelope to be recorded before dispatch, not guessed at selection."
+}

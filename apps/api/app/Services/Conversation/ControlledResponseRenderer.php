@@ -25,14 +25,17 @@ final readonly class ControlledResponseRenderer
     }
 
     /** @return array{kind: MessageKind, text: string, renderer_version: string} */
-    public function clarification(RetrievalClarificationSource $source, string $reason): array
+    public function clarification(RetrievalClarificationSource $source, string $reason, ?string $question = null): array
     {
         $text = match ($source) {
             RetrievalClarificationSource::Planner => match (PlannerClarificationReason::tryFrom($reason)) {
                 PlannerClarificationReason::UnclassifiableTemporalIntent => 'Which date, period, or version should I use for this question?',
+                PlannerClarificationReason::EvidenceNeedsClarification => is_string($question) && trim($question) !== '' ? $question : null,
+                PlannerClarificationReason::UngroundedNeedsReference => 'I could not reliably link part of your question to what you wrote. Could you rephrase it, making any document, date or location reference explicit?',
                 null => null,
             },
             RetrievalClarificationSource::EligibilityResolver => match (EligibilityClarificationReason::tryFrom($reason)) {
+                EligibilityClarificationReason::AmbiguousDocumentSubject => 'Which document or policy do you mean?',
                 EligibilityClarificationReason::AmbiguousAuthorityWindowForPeriod => 'Which date within that period should I use?',
                 EligibilityClarificationReason::UnresolvableTemporalPeriod => 'Which specific date or recognised calendar period should I use?',
                 EligibilityClarificationReason::AmbiguousHistoricalReference => 'Which historical version should I use?',

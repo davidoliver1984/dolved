@@ -40,7 +40,7 @@
   "progress": {
     "current_phase": "R28",
     "current_session": "R28-S04",
-    "next_action": "Follow docs/evaluation/r28-s04/production-repair-plan.md: R00 baseline/session reconciliation, R01 minimum slice contract and build-versus-adopt decision, then R01P live production proof before wider repair. Preserve free-text interaction. Routine OpenAI/Voyage use has standing permission within the plan bounds; architecture and expansion gates remain. Do not mark S04 complete from diagnostics.",
+    "next_action": "David explicitly approved committing the accumulated coherent R01P checkpoint before the second independent confirmation. Commit only the slice and associated contract/tests/evidence, then execute the verified 30-question file once on frozen source adeafbe3610f920f8da363763fe885d54345c314b9a67ba0af4f8754810ee398. Keep the answer key inaccessible; return unscored observations for independent scoring. R01P remains open; no R02, selective rerun, tuning or S04 closure.",
     "completed_through": "R27-GATE",
     "completed_phase_count": 28,
     "total_phase_count": 33
@@ -5430,7 +5430,7 @@
           "id": "R28-S04",
           "guide_stage": "Stage 28.4 — Run end-to-end live retrieval and grounded-generation evaluation",
           "title": "Run End-to-End Live Retrieval and Grounded-Generation Evaluation",
-          "status": "not_started",
+          "status": "in_progress",
           "depends_on": [
             "R28-S02",
             "R28-S03"

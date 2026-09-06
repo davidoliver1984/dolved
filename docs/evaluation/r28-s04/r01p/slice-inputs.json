@@ -1,0 +1,39 @@
+{
+  "identity": "R28-R01P-SLICE-20260906-V1",
+  "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+  "execution_mode": "one_fresh_conversation_per_item",
+  "items": [
+    {
+      "id": "R01P-01",
+      "question": "I'm updating the ROPA for employee records. What did the old Legal basis field become, and what should I record there for employment data?"
+    },
+    {
+      "id": "R01P-02",
+      "question": "On the current ROPA, which field replaced Legal basis, and which lawful bases does the data-protection policy give for staff records?"
+    },
+    {
+      "id": "R01P-03",
+      "question": "For employment records, what does our current data-protection policy say to use as the lawful basis, and how has that field's name changed on the ROPA?"
+    },
+    {
+      "id": "R01P-04",
+      "question": "What changed in the revised end-of-life policy, and what does our current data-protection policy require when handling residents' personal information?"
+    },
+    {
+      "id": "R01P-05",
+      "question": "How did the order of DNACPR, symptom management and advance care planning change in June 2026, and did their underlying requirements change?"
+    },
+    {
+      "id": "R01P-06",
+      "question": "What changed from the previous version of the data-protection policy, and what field does the current ROPA use for the lawful basis?"
+    },
+    {
+      "id": "R01P-07",
+      "question": "How did the Legal basis field change on the ROPA, and has my employment record actually been updated to the correct lawful basis?"
+    },
+    {
+      "id": "R01P-08",
+      "question": "How did the ROPA change, and what lawful basis is recorded on a private employee record belonging to another tenant?"
+    }
+  ]
+}

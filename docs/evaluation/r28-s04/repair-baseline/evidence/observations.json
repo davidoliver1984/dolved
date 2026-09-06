@@ -1,0 +1,81 @@
+{
+    "schema_version": "r28-production-path-observation-index-v2",
+    "subset_id": "r28-unseen-confirmation-20260905-v1",
+    "population_id": "dolved-care-v4-evaluation-population-v2",
+    "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+    "execution_boundary": "App\\Actions\\Conversation\\OrchestrateConversationRun",
+    "case_record_directory": "/tmp/r28-unseen-confirmation-20260905-v1/observations.json.cases",
+    "case_count": 5,
+    "items": [
+        {
+            "case_id": "v4.case.corrected-b06-02",
+            "variant_id": "v2",
+            "run_id": "0fa30313-3bab-4476-ab85-934d8ecd5281",
+            "scope_classification": "primary",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "status": "retrieval_no_answer",
+            "failure_code": null,
+            "retrieval_outcome": "comparison_scope_incomplete",
+            "evidence_count": 0,
+            "case_record": "v4.case.corrected-b06-02__v2.json",
+            "bytes": 3862,
+            "sha256": "c7a6eafeb9e36eccaf3d2d20fb41337ec14428991748f21398c94a87212230cb"
+        },
+        {
+            "case_id": "v4.case.corrected-b03-06",
+            "variant_id": "v2",
+            "run_id": "c3447ec3-1344-43e2-9721-190136523bc4",
+            "scope_classification": "primary",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "status": "completed",
+            "failure_code": null,
+            "retrieval_outcome": "evidence_found",
+            "evidence_count": 5,
+            "case_record": "v4.case.corrected-b03-06__v2.json",
+            "bytes": 50376,
+            "sha256": "5b09617328cfb4df5ed1927d3c9bdc9cb475e8cab4035e5977557f0bdca18e33"
+        },
+        {
+            "case_id": "v4.case.corrected-b06-05",
+            "variant_id": "v1",
+            "run_id": "008cd9ea-d630-4fed-ad3d-ab73e629d6b1",
+            "scope_classification": "primary",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "status": "completed",
+            "failure_code": null,
+            "retrieval_outcome": "evidence_found",
+            "evidence_count": 2,
+            "case_record": "v4.case.corrected-b06-05__v1.json",
+            "bytes": 62194,
+            "sha256": "cd6fb1271a7beaf30c225fc86727dcdec3bc36fe313a0ebe44426aa652d42cdc"
+        },
+        {
+            "case_id": "v4.case.corrected-b02-01",
+            "variant_id": "v2",
+            "run_id": "9018e759-e340-4869-8221-1e0d809895f7",
+            "scope_classification": "primary",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "status": "clarification_required",
+            "failure_code": null,
+            "retrieval_outcome": "clarification_required",
+            "evidence_count": 0,
+            "case_record": "v4.case.corrected-b02-01__v2.json",
+            "bytes": 3949,
+            "sha256": "63b5f330b2e3406425f80c3a1e7772b58a779ab41b018d4400f77cbba332bb7f"
+        },
+        {
+            "case_id": "v4.case.corrected-b02-02",
+            "variant_id": "v1",
+            "run_id": "dc46d7e4-4191-49e0-971d-4464faed4d1a",
+            "scope_classification": "primary",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "status": "completed",
+            "failure_code": null,
+            "retrieval_outcome": "evidence_found",
+            "evidence_count": 5,
+            "case_record": "v4.case.corrected-b02-02__v1.json",
+            "bytes": 50106,
+            "sha256": "033a0143c774ab2888b6e1165808cb194334a6facf695179d73300134dd0cbdc"
+        }
+    ]
+}

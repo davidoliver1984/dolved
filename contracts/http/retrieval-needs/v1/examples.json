@@ -1,0 +1,278 @@
+[
+  {
+    "name": "mixed",
+    "turns": [
+      {
+        "turn_id": "u1",
+        "text": "What changed in the ROPA, and what does current policy require for employment records?"
+      }
+    ],
+    "plan": {
+      "schema_version": "evidence-needs-plan-v1",
+      "decision": "plan",
+      "clarification": null,
+      "needs": [
+        {
+          "need_id": "n1",
+          "aspect": "ROPA changes",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "What changed in the ROPA"
+          },
+          "operation": "compare",
+          "authority": {
+            "kind": "previous",
+            "value": "previous",
+            "precision": "named",
+            "source": {
+              "turn_id": "u1",
+              "quote": "What changed in the ROPA"
+            }
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null
+        },
+        {
+          "need_id": "n2",
+          "aspect": "current employment-record requirements",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "what does current policy require for employment records?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": "n1"
+        }
+      ]
+    }
+  },
+  {
+    "name": "transition_month",
+    "turns": [
+      {
+        "turn_id": "u1",
+        "text": "What changed during June 2026?"
+      }
+    ],
+    "plan": {
+      "schema_version": "evidence-needs-plan-v1",
+      "decision": "plan",
+      "clarification": null,
+      "needs": [
+        {
+          "need_id": "n1",
+          "aspect": "changes in June",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "What changed during June 2026?"
+          },
+          "operation": "compare",
+          "authority": {
+            "kind": "transition_period",
+            "value": "2026-06",
+            "precision": "month",
+            "source": {
+              "turn_id": "u1",
+              "quote": "June 2026"
+            }
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "dated_fact",
+    "turns": [
+      {
+        "turn_id": "u1",
+        "text": "Had I completed training by 15 December 2031?"
+      }
+    ],
+    "plan": {
+      "schema_version": "evidence-needs-plan-v1",
+      "decision": "plan",
+      "clarification": null,
+      "needs": [
+        {
+          "need_id": "n1",
+          "aspect": "personal training completion",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Had I completed training by 15 December 2031?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2031-12-15",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "15 December 2031"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "generic",
+    "turns": [
+      {
+        "turn_id": "u1",
+        "text": "What do we do about a new workplace hazard?"
+      }
+    ],
+    "plan": {
+      "schema_version": "evidence-needs-plan-v1",
+      "decision": "plan",
+      "clarification": null,
+      "needs": [
+        {
+          "need_id": "n1",
+          "aspect": "hazard response",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "What do we do about a new workplace hazard?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": {
+              "turn_id": "u1",
+              "quote": "workplace"
+            }
+          },
+          "supports_need_id": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "named_ambiguous",
+    "turns": [
+      {
+        "turn_id": "u1",
+        "text": "Which policy applies at Riverside?"
+      }
+    ],
+    "plan": {
+      "schema_version": "evidence-needs-plan-v1",
+      "decision": "plan",
+      "clarification": null,
+      "needs": [
+        {
+          "need_id": "n1",
+          "aspect": "applicable policy",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Which policy applies at Riverside?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "named",
+            "source": {
+              "turn_id": "u1",
+              "quote": "Riverside"
+            }
+          },
+          "supports_need_id": null
+        }
+      ]
+    }
+  },
+  {
+    "name": "clarification_reply",
+    "turns": [
+      {
+        "turn_id": "u1",
+        "text": "Which policy applies at Riverside?"
+      },
+      {
+        "turn_id": "u2",
+        "text": "The outreach site"
+      }
+    ],
+    "plan": {
+      "schema_version": "evidence-needs-plan-v1",
+      "decision": "plan",
+      "clarification": null,
+      "needs": [
+        {
+          "need_id": "n1",
+          "aspect": "applicable policy",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Which policy applies at Riverside?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "relational",
+            "source": {
+              "turn_id": "u2",
+              "quote": "The outreach site"
+            }
+          },
+          "supports_need_id": null
+        }
+      ]
+    }
+  }
+]

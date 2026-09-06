@@ -14,12 +14,15 @@ use App\Enums\GenerationRunFailureCode;
 use App\Enums\GenerationRunStatus;
 use App\Enums\MessageKind;
 use App\Enums\MessageRole;
+use App\Enums\PlannerClarificationReason;
+use App\Enums\RetrievalClarificationSource;
 use App\Enums\RetrievalOutcome;
 use App\Exceptions\GenerationCancelled;
 use App\Exceptions\GenerationContextBudgetExceeded;
 use App\Exceptions\GenerationException;
 use App\Exceptions\GenerationProviderException;
 use App\Exceptions\GenerationStreamException;
+use App\Exceptions\RetrievalPlannerException;
 use App\Models\ContextualisationResultSnapshot;
 use App\Models\ControlledAssistantResponse;
 use App\Models\Conversation;
@@ -32,6 +35,7 @@ use App\Services\Conversation\ContextualisationClient;
 use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Conversation\ConversationHistoryBuilder;
 use App\Services\Generation\GenerationProfileFactory;
+use App\Services\Retrieval\RetrievalClient;
 use App\Support\Conversation\ContextualisationRequest;
 use App\Support\Conversation\ContextualisationResult;
 use App\Support\Generation\AnswerPartResult;
@@ -59,6 +63,7 @@ final readonly class OrchestrateConversationRun
         private PersistGeneratedAnswer $persistence,
         private ChatDeliveryEventRecorder $events,
         private RecordWorkspaceUsage $usageRecorder,
+        private RetrievalClient $retrievalClient,
     ) {}
 
     /** @param null|callable(string, mixed): void $observe */
@@ -74,6 +79,7 @@ final readonly class OrchestrateConversationRun
             $stage = GenerationRunStatus::Contextualising;
             $userMessage = $run->userMessage;
             $workspace = $run->conversation->workspace;
+            $needsProfile = $run->needs_profile === null ? null : $this->profiles->pinnedNeeds($run->needs_profile);
             $history = $this->history->forMessage($userMessage);
             $request = new ContextualisationRequest(
                 (string) Str::uuid(),
@@ -82,7 +88,11 @@ final readonly class OrchestrateConversationRun
                 $history,
                 (string) config('conversation.context_policy_version'),
             );
-            $contextualised = $this->contextualisation->contextualise($workspace, $request);
+            // The needs planner receives authorised user turns directly: no second
+            // model rewrites the question before its grounded quotation checks.
+            $contextualised = $needsProfile === null ? $this->contextualisation->contextualise($workspace, $request)
+                : new ContextualisationResult(ContextualisationStatus::Resolved, $userMessage->display_text,
+                    $history !== [], null, null, 'authorised-user-turns-needs-v1', null);
             $this->persistContextualisation($run, $contextualised);
             $observe?->__invoke('contextualisation', [
                 'status' => $contextualised->status->value,
@@ -103,13 +113,20 @@ final readonly class OrchestrateConversationRun
             $stage = GenerationRunStatus::Retrieving;
             $scope = $this->authorisation->handle($userMessage->createdBy, (string) $workspace->public_id);
             $evaluatedAt = CarbonImmutable::now();
-            $retrieval = $this->retrieval->handle(
-                $scope,
-                $contextualised->resolvedQuery ?? $userMessage->display_text,
-                (int) config('conversation.candidate_k'),
-                $observe,
-            );
-            $snapshot = $this->persistRetrievalSnapshot($run, $retrieval, $evaluatedAt);
+            $needsPlan = null;
+            if ($needsProfile !== null) {
+                $turns = array_map(fn ($turn) => ['turn_id' => 'user-'.$turn['user_ordinal'], 'text' => $turn['user_message']], $history);
+                $turns[] = ['turn_id' => 'user-'.$userMessage->ordinal, 'text' => $userMessage->display_text];
+                $needsPlan = $this->retrievalClient->planNeeds($workspace, $turns, $evaluatedAt);
+            }
+            $retrieval = $needsPlan !== null ? $this->retrieval->handleNeeds($scope, $needsPlan,
+                (int) config('conversation.candidate_k'), $evaluatedAt, $observe) : $this->retrieval->handle(
+                    $scope,
+                    $contextualised->resolvedQuery ?? $userMessage->display_text,
+                    (int) config('conversation.candidate_k'),
+                    $observe,
+                );
+            $snapshot = $this->persistRetrievalSnapshot($run, $retrieval, $evaluatedAt, $needsPlan?->value);
             if ($retrieval->outcome !== RetrievalOutcome::EvidenceFound) {
                 $this->completeControlledRetrieval($run, $retrieval, $snapshot);
 
@@ -134,10 +151,11 @@ final readonly class OrchestrateConversationRun
                     $retrieval->candidates,
                 ),
             ]);
-            $profile = $this->profiles->configured();
+            $profile = $needsProfile ?? $this->profiles->configured();
             $run->update([
                 'delivery_mode' => $profile->deliveryMode->value,
-                'generation_endpoint' => $profile->deliveryMode->value === 'streaming_parts' ? 'generation.stream' : 'generation.answer',
+                'generation_endpoint' => $needsProfile !== null ? 'generation.answer-needs'
+                    : ($profile->deliveryMode->value === 'streaming_parts' ? 'generation.stream' : 'generation.answer'),
             ]);
             $prepared = $this->generation->prepare(
                 $input,
@@ -156,6 +174,32 @@ final readonly class OrchestrateConversationRun
             $this->completeAnswer($run, $scope, $input->question, $prepared);
         } catch (GenerationCancelled) {
             $this->fail($runId, GenerationRunFailureCode::InternalFailure);
+        } catch (RetrievalPlannerException $exception) {
+            $failureUsage = [
+                ...($run->fresh()->usage ?? []),
+                'planner_failure' => [
+                    'category' => $exception->category,
+                    'provider_status' => $exception->providerStatus,
+                    'attempt_count' => $exception->attemptCount,
+                    'systemic' => $exception->systemic,
+                    ...($exception->validation === null ? [] : ['validation' => $exception->validation]),
+                    ...($exception->completion === null ? [] : ['completion' => $exception->completion]),
+                ],
+            ];
+            if ($needsProfile !== null
+                && $exception->category === 'invalid_grounded_needs_plan'
+                && ! $exception->systemic
+                && $exception->validation === ['stage' => 'grounding', 'field' => 'root', 'code' => 'reference_grounding']) {
+                $run->forceFill(['usage' => $failureUsage])->save();
+                $retrieval = new RetrievalResult(RetrievalOutcome::ClarificationRequired,
+                    reason: PlannerClarificationReason::UngroundedNeedsReference->value,
+                    clarificationSource: RetrievalClarificationSource::Planner);
+                $snapshot = $this->persistRetrievalSnapshot($run, $retrieval, $evaluatedAt);
+                $this->completeControlledRetrieval($run, $retrieval, $snapshot);
+
+                return;
+            }
+            $this->fail($runId, GenerationRunFailureCode::RetrievalFailed, $failureUsage);
         } catch (GenerationContextBudgetExceeded $exception) {
             $this->fail($runId, GenerationRunFailureCode::GenerationContextBudgetExceeded);
         } catch (GenerationProviderException $exception) {
@@ -256,9 +300,9 @@ final readonly class OrchestrateConversationRun
         });
     }
 
-    private function persistRetrievalSnapshot(GenerationRun $run, RetrievalResult $result, CarbonImmutable $evaluatedAt): RetrievalOutcomeSnapshot
+    private function persistRetrievalSnapshot(GenerationRun $run, RetrievalResult $result, CarbonImmutable $evaluatedAt, ?array $needsPlan = null): RetrievalOutcomeSnapshot
     {
-        return DB::transaction(function () use ($run, $result, $evaluatedAt): RetrievalOutcomeSnapshot {
+        return DB::transaction(function () use ($run, $result, $evaluatedAt, $needsPlan): RetrievalOutcomeSnapshot {
             $snapshot = RetrievalOutcomeSnapshot::query()->create([
                 'public_id' => (string) Str::uuid(),
                 'workspace_id' => $run->workspace_id,
@@ -268,7 +312,7 @@ final readonly class OrchestrateConversationRun
                 'clarification_reason' => $result->reason,
                 'resolved_temporal_authority' => $result->resolvedTemporalAuthority,
                 'resolved_applicability_location' => $result->resolvedApplicabilityLocation,
-                'lineage' => $result->lineage,
+                'lineage' => [...$result->lineage, ...($needsPlan === null ? [] : ['evidence_needs_plan' => $needsPlan])],
                 'evaluated_at' => $evaluatedAt,
                 'candidate_count' => count($result->candidates),
                 'evidence_count' => $result->outcome === RetrievalOutcome::EvidenceFound ? count($result->candidates) : 0,
@@ -300,7 +344,7 @@ final readonly class OrchestrateConversationRun
             return;
         }
         $rendered = $result->outcome === RetrievalOutcome::ClarificationRequired
-            ? $this->renderer->clarification($result->clarificationSource ?? throw new GenerationException('A clarification source is required.'), $result->reason ?? '')
+            ? $this->renderer->clarification($result->clarificationSource ?? throw new GenerationException('A clarification source is required.'), $result->reason ?? '', $result->clarificationQuestion)
             : $this->renderer->noAnswer($result->outcome === RetrievalOutcome::ComparisonScopeIncomplete);
         $terminal = $result->outcome === RetrievalOutcome::ClarificationRequired
             ? GenerationRunStatus::ClarificationRequired

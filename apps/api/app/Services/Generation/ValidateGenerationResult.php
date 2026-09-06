@@ -7,11 +7,51 @@ namespace App\Services\Generation;
 use App\Enums\GenerationOutcome;
 use App\Exceptions\GenerationException;
 use App\Support\Generation\AnswerPartResult;
+use App\Support\Generation\AspectCoverage;
 use App\Support\Generation\GenerationRequest;
 use App\Support\Generation\GenerationResult;
 
 final class ValidateGenerationResult
 {
+    /** @param list<string> $needIds @param array<string, mixed> $payload */
+    public function handleNeeds(GenerationRequest $request, array $needIds, array $payload): GenerationResult
+    {
+        if ($request->evidenceNeeds !== [] && array_column($request->evidenceNeeds, 'need_id') !== $needIds) {
+            throw new GenerationException('Generation result needs differ from the assembled request.');
+        }
+        if (! $this->hasExactKeys($payload, ['contract_version', 'outcome', 'answer_parts', 'unsupported_aspects', 'insufficiency_reason', 'usage', 'aspect_links'])
+            || ($payload['contract_version'] ?? null) !== 2 || ! is_array($payload['aspect_links'])) {
+            throw new GenerationException('The needs generation result schema is invalid.');
+        }
+        $links = $payload['aspect_links'];
+        unset($payload['aspect_links']);
+        $payload['contract_version'] = 1;
+        // Preserve the same citation membership and outcome invariants as v1.
+        $result = $this->handle($request, $payload);
+        try {
+            $statuses = AspectCoverage::derive($result, $needIds, $links);
+            if ($request->evidenceNeeds !== []) {
+                $owners = array_column($request->evidenceNeeds, 'evidence_ids', 'need_id');
+                foreach ($links as $link) {
+                    $owned = $owners[$link['need_id']];
+                    foreach ($link['answer_part_indices'] as $index) {
+                        if (array_diff($result->answerParts[$index]->evidenceIds, $owned) !== []) {
+                            throw new \InvalidArgumentException('Answer cites another need evidence.');
+                        }
+                    }
+                    if ($owned === [] && ($link['answer_part_indices'] !== [] || $link['unsupported_aspect_indices'] === [])) {
+                        throw new \InvalidArgumentException('Need without evidence requires a gap.');
+                    }
+                }
+            }
+        } catch (\InvalidArgumentException $exception) {
+            throw new GenerationException('The needs generation coverage is invalid.', previous: $exception);
+        }
+
+        return new GenerationResult($result->outcome, $result->answerParts, $result->unsupportedAspects,
+            $result->insufficiencyReason, $result->usage, $links, $statuses);
+    }
+
     /** @param array<string, mixed> $payload */
     public function handle(GenerationRequest $request, array $payload): GenerationResult
     {

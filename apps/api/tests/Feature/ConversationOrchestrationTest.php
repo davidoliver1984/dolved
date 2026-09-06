@@ -7,6 +7,7 @@ namespace Tests\Feature;
 use App\Actions\Conversation\CreateConversation;
 use App\Actions\Conversation\OrchestrateConversationRun;
 use App\Actions\Conversation\ReconcileStaleGenerationRuns;
+use App\Actions\Conversation\RetryGenerationRun;
 use App\Actions\Conversation\SubmitConversationMessage;
 use App\Enums\ChatStreamEventType;
 use App\Enums\ConversationStatus;
@@ -30,17 +31,138 @@ use App\Models\WorkspaceCorpusGeneration;
 use App\Models\WorkspaceCorpusGenerationChunk;
 use App\Models\WorkspaceMembership;
 use App\Services\Conversation\ChatDeliveryEventRecorder;
+use App\Services\Generation\GenerationProfileFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ConversationOrchestrationTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_needs_profile_is_immutable_survives_retry_and_rejects_deployment_drift(): void
+    {
+        Queue::fake();
+        Http::preventStrayRequests();
+        Http::fake();
+        [$user, $workspace] = $this->workspaceFixture();
+        config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
+        $conversation = app(CreateConversation::class)->handle($workspace, $user);
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, 'A synthetic question', (string) Str::uuid());
+        $pin = $run->fresh()->needs_profile;
+        $this->assertNotNull($pin);
+        $reordered = array_reverse($pin, true);
+        app(GenerationProfileFactory::class)->pinnedNeeds($reordered);
+        try {
+            $run->update(['needs_profile' => null]);
+            $this->fail('Profile mutation was accepted.');
+        } catch (LogicException) {
+            $run->refresh();
+        }
+        config(['conversation.needs_workspace_ids' => [], 'generation.model' => 'changed-after-submission']);
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $this->assertSame(GenerationRunStatus::Failed, $run->fresh()->status);
+        Http::assertNothingSent();
+        $retry = app(RetryGenerationRun::class)->handle($run->fresh(), (string) Str::uuid());
+        $this->assertSame($pin, $retry->fresh()->needs_profile);
+        $other = app(CreateConversation::class)->handle($workspace, $user);
+        $newRun = app(SubmitConversationMessage::class)->handle($other, $user, 'New legacy question', (string) Str::uuid());
+        $this->assertNull($newRun->needs_profile);
+    }
+
+    public function test_needs_planner_failure_retains_safe_typed_detail_and_stops_before_retrieval(): void
+    {
+        Queue::fake();
+        [$user, $workspace] = $this->workspaceFixture();
+        config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
+        Http::preventStrayRequests();
+        Http::fake(fn () => Http::response(['detail' => [
+            'code' => 'retrieval_planning_failed', 'category' => 'invalid_grounded_needs_plan',
+            'provider_status' => 200, 'attempt_count' => 1, 'systemic' => false,
+            'raw_body' => 'Must never persist this',
+            'completion' => ['finish_reason' => 'stop', 'input_tokens' => 120, 'output_tokens' => 90,
+                'reasoning_tokens' => 50, 'raw_body' => 'Must never persist this'],
+            'validation' => ['stage' => 'catalogue', 'field' => 'root', 'code' => 'binding_coverage',
+                'input' => 'Must never persist this'],
+        ]], 503));
+        $conversation = app(CreateConversation::class)->handle($workspace, $user);
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, 'Synthetic question', (string) Str::uuid());
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        $this->assertSame(GenerationRunStatus::Failed, $run->status);
+        $this->assertSame('retrieval_failed', $run->failure_code->value);
+        $this->assertSame(['category' => 'invalid_grounded_needs_plan', 'provider_status' => 200,
+            'attempt_count' => 1, 'systemic' => false,
+            'validation' => ['stage' => 'catalogue', 'field' => 'root', 'code' => 'binding_coverage'],
+            'completion' => ['finish_reason' => 'stop', 'input_tokens' => 120, 'output_tokens' => 90,
+                'reasoning_tokens' => 50]], $run->usage['planner_failure']);
+        $this->assertStringNotContainsString('Must never persist', json_encode($run->usage));
+        Http::assertSentCount(1);
+        $this->assertDatabaseCount('generated_answers', 0);
+    }
+
+    public function test_needs_clarification_keeps_text_separate_from_the_bounded_reason_code(): void
+    {
+        Queue::fake();
+        [$user, $workspace] = $this->workspaceFixture();
+        config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
+        $question = str_repeat('Which version and site should be used? ', 10);
+        Http::fake(function (Request $request) use ($question) {
+            $identity = ['provider' => 'openai', 'model' => 'gpt-5-mini',
+                'contract_schema_version' => 'evidence-needs-plan-v2',
+                'prompt_version' => 'bounded-evidence-needs-v9', 'adapter_version' => 'structured-chat-needs-v4'];
+            $canonical = $identity;
+            ksort($canonical);
+
+            return Http::response(['contract_version' => 2, 'request_id' => $request->data()['request_id'],
+                'plan' => ['schema_version' => 'evidence-needs-plan-v2', 'decision' => 'clarify', 'clarification' => $question, 'needs' => []],
+                'classifier_lineage' => [...$identity, 'fingerprint' => hash('sha256', json_encode($canonical, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR))],
+                'usage' => ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini',
+                    'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
+                    'input_tokens' => 10, 'cached_input_tokens' => 0, 'output_tokens' => 10,
+                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null, 'pricing_snapshot' => null]]);
+        });
+        $conversation = app(CreateConversation::class)->handle($workspace, $user);
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, 'A synthetic ambiguous question', (string) Str::uuid());
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        $this->assertSame(GenerationRunStatus::ClarificationRequired, $run->status, json_encode($run->only(['failure_code', 'usage'])));
+        $this->assertSame('evidence_needs_clarification', $run->retrievalOutcomeSnapshot->clarification_reason);
+        $this->assertSame($question, $run->assistantMessage->display_text);
+        Http::assertSentCount(1);
+    }
+
+    public function test_ungrounded_needs_reference_uses_existing_typed_clarification_without_retrieval(): void
+    {
+        Queue::fake();
+        [$user, $workspace] = $this->workspaceFixture();
+        config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
+        Http::preventStrayRequests();
+        Http::fake(fn () => Http::response(['detail' => [
+            'code' => 'retrieval_planning_failed', 'category' => 'invalid_grounded_needs_plan',
+            'provider_status' => 200, 'attempt_count' => 1, 'systemic' => false,
+            'validation' => ['stage' => 'grounding', 'field' => 'root', 'code' => 'reference_grounding'],
+            'completion' => ['finish_reason' => 'stop', 'input_tokens' => 120, 'output_tokens' => 90, 'reasoning_tokens' => 50],
+        ]], 503));
+        $conversation = app(CreateConversation::class)->handle($workspace, $user);
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, 'How does the supplier register work?', (string) Str::uuid());
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        $this->assertSame(GenerationRunStatus::ClarificationRequired, $run->status);
+        $this->assertNull($run->failure_code);
+        $this->assertSame('ungrounded_needs_reference', $run->retrievalOutcomeSnapshot->clarification_reason);
+        $this->assertStringContainsString('Could you rephrase', $run->assistantMessage->display_text);
+        $this->assertSame('reference_grounding', $run->usage['planner_failure']['validation']['code']);
+        $this->assertSame(90, $run->usage['planner_failure']['completion']['output_tokens']);
+        Http::assertSentCount(1);
+        $this->assertDatabaseCount('generated_answers', 0);
+    }
 
     public function test_submission_is_workspace_scoped_idempotent_and_allows_only_one_active_run(): void
     {
@@ -200,10 +322,17 @@ class ConversationOrchestrationTest extends TestCase
         Http::assertSentCount(2);
     }
 
-    public function test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer(): void
+    public static function executionPaths(): array
+    {
+        return [['legacy'], ['needs']];
+    }
+
+    #[DataProvider('executionPaths')]
+    public function test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer(string $path): void
     {
         Queue::fake();
         [$user, $workspace] = $this->workspaceFixture();
+        config(['conversation.needs_workspace_ids' => $path === 'needs' ? [$workspace->public_id] : []]);
         $profile = EmbeddingProfile::factory()->create();
         $space = EmbeddingSpaceGeneration::factory()->available()->create([
             'embedding_profile_id' => $profile->id,
@@ -244,8 +373,33 @@ class ConversationOrchestrationTest extends TestCase
         $run = app(SubmitConversationMessage::class)->handle(
             $conversation, $user, 'What does the current approved procedure require?', (string) Str::uuid(),
         );
-        Http::fake(function ($request) use ($generation, $document, $chunk) {
+        // Rollback controls new submissions, never queued work.
+        config(['conversation.needs_workspace_ids' => []]);
+        $this->assertSame($path === 'needs', $run->needs_profile !== null);
+        Http::preventStrayRequests();
+        Http::fake(function ($request) use ($generation, $document, $chunk, $path) {
             $body = $request->data();
+            if (str_ends_with($request->url(), '/plan-needs')) {
+                $this->assertSame([['turn_id' => 'user-1', 'text' => 'What does the current approved procedure require?']], $body['user_turns']);
+                $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
+                    'contract_schema_version' => 'evidence-needs-plan-v2',
+                    'prompt_version' => 'bounded-evidence-needs-v9', 'adapter_version' => 'structured-chat-needs-v4'];
+                ksort($lineage);
+                $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+
+                return Http::response(['contract_version' => 2, 'request_id' => $body['request_id'],
+                    'plan' => ['schema_version' => 'evidence-needs-plan-v2', 'decision' => 'plan', 'clarification' => null,
+                        'bindings' => [['need_id' => 'n1', 'subject_status' => 'topic', 'family_ids' => [],
+                            'ownership' => 'authorised_workspace', 'ownership_source' => null]],
+                        'needs' => [['need_id' => 'n1', 'aspect' => 'current procedure requirements', 'central' => true,
+                            'question_span' => ['turn_id' => 'user-1', 'quote' => $body['user_turns'][0]['text']],
+                            'operation' => 'retrieve', 'authority' => ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null],
+                            'fact_reference' => null, 'applicability' => ['kind' => 'generic', 'source' => null], 'supports_need_id' => null]]],
+                    'classifier_lineage' => $lineage,
+                    'usage' => ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini', 'execution' => 'provider_api',
+                        'request_count' => 1, 'retry_count' => 0, 'input_tokens' => 12, 'cached_input_tokens' => null,
+                        'output_tokens' => 20, 'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null, 'pricing_snapshot' => null]]);
+            }
             if (str_ends_with($request->url(), '/conversation/contextualize')) {
                 return Http::response([
                     'contract_version' => 1, 'request_id' => $body['request_id'],
@@ -277,6 +431,15 @@ class ConversationOrchestrationTest extends TestCase
                     'usage' => ['latency_ms' => 2, 'input_tokens' => 20, 'output_tokens' => 8, 'cost_usd' => null],
                 ],
             ];
+            if ($path === 'needs') {
+                $this->assertStringEndsWith('/generation/answer-needs', $request->url());
+                $this->assertSame(['ev-01'], $body['evidence_needs'][0]['evidence_ids']);
+                $result['contract_version'] = 2;
+                $result['result']['contract_version'] = 2;
+                $result['result']['aspect_links'] = [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]];
+
+                return Http::response($result);
+            }
             $candidate = [
                 'contract_version' => 1, 'request_id' => $body['request_id'], 'sequence' => 1,
                 'event_type' => 'answer_part_candidate',
@@ -305,19 +468,26 @@ class ConversationOrchestrationTest extends TestCase
         $this->assertDatabaseCount('evidence_snapshots', 1);
         $this->assertDatabaseHas('messages', ['id' => $run->assistant_message_id, 'kind' => 'grounded_answer']);
         $this->assertSame($run->id, $run->generatedAnswer?->generation_run_id);
-        $this->assertSame('streaming_parts', $run->delivery_mode);
-        $this->assertSame('generation.stream', $run->generation_endpoint);
+        $this->assertSame($path === 'needs' ? 'complete_result_only' : 'streaming_parts', $run->delivery_mode);
+        $this->assertSame($path === 'needs' ? 'generation.answer-needs' : 'generation.stream', $run->generation_endpoint);
         $events = $run->deliveryEvents()->get();
-        $this->assertSame([
-            'run_progress', 'run_progress', 'run_progress', 'run_progress',
-            'answer_part_accepted_for_display', 'run_progress', 'answer_completed',
-        ], $events->pluck('event_type')->map->value->all());
-        $this->assertTrue($events[4]->provisional);
-        $this->assertFalse($events[6]->provisional);
-        $provisional = json_encode($events[4]->safe_payload, JSON_THROW_ON_ERROR);
-        $this->assertStringNotContainsString('ev-01', $provisional);
-        $this->assertStringNotContainsString('document_chunk_id', $provisional);
-        $this->assertSame($run->assistantMessage?->public_id, $events[6]->safe_payload['message_id']);
+        if ($path === 'needs') {
+            $this->assertSame(['n1' => 'supported'], $run->generatedAnswer->aspect_results);
+            $this->assertSame('evidence-needs-plan-v2', $run->retrievalOutcomeSnapshot->lineage['evidence_needs_plan']['schema_version']);
+            $this->assertFalse($events->contains(fn ($event) => $event->provisional));
+            Http::assertSentCount(3);
+        } else {
+            $this->assertSame([
+                'run_progress', 'run_progress', 'run_progress', 'run_progress',
+                'answer_part_accepted_for_display', 'run_progress', 'answer_completed',
+            ], $events->pluck('event_type')->map->value->all());
+            $this->assertTrue($events[4]->provisional);
+            $this->assertFalse($events[6]->provisional);
+            $provisional = json_encode($events[4]->safe_payload, JSON_THROW_ON_ERROR);
+            $this->assertStringNotContainsString('ev-01', $provisional);
+            $this->assertStringNotContainsString('document_chunk_id', $provisional);
+            $this->assertSame($run->assistantMessage?->public_id, $events[6]->safe_payload['message_id']);
+        }
         $this->actingAs($user)
             ->getJson("/api/workspaces/{$workspace->public_id}/conversations/{$conversation->public_id}")
             ->assertOk()
@@ -353,7 +523,7 @@ class ConversationOrchestrationTest extends TestCase
             ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.source_route', null)
             ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.cited_text', $chunk->text)
             ->assertJsonPath('data.runs.0.answer.parts.0.citations.0.source_provenance', $chunk->provenance);
-        Http::assertSentCount(4);
+        Http::assertSentCount($path === 'needs' ? 3 : 4);
     }
 
     public function test_sse_replays_after_last_event_id_and_closes_on_terminal_event(): void

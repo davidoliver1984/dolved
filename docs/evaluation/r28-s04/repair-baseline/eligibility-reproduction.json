@@ -1,0 +1,12 @@
+{
+    "generic_location": "unresolved_location_reference",
+    "primary_after_pair_filter": [
+        2
+    ],
+    "comparison_after_pair_filter": [
+        1
+    ],
+    "current_support_removed": 3,
+    "scope_authorisation": "BuildAuthorisedKnowledgeScope",
+    "database": "read_only"
+}

@@ -1,0 +1,69 @@
+{
+  "$defs": {
+    "UserTurn": {
+      "additionalProperties": false,
+      "properties": {
+        "turn_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Turn Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "turn_id",
+        "text"
+      ],
+      "title": "UserTurn",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "const": 1,
+      "title": "Contract Version",
+      "type": "integer"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "workspace_id": {
+      "format": "uuid",
+      "title": "Workspace Id",
+      "type": "string"
+    },
+    "evaluated_at": {
+      "format": "date-time",
+      "title": "Evaluated At",
+      "type": "string"
+    },
+    "user_turns": {
+      "items": {
+        "$ref": "#/$defs/UserTurn"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "User Turns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "contract_version",
+    "request_id",
+    "workspace_id",
+    "evaluated_at",
+    "user_turns"
+  ],
+  "title": "NeedsPlanRequest",
+  "type": "object"
+}

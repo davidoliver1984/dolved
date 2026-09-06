@@ -4,6 +4,29 @@ from app.generation.protocol import Generator
 from app.settings import Settings
 
 
+def build_needs_generator(settings: Settings) -> OpenAIGenerator:
+    from app.generation.openai_adapter import (
+        NEEDS_ADAPTER_VERSION,
+        NEEDS_CONTRACT_VERSION,
+        NEEDS_PROMPT_VERSION,
+    )
+
+    if settings.generation_provider != "openai":
+        raise ValueError("needs generation requires the configured OpenAI provider")
+    generator = build_generator(
+        settings.model_copy(
+            update={
+                "generation_contract_version": NEEDS_CONTRACT_VERSION,
+                "generation_prompt_version": NEEDS_PROMPT_VERSION,
+                "generation_adapter_version": NEEDS_ADAPTER_VERSION,
+            }
+        )
+    )
+    if not isinstance(generator, OpenAIGenerator):
+        raise TypeError("invalid needs generator")
+    return generator
+
+
 def build_generator(settings: Settings) -> Generator:
     if settings.generation_provider == "deterministic":
         return CatalogueDeterministicGenerator(

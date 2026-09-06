@@ -8,6 +8,7 @@ use App\Exceptions\GenerationException;
 use App\Models\AnswerPart;
 use App\Models\EvidenceSnapshot;
 use App\Models\GeneratedAnswer;
+use App\Support\Generation\AspectCoverage;
 use App\Support\Generation\GenerationRequest;
 use App\Support\Generation\GenerationResult;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
@@ -20,6 +21,17 @@ final class PersistGeneratedAnswer
     /** @param array{fingerprint_scheme_version: int, generation_fingerprint: string, snapshot: array<string, mixed>} $fingerprint */
     public function handle(AuthorisedKnowledgeScope $authorised, string $question, string $correlationId, GenerationRequest $request, GenerationResult $result, array $fingerprint, ?int $assistantMessageId = null, ?int $generationRunId = null): GeneratedAnswer
     {
+        $hasNeeds = $result->aspectLinks !== [];
+        if ($hasNeeds !== (($fingerprint['snapshot']['contract_version'] ?? null) === 'generation-result-v2')) {
+            throw new GenerationException('Generation coverage does not match the pinned contract.');
+        }
+        if ($hasNeeds && AspectCoverage::derive($result, array_keys($result->aspectResults), $result->aspectLinks) !== $result->aspectResults) {
+            throw new GenerationException('Generation coverage changed before persistence.');
+        }
+        if (! $hasNeeds && $result->aspectResults !== []) {
+            throw new GenerationException('Legacy generation cannot contain needs coverage.');
+        }
+
         return DB::transaction(function () use ($authorised, $question, $correlationId, $request, $result, $fingerprint, $assistantMessageId, $generationRunId): GeneratedAnswer {
             $answer = GeneratedAnswer::query()->create([
                 'public_id' => (string) Str::uuid(),
@@ -31,6 +43,8 @@ final class PersistGeneratedAnswer
                 'question' => $question,
                 'outcome' => $result->outcome,
                 'unsupported_aspects' => $result->unsupportedAspects,
+                'aspect_links' => $result->aspectLinks === [] ? null : $result->aspectLinks,
+                'aspect_results' => $result->aspectResults === [] ? null : $result->aspectResults,
                 'insufficiency_reason' => $result->insufficiencyReason,
                 'fingerprint_scheme_version' => $fingerprint['fingerprint_scheme_version'],
                 'generation_fingerprint' => $fingerprint['generation_fingerprint'],

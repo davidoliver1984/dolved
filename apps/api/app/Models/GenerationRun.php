@@ -42,7 +42,7 @@ class GenerationRun extends Model
         });
 
         static::updating(function (GenerationRun $run): void {
-            if ($run->isDirty(['public_id', 'workspace_id', 'conversation_id', 'user_message_id', 'retry_of_run_id', 'correlation_id'])) {
+            if ($run->isDirty(['public_id', 'workspace_id', 'conversation_id', 'user_message_id', 'retry_of_run_id', 'correlation_id', 'needs_profile'])) {
                 throw new LogicException('Generation run identity and lineage are immutable.');
             }
         });
@@ -55,6 +55,7 @@ class GenerationRun extends Model
             'failure_code' => GenerationRunFailureCode::class,
             'retrieval_outcome' => RetrievalOutcome::class,
             'usage' => 'array',
+            'needs_profile' => 'array',
             'started_at' => 'immutable_datetime',
             'first_progress_at' => 'immutable_datetime',
             'completed_at' => 'immutable_datetime',

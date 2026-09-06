@@ -15,6 +15,8 @@ final readonly class GenerationResult
         public array $unsupportedAspects,
         public ?string $insufficiencyReason,
         public ?array $usage = null,
+        public array $aspectLinks = [],
+        public array $aspectResults = [],
     ) {}
 
     public function renderedText(): string

@@ -47,7 +47,18 @@ final readonly class EligibilityResolver
             return new EligibleRetrievalScope(RetrievalOutcome::NoEligibleEvidence);
         }
 
-        $location = $this->resolveLocations($authorised, $plan->locationReferences);
+        $binding = $plan->evidenceNeed['subject_binding'] ?? null;
+        if ($binding !== null) {
+            if ($binding['ownership'] === 'external_tenant' || $binding['subject_status'] === 'unavailable') {
+                return new EligibleRetrievalScope(RetrievalOutcome::NoEligibleEvidence, reason: 'requested_subject_unavailable');
+            }
+            if ($binding['subject_status'] === 'ambiguous') {
+                return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
+                    reason: 'ambiguous_document_subject', clarificationSource: RetrievalClarificationSource::EligibilityResolver);
+            }
+        }
+
+        $location = $this->resolveLocations($authorised, $plan->locationReferences, $plan->evidenceNeed !== null);
         if ($location instanceof EligibilityClarificationReason) {
             return new EligibleRetrievalScope(
                 RetrievalOutcome::ClarificationRequired,
@@ -58,10 +69,16 @@ final readonly class EligibilityResolver
 
         $families = DocumentFamily::query()
             ->where('workspace_id', $authorised->workspace->id)
+            ->when($binding !== null && $binding['subject_status'] === 'matched',
+                fn ($query) => $query->whereIn('public_id', $binding['family_ids'])->whereNull('tombstoned_at'))
             ->with(['documents.applicabilitySnapshot.locations'])
             ->get();
 
         if ($plan->temporalMode === RetrievalTemporalMode::Compare) {
+            $needAuthority = $plan->evidenceNeed['authority'] ?? null;
+            if ($needAuthority !== null && in_array($needAuthority['kind'], ['transition_period', 'transition_boundary'], true)) {
+                return $this->transitionNeed($families, $authorised, $location, $needAuthority, $evaluatedAt);
+            }
             $transitionAt = $plan->versionTransitionBoundary === null
                 ? null
                 : $this->periods->boundaryStart($plan->versionTransitionBoundary['value']);
@@ -142,6 +159,59 @@ final readonly class EligibilityResolver
      * @param  Collection<int, Document>  $primary
      * @return Collection<int, Document>|EligibilityClarificationReason
      */
+    private function transitionNeed(
+        Collection $families,
+        AuthorisedKnowledgeScope $authorised,
+        ?OrganisationalLocation $location,
+        array $authority,
+        CarbonImmutable $evaluatedAt,
+    ): EligibleRetrievalScope {
+        $window = $authority['kind'] === 'transition_boundary'
+            ? [CarbonImmutable::parse($authority['value'])->startOfDay(), CarbonImmutable::parse($authority['value'])->addDay()->startOfDay()]
+            : $this->periods->window($authority['value']);
+        if ($window === null) {
+            return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
+                reason: EligibilityClarificationReason::UnresolvableTemporalPeriod->value,
+                clarificationSource: RetrievalClarificationSource::EligibilityResolver);
+        }
+        [$start, $end] = $window;
+        $primary = collect();
+        $comparison = collect();
+        foreach ($families as $family) {
+            $pairs = [];
+            foreach ($this->timeline->attainedVersions($family) as $version) {
+                $at = $this->timeline->authorityStart($version);
+                if ($at === null || $at->lt($start) || $at->gte($end) || $at->gt($evaluatedAt)) {
+                    continue;
+                }
+                $before = $this->timeline->resolve($family, $at->subMicrosecond());
+                $after = $this->timeline->resolve($family, $at);
+                if ($before !== null && $after !== null && ! $before->is($after)) {
+                    // Scope both sides before treating a transition as available.
+                    if ($this->eligible(collect([$before, $after]), $authorised, $location)->count() === 2) {
+                        $pairs[] = [$after, $before];
+                    }
+                }
+            }
+            if (count($pairs) > 1) {
+                return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
+                    reason: EligibilityClarificationReason::AmbiguousAuthorityWindowForPeriod->value,
+                    resolvedLocationPublicId: $location?->public_id,
+                    clarificationSource: RetrievalClarificationSource::EligibilityResolver);
+            }
+            if (count($pairs) === 1) {
+                $primary->push($pairs[0][0]);
+                $comparison->push($pairs[0][1]);
+            }
+        }
+
+        return $primary->isEmpty()
+            ? new EligibleRetrievalScope(RetrievalOutcome::ComparisonScopeIncomplete, resolvedLocationPublicId: $location?->public_id)
+            : new EligibleRetrievalScope(RetrievalOutcome::EvidenceFound,
+                ['primary' => $primary->pluck('public_id')->all(), 'comparison' => $comparison->pluck('public_id')->all()],
+                resolvedLocationPublicId: $location?->public_id);
+    }
+
     private function comparison(
         Collection $families,
         RetrievalPlan $plan,
@@ -285,16 +355,19 @@ final readonly class EligibilityResolver
     private function resolveLocations(
         AuthorisedKnowledgeScope $authorised,
         array $references,
+        bool $exactReferences = false,
     ): OrganisationalLocation|EligibilityClarificationReason|null {
         if ($references === []) {
             return null;
         }
         $resolved = collect();
         foreach ($references as $reference) {
-            if ($this->isOrganisationReference($authorised, $reference)) {
+            if ($exactReferences
+                ? Str::lower(trim($reference)) === Str::lower(trim($authorised->workspace->name))
+                : $this->isOrganisationReference($authorised, $reference)) {
                 continue;
             }
-            $match = $this->resolveLocationReference($authorised, $reference);
+            $match = $this->resolveLocationReference($authorised, $reference, $exactReferences);
             if ($match instanceof EligibilityClarificationReason) {
                 return $match;
             }
@@ -317,16 +390,17 @@ final readonly class EligibilityResolver
     private function resolveLocationReference(
         AuthorisedKnowledgeScope $authorised,
         string $reference,
+        bool $exactReference = false,
     ): OrganisationalLocation|EligibilityClarificationReason {
         $normalised = Str::lower(trim($reference));
         $matches = $this->locationMatches($authorised, $normalised);
-        if ($matches->isEmpty() && str_starts_with($normalised, 'the ')) {
+        if (! $exactReference && $matches->isEmpty() && str_starts_with($normalised, 'the ')) {
             $withoutArticle = trim(substr($normalised, 4));
             if (! in_array($withoutArticle, ['home', 'site', 'office', 'region', 'location'], true)) {
                 $matches = $this->locationMatches($authorised, $withoutArticle);
             }
         }
-        if ($matches->isEmpty()) {
+        if (! $exactReference && $matches->isEmpty()) {
             $withoutScopeSuffix = preg_replace(
                 '/\s+(?:outreach|service|team|site|home|office|region)$/u',
                 '',

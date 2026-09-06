@@ -33,6 +33,11 @@ from app.retrieval.models import (
     SearchRequest,
     SearchResponse,
 )
+from app.retrieval.needs import NeedsPlanRequest, NeedsPlanResponse
+from app.retrieval.needs_planner import (
+    NeedsValidationFailure,
+    StructuredChatNeedsPlanner,
+)
 from app.retrieval.planner import RetrievalPlanningError, StructuredChatRetrievalPlanner
 from app.retrieval.protocols import RetrievalPlanner, Retriever
 from app.retrieval.retriever import DenseRetriever
@@ -69,6 +74,21 @@ def retriever_dependency() -> Retriever:
         embedder=create_deferred_embedder(settings),
         vector_store=create_vector_store(settings),
         sparse_encoder=create_deferred_sparse_encoder(settings),
+    )
+
+
+def needs_planner_dependency() -> StructuredChatNeedsPlanner:
+    settings = get_settings()
+    if settings.retrieval_planner_provider != "openai":
+        raise RetrievalPlanningError(
+            "unsupported needs planner provider", systemic=True
+        )
+    return StructuredChatNeedsPlanner(
+        api_url=settings.retrieval_planner_api_url,
+        api_key=settings.retrieval_planner_api_key,
+        provider_name=settings.retrieval_planner_provider,
+        model=settings.retrieval_planner_model,
+        timeout_seconds=settings.retrieval_planner_timeout_seconds,
     )
 
 
@@ -172,6 +192,56 @@ async def plan_retrieval(
             },
         ) from exception
     return PlanResponse(
+        request_id=incoming.request_id,
+        plan=result.plan,
+        classifier_lineage=result.lineage,
+        usage=result.usage,
+    )
+
+
+@router.post("/plan-needs", response_model=NeedsPlanResponse)
+async def plan_evidence_needs(
+    request: Request,
+    planner: Annotated[StructuredChatNeedsPlanner, Depends(needs_planner_dependency)],
+) -> NeedsPlanResponse:
+    body = await authenticate(request, "retrieval.plan-needs", get_settings())
+    try:
+        incoming = NeedsPlanRequest.model_validate_json(body)
+    except ValueError as exception:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_CONTENT, "Invalid needs request."
+        ) from exception
+    if str(incoming.workspace_id) != request.headers.get(
+        "X-Retrieval-Caller-Workspace-ID"
+    ) or str(incoming.request_id) != request.headers.get(
+        "X-Retrieval-Caller-Request-ID"
+    ):
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED, "Signed identity does not match body."
+        )
+    try:
+        result = planner.plan_needs(
+            incoming.user_turns,
+            evaluated_at=incoming.evaluated_at.isoformat(),
+            catalogue=incoming.catalogue,
+        )
+    except RetrievalPlanningError as exception:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            {
+                "code": "retrieval_planning_failed",
+                "category": exception.category,
+                "provider_status": exception.provider_status,
+                "attempt_count": 1,
+                "systemic": exception.systemic,
+                **(
+                    {"validation": exception.validation, "completion": exception.completion}
+                    if isinstance(exception, NeedsValidationFailure)
+                    else {}
+                ),
+            },
+        ) from exception
+    return NeedsPlanResponse(
         request_id=incoming.request_id,
         plan=result.plan,
         classifier_lineage=result.lineage,

@@ -1,0 +1,56 @@
+{
+  "transport": "httpx.MockTransport",
+  "network_connect": "blocked",
+  "results": [
+    {
+      "reproduction": "unsupported_date",
+      "actual": {
+        "retrieval_queries": [
+          "How did the order of DNACPR, symptom management and advance care planning change in June 2026, and did their underlying requirements change?"
+        ],
+        "temporal_mode": "compare",
+        "explicit_date": "0606-06-06",
+        "temporal_reference": null,
+        "version_transition_boundary": null,
+        "fact_date": null,
+        "requested_evidence_type": "current_versus_historical_comparison",
+        "location_references": [],
+        "clarification_reason": null
+      }
+    },
+    {
+      "reproduction": "generic_location",
+      "actual": {
+        "retrieval_queries": [
+          "If we discover a completely new workplace hazard, what is the immediate management response and what related documentation has to be kept?"
+        ],
+        "temporal_mode": "current",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "version_transition_boundary": null,
+        "fact_date": null,
+        "requested_evidence_type": "policy_or_procedural_requirements",
+        "location_references": [
+          "workplace"
+        ],
+        "clarification_reason": null
+      }
+    },
+    {
+      "reproduction": "training_policy_override",
+      "actual": {
+        "retrieval_queries": [
+          "What was our training policy on 15 December 2031?"
+        ],
+        "temporal_mode": "current",
+        "explicit_date": null,
+        "temporal_reference": null,
+        "version_transition_boundary": null,
+        "fact_date": "2031-12-15",
+        "requested_evidence_type": "personal_record_status",
+        "location_references": [],
+        "clarification_reason": null
+      }
+    }
+  ]
+}

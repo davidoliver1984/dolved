@@ -15381,7 +15381,7 @@ generation with citations and `EvidenceSnapshot` behaviour; clarification,
 insufficiency and failure distinctions; version-conflation resistance; and
 over-refusal/leakage controls. Retrieval metrics and answer-quality metrics
 are recorded separately, never blended into one score, and every case
-produces an inspectable per-case artefact, not only an aggregate number.
+produces an inspectable per-case artefact, not only an aggregate number. Partial diagnostic execution and approved production repair may occur while this stage is in progress; neither completes the full-run requirement. Apply Stage 28.5's correction-review safeguards before repair; retain its later consolidated diagnosis and Stage 28.6 exact-commit rerun obligations (ADR-0038/R01 acceptance, 2026-09-06).
 
 ## Stage 28.5 — Diagnose failures and approve bounded corrections
 

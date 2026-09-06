@@ -1,0 +1,66 @@
+{
+  "schema_version": "r28-unseen-confirmation-selection-v1",
+  "seed": "R28-UNSEEN-CONFIRMATION-20260905-V1",
+  "hash_input": "<seed><NUL><category><NUL><case_id><NUL><variant_id>",
+  "selection_rule": "For each category in order, choose the lexicographically lowest SHA-256 eligible frozen variant whose case_id is neither excluded nor already selected.",
+  "repository_commit": "35f5c2d2278b2890cd53f8fbd1a5a4c29ceebb5d",
+  "population_identity": "dolved-care-v4-evaluation-population-v2",
+  "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+  "population_file_sha256": "17e11317d9999056046115e17300c59423c08f0cb0453b636d5abda07ba104b5",
+  "excluded_case_ids": [
+    "v4.case.corrected-b02-06",
+    "v4.case.corrected-b01-08",
+    "v4.case.corrected-b02-03",
+    "v4.case.corrected-b01-02",
+    "v4.case.corrected-b02-10",
+    "v4.case.corrected-b01-03",
+    "v4.case.corrected-b01-06",
+    "v4.case.corrected-b03-08"
+  ],
+  "eligibility": {
+    "temporal_comparison": "context.temporal_mode == COMPARE",
+    "historical_or_valid_at": "context.temporal_mode in [HISTORICAL_REFERENCE, VALID_AT_DATE]",
+    "competing_or_near_duplicate": "slices contains competition.competing_document or competition.near_duplicate",
+    "ordinary_current_evidence_found": "scope == primary and context.temporal_mode == CURRENT and expected_outcome.retrieval == EVIDENCE_FOUND",
+    "cross_tenant_safety": "slices contains safety.cross_tenant"
+  },
+  "runtime_lineage": {
+    "dense": "voyage/voyage-4-large/ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+    "sparse": "fastembed/prithivida/Splade_PP_en_v1/e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+    "reranker": "voyage/rerank-2.5/document-metadata-v2",
+    "threshold_policy": "provisional-r28-query-evidence-contract-v1",
+    "evidence_threshold": 0.337890625
+  },
+  "items": [
+    {
+      "category": "temporal_comparison",
+      "case_id": "v4.case.corrected-b06-02",
+      "variant_id": "v2",
+      "selection_sha256": "07d254ab9a0c10f15a72c4623ca9a2c441bd52ba95c9cdb87b4bc1674835f2e3"
+    },
+    {
+      "category": "historical_or_valid_at",
+      "case_id": "v4.case.corrected-b03-06",
+      "variant_id": "v2",
+      "selection_sha256": "101e298aea92e3069f7669020deaaccccc0ca3776d28a128ee63e8883878e2f7"
+    },
+    {
+      "category": "competing_or_near_duplicate",
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v1",
+      "selection_sha256": "025323883171a579655a2842448a460ff00e9a38961193796c0caf0dc1ea6dd0"
+    },
+    {
+      "category": "ordinary_current_evidence_found",
+      "case_id": "v4.case.corrected-b02-01",
+      "variant_id": "v2",
+      "selection_sha256": "02ed3202c65c5bdfdac7329349b1bd94a51f15ec2aa1f4894df76bad4e061452"
+    },
+    {
+      "category": "cross_tenant_safety",
+      "case_id": "v4.case.corrected-b02-02",
+      "variant_id": "v1",
+      "selection_sha256": "29772ffd4032ecbdc48719cc0b8093d6d6a904abb7a1eef910461a6ca82dd669"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ use App\Exceptions\RetrievalException;
 use App\Exceptions\RetrievalExecutionException;
 use App\Exceptions\RetrievalPlannerException;
 use App\Models\DocumentChunk;
+use App\Models\DocumentFamily;
 use App\Models\EmbeddingProfile;
 use App\Models\EmbeddingSpaceGeneration;
 use App\Models\EvidenceThresholdPolicy;
@@ -16,6 +17,7 @@ use App\Models\SparseSpaceGeneration;
 use App\Models\Workspace;
 use App\Models\WorkspaceCorpusGeneration;
 use App\Support\Retrieval\EligibleRetrievalScope;
+use App\Support\Retrieval\EvidenceNeedsPlan;
 use App\Support\Retrieval\RetrievalFailureObservation;
 use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\RetrievalSearchResult;
@@ -65,6 +67,44 @@ final readonly class RetrievalClient
                 false,
                 $exception,
             );
+        }
+    }
+
+    /** @param list<array{turn_id: string, text: string}> $userTurns Authorised user history only. */
+    public function planNeeds(Workspace $workspace, array $userTurns, CarbonImmutable $evaluatedAt): EvidenceNeedsPlan
+    {
+        $catalogue = DocumentFamily::query()->where('workspace_id', $workspace->id)
+            ->whereNull('tombstoned_at')->orderBy('public_id')->limit(501)
+            ->get(['public_id', 'name'])->map(fn ($family) => [
+                'family_id' => $family->public_id, 'title' => $family->name,
+            ])->all();
+        if (count($catalogue) > 500
+            || strlen(json_encode($catalogue, JSON_THROW_ON_ERROR)) > 40000
+            || strlen(json_encode($userTurns, JSON_THROW_ON_ERROR)) > 20000) {
+            throw new RetrievalPlannerException('The authorised catalogue exceeds the bounded planner input.',
+                'catalogue_bound_exceeded', null, 0, false);
+        }
+        $response = $this->call('/api/internal/retrieval/plan-needs', 'retrieval.plan-needs', $workspace, [
+            'contract_version' => 2,
+            'workspace_id' => $workspace->public_id,
+            'user_turns' => $userTurns,
+            'evaluated_at' => $evaluatedAt->toIso8601String(),
+            'catalogue' => $catalogue,
+        ]);
+        try {
+            if ($response->json('contract_version') !== 2
+                || ! is_array($response->json('plan')) || ! is_array($response->json('classifier_lineage'))
+                || ! is_array($response->json('usage'))) {
+                throw new InvalidArgumentException('Invalid needs response envelope.');
+            }
+            EvidenceNeedsPlan::validateWireShape($response->json(), 'response');
+            EvidenceNeedsPlan::validateCatalogue($response->json('plan'), $catalogue, $userTurns);
+
+            return EvidenceNeedsPlan::fromArray($response->json('plan'), $userTurns,
+                $response->json('classifier_lineage'), $response->json('usage'));
+        } catch (InvalidArgumentException $exception) {
+            throw new RetrievalPlannerException('The needs planner returned an invalid plan.',
+                'invalid_grounded_needs_plan', null, 1, false, $exception);
         }
     }
 
@@ -404,7 +444,7 @@ final readonly class RetrievalClient
                     ->withBody($body, 'application/json')
                     ->post($baseUrl.$path);
                 if ($response->successful()) {
-                    if ($path !== '/api/internal/retrieval/plan') {
+                    if (! in_array($path, ['/api/internal/retrieval/plan', '/api/internal/retrieval/plan-needs'], true)) {
                         $response = $this->withOuterAttemptHistory(
                             $response,
                             $attempt,
@@ -417,11 +457,12 @@ final readonly class RetrievalClient
 
                     return $response;
                 }
-                if ($path === '/api/internal/retrieval/plan') {
+                if (in_array($path, ['/api/internal/retrieval/plan', '/api/internal/retrieval/plan-needs'], true)) {
                     $failure = $this->plannerFailure($response, $attempt);
                     $last = $failure;
                     if ($failure->systemic || in_array($failure->category, [
                         'invalid_typed_plan',
+                        'invalid_grounded_needs_plan',
                         'query_not_preserved',
                         'provider_request_rejected',
                     ], true)) {
@@ -476,7 +517,7 @@ final readonly class RetrievalClient
                     break;
                 }
             } catch (ConnectionException $exception) {
-                $last = $path === '/api/internal/retrieval/plan'
+                $last = in_array($path, ['/api/internal/retrieval/plan', '/api/internal/retrieval/plan-needs'], true)
                     ? new RetrievalPlannerException(
                         'The retrieval planner transport is unavailable.',
                         'transport_error',
@@ -634,6 +675,37 @@ final readonly class RetrievalClient
         $providerAttempts = is_array($detail) && is_int($detail['attempt_count'] ?? null)
             ? max(1, $detail['attempt_count'])
             : 1;
+        $validation = null;
+        $candidate = $detail['validation'] ?? null;
+        if (is_array($candidate)
+            && in_array($candidate['stage'] ?? null, ['completion', 'envelope', 'schema', 'grounding', 'catalogue'], true)
+            && in_array($candidate['code'] ?? null, ['binding_coverage', 'unknown_family', 'ownership_grounding',
+                'ownership_location_conflict', 'reference_grounding', 'calendar_grounding', 'need_order',
+                'historical_grounding', 'binding_shape', 'comparison_authority', 'authority_grounding',
+                'authority_precision', 'invalid_value', 'missing', 'literal_error', 'uuid_parsing',
+                'extra_forbidden', 'json_invalid', 'string_type', 'too_short', 'too_long', 'value_error', 'output_truncated', 'output_not_completed'], true)
+            && is_string($candidate['field'] ?? null)) {
+            $allowed = ['root', 'unknown', 'needs', 'bindings', 'need_id', 'authority', 'kind', 'value', 'precision',
+                'source', 'question_span', 'applicability', 'fact_reference', 'supports_need_id', 'family_ids',
+                'subject_status', 'ownership', 'ownership_source', 'turn_id', 'quote', 'operation',
+                'schema_version', 'decision', 'clarification', 'aspect', 'central'];
+            $parts = explode('.', $candidate['field']);
+            if (count($parts) <= 6 && array_all($parts, fn ($part) => in_array($part, $allowed, true)
+                || in_array($part, array_map('strval', range(0, 20)), true))) {
+                $validation = array_intersect_key($candidate, array_flip(['stage', 'field', 'code']));
+            }
+        }
+
+        $completion = null;
+        $metadata = $detail['completion'] ?? null;
+        if (is_array($metadata)) {
+            $completion = ['finish_reason' => in_array($metadata['finish_reason'] ?? null,
+                ['stop', 'length', 'content_filter', 'tool_calls', 'function_call', 'unknown'], true)
+                ? $metadata['finish_reason'] : 'unknown'];
+            foreach (['input_tokens', 'output_tokens', 'reasoning_tokens'] as $key) {
+                $completion[$key] = is_int($metadata[$key] ?? null) && $metadata[$key] >= 0 ? $metadata[$key] : null;
+            }
+        }
 
         return new RetrievalPlannerException(
             'The retrieval planner failed.',
@@ -641,6 +713,8 @@ final readonly class RetrievalClient
             $providerStatus,
             (($attempt - 1) * $providerAttempts) + $providerAttempts,
             $systemic,
+            validation: $validation,
+            completion: $completion,
         );
     }
 

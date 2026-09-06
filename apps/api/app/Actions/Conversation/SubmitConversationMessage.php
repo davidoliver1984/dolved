@@ -13,13 +13,14 @@ use App\Models\Conversation;
 use App\Models\GenerationRun;
 use App\Models\Message;
 use App\Models\User;
+use App\Services\Generation\GenerationProfileFactory;
 use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 final readonly class SubmitConversationMessage
 {
-    public function __construct(private RecordWorkspaceUsage $usage) {}
+    public function __construct(private RecordWorkspaceUsage $usage, private GenerationProfileFactory $profiles) {}
 
     public function handle(Conversation $conversation, User $user, string $text, string $idempotencyKey): GenerationRun
     {
@@ -69,6 +70,7 @@ final readonly class SubmitConversationMessage
                 'retry_of_run_id' => null,
                 'retry_idempotency_key' => null,
                 'status' => GenerationRunStatus::Queued,
+                'needs_profile' => $this->profiles->needsPin((string) $locked->workspace->public_id),
                 'correlation_id' => (string) Str::uuid(),
             ]), true];
         });

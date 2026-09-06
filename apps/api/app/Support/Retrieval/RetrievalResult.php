@@ -19,6 +19,8 @@ final readonly class RetrievalResult
         public array $resolvedApplicabilityLocation = [],
         public array $lineage = [],
         public array $usage = [],
+        public array $evidenceNeeds = [],
+        public ?string $clarificationQuestion = null,
     ) {}
 
     /** @return array<string, mixed> */
@@ -33,6 +35,7 @@ final readonly class RetrievalResult
             'resolved_applicability_location' => $this->resolvedApplicabilityLocation,
             'lineage' => $this->lineage,
             'usage' => $this->usage,
+            ...($this->evidenceNeeds === [] ? [] : ['evidence_needs' => $this->evidenceNeeds]),
         ];
     }
 }
