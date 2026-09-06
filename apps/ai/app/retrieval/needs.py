@@ -135,7 +135,16 @@ class FactReference(ImmutableModel):
 
     @model_validator(mode="after")
     def coherent_date(self) -> FactReference:
-        validate_date_value(self.value, self.precision)
+        try:
+            validate_date_value(self.value, self.precision)
+        except ValueError as error:
+            if str(error) in {
+                "date value does not match declared precision",
+                "date interval requires two day endpoints",
+                "date interval is reversed",
+            }:
+                raise ValueError("fact reference " + str(error)) from None
+            raise ValueError("fact reference invalid calendar date") from None
         return self
 
 

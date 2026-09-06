@@ -114,7 +114,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         app(OrchestrateConversationRun::class)->handle($run->id);
         $run->refresh();
         if ($case === 'ungrounded') {
-            $this->assertSame(GenerationRunStatus::Failed, $run->status);
+            $this->assertSame(GenerationRunStatus::ClarificationRequired, $run->status);
+            $this->assertSame('ungrounded_needs_reference', $run->retrievalOutcomeSnapshot->clarification_reason);
             $this->assertSame(['planner_transport'], array_column($observations, 'stage'));
             $this->assertNull($run->generatedAnswer);
             Http::assertSentCount(1);

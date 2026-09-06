@@ -122,7 +122,7 @@ final readonly class EligibilityResolver
             RetrievalTemporalMode::Current => $this->current($families, $evaluatedAt),
             RetrievalTemporalMode::ValidAtDate => $plan->explicitDate !== null
                 ? $this->current($families, $plan->explicitDate)
-                : $this->resolveEach($families, fn (DocumentFamily $family): TemporalResolution => $this->periods->resolve($family, $plan->temporalReference['value'])),
+                : $this->resolveEach($families, fn (DocumentFamily $family): TemporalResolution => $this->periods->resolve($family, $plan->temporalReference['value'], $plan->evidenceNeed['authority']['source']['quote'] ?? null)),
             RetrievalTemporalMode::HistoricalReference => $this->resolveEach(
                 $families,
                 fn (DocumentFamily $family): TemporalResolution => $this->historical->resolve(
@@ -223,7 +223,7 @@ final readonly class EligibilityResolver
         }
         if ($plan->temporalReference !== null) {
             return $this->resolveEach($families, fn (DocumentFamily $family): TemporalResolution => $plan->temporalReference['kind'] === RetrievalTemporalReferenceKind::CalendarPeriod
-                    ? $this->periods->resolve($family, $plan->temporalReference['value'])
+                    ? $this->periods->resolve($family, $plan->temporalReference['value'], $plan->evidenceNeed['authority']['source']['quote'] ?? null)
                     : $this->historical->resolve($family, $plan->temporalReference['value'], $evaluatedAt));
         }
 

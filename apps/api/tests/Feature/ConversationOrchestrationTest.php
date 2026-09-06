@@ -138,7 +138,8 @@ class ConversationOrchestrationTest extends TestCase
         Http::assertSentCount(1);
     }
 
-    public function test_ungrounded_needs_reference_uses_existing_typed_clarification_without_retrieval(): void
+    #[DataProvider('referenceFailures')]
+    public function test_ungrounded_needs_reference_uses_existing_typed_clarification_without_retrieval(array $validation, string $reason): void
     {
         Queue::fake();
         [$user, $workspace] = $this->workspaceFixture();
@@ -147,7 +148,7 @@ class ConversationOrchestrationTest extends TestCase
         Http::fake(fn () => Http::response(['detail' => [
             'code' => 'retrieval_planning_failed', 'category' => 'invalid_grounded_needs_plan',
             'provider_status' => 200, 'attempt_count' => 1, 'systemic' => false,
-            'validation' => ['stage' => 'grounding', 'field' => 'root', 'code' => 'reference_grounding'],
+            'validation' => $validation,
             'completion' => ['finish_reason' => 'stop', 'input_tokens' => 120, 'output_tokens' => 90, 'reasoning_tokens' => 50],
         ]], 503));
         $conversation = app(CreateConversation::class)->handle($workspace, $user);
@@ -156,12 +157,22 @@ class ConversationOrchestrationTest extends TestCase
         $run->refresh();
         $this->assertSame(GenerationRunStatus::ClarificationRequired, $run->status);
         $this->assertNull($run->failure_code);
-        $this->assertSame('ungrounded_needs_reference', $run->retrievalOutcomeSnapshot->clarification_reason);
-        $this->assertStringContainsString('Could you rephrase', $run->assistantMessage->display_text);
-        $this->assertSame('reference_grounding', $run->usage['planner_failure']['validation']['code']);
+        $this->assertSame($reason, $run->retrievalOutcomeSnapshot->clarification_reason);
+        $this->assertStringContainsString('?', $run->assistantMessage->display_text);
+        $this->assertSame($validation, $run->usage['planner_failure']['validation']);
         $this->assertSame(90, $run->usage['planner_failure']['completion']['output_tokens']);
         Http::assertSentCount(1);
         $this->assertDatabaseCount('generated_answers', 0);
+    }
+
+    public static function referenceFailures(): array
+    {
+        $cases = [[['stage' => 'grounding', 'field' => 'root', 'code' => 'reference_grounding'], 'ungrounded_needs_reference']];
+        foreach (['value_error', 'fact_date_precision', 'fact_date_calendar', 'fact_date_interval_shape', 'fact_date_interval_reversed'] as $code) {
+            $cases[] = [['stage' => 'schema', 'field' => 'needs.0.fact_reference', 'code' => $code], 'invalid_fact_date_reference'];
+        }
+
+        return $cases;
     }
 
     public function test_submission_is_workspace_scoped_idempotent_and_allows_only_one_active_run(): void

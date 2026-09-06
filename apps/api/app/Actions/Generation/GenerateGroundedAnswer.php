@@ -47,8 +47,8 @@ final readonly class GenerateGroundedAnswer
         $observeStage?->__invoke('preparing_evidence');
         $request = $this->assembler->handle($input);
         if ($request->evidenceNeeds !== [] && ($profile->contractVersion !== 'generation-result-v2'
-            || $profile->promptVersion !== 'grounded-generation-needs-v3'
-            || $profile->adapterVersion !== 'openai-responses-needs-v1'
+            || $profile->promptVersion !== 'grounded-generation-needs-v4'
+            || $profile->adapterVersion !== 'openai-responses-needs-v2'
             || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly)) {
             throw new GenerationException('Needs generation requires the pinned v2 complete-result profile.');
         }

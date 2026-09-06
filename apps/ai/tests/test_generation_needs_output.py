@@ -17,6 +17,35 @@ CASES = json.loads(
 )["cases"]
 
 
+@pytest.mark.parametrize(
+    "text,valid",
+    [
+        ("Yes. The employee's manager is not notified.", False),
+        ("No! The guidance permits it.", False),
+        ("No", False),
+        ("No, the guidance explicitly forbids sharing passwords.", True),
+        ("Yes, employees may contact the provider directly.", True),
+        ("The manager is not notified unless the employee shares it.", True),
+    ],
+)
+def test_detached_polarity_is_rejected_but_connected_statements_remain(text, valid):
+    case = copy.deepcopy(CASES[0])
+    case["result"]["answer_parts"][0]["text"] = text
+    output = OpenAIGenerationNeedsOutput.model_validate(
+        {**case["result"], "aspect_links": case["links"]}
+    )
+    if valid:
+        output.to_result(
+            GenerationRequest.model_validate(request_payload()), tuple(case["need_ids"])
+        )
+    else:
+        with pytest.raises(ValueError, match="detached yes/no"):
+            output.to_result(
+                GenerationRequest.model_validate(request_payload()),
+                tuple(case["need_ids"]),
+            )
+
+
 @pytest.mark.parametrize("case", CASES, ids=lambda case: case["name"])
 def test_real_provider_output_and_consumer_cover_shared_cases(case):
     def validate():

@@ -31,6 +31,9 @@ final readonly class HistoricalReferenceResolver
         $hasVersion = $versionMatches[1] !== [];
         $strategies = (int) $hasVersion + (int) ($yearMatches[1] !== [])
             + (int) $hasRelative + (int) ($hasWithdrawal && ! $hasVersion);
+        if ($strategies === 0) {
+            return TemporalResolution::empty();
+        }
         if ($strategies !== 1 || count(array_unique($versionMatches[1])) > 1 || count(array_unique($yearMatches[1])) > 1) {
             return TemporalResolution::unresolved(
                 EligibilityClarificationReason::AmbiguousHistoricalReference,

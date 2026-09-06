@@ -29,6 +29,37 @@ EXAMPLES = json.loads((ROOT / "examples.json").read_text())
 MUTATIONS = json.loads((ROOT / "invalid-mutations.json").read_text())
 
 
+@pytest.mark.parametrize(
+    "value,precision,code",
+    [
+        ("last month", "month", "fact_date_precision"),
+        ("2025-02-30", "day", "fact_date_calendar"),
+        ("2025-02-01/2025-01-01", "interval", "fact_date_interval_reversed"),
+        ("2025-01-01", "interval", "fact_date_interval_shape"),
+    ],
+)
+def test_fact_date_failure_diagnostics_are_allowlisted(value, precision, code):
+    from pydantic import ValidationError
+
+    from app.retrieval.needs import FactReference
+
+    try:
+        FactReference.model_validate(
+            {
+                "value": value,
+                "precision": precision,
+                "source": {"turn_id": "user-1", "quote": "PRIVATE"},
+            }
+        )
+    except ValidationError as exception:
+        failure = NeedsValidationFailure("schema", exception)
+    else:
+        pytest.fail("invalid fact date accepted")
+    assert failure.validation["code"] == code
+    assert "PRIVATE" not in json.dumps(failure.validation)
+    assert value not in json.dumps(failure.validation)
+
+
 def test_safe_failure_details_exclude_input_exception_context_and_unknown_keys():
     from pydantic import ValidationError
 

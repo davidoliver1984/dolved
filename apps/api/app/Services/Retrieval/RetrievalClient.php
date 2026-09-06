@@ -681,6 +681,7 @@ final readonly class RetrievalClient
             && in_array($candidate['stage'] ?? null, ['completion', 'envelope', 'schema', 'grounding', 'catalogue'], true)
             && in_array($candidate['code'] ?? null, ['binding_coverage', 'unknown_family', 'ownership_grounding',
                 'ownership_location_conflict', 'reference_grounding', 'calendar_grounding', 'need_order',
+                'fact_date_precision', 'fact_date_interval_shape', 'fact_date_interval_reversed', 'fact_date_calendar',
                 'historical_grounding', 'binding_shape', 'comparison_authority', 'authority_grounding',
                 'authority_precision', 'invalid_value', 'missing', 'literal_error', 'uuid_parsing',
                 'extra_forbidden', 'json_invalid', 'string_type', 'too_short', 'too_long', 'value_error', 'output_truncated', 'output_not_completed'], true)

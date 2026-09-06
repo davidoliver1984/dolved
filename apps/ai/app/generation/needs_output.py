@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Annotated, Literal
 from uuid import UUID
 
@@ -61,6 +62,11 @@ class GenerationNeedsResult(ImmutableModel):
     @model_validator(mode="after")
     def validate_shape(self) -> GenerationNeedsResult:
         self.authoritative_result()
+        for part in self.answer_parts:
+            if re.match(
+                r"^\s*(?:yes|no)\s*(?:[.!?](?:\s|$)|$)", part.text, re.IGNORECASE
+            ):
+                raise ValueError("detached yes/no framing is not an evidence statement")
         return self
 
     def validate_against(

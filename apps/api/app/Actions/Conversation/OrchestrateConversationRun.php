@@ -186,13 +186,16 @@ final readonly class OrchestrateConversationRun
                     ...($exception->completion === null ? [] : ['completion' => $exception->completion]),
                 ],
             ];
+            $invalidFactDate = ($exception->validation['stage'] ?? null) === 'schema'
+                && preg_match('/^needs\.[0-2]\.fact_reference$/D', $exception->validation['field'] ?? '') === 1
+                && in_array($exception->validation['code'] ?? null, ['value_error', 'fact_date_precision', 'fact_date_interval_shape', 'fact_date_interval_reversed', 'fact_date_calendar'], true);
             if ($needsProfile !== null
                 && $exception->category === 'invalid_grounded_needs_plan'
                 && ! $exception->systemic
-                && $exception->validation === ['stage' => 'grounding', 'field' => 'root', 'code' => 'reference_grounding']) {
+                && ($invalidFactDate || $exception->validation === ['stage' => 'grounding', 'field' => 'root', 'code' => 'reference_grounding'])) {
                 $run->forceFill(['usage' => $failureUsage])->save();
                 $retrieval = new RetrievalResult(RetrievalOutcome::ClarificationRequired,
-                    reason: PlannerClarificationReason::UngroundedNeedsReference->value,
+                    reason: ($invalidFactDate ? PlannerClarificationReason::InvalidFactDateReference : PlannerClarificationReason::UngroundedNeedsReference)->value,
                     clarificationSource: RetrievalClarificationSource::Planner);
                 $snapshot = $this->persistRetrievalSnapshot($run, $retrieval, $evaluatedAt);
                 $this->completeControlledRetrieval($run, $retrieval, $snapshot);

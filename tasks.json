@@ -40,7 +40,7 @@
   "progress": {
     "current_phase": "R28",
     "current_session": "R28-S04",
-    "next_action": "David explicitly approved committing the accumulated coherent R01P checkpoint before the second independent confirmation. Commit only the slice and associated contract/tests/evidence, then execute the verified 30-question file once on frozen source adeafbe3610f920f8da363763fe885d54345c314b9a67ba0af4f8754810ee398. Keep the answer key inaccessible; return unscored observations for independent scoring. R01P remains open; no R02, selective rerun, tuning or S04 closure.",
+    "next_action": "R01P remains open within R28-S04. The four approved corrections and one-pass d04/d24/d26/d29 regression are recorded in docs/evaluation/r28-s04/r01p/second-confirmation-corrections.md. Frozen uncommitted source b4dcff026fc21e72e06cfe36cf6a3f69d527513853ae1d63b1a411d2a0a4bac7 produced three generated responses and one safe clarification, not an independent correctness pass. Await David's commit-boundary decision and separately supplied next confirmation; no R02, selective rerun or S04 closure.",
     "completed_through": "R27-GATE",
     "completed_phase_count": 28,
     "total_phase_count": 33

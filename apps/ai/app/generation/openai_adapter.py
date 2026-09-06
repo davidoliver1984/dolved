@@ -42,9 +42,12 @@ MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
 ADAPTER_VERSION = "openai-responses-v3-claim-type"
 NEEDS_CONTRACT_VERSION = "generation-result-v2"
-NEEDS_PROMPT_VERSION = "grounded-generation-needs-v3"
-NEEDS_ADAPTER_VERSION = "openai-responses-needs-v1"
+NEEDS_PROMPT_VERSION = "grounded-generation-needs-v4"
+NEEDS_ADAPTER_VERSION = "openai-responses-needs-v2"
 NEEDS_INSTRUCTIONS = """
+Answer directly with the evidence-supported statement, not a detached one-word
+Yes. or No. headline. A connected statement such as "No, the guidance forbids ..."
+is acceptable; do not generate a separate polarity token before the substance.
 This request contains independent evidence_needs. Interpret comparison/current
 requirements per need, not globally. Evidence ownership, family/version identity,
 authority and applicability were resolved by Laravel and must not be changed.

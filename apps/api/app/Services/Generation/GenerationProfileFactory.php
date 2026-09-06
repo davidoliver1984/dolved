@@ -30,7 +30,7 @@ final class GenerationProfileFactory
 
     private function needsIdentity(): array
     {
-        return ['execution_version' => 'bounded-needs-slice-v7',
+        return ['execution_version' => 'bounded-needs-slice-v8',
             'planner_contract' => 'evidence-needs-plan-v2',
             'planner_provider' => config('retrieval.planner.provider'),
             'planner_model' => config('retrieval.planner.model'),
@@ -63,7 +63,7 @@ final class GenerationProfileFactory
         $base = $this->configured();
 
         return new GenerationProfile($base->provider, $base->model, 'generation-result-v2',
-            'grounded-generation-needs-v3', 'openai-responses-needs-v1',
+            'grounded-generation-needs-v4', 'openai-responses-needs-v2',
             GenerationDeliveryMode::CompleteResultOnly, $base->qualityAffectingConfiguration);
     }
 

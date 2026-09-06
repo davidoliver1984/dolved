@@ -14,7 +14,7 @@ final readonly class TemporalPeriodResolver
 {
     public function __construct(private DocumentAuthorityTimeline $timeline) {}
 
-    public function resolve(DocumentFamily $family, string $reference): TemporalResolution
+    public function resolve(DocumentFamily $family, string $reference, ?string $sourceQuote = null): TemporalResolution
     {
         $window = $this->window($reference);
         if ($window === null) {
@@ -33,9 +33,33 @@ final readonly class TemporalPeriodResolver
             return TemporalResolution::empty();
         }
 
+        $narrowed = $this->qualifiedYearWindow($reference, $sourceQuote);
+        if ($narrowed !== null) {
+            // Only retry the same authority check on the quote-bounded period.
+            // No invented exact date, and no choosing one side of a boundary.
+            return $this->resolve($family, $narrowed);
+        }
+
         return TemporalResolution::unresolved(
             EligibilityClarificationReason::AmbiguousAuthorityWindowForPeriod,
         );
+    }
+
+    public function qualifiedYearWindow(string $reference, ?string $sourceQuote): ?string
+    {
+        if (preg_match('/^\d{4}$/D', $reference) !== 1 || $sourceQuote === null) {
+            return null;
+        }
+        $year = preg_quote($reference, '/');
+        $first = preg_match('/\b(?:early|start of|beginning of|first half of)\s+'.$year.'\b/i', $sourceQuote) === 1;
+        $last = preg_match('/\b(?:late|end of|second half of|latter half of)\s+'.$year.'\b/i', $sourceQuote) === 1;
+        if ($first === $last) {
+            return null;
+        }
+
+        // A deliberately broad half-year: if authority changes within it,
+        // clarification remains mandatory rather than guessing a narrower day.
+        return $first ? $reference.'-01-01/'.$reference.'-06-30' : $reference.'-07-01/'.$reference.'-12-31';
     }
 
     public function boundaryStart(string $reference): ?CarbonImmutable

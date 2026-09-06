@@ -20,6 +20,8 @@ use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceMembership;
 use App\Queries\Documents\ResolveAuthoritativeDocument;
+use App\Services\Retrieval\HistoricalReferenceResolver;
+use App\Services\Retrieval\TemporalPeriodResolver;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\QueryException;
@@ -32,6 +34,32 @@ use Tests\TestCase;
 class DocumentVersioningAndTemporalAuthorityTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_quote_narrowing_retains_real_ambiguity_and_unknown_history_has_no_match(): void
+    {
+        [$workspace, $owner] = $this->workspaceOwner();
+        $first = $this->document($workspace, $owner, CarbonImmutable::parse('2024-01-01'));
+        $this->travelTo('2024-01-01');
+        app(ApproveDocumentVersion::class)->handle($first, $owner);
+        $second = $this->successor($first, $owner, CarbonImmutable::parse('2025-09-01'));
+        $this->travelTo('2025-09-01');
+        app(ApproveDocumentVersion::class)->handle($second, $owner);
+        $periods = app(TemporalPeriodResolver::class);
+        $this->assertSame('ambiguous_authority_window_for_period', $periods->resolve($first->family, '2025')->reason->value);
+        foreach (['early', 'start of', 'beginning of', 'first half of'] as $qualifier) {
+            $this->assertTrue($periods->resolve($first->family, '2025', $qualifier.' 2025')->document->is($first));
+        }
+        foreach (['late', 'end of', 'second half of', 'latter half of'] as $qualifier) {
+            $this->assertSame('ambiguous_authority_window_for_period', $periods->resolve($first->family, '2025', $qualifier.' 2025')->reason->value);
+        }
+        $this->assertNull($periods->qualifiedYearWindow('2025', 'early 2024'));
+        $this->assertNull($periods->qualifiedYearWindow('2025', 'early 2025 and late 2025'));
+        $history = app(HistoricalReferenceResolver::class);
+        $unknown = $history->resolve($first->family, 'An unregistered supplier rule', now()->toImmutable());
+        $this->assertNull($unknown->document);
+        $this->assertNull($unknown->reason);
+        $this->assertSame('ambiguous_historical_reference', $history->resolve($first->family, 'version 1 or version 2', now()->toImmutable())->reason->value);
+    }
 
     public function test_upload_creation_atomically_creates_family_and_sealed_universal_snapshot(): void
     {
