@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support\Retrieval;
 
 use App\Enums\PlannerCostBasis;
+use App\Support\Generation\ValidationAttemptUsage;
 use InvalidArgumentException;
 
 final readonly class PlannerUsage
@@ -22,6 +23,7 @@ final readonly class PlannerUsage
         public PlannerCostBasis $costBasis,
         public ?float $costUsd,
         public ?string $pricingSnapshot,
+        public array $validationAttempts = [],
     ) {}
 
     /** @param array<string, mixed> $value */
@@ -74,7 +76,45 @@ final readonly class PlannerUsage
             $basis,
             $cost === null ? null : (float) $cost,
             $pricing,
+            self::safeAttempts($value['validation_attempts'] ?? []),
         );
+    }
+
+    public static function safeValidation(mixed $candidate): ?array
+    {
+        $validation = null;
+        if (is_array($candidate)
+            && in_array($candidate['stage'] ?? null, ['completion', 'envelope', 'schema', 'grounding', 'catalogue'], true)
+            && in_array($candidate['code'] ?? null, ['binding_coverage', 'unknown_family', 'ownership_grounding',
+                'ownership_location_conflict', 'reference_grounding', 'calendar_grounding', 'need_order',
+                'fact_date_precision', 'fact_date_interval_shape', 'fact_date_interval_reversed', 'fact_date_calendar',
+                'historical_grounding', 'binding_shape', 'comparison_authority', 'authority_grounding',
+                'authority_precision', 'invalid_value', 'missing', 'literal_error', 'uuid_parsing',
+                'extra_forbidden', 'json_invalid', 'string_type', 'too_short', 'too_long', 'value_error', 'output_truncated', 'output_not_completed'], true)
+            && is_string($candidate['field'] ?? null)) {
+            $allowed = ['root', 'unknown', 'needs', 'bindings', 'need_id', 'authority', 'kind', 'value', 'precision',
+                'source', 'question_span', 'applicability', 'fact_reference', 'supports_need_id', 'family_ids',
+                'subject_status', 'ownership', 'ownership_source', 'turn_id', 'quote', 'operation',
+                'schema_version', 'decision', 'clarification', 'aspect', 'central'];
+            $parts = explode('.', $candidate['field']);
+            if (count($parts) <= 6 && array_all($parts, fn ($part) => in_array($part, $allowed, true)
+                || in_array($part, array_map('strval', range(0, 20)), true))) {
+                $validation = array_intersect_key($candidate, array_flip(['stage', 'field', 'code']));
+            }
+        }
+
+        return $validation;
+    }
+
+    public static function safeAttempts(mixed $attempts): array
+    {
+        return array_map(static function ($attempt) {
+            $attempt = is_array($attempt) ? $attempt : [];
+
+            return [...ValidationAttemptUsage::receipt($attempt),
+                'validation' => self::safeValidation($attempt['validation'] ?? null),
+                'status' => in_array($attempt['status'] ?? null, ['accepted', 'rejected'], true) ? $attempt['status'] : 'unknown'];
+        }, is_array($attempts) ? array_slice($attempts, 0, 2) : []);
     }
 
     /** @return array<string, mixed> */
@@ -94,6 +134,7 @@ final readonly class PlannerUsage
             'cost_basis' => strtoupper($this->costBasis->value),
             'cost_usd' => $this->costUsd,
             'pricing_snapshot' => $this->pricingSnapshot,
+            ...($this->validationAttempts === [] ? [] : ['validation_attempts' => $this->validationAttempts]),
         ];
     }
 }

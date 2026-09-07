@@ -251,6 +251,9 @@ def test_generation_route_fails_closed_when_no_provider_adapter_is_configured(
         "http_status": None,
         "attempt_count": 1,
         "latency_ms": 0.0,
+        "validation": None,
+        "returned_output": False,
+        "usage": None,
     }
 
 

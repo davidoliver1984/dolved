@@ -130,6 +130,31 @@ class GenerationContextBudgetExceeded(ImmutableModel):
     maximum_units: int = Field(gt=0)
 
 
+class GenerationValidationDiagnostic(ImmutableModel):
+    field: Literal[
+        "result",
+        "outcome",
+        "answer_parts.text",
+        "answer_parts.evidence_ids",
+        "aspect_links",
+    ]
+    code: Literal[
+        "detached_polarity",
+        "outcome_invariant",
+        "citation_membership",
+        "duplicate_citation",
+        "blank_answer",
+        "need_coverage",
+        "reference_range",
+        "empty_need",
+        "unmapped_content",
+        "coverage_outcome",
+        "citation_ownership",
+        "missing_evidence_gap",
+        "schema_validation",
+    ]
+
+
 class GenerationProviderError(ImmutableModel):
     category: Literal[
         "transport_failure",
@@ -144,6 +169,9 @@ class GenerationProviderError(ImmutableModel):
     http_status: int | None = None
     attempt_count: int = Field(ge=1)
     latency_ms: float = Field(ge=0)
+    validation: GenerationValidationDiagnostic | None = None
+    returned_output: bool = False
+    usage: dict[str, object] | None = None
 
 
 class GenerationResponse(ImmutableModel):

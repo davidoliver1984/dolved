@@ -6,4 +6,7 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class GenerationException extends RuntimeException {}
+class GenerationException extends RuntimeException
+{
+    public array $validationAttempts = [];
+}

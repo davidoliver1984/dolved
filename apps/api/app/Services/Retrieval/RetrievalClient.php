@@ -18,6 +18,7 @@ use App\Models\Workspace;
 use App\Models\WorkspaceCorpusGeneration;
 use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\EvidenceNeedsPlan;
+use App\Support\Retrieval\PlannerUsage;
 use App\Support\Retrieval\RetrievalFailureObservation;
 use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\RetrievalSearchResult;
@@ -460,7 +461,7 @@ final readonly class RetrievalClient
                 if (in_array($path, ['/api/internal/retrieval/plan', '/api/internal/retrieval/plan-needs'], true)) {
                     $failure = $this->plannerFailure($response, $attempt);
                     $last = $failure;
-                    if ($failure->systemic || in_array($failure->category, [
+                    if ($failure->validationAttempts !== [] && count($failure->validationAttempts) > 1 || $failure->systemic || in_array($failure->category, [
                         'invalid_typed_plan',
                         'invalid_grounded_needs_plan',
                         'query_not_preserved',
@@ -675,27 +676,7 @@ final readonly class RetrievalClient
         $providerAttempts = is_array($detail) && is_int($detail['attempt_count'] ?? null)
             ? max(1, $detail['attempt_count'])
             : 1;
-        $validation = null;
-        $candidate = $detail['validation'] ?? null;
-        if (is_array($candidate)
-            && in_array($candidate['stage'] ?? null, ['completion', 'envelope', 'schema', 'grounding', 'catalogue'], true)
-            && in_array($candidate['code'] ?? null, ['binding_coverage', 'unknown_family', 'ownership_grounding',
-                'ownership_location_conflict', 'reference_grounding', 'calendar_grounding', 'need_order',
-                'fact_date_precision', 'fact_date_interval_shape', 'fact_date_interval_reversed', 'fact_date_calendar',
-                'historical_grounding', 'binding_shape', 'comparison_authority', 'authority_grounding',
-                'authority_precision', 'invalid_value', 'missing', 'literal_error', 'uuid_parsing',
-                'extra_forbidden', 'json_invalid', 'string_type', 'too_short', 'too_long', 'value_error', 'output_truncated', 'output_not_completed'], true)
-            && is_string($candidate['field'] ?? null)) {
-            $allowed = ['root', 'unknown', 'needs', 'bindings', 'need_id', 'authority', 'kind', 'value', 'precision',
-                'source', 'question_span', 'applicability', 'fact_reference', 'supports_need_id', 'family_ids',
-                'subject_status', 'ownership', 'ownership_source', 'turn_id', 'quote', 'operation',
-                'schema_version', 'decision', 'clarification', 'aspect', 'central'];
-            $parts = explode('.', $candidate['field']);
-            if (count($parts) <= 6 && array_all($parts, fn ($part) => in_array($part, $allowed, true)
-                || in_array($part, array_map('strval', range(0, 20)), true))) {
-                $validation = array_intersect_key($candidate, array_flip(['stage', 'field', 'code']));
-            }
-        }
+        $validation = PlannerUsage::safeValidation($detail['validation'] ?? null);
 
         $completion = null;
         $metadata = $detail['completion'] ?? null;
@@ -712,10 +693,11 @@ final readonly class RetrievalClient
             'The retrieval planner failed.',
             $category,
             $providerStatus,
-            (($attempt - 1) * $providerAttempts) + $providerAttempts,
+            ($attempt - 1) + $providerAttempts,
             $systemic,
             validation: $validation,
             completion: $completion,
+            validationAttempts: PlannerUsage::safeAttempts($detail['validation_attempts'] ?? []),
         );
     }
 

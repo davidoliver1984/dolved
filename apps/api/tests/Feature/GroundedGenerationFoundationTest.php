@@ -31,10 +31,12 @@ use App\Support\Generation\GenerationEvidence;
 use App\Support\Generation\GenerationProfile;
 use App\Support\Generation\GenerationRequest;
 use App\Support\Generation\GenerationResult;
+use App\Support\Generation\GenerationValidationDiagnostics;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\RetrievalResult;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -128,6 +130,79 @@ class GroundedGenerationFoundationTest extends TestCase
         $fixtures = json_decode((string) file_get_contents('/contracts/fixtures/generation-aspect-coverage/v1.json'), true, flags: JSON_THROW_ON_ERROR);
         foreach ($fixtures['cases'] as $case) {
             yield $case['name'] => [$case];
+        }
+    }
+
+    public static function validationRetryScenarios(): array
+    {
+        return [['local_then_valid', 2], ['remote_then_valid', 2], ['twice_invalid', 2],
+            ['invalid_then_transport', 2], ['transport', 1], ['insufficient', 1]];
+    }
+
+    #[DataProvider('validationRetryScenarios')]
+    public function test_bounded_validation_retry_retains_identical_input_and_usage(string $scenario, int $expected): void
+    {
+        [$base, $chunk] = $this->assemblyFixture();
+        $examples = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/examples.json'), true, flags: JSON_THROW_ON_ERROR);
+        $need = $examples[0]['plan']['needs'][1];
+        $need['need_id'] = 'n1';
+        unset($need['supports_need_id']);
+        $need += ['retrieval_outcome' => 'EVIDENCE_FOUND', 'retrieval_reason' => null,
+            'resolved_temporal_authority' => ['mode' => 'current'],
+            'resolved_applicability_location' => ['resolved_location_public_id' => null]];
+        $candidate = ['chunk_id' => $chunk->public_id, 'document_id' => $chunk->document->public_id,
+            'document_family_id' => $chunk->document->family->public_id, 'chunk_text' => $chunk->text,
+            'side' => 'primary', 'need_id' => 'n1'];
+        $input = new GenerationAssemblyInput($base->question,
+            new RetrievalResult(RetrievalOutcome::EvidenceFound, [$candidate], evidenceNeeds: [$need]),
+            [], [], $base->authorisedScope, []);
+        $calls = [];
+        Http::preventStrayRequests();
+        Http::fake(function ($sent) use (&$calls, $scenario) {
+            $calls[] = $sent->body();
+            $count = count($calls);
+            if ($scenario === 'transport' || ($scenario === 'invalid_then_transport' && $count === 2)) {
+                throw new ConnectionException('synthetic transport failure');
+            }
+            $usage = ['request_count' => 1, 'retry_count' => 0, 'input_tokens' => 100,
+                'output_tokens' => 20, 'cached_input_tokens' => 0, 'latency_ms' => 10, 'cost_usd' => 0.001];
+            if ($scenario === 'remote_then_valid' && $count === 1) {
+                return Http::response(['contract_version' => 2, 'request_id' => $sent->data()['request_id'],
+                    'status' => 'provider_error', 'error' => ['category' => 'contract_validation_failure',
+                        'provider' => 'openai', 'model' => 'synthetic', 'http_status' => 200,
+                        'attempt_count' => 1, 'latency_ms' => 10, 'returned_output' => true,
+                        'validation' => ['field' => 'answer_parts.text', 'code' => 'detached_polarity'], 'usage' => $usage]]);
+            }
+            $invalid = $scenario === 'twice_invalid' || ($count === 1 && in_array($scenario, ['local_then_valid', 'invalid_then_transport'], true));
+            $insufficient = $scenario === 'insufficient';
+
+            return Http::response(['contract_version' => 2, 'request_id' => $sent->data()['request_id'], 'status' => 'completed',
+                'result' => ['contract_version' => 2, 'outcome' => $insufficient ? 'insufficient_evidence' : 'answered',
+                    'answer_parts' => $insufficient ? [] : [['text' => 'Supported fictional statement.', 'evidence_ids' => [$invalid ? 'ev-99' : 'ev-01']]],
+                    'unsupported_aspects' => $insufficient ? ['Requested information.'] : [],
+                    'insufficiency_reason' => $insufficient ? 'No supporting passage.' : null, 'usage' => $usage,
+                    'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => $insufficient ? [] : [0],
+                        'unsupported_aspect_indices' => $insufficient ? [0] : []]]]]);
+        });
+        try {
+            $prepared = app(GenerateGroundedAnswer::class)->prepare($input, app(GenerationProfileFactory::class)->configuredNeeds());
+            $this->assertNotContains($scenario, ['twice_invalid', 'transport', 'invalid_then_transport']);
+            $this->assertSame(100 * $expected, $prepared->result->usage['input_tokens']);
+            $this->assertSame(20 * $expected, $prepared->result->usage['output_tokens']);
+            $this->assertSame(10 * $expected, $prepared->result->usage['latency_ms']);
+            $this->assertEquals(0.001 * $expected, $prepared->result->usage['cost_usd']);
+            $this->assertCount($expected, $prepared->result->usage['validation_attempts']);
+        } catch (GenerationException $exception) {
+            $this->assertContains($scenario, ['twice_invalid', 'transport', 'invalid_then_transport']);
+            $this->assertCount($expected, $exception->validationAttempts);
+            if ($expected === 2) {
+                $this->assertSame(100, $exception->validationAttempts[0]['input_tokens']);
+                $this->assertSame('citation_membership', $exception->validationAttempts[0]['validation']['code']);
+            }
+        }
+        $this->assertCount($expected, $calls);
+        if ($expected === 2) {
+            $this->assertSame($calls[0], $calls[1]);
         }
     }
 
@@ -248,6 +323,39 @@ class GroundedGenerationFoundationTest extends TestCase
             'answer_parts' => [['text' => 'Unsafe.', 'evidence_ids' => ['ev-99']]],
             'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
         ]);
+    }
+
+    public function test_actual_validator_failures_have_safe_rule_diagnostics(): void
+    {
+        $base = ['contract_version' => 2, 'outcome' => 'answered',
+            'answer_parts' => [['text' => 'PRIVATE-CONTENT', 'evidence_ids' => ['ev-01']]],
+            'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+            'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]]];
+        $mutations = [
+            'needs_schema' => fn ($p) => array_replace($p, ['contract_version' => 99]),
+            'result_fields' => fn ($p) => array_replace($p, ['unsupported_aspects' => ['']]),
+            'part_shape' => fn ($p) => array_replace($p, ['answer_parts' => [['text' => 'PRIVATE-CONTENT', 'evidence_ids' => []]]]),
+            'citation_membership' => fn ($p) => array_replace($p, ['answer_parts' => [['text' => 'PRIVATE-CONTENT', 'evidence_ids' => ['ev-99']]]]),
+            'outcome_invariant' => fn ($p) => array_replace($p, ['insufficiency_reason' => 'PRIVATE-CONTENT']),
+            'usage_shape' => fn ($p) => array_replace($p, ['usage' => 'PRIVATE-CONTENT']),
+            'need_identity' => fn ($p) => array_replace($p, ['aspect_links' => []]),
+            'need_coverage' => fn ($p) => array_replace($p, ['aspect_links' => [['need_id' => 'n2', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]]]),
+            'empty_need' => fn ($p) => array_replace($p, ['aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [], 'unsupported_aspect_indices' => []]]]),
+            'reference_range' => fn ($p) => array_replace($p, ['aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [99], 'unsupported_aspect_indices' => []]]]),
+            'reference_list' => fn ($p) => array_replace($p, ['aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => 'PRIVATE-CONTENT', 'unsupported_aspect_indices' => []]]]),
+            'unmapped_content' => fn ($p) => array_replace($p, ['answer_parts' => [$p['answer_parts'][0], $p['answer_parts'][0]]]),
+        ];
+        foreach ($mutations as $code => $mutate) {
+            try {
+                app(ValidateGenerationResult::class)->handleNeeds($this->simpleRequest(), ['n1'], $mutate($base));
+                $this->fail('Mutation accepted: '.$code);
+            } catch (GenerationException $exception) {
+                $diagnostic = GenerationValidationDiagnostics::local($exception);
+                $this->assertSame($code, $diagnostic['code']);
+                $this->assertSame('laravel_result_validation', $diagnostic['layer']);
+                $this->assertStringNotContainsString('PRIVATE', json_encode($diagnostic));
+            }
+        }
     }
 
     public function test_provider_cannot_supply_persistent_answer_part_identity(): void

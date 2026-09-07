@@ -136,7 +136,7 @@ def test_real_transport_sends_request_specific_schema_and_does_not_cache_other_t
         jsonschema.validate(example["plan"], schema)
         other = str(UUID(int=2 if family.family_id.int == 1 else 1))
         assert other not in json.dumps(schema)
-        assert result.lineage.adapter_version == "structured-chat-needs-v4"
+        assert result.lineage.adapter_version == "structured-chat-needs-v5"
         assert len(calls) == 1
 
 

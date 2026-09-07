@@ -33,7 +33,7 @@ from app.retrieval.models import (
     SearchRequest,
     SearchResponse,
 )
-from app.retrieval.needs import NeedsPlanRequest, NeedsPlanResponse
+from app.retrieval.needs import NeedsOperationUsage, NeedsPlanRequest, NeedsPlanResponse
 from app.retrieval.needs_planner import (
     NeedsValidationFailure,
     StructuredChatNeedsPlanner,
@@ -232,20 +232,24 @@ async def plan_evidence_needs(
                 "code": "retrieval_planning_failed",
                 "category": exception.category,
                 "provider_status": exception.provider_status,
-                "attempt_count": 1,
                 "systemic": exception.systemic,
                 **(
-                    {"validation": exception.validation, "completion": exception.completion}
+                    {
+                        "validation": exception.validation,
+                        "completion": exception.completion,
+                    }
                     if isinstance(exception, NeedsValidationFailure)
                     else {}
                 ),
+                "attempt_count": exception.attempt_count,
+                "validation_attempts": exception.validation_attempts,
             },
         ) from exception
     return NeedsPlanResponse(
         request_id=incoming.request_id,
         plan=result.plan,
         classifier_lineage=result.lineage,
-        usage=result.usage,
+        usage=NeedsOperationUsage.model_validate(result.usage.model_dump()),
     )
 
 

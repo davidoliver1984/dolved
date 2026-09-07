@@ -318,7 +318,7 @@
       "title": "NeedBinding",
       "type": "object"
     },
-    "OperationUsage": {
+    "NeedsOperationUsage": {
       "additionalProperties": false,
       "properties": {
         "stage": {
@@ -551,6 +551,16 @@
           ],
           "default": null,
           "title": "Pricing Snapshot"
+        },
+        "validation_attempts": {
+          "default": [],
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 2,
+          "title": "Validation Attempts",
+          "type": "array"
         }
       },
       "required": [
@@ -563,7 +573,7 @@
         "latency_ms",
         "cost_basis"
       ],
-      "title": "OperationUsage",
+      "title": "NeedsOperationUsage",
       "type": "object"
     },
     "PlannerLineage": {
@@ -681,7 +691,7 @@
       "$ref": "#/$defs/PlannerLineage"
     },
     "usage": {
-      "$ref": "#/$defs/OperationUsage"
+      "$ref": "#/$defs/NeedsOperationUsage"
     }
   },
   "required": [

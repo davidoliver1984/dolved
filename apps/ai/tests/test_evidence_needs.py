@@ -29,6 +29,16 @@ EXAMPLES = json.loads((ROOT / "examples.json").read_text())
 MUTATIONS = json.loads((ROOT / "invalid-mutations.json").read_text())
 
 
+def test_prompt_distinguishes_requested_tasks_from_source_count_and_named_binding():
+    from app.retrieval.needs_planner import PROMPT
+
+    assert "Number of possible source documents is not need count" in PROMPT
+    assert "two independently requested topics require two needs" in PROMPT
+    assert "use topic\nwith empty family_ids" in PROMPT
+    assert "never broaden an\nunavailable named subject into topic" in PROMPT
+    # This proves instruction presence, not model judgement/generalisation.
+
+
 @pytest.mark.parametrize(
     "value,precision,code",
     [
@@ -266,7 +276,9 @@ def test_larger_combined_budget_accepts_output_after_old_reasoning_ceiling():
         ("content_filter", "", "output_not_completed"),
     ],
 )
-def test_completion_failure_keeps_safe_usage_without_retry(reason, content, code):
+def test_completion_failure_keeps_safe_usage_and_only_completed_output_retries(
+    reason, content, code
+):
     calls = []
 
     def handle(request):
@@ -301,7 +313,8 @@ def test_completion_failure_keeps_safe_usage_without_retry(reason, content, code
         "output_tokens": 4096,
         "reasoning_tokens": 4000,
     }
-    assert len(calls) == 1
+    assert len(calls) == (2 if reason == "stop" else 1)
+    assert len(caught.value.validation_attempts) == len(calls)
     assert caught.value.category == "invalid_grounded_needs_plan"
 
 
@@ -436,7 +449,7 @@ def test_non_current_reference_still_rejects_missing_components(field):
     authority[field] = "none" if field == "precision" else None
     calls = []
     planner = adapter(example["plan"], calls)
-    assert planner.lineage().prompt_version == "bounded-evidence-needs-v9"
+    assert planner.lineage().prompt_version == "bounded-evidence-needs-v10"
     with pytest.raises(RetrievalPlanningError) as error:
         planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
     assert error.value.category == "invalid_grounded_needs_plan"

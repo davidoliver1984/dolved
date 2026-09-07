@@ -41,6 +41,7 @@ use App\Support\Conversation\ContextualisationResult;
 use App\Support\Generation\AnswerPartResult;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Generation\GenerationRequest;
+use App\Support\Generation\GenerationValidationDiagnostics;
 use App\Support\Generation\PreparedGroundedAnswer;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\RetrievalResult;
@@ -184,6 +185,7 @@ final readonly class OrchestrateConversationRun
                     'systemic' => $exception->systemic,
                     ...($exception->validation === null ? [] : ['validation' => $exception->validation]),
                     ...($exception->completion === null ? [] : ['completion' => $exception->completion]),
+                    'validation_attempts' => $exception->validationAttempts,
                 ],
             ];
             $invalidFactDate = ($exception->validation['stage'] ?? null) === 'schema'
@@ -209,14 +211,16 @@ final readonly class OrchestrateConversationRun
             $code = $exception->category === 'timeout'
                 ? GenerationRunFailureCode::ProviderResponseTimeout
                 : GenerationRunFailureCode::ProviderUnavailable;
-            $this->fail($runId, $code, ['generation' => ['attempt_count' => $exception->attemptCount, 'latency_ms' => $exception->latencyMs]]);
+            $this->fail($runId, $code, [...($run->fresh()->usage ?? []), 'generation' => $exception->safeDiagnostics()]);
         } catch (GenerationStreamException) {
             $this->fail($runId, GenerationRunFailureCode::StreamProtocolFailure);
         } catch (GenerationException $exception) {
             $code = $stage === GenerationRunStatus::Contextualising
                 ? GenerationRunFailureCode::ContextualisationFailed
                 : GenerationRunFailureCode::GenerationContractInvalid;
-            $this->fail($runId, $code);
+            $this->fail($runId, $code, [...($run->fresh()->usage ?? []),
+                'generation_validation' => GenerationValidationDiagnostics::local($exception),
+                'generation_validation_attempts' => $exception->validationAttempts]);
         } catch (Throwable) {
             $this->fail($runId, GenerationRunFailureCode::InternalFailure);
         }
@@ -325,7 +329,13 @@ final readonly class OrchestrateConversationRun
                 'retryable' => $result->outcome === RetrievalOutcome::RetrievalFailed,
                 'correlation_id' => $run->correlation_id,
             ]);
-            $run->update(['retrieval_outcome' => $result->outcome]);
+            $plannerUsage = collect($result->usage)->first(fn ($entry) => ($entry['stage'] ?? null) === 'planner');
+            $run->update(['retrieval_outcome' => $result->outcome,
+                'usage' => [...($run->fresh()->usage ?? []),
+                    ...(empty($plannerUsage['validation_attempts']) ? [] : [
+                        'planner_validation_attempts' => $plannerUsage['validation_attempts'],
+                    ])],
+            ]);
             if ($result->usage !== []) {
                 $this->usageRecorder->usage($run->workspace_id, 'generation_run', $run->public_id, $result->usage);
             }

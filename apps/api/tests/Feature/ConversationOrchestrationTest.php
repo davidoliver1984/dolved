@@ -101,22 +101,28 @@ class ConversationOrchestrationTest extends TestCase
             'attempt_count' => 1, 'systemic' => false,
             'validation' => ['stage' => 'catalogue', 'field' => 'root', 'code' => 'binding_coverage'],
             'completion' => ['finish_reason' => 'stop', 'input_tokens' => 120, 'output_tokens' => 90,
-                'reasoning_tokens' => 50]], $run->usage['planner_failure']);
+                'reasoning_tokens' => 50], 'validation_attempts' => []], $run->usage['planner_failure']);
         $this->assertStringNotContainsString('Must never persist', json_encode($run->usage));
         Http::assertSentCount(1);
         $this->assertDatabaseCount('generated_answers', 0);
     }
 
-    public function test_needs_clarification_keeps_text_separate_from_the_bounded_reason_code(): void
+    public static function plannerReceiptCounts(): array
+    {
+        return [[1], [2]];
+    }
+
+    #[DataProvider('plannerReceiptCounts')]
+    public function test_needs_clarification_keeps_text_separate_from_the_bounded_reason_code(int $attempts): void
     {
         Queue::fake();
         [$user, $workspace] = $this->workspaceFixture();
         config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
         $question = str_repeat('Which version and site should be used? ', 10);
-        Http::fake(function (Request $request) use ($question) {
+        Http::fake(function (Request $request) use ($question, $attempts) {
             $identity = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                 'contract_schema_version' => 'evidence-needs-plan-v2',
-                'prompt_version' => 'bounded-evidence-needs-v9', 'adapter_version' => 'structured-chat-needs-v4'];
+                'prompt_version' => 'bounded-evidence-needs-v10', 'adapter_version' => 'structured-chat-needs-v5'];
             $canonical = $identity;
             ksort($canonical);
 
@@ -124,9 +130,14 @@ class ConversationOrchestrationTest extends TestCase
                 'plan' => ['schema_version' => 'evidence-needs-plan-v2', 'decision' => 'clarify', 'clarification' => $question, 'needs' => []],
                 'classifier_lineage' => [...$identity, 'fingerprint' => hash('sha256', json_encode($canonical, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR))],
                 'usage' => ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini',
-                    'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
-                    'input_tokens' => 10, 'cached_input_tokens' => 0, 'output_tokens' => 10,
-                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null, 'pricing_snapshot' => null]]);
+                    'execution' => 'provider_api', 'request_count' => $attempts, 'retry_count' => $attempts - 1,
+                    'input_tokens' => 10 * $attempts, 'cached_input_tokens' => 0, 'output_tokens' => 10 * $attempts,
+                    'latency_ms' => $attempts, 'cost_basis' => 'unavailable', 'cost_usd' => null, 'pricing_snapshot' => null,
+                    'validation_attempts' => array_map(fn ($n) => ['request_count' => 1, 'retry_count' => 0,
+                        'input_tokens' => 10, 'output_tokens' => 10, 'latency_ms' => 1,
+                        'status' => $n === $attempts ? 'accepted' : 'rejected',
+                        'validation' => $n === $attempts ? null : ['stage' => 'catalogue', 'field' => 'root',
+                            'code' => 'binding_coverage', 'input' => 'PRIVATE-CONTENT']], range(1, $attempts))]]);
         });
         $conversation = app(CreateConversation::class)->handle($workspace, $user);
         $run = app(SubmitConversationMessage::class)->handle($conversation, $user, 'A synthetic ambiguous question', (string) Str::uuid());
@@ -135,6 +146,14 @@ class ConversationOrchestrationTest extends TestCase
         $this->assertSame(GenerationRunStatus::ClarificationRequired, $run->status, json_encode($run->only(['failure_code', 'usage'])));
         $this->assertSame('evidence_needs_clarification', $run->retrievalOutcomeSnapshot->clarification_reason);
         $this->assertSame($question, $run->assistantMessage->display_text);
+        $receipts = $run->usage['planner_validation_attempts'];
+        $this->assertCount($attempts, $receipts);
+        $this->assertSame(10 * $attempts, array_sum(array_column($receipts, 'input_tokens')));
+        $this->assertStringNotContainsString('PRIVATE-CONTENT', json_encode($receipts));
+        if ($attempts === 2) {
+            $this->assertSame('binding_coverage', $receipts[0]['validation']['code']);
+            $this->assertSame('accepted', $receipts[1]['status']);
+        }
         Http::assertSentCount(1);
     }
 
@@ -335,11 +354,11 @@ class ConversationOrchestrationTest extends TestCase
 
     public static function executionPaths(): array
     {
-        return [['legacy'], ['needs']];
+        return [['legacy'], ['needs'], ['needs', 'contract_validation_failure', 200], ['needs', 'rate_limit', 429], ['needs', 'PRIVATE-CONTENT', 999]];
     }
 
     #[DataProvider('executionPaths')]
-    public function test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer(string $path): void
+    public function test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer(string $path, ?string $failureCategory = null, ?int $failureStatus = null): void
     {
         Queue::fake();
         [$user, $workspace] = $this->workspaceFixture();
@@ -388,13 +407,13 @@ class ConversationOrchestrationTest extends TestCase
         config(['conversation.needs_workspace_ids' => []]);
         $this->assertSame($path === 'needs', $run->needs_profile !== null);
         Http::preventStrayRequests();
-        Http::fake(function ($request) use ($generation, $document, $chunk, $path) {
+        Http::fake(function ($request) use ($generation, $document, $chunk, $path, $failureCategory, $failureStatus) {
             $body = $request->data();
             if (str_ends_with($request->url(), '/plan-needs')) {
                 $this->assertSame([['turn_id' => 'user-1', 'text' => 'What does the current approved procedure require?']], $body['user_turns']);
                 $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                     'contract_schema_version' => 'evidence-needs-plan-v2',
-                    'prompt_version' => 'bounded-evidence-needs-v9', 'adapter_version' => 'structured-chat-needs-v4'];
+                    'prompt_version' => 'bounded-evidence-needs-v10', 'adapter_version' => 'structured-chat-needs-v5'];
                 ksort($lineage);
                 $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
@@ -433,6 +452,14 @@ class ConversationOrchestrationTest extends TestCase
                 ]);
             }
 
+            if ($failureCategory !== null) {
+                return Http::response(['contract_version' => 2, 'request_id' => $body['request_id'], 'status' => 'provider_error',
+                    'error' => ['category' => $failureCategory, 'provider' => 'PRIVATE-PROVIDER', 'model' => 'PRIVATE-MODEL',
+                        'http_status' => $failureStatus, 'attempt_count' => 1, 'latency_ms' => 12.5,
+                        'validation' => $failureCategory === 'contract_validation_failure'
+                            ? ['field' => 'answer_parts.text', 'code' => 'detached_polarity']
+                            : ['field' => 'PRIVATE-CONTENT', 'code' => 'PRIVATE-CONTENT']]]);
+            }
             $result = [
                 'contract_version' => 1, 'request_id' => $body['request_id'], 'status' => 'completed',
                 'result' => [
@@ -469,6 +496,19 @@ class ConversationOrchestrationTest extends TestCase
         app(OrchestrateConversationRun::class)->handle($run->id);
 
         $run->refresh();
+        if ($failureCategory !== null) {
+            $this->assertSame(GenerationRunStatus::Failed, $run->status);
+            $this->assertSame($failureCategory === 'PRIVATE-CONTENT' ? 'unknown_generation_failure' : $failureCategory, $run->usage['generation']['category']);
+            $this->assertSame($failureStatus === 999 ? null : $failureStatus, $run->usage['generation']['http_status']);
+            $this->assertSame($failureCategory === 'contract_validation_failure' ? 'answer_parts.text' : null, $run->usage['generation']['field']);
+            $this->assertSame($failureCategory === 'contract_validation_failure' ? 'detached_polarity' : null, $run->usage['generation']['code']);
+            $this->assertSame(1, $run->usage['generation']['attempt_count']);
+            $this->assertStringNotContainsString('PRIVATE', json_encode($run->usage));
+            $this->assertNull($run->generatedAnswer);
+            Http::assertSentCount(3);
+
+            return;
+        }
         $this->assertSame(
             GenerationRunStatus::Completed,
             $run->status,

@@ -42,12 +42,15 @@ MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
 ADAPTER_VERSION = "openai-responses-v3-claim-type"
 NEEDS_CONTRACT_VERSION = "generation-result-v2"
-NEEDS_PROMPT_VERSION = "grounded-generation-needs-v4"
+NEEDS_PROMPT_VERSION = "grounded-generation-needs-v5"
 NEEDS_ADAPTER_VERSION = "openai-responses-needs-v2"
 NEEDS_INSTRUCTIONS = """
-Answer directly with the evidence-supported statement, not a detached one-word
-Yes. or No. headline. A connected statement such as "No, the guidance forbids ..."
-is acceptable; do not generate a separate polarity token before the substance.
+Answer directly with an evidence-supported statement. If an answer part starts with
+Yes or No, join that word to its immediate justification in the SAME sentence using
+only a comma, colon or em-dash: "Yes, ...", "No: ...", or "No — ...".
+Never begin "Yes. ...", "No! ...", a bare Yes/No, or a separate headline, including
+Markdown-emphasised forms. Prefer starting with the supported subject and action.
+This is a structural writing rule; independently ensure the full claim agrees with evidence.
 This request contains independent evidence_needs. Interpret comparison/current
 requirements per need, not globally. Evidence ownership, family/version identity,
 authority and applicability were resolved by Laravel and must not be changed.
@@ -465,7 +468,12 @@ class OpenAIGenerator:
                             {
                                 **provider_output.model_dump(),
                                 "contract_version": 2,
-                                "usage": result.usage,
+                                "usage": {
+                                    **(result.usage or {}),
+                                    **self._response_receipt(
+                                        response, attempt, started
+                                    ),
+                                },
                             }
                         ).validate_for_needs_request(needs_request)
                     record_dependency(
@@ -474,8 +482,17 @@ class OpenAIGenerator:
                         self._monotonic() - started,
                     )
                     return needs_result if needs_request is not None else validated
-                except ValidationError, ValueError:
-                    self._fail("contract_validation_failure", started, attempt, None)
+                except (ValidationError, ValueError) as exception:
+                    from app.generation.diagnostics import validation_diagnostic
+
+                    self._fail(
+                        "contract_validation_failure",
+                        started,
+                        attempt,
+                        None,
+                        validation_diagnostic(exception),
+                        self._response_receipt(response, attempt, started),
+                    )
             except GenerationProviderFailure:
                 raise
             except (
@@ -666,6 +683,41 @@ class OpenAIGenerator:
             },
         )
 
+    def _response_receipt(
+        self, response: Any, attempt: int, started: float
+    ) -> dict[str, object]:
+        usage = getattr(response, "usage", None)
+
+        def number(value: object) -> int | None:
+            return (
+                value
+                if isinstance(value, int) and not isinstance(value, bool) and value >= 0
+                else None
+            )
+
+        incoming = number(getattr(usage, "input_tokens", None))
+        outgoing = number(getattr(usage, "output_tokens", None))
+        cached = number(
+            getattr(getattr(usage, "input_tokens_details", None), "cached_tokens", None)
+        )
+        cost = (
+            self._estimated_cost(incoming, cached, outgoing) if attempt == 1 else None
+        )
+        return {
+            "stage": "generation",
+            "provider": self.profile.provider,
+            "model": self.profile.model,
+            "request_count": attempt,
+            "retry_count": attempt - 1,
+            "input_tokens": incoming if attempt == 1 else None,
+            "output_tokens": outgoing if attempt == 1 else None,
+            "cached_input_tokens": cached if attempt == 1 else None,
+            "latency_ms": (self._monotonic() - started) * 1000,
+            "cost_usd": cost,
+            "cost_basis": "estimated" if cost is not None else "unavailable",
+            "pricing_snapshot": self._pricing_snapshot if cost is not None else None,
+        }
+
     def _estimated_cost(
         self,
         input_tokens: int | None,
@@ -733,7 +785,11 @@ class OpenAIGenerator:
         started: float,
         attempt: int,
         status: int | None,
+        validation: dict[str, str] | None = None,
+        usage: dict[str, object] | None = None,
     ) -> None:
+        from app.generation.models import GenerationValidationDiagnostic
+
         elapsed = self._monotonic() - started
         record_dependency(
             "generation_provider",
@@ -748,6 +804,11 @@ class OpenAIGenerator:
                 http_status=status,
                 attempt_count=attempt,
                 latency_ms=elapsed * 1000,
+                validation=GenerationValidationDiagnostic.model_validate(validation)
+                if validation is not None
+                else None,
+                returned_output=validation is not None and usage is not None,
+                usage=usage,
             )
         )
 

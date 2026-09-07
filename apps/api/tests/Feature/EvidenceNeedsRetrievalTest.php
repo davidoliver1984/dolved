@@ -195,7 +195,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $data = $mutate($data);
         }
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v2',
-            'prompt_version' => 'bounded-evidence-needs-v9', 'adapter_version' => 'structured-chat-needs-v4'];
+            'prompt_version' => 'bounded-evidence-needs-v10', 'adapter_version' => 'structured-chat-needs-v5'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
@@ -276,6 +276,31 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $support = $resolver->handle($scope, $plan->retrievalPlan('n2'), CarbonImmutable::parse('2026-09-06'));
         $this->assertSame(RetrievalOutcome::EvidenceFound, $support->outcome);
         Http::assertNothingSent();
+    }
+
+    public function test_topical_current_scope_remains_broad_but_named_binding_remains_exclusive(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $first = $this->document($workspace, $generation, '2026-01-01');
+        $second = $this->document($workspace, $generation, '2026-01-01');
+        $resolver = app(EligibilityResolver::class);
+        $topic = $this->plan(0, function ($data) {
+            $data['plan']['bindings'][1]['subject_status'] = 'topic';
+            $data['plan']['bindings'][1]['family_ids'] = [];
+
+            return $data;
+        });
+        $result = $resolver->handle($scope, $topic->retrievalPlan('n2'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertContains($first->public_id, $result->documentPublicIdsBySide['primary']);
+        $this->assertContains($second->public_id, $result->documentPublicIdsBySide['primary']);
+        $named = $this->plan(0, function ($data) use ($first) {
+            $data['plan']['bindings'][1]['subject_status'] = 'matched';
+            $data['plan']['bindings'][1]['family_ids'] = [$first->family->public_id];
+
+            return $data;
+        });
+        $result = $resolver->handle($scope, $named->retrievalPlan('n2'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame([$first->public_id], $result->documentPublicIdsBySide['primary']);
     }
 
     public function test_external_ownership_is_an_unavailable_need_not_a_location_clarification(): void

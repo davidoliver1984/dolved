@@ -370,9 +370,13 @@ class NeedsPlanRequest(ImmutableModel):
         return self
 
 
+class NeedsOperationUsage(OperationUsage):
+    validation_attempts: tuple[dict[str, object], ...] = Field(default=(), max_length=2)
+
+
 class NeedsPlanResponse(ImmutableModel):
     contract_version: Literal[2] = 2
     request_id: UUID
     plan: EvidenceNeedsPlan
     classifier_lineage: PlannerLineage
-    usage: OperationUsage
+    usage: NeedsOperationUsage

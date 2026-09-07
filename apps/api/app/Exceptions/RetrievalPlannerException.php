@@ -15,6 +15,7 @@ final class RetrievalPlannerException extends RetrievalException
         ?\Throwable $previous = null,
         public readonly ?array $validation = null,
         public readonly ?array $completion = null,
+        public readonly array $validationAttempts = [],
     ) {
         parent::__construct($message, 0, $previous);
     }

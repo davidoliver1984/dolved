@@ -36,6 +36,8 @@ class RetrievalPlanningError(RuntimeError):
         self.category = category
         self.provider_status = provider_status
         self.systemic = systemic
+        self.attempt_count = 1
+        self.validation_attempts: list[dict[str, object]] = []
 
 
 @dataclass(frozen=True)

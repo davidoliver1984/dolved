@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 from typing import Annotated, Literal
 from uuid import UUID
 
@@ -21,6 +20,7 @@ from app.generation.models import (
 )
 from app.generation.needs_request import GenerationNeedsRequest
 from app.generation.openai_adapter import OpenAIGenerationOutput
+from app.generation.polarity import has_invalid_leading_polarity
 
 
 class NeedsCompletedResponse(ImmutableModel):
@@ -63,9 +63,7 @@ class GenerationNeedsResult(ImmutableModel):
     def validate_shape(self) -> GenerationNeedsResult:
         self.authoritative_result()
         for part in self.answer_parts:
-            if re.match(
-                r"^\s*(?:yes|no)\s*(?:[.!?](?:\s|$)|$)", part.text, re.IGNORECASE
-            ):
+            if has_invalid_leading_polarity(part.text):
                 raise ValueError("detached yes/no framing is not an evidence statement")
         return self
 

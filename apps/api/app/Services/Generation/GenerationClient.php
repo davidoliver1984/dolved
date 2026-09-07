@@ -11,7 +11,9 @@ use App\Exceptions\GenerationStreamException;
 use App\Models\Workspace;
 use App\Services\Retrieval\RetrievalCallSigner;
 use App\Support\Generation\GenerationRequest;
+use App\Support\Generation\ValidationAttemptUsage;
 use App\Telemetry\TraceContextHeaders;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use JsonException;
 
@@ -34,7 +36,11 @@ final readonly class GenerationClient
         $path = $needs ? '/api/internal/retrieval/generation/answer-needs' : '/api/internal/retrieval/generation/answer';
         $headers = $this->signer->headers('POST', $path, $body, (string) $workspace->public_id, $needs ? 'generation.answer-needs' : 'generation.answer', $request->requestId)
             + $this->traceContext->current();
-        $response = Http::timeout((float) config('retrieval.timeout_seconds'))->withHeaders($headers)->withBody($body, 'application/json')->post(rtrim((string) config('retrieval.ai_url'), '/').$path);
+        try {
+            $response = Http::timeout((float) config('retrieval.timeout_seconds'))->withHeaders($headers)->withBody($body, 'application/json')->post(rtrim((string) config('retrieval.ai_url'), '/').$path);
+        } catch (ConnectionException $exception) {
+            throw new GenerationException('The generation service transport failed.', 0, $exception);
+        }
         if (! $response->successful() || $response->json('request_id') !== $request->requestId) {
             throw new GenerationException('The generation service call failed.');
         }
@@ -64,6 +70,9 @@ final readonly class GenerationClient
                 is_int($envelope['error']['http_status'] ?? null) ? $envelope['error']['http_status'] : null,
                 (int) ($envelope['error']['attempt_count'] ?? 1),
                 (float) ($envelope['error']['latency_ms'] ?? 0),
+                $envelope['error']['validation'] ?? null,
+                ($envelope['error']['returned_output'] ?? null) === true,
+                is_array($envelope['error']['usage'] ?? null) ? ValidationAttemptUsage::receipt($envelope['error']['usage']) : null,
             );
         }
         $result = $envelope['result'] ?? null;
@@ -146,6 +155,9 @@ final readonly class GenerationClient
                 is_int($terminal['error']['http_status'] ?? null) ? $terminal['error']['http_status'] : null,
                 (int) ($terminal['error']['attempt_count'] ?? 1),
                 (float) ($terminal['error']['latency_ms'] ?? 0),
+                $terminal['error']['validation'] ?? null,
+                ($terminal['error']['returned_output'] ?? null) === true,
+                is_array($terminal['error']['usage'] ?? null) ? ValidationAttemptUsage::receipt($terminal['error']['usage']) : null,
             );
         }
         if ($terminal['event_type'] !== 'generation_completed' || ! is_array($terminal['result'])) {
