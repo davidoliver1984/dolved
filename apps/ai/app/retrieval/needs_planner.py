@@ -96,6 +96,21 @@ type in the rewritten question. Do not introduce a policy title or answer not su
 Temporal selection precedence: when change is explicitly tied to a calendar period, use
 transition_period with that period's normalised value, even when the wording says 'in'
 rather than 'during'. A quoted calendar period is not a named previous-version selector.
+For a specifically named point-in-time record such as a memo, meeting minutes or audit
+outcome, a month or year that is part of that record's own event/title identity identifies
+the record; it does not select a historical version of the record. When the authorised
+catalogue contains that single named record, use current authority and bind the family.
+Do not ask which year/version solely because the point-in-time record's name contains a
+month. This exception does not apply to a policy, procedure, form or other versioned
+authority: a date or historical label that selects one of those versions retains the
+normal date/period/historical-reference rules and genuine ambiguity must still clarify.
+This includes a pre-nominal date in a definite record phrase: 'the January medication audit
+at Willow Bank' means the January audit record at that site, not a previous document version.
+Past-tense questions about what that completed audit, memo or meeting found do not change
+its authority from current. For such a phrase, named applicability quotes only the smallest
+exact location phrase ('Willow Bank'), never the whole record phrase or question. More
+generally, exclude dates, record titles, actions and surrounding question wording from a
+named applicability quote; it identifies the organisational site and nothing else.
 When change is tied to an explicit day boundary, use transition_boundary. Only WITHOUT
 such a calendar qualifier, for an unqualified change into the current state ('replaced', 'renamed', 'became', 'old'
 versus current), choose operation=compare and authority.kind=previous, precision=named.
@@ -261,7 +276,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             timeout_seconds=timeout_seconds,
             client=client,
             contract_schema_version="evidence-needs-plan-v2",
-            prompt_version="bounded-evidence-needs-v10",
+            prompt_version="bounded-evidence-needs-v12",
             adapter_version="structured-chat-needs-v5",
         )
 

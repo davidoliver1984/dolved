@@ -449,7 +449,7 @@ def test_non_current_reference_still_rejects_missing_components(field):
     authority[field] = "none" if field == "precision" else None
     calls = []
     planner = adapter(example["plan"], calls)
-    assert planner.lineage().prompt_version == "bounded-evidence-needs-v10"
+    assert planner.lineage().prompt_version == "bounded-evidence-needs-v12"
     with pytest.raises(RetrievalPlanningError) as error:
         planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
     assert error.value.category == "invalid_grounded_needs_plan"
@@ -461,6 +461,106 @@ def test_non_current_reference_still_rejects_missing_components(field):
     assert "does NOT require a supplied date" in instructions
     assert "Tenant/account ownership" in instructions
     assert "must never be widened" in instructions
+
+
+@pytest.mark.parametrize(
+    ("question", "family_title", "location"),
+    [
+        (
+            "Did the January medication audit at Willow Bank find any problems?",
+            "Memo: Medication Audit Outcome — Willow Bank, January 2026",
+            "Willow Bank",
+        ),
+        (
+            "What actions were recorded in the March infection-control meeting minutes at Oakfield Lodge?",
+            "Infection-control meeting minutes — Oakfield Lodge, March 2026",
+            "Oakfield Lodge",
+        ),
+        (
+            "Summarise the 2025 fire-drill outcome memo for Riverside House.",
+            "Fire-drill outcome memo — Riverside House, 2025",
+            "Riverside House",
+        ),
+    ],
+)
+def test_point_in_time_record_date_is_identity_not_policy_version_selector(
+    question, family_title, location
+):
+    family = CatalogueFamily(family_id=uuid4(), title=family_title)
+    current = {
+        "schema_version": "evidence-needs-plan-v2",
+        "decision": "plan",
+        "clarification": None,
+        "needs": [
+            {
+                "need_id": "n1",
+                "aspect": question,
+                "central": True,
+                "question_span": {"turn_id": "user-1", "quote": question},
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "value": None,
+                    "precision": "none",
+                    "source": None,
+                },
+                "fact_reference": None,
+                "applicability": {
+                    "kind": "named",
+                    "source": {"turn_id": "user-1", "quote": location},
+                },
+                "supports_need_id": None,
+            }
+        ],
+        "bindings": [
+            {
+                "need_id": "n1",
+                "subject_status": "matched",
+                "family_ids": [str(family.family_id)],
+                "ownership": "authorised_workspace",
+                "ownership_source": None,
+            }
+        ],
+    }
+    calls = []
+    result = adapter(current, calls).plan_needs(
+        (UserTurn(turn_id="user-1", text=question),),
+        evaluated_at="2026-09-07T12:00:00Z",
+        catalogue=(family,),
+    )
+    assert result.plan.needs[0].authority.kind == "current"
+    assert result.plan.needs[0].applicability.source is not None
+    assert result.plan.needs[0].applicability.source.quote == location
+    assert result.plan.bindings[0].family_ids == (family.family_id,)
+    instructions = calls[0]["messages"][0]["content"]
+    assert "point-in-time record" in instructions
+    assert "does not select a historical version" in instructions
+    assert "policy, procedure, form or other versioned\nauthority" in instructions
+    assert "pre-nominal date in a definite record phrase" in instructions
+    assert "smallest\nexact location phrase" in instructions
+
+    historical = deepcopy(current)
+    historical_question = "Which rule did the January 2025 Medication Policy require?"
+    historical["needs"][0].update(
+        aspect=historical_question,
+        question_span={"turn_id": "user-1", "quote": historical_question},
+        applicability={"kind": "generic", "source": None},
+    )
+    historical["needs"][0]["authority"] = {
+        "kind": "period",
+        "value": "2025-01",
+        "precision": "month",
+        "source": {"turn_id": "user-1", "quote": "January 2025"},
+    }
+    policy = CatalogueFamily(family_id=uuid4(), title="Medication Policy")
+    historical["bindings"][0]["family_ids"] = [str(policy.family_id)]
+    result = adapter(historical, []).plan_needs(
+        (UserTurn(turn_id="user-1", text=historical_question),),
+        evaluated_at="2026-09-07T12:00:00Z",
+        catalogue=(policy,),
+    )
+    assert result.plan.needs[0].authority.kind == "period"
+    assert result.plan.needs[0].authority.value == "2025-01"
 
 
 @pytest.mark.parametrize("fault", [None, "purpose", "workspace", "turns"])
