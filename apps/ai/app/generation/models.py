@@ -130,7 +130,19 @@ class GenerationContextBudgetExceeded(ImmutableModel):
     maximum_units: int = Field(gt=0)
 
 
+class CitationOwnershipDiagnostic(ImmutableModel):
+    need_id: Literal["n1", "n2", "n3"]
+    answer_part_index: int = Field(ge=0, le=127)
+    cited_ids: tuple[Annotated[EvidenceId, Field(max_length=16)], ...] = Field(
+        max_length=5
+    )
+    allowed_ids: tuple[Annotated[EvidenceId, Field(max_length=16)], ...] = Field(
+        max_length=5
+    )
+
+
 class GenerationValidationDiagnostic(ImmutableModel):
+    ownership: CitationOwnershipDiagnostic | None = None
     field: Literal[
         "result",
         "outcome",

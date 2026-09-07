@@ -9,6 +9,7 @@ from pydantic import Field, TypeAdapter, model_validator
 
 from app.extraction.models import ImmutableModel
 from app.generation.aspect_coverage import AspectLink, validate_aspect_links
+from app.generation.diagnostics import CitationOwnershipError
 from app.generation.models import (
     AnswerPart,
     BoundedText,
@@ -89,8 +90,11 @@ class GenerationNeedsResult(ImmutableModel):
                 if not set(self.answer_parts[index].evidence_ids).issubset(
                     owners[link.need_id]
                 ):
-                    raise ValueError(
-                        "answer part cites evidence belonging to another need"
+                    raise CitationOwnershipError(
+                        link.need_id,
+                        index,
+                        self.answer_parts[index].evidence_ids,
+                        owners[link.need_id],
                     )
             if not owners[link.need_id] and (
                 link.answer_part_indices or not link.unsupported_aspect_indices

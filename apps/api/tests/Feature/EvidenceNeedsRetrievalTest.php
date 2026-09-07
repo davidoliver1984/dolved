@@ -205,6 +205,38 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 'request_count' => 1, 'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable']);
     }
 
+    public function test_verified_single_version_previous_need_is_not_an_ambiguous_reference(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-04-01');
+        $plan = $this->plan(0, function ($data) use ($document) {
+            foreach ($data['plan']['needs'] as &$need) {
+                $need['authority'] = ['kind' => 'previous', 'value' => 'previous', 'precision' => 'named',
+                    'source' => $need['question_span']];
+            }
+            foreach ($data['plan']['bindings'] as &$binding) {
+                $binding['subject_status'] = 'matched';
+                $binding['family_ids'] = [$document->family->public_id];
+            }
+
+            return $data;
+        });
+        $resolver = app(EligibilityResolver::class);
+        foreach (['n1', 'n2'] as $id) {
+            $result = $resolver->handle($scope, $plan->retrievalPlan($id), CarbonImmutable::parse('2026-09-06'));
+            $this->assertSame('no_previous_version', $result->reason);
+            $this->assertFalse($result->canSearch());
+        }
+        $rendered = app(ControlledResponseRenderer::class)->noAnswer(false, 'no_previous_version');
+        $this->assertStringContainsString('no earlier version available', $rendered['text']);
+        $this->document($workspace, $generation, '2026-06-01', $document);
+        $result = $resolver->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome);
+        $this->assertNull($result->reason);
+        Http::assertNothingSent();
+    }
+
     public function test_june_pair_is_march_june_while_ordinary_comparison_is_june_september_and_support_remains_current(): void
     {
         [$workspace, $generation, $scope] = $this->scope();
@@ -297,7 +329,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         Http::preventStrayRequests();
         $resolver = app(EligibilityResolver::class);
         $result = $resolver->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
-        $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete, $result->outcome);
+        $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $result->outcome);
+        $this->assertSame('no_previous_version', $result->reason);
         $this->assertFalse($result->canSearch());
         $support = $resolver->handle($scope, $plan->retrievalPlan('n2'), CarbonImmutable::parse('2026-09-06'));
         $this->assertSame(RetrievalOutcome::EvidenceFound, $support->outcome);

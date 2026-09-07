@@ -136,7 +136,7 @@ class GroundedGenerationFoundationTest extends TestCase
     public static function validationRetryScenarios(): array
     {
         return [['local_then_valid', 2], ['remote_then_valid', 2], ['twice_invalid', 2],
-            ['invalid_then_transport', 2], ['transport', 1], ['insufficient', 1]];
+            ['invalid_then_transport', 2], ['invalid_then_replay', 2], ['transport', 1], ['insufficient', 1]];
     }
 
     #[DataProvider('validationRetryScenarios')]
@@ -161,6 +161,9 @@ class GroundedGenerationFoundationTest extends TestCase
         Http::fake(function ($sent) use (&$calls, $scenario) {
             $calls[] = $sent->body();
             $count = count($calls);
+            if ($scenario === 'invalid_then_replay' && $count === 2) {
+                return Http::response(['detail' => 'PRIVATE'], 401, ['X-Retrieval-Rejection' => 'replay']);
+            }
             if ($scenario === 'transport' || ($scenario === 'invalid_then_transport' && $count === 2)) {
                 throw new ConnectionException('synthetic transport failure');
             }
@@ -173,7 +176,7 @@ class GroundedGenerationFoundationTest extends TestCase
                         'attempt_count' => 1, 'latency_ms' => 10, 'returned_output' => true,
                         'validation' => ['field' => 'answer_parts.text', 'code' => 'detached_polarity'], 'usage' => $usage]]);
             }
-            $invalid = $scenario === 'twice_invalid' || ($count === 1 && in_array($scenario, ['local_then_valid', 'invalid_then_transport'], true));
+            $invalid = $scenario === 'twice_invalid' || ($count === 1 && in_array($scenario, ['local_then_valid', 'invalid_then_transport', 'invalid_then_replay'], true));
             $insufficient = $scenario === 'insufficient';
 
             return Http::response(['contract_version' => 2, 'request_id' => $sent->data()['request_id'], 'status' => 'completed',
@@ -186,15 +189,25 @@ class GroundedGenerationFoundationTest extends TestCase
         });
         try {
             $prepared = app(GenerateGroundedAnswer::class)->prepare($input, app(GenerationProfileFactory::class)->configuredNeeds());
-            $this->assertNotContains($scenario, ['twice_invalid', 'transport', 'invalid_then_transport']);
+            $this->assertNotContains($scenario, ['twice_invalid', 'transport', 'invalid_then_transport', 'invalid_then_replay']);
             $this->assertSame(100 * $expected, $prepared->result->usage['input_tokens']);
             $this->assertSame(20 * $expected, $prepared->result->usage['output_tokens']);
             $this->assertSame(10 * $expected, $prepared->result->usage['latency_ms']);
             $this->assertEquals(0.001 * $expected, $prepared->result->usage['cost_usd']);
             $this->assertCount($expected, $prepared->result->usage['validation_attempts']);
         } catch (GenerationException $exception) {
-            $this->assertContains($scenario, ['twice_invalid', 'transport', 'invalid_then_transport']);
+            $this->assertContains($scenario, ['twice_invalid', 'transport', 'invalid_then_transport', 'invalid_then_replay']);
             $this->assertCount($expected, $exception->validationAttempts);
+            if ($scenario === 'invalid_then_replay') {
+                $second = $exception->validationAttempts[1];
+                $this->assertSame('replay_rejected', $second['validation']['code']);
+                $this->assertSame('python_service_authentication', $second['validation']['layer']);
+                $this->assertSame(401, $second['validation']['http_status']);
+                $this->assertSame(0, $second['request_count']);
+                $this->assertSame(0, $second['input_tokens']);
+                $this->assertSame(0, $second['cost_usd']);
+                $this->assertStringNotContainsString('PRIVATE', json_encode($second));
+            }
             if ($expected === 2) {
                 $this->assertSame(100, $exception->validationAttempts[0]['input_tokens']);
                 $this->assertSame('citation_membership', $exception->validationAttempts[0]['validation']['code']);
@@ -264,7 +277,10 @@ class GroundedGenerationFoundationTest extends TestCase
             app(ValidateGenerationResult::class)->handleNeeds($request, ['n1', 'n2'], $payload);
             $this->fail('Cross-need citation accepted.');
         } catch (GenerationException $exception) {
-            $this->assertStringContainsString('coverage', $exception->getMessage());
+            $diagnostic = GenerationValidationDiagnostics::local($exception);
+            $this->assertSame('citation_ownership', $diagnostic['code']);
+            $this->assertSame(['need_id' => 'n1', 'answer_part_index' => 0,
+                'cited_ids' => ['ev-01'], 'allowed_ids' => []], $diagnostic['ownership']);
         }
         $payload['outcome'] = 'qualified';
         $payload['unsupported_aspects'] = ['The requested history is unavailable in this evidence.'];

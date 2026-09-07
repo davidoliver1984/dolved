@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Support\Generation;
 
+use App\Exceptions\GenerationCitationOwnershipException;
+use App\Exceptions\GenerationServiceAuthenticationException;
 use Throwable;
 
 final class GenerationValidationDiagnostics
@@ -31,12 +33,18 @@ final class GenerationValidationDiagnostics
 
     public static function local(Throwable $exception): array
     {
+        if ($exception instanceof GenerationServiceAuthenticationException) {
+            return ['category' => 'service_authentication_failure', 'layer' => 'python_service_authentication',
+                'field' => 'request', 'code' => $exception->replayRejected ? 'replay_rejected' : 'authentication_rejected', 'http_status' => 401];
+        }
         // Prefer the actual coverage predicate to its generic wrapper, bounded depth.
         $cause = $exception->getPrevious() ?? $exception;
         [$field, $code] = self::RULES[$cause->getMessage()] ?? ['result', 'unclassified_validation'];
 
         return ['category' => 'contract_validation_failure', 'layer' => 'laravel_result_validation',
-            'field' => $field, 'code' => $code, 'http_status' => null];
+            'field' => $field, 'code' => $code, 'http_status' => null,
+            ...($exception instanceof GenerationCitationOwnershipException
+                ? self::ownership($exception->ownership) : [])];
     }
 
     public static function remote(mixed $diagnostic): array
@@ -55,6 +63,27 @@ final class GenerationValidationDiagnostics
             return ['field' => null, 'code' => null];
         }
 
-        return ['field' => $pairs[$code], 'code' => $code];
+        return ['field' => $pairs[$code], 'code' => $code,
+            ...($code === 'citation_ownership' ? self::ownership($diagnostic['ownership'] ?? null) : [])];
+    }
+
+    private static function ownership(mixed $value): array
+    {
+        if (! is_array($value) || ! in_array($value['need_id'] ?? null, ['n1', 'n2', 'n3'], true)
+            || ! is_int($value['answer_part_index'] ?? null) || $value['answer_part_index'] < 0 || $value['answer_part_index'] > 127) {
+            return [];
+        }
+        foreach (['cited_ids', 'allowed_ids'] as $key) {
+            if (! is_array($value[$key] ?? null) || ! array_is_list($value[$key]) || count($value[$key]) > 5) {
+                return [];
+            }
+            foreach ($value[$key] as $id) {
+                if (! is_string($id) || strlen($id) > 16 || preg_match('/^ev-[0-9]{2,}$/D', $id) !== 1) {
+                    return [];
+                }
+            }
+        }
+
+        return ['ownership' => array_intersect_key($value, array_flip(['need_id', 'answer_part_index', 'cited_ids', 'allowed_ids']))];
     }
 }

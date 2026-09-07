@@ -75,6 +75,17 @@ final readonly class EligibilityResolver
             ->with(['documents.applicabilitySnapshot.locations'])
             ->get();
 
+        // A positive catalogue fact, never a guess about an ambiguous reference.
+        if (($binding['subject_status'] ?? null) === 'matched'
+            && count($binding['family_ids']) === 1 && $families->count() === 1
+            && ($plan->evidenceNeed['authority']['kind'] ?? null) === 'previous'
+            && $families->first()->documents->count() === 1
+            && $this->timeline->attainedVersions($families->first())->count() === 1
+            && $this->eligible($this->current($families, $evaluatedAt), $authorised, $location)->count() === 1) {
+            return new EligibleRetrievalScope(RetrievalOutcome::NoEligibleEvidence,
+                reason: 'no_previous_version', resolvedLocationPublicId: $location?->public_id);
+        }
+
         if ($plan->temporalMode === RetrievalTemporalMode::Compare) {
             $needAuthority = $plan->evidenceNeed['authority'] ?? null;
             if ($needAuthority !== null && in_array($needAuthority['kind'], ['transition_period', 'transition_boundary'], true)) {

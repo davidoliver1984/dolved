@@ -7,6 +7,7 @@ namespace App\Services\Generation;
 use App\Exceptions\GenerationContextBudgetExceeded;
 use App\Exceptions\GenerationException;
 use App\Exceptions\GenerationProviderException;
+use App\Exceptions\GenerationServiceAuthenticationException;
 use App\Exceptions\GenerationStreamException;
 use App\Models\Workspace;
 use App\Services\Retrieval\RetrievalCallSigner;
@@ -40,6 +41,9 @@ final readonly class GenerationClient
             $response = Http::timeout((float) config('retrieval.timeout_seconds'))->withHeaders($headers)->withBody($body, 'application/json')->post(rtrim((string) config('retrieval.ai_url'), '/').$path);
         } catch (ConnectionException $exception) {
             throw new GenerationException('The generation service transport failed.', 0, $exception);
+        }
+        if ($response->status() === 401) {
+            throw new GenerationServiceAuthenticationException($response->header('X-Retrieval-Rejection') === 'replay');
         }
         if (! $response->successful() || $response->json('request_id') !== $request->requestId) {
             throw new GenerationException('The generation service call failed.');

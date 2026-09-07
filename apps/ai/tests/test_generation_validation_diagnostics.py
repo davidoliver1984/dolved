@@ -50,7 +50,15 @@ def test_real_adapter_reports_static_rejected_rule(mutation, field, code):
         adapter.generate_needs(GenerationNeedsRequest.model_validate(raw))
     error = caught.value.error
     assert error.category == "contract_validation_failure"
-    assert error.validation.model_dump() == {"field": field, "code": code}
+    diagnostic = error.validation.model_dump(exclude_none=True, mode="json")
+    if mutation == "ownership":
+        assert diagnostic.pop("ownership") == {
+            "need_id": "n1",
+            "answer_part_index": 0,
+            "cited_ids": ["ev-03"],
+            "allowed_ids": ["ev-01", "ev-02"],
+        }
+    assert diagnostic == {"field": field, "code": code}
     assert "PRIVATE" not in error.model_dump_json()
     assert len(responses.calls) == 1
 
@@ -60,3 +68,12 @@ def test_unknown_exception_content_is_never_exposed():
         "field": "result",
         "code": "schema_validation",
     }
+
+
+def test_diagnostic_bounds_cannot_replace_ownership_failure():
+    from app.generation.diagnostics import CitationOwnershipError
+
+    failure = CitationOwnershipError("n1", 999, ("ev-01",), {"ev-02"})
+    diagnostic = validation_diagnostic(failure)
+    assert diagnostic["code"] == "citation_ownership"
+    assert diagnostic["ownership"] is None

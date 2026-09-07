@@ -13,13 +13,15 @@ use InvalidArgumentException;
 final readonly class ControlledResponseRenderer
 {
     /** @return array{kind: MessageKind, text: string, renderer_version: string} */
-    public function noAnswer(bool $comparisonIncomplete): array
+    public function noAnswer(bool $comparisonIncomplete, ?string $reason = null): array
     {
         return [
             'kind' => MessageKind::NoAnswer,
-            'text' => $comparisonIncomplete
+            'text' => $reason === 'no_previous_version'
+                ? 'Only one version of the requested document is available in this knowledge library, so there is no earlier version available to compare.'
+                : ($comparisonIncomplete
                 ? "I couldn't find enough available evidence to complete both sides of that comparison."
-                : "I couldn't find enough available evidence to answer that question.",
+                : "I couldn't find enough available evidence to answer that question."),
             'renderer_version' => (string) config('conversation.controlled_renderer_version'),
         ];
     }

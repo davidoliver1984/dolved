@@ -141,6 +141,9 @@ async def authenticate(request: Request, purpose: str, settings: Settings) -> by
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
             "The retrieval caller request is not authenticated.",
+            headers={"X-Retrieval-Rejection": "replay"}
+            if exception.reason == "replay"
+            else None,
         ) from exception
     return body
 

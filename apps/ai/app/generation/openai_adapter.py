@@ -785,7 +785,7 @@ class OpenAIGenerator:
         started: float,
         attempt: int,
         status: int | None,
-        validation: dict[str, str] | None = None,
+        validation: dict[str, object] | None = None,
         usage: dict[str, object] | None = None,
     ) -> None:
         from app.generation.models import GenerationValidationDiagnostic

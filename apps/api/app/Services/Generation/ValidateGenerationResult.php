@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Generation;
 
 use App\Enums\GenerationOutcome;
+use App\Exceptions\GenerationCitationOwnershipException;
 use App\Exceptions\GenerationException;
 use App\Support\Generation\AnswerPartResult;
 use App\Support\Generation\AspectCoverage;
@@ -36,7 +37,10 @@ final class ValidateGenerationResult
                     $owned = $owners[$link['need_id']];
                     foreach ($link['answer_part_indices'] as $index) {
                         if (array_diff($result->answerParts[$index]->evidenceIds, $owned) !== []) {
-                            throw new \InvalidArgumentException('Answer cites another need evidence.');
+                            throw new GenerationCitationOwnershipException([
+                                'need_id' => $link['need_id'], 'answer_part_index' => $index,
+                                'cited_ids' => $result->answerParts[$index]->evidenceIds, 'allowed_ids' => $owned,
+                            ]);
                         }
                     }
                     if ($owned === [] && ($link['answer_part_indices'] !== [] || $link['unsupported_aspect_indices'] === [])) {

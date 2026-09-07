@@ -7,6 +7,7 @@ namespace App\Actions\Generation;
 use App\Enums\GenerationDeliveryMode;
 use App\Exceptions\GenerationException;
 use App\Exceptions\GenerationProviderException;
+use App\Exceptions\GenerationServiceAuthenticationException;
 use App\Models\GeneratedAnswer;
 use App\Services\Generation\AssembleGenerationRequest;
 use App\Services\Generation\GenerationClient;
@@ -91,8 +92,14 @@ final readonly class GenerateGroundedAnswer
                     $receipt['request_count'] = $exception->attemptCount;
                     $receipt['latency_ms'] ??= $exception->latencyMs;
                 }
+                if ($exception instanceof GenerationServiceAuthenticationException) {
+                    // Authentication rejected before any provider attempt.
+                    $receipt = ValidationAttemptUsage::receipt(['request_count' => 0, 'retry_count' => 0,
+                        'input_tokens' => 0, 'output_tokens' => 0, 'cached_input_tokens' => 0,
+                        'cost_usd' => 0, 'latency_ms' => 0]);
+                }
                 $receipt['outcome'] = 'rejected';
-                $receipt['validation'] = array_intersect_key($diagnostic, array_flip(['category', 'field', 'code', 'layer']));
+                $receipt['validation'] = array_intersect_key($diagnostic, array_flip(['category', 'field', 'code', 'layer', 'http_status', 'ownership']));
                 $receipts[] = $receipt;
                 $exception->validationAttempts = $receipts;
                 $eligible = $request->evidenceNeeds !== [] && $profile->deliveryMode === GenerationDeliveryMode::CompleteResultOnly

@@ -2,6 +2,29 @@
 
 from pydantic import ValidationError
 
+from app.generation.models import CitationOwnershipDiagnostic
+
+
+class CitationOwnershipError(ValueError):
+    def __init__(
+        self, need_id: str, index: int, cited: tuple[str, ...], allowed: set[str]
+    ):
+        super().__init__("answer part cites evidence belonging to another need")
+        self.ownership: CitationOwnershipDiagnostic | None = None
+        try:
+            self.ownership = CitationOwnershipDiagnostic.model_validate(
+                {
+                    "need_id": need_id,
+                    "answer_part_index": index,
+                    "cited_ids": cited,
+                    "allowed_ids": sorted(allowed),
+                }
+            )
+        except ValidationError:
+            # Diagnostic bounds must never replace the actual rejection.
+            pass
+
+
 RULES: dict[str, tuple[str, str]] = {
     "provider output violates the generation outcome invariant": (
         "outcome",
@@ -62,7 +85,15 @@ RULES: dict[str, tuple[str, str]] = {
 }
 
 
-def validation_diagnostic(exception: ValueError) -> dict[str, str]:
+def validation_diagnostic(exception: ValueError) -> dict[str, object]:
+    if isinstance(exception, CitationOwnershipError):
+        return {
+            "field": "answer_parts.evidence_ids",
+            "code": "citation_ownership",
+            "ownership": exception.ownership.model_dump(mode="json")
+            if exception.ownership is not None
+            else None,
+        }
     # Exact static messages originate in our validators, not arbitrary output text.
     messages = [str(exception)]
     if isinstance(exception, ValidationError):

@@ -21,6 +21,7 @@ use App\Exceptions\GenerationCancelled;
 use App\Exceptions\GenerationContextBudgetExceeded;
 use App\Exceptions\GenerationException;
 use App\Exceptions\GenerationProviderException;
+use App\Exceptions\GenerationServiceAuthenticationException;
 use App\Exceptions\GenerationStreamException;
 use App\Exceptions\RetrievalPlannerException;
 use App\Models\ContextualisationResultSnapshot;
@@ -215,9 +216,11 @@ final readonly class OrchestrateConversationRun
         } catch (GenerationStreamException) {
             $this->fail($runId, GenerationRunFailureCode::StreamProtocolFailure);
         } catch (GenerationException $exception) {
-            $code = $stage === GenerationRunStatus::Contextualising
+            $code = $exception instanceof GenerationServiceAuthenticationException
+                ? GenerationRunFailureCode::ProviderUnavailable
+                : ($stage === GenerationRunStatus::Contextualising
                 ? GenerationRunFailureCode::ContextualisationFailed
-                : GenerationRunFailureCode::GenerationContractInvalid;
+                : GenerationRunFailureCode::GenerationContractInvalid);
             $this->fail($runId, $code, [...($run->fresh()->usage ?? []),
                 'generation_validation' => GenerationValidationDiagnostics::local($exception),
                 'generation_validation_attempts' => $exception->validationAttempts]);
@@ -358,7 +361,7 @@ final readonly class OrchestrateConversationRun
         }
         $rendered = $result->outcome === RetrievalOutcome::ClarificationRequired
             ? $this->renderer->clarification($result->clarificationSource ?? throw new GenerationException('A clarification source is required.'), $result->reason ?? '', $result->clarificationQuestion)
-            : $this->renderer->noAnswer($result->outcome === RetrievalOutcome::ComparisonScopeIncomplete);
+            : $this->renderer->noAnswer($result->outcome === RetrievalOutcome::ComparisonScopeIncomplete, $result->reason);
         $terminal = $result->outcome === RetrievalOutcome::ClarificationRequired
             ? GenerationRunStatus::ClarificationRequired
             : GenerationRunStatus::RetrievalNoAnswer;

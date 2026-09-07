@@ -134,6 +134,7 @@ def test_plan_endpoint_validates_signed_identity_and_rejects_replay() -> None:
     assert response.json()["plan"]["temporal_mode"] == "current"
     assert response.json()["classifier_lineage"]["provider"] == "deterministic"
     assert replay.status_code == 401
+    assert replay.headers["X-Retrieval-Rejection"] == "replay"
 
 
 def test_search_endpoint_is_purpose_isolated_and_returns_typed_empty_result() -> None:

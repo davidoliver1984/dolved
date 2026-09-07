@@ -126,7 +126,10 @@ final readonly class RetrieveWorkspaceEvidence
         $observe?->__invoke('needs_final_evidence', $selected);
 
         return new RetrievalResult($selected === [] ? RetrievalOutcome::InsufficientEvidence : RetrievalOutcome::EvidenceFound,
-            $selected, lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v2',
+            $selected, reason: $selected === [] && $coverage !== []
+                && count(array_filter($coverage, fn ($need) => $need['retrieval_reason'] === 'no_previous_version')) === count($coverage)
+                    ? 'no_previous_version' : null,
+            lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v2',
                 'needs' => array_map(fn ($r) => $r->lineage, $results)], usage: $usage, evidenceNeeds: $coverage);
     }
 

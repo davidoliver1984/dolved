@@ -60,6 +60,54 @@
       "title": "AspectLink",
       "type": "object"
     },
+    "CitationOwnershipDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "enum": [
+            "n1",
+            "n2",
+            "n3"
+          ],
+          "title": "Need Id",
+          "type": "string"
+        },
+        "answer_part_index": {
+          "maximum": 127,
+          "minimum": 0,
+          "title": "Answer Part Index",
+          "type": "integer"
+        },
+        "cited_ids": {
+          "items": {
+            "maxLength": 16,
+            "pattern": "^ev-[0-9]{2,}$",
+            "type": "string"
+          },
+          "maxItems": 5,
+          "title": "Cited Ids",
+          "type": "array"
+        },
+        "allowed_ids": {
+          "items": {
+            "maxLength": 16,
+            "pattern": "^ev-[0-9]{2,}$",
+            "type": "string"
+          },
+          "maxItems": 5,
+          "title": "Allowed Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "need_id",
+        "answer_part_index",
+        "cited_ids",
+        "allowed_ids"
+      ],
+      "title": "CitationOwnershipDiagnostic",
+      "type": "object"
+    },
     "GenerationContextBudgetExceeded": {
       "additionalProperties": false,
       "properties": {
@@ -279,6 +327,17 @@
     "GenerationValidationDiagnostic": {
       "additionalProperties": false,
       "properties": {
+        "ownership": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CitationOwnershipDiagnostic"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "field": {
           "enum": [
             "result",
