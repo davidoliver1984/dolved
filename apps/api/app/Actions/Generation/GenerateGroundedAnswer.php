@@ -16,10 +16,12 @@ use App\Services\Generation\ValidateAnswerPartCandidate;
 use App\Services\Generation\ValidateGenerationResult;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Generation\GenerationProfile;
+use App\Support\Generation\GenerationRequest;
 use App\Support\Generation\GenerationResult;
 use App\Support\Generation\GenerationValidationDiagnostics;
 use App\Support\Generation\PreparedGroundedAnswer;
 use App\Support\Generation\ValidationAttemptUsage;
+use Illuminate\Support\Str;
 
 final readonly class GenerateGroundedAnswer
 {
@@ -51,6 +53,7 @@ final readonly class GenerateGroundedAnswer
     {
         $observeStage?->__invoke('preparing_evidence');
         $request = $this->assembler->handle($input);
+        $initialRequestId = $request->requestId;
         if ($request->evidenceNeeds !== [] && ($profile->contractVersion !== 'generation-result-v2'
             || $profile->promptVersion !== 'grounded-generation-needs-v5'
             || $profile->adapterVersion !== 'openai-responses-needs-v2'
@@ -76,6 +79,8 @@ final readonly class GenerateGroundedAnswer
 
                 $receipt = ValidationAttemptUsage::receipt($result->usage);
                 $receipt['outcome'] = 'accepted';
+                $receipt['request_id'] = $request->requestId;
+                $receipt['retry_of_request_id'] = $validationAttempt === 2 ? $initialRequestId : null;
                 $receipts[] = $receipt;
                 $result = new GenerationResult($result->outcome, $result->answerParts,
                     $result->unsupportedAspects, $result->insufficiencyReason,
@@ -99,6 +104,8 @@ final readonly class GenerateGroundedAnswer
                         'cost_usd' => 0, 'latency_ms' => 0]);
                 }
                 $receipt['outcome'] = 'rejected';
+                $receipt['request_id'] = $request->requestId;
+                $receipt['retry_of_request_id'] = $validationAttempt === 2 ? $initialRequestId : null;
                 $receipt['validation'] = array_intersect_key($diagnostic, array_flip(['category', 'field', 'code', 'layer', 'http_status', 'ownership']));
                 $receipts[] = $receipt;
                 $exception->validationAttempts = $receipts;
@@ -107,6 +114,14 @@ final readonly class GenerateGroundedAnswer
                         ? ($exception->category === 'contract_validation_failure' && $exception->returnedOutput && ($diagnostic['code'] ?? null) !== null)
                         : (is_array($payload) && ($diagnostic['code'] ?? 'unclassified_validation') !== 'unclassified_validation'));
                 if ($validationAttempt === 1 && $eligible) {
+                    // A rejected completed output needs a new sample, not a replay.
+                    // Preserve the exact assembled input; change only rc1 identity.
+                    $request = new GenerationRequest(
+                        (string) Str::uuid(), $request->workspacePublicId, $request->question,
+                        $request->evidence, $request->contextPolicyVersion, $request->maxContextCharacters,
+                        $request->requiredSides, $request->requestedEvidenceType, $request->evidenceNeeds,
+                    );
+
                     continue;
                 }
                 throw $exception;
@@ -121,7 +136,7 @@ final readonly class GenerateGroundedAnswer
             $profile->adapterVersion,
             $profile->qualityAffectingConfiguration,
         );
-        $correlationId = (string) ($input->correlationLineage['correlation_id'] ?? $request->requestId);
+        $correlationId = (string) ($input->correlationLineage['correlation_id'] ?? $initialRequestId);
 
         return new PreparedGroundedAnswer($request, $result, $fingerprint, $correlationId);
     }

@@ -3,6 +3,7 @@ import json
 from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
@@ -135,6 +136,59 @@ def test_legacy_profile_cannot_dispatch_needs_silently():
     with pytest.raises(ValueError):
         adapter.generate_needs(GenerationNeedsRequest.model_validate(raw))
     assert responses.calls == []
+
+
+def test_validation_retry_new_identity_crosses_real_auth_with_identical_model_input(
+    monkeypatch,
+):
+    raw, adapter, responses = prepared()
+    raw["request_id"] = str(uuid4())
+    valid = responses.values[0]
+    invalid = valid.output_parsed.model_dump()
+    invalid["answer_parts"][0]["evidence_ids"] = ["ev-03"]
+    responses.values = [response(invalid), valid]
+    secret = b"n" * 32
+    monkeypatch.setenv(
+        "RETRIEVAL_CALLER_HMAC_KEYS",
+        json.dumps({"test": base64.b64encode(secret).decode()}),
+    )
+    get_settings.cache_clear()
+    app.dependency_overrides[needs_generator_dependency] = lambda: adapter
+    path = "/api/internal/retrieval/generation/answer-needs"
+    first_body, first_headers = signed_request(
+        raw, secret, path, "generation.answer-needs"
+    )
+    second = {**raw, "request_id": str(uuid4())}
+    second_body, second_headers = signed_request(
+        second, secret, path, "generation.answer-needs"
+    )
+    try:
+        client = TestClient(app)
+        rejected = client.post(path, content=first_body, headers=first_headers)
+        assert rejected.status_code == 200
+        assert rejected.json()["error"]["validation"]["code"] == "citation_ownership"
+        replay = client.post(path, content=first_body, headers=first_headers)
+        assert replay.status_code == 401
+        assert len(responses.calls) == 1
+        accepted = client.post(path, content=second_body, headers=second_headers)
+        assert accepted.status_code == 200
+        assert accepted.json()["status"] == "completed"
+        assert len(responses.calls) == 2
+        # Actual rendered provider instructions/input/schema/settings, not just DTO equality.
+        assert responses.calls[0] == responses.calls[1]
+        assert first_body != second_body
+        assert (
+            first_headers["X-Retrieval-Caller-Signature"]
+            != second_headers["X-Retrieval-Caller-Signature"]
+        )
+        assert (
+            client.post(path, content=second_body, headers=second_headers).status_code
+            == 401
+        )
+        assert len(responses.calls) == 2
+    finally:
+        app.dependency_overrides.clear()
+        get_settings.cache_clear()
 
 
 @pytest.mark.parametrize("invalid", [False, True])

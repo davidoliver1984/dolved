@@ -140,7 +140,7 @@ class GroundedGenerationFoundationTest extends TestCase
     }
 
     #[DataProvider('validationRetryScenarios')]
-    public function test_bounded_validation_retry_retains_identical_input_and_usage(string $scenario, int $expected): void
+    public function test_bounded_validation_retry_refreshes_only_identity_and_retains_usage(string $scenario, int $expected): void
     {
         [$base, $chunk] = $this->assemblyFixture();
         $examples = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/examples.json'), true, flags: JSON_THROW_ON_ERROR);
@@ -157,9 +157,11 @@ class GroundedGenerationFoundationTest extends TestCase
             new RetrievalResult(RetrievalOutcome::EvidenceFound, [$candidate], evidenceNeeds: [$need]),
             [], [], $base->authorisedScope, []);
         $calls = [];
+        $signatures = [];
         Http::preventStrayRequests();
-        Http::fake(function ($sent) use (&$calls, $scenario) {
+        Http::fake(function ($sent) use (&$calls, &$signatures, $scenario) {
             $calls[] = $sent->body();
+            $signatures[] = $sent->header('X-Retrieval-Caller-Signature');
             $count = count($calls);
             if ($scenario === 'invalid_then_replay' && $count === 2) {
                 return Http::response(['detail' => 'PRIVATE'], 401, ['X-Retrieval-Rejection' => 'replay']);
@@ -215,7 +217,21 @@ class GroundedGenerationFoundationTest extends TestCase
         }
         $this->assertCount($expected, $calls);
         if ($expected === 2) {
-            $this->assertSame($calls[0], $calls[1]);
+            $first = json_decode($calls[0], true, flags: JSON_THROW_ON_ERROR);
+            $second = json_decode($calls[1], true, flags: JSON_THROW_ON_ERROR);
+            $this->assertNotSame($first['request_id'], $second['request_id']);
+            $this->assertNotSame(hash('sha256', $calls[0]), hash('sha256', $calls[1]));
+            $this->assertNotSame($signatures[0], $signatures[1]);
+            $history = isset($prepared) ? $prepared->result->usage['validation_attempts'] : $exception->validationAttempts;
+            $this->assertSame($first['request_id'], $history[0]['request_id']);
+            $this->assertSame($second['request_id'], $history[1]['request_id']);
+            $this->assertSame($first['request_id'], $history[1]['retry_of_request_id']);
+            if (isset($prepared)) {
+                $this->assertSame($second['request_id'], $prepared->request->requestId);
+                $this->assertSame($first['request_id'], $prepared->correlationId);
+            }
+            unset($first['request_id'], $second['request_id']);
+            $this->assertSame(json_encode($first, JSON_THROW_ON_ERROR), json_encode($second, JSON_THROW_ON_ERROR));
         }
     }
 
