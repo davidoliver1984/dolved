@@ -18,6 +18,7 @@ final readonly class EligibleRetrievalScope
         public ?string $reason = null,
         public ?string $resolvedLocationPublicId = null,
         public ?RetrievalClarificationSource $clarificationSource = null,
+        public ?string $clarificationQuestion = null,
     ) {}
 
     public function canSearch(): bool

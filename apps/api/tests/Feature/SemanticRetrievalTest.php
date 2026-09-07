@@ -34,6 +34,7 @@ use App\Models\WorkspaceCorpusGeneration;
 use App\Models\WorkspaceCorpusGenerationChunk;
 use App\Models\WorkspaceMembership;
 use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
+use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Services\Retrieval\RetrievalClient;
 use App\Support\Retrieval\ClassifierLineage;
@@ -55,6 +56,57 @@ use Tests\TestCase;
 class SemanticRetrievalTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_explicit_location_descriptors_and_candidate_clarifications_are_collision_safe(): void
+    {
+        $scenarios = [
+            ['unique', [['Fern House', 'House']], 'Fern', 'Fern House', null, []],
+            ['collision', [['Fern House', 'House'], ['Fern Lodge', 'Lodge']], 'Fern', null, 'ambiguous_location_reference', ['Fern House', 'Fern Lodge']],
+            ['no match', [['Fern House', 'House']], 'Zebra', null, 'unresolved_location_reference', []],
+            ['no designation', [['Fern Bank', null]], 'Fern', null, 'unresolved_location_reference', ['Fern Bank']],
+            ['false collision', [['Fern Bank', null], ['Fern Lodge', 'Lodge']], 'Fern', 'Fern Lodge', null, []],
+            ['whole phrase', [['Willow Bank Community Service', 'Community Service']], 'Willow Bank', 'Willow Bank Community Service', null, []],
+            ['no recursive strip', [['Willow Bank Community Service', 'Community Service']], 'Willow', null, 'unresolved_location_reference', ['Willow Bank Community Service']],
+            ['exact precedence', [['Fern', null], ['Fern House', 'House']], 'Fern', 'Fern', null, []],
+            ['typo suggestion only', [['Fern House', 'House']], 'Ferm', null, 'unresolved_location_reference', ['Fern House']],
+            ['internal word', [['House of Fern', null]], 'House of', null, 'unresolved_location_reference', ['House of Fern']],
+        ];
+        foreach ($scenarios as [$label, $locations, $reference, $expected, $reason, $candidates]) {
+            [$workspace, $user] = $this->retrievalWorkspace();
+            foreach ($locations as [$name, $descriptor]) {
+                OrganisationalLocation::factory()->for($workspace)->create(['name' => $name, 'kind' => 'site', 'reference_descriptor' => $descriptor]);
+            }
+            OrganisationalLocation::factory()->create(['name' => 'Fern Court', 'reference_descriptor' => 'Court']);
+            $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
+            $plan = new RetrievalPlan('Question', RetrievalTemporalMode::Current, null, null, [$reference], null, $this->lineage(), $this->plannerUsage());
+            $resolved = app(EligibilityResolver::class)->handle($scope, $plan, CarbonImmutable::parse('2026-03-01'));
+            $this->assertSame($reason, $resolved->reason, $label);
+            $this->assertSame($expected, OrganisationalLocation::where('public_id', $resolved->resolvedLocationPublicId)->value('name'), $label);
+            if ($reason !== null) {
+                $rendered = (new ControlledResponseRenderer)->clarification($resolved->clarificationSource, $reason, $resolved->clarificationQuestion);
+                foreach ($candidates as $candidate) {
+                    $this->assertStringContainsString($candidate, $rendered['text'], $label);
+                }
+                $this->assertStringNotContainsString('Fern Court', $rendered['text'], $label);
+                if ($candidates === []) {
+                    $this->assertSame('Which organisational site or region do you mean?', $rendered['text'], $label);
+                }
+            }
+        }
+    }
+
+    public function test_location_descriptor_must_be_a_trailing_phrase_not_the_whole_name(): void
+    {
+        $this->expectException(\LogicException::class);
+        OrganisationalLocation::factory()->create(['name' => 'Bank', 'reference_descriptor' => 'Bank']);
+    }
+
+    public function test_location_name_cannot_leave_a_stale_descriptor_when_renamed(): void
+    {
+        $location = OrganisationalLocation::factory()->create(['name' => 'Fern House', 'reference_descriptor' => 'House']);
+        $this->expectException(\LogicException::class);
+        $location->update(['name' => 'Fern Lodge']);
+    }
 
     public function test_current_valid_at_date_and_compare_resolve_only_indexed_corpus_evidence(): void
     {

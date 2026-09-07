@@ -64,6 +64,7 @@ final readonly class EligibilityResolver
                 RetrievalOutcome::ClarificationRequired,
                 reason: $location->value,
                 clarificationSource: RetrievalClarificationSource::EligibilityResolver,
+                clarificationQuestion: (new LocationReferenceCandidates)->question($authorised->workspace->id, $plan->locationReferences),
             );
         }
 
@@ -409,6 +410,9 @@ final readonly class EligibilityResolver
             if (is_string($withoutScopeSuffix) && $withoutScopeSuffix !== $normalised) {
                 $matches = $this->locationMatches($authorised, $withoutScopeSuffix);
             }
+        }
+        if ($matches->isEmpty()) {
+            $matches = (new LocationReferenceCandidates)->shortened($authorised->workspace->id, $normalised);
         }
         if ($matches->isEmpty()) {
             return EligibilityClarificationReason::UnresolvedLocationReference;

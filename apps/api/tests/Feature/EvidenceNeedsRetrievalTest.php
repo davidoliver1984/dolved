@@ -27,6 +27,7 @@ use App\Models\WorkspaceCorpusGeneration;
 use App\Models\WorkspaceCorpusGenerationChunk;
 use App\Models\WorkspaceMembership;
 use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
+use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Support\Retrieval\EvidenceNeedsPlan;
 use Carbon\CarbonImmutable;
@@ -254,6 +255,31 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         });
         $result = $resolver->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
         $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+    }
+
+    public function test_named_location_candidates_survive_the_needs_retrieval_and_renderer_boundary(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        foreach (['House', 'Lodge'] as $descriptor) {
+            OrganisationalLocation::factory()->for($workspace)->create([
+                'name' => 'Fern '.$descriptor, 'reference_descriptor' => $descriptor,
+            ]);
+        }
+        $plan = $this->plan(4, function ($data) {
+            $data['turns'][0]['text'] = 'Which policy applies at Fern?';
+            $data['plan']['needs'][0]['question_span']['quote'] = $data['turns'][0]['text'];
+            $data['plan']['needs'][0]['applicability']['source']['quote'] = 'Fern';
+
+            return $data;
+        });
+        Http::preventStrayRequests();
+        Http::fake();
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 40, CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame('ambiguous_location_reference', $result->reason);
+        $rendered = (new ControlledResponseRenderer)->clarification($result->clarificationSource, $result->reason, $result->clarificationQuestion);
+        $this->assertStringContainsString('Fern House', $rendered['text']);
+        $this->assertStringContainsString('Fern Lodge', $rendered['text']);
+        Http::assertNothingSent();
     }
 
     public function test_bound_subject_cannot_borrow_unrelated_history_and_support_stays_available(): void

@@ -85,7 +85,7 @@ final readonly class RetrieveWorkspaceEvidence
             if ($results[$id]->outcome === RetrievalOutcome::ClarificationRequired) {
                 return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
                     reason: $results[$id]->reason, clarificationSource: $results[$id]->clarificationSource,
-                    usage: $usage);
+                    usage: $usage, clarificationQuestion: $results[$id]->clarificationQuestion);
             }
         }
         // A corpus cutover during multi-need execution must not mix generations.
@@ -98,7 +98,8 @@ final readonly class RetrieveWorkspaceEvidence
             $eligible = $this->eligibility->handle($authorised, $plans[$id], $evaluatedAt);
             if ($eligible->outcome === RetrievalOutcome::ClarificationRequired) {
                 return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
-                    reason: $eligible->reason, clarificationSource: $eligible->clarificationSource, usage: $usage);
+                    reason: $eligible->reason, clarificationSource: $eligible->clarificationSource, usage: $usage,
+                    clarificationQuestion: $eligible->clarificationQuestion);
             }
             $candidates = $this->hydrateAndRecheck($result->candidates,
                 $eligible->canSearch() ? $eligible->documentPublicIdsBySide : [], $authorised);
@@ -285,12 +286,14 @@ final readonly class RetrieveWorkspaceEvidence
                 'document_public_ids_by_side' => $eligible->documentPublicIdsBySide,
                 'reason' => $eligible->reason,
                 'resolved_location_public_id' => $eligible->resolvedLocationPublicId,
+                'clarification_question' => $eligible->clarificationQuestion,
             ]);
             if (! $eligible->canSearch()) {
                 return new RetrievalResult(
                     $eligible->outcome,
                     reason: $eligible->reason,
                     clarificationSource: $eligible->clarificationSource,
+                    clarificationQuestion: $eligible->clarificationQuestion,
                     resolvedTemporalAuthority: $this->resolvedTemporalAuthority($plan, $eligible, $evaluatedAt),
                     resolvedApplicabilityLocation: ['resolved_location_public_id' => $eligible->resolvedLocationPublicId],
                     lineage: ['planner' => $plan->classifierLineage->toArray()],

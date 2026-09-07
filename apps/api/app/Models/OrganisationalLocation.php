@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
-#[Fillable(['parent_id', 'name', 'kind'])]
+#[Fillable(['parent_id', 'name', 'kind', 'reference_descriptor'])]
 class OrganisationalLocation extends Model
 {
     /** @use HasFactory<OrganisationalLocationFactory> */
@@ -22,6 +22,13 @@ class OrganisationalLocation extends Model
     protected static function booted(): void
     {
         static::saving(function (OrganisationalLocation $location): void {
+            if ($location->reference_descriptor !== null) {
+                $descriptor = trim($location->reference_descriptor);
+                if ($descriptor === '' || ! str_ends_with(mb_strtolower(trim($location->name)), ' '.mb_strtolower($descriptor))) {
+                    throw new LogicException('A reference descriptor must be an explicit trailing phrase after a non-empty location name.');
+                }
+                $location->reference_descriptor = $descriptor;
+            }
             if ($location->exists && $location->isDirty(['public_id', 'workspace_id'])) {
                 throw new LogicException('Organisational location identity and ownership are immutable.');
             }
