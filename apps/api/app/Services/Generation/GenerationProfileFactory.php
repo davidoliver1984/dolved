@@ -30,12 +30,14 @@ final class GenerationProfileFactory
 
     private function needsIdentity(): array
     {
-        return ['execution_version' => 'bounded-needs-slice-v12',
-            'planner_contract' => 'evidence-needs-plan-v2',
+        return ['execution_version' => 'bounded-needs-slice-v14',
+            'scope_renderer' => 'scope-fact-renderer-v1',
+            'scope_answer_contract' => 'scope-composed-answer-v1',
+            'planner_contract' => 'evidence-needs-plan-v3',
             'planner_provider' => config('retrieval.planner.provider'),
             'planner_model' => config('retrieval.planner.model'),
-            'planner_prompt' => 'bounded-evidence-needs-v12',
-            'planner_adapter' => 'structured-chat-needs-v5',
+            'planner_prompt' => 'bounded-evidence-needs-v14',
+            'planner_adapter' => 'structured-chat-needs-v6',
             'generation' => json_decode(json_encode($this->configuredNeeds(), JSON_THROW_ON_ERROR), true, flags: JSON_THROW_ON_ERROR),
             'generation_context_policy' => 'whole-needs-evidence-v1',
             'generation_max_context_characters' => config('generation.max_context_characters'),

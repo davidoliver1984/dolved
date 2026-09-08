@@ -24,7 +24,7 @@ from app.retrieval.planner import RetrievalPlanningError
 from app.retrieval.routes import needs_planner_dependency
 from tests.test_retrieval_routes import signed_headers
 
-ROOT = Path("/contracts/http/retrieval-needs/v2")
+ROOT = Path("/contracts/http/retrieval-needs/v3")
 EXAMPLES = json.loads((ROOT / "examples.json").read_text())
 MUTATIONS = json.loads((ROOT / "invalid-mutations.json").read_text())
 
@@ -325,7 +325,7 @@ def test_real_transport_preserves_month_and_mixed_needs_without_normalisation():
             turns(example), evaluated_at="2026-09-06T12:00:00Z"
         )
         assert result.plan.model_dump(mode="json") == example["plan"]
-        assert result.lineage.contract_schema_version == "evidence-needs-plan-v2"
+        assert result.lineage.contract_schema_version == "evidence-needs-plan-v3"
         assert result.usage.request_count == 1
         assert result.usage.input_tokens == 120
         assert len(calls) == 1
@@ -449,7 +449,7 @@ def test_non_current_reference_still_rejects_missing_components(field):
     authority[field] = "none" if field == "precision" else None
     calls = []
     planner = adapter(example["plan"], calls)
-    assert planner.lineage().prompt_version == "bounded-evidence-needs-v12"
+    assert planner.lineage().prompt_version == "bounded-evidence-needs-v14"
     with pytest.raises(RetrievalPlanningError) as error:
         planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
     assert error.value.category == "invalid_grounded_needs_plan"
@@ -488,7 +488,7 @@ def test_point_in_time_record_date_is_identity_not_policy_version_selector(
 ):
     family = CatalogueFamily(family_id=uuid4(), title=family_title)
     current = {
-        "schema_version": "evidence-needs-plan-v2",
+        "schema_version": "evidence-needs-plan-v3",
         "decision": "plan",
         "clarification": None,
         "needs": [

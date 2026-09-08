@@ -7,10 +7,12 @@ namespace Tests\Feature;
 use App\Actions\Conversation\CreateConversation;
 use App\Actions\Conversation\OrchestrateConversationRun;
 use App\Actions\Conversation\SubmitConversationMessage;
+use App\Actions\Generation\GenerateGroundedAnswer;
 use App\Actions\Retrieval\RetrieveWorkspaceEvidence;
 use App\Enums\DocumentStatus;
 use App\Enums\GenerationRunStatus;
 use App\Enums\RetrievalOutcome;
+use App\Enums\RetrievalTemporalMode;
 use App\Enums\WorkspaceRole;
 use App\Models\Document;
 use App\Models\DocumentChunk;
@@ -26,15 +28,22 @@ use App\Models\Workspace;
 use App\Models\WorkspaceCorpusGeneration;
 use App\Models\WorkspaceCorpusGenerationChunk;
 use App\Models\WorkspaceMembership;
+use App\Models\WorkspaceUsageEvent;
 use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
 use App\Services\Conversation\ControlledResponseRenderer;
+use App\Services\Generation\GenerationProfileFactory;
 use App\Services\Retrieval\EligibilityResolver;
+use App\Support\Generation\GenerationAssemblyInput;
+use App\Support\Retrieval\ApplicabilityScopeFact;
 use App\Support\Retrieval\EvidenceNeedsPlan;
+use App\Support\Retrieval\RetrievalPlan;
+use App\Support\Retrieval\RetrievalResult;
 use Carbon\CarbonImmutable;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
@@ -68,7 +77,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         }
         [$foreign, $foreignGeneration] = $this->scope(true);
         $foreignDocument = $this->document($foreign, $foreignGeneration, '2026-01-01');
-        $example = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/examples.json'), true, flags: JSON_THROW_ON_ERROR)[0];
+        $example = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/examples.json'), true, flags: JSON_THROW_ON_ERROR)[0];
         foreach ($example['plan']['needs'] as &$need) {
             $need['question_span']['turn_id'] = 'user-1';
             if ($need['authority']['source'] !== null) {
@@ -191,18 +200,264 @@ final class EvidenceNeedsRetrievalTest extends TestCase
 
     private function plan(int $example = 0, ?callable $mutate = null): EvidenceNeedsPlan
     {
-        $data = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/examples.json'), true, flags: JSON_THROW_ON_ERROR)[$example];
+        $data = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/examples.json'), true, flags: JSON_THROW_ON_ERROR)[$example];
         if ($mutate !== null) {
             $data = $mutate($data);
         }
-        $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v2',
-            'prompt_version' => 'bounded-evidence-needs-v12', 'adapter_version' => 'structured-chat-needs-v5'];
+        $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v3',
+            'prompt_version' => 'bounded-evidence-needs-v14', 'adapter_version' => 'structured-chat-needs-v6'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
         return EvidenceNeedsPlan::fromArray($data['plan'], $data['turns'], $lineage,
             ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini', 'execution' => 'provider_api',
                 'request_count' => 1, 'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable']);
+    }
+
+    private function scopePlan(Document $document, string $question = 'Does Equipment Policy cover Harbour Place?', string $location = 'Harbour Place'): EvidenceNeedsPlan
+    {
+        return $this->plan(4, function ($data) use ($document, $question, $location) {
+            $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
+            $data['plan']['needs'] = [[
+                'need_id' => 'n1', 'aspect' => $question, 'central' => true,
+                'question_span' => ['turn_id' => 'user-1', 'quote' => $question],
+                'operation' => 'scope_enquiry', 'authority' => ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null],
+                'fact_reference' => null, 'applicability' => ['kind' => 'named', 'source' => ['turn_id' => 'user-1', 'quote' => $location]],
+                'supports_need_id' => null,
+            ]];
+            $data['plan']['bindings'] = [['need_id' => 'n1', 'ownership' => 'authorised_workspace',
+                'ownership_source' => null, 'subject_status' => 'matched', 'family_ids' => [$document->family->public_id]]];
+
+            return $data;
+        });
+    }
+
+    public static function scopeBases(): array
+    {
+        return [['universal'], ['direct_match'], ['inherited_match'], ['outside_recorded_scope']];
+    }
+
+    #[DataProvider('scopeBases')]
+    public function test_scope_facts_use_real_resolver_and_never_dispatch_or_read_operational_chunks(string $basis): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        $document->family->update(['name' => 'Equipment Policy']);
+        $parent = OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Northern Region']);
+        $site = OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place', 'parent_id' => $parent->id]);
+        if ($basis !== 'universal') {
+            // Arrange a sealed synthetic snapshot; never mutate production fixtures.
+            DB::table('document_applicability_snapshots')
+                ->where('document_id', $document->id)->update(['scope' => 'specific']);
+            $member = $basis === 'direct_match' ? $site : ($basis === 'inherited_match' ? $parent
+                : OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id]));
+            $document->applicabilitySnapshot->locations()->attach($member->id, ['workspace_id' => $workspace->id]);
+            if ($basis === 'direct_match') {
+                // A snapshot may list both the parent region and its child site.
+                $document->applicabilitySnapshot->locations()->attach($parent->id, ['workspace_id' => $workspace->id]);
+            }
+        }
+        $plan = $this->scopePlan($document);
+        $at = CarbonImmutable::parse('2026-09-08');
+        $resolver = app(EligibilityResolver::class);
+        $fact = $resolver->scopeFact($scope, $plan->retrievalPlan('n1'), $at);
+        $this->assertInstanceOf(ApplicabilityScopeFact::class, $fact);
+        $this->assertSame($basis, $fact->value['basis']);
+        $this->assertSame($basis === 'outside_recorded_scope' ? 'does_not_apply' : 'applies', $fact->value['result']);
+        $resolver->recheckScopeFact($scope, $fact->value);
+        $ordinary = $resolver->handle($scope, $plan->retrievalPlan('n1'), $at);
+        $this->assertSame($basis !== 'outside_recorded_scope', $ordinary->canSearch());
+        $retrieval = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 15, $at);
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $retrieval->outcome);
+        $this->assertSame([], $retrieval->candidates);
+        $this->assertSame($fact->value, $retrieval->evidenceNeeds[0]['scope_fact']);
+        $this->assertArrayNotHasKey('chunk_text', $fact->value);
+        Http::assertNothingSent();
+    }
+
+    public function test_scope_adversarial_framing_is_fixed_and_persists_a_real_snapshot_citation_without_a_provider(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place']);
+        DB::table('document_applicability_snapshots')->where('document_id', $document->id)->update(['scope' => 'specific']);
+        $texts = [];
+        foreach (['Does Equipment Policy cover Harbour Place?', 'So I do not need to check at Harbour Place, right?'] as $question) {
+            $plan = $this->scopePlan($document, $question);
+            $retrieval = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 15, CarbonImmutable::parse('2026-09-08'));
+            $input = new GenerationAssemblyInput($question, $retrieval, [], [], $scope, []);
+            $answer = app(GenerateGroundedAnswer::class)->handle($input,
+                app(GenerationProfileFactory::class)->configuredNeeds());
+            $texts[] = $answer->renderedText();
+            $this->assertSame('scope-composed-answer-v1', $answer->contract_version);
+            $this->assertSame($document->applicabilitySnapshot->id, $answer->scope_facts[0]['snapshot']['snapshot_id']);
+            $this->assertCount(0, $answer->evidenceSnapshots);
+            $this->assertSame(0, $answer->usage['request_count']);
+        }
+        $this->assertSame($texts[0], $texts[1]);
+        $this->assertStringContainsString('does not include', $texts[1]);
+        $this->assertStringContainsString('does not establish what action is safe or required', $texts[1]);
+        $this->assertStringNotContainsString('do not need to check', $texts[1]);
+        Http::assertNothingSent();
+    }
+
+    public function test_scope_only_conversation_publishes_with_a_zero_cost_local_receipt(): void
+    {
+        Queue::fake();
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place']);
+        $question = 'Does Equipment Policy cover Harbour Place?';
+        $plan = $this->scopePlan($document, $question);
+        config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
+        Http::fake(function ($request) use ($plan) {
+            $this->assertStringEndsWith('/plan-needs', $request->url());
+
+            return Http::response(['contract_version' => 2, 'request_id' => $request->data()['request_id'],
+                'plan' => $plan->value, 'classifier_lineage' => $plan->lineage->toArray(),
+                'usage' => ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini',
+                    'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
+                    'latency_ms' => 1, 'cost_basis' => 'unavailable']]);
+        });
+        $conversation = app(CreateConversation::class)->handle($workspace, $scope->user);
+        $run = app(SubmitConversationMessage::class)->handle($conversation,
+            $scope->user, $question, (string) Str::uuid());
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        $this->assertSame(GenerationRunStatus::Completed, $run->status, json_encode($run->usage));
+        $this->assertStringContainsString('recorded scope', $run->assistantMessage->display_text);
+        $usage = WorkspaceUsageEvent::where('scope_public_id', $run->public_id)
+            ->where('operation_kind', 'generation')->firstOrFail();
+        $this->assertSame('application', $usage->provider);
+        $this->assertSame('local', $usage->execution);
+        $this->assertSame('zero_cost_local', $usage->cost_basis);
+        $this->assertSame(0, $usage->request_count);
+        $this->assertSame(0.0, (float) $usage->cost_usd);
+        $this->assertDatabaseCount('evidence_snapshots', 0);
+        Http::assertSentCount(1);
+    }
+
+    public function test_scope_and_operational_answer_are_isolated_through_generation_and_persistence(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        $other = $this->document($workspace, $generation, '2026-01-01');
+        OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place']);
+        $scopeRetrieval = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $this->scopePlan($document), 15, CarbonImmutable::parse('2026-09-08'));
+        $chunk = $other->chunks()->firstOrFail();
+        $need = $scopeRetrieval->evidenceNeeds[0];
+        unset($need['scope_fact']);
+        $need = [...$need, 'need_id' => 'n2', 'aspect' => 'How are temporary workers booked?', 'operation' => 'retrieve'];
+        $retrieval = new RetrievalResult(RetrievalOutcome::EvidenceFound,
+            [['chunk_id' => $chunk->public_id, 'document_id' => $other->public_id,
+                'document_family_id' => $other->family->public_id, 'side' => 'primary',
+                'chunk_text' => $chunk->text, 'need_id' => 'n2']],
+            evidenceNeeds: [$scopeRetrieval->evidenceNeeds[0], $need]);
+        Http::fake(function ($sent) use ($other, $document) {
+            $wire = $sent->data();
+            $this->assertSame('How are temporary workers booked?', $wire['question']);
+            $this->assertSame(['n2'], array_column($wire['evidence_needs'], 'need_id'));
+            $this->assertSame([$other->id], array_column($wire['evidence'], 'document_id'));
+            $this->assertStringNotContainsString($document->public_id, $sent->body());
+            $this->assertStringNotContainsString('scope_fact', $sent->body());
+
+            return Http::response(['contract_version' => 2, 'request_id' => $wire['request_id'],
+                'status' => 'completed', 'result' => ['contract_version' => 2, 'outcome' => 'answered',
+                    'answer_parts' => [['text' => 'Use the authorised booking record.', 'evidence_ids' => ['ev-01']]],
+                    'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+                    'aspect_links' => [['need_id' => 'n2', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]]]]);
+        });
+        $input = new GenerationAssemblyInput('Does this scope apply, and how do we book temporary workers?', $retrieval, [], [], $scope, []);
+        $answer = app(GenerateGroundedAnswer::class)->handle($input,
+            app(GenerationProfileFactory::class)->configuredNeeds());
+        $this->assertCount(1, $answer->scope_facts);
+        $this->assertCount(1, $answer->evidenceSnapshots);
+        $this->assertSame($other->id, $answer->evidenceSnapshots[0]->document_id);
+        $this->assertSame(['n2' => 'supported'], $answer->aspect_results);
+        $this->assertStringContainsString('Use the authorised booking record.', $answer->renderedText());
+        Http::assertSentCount(1);
+    }
+
+    public static function scopeFailures(): array
+    {
+        return [['foreign_family'], ['foreign_location'], ['future'], ['draft'], ['withdrawn'], ['unsealed'], ['no_snapshot']];
+    }
+
+    #[DataProvider('scopeFailures')]
+    public function test_scope_enquiry_preserves_access_authority_and_snapshot_prerequisites(string $failure): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        $locationWorkspace = $failure === 'foreign_location' ? Workspace::factory()->create() : $workspace;
+        OrganisationalLocation::factory()->create(['workspace_id' => $locationWorkspace->id, 'name' => 'Harbour Place']);
+        if ($failure === 'foreign_family') {
+            [$foreign, $foreignGeneration] = $this->scope();
+            $document = $this->document($foreign, $foreignGeneration, '2026-01-01');
+        } elseif ($failure === 'future') {
+            DB::table('documents')->where('id', $document->id)->update(['effective_from' => '2027-01-01']);
+        } elseif ($failure === 'draft') {
+            DB::table('documents')->where('id', $document->id)->update(['governance_status' => 'draft', 'approved_at' => null]);
+        } elseif ($failure === 'withdrawn') {
+            DB::table('documents')->where('id', $document->id)->update(['governance_status' => 'withdrawn', 'withdrawn_at' => '2026-02-01']);
+        } elseif ($failure === 'unsealed') {
+            DB::table('document_applicability_snapshots')->where('document_id', $document->id)->update(['sealed_at' => null]);
+        } else {
+            DB::table('document_applicability_snapshots')->where('document_id', $document->id)->delete();
+        }
+        $result = app(EligibilityResolver::class)->scopeFact($scope, $this->scopePlan($document)->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-08'));
+        $this->assertNotInstanceOf(ApplicabilityScopeFact::class, $result);
+        Http::assertNothingSent();
+    }
+
+    public function test_scope_fact_publication_rechecks_corpus_and_source_identity(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place']);
+        $resolver = app(EligibilityResolver::class);
+        $fact = $resolver->scopeFact($scope, $this->scopePlan($document)->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-08'));
+        $tampered = $fact->value;
+        $tampered['result'] = 'does_not_apply';
+        try {
+            $resolver->recheckScopeFact($scope, $tampered);
+            $this->fail('Tampered scope result was accepted.');
+        } catch (\RuntimeException $error) {
+            $this->assertStringContainsString('changed', $error->getMessage());
+        }
+        $workspace->active_workspace_corpus_generation_id = null;
+        $workspace->save();
+        $this->expectException(\RuntimeException::class);
+        $resolver->recheckScopeFact($scope, $fact->value);
+    }
+
+    public function test_historical_scope_uses_the_selected_versions_snapshot_not_the_current_one(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $old = $this->document($workspace, $generation, '2026-01-01');
+        $new = $this->document($workspace, $generation, '2026-06-01', $old);
+        OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place']);
+        DB::table('document_applicability_snapshots')->where('document_id', $new->id)->update(['scope' => 'specific']);
+        $plan = $this->scopePlan($old)->retrievalPlan('n1');
+        $resolver = app(EligibilityResolver::class);
+        $at = CarbonImmutable::parse('2026-09-08');
+        $current = $resolver->scopeFact($scope, $plan, $at);
+        $historical = new RetrievalPlan($plan->query,
+            RetrievalTemporalMode::ValidAtDate, CarbonImmutable::parse('2026-02-01'),
+            null, $plan->locationReferences, null, $plan->classifierLineage, $plan->classifierUsage,
+            evidenceNeed: $plan->evidenceNeed);
+        $past = $resolver->scopeFact($scope, $historical, $at);
+        $this->assertSame($new->public_id, $current->value['document_version_id']);
+        $this->assertSame('does_not_apply', $current->value['result']);
+        $this->assertSame($old->public_id, $past->value['document_version_id']);
+        $this->assertSame('applies', $past->value['result']);
+        $resolver->recheckScopeFact($scope, $past->value);
+        Http::assertNothingSent();
     }
 
     public function test_verified_single_version_previous_need_is_not_an_ambiguous_reference(): void

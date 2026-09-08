@@ -164,7 +164,7 @@ class EvidenceNeed(ImmutableModel):
     aspect: Text
     central: StrictBool
     question_span: QuestionSpan
-    operation: Literal["retrieve", "compare"]
+    operation: Literal["retrieve", "compare", "scope_enquiry"]
     authority: NeedAuthority
     fact_reference: FactReference | None
     applicability: NeedApplicability
@@ -208,7 +208,7 @@ class NeedBinding(ImmutableModel):
 
 
 class EvidenceNeedsPlan(ImmutableModel):
-    schema_version: Literal["evidence-needs-plan-v2"]
+    schema_version: Literal["evidence-needs-plan-v3"]
     decision: Literal["plan", "clarify"]
     clarification: Text | None
     needs: tuple[EvidenceNeed, ...] = Field(max_length=3)

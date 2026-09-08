@@ -173,6 +173,7 @@ final readonly class RunR28ProductionPathDiagnostic
             'generation' => $answer === null ? null : [
                 'outcome' => $answer->outcome->value,
                 'rendered_text' => $answer->renderedText(),
+                'scope_citations' => $answer->scope_facts ?? [],
                 'unsupported_aspects' => $answer->unsupported_aspects,
                 'aspect_links' => $answer->aspect_links,
                 'aspect_results' => $answer->aspect_results,
@@ -207,6 +208,9 @@ final readonly class RunR28ProductionPathDiagnostic
         }
         if ($stage === 'needs_plan') {
             return collect($value)->only(['decision', 'clarification', 'needs'])->all();
+        }
+        if ($stage === 'scope_fact') {
+            return collect($value)->except(['resolution'])->all();
         }
         if ($stage === 'needs_final_evidence') {
             return array_map(fn (array $candidate): array => collect($candidate)->only([

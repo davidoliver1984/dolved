@@ -64,7 +64,7 @@ def test_correct_clarification_is_not_retried():
     calls = []
     result = adapter(
         {
-            "schema_version": "evidence-needs-plan-v2",
+            "schema_version": "evidence-needs-plan-v3",
             "decision": "clarify",
             "clarification": "Which period?",
             "needs": [],

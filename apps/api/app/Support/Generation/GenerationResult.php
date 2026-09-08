@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support\Generation;
 
 use App\Enums\GenerationOutcome;
+use App\Support\Retrieval\ApplicabilityScopeFact;
 
 final readonly class GenerationResult
 {
@@ -17,10 +18,23 @@ final readonly class GenerationResult
         public ?array $usage = null,
         public array $aspectLinks = [],
         public array $aspectResults = [],
+        public array $scopeFacts = [],
+        public ?self $operationalResult = null,
     ) {}
 
     public function renderedText(): string
     {
-        return implode("\n\n", array_map(fn (AnswerPartResult $part): string => $part->text, $this->answerParts));
+        $scope = array_map(fn (array $fact): string => (new ApplicabilityScopeFact($fact))->renderedText(), $this->scopeFacts);
+
+        $parts = array_map(fn (AnswerPartResult $part): string => $part->text, $this->answerParts);
+        if ($scope !== [] && $parts === [] && $this->unsupportedAspects !== []) {
+            $parts[] = 'No operational evidence was available for the other requested aspect. The scope statement does not answer that operational question.';
+        }
+
+        if ($scope !== [] && $parts !== []) {
+            return "Recorded policy scope\n\n".implode("\n\n", $scope)."\n\nOther requested guidance\n\n".implode("\n\n", $parts);
+        }
+
+        return implode("\n\n", [...$scope, ...$parts]);
     }
 }

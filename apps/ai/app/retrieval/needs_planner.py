@@ -42,6 +42,25 @@ Current authority has null value/source and precision none. Distinguish dates of
 personal facts (fact_reference) from dates selecting governing document authority. Do not
 turn 'our training' or grammatical past tense into a historical authority selection.
 Use compare only for document/policy changes, not a contrast of two current policy values.
+Use scope_enquiry for a deliberate question about whether a particular policy covers a
+named location, including a question whose requested requirement depends on that policy's
+site coverage. Bind the exact relevant catalogue family and retain the grounded location.
+This requests ONLY recorded applicability, never permission to act or a safety conclusion.
+Keep requests for working instructions as retrieve; never relabel empty retrieval after
+execution. A scope fact cannot establish whether an action is safe or whether other duties
+apply. Keep unrelated operational aspects separate. Do not use scope_enquiry for a generic
+request for the contents of a universal policy at a location. Do not guess scope from titles.
+Choose each need's purpose from its ORIGINAL requested clause before rewriting its aspect.
+Decomposition must preserve that purpose: adding an unrelated second question does not turn
+a policy/site coverage-dependent requirement into a request for working instructions.
+Do not use your own generated 'Retrieve any guidance...' wording as evidence for retrieve.
+For each clause distinguish 'does this policy's requirement cover this site?' (scope_enquiry,
+recorded applicability only) from 'how do I carry out the required action?' (retrieve).
+For example, 'Does the Equipment Inspection Procedure cover East Lodge, and how do I book
+temporary staff?' keeps a scope enquiry and a separate operational booking need. A standalone
+or compound 'How do I inspect equipment at East Lodge?' remains retrieve. A policy-version
+change question remains compare. Recheck each clause's purpose independently before returning
+the plan; keep the exact original question_span and do not create an extra unasked need.
 Previous means current versus the previous attained document version. Historical_reference
 retains a named historical selector. Exact authority dates use ISO day, calendar periods use
 month/year/interval precision without an invented day. Explicit changes during a period use
@@ -275,9 +294,9 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             model=model,
             timeout_seconds=timeout_seconds,
             client=client,
-            contract_schema_version="evidence-needs-plan-v2",
-            prompt_version="bounded-evidence-needs-v12",
-            adapter_version="structured-chat-needs-v5",
+            contract_schema_version="evidence-needs-plan-v3",
+            prompt_version="bounded-evidence-needs-v14",
+            adapter_version="structured-chat-needs-v6",
         )
 
     def plan_needs(

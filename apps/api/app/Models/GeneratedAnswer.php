@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\GenerationOutcome;
+use App\Support\Generation\AnswerPartResult;
+use App\Support\Generation\GenerationResult;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +17,7 @@ class GeneratedAnswer extends Model
 
     protected function casts(): array
     {
-        return ['outcome' => GenerationOutcome::class, 'unsupported_aspects' => 'array', 'generation_configuration' => 'array', 'usage' => 'array', 'cost_usd' => 'decimal:8', 'aspect_links' => 'array', 'aspect_results' => 'array'];
+        return ['outcome' => GenerationOutcome::class, 'unsupported_aspects' => 'array', 'generation_configuration' => 'array', 'usage' => 'array', 'cost_usd' => 'decimal:8', 'aspect_links' => 'array', 'aspect_results' => 'array', 'scope_facts' => 'array'];
     }
 
     public function workspace(): BelongsTo
@@ -54,8 +56,15 @@ class GeneratedAnswer extends Model
             return (string) $this->insufficiency_reason;
         }
 
-        return $this->answerParts()
+        if ($this->scope_facts !== null) {
+            return (new GenerationResult($this->outcome,
+                $this->answerParts->map(fn ($part) => new AnswerPartResult($part->text, []))->all(),
+                $this->unsupported_aspects, $this->insufficiency_reason, scopeFacts: $this->scope_facts))->renderedText();
+        }
+        $text = $this->answerParts()
             ->pluck('text')
             ->implode("\n\n");
+
+        return $text;
     }
 }

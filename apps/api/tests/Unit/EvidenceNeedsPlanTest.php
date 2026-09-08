@@ -13,7 +13,7 @@ final class EvidenceNeedsPlanTest extends TestCase
 {
     private static function read(string $name): array
     {
-        return json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/'.$name.'.json'), true, flags: JSON_THROW_ON_ERROR);
+        return json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/'.$name.'.json'), true, flags: JSON_THROW_ON_ERROR);
     }
 
     public static function examples(): iterable

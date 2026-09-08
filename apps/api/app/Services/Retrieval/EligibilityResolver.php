@@ -14,9 +14,13 @@ use App\Enums\RetrievalTemporalReferenceKind;
 use App\Models\Document;
 use App\Models\DocumentFamily;
 use App\Models\OrganisationalLocation;
+use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
 use App\Support\Documents\DocumentAuthorityTimeline;
+use App\Support\Retrieval\ApplicabilityScopeFact;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
+use App\Support\Retrieval\ClassifierLineage;
 use App\Support\Retrieval\EligibleRetrievalScope;
+use App\Support\Retrieval\PlannerUsage;
 use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\TemporalResolution;
 use Carbon\CarbonImmutable;
@@ -30,6 +34,113 @@ final readonly class EligibilityResolver
         private TemporalPeriodResolver $periods,
         private HistoricalReferenceResolver $historical,
     ) {}
+
+    /**
+     * ADR-0039's metadata-only path. Never return these documents as chunk candidates.
+     * The same resolver still owns access, location, catalogue and temporal checks.
+     */
+    public function scopeFact(AuthorisedKnowledgeScope $authorised, RetrievalPlan $plan, CarbonImmutable $evaluatedAt): ApplicabilityScopeFact|EligibleRetrievalScope
+    {
+        // Reuse the production membership/concealment boundary; a location is not access.
+        app(BuildAuthorisedKnowledgeScope::class)
+            ->handle($authorised->user, $authorised->workspace->public_id);
+        $need = $plan->evidenceNeed;
+        if (($need['operation'] ?? null) !== 'scope_enquiry') {
+            throw new \InvalidArgumentException('Scope facts require an explicitly planned scope enquiry.');
+        }
+        $binding = $need['subject_binding'] ?? [];
+        if (($binding['ownership'] ?? null) !== 'authorised_workspace'
+            || ($binding['subject_status'] ?? null) !== 'matched'
+            || count($binding['family_ids'] ?? []) !== 1) {
+            return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
+                reason: 'ambiguous_document_subject', clarificationSource: RetrievalClarificationSource::EligibilityResolver);
+        }
+        $location = $this->resolveLocations($authorised, $plan->locationReferences, true);
+        if (! $location instanceof OrganisationalLocation) {
+            return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
+                reason: $location?->value ?? 'unresolved_location_reference',
+                clarificationSource: RetrievalClarificationSource::EligibilityResolver);
+        }
+        // Resolve the same family/version through the ordinary authority path, but
+        // ask for metadata without operational location narrowing. No chunks are read.
+        $metadataPlan = new RetrievalPlan($plan->query, $plan->temporalMode,
+            $plan->explicitDate, $plan->temporalReference, [], $plan->clarificationReason,
+            $plan->classifierLineage, $plan->classifierUsage, $plan->versionTransitionBoundary,
+            $plan->factDate, $plan->requestedEvidenceType, $need);
+        $eligible = $this->handle($authorised, $metadataPlan, $evaluatedAt);
+        $ids = $eligible->documentPublicIdsBySide['primary'] ?? [];
+        if (! $eligible->canSearch() || count($ids) !== 1 || isset($eligible->documentPublicIdsBySide['comparison'])) {
+            return $eligible;
+        }
+        $document = Document::query()->where('workspace_id', $authorised->workspace->id)
+            ->where('public_id', $ids[0])->with(['family', 'applicabilitySnapshot.locations'])->firstOrFail();
+        $snapshot = $document->applicabilitySnapshot;
+        if ($snapshot === null || $snapshot->sealed_at === null) {
+            return new EligibleRetrievalScope(RetrievalOutcome::NoEligibleEvidence, reason: 'scope_record_unavailable');
+        }
+        $path = [];
+        for ($node = $location; $node !== null; $node = $node->parent) {
+            if ($node->workspace_id !== $authorised->workspace->id) {
+                throw new \RuntimeException('Scope hierarchy escaped authorised workspace.');
+            }
+            $path[] = $node->public_id;
+        }
+        // Prefer the most specific recorded match, independent of pivot row order.
+        $matched = collect($path)->map(fn ($id) => $snapshot->locations->firstWhere('public_id', $id))->first(fn ($entry) => $entry !== null);
+        $basis = $snapshot->scope === DocumentApplicabilityScope::Universal ? 'universal'
+            : ($matched === null ? 'outside_recorded_scope'
+                : ($matched->id === $location->id ? 'direct_match' : 'inherited_match'));
+        $source = ['snapshot_id' => $snapshot->id, 'document_version_id' => $document->public_id,
+            'scope' => $snapshot->scope->value, 'sealed_at' => $snapshot->sealed_at->toIso8601String(),
+            'location_ids' => $snapshot->locations->pluck('public_id')->sort()->values()->all()];
+
+        return new ApplicabilityScopeFact([
+            'representation' => ApplicabilityScopeFact::VERSION, 'need_id' => $need['need_id'],
+            'workspace_id' => $authorised->workspace->public_id, 'policy_title' => $document->family->name,
+            'family_id' => $document->family->public_id, 'document_version_id' => $document->public_id,
+            'citation_type' => 'applicability_snapshot',
+            'source_route' => '/api/workspaces/'.$authorised->workspace->public_id.'/document-families/'.$document->family->public_id.'/versions',
+            'snapshot' => $source, 'snapshot_digest' => hash('sha256', json_encode($source, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES)),
+            'location_id' => $location->public_id, 'location_name' => $location->name,
+            'hierarchy_path' => $path, 'matched_location_id' => $matched?->public_id,
+            'evaluated_at' => $evaluatedAt->toIso8601String(),
+            'temporal_mode' => $plan->temporalMode->value,
+            'authority_start' => $this->timeline->authorityStart($document)?->toIso8601String(),
+            'result' => $basis === 'outside_recorded_scope' ? 'does_not_apply' : 'applies', 'basis' => $basis,
+            'corpus_id' => $authorised->activeCorpusGeneration?->public_id,
+            'resolution' => ['query' => $plan->query, 'need' => $need,
+                'temporal_mode' => $plan->temporalMode->value, 'explicit_date' => $plan->explicitDate?->toDateString(),
+                'temporal_reference' => $plan->temporalReference === null ? null : [
+                    'kind' => $plan->temporalReference['kind']->value, 'value' => $plan->temporalReference['value']],
+                'location_references' => $plan->locationReferences,
+                'lineage' => $plan->classifierLineage->toArray(), 'usage' => $plan->classifierUsage->toArray()],
+        ]);
+    }
+
+    public function recheckScopeFact(AuthorisedKnowledgeScope $authorised, array $fact): void
+    {
+        $workspace = $authorised->workspace->fresh();
+        if ($workspace->activeCorpusGeneration?->public_id !== ($fact['corpus_id'] ?? null)) {
+            throw new \RuntimeException('Scope fact corpus changed before publication.');
+        }
+        $r = $fact['resolution'];
+        $usage = $r['usage'];
+        $usage['execution'] = strtolower($usage['execution']);
+        $usage['cost_basis'] = strtolower($usage['cost_basis']);
+        $reference = $r['temporal_reference'];
+        if ($reference !== null) {
+            $reference['kind'] = RetrievalTemporalReferenceKind::from($reference['kind']);
+        }
+        $plan = new RetrievalPlan($r['query'], RetrievalTemporalMode::from($r['temporal_mode']),
+            $r['explicit_date'] === null ? null : CarbonImmutable::parse($r['explicit_date']),
+            $reference, $r['location_references'], null,
+            ClassifierLineage::fromArray($r['lineage']),
+            PlannerUsage::fromArray($usage), evidenceNeed: $r['need']);
+        $fresh = $this->scopeFact($authorised, $plan, CarbonImmutable::parse($fact['evaluated_at']));
+        if (! $fresh instanceof ApplicabilityScopeFact || $fresh->value !== $fact) {
+            throw new \RuntimeException('Scope fact changed before publication.');
+        }
+    }
 
     public function handle(
         AuthorisedKnowledgeScope $authorised,

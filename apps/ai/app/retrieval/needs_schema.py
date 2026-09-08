@@ -69,6 +69,7 @@ def provider_needs_schema(catalogue: tuple[CatalogueFamily, ...]) -> dict[str, A
     for operation, ref in [
         ("retrieve", "RetrieveNeedAuthority"),
         ("compare", "CompareNeedAuthority"),
+        ("scope_enquiry", "RetrieveNeedAuthority"),
     ]:
         branch = deepcopy(need)
         branch["properties"]["operation"] = {"type": "string", "enum": [operation]}

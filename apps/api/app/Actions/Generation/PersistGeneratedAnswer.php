@@ -6,8 +6,10 @@ namespace App\Actions\Generation;
 
 use App\Exceptions\GenerationException;
 use App\Models\AnswerPart;
+use App\Models\Document;
 use App\Models\EvidenceSnapshot;
 use App\Models\GeneratedAnswer;
+use App\Services\Retrieval\EligibilityResolver;
 use App\Support\Generation\AspectCoverage;
 use App\Support\Generation\GenerationRequest;
 use App\Support\Generation\GenerationResult;
@@ -22,10 +24,18 @@ final class PersistGeneratedAnswer
     public function handle(AuthorisedKnowledgeScope $authorised, string $question, string $correlationId, GenerationRequest $request, GenerationResult $result, array $fingerprint, ?int $assistantMessageId = null, ?int $generationRunId = null): GeneratedAnswer
     {
         $hasNeeds = $result->aspectLinks !== [];
-        if ($hasNeeds !== (($fingerprint['snapshot']['contract_version'] ?? null) === 'generation-result-v2')) {
+        $scopeComposed = ($fingerprint['snapshot']['contract_version'] ?? null) === 'scope-composed-answer-v1';
+        if ($scopeComposed !== ($result->scopeFacts !== [])) {
+            throw new GenerationException('Scope facts require their dedicated composed-answer contract.');
+        }
+        if (! $scopeComposed && $hasNeeds !== (($fingerprint['snapshot']['contract_version'] ?? null) === 'generation-result-v2')) {
             throw new GenerationException('Generation coverage does not match the pinned contract.');
         }
-        if ($hasNeeds && AspectCoverage::derive($result, array_keys($result->aspectResults), $result->aspectLinks) !== $result->aspectResults) {
+        $coverageResult = $scopeComposed ? $result->operationalResult : $result;
+        if ($hasNeeds && ($coverageResult === null
+            || $coverageResult->answerParts !== $result->answerParts
+            || $coverageResult->unsupportedAspects !== $result->unsupportedAspects
+            || AspectCoverage::derive($coverageResult, array_keys($result->aspectResults), $result->aspectLinks) !== $result->aspectResults)) {
             throw new GenerationException('Generation coverage changed before persistence.');
         }
         if (! $hasNeeds && $result->aspectResults !== []) {
@@ -33,6 +43,23 @@ final class PersistGeneratedAnswer
         }
 
         return DB::transaction(function () use ($authorised, $question, $correlationId, $request, $result, $fingerprint, $assistantMessageId, $generationRunId): GeneratedAnswer {
+            foreach ($result->scopeFacts as $fact) {
+                app(EligibilityResolver::class)->recheckScopeFact($authorised, $fact);
+                $document = Document::where('workspace_id', $authorised->workspace->id)
+                    ->where('public_id', $fact['document_version_id'])->with('applicabilitySnapshot.locations')->first();
+                $snapshot = $document?->applicabilitySnapshot;
+                if ($snapshot === null || $snapshot->sealed_at === null
+                    || $fact['workspace_id'] !== $authorised->workspace->public_id
+                    || $snapshot->id !== $fact['snapshot']['snapshot_id']) {
+                    throw new GenerationException('Scope citation source is unavailable.');
+                }
+                $source = ['snapshot_id' => $snapshot->id, 'document_version_id' => $document->public_id,
+                    'scope' => $snapshot->scope->value, 'sealed_at' => $snapshot->sealed_at->toIso8601String(),
+                    'location_ids' => $snapshot->locations->pluck('public_id')->sort()->values()->all()];
+                if (! hash_equals($fact['snapshot_digest'], hash('sha256', json_encode($source, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES)))) {
+                    throw new GenerationException('Scope citation source changed before persistence.');
+                }
+            }
             $answer = GeneratedAnswer::query()->create([
                 'public_id' => (string) Str::uuid(),
                 'workspace_id' => $authorised->workspace->id,
@@ -43,6 +70,7 @@ final class PersistGeneratedAnswer
                 'question' => $question,
                 'outcome' => $result->outcome,
                 'unsupported_aspects' => $result->unsupportedAspects,
+                'scope_facts' => $result->scopeFacts === [] ? null : $result->scopeFacts,
                 'aspect_links' => $result->aspectLinks === [] ? null : $result->aspectLinks,
                 'aspect_results' => $result->aspectResults === [] ? null : $result->aspectResults,
                 'insufficiency_reason' => $result->insufficiencyReason,

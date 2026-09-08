@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Actions\Generation;
 
 use App\Enums\GenerationDeliveryMode;
+use App\Enums\GenerationOutcome;
+use App\Enums\RetrievalOutcome;
 use App\Exceptions\GenerationException;
 use App\Exceptions\GenerationProviderException;
 use App\Exceptions\GenerationServiceAuthenticationException;
@@ -21,6 +23,7 @@ use App\Support\Generation\GenerationResult;
 use App\Support\Generation\GenerationValidationDiagnostics;
 use App\Support\Generation\PreparedGroundedAnswer;
 use App\Support\Generation\ValidationAttemptUsage;
+use App\Support\Retrieval\RetrievalResult;
 use Illuminate\Support\Str;
 
 final readonly class GenerateGroundedAnswer
@@ -51,6 +54,9 @@ final readonly class GenerateGroundedAnswer
     /** @param null|callable(string): void $observeStage @param null|callable(\App\Support\Generation\AnswerPartResult, GenerationRequest): void $observeCandidate */
     public function prepare(GenerationAssemblyInput $input, GenerationProfile $profile, ?callable $observeStage = null, ?callable $observeCandidate = null): PreparedGroundedAnswer
     {
+        if (array_filter($input->retrievalResult->evidenceNeeds, fn ($need) => $need['operation'] === 'scope_enquiry') !== []) {
+            return $this->prepareScopeAnswer($input, $profile, $observeStage, $observeCandidate);
+        }
         $observeStage?->__invoke('preparing_evidence');
         $request = $this->assembler->handle($input);
         $initialRequestId = $request->requestId;
@@ -139,5 +145,69 @@ final readonly class GenerateGroundedAnswer
         $correlationId = (string) ($input->correlationLineage['correlation_id'] ?? $initialRequestId);
 
         return new PreparedGroundedAnswer($request, $result, $fingerprint, $correlationId);
+    }
+
+    private function prepareScopeAnswer(GenerationAssemblyInput $input, GenerationProfile $profile, ?callable $observeStage, ?callable $observeCandidate): PreparedGroundedAnswer
+    {
+        if ($profile->contractVersion !== 'generation-result-v2'
+            || $profile->promptVersion !== 'grounded-generation-needs-v5'
+            || $profile->adapterVersion !== 'openai-responses-needs-v2'
+            || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly) {
+            throw new GenerationException('Scope composition requires the pinned complete-result needs profile.');
+        }
+        $facts = [];
+        $operational = [];
+        foreach ($input->retrievalResult->evidenceNeeds as $need) {
+            if ($need['operation'] !== 'scope_enquiry') {
+                $operational[] = $need;
+
+                continue;
+            }
+            if (! isset($need['scope_fact']) || $need['scope_fact']['need_id'] !== $need['need_id']) {
+                throw new GenerationException('A scope enquiry requires its resolved scope fact.');
+            }
+            $facts[] = $need['scope_fact'];
+        }
+        $candidates = $input->retrievalResult->candidates;
+        foreach ($candidates as $candidate) {
+            if (! in_array($candidate['need_id'], array_column($operational, 'need_id'), true)) {
+                throw new GenerationException('Scope enquiry cannot supply operational chunks.');
+            }
+        }
+        if ($operational !== [] && $candidates !== []) {
+            // Do not send the compound question or scope fact to the operational model.
+            // Each aspect is the planner's already-grounded standalone request.
+            $question = implode("\n", array_column($operational, 'aspect'));
+            $retrieval = new RetrievalResult(RetrievalOutcome::EvidenceFound,
+                $candidates, evidenceNeeds: $operational);
+            $prepared = $this->prepare(new GenerationAssemblyInput($question, $retrieval,
+                $input->resolvedTemporalAuthority, $input->resolvedApplicabilityLocation,
+                $input->authorisedScope, $input->correlationLineage), $profile, $observeStage, $observeCandidate);
+            $request = $prepared->request;
+            $base = $prepared->result;
+            $fingerprint = $prepared->fingerprint;
+            $correlation = $prepared->correlationId;
+        } else {
+            $request = new GenerationRequest((string) Str::uuid(), $input->authorisedScope->workspace->public_id,
+                $input->question, [], 'scope-fact-renderer-v1', 0, []);
+            $gaps = array_column($operational, 'aspect');
+            $base = new GenerationResult(GenerationOutcome::InsufficientEvidence, [], $gaps,
+                $gaps === [] ? null : 'No operational evidence was available.',
+                ['execution' => 'local', 'cost_basis' => 'zero_cost_local',
+                    'request_count' => 0, 'retry_count' => 0, 'input_tokens' => 0, 'output_tokens' => 0,
+                    'latency_ms' => 0, 'cost_usd' => 0]);
+            $fingerprint = $this->fingerprints->make($profile->provider, $profile->model,
+                $profile->contractVersion, $profile->promptVersion, $profile->adapterVersion,
+                $profile->qualityAffectingConfiguration);
+            $correlation = $input->correlationLineage['correlation_id'] ?? $request->requestId;
+        }
+        $fingerprint = $this->fingerprints->make($profile->provider, $profile->model,
+            'scope-composed-answer-v1', $profile->promptVersion, $profile->adapterVersion,
+            [...$profile->qualityAffectingConfiguration, 'scope_renderer' => 'scope-fact-renderer-v1']);
+        $outcome = $base->unsupportedAspects === [] ? GenerationOutcome::Answered : GenerationOutcome::Qualified;
+        $result = new GenerationResult($outcome, $base->answerParts, $base->unsupportedAspects, null,
+            $base->usage, $base->aspectLinks, $base->aspectResults, $facts, $operational === [] ? null : $base);
+
+        return new PreparedGroundedAnswer($request, $result, $fingerprint, $correlation);
     }
 }

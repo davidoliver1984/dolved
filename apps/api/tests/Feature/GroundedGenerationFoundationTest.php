@@ -72,7 +72,7 @@ class GroundedGenerationFoundationTest extends TestCase
                 'document_family_id' => $chunk->document->family->public_id, 'chunk_text' => $chunk->text,
                 'side' => $i === 1 ? 'comparison' : 'primary', 'need_id' => $i === 2 ? 'n2' : 'n1'];
         }
-        $examples = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/examples.json'), true, flags: JSON_THROW_ON_ERROR);
+        $examples = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/examples.json'), true, flags: JSON_THROW_ON_ERROR);
         $needs = array_map(fn ($need) => [...$need, 'retrieval_outcome' => 'EVIDENCE_FOUND', 'retrieval_reason' => null,
             'resolved_temporal_authority' => ['mode' => $need['operation']],
             'resolved_applicability_location' => ['resolved_location_public_id' => null]], $examples[0]['plan']['needs']);
@@ -143,7 +143,7 @@ class GroundedGenerationFoundationTest extends TestCase
     public function test_bounded_validation_retry_refreshes_only_identity_and_retains_usage(string $scenario, int $expected): void
     {
         [$base, $chunk] = $this->assemblyFixture();
-        $examples = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/examples.json'), true, flags: JSON_THROW_ON_ERROR);
+        $examples = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/examples.json'), true, flags: JSON_THROW_ON_ERROR);
         $need = $examples[0]['plan']['needs'][1];
         $need['need_id'] = 'n1';
         unset($need['supports_need_id']);

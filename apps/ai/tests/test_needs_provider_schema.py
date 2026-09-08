@@ -12,7 +12,7 @@ from app.retrieval.planner import RetrievalPlanningError
 from tests.test_evidence_needs import adapter, turns
 
 EXAMPLES = json.loads(
-    Path("/contracts/http/retrieval-needs/v2/examples.json").read_text()
+    Path("/contracts/http/retrieval-needs/v3/examples.json").read_text()
 )
 
 
@@ -21,6 +21,115 @@ def families(count):
         CatalogueFamily(family_id=UUID(int=i + 1), title=f"Synthetic family {i}")
         for i in range(count)
     )
+
+
+def test_scope_enquiry_is_explicit_in_real_provider_schema_and_does_not_rewrite_retrieve():
+    from app.retrieval.needs_planner import PROMPT
+
+    plan = deepcopy(EXAMPLES[0]["plan"])
+    plan["needs"][0]["operation"] = "scope_enquiry"
+    plan["needs"][0]["authority"] = {
+        "kind": "current",
+        "value": None,
+        "precision": "none",
+        "source": None,
+    }
+    parsed = EvidenceNeedsPlan.model_validate(plan)
+    jsonschema.validate(plan, provider_needs_schema(()))
+    assert parsed.needs[0].operation == "scope_enquiry"
+    ordinary = EvidenceNeedsPlan.model_validate(EXAMPLES[0]["plan"])
+    assert ordinary.needs[0].operation == EXAMPLES[0]["plan"]["needs"][0]["operation"]
+    assert "never relabel empty retrieval after" in PROMPT
+    assert "ONLY recorded applicability, never permission to act" in PROMPT
+
+
+@pytest.mark.parametrize(
+    "operations",
+    [
+        ("scope_enquiry",),
+        ("scope_enquiry", "retrieve"),
+        ("retrieve", "scope_enquiry"),
+        ("retrieve", "retrieve"),
+        ("compare", "retrieve"),
+    ],
+)
+def test_clause_purpose_survives_real_adapter_without_posthoc_reclassification(
+    operations,
+):
+    from app.retrieval.needs import UserTurn
+    from app.retrieval.needs_planner import PROMPT
+
+    clauses = {
+        "scope_enquiry": "Does Equipment Inspection Procedure cover East Lodge?",
+        "retrieve": "How do I book temporary staff?",
+        "compare": "What changed from the previous Equipment Inspection Procedure?",
+    }
+    selected = [
+        clauses[o]
+        if index == 0 or o != operations[0]
+        else "How do I confirm a booking?"
+        for index, o in enumerate(operations)
+    ]
+    text = " And ".join(selected)
+    plan = {
+        "schema_version": "evidence-needs-plan-v3",
+        "decision": "plan",
+        "clarification": None,
+        "needs": [],
+        "bindings": [],
+    }
+    catalogue = families(1)
+    for index, operation in enumerate(operations, 1):
+        quote = selected[index - 1]
+        plan["needs"].append(
+            {
+                "need_id": f"n{index}",
+                "aspect": quote,
+                "central": True,
+                "question_span": {"turn_id": "user-1", "quote": quote},
+                "operation": operation,
+                "authority": {
+                    "kind": "previous" if operation == "compare" else "current",
+                    "value": "previous" if operation == "compare" else None,
+                    "precision": "named" if operation == "compare" else "none",
+                    "source": {"turn_id": "user-1", "quote": "previous"}
+                    if operation == "compare"
+                    else None,
+                },
+                "applicability": {
+                    "kind": "named" if operation == "scope_enquiry" else "generic",
+                    "source": {"turn_id": "user-1", "quote": "East Lodge"}
+                    if operation == "scope_enquiry"
+                    else None,
+                },
+                "fact_reference": None,
+                "supports_need_id": None,
+            }
+        )
+        plan["bindings"].append(
+            {
+                "need_id": f"n{index}",
+                "ownership": "authorised_workspace",
+                "ownership_source": None,
+                "subject_status": "topic" if operation == "retrieve" else "matched",
+                "family_ids": []
+                if operation == "retrieve"
+                else [str(catalogue[0].family_id)],
+            }
+        )
+    calls = []
+    result = adapter(plan, calls).plan_needs(
+        (UserTurn(turn_id="user-1", text=text),),
+        evaluated_at="2026-09-08T12:00:00Z",
+        catalogue=catalogue,
+    )
+    assert tuple(n.operation for n in result.plan.needs) == operations
+    assert len(calls) == 1
+    assert "ORIGINAL requested clause before rewriting" in PROMPT
+    assert "adding an unrelated second question does not turn" in PROMPT
+    assert "How do I inspect equipment at East Lodge?' remains retrieve" in PROMPT
+    assert "A policy-version\nchange question remains compare" in PROMPT
+    # Fake model output proves transport/contract preservation, NOT model judgement.
 
 
 @pytest.mark.parametrize("example", EXAMPLES, ids=lambda e: e["name"])
@@ -136,7 +245,7 @@ def test_real_transport_sends_request_specific_schema_and_does_not_cache_other_t
         jsonschema.validate(example["plan"], schema)
         other = str(UUID(int=2 if family.family_id.int == 1 else 1))
         assert other not in json.dumps(schema)
-        assert result.lineage.adapter_version == "structured-chat-needs-v5"
+        assert result.lineage.adapter_version == "structured-chat-needs-v6"
         assert len(calls) == 1
 
 

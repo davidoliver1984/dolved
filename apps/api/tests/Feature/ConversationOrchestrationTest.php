@@ -121,13 +121,13 @@ class ConversationOrchestrationTest extends TestCase
         $question = str_repeat('Which version and site should be used? ', 10);
         Http::fake(function (Request $request) use ($question, $attempts) {
             $identity = ['provider' => 'openai', 'model' => 'gpt-5-mini',
-                'contract_schema_version' => 'evidence-needs-plan-v2',
-                'prompt_version' => 'bounded-evidence-needs-v12', 'adapter_version' => 'structured-chat-needs-v5'];
+                'contract_schema_version' => 'evidence-needs-plan-v3',
+                'prompt_version' => 'bounded-evidence-needs-v14', 'adapter_version' => 'structured-chat-needs-v6'];
             $canonical = $identity;
             ksort($canonical);
 
             return Http::response(['contract_version' => 2, 'request_id' => $request->data()['request_id'],
-                'plan' => ['schema_version' => 'evidence-needs-plan-v2', 'decision' => 'clarify', 'clarification' => $question, 'needs' => []],
+                'plan' => ['schema_version' => 'evidence-needs-plan-v3', 'decision' => 'clarify', 'clarification' => $question, 'needs' => []],
                 'classifier_lineage' => [...$identity, 'fingerprint' => hash('sha256', json_encode($canonical, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR))],
                 'usage' => ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini',
                     'execution' => 'provider_api', 'request_count' => $attempts, 'retry_count' => $attempts - 1,
@@ -412,13 +412,13 @@ class ConversationOrchestrationTest extends TestCase
             if (str_ends_with($request->url(), '/plan-needs')) {
                 $this->assertSame([['turn_id' => 'user-1', 'text' => 'What does the current approved procedure require?']], $body['user_turns']);
                 $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
-                    'contract_schema_version' => 'evidence-needs-plan-v2',
-                    'prompt_version' => 'bounded-evidence-needs-v12', 'adapter_version' => 'structured-chat-needs-v5'];
+                    'contract_schema_version' => 'evidence-needs-plan-v3',
+                    'prompt_version' => 'bounded-evidence-needs-v14', 'adapter_version' => 'structured-chat-needs-v6'];
                 ksort($lineage);
                 $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
                 return Http::response(['contract_version' => 2, 'request_id' => $body['request_id'],
-                    'plan' => ['schema_version' => 'evidence-needs-plan-v2', 'decision' => 'plan', 'clarification' => null,
+                    'plan' => ['schema_version' => 'evidence-needs-plan-v3', 'decision' => 'plan', 'clarification' => null,
                         'bindings' => [['need_id' => 'n1', 'subject_status' => 'topic', 'family_ids' => [],
                             'ownership' => 'authorised_workspace', 'ownership_source' => null]],
                         'needs' => [['need_id' => 'n1', 'aspect' => 'current procedure requirements', 'central' => true,
@@ -524,7 +524,7 @@ class ConversationOrchestrationTest extends TestCase
         $events = $run->deliveryEvents()->get();
         if ($path === 'needs') {
             $this->assertSame(['n1' => 'supported'], $run->generatedAnswer->aspect_results);
-            $this->assertSame('evidence-needs-plan-v2', $run->retrievalOutcomeSnapshot->lineage['evidence_needs_plan']['schema_version']);
+            $this->assertSame('evidence-needs-plan-v3', $run->retrievalOutcomeSnapshot->lineage['evidence_needs_plan']['schema_version']);
             $this->assertFalse($events->contains(fn ($event) => $event->provisional));
             Http::assertSentCount(3);
         } else {

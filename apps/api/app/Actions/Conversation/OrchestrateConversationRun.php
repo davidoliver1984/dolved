@@ -427,6 +427,7 @@ final readonly class OrchestrateConversationRun
                 'message_id' => $message->public_id,
                 'answer_id' => $answer->public_id,
                 'outcome' => $answer->outcome->value,
+                'scope_citations' => $answer->scope_facts ?? [],
                 'text' => $message->display_text,
                 'unsupported_aspects' => $answer->unsupported_aspects,
                 'insufficiency_reason' => $answer->insufficiency_reason,

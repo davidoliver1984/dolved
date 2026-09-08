@@ -49,6 +49,7 @@ class ConversationResource extends JsonResource
                 'answer' => $run->relationLoaded('generatedAnswer') && $run->generatedAnswer !== null ? [
                     'id' => $run->generatedAnswer->public_id,
                     'outcome' => $run->generatedAnswer->outcome->value,
+                    'scope_citations' => $run->generatedAnswer->scope_facts ?? [],
                     'unsupported_aspects' => $run->generatedAnswer->unsupported_aspects,
                     'insufficiency_reason' => $run->generatedAnswer->insufficiency_reason,
                     'parts' => $run->generatedAnswer->answerParts->map(fn ($part): array => [

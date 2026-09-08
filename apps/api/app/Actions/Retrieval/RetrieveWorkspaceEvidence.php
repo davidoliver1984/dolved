@@ -18,6 +18,7 @@ use App\Services\Retrieval\EligibilityResolver;
 use App\Services\Retrieval\ResolveEvidenceThresholdPolicy;
 use App\Services\Retrieval\RetrievalClient;
 use App\Support\Documents\DocumentAuthorityTimeline;
+use App\Support\Retrieval\ApplicabilityScopeFact;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\EvidenceNeedsPlan;
@@ -72,9 +73,27 @@ final readonly class RetrieveWorkspaceEvidence
         }
         $results = [];
         $plans = [];
+        $scopeFacts = [];
         foreach ($needs as $need) {
             $id = $need['need_id'];
             $plans[$id] = $plan->retrievalPlan($id);
+            if ($need['operation'] === 'scope_enquiry') {
+                $fact = $this->eligibility->scopeFact($authorised, $plans[$id], $evaluatedAt);
+                if (! $fact instanceof ApplicabilityScopeFact) {
+                    $observe?->__invoke('need.'.$id.'.scope_fact', ['need_id' => $id, 'result' => 'unresolved',
+                        'reason' => $fact->reason ?? 'scope_record_unavailable']);
+
+                    return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
+                        reason: $fact->reason ?? 'scope_record_unavailable',
+                        clarificationSource: RetrievalClarificationSource::EligibilityResolver,
+                        usage: $usage, clarificationQuestion: 'Please identify the policy and location whose recorded scope you want to check.');
+                }
+                $scopeFacts[$id] = $fact;
+                $observe?->__invoke('need.'.$id.'.scope_fact', $fact->value);
+                $results[$id] = new RetrievalResult(RetrievalOutcome::EvidenceFound);
+
+                continue;
+            }
             $results[$id] = $this->execute($authorised, $need['aspect'], $candidateK, $evaluatedAt,
                 observe: $observe === null ? null : fn ($stage, $value) => $observe('need.'.$id.'.'.$stage, $value),
                 planOverride: $plans[$id], recordPlannerUsage: false);
@@ -95,6 +114,14 @@ final readonly class RetrieveWorkspaceEvidence
         }
         // Revalidate every need after all provider work, before the global allocation.
         foreach ($results as $id => $result) {
+            if (isset($scopeFacts[$id])) {
+                $fresh = $this->eligibility->scopeFact($authorised, $plans[$id], $evaluatedAt);
+                if (! $fresh instanceof ApplicabilityScopeFact || $fresh->value !== $scopeFacts[$id]->value) {
+                    return new RetrievalResult(RetrievalOutcome::RetrievalFailed, reason: 'scope_record_changed', usage: $usage);
+                }
+
+                continue;
+            }
             $eligible = $this->eligibility->handle($authorised, $plans[$id], $evaluatedAt);
             if ($eligible->outcome === RetrievalOutcome::ClarificationRequired) {
                 return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
@@ -118,6 +145,7 @@ final readonly class RetrieveWorkspaceEvidence
             unset($need['supports_need_id']);
             $result = $results[$id];
             $coverage[] = [...$need, 'retrieval_outcome' => $result->outcome->value,
+                ...(isset($scopeFacts[$id]) ? ['scope_fact' => $scopeFacts[$id]->value] : []),
                 'retrieval_reason' => $result->reason,
                 'selected_chunk_ids' => array_column(array_values(array_filter($selected, fn ($c) => $c['need_id'] === $id)), 'chunk_id'),
                 'resolved_temporal_authority' => $result->resolvedTemporalAuthority,
@@ -125,7 +153,7 @@ final readonly class RetrieveWorkspaceEvidence
         }
         $observe?->__invoke('needs_final_evidence', $selected);
 
-        return new RetrievalResult($selected === [] ? RetrievalOutcome::InsufficientEvidence : RetrievalOutcome::EvidenceFound,
+        return new RetrievalResult($selected === [] && $scopeFacts === [] ? RetrievalOutcome::InsufficientEvidence : RetrievalOutcome::EvidenceFound,
             $selected, reason: $selected === [] && $coverage !== []
                 && count(array_filter($coverage, fn ($need) => $need['retrieval_reason'] === 'no_previous_version')) === count($coverage)
                     ? 'no_previous_version' : null,

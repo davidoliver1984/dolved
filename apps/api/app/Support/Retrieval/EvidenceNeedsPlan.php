@@ -26,9 +26,9 @@ final readonly class EvidenceNeedsPlan
         self::validate($value, $turns);
         $identity = ClassifierLineage::fromArray($lineage);
         $observation = PlannerUsage::fromArray($usage);
-        if ($identity->contractSchemaVersion !== 'evidence-needs-plan-v2'
-            || $identity->promptVersion !== 'bounded-evidence-needs-v12'
-            || $identity->adapterVersion !== 'structured-chat-needs-v5'
+        if ($identity->contractSchemaVersion !== 'evidence-needs-plan-v3'
+            || $identity->promptVersion !== 'bounded-evidence-needs-v14'
+            || $identity->adapterVersion !== 'structured-chat-needs-v6'
             || $identity->provider !== $observation->provider
             || $identity->model !== $observation->model) {
             throw new InvalidArgumentException('Needs planner identity does not match its contract or usage.');
@@ -209,7 +209,7 @@ final readonly class EvidenceNeedsPlan
         if (! in_array($name, ['plan', 'request', 'response'], true)) {
             throw new InvalidArgumentException('Unknown needs contract.');
         }
-        $schema = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v2/'.$name.'.schema.json'), flags: JSON_THROW_ON_ERROR);
+        $schema = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/'.$name.'.schema.json'), flags: JSON_THROW_ON_ERROR);
         $data = json_decode(json_encode($value, JSON_THROW_ON_ERROR), flags: JSON_THROW_ON_ERROR);
         if (! (new Validator)->validate($data, $schema)->isValid()) {
             throw new InvalidArgumentException('Invalid evidence needs shape.');
