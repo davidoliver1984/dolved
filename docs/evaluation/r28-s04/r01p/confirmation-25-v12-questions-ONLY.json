@@ -1,0 +1,32 @@
+{
+  "set_id": "R28-INDEPENDENT-CONFIRMATION-20261106-V12",
+  "author": "Claude (Sonnet 5), read-only reviewer, not involved in the R01P diagnosis, corrections, or scoring the prior eleven confirmations",
+  "note": "Questions only. No expected answers, sources, or hints included in this file. Freeze code (record the runtime-source aggregate hash) before running. Run once. No tuning or reruns before David's decision. For every call, set CONVERSATION_NEEDS_WORKSPACE_IDS to the primary workspace only and confirm in each trace that the needs pipeline was actually exercised.",
+  "questions": [
+    { "id": "n01", "text": "If something's gone wrong with a resident's care, how long do we actually have to send the written follow-up after the first conversation with the family?" },
+    { "id": "n02", "text": "How long does a first written warning actually stay live for?" },
+    { "id": "n03", "text": "Can I bring a mate from outside work to sit in on my disciplinary hearing?" },
+    { "id": "n04", "text": "How many flexible working requests can someone actually put in within a year?" },
+    { "id": "n05", "text": "How long do I have to appeal if my flexible working request gets turned down?" },
+    { "id": "n06", "text": "How quickly does an accident report actually need to reach the registered manager?" },
+    { "id": "n07", "text": "How often does COSHH refresher training actually need doing?" },
+    { "id": "n08", "text": "If a community visit check-in gets missed, how long before the office tries a welfare call, and if that goes unanswered, how long before someone's actually sent out?" },
+    { "id": "n09", "text": "How long does CCTV footage actually get kept for as standard?" },
+    { "id": "n10", "text": "Can a family member just ask to see CCTV footage of their relative whenever they want?" },
+    { "id": "n11", "text": "Is a staff member allowed to wear their wedding ring while doing personal care?" },
+    { "id": "n12", "text": "If staff notice an unexplained mark on someone, how quickly does the body map actually need completing?" },
+    { "id": "n13", "text": "Does having a diagnosis like dementia automatically mean someone gets assessed as lacking capacity?" },
+    { "id": "n14", "text": "Has anything actually changed about who gets contacted if a resident has a fall with a suspected injury?" },
+    { "id": "n15", "text": "Has the appraisal and supervision schedule changed much, or is it still the same frequencies as before?" },
+    { "id": "n16", "text": "If there's a concern about a resident's money going missing, who does that actually get escalated to these days?" },
+    { "id": "n17", "text": "Is the key safe procedure still just a Willow Bank thing?" },
+    { "id": "n18", "text": "Can a resident still just self-administer their own cream without a full assessment?" },
+    { "id": "n19", "text": "Is the self-administration assessment still just reviewed once a year?" },
+    { "id": "n20", "text": "Quick one: how many flexible working requests can someone put in over a year, and separately, how long does a first written warning actually stay live for?" },
+    { "id": "n21", "text": "Quick one: is the key safe procedure still just for Willow Bank, and separately, has anything changed about who gets contacted for a fall with a suspected injury?" },
+    { "id": "n22", "text": "Quick one: how quickly does an accident report actually need to reach the registered manager, and separately, how long do we keep CCTV footage for as standard?" },
+    { "id": "n23", "text": "Under the Lone Working Policy, how long before a missed check-in actually gets a welfare call?" },
+    { "id": "n24", "text": "How does toner reordering actually work for the printer at Central Support Office?" },
+    { "id": "n25", "text": "Is it okay that the delivery came in late the other day - did someone actually approve it being checked in anyway?" }
+  ]
+}
