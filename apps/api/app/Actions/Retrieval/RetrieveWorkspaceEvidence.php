@@ -83,6 +83,11 @@ final readonly class RetrieveWorkspaceEvidence
                     $observe?->__invoke('need.'.$id.'.scope_fact', ['need_id' => $id, 'result' => 'unresolved',
                         'reason' => $fact->reason ?? 'scope_record_unavailable']);
 
+                    if ($fact->outcome === RetrievalOutcome::NoEligibleEvidence) {
+                        return new RetrievalResult(RetrievalOutcome::NoEligibleEvidence,
+                            reason: $fact->reason ?? 'scope_record_unavailable', usage: $usage);
+                    }
+
                     return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
                         reason: $fact->reason ?? 'scope_record_unavailable',
                         clarificationSource: RetrievalClarificationSource::EligibilityResolver,

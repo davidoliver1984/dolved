@@ -387,6 +387,73 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         return [['foreign_family'], ['foreign_location'], ['future'], ['draft'], ['withdrawn'], ['unsealed'], ['no_snapshot']];
     }
 
+    public static function unavailableScopeRecords(): array
+    {
+        return [['no_current_version'], ['unsealed_snapshot']];
+    }
+
+    #[DataProvider('unavailableScopeRecords')]
+    public function test_unavailable_scope_record_publishes_controlled_no_answer(string $failure): void
+    {
+        Queue::fake();
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place']);
+        if ($failure === 'no_current_version') {
+            DB::table('documents')->where('id', $document->id)->update([
+                'governance_status' => 'withdrawn', 'withdrawn_at' => '2026-02-01',
+            ]);
+        } else {
+            DB::table('document_applicability_snapshots')->where('document_id', $document->id)
+                ->update(['sealed_at' => null]);
+        }
+        $question = 'Does Equipment Policy cover Harbour Place?';
+        $plan = $this->scopePlan($document, $question);
+        config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
+        Http::fake(function ($request) use ($plan) {
+            $this->assertStringEndsWith('/plan-needs', $request->url());
+
+            return Http::response(['contract_version' => 2, 'request_id' => $request->data()['request_id'],
+                'plan' => $plan->value, 'classifier_lineage' => $plan->lineage->toArray(),
+                'usage' => ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini',
+                    'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
+                    'latency_ms' => 1, 'cost_basis' => 'unavailable']]);
+        });
+        $conversation = app(CreateConversation::class)->handle($workspace, $scope->user);
+        $run = app(SubmitConversationMessage::class)->handle($conversation,
+            $scope->user, $question, (string) Str::uuid());
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        $this->assertSame(GenerationRunStatus::RetrievalNoAnswer, $run->status);
+        $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $run->retrievalOutcomeSnapshot->outcome);
+        $this->assertSame('scope_record_unavailable', $run->retrievalOutcomeSnapshot->clarification_reason);
+        $this->assertSame("I couldn't find enough available evidence to answer that question.", $run->assistantMessage->display_text);
+        $this->assertNull($run->generatedAnswer);
+        Http::assertSentCount(1);
+    }
+
+    public function test_ambiguous_scope_subject_still_clarifies(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place']);
+        $plan = $this->plan(4, function ($data) use ($document) {
+            $data = $this->scopePlan($document)->value;
+            $data['bindings'][0]['subject_status'] = 'topic';
+            $data['bindings'][0]['family_ids'] = [];
+
+            return ['turns' => [['turn_id' => 'user-1', 'text' => 'Does Equipment Policy cover Harbour Place?']], 'plan' => $data];
+        });
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 15, CarbonImmutable::parse('2026-09-08'));
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+        $this->assertSame('ambiguous_document_subject', $result->reason);
+        $rendered = app(ControlledResponseRenderer::class)->clarification($result->clarificationSource, $result->reason, $result->clarificationQuestion);
+        $this->assertSame('Which document or policy do you mean?', $rendered['text']);
+        Http::assertNothingSent();
+    }
+
     #[DataProvider('scopeFailures')]
     public function test_scope_enquiry_preserves_access_authority_and_snapshot_prerequisites(string $failure): void
     {
