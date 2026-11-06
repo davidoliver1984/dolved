@@ -102,6 +102,12 @@ data category, role, audience or policy topic is not a named location. With no s
 reference use generic with source=null. Relational means a relative site such as the user's
 branch, not an anaphoric reference to a document or field. Do not turn every named noun into
 an applicability constraint; the application must not have to resolve topics as places.
+Apply that distinction independently to EACH clause of a compound question. A trailing
+'under/according to the [named] policy or procedure' phrase identifies a document, not a
+site; it cannot be the applicability.source even when it is the only named phrase in that
+clause. With no separate organisational site reference, use generic/source=null. If the
+same clause also names a real site, quote only that site for named applicability; preserve
+the document reference in the aspect and binding, never as a substitute location.
 Tenant/account ownership and another person's private record are not organisational
 locations. Preserve such requested facts in the aspect, but do not encode tenant or
 account wording as named/relational applicability. With no actual site reference use
@@ -310,7 +316,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             timeout_seconds=timeout_seconds,
             client=client,
             contract_schema_version="evidence-needs-plan-v3",
-            prompt_version="bounded-evidence-needs-v16",
+            prompt_version="bounded-evidence-needs-v17",
             adapter_version="structured-chat-needs-v6",
         )
 

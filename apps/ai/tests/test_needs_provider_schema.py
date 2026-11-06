@@ -15,7 +15,10 @@ EXAMPLES = json.loads(
     Path("/contracts/http/retrieval-needs/v3/examples.json").read_text()
 )
 BOUNDARY_MATRIX = json.loads(
-    Path(__file__).with_name("fixtures").joinpath("needs_operation_boundary_matrix.json").read_text()
+    Path(__file__)
+    .with_name("fixtures")
+    .joinpath("needs_operation_boundary_matrix.json")
+    .read_text()
 )
 
 
@@ -25,7 +28,12 @@ def test_operation_boundary_matrix_is_broad_and_prompt_states_semantic_division(
     assert len(BOUNDARY_MATRIX["scope_enquiry"]) >= 20
     assert len(BOUNDARY_MATRIX["retrieve"]) >= 20
     assert len(BOUNDARY_MATRIX["controls"]) >= 8
-    assert len({q for side in ("scope_enquiry", "retrieve") for q in BOUNDARY_MATRIX[side]}) == 40
+    assert (
+        len(
+            {q for side in ("scope_enquiry", "retrieve") for q in BOUNDARY_MATRIX[side]}
+        )
+        == 40
+    )
     assert "requested fact must be WHERE the policy applies" in PROMPT
     assert "current way to act asks for operational guidance" in PROMPT
     assert "not words such as old, still, can, number or cover" in PROMPT
@@ -147,6 +155,104 @@ def test_clause_purpose_survives_real_adapter_without_posthoc_reclassification(
     assert "How do I inspect equipment at East Lodge?' remains retrieve" in PROMPT
     assert "A policy-version\nchange question remains compare" in PROMPT
     # Fake model output proves transport/contract preservation, NOT model judgement.
+
+
+@pytest.mark.parametrize(
+    ("question", "clauses", "location_quote"),
+    [
+        (
+            "Quick one: how long before an immediate on-site search escalates to calling the police for a missing resident, and separately, how far can a window actually open under the restrictor policy?",
+            (
+                "how long before an immediate on-site search escalates to calling the police for a missing resident",
+                "how far can a window actually open under the restrictor policy?",
+            ),
+            None,
+        ),
+        (
+            "How far can a resident's window open under the Window Restrictor Policy?",
+            (
+                "How far can a resident's window open under the Window Restrictor Policy?",
+            ),
+            None,
+        ),
+        (
+            "Can staff at Riverside House wear the fleece under the Dress Code Policy?",
+            (
+                "Can staff at Riverside House wear the fleece under the Dress Code Policy?",
+            ),
+            "Riverside House",
+        ),
+        (
+            "At Oakfield Lodge, what does the Window Restrictor Procedure require?",
+            ("At Oakfield Lodge, what does the Window Restrictor Procedure require?",),
+            "Oakfield Lodge",
+        ),
+    ],
+)
+def test_document_reference_and_real_site_are_separate_applicability_fields(
+    question, clauses, location_quote
+):
+    from app.retrieval.needs_planner import PROMPT
+
+    catalogue = (CatalogueFamily(family_id=UUID(int=1), title="Named policy"),)
+    plan = {
+        "schema_version": "evidence-needs-plan-v3",
+        "decision": "plan",
+        "clarification": None,
+        "needs": [],
+        "bindings": [],
+    }
+    for index, clause in enumerate(clauses, 1):
+        plan["needs"].append(
+            {
+                "need_id": f"n{index}",
+                "aspect": clause,
+                "central": True,
+                "question_span": {"turn_id": "user-1", "quote": clause},
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "value": None,
+                    "precision": "none",
+                    "source": None,
+                },
+                "fact_reference": None,
+                "applicability": {
+                    "kind": "named" if location_quote else "generic",
+                    "source": {"turn_id": "user-1", "quote": location_quote}
+                    if location_quote
+                    else None,
+                },
+                "supports_need_id": None,
+            }
+        )
+        is_topical = len(clauses) > 1 and index == 1
+        plan["bindings"].append(
+            {
+                "need_id": f"n{index}",
+                "subject_status": "topic" if is_topical else "matched",
+                "family_ids": [] if is_topical else [str(catalogue[0].family_id)],
+                "ownership": "authorised_workspace",
+                "ownership_source": None,
+            }
+        )
+    calls = []
+    result = adapter(plan, calls).plan_needs(
+        (UserTurn(turn_id="user-1", text=question),),
+        evaluated_at="2026-11-06T12:00:00Z",
+        catalogue=catalogue,
+    )
+    assert len(calls) == 1
+    assert all(need.operation == "retrieve" for need in result.plan.needs)
+    assert all(
+        (need.applicability.source.quote if need.applicability.source else None)
+        == location_quote
+        for need in result.plan.needs
+    )
+    assert result.plan.bindings[-1].family_ids == (catalogue[0].family_id,)
+    assert "trailing\n'under/according to the [named] policy or procedure'" in PROMPT
+    assert "quote only that site for named applicability" in PROMPT
+    # Fake output proves valid transport/contract separation, not model judgement.
 
 
 @pytest.mark.parametrize("example", EXAMPLES, ids=lambda e: e["name"])
