@@ -1,10 +1,10 @@
 # Evidence needs plan v3 — applicability scope enquiries
 
 ADR-0039 adds `scope_enquiry` to the existing retrieve/compare operation union.
-Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v14`,
+Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v15`,
 `structured-chat-needs-v6`. The existing request and signed transport purpose
 are retained. V2 historical contracts remain byte-identical; v3 is explicitly
-pinned for new needs runs by `bounded-needs-slice-v14`.
+pinned for new needs runs by `bounded-needs-slice-v16`.
 
 Scope enquiries are explicit, grounded planner choices. They do not result from
 an empty operational search. Laravel requires a matched single authorised family

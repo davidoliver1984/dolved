@@ -6,6 +6,7 @@ namespace Tests\Feature;
 
 use App\Actions\Generation\GenerateGroundedAnswer;
 use App\Actions\Generation\PersistGeneratedAnswer;
+use App\Enums\DocumentGovernanceStatus;
 use App\Enums\GenerationDeliveryMode;
 use App\Enums\GenerationOutcome;
 use App\Enums\GenerationSide;
@@ -34,6 +35,7 @@ use App\Support\Generation\GenerationResult;
 use App\Support\Generation\GenerationValidationDiagnostics;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\RetrievalResult;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
@@ -46,6 +48,44 @@ use Tests\TestCase;
 class GroundedGenerationFoundationTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_needs_evidence_keeps_authored_banner_and_adds_resolved_current_status(): void
+    {
+        [$base, $chunk] = $this->assemblyFixture();
+        $chunk->document->forceFill([
+            'governance_status' => DocumentGovernanceStatus::Approved,
+            'approved_at' => CarbonImmutable::parse('2026-08-31T23:59:59+00:00'),
+            'effective_from' => CarbonImmutable::parse('2026-09-01T00:00:00+00:00'),
+        ])->save();
+        $banner = 'Not yet effective; becomes authoritative on 1 September 2026.';
+        $bannerChunk = DocumentChunk::factory()->create([
+            'workspace_id' => $chunk->workspace_id,
+            'document_id' => $chunk->document_id,
+            'ingestion_event_claim_id' => $chunk->ingestion_event_claim_id,
+            'ordinal' => 2,
+            'text' => $banner,
+            'content_digest' => hash('sha256', $banner),
+        ]);
+        $examples = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/examples.json'), true, flags: JSON_THROW_ON_ERROR);
+        $need = $examples[0]['plan']['needs'][1];
+        $need['need_id'] = 'n1';
+        unset($need['supports_need_id']);
+        $need += ['retrieval_outcome' => 'EVIDENCE_FOUND', 'retrieval_reason' => null,
+            'resolved_temporal_authority' => ['temporal_mode' => 'current', 'evaluated_at' => '2026-11-06T10:27:00+00:00'],
+            'resolved_applicability_location' => ['resolved_location_public_id' => null]];
+        $candidate = ['chunk_id' => $bannerChunk->public_id, 'document_id' => $chunk->document->public_id,
+            'document_family_id' => $chunk->document->family->public_id, 'chunk_text' => $banner,
+            'side' => 'primary', 'need_id' => 'n1'];
+        $input = new GenerationAssemblyInput($base->question,
+            new RetrievalResult(RetrievalOutcome::EvidenceFound, [$candidate], evidenceNeeds: [$need]),
+            [], [], $base->authorisedScope, []);
+
+        $evidence = app(AssembleGenerationRequest::class)->handle($input)->toArray()['evidence'][0];
+        $this->assertSame($banner, $evidence['text']);
+        $this->assertSame('2026-11-06T10:27:00+00:00', $evidence['temporal_authority']['evaluated_at']);
+        $this->assertSame('2026-09-01T00:00:00+00:00', $evidence['temporal_authority']['authority_start']);
+        $this->assertTrue($evidence['temporal_authority']['authoritative_at_evaluated_at']);
+    }
 
     public static function needsAssemblyMutations(): array
     {

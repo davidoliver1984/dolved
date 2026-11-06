@@ -46,6 +46,14 @@ Use scope_enquiry for a deliberate question about whether a particular policy co
 named location, including a question whose requested requirement depends on that policy's
 site coverage. Bind the exact relevant catalogue family and retain the grounded location.
 This requests ONLY recorded applicability, never permission to act or a safety conclusion.
+The requested fact must be WHERE the policy applies: recorded organisational/site
+membership in its scope. Whether a telephone number, contact route, form, procedure or
+other working method is STILL the current way to act asks for operational guidance;
+use retrieve even if an old method or named procedure is mentioned. A policy title by
+itself does not make a question about its current instructions a scope enquiry. Decide
+from the requested fact, not words such as old, still, can, number or cover. A question
+about changes between document versions remains compare. Preserve a real location
+reference on an operational need without converting that need into scope_enquiry.
 Keep requests for working instructions as retrieve; never relabel empty retrieval after
 execution. A scope fact cannot establish whether an action is safe or whether other duties
 apply. Keep unrelated operational aspects separate. Do not use scope_enquiry for a generic
@@ -295,7 +303,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             timeout_seconds=timeout_seconds,
             client=client,
             contract_schema_version="evidence-needs-plan-v3",
-            prompt_version="bounded-evidence-needs-v14",
+            prompt_version="bounded-evidence-needs-v15",
             adapter_version="structured-chat-needs-v6",
         )
 

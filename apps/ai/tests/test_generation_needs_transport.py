@@ -82,6 +82,23 @@ def test_real_adapter_preserves_needs_schema_accounting_and_profile():
     assert sent["truncation"] == "disabled"
 
 
+def test_resolved_temporal_status_reaches_model_without_rewriting_authored_banner():
+    raw, adapter, responses = prepared()
+    banner = "Not yet effective; becomes authoritative on 1 September 2026."
+    raw["evidence"][0]["text"] = banner
+    raw["evidence"][0]["temporal_authority"].update(
+        evaluated_at="2026-11-06T10:27:00+00:00",
+        authority_start="2026-09-01T00:00:00+00:00",
+        authoritative_at_evaluated_at=True,
+    )
+    adapter.generate_needs(GenerationNeedsRequest.model_validate(raw))
+    sent = responses.calls[0]
+    assert banner in sent["input"]
+    assert '"authoritative_at_evaluated_at":true' in sent["input"]
+    assert "author-time commentary" in sent["instructions"]
+    assert "Do not re-resolve eligibility" in sent["instructions"]
+
+
 def test_needs_schema_and_prompt_are_included_in_predispatch_token_budget():
     raw, adapter, responses = prepared()
     adapter.profile = replace(adapter.profile, context_window_tokens=1)

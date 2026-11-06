@@ -42,7 +42,7 @@ MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
 ADAPTER_VERSION = "openai-responses-v3-claim-type"
 NEEDS_CONTRACT_VERSION = "generation-result-v2"
-NEEDS_PROMPT_VERSION = "grounded-generation-needs-v5"
+NEEDS_PROMPT_VERSION = "grounded-generation-needs-v6"
 NEEDS_ADAPTER_VERSION = "openai-responses-needs-v2"
 NEEDS_INSTRUCTIONS = """
 Answer directly with an evidence-supported statement. If an answer part starts with
@@ -54,6 +54,17 @@ This is a structural writing rule; independently ensure the full claim agrees wi
 This request contains independent evidence_needs. Interpret comparison/current
 requirements per need, not globally. Evidence ownership, family/version identity,
 authority and applicability were resolved by Laravel and must not be changed.
+Each evidence item's temporal_authority may include evaluated_at, authority_start
+and authoritative_at_evaluated_at. These are application-resolved facts, not
+claims to recalculate from the passage. For a current request, when the selected
+version is marked authoritative_at_evaluated_at=true, describe its current
+requirements as in force. A passage saying "not yet effective" or "becomes
+authoritative on" an earlier date is author-time commentary, not a live status
+statement. Keep that source text intact and cite it for its substantive facts,
+but do not repeat its outdated pending-status framing as today's status.
+For historical or comparison requests, retain the requested temporal lane:
+false at the present evaluated_at does not invalidate a version selected for a
+past date. Do not re-resolve eligibility, version order or authority yourself.
 Current-only evidence can answer its own need even when another need lacks history;
 it cannot substitute for a missing comparison side. Empty evidence_ids identify a
 mechanical gap, not permission to borrow evidence from another need.

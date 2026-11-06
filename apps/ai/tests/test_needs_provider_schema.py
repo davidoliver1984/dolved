@@ -14,6 +14,23 @@ from tests.test_evidence_needs import adapter, turns
 EXAMPLES = json.loads(
     Path("/contracts/http/retrieval-needs/v3/examples.json").read_text()
 )
+BOUNDARY_MATRIX = json.loads(
+    Path(__file__).with_name("fixtures").joinpath("needs_operation_boundary_matrix.json").read_text()
+)
+
+
+def test_operation_boundary_matrix_is_broad_and_prompt_states_semantic_division():
+    from app.retrieval.needs_planner import PROMPT
+
+    assert len(BOUNDARY_MATRIX["scope_enquiry"]) >= 20
+    assert len(BOUNDARY_MATRIX["retrieve"]) >= 20
+    assert len(BOUNDARY_MATRIX["controls"]) >= 8
+    assert len({q for side in ("scope_enquiry", "retrieve") for q in BOUNDARY_MATRIX[side]}) == 40
+    assert "requested fact must be WHERE the policy applies" in PROMPT
+    assert "current way to act asks for operational guidance" in PROMPT
+    assert "not words such as old, still, can, number or cover" in PROMPT
+    assert "Preserve a real location" in PROMPT
+    # This checks instruction and fixture coverage, not model classification quality.
 
 
 def families(count):

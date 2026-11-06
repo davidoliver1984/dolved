@@ -13,11 +13,15 @@ use App\Models\DocumentChunk;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Generation\GenerationEvidence;
 use App\Support\Generation\GenerationRequest;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 
 final readonly class AssembleGenerationRequest
 {
-    public function __construct(private GenerationContextPacker $packer) {}
+    public function __construct(
+        private GenerationContextPacker $packer,
+        private ResolvedEvidenceTemporalStatus $temporalStatus,
+    ) {}
 
     public function handle(GenerationAssemblyInput $input): GenerationRequest
     {
@@ -65,6 +69,12 @@ final readonly class AssembleGenerationRequest
                     'document_title' => mb_substr($chunk->document->source_filename, 0, 500),
                     'document_family_title' => mb_substr($chunk->document->family->name, 0, 500)];
                 $applicability = $need['resolved_applicability_location'];
+            }
+            if (isset($authority['evaluated_at'])) {
+                $authority = [...$authority, ...$this->temporalStatus->forDocument(
+                    $chunk->document,
+                    CarbonImmutable::parse($authority['evaluated_at']),
+                )];
             }
             $evidence[] = new GenerationEvidence(
                 sprintf('ev-%02d', $index + 1),
