@@ -1,0 +1,19 @@
+{
+  "set_id": "R28-INDEPENDENT-CONFIRMATION-20261106-V13",
+  "author": "Claude (Sonnet 5), read-only reviewer, not involved in the R01P diagnosis, corrections, or scoring the prior twelve confirmations",
+  "note": "Questions only. No expected answers, sources, or hints included in this file. Freeze code (record the runtime-source aggregate hash) before running. Run once. No tuning or reruns before David's decision. For every call, set CONVERSATION_NEEDS_WORKSPACE_IDS to the primary workspace only and confirm in each trace that the needs pipeline was actually exercised.",
+  "questions": [
+    { "id": "o01", "text": "Do complaints get acknowledged within 5 working days here?" },
+    { "id": "o02", "text": "Is a complaint something I'd raise with the Brambleford Office?" },
+    { "id": "o03", "text": "Do our safeguarding case logs use a TF-INC- reference prefix?" },
+    { "id": "o04", "text": "Has everyone actually done their manual handling refresher training?" },
+    { "id": "o05", "text": "What's the shift pattern look like on the day team rota this week?" },
+    { "id": "o06", "text": "What fields do I need to fill in on the safeguarding referral cover sheet?" },
+    { "id": "o07", "text": "How do I annotate the chart when a dose is withheld?" },
+    { "id": "o08", "text": "What's the structure for writing up an incident report?" },
+    { "id": "o09", "text": "Has my mileage claim actually been approved yet?" },
+    { "id": "o10", "text": "Quick one: do complaints get acknowledged within 5 working days, and separately, do our safeguarding logs use a TF-INC- reference?" },
+    { "id": "o11", "text": "Quick one: what's on the day team rota this week, and separately, how do I annotate the chart when a dose is withheld?" },
+    { "id": "o12", "text": "Quick one: what's the structure for an incident report, and separately, has my mileage claim actually been approved yet?" }
+  ]
+}
