@@ -36,7 +36,71 @@ def test_prompt_distinguishes_requested_tasks_from_source_count_and_named_bindin
     assert "two independently requested topics require two needs" in PROMPT
     assert "use topic\nwith empty family_ids" in PROMPT
     assert "never broaden an\nunavailable named subject into topic" in PROMPT
+    assert (
+        "Decide whether the user named a document from the original user turns"
+        in PROMPT
+    )
+    assert "do not add an unspoken policy title" in PROMPT
+    assert (
+        "If the user expressly names a particular policy or guidance document" in PROMPT
+    )
     # This proves instruction presence, not model judgement/generalisation.
+
+
+@pytest.mark.parametrize(
+    "question,family_title",
+    [
+        ("May I accept a reference letter brought in by an applicant?", None),
+        ("Can staff rely on a candidate's own reference letter?", None),
+        (
+            "What does the Recruitment and Selection Policy say about references?",
+            "Recruitment and Selection Policy",
+        ),
+        (
+            "Under Safer Recruitment Guidance, can I accept an open reference?",
+            "Safer Recruitment Guidance",
+        ),
+    ],
+)
+def test_reference_rule_topic_and_explicit_document_bindings_transport(
+    question, family_title
+):
+    # Fake output proves the real schema/transport accepts the intended distinction;
+    # the model's judgement remains a live-regression question.
+    sample = deepcopy(EXAMPLES[0])
+    sample["turns"] = [{"turn_id": "u1", "text": question}]
+    sample["plan"]["needs"] = sample["plan"]["needs"][:1]
+    need = sample["plan"]["needs"][0]
+    need.update(
+        aspect=question,
+        question_span={"turn_id": "u1", "quote": question},
+        operation="retrieve",
+        authority={
+            "kind": "current",
+            "value": None,
+            "precision": "none",
+            "source": None,
+        },
+        supports_need_id=None,
+    )
+    family = CatalogueFamily(
+        family_id=uuid4(), title=family_title or "Recruitment and Selection Policy"
+    )
+    sample["plan"]["bindings"] = [
+        {
+            "need_id": "n1",
+            "subject_status": "matched" if family_title else "topic",
+            "family_ids": [str(family.family_id)] if family_title else [],
+            "ownership": "authorised_workspace",
+            "ownership_source": None,
+        }
+    ]
+    result = adapter(sample["plan"], []).plan_needs(
+        turns(sample), evaluated_at="2026-11-06T12:00:00Z", catalogue=(family,)
+    )
+    assert result.plan.bindings[0].subject_status == (
+        "matched" if family_title else "topic"
+    )
 
 
 @pytest.mark.parametrize(
@@ -449,7 +513,7 @@ def test_non_current_reference_still_rejects_missing_components(field):
     authority[field] = "none" if field == "precision" else None
     calls = []
     planner = adapter(example["plan"], calls)
-    assert planner.lineage().prompt_version == "bounded-evidence-needs-v15"
+    assert planner.lineage().prompt_version == "bounded-evidence-needs-v16"
     with pytest.raises(RetrievalPlanningError) as error:
         planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
     assert error.value.category == "invalid_grounded_needs_plan"
