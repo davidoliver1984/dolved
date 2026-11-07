@@ -255,6 +255,76 @@ def test_document_reference_and_real_site_are_separate_applicability_fields(
     # Fake output proves valid transport/contract separation, not model judgement.
 
 
+@pytest.mark.parametrize(
+    ("question", "location_quote"),
+    [
+        (
+            "Does the Key Holder Procedure cover North West Region sites?",
+            "North West Region",
+        ),
+        (
+            "Does the Key Holder Procedure cover the Riverside House site?",
+            "Riverside House",
+        ),
+        (
+            "Does the Key Holder Procedure cover Willow Bank Community Service?",
+            "Willow Bank Community Service",
+        ),
+    ],
+)
+def test_location_quote_excludes_incidental_trailing_qualifier_in_real_plan_contract(
+    question, location_quote
+):
+    from app.retrieval.needs_planner import PROMPT
+
+    catalogue = (CatalogueFamily(family_id=UUID(int=1), title="Key Holder Procedure"),)
+    plan = {
+        "schema_version": "evidence-needs-plan-v3",
+        "decision": "plan",
+        "clarification": None,
+        "needs": [
+            {
+                "need_id": "n1",
+                "aspect": question,
+                "central": True,
+                "question_span": {"turn_id": "user-1", "quote": question},
+                "operation": "scope_enquiry",
+                "authority": {
+                    "kind": "current",
+                    "value": None,
+                    "precision": "none",
+                    "source": None,
+                },
+                "fact_reference": None,
+                "applicability": {
+                    "kind": "named",
+                    "source": {"turn_id": "user-1", "quote": location_quote},
+                },
+                "supports_need_id": None,
+            }
+        ],
+        "bindings": [
+            {
+                "need_id": "n1",
+                "subject_status": "matched",
+                "family_ids": [str(catalogue[0].family_id)],
+                "ownership": "authorised_workspace",
+                "ownership_source": None,
+            }
+        ],
+    }
+    calls = []
+    result = adapter(plan, calls).plan_needs(
+        (UserTurn(turn_id="user-1", text=question),),
+        evaluated_at="2026-11-07T12:00:00Z",
+        catalogue=catalogue,
+    )
+    assert len(calls) == 1
+    assert result.plan.needs[0].applicability.source.quote == location_quote
+    assert "For 'North West Region sites', quote 'North West Region'" in PROMPT
+    # The fake response proves schema/grounding, not that the model will obey the instruction.
+
+
 @pytest.mark.parametrize("example", EXAMPLES, ids=lambda e: e["name"])
 def test_existing_structurally_valid_examples_remain_representable(example):
     jsonschema.validate(example["plan"], provider_needs_schema(()))

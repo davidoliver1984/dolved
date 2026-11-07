@@ -1,0 +1,9 @@
+{
+  "frozen_at_utc": "2026-11-07T18:36:16Z",
+  "head_before": "2a3421d4c02b55293b4f705abf8006e3a07b5406",
+  "head_after": "2a3421d4c02b55293b4f705abf8006e3a07b5406",
+  "runtime_source_aggregate_before_sha256": "fd4fbdbcce4d0310ff43eae4eba61f1c6aac824a4f76b7369fb1281612b43b01",
+  "runtime_source_aggregate_after_sha256": "fd4fbdbcce4d0310ff43eae4eba61f1c6aac824a4f76b7369fb1281612b43b01",
+  "input_sha256": "cf94f3fa1513ecb61ac672ca3450cdfb5b29ed74c055f09e67c2cd83472a2bad",
+  "call_boundary": "RetrievalClient::planNeeds only; no retrieval, eligibility, reranking, generation or publication"
+}

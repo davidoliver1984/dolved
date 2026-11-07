@@ -144,6 +144,12 @@ its authority from current. For such a phrase, named applicability quotes only t
 exact location phrase ('Willow Bank'), never the whole record phrase or question. More
 generally, exclude dates, record titles, actions and surrounding question wording from a
 named applicability quote; it identifies the organisational site and nothing else.
+Quote only the location expression itself, not a trailing generic noun describing the
+places or staff associated with it. For 'North West Region sites', quote 'North West Region';
+for 'the Riverside House site', quote 'Riverside House'. Preserve words that are part of
+the location's own name, such as 'Region' in 'North West Region' or 'Community Service'
+in 'Willow Bank Community Service'. Do not remove a word merely because it can also
+be a generic qualifier.
 When change is tied to an explicit day boundary, use transition_boundary. Only WITHOUT
 such a calendar qualifier, for an unqualified change into the current state ('replaced', 'renamed', 'became', 'old'
 versus current), choose operation=compare and authority.kind=previous, precision=named.
@@ -316,7 +322,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             timeout_seconds=timeout_seconds,
             client=client,
             contract_schema_version="evidence-needs-plan-v3",
-            prompt_version="bounded-evidence-needs-v17",
+            prompt_version="bounded-evidence-needs-v18",
             adapter_version="structured-chat-needs-v6",
         )
 

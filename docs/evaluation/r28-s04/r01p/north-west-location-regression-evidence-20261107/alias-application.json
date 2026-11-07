@@ -1,0 +1,14 @@
+{
+  "fixture_path": "docs/evaluation/r28-s04/r01p/north-west-location-alias.json",
+  "fixture_sha256": "7a3ef96985a576563e5eb30679077cbaaa170bc9672521a53bd92c37ccd5386f",
+  "application_script_path": "docs/evaluation/r28-s04/r01p/apply-north-west-location-alias.php",
+  "initial_guard_result": "refused before write because the isolated container reports APP_ENV=local",
+  "applied_result": "created",
+  "alias_row_id": 18,
+  "workspace_public_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+  "location_public_id": "ac53a327-426b-41bf-b4ba-4dc61d7e5d64",
+  "location_name": "North West Region",
+  "alias": "North West",
+  "verified_by_read_only_query": true,
+  "frozen_archive_changed": false
+}

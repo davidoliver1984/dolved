@@ -1,0 +1,323 @@
+{
+    "case_id": "r19",
+    "utterance": "Under the Key Holder Procedure, is this still just for North West Region sites?",
+    "needs_opt_in": [
+        "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
+    ],
+    "started_at": "2026-11-07T17:47:46+00:00",
+    "observation": {
+        "case_id": "r19",
+        "variant_id": "north-west-location-regression-once-20261107",
+        "run_id": "915461c5-5575-4faa-952f-6de97dd45e29",
+        "scope_classification": "primary",
+        "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+        "status": "completed",
+        "failure_code": null,
+        "production_trace": {
+            "needs_plan": {
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                    {
+                        "need_id": "n1",
+                        "aspect": "Under the named document 'Key Holder Procedure', does that procedure's recorded scope apply only to North West Region sites (i.e. is it limited to North West Region)?",
+                        "central": true,
+                        "question_span": {
+                            "turn_id": "user-1",
+                            "quote": "Under the Key Holder Procedure, is this still just for North West Region sites?"
+                        },
+                        "operation": "scope_enquiry",
+                        "authority": {
+                            "kind": "current",
+                            "value": null,
+                            "precision": "none",
+                            "source": null
+                        },
+                        "fact_reference": null,
+                        "applicability": {
+                            "kind": "named",
+                            "source": {
+                                "turn_id": "user-1",
+                                "quote": "North West Region sites"
+                            }
+                        },
+                        "supports_need_id": null
+                    }
+                ]
+            },
+            "need.n1.scope_fact": {
+                "representation": "applicability-scope-fact-v1",
+                "need_id": "n1",
+                "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+                "policy_title": "Key Holder Procedure",
+                "family_id": "5a84914a-79a1-4e55-9e83-1ac42dda6720",
+                "document_version_id": "8b50438f-0446-4556-a5f3-ea08aa15aaac",
+                "citation_type": "applicability_snapshot",
+                "source_route": "/api/workspaces/5323cd6b-8b7a-40f9-98b0-9413c75f643e/document-families/5a84914a-79a1-4e55-9e83-1ac42dda6720/versions",
+                "snapshot": {
+                    "snapshot_id": 192,
+                    "document_version_id": "8b50438f-0446-4556-a5f3-ea08aa15aaac",
+                    "scope": "universal",
+                    "sealed_at": "2026-09-04T11:20:38+00:00",
+                    "location_ids": []
+                },
+                "snapshot_digest": "5befcaac1abfc5215987dc5b31eb3f49dc16fa1e625aeaf5a29ff07328d297cd",
+                "location_id": "ac53a327-426b-41bf-b4ba-4dc61d7e5d64",
+                "location_name": "North West Region",
+                "hierarchy_path": [
+                    "ac53a327-426b-41bf-b4ba-4dc61d7e5d64"
+                ],
+                "matched_location_id": null,
+                "evaluated_at": "2026-11-07T17:47:46+00:00",
+                "temporal_mode": "current",
+                "authority_start": "2026-01-01T00:00:00+00:00",
+                "result": "applies",
+                "basis": "universal",
+                "corpus_id": "b24a79c2-875e-4f7c-8fa9-3681db92ae73"
+            },
+            "needs_final_evidence": [],
+            "generation_input": {
+                "evidence": []
+            }
+        },
+        "contextualisation": {
+            "status": "resolved",
+            "resolved_query": null,
+            "clarification_question": null,
+            "used_prior_context": false,
+            "interpretation_metadata": null,
+            "contextualiser_version": "authorised-user-turns-needs-v1",
+            "usage": null
+        },
+        "retrieval": {
+            "outcome": "evidence_found",
+            "clarification_source": null,
+            "clarification_reason": null,
+            "resolved_temporal_authority": [],
+            "resolved_applicability_location": [],
+            "lineage": {
+                "planner": {
+                    "provider": "openai",
+                    "model": "gpt-5-mini",
+                    "contract_schema_version": "evidence-needs-plan-v3",
+                    "prompt_version": "bounded-evidence-needs-v18",
+                    "adapter_version": "structured-chat-needs-v6",
+                    "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a"
+                },
+                "evidence_selection": "bounded-needs-k5-v2",
+                "needs": {
+                    "n1": []
+                },
+                "evidence_needs_plan": {
+                    "schema_version": "evidence-needs-plan-v3",
+                    "decision": "plan",
+                    "clarification": null,
+                    "needs": [
+                        {
+                            "need_id": "n1",
+                            "aspect": "Under the named document 'Key Holder Procedure', does that procedure's recorded scope apply only to North West Region sites (i.e. is it limited to North West Region)?",
+                            "central": true,
+                            "question_span": {
+                                "turn_id": "user-1",
+                                "quote": "Under the Key Holder Procedure, is this still just for North West Region sites?"
+                            },
+                            "operation": "scope_enquiry",
+                            "authority": {
+                                "kind": "current",
+                                "value": null,
+                                "precision": "none",
+                                "source": null
+                            },
+                            "fact_reference": null,
+                            "applicability": {
+                                "kind": "named",
+                                "source": {
+                                    "turn_id": "user-1",
+                                    "quote": "North West Region sites"
+                                }
+                            },
+                            "supports_need_id": null
+                        }
+                    ],
+                    "bindings": [
+                        {
+                            "need_id": "n1",
+                            "subject_status": "matched",
+                            "family_ids": [
+                                "5a84914a-79a1-4e55-9e83-1ac42dda6720"
+                            ],
+                            "ownership": "authorised_workspace",
+                            "ownership_source": null
+                        }
+                    ]
+                }
+            },
+            "candidate_count": 0,
+            "evidence_count": 0
+        },
+        "generation": {
+            "outcome": "answered",
+            "rendered_text": "The recorded scope of \"Key Holder Procedure\" includes \"North West Region\". This is a statement of recorded policy applicability only; it does not establish what action is safe or required. The reason for this scope is not established by the scope record.",
+            "scope_citations": [
+                {
+                    "basis": "universal",
+                    "result": "applies",
+                    "need_id": "n1",
+                    "snapshot": {
+                        "scope": "universal",
+                        "sealed_at": "2026-09-04T11:20:38+00:00",
+                        "snapshot_id": 192,
+                        "location_ids": [],
+                        "document_version_id": "8b50438f-0446-4556-a5f3-ea08aa15aaac"
+                    },
+                    "corpus_id": "b24a79c2-875e-4f7c-8fa9-3681db92ae73",
+                    "family_id": "5a84914a-79a1-4e55-9e83-1ac42dda6720",
+                    "resolution": {
+                        "need": {
+                            "aspect": "Under the named document 'Key Holder Procedure', does that procedure's recorded scope apply only to North West Region sites (i.e. is it limited to North West Region)?",
+                            "central": true,
+                            "need_id": "n1",
+                            "authority": {
+                                "kind": "current",
+                                "value": null,
+                                "source": null,
+                                "precision": "none"
+                            },
+                            "operation": "scope_enquiry",
+                            "applicability": {
+                                "kind": "named",
+                                "source": {
+                                    "quote": "North West Region sites",
+                                    "turn_id": "user-1"
+                                }
+                            },
+                            "question_span": {
+                                "quote": "Under the Key Holder Procedure, is this still just for North West Region sites?",
+                                "turn_id": "user-1"
+                            },
+                            "fact_reference": null,
+                            "subject_binding": {
+                                "need_id": "n1",
+                                "ownership": "authorised_workspace",
+                                "family_ids": [
+                                    "5a84914a-79a1-4e55-9e83-1ac42dda6720"
+                                ],
+                                "subject_status": "matched",
+                                "ownership_source": null
+                            }
+                        },
+                        "query": "Under the named document 'Key Holder Procedure', does that procedure's recorded scope apply only to North West Region sites (i.e. is it limited to North West Region)?",
+                        "usage": {
+                            "model": "gpt-5-mini",
+                            "stage": "planner",
+                            "cost_usd": null,
+                            "provider": "openai",
+                            "execution": "PROVIDER_API",
+                            "cost_basis": "UNAVAILABLE",
+                            "latency_ms": 9227.028879991849,
+                            "retry_count": 0,
+                            "input_tokens": 17338,
+                            "output_tokens": 650,
+                            "request_count": 1,
+                            "pricing_snapshot": null,
+                            "cached_input_tokens": 2816,
+                            "validation_attempts": [
+                                {
+                                    "status": "accepted",
+                                    "cost_usd": null,
+                                    "cost_basis": "unavailable",
+                                    "latency_ms": 9227.028879991849,
+                                    "validation": null,
+                                    "retry_count": 0,
+                                    "input_tokens": 17338,
+                                    "output_tokens": 650,
+                                    "request_count": 1,
+                                    "cached_input_tokens": null
+                                }
+                            ]
+                        },
+                        "lineage": {
+                            "model": "gpt-5-mini",
+                            "provider": "openai",
+                            "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a",
+                            "prompt_version": "bounded-evidence-needs-v18",
+                            "adapter_version": "structured-chat-needs-v6",
+                            "contract_schema_version": "evidence-needs-plan-v3"
+                        },
+                        "explicit_date": null,
+                        "temporal_mode": "current",
+                        "temporal_reference": null,
+                        "location_references": [
+                            "North West Region sites"
+                        ]
+                    },
+                    "location_id": "ac53a327-426b-41bf-b4ba-4dc61d7e5d64",
+                    "evaluated_at": "2026-11-07T17:47:46+00:00",
+                    "policy_title": "Key Holder Procedure",
+                    "source_route": "/api/workspaces/5323cd6b-8b7a-40f9-98b0-9413c75f643e/document-families/5a84914a-79a1-4e55-9e83-1ac42dda6720/versions",
+                    "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+                    "citation_type": "applicability_snapshot",
+                    "location_name": "North West Region",
+                    "temporal_mode": "current",
+                    "hierarchy_path": [
+                        "ac53a327-426b-41bf-b4ba-4dc61d7e5d64"
+                    ],
+                    "representation": "applicability-scope-fact-v1",
+                    "authority_start": "2026-01-01T00:00:00+00:00",
+                    "snapshot_digest": "5befcaac1abfc5215987dc5b31eb3f49dc16fa1e625aeaf5a29ff07328d297cd",
+                    "document_version_id": "8b50438f-0446-4556-a5f3-ea08aa15aaac",
+                    "matched_location_id": null
+                }
+            ],
+            "unsupported_aspects": [],
+            "aspect_links": null,
+            "aspect_results": null,
+            "insufficiency_reason": null,
+            "provider": "openai",
+            "model": "gpt-5-mini",
+            "generation_fingerprint": "f0d0d7da5bd9426ba7c3b579a754bba4631d4934037f4a5e1a1360cd85b08b42",
+            "usage": {
+                "execution": "local",
+                "cost_basis": "zero_cost_local",
+                "request_count": 0,
+                "retry_count": 0,
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "latency_ms": 0,
+                "cost_usd": 0
+            },
+            "parts": []
+        },
+        "assistant_message_kind": "grounded_answer",
+        "usage": {
+            "contextualisation": null,
+            "planner_validation_attempts": [
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 17338,
+                    "output_tokens": 650,
+                    "cached_input_tokens": null,
+                    "latency_ms": 9227.028879991849,
+                    "cost_usd": null,
+                    "cost_basis": "unavailable",
+                    "validation": null,
+                    "status": "accepted"
+                }
+            ],
+            "generation": {
+                "execution": "local",
+                "cost_basis": "zero_cost_local",
+                "request_count": 0,
+                "retry_count": 0,
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "latency_ms": 0,
+                "cost_usd": 0
+            }
+        }
+    },
+    "displayed_text": "The recorded scope of \"Key Holder Procedure\" includes \"North West Region\". This is a statement of recorded policy applicability only; it does not establish what action is safe or required. The reason for this scope is not established by the scope record.",
+    "finished_at": "2026-11-07T17:47:56+00:00",
+    "needs_pipeline_exercised": true
+}

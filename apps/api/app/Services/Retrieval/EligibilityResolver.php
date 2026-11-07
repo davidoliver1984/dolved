@@ -490,7 +490,7 @@ final readonly class EligibilityResolver
                 : $this->isOrganisationReference($authorised, $reference)) {
                 continue;
             }
-            $match = $this->resolveLocationReference($authorised, $reference, $exactReferences);
+            $match = $this->resolveLocationReference($authorised, $reference);
             if ($match instanceof EligibilityClarificationReason) {
                 return $match;
             }
@@ -513,19 +513,18 @@ final readonly class EligibilityResolver
     private function resolveLocationReference(
         AuthorisedKnowledgeScope $authorised,
         string $reference,
-        bool $exactReference = false,
     ): OrganisationalLocation|EligibilityClarificationReason {
         $normalised = Str::lower(trim($reference));
         $matches = $this->locationMatches($authorised, $normalised);
-        if (! $exactReference && $matches->isEmpty() && str_starts_with($normalised, 'the ')) {
+        if ($matches->isEmpty() && str_starts_with($normalised, 'the ')) {
             $withoutArticle = trim(substr($normalised, 4));
             if (! in_array($withoutArticle, ['home', 'site', 'office', 'region', 'location'], true)) {
                 $matches = $this->locationMatches($authorised, $withoutArticle);
             }
         }
-        if (! $exactReference && $matches->isEmpty()) {
+        if ($matches->isEmpty()) {
             $withoutScopeSuffix = preg_replace(
-                '/\s+(?:outreach|service|team|site|home|office|region)$/u',
+                '/\s+(?:outreach|services?|teams?|sites?|homes?|offices?|regions?)$/u',
                 '',
                 $normalised,
             );

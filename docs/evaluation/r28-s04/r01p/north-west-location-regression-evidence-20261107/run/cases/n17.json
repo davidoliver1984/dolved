@@ -1,0 +1,331 @@
+{
+    "case_id": "n17",
+    "utterance": "Is the key safe procedure still just a Willow Bank thing?",
+    "needs_opt_in": [
+        "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
+    ],
+    "started_at": "2026-11-07T17:51:26+00:00",
+    "observation": {
+        "case_id": "n17",
+        "variant_id": "north-west-location-regression-once-20261107",
+        "run_id": "d5a7924c-5d56-4d69-ab36-5cbf81cd3f62",
+        "scope_classification": "primary",
+        "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+        "status": "completed",
+        "failure_code": null,
+        "production_trace": {
+            "needs_plan": {
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                    {
+                        "need_id": "n1",
+                        "aspect": "For the named document 'Key Safe Procedure', confirm whether the procedure's recorded applicability is limited to the Willow Bank site only (i.e. whether the policy states it applies solely to Willow Bank or to other sites as well).",
+                        "central": true,
+                        "question_span": {
+                            "turn_id": "user-1",
+                            "quote": "Is the key safe procedure still just a Willow Bank thing?"
+                        },
+                        "operation": "scope_enquiry",
+                        "authority": {
+                            "kind": "current",
+                            "value": null,
+                            "precision": "none",
+                            "source": null
+                        },
+                        "fact_reference": null,
+                        "applicability": {
+                            "kind": "named",
+                            "source": {
+                                "turn_id": "user-1",
+                                "quote": "Willow Bank"
+                            }
+                        },
+                        "supports_need_id": null
+                    }
+                ]
+            },
+            "need.n1.scope_fact": {
+                "representation": "applicability-scope-fact-v1",
+                "need_id": "n1",
+                "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+                "policy_title": "Key Safe Procedure",
+                "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+                "document_version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                "citation_type": "applicability_snapshot",
+                "source_route": "/api/workspaces/5323cd6b-8b7a-40f9-98b0-9413c75f643e/document-families/df1c71ef-a996-475d-90e5-c5b595ad7e88/versions",
+                "snapshot": {
+                    "snapshot_id": 234,
+                    "document_version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                    "scope": "specific",
+                    "sealed_at": "2026-09-04T11:21:12+00:00",
+                    "location_ids": [
+                        "751d113c-89c1-4c80-b802-b79559f4336e",
+                        "894d2e64-972d-43f6-8df5-cc849e4a89d5"
+                    ]
+                },
+                "snapshot_digest": "5cf6a35588f3be7836fed6065ce90045fa65f605c33d2021606361c829c52d4b",
+                "location_id": "894d2e64-972d-43f6-8df5-cc849e4a89d5",
+                "location_name": "Willow Bank Community Service",
+                "hierarchy_path": [
+                    "894d2e64-972d-43f6-8df5-cc849e4a89d5",
+                    "751d113c-89c1-4c80-b802-b79559f4336e"
+                ],
+                "matched_location_id": "894d2e64-972d-43f6-8df5-cc849e4a89d5",
+                "evaluated_at": "2026-11-07T17:51:26+00:00",
+                "temporal_mode": "current",
+                "authority_start": "2026-02-01T00:00:00+00:00",
+                "result": "applies",
+                "basis": "direct_match",
+                "corpus_id": "b24a79c2-875e-4f7c-8fa9-3681db92ae73"
+            },
+            "needs_final_evidence": [],
+            "generation_input": {
+                "evidence": []
+            }
+        },
+        "contextualisation": {
+            "status": "resolved",
+            "resolved_query": null,
+            "clarification_question": null,
+            "used_prior_context": false,
+            "interpretation_metadata": null,
+            "contextualiser_version": "authorised-user-turns-needs-v1",
+            "usage": null
+        },
+        "retrieval": {
+            "outcome": "evidence_found",
+            "clarification_source": null,
+            "clarification_reason": null,
+            "resolved_temporal_authority": [],
+            "resolved_applicability_location": [],
+            "lineage": {
+                "planner": {
+                    "provider": "openai",
+                    "model": "gpt-5-mini",
+                    "contract_schema_version": "evidence-needs-plan-v3",
+                    "prompt_version": "bounded-evidence-needs-v18",
+                    "adapter_version": "structured-chat-needs-v6",
+                    "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a"
+                },
+                "evidence_selection": "bounded-needs-k5-v2",
+                "needs": {
+                    "n1": []
+                },
+                "evidence_needs_plan": {
+                    "schema_version": "evidence-needs-plan-v3",
+                    "decision": "plan",
+                    "clarification": null,
+                    "needs": [
+                        {
+                            "need_id": "n1",
+                            "aspect": "For the named document 'Key Safe Procedure', confirm whether the procedure's recorded applicability is limited to the Willow Bank site only (i.e. whether the policy states it applies solely to Willow Bank or to other sites as well).",
+                            "central": true,
+                            "question_span": {
+                                "turn_id": "user-1",
+                                "quote": "Is the key safe procedure still just a Willow Bank thing?"
+                            },
+                            "operation": "scope_enquiry",
+                            "authority": {
+                                "kind": "current",
+                                "value": null,
+                                "precision": "none",
+                                "source": null
+                            },
+                            "fact_reference": null,
+                            "applicability": {
+                                "kind": "named",
+                                "source": {
+                                    "turn_id": "user-1",
+                                    "quote": "Willow Bank"
+                                }
+                            },
+                            "supports_need_id": null
+                        }
+                    ],
+                    "bindings": [
+                        {
+                            "need_id": "n1",
+                            "subject_status": "matched",
+                            "family_ids": [
+                                "df1c71ef-a996-475d-90e5-c5b595ad7e88"
+                            ],
+                            "ownership": "authorised_workspace",
+                            "ownership_source": null
+                        }
+                    ]
+                }
+            },
+            "candidate_count": 0,
+            "evidence_count": 0
+        },
+        "generation": {
+            "outcome": "answered",
+            "rendered_text": "The recorded scope of \"Key Safe Procedure\" includes \"Willow Bank Community Service\". This is a statement of recorded policy applicability only; it does not establish what action is safe or required. The reason for this scope is not established by the scope record.",
+            "scope_citations": [
+                {
+                    "basis": "direct_match",
+                    "result": "applies",
+                    "need_id": "n1",
+                    "snapshot": {
+                        "scope": "specific",
+                        "sealed_at": "2026-09-04T11:21:12+00:00",
+                        "snapshot_id": 234,
+                        "location_ids": [
+                            "751d113c-89c1-4c80-b802-b79559f4336e",
+                            "894d2e64-972d-43f6-8df5-cc849e4a89d5"
+                        ],
+                        "document_version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab"
+                    },
+                    "corpus_id": "b24a79c2-875e-4f7c-8fa9-3681db92ae73",
+                    "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+                    "resolution": {
+                        "need": {
+                            "aspect": "For the named document 'Key Safe Procedure', confirm whether the procedure's recorded applicability is limited to the Willow Bank site only (i.e. whether the policy states it applies solely to Willow Bank or to other sites as well).",
+                            "central": true,
+                            "need_id": "n1",
+                            "authority": {
+                                "kind": "current",
+                                "value": null,
+                                "source": null,
+                                "precision": "none"
+                            },
+                            "operation": "scope_enquiry",
+                            "applicability": {
+                                "kind": "named",
+                                "source": {
+                                    "quote": "Willow Bank",
+                                    "turn_id": "user-1"
+                                }
+                            },
+                            "question_span": {
+                                "quote": "Is the key safe procedure still just a Willow Bank thing?",
+                                "turn_id": "user-1"
+                            },
+                            "fact_reference": null,
+                            "subject_binding": {
+                                "need_id": "n1",
+                                "ownership": "authorised_workspace",
+                                "family_ids": [
+                                    "df1c71ef-a996-475d-90e5-c5b595ad7e88"
+                                ],
+                                "subject_status": "matched",
+                                "ownership_source": null
+                            }
+                        },
+                        "query": "For the named document 'Key Safe Procedure', confirm whether the procedure's recorded applicability is limited to the Willow Bank site only (i.e. whether the policy states it applies solely to Willow Bank or to other sites as well).",
+                        "usage": {
+                            "model": "gpt-5-mini",
+                            "stage": "planner",
+                            "cost_usd": null,
+                            "provider": "openai",
+                            "execution": "PROVIDER_API",
+                            "cost_basis": "UNAVAILABLE",
+                            "latency_ms": 7419.800294999732,
+                            "retry_count": 0,
+                            "input_tokens": 17334,
+                            "output_tokens": 526,
+                            "request_count": 1,
+                            "pricing_snapshot": null,
+                            "cached_input_tokens": 2816,
+                            "validation_attempts": [
+                                {
+                                    "status": "accepted",
+                                    "cost_usd": null,
+                                    "cost_basis": "unavailable",
+                                    "latency_ms": 7419.800294999732,
+                                    "validation": null,
+                                    "retry_count": 0,
+                                    "input_tokens": 17334,
+                                    "output_tokens": 526,
+                                    "request_count": 1,
+                                    "cached_input_tokens": null
+                                }
+                            ]
+                        },
+                        "lineage": {
+                            "model": "gpt-5-mini",
+                            "provider": "openai",
+                            "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a",
+                            "prompt_version": "bounded-evidence-needs-v18",
+                            "adapter_version": "structured-chat-needs-v6",
+                            "contract_schema_version": "evidence-needs-plan-v3"
+                        },
+                        "explicit_date": null,
+                        "temporal_mode": "current",
+                        "temporal_reference": null,
+                        "location_references": [
+                            "Willow Bank"
+                        ]
+                    },
+                    "location_id": "894d2e64-972d-43f6-8df5-cc849e4a89d5",
+                    "evaluated_at": "2026-11-07T17:51:26+00:00",
+                    "policy_title": "Key Safe Procedure",
+                    "source_route": "/api/workspaces/5323cd6b-8b7a-40f9-98b0-9413c75f643e/document-families/df1c71ef-a996-475d-90e5-c5b595ad7e88/versions",
+                    "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+                    "citation_type": "applicability_snapshot",
+                    "location_name": "Willow Bank Community Service",
+                    "temporal_mode": "current",
+                    "hierarchy_path": [
+                        "894d2e64-972d-43f6-8df5-cc849e4a89d5",
+                        "751d113c-89c1-4c80-b802-b79559f4336e"
+                    ],
+                    "representation": "applicability-scope-fact-v1",
+                    "authority_start": "2026-02-01T00:00:00+00:00",
+                    "snapshot_digest": "5cf6a35588f3be7836fed6065ce90045fa65f605c33d2021606361c829c52d4b",
+                    "document_version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                    "matched_location_id": "894d2e64-972d-43f6-8df5-cc849e4a89d5"
+                }
+            ],
+            "unsupported_aspects": [],
+            "aspect_links": null,
+            "aspect_results": null,
+            "insufficiency_reason": null,
+            "provider": "openai",
+            "model": "gpt-5-mini",
+            "generation_fingerprint": "f0d0d7da5bd9426ba7c3b579a754bba4631d4934037f4a5e1a1360cd85b08b42",
+            "usage": {
+                "execution": "local",
+                "cost_basis": "zero_cost_local",
+                "request_count": 0,
+                "retry_count": 0,
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "latency_ms": 0,
+                "cost_usd": 0
+            },
+            "parts": []
+        },
+        "assistant_message_kind": "grounded_answer",
+        "usage": {
+            "contextualisation": null,
+            "planner_validation_attempts": [
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 17334,
+                    "output_tokens": 526,
+                    "cached_input_tokens": null,
+                    "latency_ms": 7419.800294999732,
+                    "cost_usd": null,
+                    "cost_basis": "unavailable",
+                    "validation": null,
+                    "status": "accepted"
+                }
+            ],
+            "generation": {
+                "execution": "local",
+                "cost_basis": "zero_cost_local",
+                "request_count": 0,
+                "retry_count": 0,
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "latency_ms": 0,
+                "cost_usd": 0
+            }
+        }
+    },
+    "displayed_text": "The recorded scope of \"Key Safe Procedure\" includes \"Willow Bank Community Service\". This is a statement of recorded policy applicability only; it does not establish what action is safe or required. The reason for this scope is not established by the scope record.",
+    "finished_at": "2026-11-07T17:51:34+00:00",
+    "needs_pipeline_exercised": true
+}

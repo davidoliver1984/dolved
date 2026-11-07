@@ -1,0 +1,138 @@
+{
+    "case_id": "r08",
+    "utterance": "Is the key holder arrangement still just a North West thing?",
+    "needs_opt_in": [
+        "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
+    ],
+    "started_at": "2026-11-07T17:46:52+00:00",
+    "observation": {
+        "case_id": "r08",
+        "variant_id": "north-west-location-regression-once-20261107",
+        "run_id": "52e89f3a-7dc1-405c-88f4-8c132237c316",
+        "scope_classification": "primary",
+        "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+        "status": "clarification_required",
+        "failure_code": null,
+        "production_trace": {
+            "needs_plan": {
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                    {
+                        "need_id": "n1",
+                        "aspect": "Determine whether the organisation's guidance on the 'key holder' arrangement applies only to the North West region or more widely (i.e. is the key holder arrangement still restricted to North West sites).",
+                        "central": true,
+                        "question_span": {
+                            "turn_id": "user-1",
+                            "quote": "Is the key holder arrangement still just a North West thing?"
+                        },
+                        "operation": "scope_enquiry",
+                        "authority": {
+                            "kind": "current",
+                            "value": null,
+                            "precision": "none",
+                            "source": null
+                        },
+                        "fact_reference": null,
+                        "applicability": {
+                            "kind": "named",
+                            "source": {
+                                "turn_id": "user-1",
+                                "quote": "North West"
+                            }
+                        },
+                        "supports_need_id": null
+                    }
+                ]
+            },
+            "need.n1.scope_fact": {
+                "need_id": "n1",
+                "result": "unresolved",
+                "reason": "ambiguous_document_subject"
+            }
+        },
+        "contextualisation": {
+            "status": "resolved",
+            "resolved_query": null,
+            "clarification_question": null,
+            "used_prior_context": false,
+            "interpretation_metadata": null,
+            "contextualiser_version": "authorised-user-turns-needs-v1",
+            "usage": null
+        },
+        "retrieval": {
+            "outcome": "clarification_required",
+            "clarification_source": "eligibility_resolver",
+            "clarification_reason": "ambiguous_document_subject",
+            "resolved_temporal_authority": [],
+            "resolved_applicability_location": [],
+            "lineage": {
+                "evidence_needs_plan": {
+                    "schema_version": "evidence-needs-plan-v3",
+                    "decision": "plan",
+                    "clarification": null,
+                    "needs": [
+                        {
+                            "need_id": "n1",
+                            "aspect": "Determine whether the organisation's guidance on the 'key holder' arrangement applies only to the North West region or more widely (i.e. is the key holder arrangement still restricted to North West sites).",
+                            "central": true,
+                            "question_span": {
+                                "turn_id": "user-1",
+                                "quote": "Is the key holder arrangement still just a North West thing?"
+                            },
+                            "operation": "scope_enquiry",
+                            "authority": {
+                                "kind": "current",
+                                "value": null,
+                                "precision": "none",
+                                "source": null
+                            },
+                            "fact_reference": null,
+                            "applicability": {
+                                "kind": "named",
+                                "source": {
+                                    "turn_id": "user-1",
+                                    "quote": "North West"
+                                }
+                            },
+                            "supports_need_id": null
+                        }
+                    ],
+                    "bindings": [
+                        {
+                            "need_id": "n1",
+                            "subject_status": "topic",
+                            "family_ids": [],
+                            "ownership": "authorised_workspace",
+                            "ownership_source": null
+                        }
+                    ]
+                }
+            },
+            "candidate_count": 0,
+            "evidence_count": 0
+        },
+        "generation": null,
+        "assistant_message_kind": "clarification",
+        "usage": {
+            "contextualisation": null,
+            "planner_validation_attempts": [
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 17334,
+                    "output_tokens": 748,
+                    "cached_input_tokens": null,
+                    "latency_ms": 10461.886755001615,
+                    "cost_usd": null,
+                    "cost_basis": "unavailable",
+                    "validation": null,
+                    "status": "accepted"
+                }
+            ]
+        }
+    },
+    "displayed_text": "Which document or policy do you mean?",
+    "finished_at": "2026-11-07T17:47:03+00:00",
+    "needs_pipeline_exercised": true
+}

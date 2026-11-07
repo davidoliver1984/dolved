@@ -1,0 +1,9 @@
+{
+  "purpose": "R28-S04 R01P isolated evaluation location alias correction",
+  "frozen_corpus_archive_sha256": "6fa6602935efe8379cc2a7de4ba85af17aa8d8827082ae6de8df959f6e19a06e",
+  "workspace_public_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+  "location_public_id": "ac53a327-426b-41bf-b4ba-4dc61d7e5d64",
+  "location_name": "North West Region",
+  "alias": "North West",
+  "scope": "isolated primary evaluation workspace only; no archive or other workspace mutation"
+}

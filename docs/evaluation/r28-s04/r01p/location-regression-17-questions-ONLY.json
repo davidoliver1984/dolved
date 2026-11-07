@@ -1,0 +1,23 @@
+{
+  "set_id": "R28-R01P-NORTH-WEST-LOCATION-REGRESSION-20261107",
+  "note": "Verbatim known-case location-boundary regression; no expected answers or labels are supplied to execution.",
+  "questions": [
+    {"id": "r08", "text": "Is the key holder arrangement still just a North West thing?"},
+    {"id": "r16", "text": "Quick one: can I take time off instead of overtime pay now, and separately, does the fridge breakdown procedure still only need the on-call manager called?"},
+    {"id": "r17", "text": "Quick one: is the key holder arrangement still just North West, and separately, can health-record-accessing staff still use their own phone for work?"},
+    {"id": "r19", "text": "Under the Key Holder Procedure, is this still just for North West Region sites?"},
+    {"id": "m01", "text": "Do we reimburse mileage at 42 pence a mile?"},
+    {"id": "m05", "text": "Do we keep a resident's care record for 9 years after the end of their care?"},
+    {"id": "m06", "text": "Is annual leave 25 days a year inclusive of bank holidays for full-time staff?"},
+    {"id": "m09", "text": "Under the Sickness Absence Policy, is our trigger point 4 occasions of absence in a rolling 12 months?"},
+    {"id": "m10", "text": "Is the minimum password length 10 characters here?"},
+    {"id": "m11", "text": "According to the Mandatory Training Matrix, is safeguarding refresher training only required every 2 years?"},
+    {"id": "l14", "text": "How far can a resident's window actually open under the restrictor policy these days?"},
+    {"id": "l19", "text": "Can staff at Riverside House still wear the branded fleece instead of the tunic?"},
+    {"id": "l23", "text": "Quick one: how long before an immediate on-site search escalates to calling the police for a missing resident, and separately, how far can a window actually open under the restrictor policy?"},
+    {"id": "l25", "text": "Is 'Nightingale Protocol Seven' one of our actual radio codes here?"},
+    {"id": "l26", "text": "Do we log controlled drug discrepancies on a form called TF-CD-9?"},
+    {"id": "n17", "text": "Is the key safe procedure still just a Willow Bank thing?"},
+    {"id": "n21", "text": "Quick one: is the key safe procedure still just for Willow Bank, and separately, has anything changed about who gets contacted for a fall with a suspected injury?"}
+  ]
+}

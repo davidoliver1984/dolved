@@ -21,6 +21,7 @@ use App\Models\EmbeddingSpaceGeneration;
 use App\Models\EvidenceThresholdPolicy;
 use App\Models\IngestionEventClaim;
 use App\Models\OrganisationalLocation;
+use App\Models\OrganisationalLocationAlias;
 use App\Models\SparseEmbeddingProfile;
 use App\Models\SparseSpaceGeneration;
 use App\Models\User;
@@ -205,7 +206,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $data = $mutate($data);
         }
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v3',
-            'prompt_version' => 'bounded-evidence-needs-v17', 'adapter_version' => 'structured-chat-needs-v6'];
+            'prompt_version' => 'bounded-evidence-needs-v18', 'adapter_version' => 'structured-chat-needs-v6'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
@@ -273,6 +274,47 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertSame([], $retrieval->candidates);
         $this->assertSame($fact->value, $retrieval->evidenceNeeds[0]['scope_fact']);
         $this->assertArrayNotHasKey('chunk_text', $fact->value);
+        Http::assertNothingSent();
+    }
+
+    public function test_scope_location_alias_and_singular_or_plural_qualifiers_resolve_without_cross_workspace_guessing(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        $document->family->update(['name' => 'Equipment Policy']);
+        $region = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'North West Region']);
+        DB::table('document_applicability_snapshots')->where('document_id', $document->id)->update(['scope' => 'specific']);
+        $document->applicabilitySnapshot->locations()->attach($region->id, ['workspace_id' => $workspace->id]);
+        $alias = new OrganisationalLocationAlias(['alias' => 'North West']);
+        $alias->workspace()->associate($workspace);
+        $alias->organisationalLocation()->associate($region);
+        $alias->save();
+
+        [$foreign] = $this->scope();
+        $foreignLocation = OrganisationalLocation::factory()->for($foreign)->create(['name' => 'Foreign Region']);
+        $foreignAlias = new OrganisationalLocationAlias(['alias' => 'Foreign Office']);
+        $foreignAlias->workspace()->associate($foreign);
+        $foreignAlias->organisationalLocation()->associate($foreignLocation);
+        $foreignAlias->save();
+
+        $resolver = app(EligibilityResolver::class);
+        $at = CarbonImmutable::parse('2026-09-08');
+        foreach (['North West', 'North West Region', 'North West Region site', 'North West Region sites',
+            'North West Region teams', 'North West Region homes', 'North West Region offices',
+            'North West Region regions'] as $reference) {
+            $plan = $this->scopePlan($document, 'Does Equipment Policy cover '.$reference.'?', $reference);
+            $fact = $resolver->scopeFact($scope, $plan->retrievalPlan('n1'), $at);
+            $this->assertInstanceOf(ApplicabilityScopeFact::class, $fact, $reference);
+            $this->assertSame($region->public_id, $fact->value['location_id'], $reference);
+            $this->assertSame('direct_match', $fact->value['basis'], $reference);
+        }
+        foreach (['North Wester', 'Foreign Office'] as $reference) {
+            $plan = $this->scopePlan($document, 'Does Equipment Policy cover '.$reference.'?', $reference);
+            $result = $resolver->scopeFact($scope, $plan->retrievalPlan('n1'), $at);
+            $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome, $reference);
+            $this->assertSame('unresolved_location_reference', $result->reason, $reference);
+        }
         Http::assertNothingSent();
     }
 
@@ -591,7 +633,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete, $missing->outcome);
     }
 
-    public function test_named_scope_cannot_use_a_foreign_location_or_a_stripped_suffix(): void
+    public function test_named_scope_rejects_foreign_locations_but_accepts_registered_location_qualifiers(): void
     {
         [$workspace, $generation, $scope] = $this->scope();
         $this->document($workspace, $generation, '2026-01-01');
@@ -599,7 +641,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $resolver = app(EligibilityResolver::class);
         $result = $resolver->handle($scope, $this->plan(4)->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
         $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
-        OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Riverside']);
+        $riverside = OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Riverside']);
         $plan = $this->plan(4, function ($data) {
             $data['turns'][0]['text'] = 'Which policy applies at Riverside outreach?';
             $data['plan']['needs'][0]['question_span']['quote'] = $data['turns'][0]['text'];
@@ -608,7 +650,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             return $data;
         });
         $result = $resolver->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome);
+        $this->assertSame($riverside->public_id, $result->resolvedLocationPublicId);
     }
 
     public function test_named_location_candidates_survive_the_needs_retrieval_and_renderer_boundary(): void

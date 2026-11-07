@@ -1,0 +1,16 @@
+{
+  "set_id": "R28-R01P-R08-R17-PLANNER-ONLY-BINDING-VARIANCE-20261107",
+  "note": "Five exact full-turn repeats per case; r17's n1 contains the quoted clause under study. No retrieval or generation is authorised.",
+  "calls": [
+    {"id": "r08-01", "contrast": "r08_standalone", "text": "Is the key holder arrangement still just a North West thing?"},
+    {"id": "r08-02", "contrast": "r08_standalone", "text": "Is the key holder arrangement still just a North West thing?"},
+    {"id": "r08-03", "contrast": "r08_standalone", "text": "Is the key holder arrangement still just a North West thing?"},
+    {"id": "r08-04", "contrast": "r08_standalone", "text": "Is the key holder arrangement still just a North West thing?"},
+    {"id": "r08-05", "contrast": "r08_standalone", "text": "Is the key holder arrangement still just a North West thing?"},
+    {"id": "r17-01", "contrast": "r17_full_compound_n1", "text": "Quick one: is the key holder arrangement still just North West, and separately, can health-record-accessing staff still use their own phone for work?"},
+    {"id": "r17-02", "contrast": "r17_full_compound_n1", "text": "Quick one: is the key holder arrangement still just North West, and separately, can health-record-accessing staff still use their own phone for work?"},
+    {"id": "r17-03", "contrast": "r17_full_compound_n1", "text": "Quick one: is the key holder arrangement still just North West, and separately, can health-record-accessing staff still use their own phone for work?"},
+    {"id": "r17-04", "contrast": "r17_full_compound_n1", "text": "Quick one: is the key holder arrangement still just North West, and separately, can health-record-accessing staff still use their own phone for work?"},
+    {"id": "r17-05", "contrast": "r17_full_compound_n1", "text": "Quick one: is the key holder arrangement still just North West, and separately, can health-record-accessing staff still use their own phone for work?"}
+  ]
+}

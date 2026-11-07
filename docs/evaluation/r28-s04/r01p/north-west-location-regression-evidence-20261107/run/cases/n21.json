@@ -1,0 +1,1553 @@
+{
+    "case_id": "n21",
+    "utterance": "Quick one: is the key safe procedure still just for Willow Bank, and separately, has anything changed about who gets contacted for a fall with a suspected injury?",
+    "needs_opt_in": [
+        "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
+    ],
+    "started_at": "2026-11-07T17:51:34+00:00",
+    "observation": {
+        "case_id": "n21",
+        "variant_id": "north-west-location-regression-once-20261107",
+        "run_id": "9268f557-7077-43bb-8d26-13b0c2c4dc21",
+        "scope_classification": "primary",
+        "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+        "status": "completed",
+        "failure_code": null,
+        "production_trace": {
+            "needs_plan": {
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                    {
+                        "need_id": "n1",
+                        "aspect": "Confirm whether the Key Safe Procedure applies only to the Willow Bank site (i.e. whether the Key Safe Procedure's recorded applicability is limited to Willow Bank).",
+                        "central": true,
+                        "question_span": {
+                            "turn_id": "user-1",
+                            "quote": "is the key safe procedure still just for Willow Bank"
+                        },
+                        "operation": "scope_enquiry",
+                        "authority": {
+                            "kind": "current",
+                            "value": null,
+                            "precision": "none",
+                            "source": null
+                        },
+                        "fact_reference": null,
+                        "applicability": {
+                            "kind": "named",
+                            "source": {
+                                "turn_id": "user-1",
+                                "quote": "Willow Bank"
+                            }
+                        },
+                        "supports_need_id": null
+                    },
+                    {
+                        "need_id": "n2",
+                        "aspect": "Retrieve whether there have been any changes to who is contacted when a resident has a fall with a suspected injury (i.e. the current/contacting requirements for falls with suspected injury and whether that changed versus before).",
+                        "central": true,
+                        "question_span": {
+                            "turn_id": "user-1",
+                            "quote": "has anything changed about who gets contacted for a fall with a suspected injury?"
+                        },
+                        "operation": "compare",
+                        "authority": {
+                            "kind": "previous",
+                            "value": "has anything changed",
+                            "precision": "named",
+                            "source": {
+                                "turn_id": "user-1",
+                                "quote": "has anything changed about who gets contacted for a fall with a suspected injury?"
+                            }
+                        },
+                        "fact_reference": null,
+                        "applicability": {
+                            "kind": "generic",
+                            "source": null
+                        },
+                        "supports_need_id": null
+                    }
+                ]
+            },
+            "need.n1.scope_fact": {
+                "representation": "applicability-scope-fact-v1",
+                "need_id": "n1",
+                "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+                "policy_title": "Key Safe Procedure",
+                "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+                "document_version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                "citation_type": "applicability_snapshot",
+                "source_route": "/api/workspaces/5323cd6b-8b7a-40f9-98b0-9413c75f643e/document-families/df1c71ef-a996-475d-90e5-c5b595ad7e88/versions",
+                "snapshot": {
+                    "snapshot_id": 234,
+                    "document_version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                    "scope": "specific",
+                    "sealed_at": "2026-09-04T11:21:12+00:00",
+                    "location_ids": [
+                        "751d113c-89c1-4c80-b802-b79559f4336e",
+                        "894d2e64-972d-43f6-8df5-cc849e4a89d5"
+                    ]
+                },
+                "snapshot_digest": "5cf6a35588f3be7836fed6065ce90045fa65f605c33d2021606361c829c52d4b",
+                "location_id": "894d2e64-972d-43f6-8df5-cc849e4a89d5",
+                "location_name": "Willow Bank Community Service",
+                "hierarchy_path": [
+                    "894d2e64-972d-43f6-8df5-cc849e4a89d5",
+                    "751d113c-89c1-4c80-b802-b79559f4336e"
+                ],
+                "matched_location_id": "894d2e64-972d-43f6-8df5-cc849e4a89d5",
+                "evaluated_at": "2026-11-07T17:51:34+00:00",
+                "temporal_mode": "current",
+                "authority_start": "2026-02-01T00:00:00+00:00",
+                "result": "applies",
+                "basis": "direct_match",
+                "corpus_id": "b24a79c2-875e-4f7c-8fa9-3681db92ae73"
+            },
+            "need.n2.plan": {
+                "temporal_mode": "compare",
+                "explicit_date": null,
+                "temporal_reference": null,
+                "version_transition_boundary": null,
+                "fact_date": null,
+                "requested_evidence_type": "current_versus_historical_comparison",
+                "location_references": [],
+                "clarification_reason": null,
+                "classifier_lineage": {
+                    "provider": "openai",
+                    "model": "gpt-5-mini",
+                    "contract_schema_version": "evidence-needs-plan-v3",
+                    "prompt_version": "bounded-evidence-needs-v18",
+                    "adapter_version": "structured-chat-needs-v6",
+                    "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a"
+                },
+                "usage": []
+            },
+            "need.n2.eligibility": {
+                "outcome": "evidence_found",
+                "document_public_ids_by_side": {
+                    "primary": [
+                        "91fe2596-7c01-4d6b-8dc8-c6092ad07767",
+                        "3cf62858-dfeb-4f59-8548-f98b696d72e5",
+                        "b7ba4849-d76d-408e-b99f-6a5dd757a2e3",
+                        "fdca6e91-8a24-4803-b630-66a5c889e3ce",
+                        "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+                        "b9eb058e-dc89-47a0-b380-c51ae42b2727",
+                        "8b50438f-0446-4556-a5f3-ea08aa15aaac",
+                        "3478a192-8ee4-4bec-84a2-a6b01ac30518",
+                        "57a2e822-aa8d-484c-a180-f4b1f675fa07",
+                        "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce",
+                        "8cb6b4e0-e0bd-46a3-ac36-642e07cb01e6",
+                        "23c48834-49e0-4c88-bb96-9f203c0780d9",
+                        "aa57d09d-c08b-4e87-aa0e-80791d1ada1c",
+                        "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+                        "b44246ef-f452-4e2e-8158-de356b24ea19",
+                        "a190775d-ae67-4fb9-8e27-8d12c8e5bd47",
+                        "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "c36ac189-7e2d-483b-9635-189b03e8e76c",
+                        "5fcccfd6-4986-4667-8546-2a9c34cce5cd",
+                        "af1734e6-f1d8-4cfc-ba2f-b5f20c543f58",
+                        "4a5d8aa4-45fd-4d74-a7a3-08a6a9f81d5f",
+                        "0fcd20f7-6481-4a07-bfd3-2c5fb65b2bd2",
+                        "b8e7b8df-cbd5-482b-a294-be5022b06d54",
+                        "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+                        "d19e8dc2-777f-415b-92e9-c0c9e85109f6",
+                        "4d769f27-4a4a-432b-b37d-3ba13d4c4d38",
+                        "75532b6a-4ef2-4315-b596-2e8a8f322f59",
+                        "0626244e-a8ee-4746-813c-b50b70d79808",
+                        "636d900c-0009-47c1-a111-8bc9f0cec161",
+                        "7ac1a9bc-a42c-4bff-bbc1-6e54293647b8",
+                        "7e25a975-a8e6-436d-a897-43d1497d6451",
+                        "9b2b7b03-c84f-4e07-8bca-3e25ad07c485",
+                        "6c4c6bcb-a666-4b7a-8999-674a411a95eb",
+                        "5328b85b-493d-4fb4-a7dc-cd732cd6f9ed",
+                        "c40c8cd9-2262-4806-850c-2fb0864eb0d2",
+                        "b48abec3-3c1b-40b1-bc8f-bc5277f03469",
+                        "bd6da148-fe3f-40fe-90e2-49b4601997c0",
+                        "afd570c9-6033-429e-808e-8c95b3709c0e",
+                        "2c5492f6-8c9a-485f-a92e-011d8871269f",
+                        "c637668a-a5b6-4e7f-ad62-0e13b54c65bd",
+                        "77ed40d9-112d-4307-b8d8-e2bad64249fd",
+                        "2e5b9ce1-aa9f-4bb9-9699-9497a71329f1",
+                        "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+                        "eddeeede-5a30-430d-b8c0-8617fe4d5ded",
+                        "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                        "c6adbb71-001d-4de2-acf2-8320d6bec95a",
+                        "45ac6b3c-6d83-4d97-a252-f4600974f3e0",
+                        "e93dbc7f-ea71-43f3-bdad-daaa2e92373c",
+                        "c557ed4b-bbd2-4eb8-a9b5-cfea42c2a892",
+                        "8fba29d4-7857-488b-ae48-9be6c3799abd",
+                        "20b1afea-3efe-4c63-bc4d-a44fae224897",
+                        "f1fb4cc2-0ac7-4c6c-9b4d-371b98b8e11c",
+                        "ad956f9c-e21b-4d3a-acf3-7bc75ea70e4b",
+                        "b44a4c5f-2968-4294-85b6-19b066fc3cab",
+                        "64b73301-2992-4db3-aadd-374dc825df78",
+                        "250dc006-c10d-4392-9033-522c3137af82",
+                        "d92fec1f-d1ac-4ed0-9b40-bcda98fd326a",
+                        "822e205e-2579-4d1c-812d-7882d886bb97",
+                        "42fa73b1-1b53-433c-80de-8bd7023ee670",
+                        "95788e4b-11e2-45d6-a672-dd893a544715",
+                        "3b90395d-fcb7-4a1f-ad3b-5ed9d0740b94",
+                        "aef65ab6-e0af-4ecf-bf3b-bf1812eef549",
+                        "42371341-c476-4b66-859d-ba0d1ecad9e1",
+                        "10d27131-fa2c-493b-8f63-3aa8e3808b9c",
+                        "34505187-c14e-4484-9613-9077b2070d0d",
+                        "8393e791-8177-4568-8660-bfdd4efcfab3",
+                        "617c4320-42cf-4c5e-873a-54bde203926f",
+                        "29ee929e-38f3-4f4a-95f7-2e48c51c4556",
+                        "cb29e902-d33e-4fc7-b6c0-139f88eeba54",
+                        "7ea28d94-8750-4d49-bd23-dfb5b7b8b520",
+                        "5196e229-9261-4602-921f-261c74e21a83",
+                        "fdcb4b96-c23c-4cec-8bff-07099b27d88e",
+                        "80392f21-2006-4a4a-b0ec-77f13351e07e",
+                        "8281c116-c499-4a97-9226-6968ab3fa678",
+                        "192a315d-96f3-4cd9-a7fd-77aaed5facfb",
+                        "03bc8b5b-0f17-41d7-bb44-fff6875ff8d4",
+                        "05d2c4e1-86cd-4ca6-9e45-573765c3b6f5",
+                        "58e69592-9309-4ab2-a04d-5edd0b730083",
+                        "d14be51f-1bff-4b5a-814b-aa0f8bd1001d",
+                        "99718b7b-a32f-4e75-8c55-3aa824800e76",
+                        "29c809b2-02a4-4389-955c-eb267b7c30de"
+                    ],
+                    "comparison": [
+                        "3bb752da-9eeb-4e62-9f1e-0846c715cc2b",
+                        "23924760-48c1-4cbb-b83e-cd210ee60e21",
+                        "823aa11d-a07f-4402-af9a-b79e31c265fb",
+                        "6f3954b8-bb68-46f4-9cd8-105d3426aa51",
+                        "1bc8adb6-cc70-4b68-9db4-f3a555bc944b",
+                        "7e92ca76-90c9-434d-86ef-45adcaf81de8",
+                        "fa86860e-8e8d-4df3-b4c2-85b9e45b39ef",
+                        "cd930dc2-5b9e-41c6-8567-91ddf7abd043",
+                        "abf2fa7f-24a9-4a2e-a896-905c4bed7da6",
+                        "aef98fa9-7d22-4805-bcff-d02336faca81",
+                        "e7992e37-53c4-421e-8cee-55d4fd22a34f",
+                        "d2b1d0e8-4a8c-4921-8403-a40924273b27",
+                        "b82421aa-6c2b-4139-81bb-c96a9bfd3627",
+                        "9f3bf855-ae64-4808-b63a-0a4fdaad4d1c",
+                        "3e39799b-6c40-4eaf-bf87-fcdbf969a2c2",
+                        "a912a5a0-7041-4784-8527-3ad9288ec846",
+                        "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "15d5f7f0-bf6a-4e97-b779-9460f08dd7d1",
+                        "ab8f4691-16b2-4329-b954-d910102c7996",
+                        "5dc69feb-72e7-4112-8407-487aecf8235b",
+                        "9930dfd2-f8fa-4fcc-be85-eadac1dbb7c4",
+                        "58f7067b-c24e-451a-8023-19705eeddac4",
+                        "95327181-051d-4dc9-bae4-2a9bdc06e626",
+                        "37860f89-10f6-4521-95f0-2fa9a4b18a4a",
+                        "1d604c84-1c9e-4420-b066-fc2680f6453d",
+                        "6bc857a4-771d-4c51-bce3-51a82fc53074",
+                        "f165bc97-acb2-49a3-aecc-0c16437d0f14",
+                        "9e28583d-bed1-4f05-916d-60b5d1ce8481",
+                        "fe565e1a-f568-4ac8-9d2d-8f64939e5bc8",
+                        "74ac5bb7-b426-47da-aceb-05ed2cacbbb4",
+                        "8219fe0a-4f53-4221-a2f9-e3cbc0bf4ca2",
+                        "8f1f096d-ed79-4f20-bd48-21c4a3d5d27b",
+                        "75ad2269-292d-4bdf-bd78-36134d18ebc8",
+                        "d2f06076-c30a-4b9f-b947-a5a494a60297",
+                        "afadf59c-f0f5-4eed-a2d3-6844365567a1",
+                        "c395887f-0622-4e58-aef5-1df162088dc5",
+                        "bc7eb6fe-606a-4c33-b7fe-76698c99eaa1",
+                        "1a8a5ce1-ec10-4cef-b499-ace2993ca04a",
+                        "1348e466-7d69-4d1a-b718-591c68abb753",
+                        "b72a0923-ea39-442d-9119-ab25ff605735",
+                        "b7bc4a87-f741-40f3-9a4a-34a23deb9970",
+                        "83bcbb20-882a-4c80-aebd-fd8e161f1509",
+                        "8a0564fe-5d10-480f-9460-4d272d529100",
+                        "6fcbcb18-f65f-4317-b333-d34c7ff2ec11",
+                        "f812d25b-fb69-49b4-bf52-b3a202e4288d",
+                        "36dffcc4-83e5-4000-bee8-36d833c2ff68",
+                        "12fae56a-b4cf-4001-b633-6d91eb4a0838",
+                        "1c4665eb-9291-4611-936d-d58d7f1228b5",
+                        "83d33135-7d82-421c-a458-cfa95fdb1df5",
+                        "0e632c72-338e-4219-a418-611dcfbcba0f",
+                        "17f46da4-90fa-4b30-bd77-42f0eabf3e5d",
+                        "44b18a57-5a17-4f43-bc96-c0635699c8bb",
+                        "0344ac02-bb8a-4e8b-ab7c-17620bc27865",
+                        "7c86e01c-c97b-4f14-8e66-22698d258452",
+                        "e90bfda3-56b2-4e2b-8e70-2c2d1b9c5736",
+                        "4cb2a221-8951-463c-bf75-b41916c440e9",
+                        "b04c052d-956d-4820-aa89-27415ad917df",
+                        "7f5e04f1-92ba-4b50-8d01-9d7d61926887",
+                        "be53926c-f12f-4638-9ac0-a68f95fedc3a",
+                        "16978e7b-40b9-460e-8be0-d87aa09a1f73",
+                        "57341bd9-3dec-4687-81c3-8a3904364aaf",
+                        "0c0db890-60a6-4621-aa64-b0c77b480573",
+                        "1c0d9660-5096-46b4-a558-efd87d35842b",
+                        "59d7253c-3054-43ec-8f71-9052137720e6",
+                        "819826e2-d1e3-43c2-8bf8-ef2cc1114d56",
+                        "7be7f6cf-a716-419d-b338-b49b66dda715",
+                        "f7e9ec7d-e1d8-4dfa-ae82-3a874f83d85c",
+                        "0a01470b-84d4-4b1a-8bdb-155acd81788a",
+                        "5aeb4e4f-a2e2-4c6f-9327-c22133311741",
+                        "31dd65dc-7feb-4d29-b8d3-689719cf6ef9",
+                        "1cbc2482-d775-4749-a9a2-d253eba5b540",
+                        "2cbdbb20-0411-401b-b419-f76c7d6e578c",
+                        "f9c974c1-4b20-4305-b47b-35fc5d129764",
+                        "93fb2296-e246-4598-9b60-5af1ef839be0",
+                        "b67bca46-6308-4c0e-990d-e4da7614d487",
+                        "150b9a55-a81d-4653-8d36-a67d0f74ad10",
+                        "0c139627-e324-4bbf-83f4-813a2fe440bb",
+                        "1147ca13-413d-426b-9cbc-d4939fb038db",
+                        "085ec4f8-3049-4543-aab3-6af13610115b",
+                        "a8224dbb-62e6-4533-9406-b64813c3bc8b",
+                        "80a88be6-d3ce-4a66-a40c-2870b69b2b95"
+                    ]
+                },
+                "reason": null,
+                "resolved_location_public_id": null
+            },
+            "need.n2.search": {
+                "candidates": [
+                    {
+                        "chunk_id": "84902930-6732-54f2-bdec-5705aab5381d",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "score": 0.3333333333333333,
+                        "rank": 1,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "491485f8-7cf5-5cad-93fe-f274ec1561dc",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "score": 0.26785714285714285,
+                        "rank": 2,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "c7a4973d-322f-543e-9b0a-edabe763d326",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "score": 0.26785714285714285,
+                        "rank": 3,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "e529b917-dbf4-5ea7-992e-d7d166832585",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "score": 0.20202020202020202,
+                        "rank": 4,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "2617b00f-2ffa-5365-980a-2cd2c8afae24",
+                        "document_id": "3478a192-8ee4-4bec-84a2-a6b01ac30518",
+                        "score": 0.1534090909090909,
+                        "rank": 5,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "27534298-3a0b-52ed-b813-b68b56b0c97c",
+                        "document_id": "9b2b7b03-c84f-4e07-8bca-3e25ad07c485",
+                        "score": 0.15,
+                        "rank": 6,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "783fd21c-093d-5eeb-847c-cc59a4378cc0",
+                        "document_id": "64b73301-2992-4db3-aadd-374dc825df78",
+                        "score": 0.14835164835164835,
+                        "rank": 7,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "4ad1ade8-280d-52bf-a251-76489d18b5b0",
+                        "document_id": "5328b85b-493d-4fb4-a7dc-cd732cd6f9ed",
+                        "score": 0.13225806451612904,
+                        "rank": 8,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "291a2f0a-d017-5b48-907f-02a5db512666",
+                        "document_id": "d92fec1f-d1ac-4ed0-9b40-bcda98fd326a",
+                        "score": 0.1111111111111111,
+                        "rank": 9,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "8bf5d8d4-2075-529d-be55-a75ad28bd17c",
+                        "document_id": "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+                        "score": 0.1,
+                        "rank": 10,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "8899d493-216d-5695-a0b0-094d4fde1129",
+                        "document_id": "d14be51f-1bff-4b5a-814b-aa0f8bd1001d",
+                        "score": 0.08680555555555555,
+                        "rank": 11,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "f47d2fe7-1968-56b6-8a1f-671b68a83f6a",
+                        "document_id": "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+                        "score": 0.08333333333333333,
+                        "rank": 12,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "269a80fe-9e21-55ed-9c42-5a5ce83a3305",
+                        "document_id": "822e205e-2579-4d1c-812d-7882d886bb97",
+                        "score": 0.07796101949025487,
+                        "rank": 13,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "68f38e36-d76c-5992-ba3c-b36aa550e38c",
+                        "document_id": "b9eb058e-dc89-47a0-b380-c51ae42b2727",
+                        "score": 0.07703081232492998,
+                        "rank": 14,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "82bafe01-136e-5b86-afcc-90b7eeff2e07",
+                        "document_id": "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+                        "score": 0.07692307692307693,
+                        "rank": 15,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "1dca10b6-835d-51b2-baf2-6af9c6717995",
+                        "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "score": 0.29166666666666663,
+                        "rank": 1,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "188ff36c-a869-50c5-a75e-0c5de7e14add",
+                        "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "score": 0.26785714285714285,
+                        "rank": 2,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "f5451b60-a28e-58d2-a9b1-6c8aceb0578f",
+                        "document_id": "9f3bf855-ae64-4808-b63a-0a4fdaad4d1c",
+                        "score": 0.26666666666666666,
+                        "rank": 3,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "b60f1c81-ba3c-5e3c-b635-c6447639f088",
+                        "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "score": 0.20168067226890757,
+                        "rank": 4,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "bb4e9c3a-be21-5b25-98d1-845538b31581",
+                        "document_id": "cd930dc2-5b9e-41c6-8567-91ddf7abd043",
+                        "score": 0.16025641025641024,
+                        "rank": 5,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "301d102e-cb6a-5f27-96d0-348ae2cfef56",
+                        "document_id": "9f3bf855-ae64-4808-b63a-0a4fdaad4d1c",
+                        "score": 0.14646464646464646,
+                        "rank": 6,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "f3c21f61-f72c-519d-99f7-4a3dcba3cbce",
+                        "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "score": 0.13636363636363635,
+                        "rank": 7,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "25ad81b0-ad6a-51b7-b3e2-5e481a93cd6c",
+                        "document_id": "150b9a55-a81d-4653-8d36-a67d0f74ad10",
+                        "score": 0.13392857142857142,
+                        "rank": 8,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "9ee8d279-7892-5593-ac38-21928457f0f9",
+                        "document_id": "9f3bf855-ae64-4808-b63a-0a4fdaad4d1c",
+                        "score": 0.12681159420289856,
+                        "rank": 9,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "4a46325f-6a95-5092-9f7b-558ab86cfae5",
+                        "document_id": "a8224dbb-62e6-4533-9406-b64813c3bc8b",
+                        "score": 0.1111111111111111,
+                        "rank": 10,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "d69f5aa3-300b-5bde-bb2c-f201eb61a946",
+                        "document_id": "15d5f7f0-bf6a-4e97-b779-9460f08dd7d1",
+                        "score": 0.1111111111111111,
+                        "rank": 11,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "c2b40c8f-7753-5f71-a805-271eabb67ce9",
+                        "document_id": "a8224dbb-62e6-4533-9406-b64813c3bc8b",
+                        "score": 0.1,
+                        "rank": 12,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "61603f35-4a68-50bd-920b-b2a90fd2a881",
+                        "document_id": "e90bfda3-56b2-4e2b-8e70-2c2d1b9c5736",
+                        "score": 0.09999999999999999,
+                        "rank": 13,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "09f80b66-d70a-5ec6-9475-76095ee0e24c",
+                        "document_id": "e7992e37-53c4-421e-8cee-55d4fd22a34f",
+                        "score": 0.09166666666666667,
+                        "rank": 14,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "7da3fd04-0599-550e-a3af-70abb504a813",
+                        "document_id": "b04c052d-956d-4820-aa89-27415ad917df",
+                        "score": 0.08939393939393939,
+                        "rank": 15,
+                        "side": "comparison"
+                    }
+                ],
+                "lineage": {
+                    "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                    "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+                    "sparse_space_generation_id": "41cb5309-c5c5-4208-9ce6-c8fa416c29c5",
+                    "fusion_strategy": "rrf",
+                    "fusion_version": "1",
+                    "rrf_k": 5,
+                    "configuration_version": "provisional-r28-query-evidence-contract-v1"
+                },
+                "usage": [
+                    {
+                        "stage": "dense_embedding",
+                        "provider": "voyage",
+                        "model": "voyage-4-large",
+                        "execution": "provider_api",
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "provider_attempt_count": 1,
+                        "provider_retry_count": 0,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": 0,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": "2026-11-07T17:51:50.893485Z",
+                        "final_provider_success_at": "2026-11-07T17:51:51.610215Z",
+                        "provider_retry_elapsed_ms": 0,
+                        "input_tokens": 41,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 721.7717919993447,
+                        "cost_basis": "estimated",
+                        "cost_usd": 4.92e-6,
+                        "pricing_snapshot": "voyage-pricing-2026-08-12"
+                    },
+                    {
+                        "stage": "qdrant_dense_search",
+                        "provider": "qdrant",
+                        "model": "rag-platform-vectors-v1",
+                        "execution": "infrastructure",
+                        "request_count": 2,
+                        "retry_count": 0,
+                        "provider_attempt_count": null,
+                        "provider_retry_count": null,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": null,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": null,
+                        "final_provider_success_at": null,
+                        "provider_retry_elapsed_ms": null,
+                        "input_tokens": null,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 78.25516698358115,
+                        "cost_basis": "unavailable",
+                        "cost_usd": null,
+                        "pricing_snapshot": null
+                    },
+                    {
+                        "stage": "sparse_encoding",
+                        "provider": "fastembed",
+                        "model": "prithivida/Splade_PP_en_v1",
+                        "execution": "local",
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "provider_attempt_count": null,
+                        "provider_retry_count": null,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": null,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": null,
+                        "final_provider_success_at": null,
+                        "provider_retry_elapsed_ms": null,
+                        "input_tokens": null,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 1566.7914170044241,
+                        "cost_basis": "zero_cost_local",
+                        "cost_usd": 0,
+                        "pricing_snapshot": null
+                    },
+                    {
+                        "stage": "qdrant_sparse_search",
+                        "provider": "qdrant",
+                        "model": "rag-platform-vectors-v1",
+                        "execution": "infrastructure",
+                        "request_count": 2,
+                        "retry_count": 0,
+                        "provider_attempt_count": null,
+                        "provider_retry_count": null,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": null,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": null,
+                        "final_provider_success_at": null,
+                        "provider_retry_elapsed_ms": null,
+                        "input_tokens": null,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 91.31199998955708,
+                        "cost_basis": "unavailable",
+                        "cost_usd": null,
+                        "pricing_snapshot": null
+                    }
+                ]
+            },
+            "need.n2.hydrated": {
+                "candidates": [
+                    {
+                        "chunk_id": "84902930-6732-54f2-bdec-5705aab5381d",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                        "score": 0.3333333333333333,
+                        "rank": 1,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "491485f8-7cf5-5cad-93fe-f274ec1561dc",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                        "score": 0.26785714285714285,
+                        "rank": 2,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "c7a4973d-322f-543e-9b0a-edabe763d326",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                        "score": 0.26785714285714285,
+                        "rank": 3,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "e529b917-dbf4-5ea7-992e-d7d166832585",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                        "score": 0.20202020202020202,
+                        "rank": 4,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "2617b00f-2ffa-5365-980a-2cd2c8afae24",
+                        "document_id": "3478a192-8ee4-4bec-84a2-a6b01ac30518",
+                        "document_family_id": "419ba97e-f39b-4134-b389-ea74ab1bdaaf",
+                        "score": 0.1534090909090909,
+                        "rank": 5,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "27534298-3a0b-52ed-b813-b68b56b0c97c",
+                        "document_id": "9b2b7b03-c84f-4e07-8bca-3e25ad07c485",
+                        "document_family_id": "9d14e8e8-dbf9-4418-9c61-0f14d317efe6",
+                        "score": 0.15,
+                        "rank": 6,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "783fd21c-093d-5eeb-847c-cc59a4378cc0",
+                        "document_id": "64b73301-2992-4db3-aadd-374dc825df78",
+                        "document_family_id": "bcfc7bc6-8338-471b-a5b2-062421d10e33",
+                        "score": 0.14835164835164835,
+                        "rank": 7,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "4ad1ade8-280d-52bf-a251-76489d18b5b0",
+                        "document_id": "5328b85b-493d-4fb4-a7dc-cd732cd6f9ed",
+                        "document_family_id": "0feb1814-f0f5-4d40-8f3c-56ca98bd560e",
+                        "score": 0.13225806451612904,
+                        "rank": 8,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "291a2f0a-d017-5b48-907f-02a5db512666",
+                        "document_id": "d92fec1f-d1ac-4ed0-9b40-bcda98fd326a",
+                        "document_family_id": "8117df28-5dea-4c12-8d89-f69a513ed64e",
+                        "score": 0.1111111111111111,
+                        "rank": 9,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "8bf5d8d4-2075-529d-be55-a75ad28bd17c",
+                        "document_id": "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+                        "document_family_id": "7643c012-90c5-4883-9056-da22b951b8e5",
+                        "score": 0.1,
+                        "rank": 10,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "8899d493-216d-5695-a0b0-094d4fde1129",
+                        "document_id": "d14be51f-1bff-4b5a-814b-aa0f8bd1001d",
+                        "document_family_id": "250d44a1-7d4e-4e82-937a-5ec3de0391da",
+                        "score": 0.08680555555555555,
+                        "rank": 11,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "f47d2fe7-1968-56b6-8a1f-671b68a83f6a",
+                        "document_id": "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+                        "document_family_id": "25fd5936-86de-41a4-b80a-a5391364bcb2",
+                        "score": 0.08333333333333333,
+                        "rank": 12,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "269a80fe-9e21-55ed-9c42-5a5ce83a3305",
+                        "document_id": "822e205e-2579-4d1c-812d-7882d886bb97",
+                        "document_family_id": "0804eb2e-ede8-4856-8fc2-f5d77fbaf8c5",
+                        "score": 0.07796101949025487,
+                        "rank": 13,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "68f38e36-d76c-5992-ba3c-b36aa550e38c",
+                        "document_id": "b9eb058e-dc89-47a0-b380-c51ae42b2727",
+                        "document_family_id": "35e8b1ac-3604-444f-96ff-3599c61941db",
+                        "score": 0.07703081232492998,
+                        "rank": 14,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "82bafe01-136e-5b86-afcc-90b7eeff2e07",
+                        "document_id": "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+                        "document_family_id": "7643c012-90c5-4883-9056-da22b951b8e5",
+                        "score": 0.07692307692307693,
+                        "rank": 15,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "1dca10b6-835d-51b2-baf2-6af9c6717995",
+                        "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                        "score": 0.29166666666666663,
+                        "rank": 1,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "188ff36c-a869-50c5-a75e-0c5de7e14add",
+                        "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                        "score": 0.26785714285714285,
+                        "rank": 2,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "f5451b60-a28e-58d2-a9b1-6c8aceb0578f",
+                        "document_id": "9f3bf855-ae64-4808-b63a-0a4fdaad4d1c",
+                        "document_family_id": "7643c012-90c5-4883-9056-da22b951b8e5",
+                        "score": 0.26666666666666666,
+                        "rank": 3,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "b60f1c81-ba3c-5e3c-b635-c6447639f088",
+                        "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                        "score": 0.20168067226890757,
+                        "rank": 4,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "bb4e9c3a-be21-5b25-98d1-845538b31581",
+                        "document_id": "cd930dc2-5b9e-41c6-8567-91ddf7abd043",
+                        "document_family_id": "419ba97e-f39b-4134-b389-ea74ab1bdaaf",
+                        "score": 0.16025641025641024,
+                        "rank": 5,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "301d102e-cb6a-5f27-96d0-348ae2cfef56",
+                        "document_id": "9f3bf855-ae64-4808-b63a-0a4fdaad4d1c",
+                        "document_family_id": "7643c012-90c5-4883-9056-da22b951b8e5",
+                        "score": 0.14646464646464646,
+                        "rank": 6,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "f3c21f61-f72c-519d-99f7-4a3dcba3cbce",
+                        "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                        "score": 0.13636363636363635,
+                        "rank": 7,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "25ad81b0-ad6a-51b7-b3e2-5e481a93cd6c",
+                        "document_id": "150b9a55-a81d-4653-8d36-a67d0f74ad10",
+                        "document_family_id": "dd3a97e9-49d2-42ff-bdda-2061af73d8c9",
+                        "score": 0.13392857142857142,
+                        "rank": 8,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "9ee8d279-7892-5593-ac38-21928457f0f9",
+                        "document_id": "9f3bf855-ae64-4808-b63a-0a4fdaad4d1c",
+                        "document_family_id": "7643c012-90c5-4883-9056-da22b951b8e5",
+                        "score": 0.12681159420289856,
+                        "rank": 9,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "4a46325f-6a95-5092-9f7b-558ab86cfae5",
+                        "document_id": "a8224dbb-62e6-4533-9406-b64813c3bc8b",
+                        "document_family_id": "fef7222f-9987-476c-b158-1827420d168b",
+                        "score": 0.1111111111111111,
+                        "rank": 10,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "d69f5aa3-300b-5bde-bb2c-f201eb61a946",
+                        "document_id": "15d5f7f0-bf6a-4e97-b779-9460f08dd7d1",
+                        "document_family_id": "de28f2ad-3082-49c1-920f-a339aba622ae",
+                        "score": 0.1111111111111111,
+                        "rank": 11,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "c2b40c8f-7753-5f71-a805-271eabb67ce9",
+                        "document_id": "a8224dbb-62e6-4533-9406-b64813c3bc8b",
+                        "document_family_id": "fef7222f-9987-476c-b158-1827420d168b",
+                        "score": 0.1,
+                        "rank": 12,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "61603f35-4a68-50bd-920b-b2a90fd2a881",
+                        "document_id": "e90bfda3-56b2-4e2b-8e70-2c2d1b9c5736",
+                        "document_family_id": "bcfc7bc6-8338-471b-a5b2-062421d10e33",
+                        "score": 0.09999999999999999,
+                        "rank": 13,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "09f80b66-d70a-5ec6-9475-76095ee0e24c",
+                        "document_id": "e7992e37-53c4-421e-8cee-55d4fd22a34f",
+                        "document_family_id": "dc3127ec-d2ee-4b05-81aa-851b9409b7c2",
+                        "score": 0.09166666666666667,
+                        "rank": 14,
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "7da3fd04-0599-550e-a3af-70abb504a813",
+                        "document_id": "b04c052d-956d-4820-aa89-27415ad917df",
+                        "document_family_id": "8117df28-5dea-4c12-8d89-f69a513ed64e",
+                        "score": 0.08939393939393939,
+                        "rank": 15,
+                        "side": "comparison"
+                    }
+                ]
+            },
+            "need.n2.reranked": {
+                "candidates": [
+                    {
+                        "chunk_id": "188ff36c-a869-50c5-a75e-0c5de7e14add",
+                        "side": "comparison",
+                        "score": 0.6844664812088013,
+                        "rank": 1
+                    },
+                    {
+                        "chunk_id": "f5451b60-a28e-58d2-a9b1-6c8aceb0578f",
+                        "side": "comparison",
+                        "score": 0.6119574904441833,
+                        "rank": 2
+                    },
+                    {
+                        "chunk_id": "1dca10b6-835d-51b2-baf2-6af9c6717995",
+                        "side": "comparison",
+                        "score": 0.5089833736419678,
+                        "rank": 3
+                    },
+                    {
+                        "chunk_id": "4a46325f-6a95-5092-9f7b-558ab86cfae5",
+                        "side": "comparison",
+                        "score": 0.4902237057685852,
+                        "rank": 4
+                    },
+                    {
+                        "chunk_id": "301d102e-cb6a-5f27-96d0-348ae2cfef56",
+                        "side": "comparison",
+                        "score": 0.489959716796875,
+                        "rank": 5
+                    },
+                    {
+                        "chunk_id": "25ad81b0-ad6a-51b7-b3e2-5e481a93cd6c",
+                        "side": "comparison",
+                        "score": 0.4791114926338196,
+                        "rank": 6
+                    },
+                    {
+                        "chunk_id": "9ee8d279-7892-5593-ac38-21928457f0f9",
+                        "side": "comparison",
+                        "score": 0.4569663405418396,
+                        "rank": 7
+                    },
+                    {
+                        "chunk_id": "09f80b66-d70a-5ec6-9475-76095ee0e24c",
+                        "side": "comparison",
+                        "score": 0.41868460178375244,
+                        "rank": 8
+                    },
+                    {
+                        "chunk_id": "f3c21f61-f72c-519d-99f7-4a3dcba3cbce",
+                        "side": "comparison",
+                        "score": 0.4060782194137573,
+                        "rank": 9
+                    },
+                    {
+                        "chunk_id": "bb4e9c3a-be21-5b25-98d1-845538b31581",
+                        "side": "comparison",
+                        "score": 0.39249157905578613,
+                        "rank": 10
+                    },
+                    {
+                        "chunk_id": "c2b40c8f-7753-5f71-a805-271eabb67ce9",
+                        "side": "comparison",
+                        "score": 0.3752676248550415,
+                        "rank": 11
+                    },
+                    {
+                        "chunk_id": "b60f1c81-ba3c-5e3c-b635-c6447639f088",
+                        "side": "comparison",
+                        "score": 0.35256287455558777,
+                        "rank": 12
+                    },
+                    {
+                        "chunk_id": "7da3fd04-0599-550e-a3af-70abb504a813",
+                        "side": "comparison",
+                        "score": 0.3437296450138092,
+                        "rank": 13
+                    },
+                    {
+                        "chunk_id": "d69f5aa3-300b-5bde-bb2c-f201eb61a946",
+                        "side": "comparison",
+                        "score": 0.3419457674026489,
+                        "rank": 14
+                    },
+                    {
+                        "chunk_id": "61603f35-4a68-50bd-920b-b2a90fd2a881",
+                        "side": "comparison",
+                        "score": 0.32921820878982544,
+                        "rank": 15
+                    },
+                    {
+                        "chunk_id": "84902930-6732-54f2-bdec-5705aab5381d",
+                        "side": "primary",
+                        "score": 0.9283859133720398,
+                        "rank": 1
+                    },
+                    {
+                        "chunk_id": "c7a4973d-322f-543e-9b0a-edabe763d326",
+                        "side": "primary",
+                        "score": 0.9159696698188782,
+                        "rank": 2
+                    },
+                    {
+                        "chunk_id": "491485f8-7cf5-5cad-93fe-f274ec1561dc",
+                        "side": "primary",
+                        "score": 0.9145674109458923,
+                        "rank": 3
+                    },
+                    {
+                        "chunk_id": "8bf5d8d4-2075-529d-be55-a75ad28bd17c",
+                        "side": "primary",
+                        "score": 0.5626007318496704,
+                        "rank": 4
+                    },
+                    {
+                        "chunk_id": "27534298-3a0b-52ed-b813-b68b56b0c97c",
+                        "side": "primary",
+                        "score": 0.5499364137649536,
+                        "rank": 5
+                    },
+                    {
+                        "chunk_id": "e529b917-dbf4-5ea7-992e-d7d166832585",
+                        "side": "primary",
+                        "score": 0.5424665808677673,
+                        "rank": 6
+                    },
+                    {
+                        "chunk_id": "82bafe01-136e-5b86-afcc-90b7eeff2e07",
+                        "side": "primary",
+                        "score": 0.46859803795814514,
+                        "rank": 7
+                    },
+                    {
+                        "chunk_id": "8899d493-216d-5695-a0b0-094d4fde1129",
+                        "side": "primary",
+                        "score": 0.4671677350997925,
+                        "rank": 8
+                    },
+                    {
+                        "chunk_id": "f47d2fe7-1968-56b6-8a1f-671b68a83f6a",
+                        "side": "primary",
+                        "score": 0.4211289882659912,
+                        "rank": 9
+                    },
+                    {
+                        "chunk_id": "4ad1ade8-280d-52bf-a251-76489d18b5b0",
+                        "side": "primary",
+                        "score": 0.42100989818573,
+                        "rank": 10
+                    },
+                    {
+                        "chunk_id": "2617b00f-2ffa-5365-980a-2cd2c8afae24",
+                        "side": "primary",
+                        "score": 0.3936014771461487,
+                        "rank": 11
+                    },
+                    {
+                        "chunk_id": "291a2f0a-d017-5b48-907f-02a5db512666",
+                        "side": "primary",
+                        "score": 0.39075151085853577,
+                        "rank": 12
+                    },
+                    {
+                        "chunk_id": "783fd21c-093d-5eeb-847c-cc59a4378cc0",
+                        "side": "primary",
+                        "score": 0.36751416325569153,
+                        "rank": 13
+                    },
+                    {
+                        "chunk_id": "68f38e36-d76c-5992-ba3c-b36aa550e38c",
+                        "side": "primary",
+                        "score": 0.35672086477279663,
+                        "rank": 14
+                    },
+                    {
+                        "chunk_id": "269a80fe-9e21-55ed-9c42-5a5ce83a3305",
+                        "side": "primary",
+                        "score": 0.3379146456718445,
+                        "rank": 15
+                    }
+                ],
+                "profile": {
+                    "provider": "voyage",
+                    "model": "rerank-2.5",
+                    "adapter_version": "document-metadata-v2",
+                    "truncation": false
+                },
+                "usage": [
+                    {
+                        "stage": "reranking",
+                        "provider": "voyage",
+                        "model": "rerank-2.5",
+                        "execution": "PROVIDER_API",
+                        "request_count": 2,
+                        "retry_count": 0,
+                        "provider_attempt_count": 2,
+                        "provider_retry_count": 0,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": 0,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": "2026-11-07T17:51:54.157480Z",
+                        "final_provider_success_at": "2026-11-07T17:51:54.639067Z",
+                        "provider_retry_elapsed_ms": 0,
+                        "input_tokens": 15836,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 498.178542,
+                        "cost_basis": "UNAVAILABLE",
+                        "cost_usd": null,
+                        "pricing_snapshot": null
+                    }
+                ]
+            },
+            "needs_final_evidence": [
+                {
+                    "chunk_id": "84902930-6732-54f2-bdec-5705aab5381d",
+                    "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                    "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                    "side": "primary",
+                    "need_id": "n2"
+                },
+                {
+                    "chunk_id": "188ff36c-a869-50c5-a75e-0c5de7e14add",
+                    "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                    "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                    "side": "comparison",
+                    "need_id": "n2"
+                },
+                {
+                    "chunk_id": "c7a4973d-322f-543e-9b0a-edabe763d326",
+                    "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                    "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                    "side": "primary",
+                    "need_id": "n2"
+                },
+                {
+                    "chunk_id": "491485f8-7cf5-5cad-93fe-f274ec1561dc",
+                    "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                    "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                    "side": "primary",
+                    "need_id": "n2"
+                },
+                {
+                    "chunk_id": "1dca10b6-835d-51b2-baf2-6af9c6717995",
+                    "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                    "document_family_id": "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59",
+                    "side": "comparison",
+                    "need_id": "n2"
+                }
+            ],
+            "generation_input": {
+                "evidence": [
+                    {
+                        "chunk_id": "84902930-6732-54f2-bdec-5705aab5381d",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "188ff36c-a869-50c5-a75e-0c5de7e14add",
+                        "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "side": "comparison"
+                    },
+                    {
+                        "chunk_id": "c7a4973d-322f-543e-9b0a-edabe763d326",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "491485f8-7cf5-5cad-93fe-f274ec1561dc",
+                        "document_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "1dca10b6-835d-51b2-baf2-6af9c6717995",
+                        "document_id": "8519d17b-f331-4fc2-adc3-76a687900b1e",
+                        "side": "comparison"
+                    }
+                ]
+            }
+        },
+        "contextualisation": {
+            "status": "resolved",
+            "resolved_query": null,
+            "clarification_question": null,
+            "used_prior_context": false,
+            "interpretation_metadata": null,
+            "contextualiser_version": "authorised-user-turns-needs-v1",
+            "usage": null
+        },
+        "retrieval": {
+            "outcome": "evidence_found",
+            "clarification_source": null,
+            "clarification_reason": null,
+            "resolved_temporal_authority": [],
+            "resolved_applicability_location": [],
+            "lineage": {
+                "planner": {
+                    "provider": "openai",
+                    "model": "gpt-5-mini",
+                    "contract_schema_version": "evidence-needs-plan-v3",
+                    "prompt_version": "bounded-evidence-needs-v18",
+                    "adapter_version": "structured-chat-needs-v6",
+                    "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a"
+                },
+                "evidence_selection": "bounded-needs-k5-v2",
+                "needs": {
+                    "n1": [],
+                    "n2": {
+                        "planner": {
+                            "provider": "openai",
+                            "model": "gpt-5-mini",
+                            "contract_schema_version": "evidence-needs-plan-v3",
+                            "prompt_version": "bounded-evidence-needs-v18",
+                            "adapter_version": "structured-chat-needs-v6",
+                            "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a"
+                        },
+                        "retrieval": {
+                            "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                            "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+                            "sparse_space_generation_id": "41cb5309-c5c5-4208-9ce6-c8fa416c29c5",
+                            "fusion_strategy": "rrf",
+                            "fusion_version": "1",
+                            "rrf_k": 5,
+                            "configuration_version": "provisional-r28-query-evidence-contract-v1",
+                            "reranker_profile": {
+                                "provider": "voyage",
+                                "model": "rerank-2.5",
+                                "adapter_version": "document-metadata-v2",
+                                "truncation": false
+                            },
+                            "evidence_threshold_policy_version": "provisional-r28-query-evidence-contract-v1",
+                            "evidence_threshold_policy_fingerprint": "8adb1a507bda52e7524903b77cc29dea7f602ad8f0d082c9e6421c07ed6227fb"
+                        }
+                    }
+                },
+                "evidence_needs_plan": {
+                    "schema_version": "evidence-needs-plan-v3",
+                    "decision": "plan",
+                    "clarification": null,
+                    "needs": [
+                        {
+                            "need_id": "n1",
+                            "aspect": "Confirm whether the Key Safe Procedure applies only to the Willow Bank site (i.e. whether the Key Safe Procedure's recorded applicability is limited to Willow Bank).",
+                            "central": true,
+                            "question_span": {
+                                "turn_id": "user-1",
+                                "quote": "is the key safe procedure still just for Willow Bank"
+                            },
+                            "operation": "scope_enquiry",
+                            "authority": {
+                                "kind": "current",
+                                "value": null,
+                                "precision": "none",
+                                "source": null
+                            },
+                            "fact_reference": null,
+                            "applicability": {
+                                "kind": "named",
+                                "source": {
+                                    "turn_id": "user-1",
+                                    "quote": "Willow Bank"
+                                }
+                            },
+                            "supports_need_id": null
+                        },
+                        {
+                            "need_id": "n2",
+                            "aspect": "Retrieve whether there have been any changes to who is contacted when a resident has a fall with a suspected injury (i.e. the current/contacting requirements for falls with suspected injury and whether that changed versus before).",
+                            "central": true,
+                            "question_span": {
+                                "turn_id": "user-1",
+                                "quote": "has anything changed about who gets contacted for a fall with a suspected injury?"
+                            },
+                            "operation": "compare",
+                            "authority": {
+                                "kind": "previous",
+                                "value": "has anything changed",
+                                "precision": "named",
+                                "source": {
+                                    "turn_id": "user-1",
+                                    "quote": "has anything changed about who gets contacted for a fall with a suspected injury?"
+                                }
+                            },
+                            "fact_reference": null,
+                            "applicability": {
+                                "kind": "generic",
+                                "source": null
+                            },
+                            "supports_need_id": null
+                        }
+                    ],
+                    "bindings": [
+                        {
+                            "need_id": "n1",
+                            "subject_status": "matched",
+                            "family_ids": [
+                                "df1c71ef-a996-475d-90e5-c5b595ad7e88"
+                            ],
+                            "ownership": "authorised_workspace",
+                            "ownership_source": null
+                        },
+                        {
+                            "need_id": "n2",
+                            "subject_status": "topic",
+                            "family_ids": [],
+                            "ownership": "authorised_workspace",
+                            "ownership_source": null
+                        }
+                    ]
+                }
+            },
+            "candidate_count": 5,
+            "evidence_count": 5
+        },
+        "generation": {
+            "outcome": "answered",
+            "rendered_text": "Recorded policy scope\n\nThe recorded scope of \"Key Safe Procedure\" includes \"Willow Bank Community Service\". This is a statement of recorded policy applicability only; it does not establish what action is safe or required. The reason for this scope is not established by the scope record.\n\nOther requested guidance\n\nCurrent version (effective 1 April 2026) requires care staff to contact the on-call registered manager immediately after any fall and, where injury is suspected, also to contact the falls lead (the nurse or therapist designated at each site) immediately — the policy describes this as a mandatory dual-contact escalation for any fall with suspected injury and notes the falls lead provides clinical assessment alongside other escalation where needed.\n\nPrevious version (effective 1 March 2025) required care staff to contact the on-call registered manager immediately after any fall; it did not require contacting a falls lead for suspected-injury falls (falls lead contact was not part of the earlier escalation requirement).",
+            "scope_citations": [
+                {
+                    "basis": "direct_match",
+                    "result": "applies",
+                    "need_id": "n1",
+                    "snapshot": {
+                        "scope": "specific",
+                        "sealed_at": "2026-09-04T11:21:12+00:00",
+                        "snapshot_id": 234,
+                        "location_ids": [
+                            "751d113c-89c1-4c80-b802-b79559f4336e",
+                            "894d2e64-972d-43f6-8df5-cc849e4a89d5"
+                        ],
+                        "document_version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab"
+                    },
+                    "corpus_id": "b24a79c2-875e-4f7c-8fa9-3681db92ae73",
+                    "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+                    "resolution": {
+                        "need": {
+                            "aspect": "Confirm whether the Key Safe Procedure applies only to the Willow Bank site (i.e. whether the Key Safe Procedure's recorded applicability is limited to Willow Bank).",
+                            "central": true,
+                            "need_id": "n1",
+                            "authority": {
+                                "kind": "current",
+                                "value": null,
+                                "source": null,
+                                "precision": "none"
+                            },
+                            "operation": "scope_enquiry",
+                            "applicability": {
+                                "kind": "named",
+                                "source": {
+                                    "quote": "Willow Bank",
+                                    "turn_id": "user-1"
+                                }
+                            },
+                            "question_span": {
+                                "quote": "is the key safe procedure still just for Willow Bank",
+                                "turn_id": "user-1"
+                            },
+                            "fact_reference": null,
+                            "subject_binding": {
+                                "need_id": "n1",
+                                "ownership": "authorised_workspace",
+                                "family_ids": [
+                                    "df1c71ef-a996-475d-90e5-c5b595ad7e88"
+                                ],
+                                "subject_status": "matched",
+                                "ownership_source": null
+                            }
+                        },
+                        "query": "Confirm whether the Key Safe Procedure applies only to the Willow Bank site (i.e. whether the Key Safe Procedure's recorded applicability is limited to Willow Bank).",
+                        "usage": {
+                            "model": "gpt-5-mini",
+                            "stage": "planner",
+                            "cost_usd": null,
+                            "provider": "openai",
+                            "execution": "PROVIDER_API",
+                            "cost_basis": "UNAVAILABLE",
+                            "latency_ms": 15834.825673999148,
+                            "retry_count": 0,
+                            "input_tokens": 17354,
+                            "output_tokens": 1026,
+                            "request_count": 1,
+                            "pricing_snapshot": null,
+                            "cached_input_tokens": 2816,
+                            "validation_attempts": [
+                                {
+                                    "status": "accepted",
+                                    "cost_usd": null,
+                                    "cost_basis": "unavailable",
+                                    "latency_ms": 15834.825673999148,
+                                    "validation": null,
+                                    "retry_count": 0,
+                                    "input_tokens": 17354,
+                                    "output_tokens": 1026,
+                                    "request_count": 1,
+                                    "cached_input_tokens": null
+                                }
+                            ]
+                        },
+                        "lineage": {
+                            "model": "gpt-5-mini",
+                            "provider": "openai",
+                            "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a",
+                            "prompt_version": "bounded-evidence-needs-v18",
+                            "adapter_version": "structured-chat-needs-v6",
+                            "contract_schema_version": "evidence-needs-plan-v3"
+                        },
+                        "explicit_date": null,
+                        "temporal_mode": "current",
+                        "temporal_reference": null,
+                        "location_references": [
+                            "Willow Bank"
+                        ]
+                    },
+                    "location_id": "894d2e64-972d-43f6-8df5-cc849e4a89d5",
+                    "evaluated_at": "2026-11-07T17:51:34+00:00",
+                    "policy_title": "Key Safe Procedure",
+                    "source_route": "/api/workspaces/5323cd6b-8b7a-40f9-98b0-9413c75f643e/document-families/df1c71ef-a996-475d-90e5-c5b595ad7e88/versions",
+                    "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+                    "citation_type": "applicability_snapshot",
+                    "location_name": "Willow Bank Community Service",
+                    "temporal_mode": "current",
+                    "hierarchy_path": [
+                        "894d2e64-972d-43f6-8df5-cc849e4a89d5",
+                        "751d113c-89c1-4c80-b802-b79559f4336e"
+                    ],
+                    "representation": "applicability-scope-fact-v1",
+                    "authority_start": "2026-02-01T00:00:00+00:00",
+                    "snapshot_digest": "5cf6a35588f3be7836fed6065ce90045fa65f605c33d2021606361c829c52d4b",
+                    "document_version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                    "matched_location_id": "894d2e64-972d-43f6-8df5-cc849e4a89d5"
+                }
+            ],
+            "unsupported_aspects": [],
+            "aspect_links": [
+                {
+                    "need_id": "n2",
+                    "answer_part_indices": [
+                        0,
+                        1
+                    ],
+                    "unsupported_aspect_indices": []
+                }
+            ],
+            "aspect_results": {
+                "n2": "supported"
+            },
+            "insufficiency_reason": null,
+            "provider": "openai",
+            "model": "gpt-5-mini",
+            "generation_fingerprint": "f0d0d7da5bd9426ba7c3b579a754bba4631d4934037f4a5e1a1360cd85b08b42",
+            "usage": {
+                "stage": "generation",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "provider_api",
+                "prompt_version": "grounded-generation-needs-v6",
+                "contract_version": "generation-result-v2",
+                "adapter_version": "openai-responses-needs-v2",
+                "generation_fingerprint": "e0d774f338053be59e8be5e71b97afd82bb1912a867acf077076495d626b4bce",
+                "reasoning_effort": "low",
+                "max_output_tokens": 4096,
+                "request_count": 1,
+                "retry_count": 0,
+                "measured_input_tokens": 25073,
+                "input_tokens": 24996,
+                "cached_input_tokens": 1792,
+                "output_tokens": 450,
+                "latency_ms": 6112.336669990327,
+                "cost_usd": 0.0067458,
+                "cost_basis": "estimated",
+                "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+                "validation_retry_count": 0,
+                "validation_attempts": [
+                    {
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "input_tokens": 24996,
+                        "output_tokens": 450,
+                        "cached_input_tokens": 1792,
+                        "latency_ms": 6112.336669990327,
+                        "cost_usd": 0.0067458,
+                        "cost_basis": "estimated",
+                        "outcome": "accepted",
+                        "request_id": "896a45ba-bb1d-489c-826d-13e5931889ba",
+                        "retry_of_request_id": null
+                    }
+                ]
+            },
+            "parts": [
+                {
+                    "text": "Current version (effective 1 April 2026) requires care staff to contact the on-call registered manager immediately after any fall and, where injury is suspected, also to contact the falls lead (the nurse or therapist designated at each site) immediately — the policy describes this as a mandatory dual-contact escalation for any fall with suspected injury and notes the falls lead provides clinical assessment alongside other escalation where needed.",
+                    "evidence": [
+                        {
+                            "evidence_handle": "ev-01",
+                            "document_chunk_id": 637,
+                            "document_id": 206
+                        },
+                        {
+                            "evidence_handle": "ev-03",
+                            "document_chunk_id": 638,
+                            "document_id": 206
+                        },
+                        {
+                            "evidence_handle": "ev-04",
+                            "document_chunk_id": 636,
+                            "document_id": 206
+                        }
+                    ]
+                },
+                {
+                    "text": "Previous version (effective 1 March 2025) required care staff to contact the on-call registered manager immediately after any fall; it did not require contacting a falls lead for suspected-injury falls (falls lead contact was not part of the earlier escalation requirement).",
+                    "evidence": [
+                        {
+                            "evidence_handle": "ev-02",
+                            "document_chunk_id": 397,
+                            "document_id": 121
+                        },
+                        {
+                            "evidence_handle": "ev-05",
+                            "document_chunk_id": 398,
+                            "document_id": 121
+                        }
+                    ]
+                }
+            ]
+        },
+        "assistant_message_kind": "grounded_answer",
+        "usage": {
+            "contextualisation": null,
+            "planner_validation_attempts": [
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 17354,
+                    "output_tokens": 1026,
+                    "cached_input_tokens": null,
+                    "latency_ms": 15834.825673999148,
+                    "cost_usd": null,
+                    "cost_basis": "unavailable",
+                    "validation": null,
+                    "status": "accepted"
+                }
+            ],
+            "generation": {
+                "stage": "generation",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "provider_api",
+                "prompt_version": "grounded-generation-needs-v6",
+                "contract_version": "generation-result-v2",
+                "adapter_version": "openai-responses-needs-v2",
+                "generation_fingerprint": "e0d774f338053be59e8be5e71b97afd82bb1912a867acf077076495d626b4bce",
+                "reasoning_effort": "low",
+                "max_output_tokens": 4096,
+                "request_count": 1,
+                "retry_count": 0,
+                "measured_input_tokens": 25073,
+                "input_tokens": 24996,
+                "cached_input_tokens": 1792,
+                "output_tokens": 450,
+                "latency_ms": 6112.336669990327,
+                "cost_usd": 0.0067458,
+                "cost_basis": "estimated",
+                "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+                "validation_retry_count": 0,
+                "validation_attempts": [
+                    {
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "input_tokens": 24996,
+                        "output_tokens": 450,
+                        "cached_input_tokens": 1792,
+                        "latency_ms": 6112.336669990327,
+                        "cost_usd": 0.0067458,
+                        "cost_basis": "estimated",
+                        "outcome": "accepted",
+                        "request_id": "896a45ba-bb1d-489c-826d-13e5931889ba",
+                        "retry_of_request_id": null
+                    }
+                ]
+            }
+        }
+    },
+    "displayed_text": "Recorded policy scope\n\nThe recorded scope of \"Key Safe Procedure\" includes \"Willow Bank Community Service\". This is a statement of recorded policy applicability only; it does not establish what action is safe or required. The reason for this scope is not established by the scope record.\n\nOther requested guidance\n\nCurrent version (effective 1 April 2026) requires care staff to contact the on-call registered manager immediately after any fall and, where injury is suspected, also to contact the falls lead (the nurse or therapist designated at each site) immediately — the policy describes this as a mandatory dual-contact escalation for any fall with suspected injury and notes the falls lead provides clinical assessment alongside other escalation where needed.\n\nPrevious version (effective 1 March 2025) required care staff to contact the on-call registered manager immediately after any fall; it did not require contacting a falls lead for suspected-injury falls (falls lead contact was not part of the earlier escalation requirement).",
+    "finished_at": "2026-11-07T17:52:01+00:00",
+    "needs_pipeline_exercised": true
+}

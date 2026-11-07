@@ -1,0 +1,120 @@
+{
+    "id": "r17-01",
+    "contrast": "r17_full_compound_n1",
+    "question": "Quick one: is the key holder arrangement still just North West, and separately, can health-record-accessing staff still use their own phone for work?",
+    "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+    "needs_opt_in": [
+        "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
+    ],
+    "evaluated_at": "2026-11-07T18:36:42+00:00",
+    "started_at": "2026-11-07T18:37:22+00:00",
+    "plan": {
+        "schema_version": "evidence-needs-plan-v3",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+            {
+                "need_id": "n1",
+                "aspect": "Determine whether the organisation's key-holder arrangement applies only to the 'North West' location — i.e. whether the recorded Key Holder arrangement/scope is still restricted to 'North West'.",
+                "central": true,
+                "question_span": {
+                    "turn_id": "user-1",
+                    "quote": "is the key holder arrangement still just North West"
+                },
+                "operation": "scope_enquiry",
+                "authority": {
+                    "kind": "current",
+                    "value": null,
+                    "precision": "none",
+                    "source": null
+                },
+                "fact_reference": null,
+                "applicability": {
+                    "kind": "named",
+                    "source": {
+                        "turn_id": "user-1",
+                        "quote": "North West"
+                    }
+                },
+                "supports_need_id": null
+            },
+            {
+                "need_id": "n2",
+                "aspect": "Retrieve the current guidance or policy that states whether staff who access health records may use their own personal phones for work (i.e. the rule on personal-phone use for staff accessing health records).",
+                "central": true,
+                "question_span": {
+                    "turn_id": "user-1",
+                    "quote": "can health-record-accessing staff still use their own phone for work"
+                },
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "value": null,
+                    "precision": "none",
+                    "source": null
+                },
+                "fact_reference": null,
+                "applicability": {
+                    "kind": "generic",
+                    "source": null
+                },
+                "supports_need_id": null
+            }
+        ],
+        "bindings": [
+            {
+                "need_id": "n1",
+                "subject_status": "topic",
+                "family_ids": [],
+                "ownership": "authorised_workspace",
+                "ownership_source": null
+            },
+            {
+                "need_id": "n2",
+                "subject_status": "topic",
+                "family_ids": [],
+                "ownership": "authorised_workspace",
+                "ownership_source": null
+            }
+        ]
+    },
+    "lineage": {
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "contract_schema_version": "evidence-needs-plan-v3",
+        "prompt_version": "bounded-evidence-needs-v18",
+        "adapter_version": "structured-chat-needs-v6",
+        "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a"
+    },
+    "usage": {
+        "stage": "planner",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "PROVIDER_API",
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 17352,
+        "cached_input_tokens": 8960,
+        "output_tokens": 1284,
+        "latency_ms": 12725.271631003125,
+        "cost_basis": "UNAVAILABLE",
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "validation_attempts": [
+            {
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": 17352,
+                "output_tokens": 1284,
+                "cached_input_tokens": null,
+                "latency_ms": 12725.271631003125,
+                "cost_usd": null,
+                "cost_basis": "unavailable",
+                "validation": null,
+                "status": "accepted"
+            }
+        ]
+    },
+    "needs_pipeline_exercised": true,
+    "finished_at": "2026-11-07T18:37:34+00:00"
+}

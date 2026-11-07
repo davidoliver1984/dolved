@@ -1,0 +1,1016 @@
+{
+    "case_id": "m01",
+    "utterance": "Do we reimburse mileage at 42 pence a mile?",
+    "needs_opt_in": [
+        "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
+    ],
+    "started_at": "2026-11-07T17:47:56+00:00",
+    "observation": {
+        "case_id": "m01",
+        "variant_id": "north-west-location-regression-once-20261107",
+        "run_id": "77e05745-f7cc-4134-8fd5-2a3914bb83d6",
+        "scope_classification": "primary",
+        "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+        "status": "completed",
+        "failure_code": null,
+        "production_trace": {
+            "needs_plan": {
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                    {
+                        "need_id": "n1",
+                        "aspect": "Retrieve the organisation's current mileage reimbursement rate for staff mileage claims (the rate to use when reimbursing mileage).",
+                        "central": true,
+                        "question_span": {
+                            "turn_id": "user-1",
+                            "quote": "Do we reimburse mileage at 42 pence a mile?"
+                        },
+                        "operation": "retrieve",
+                        "authority": {
+                            "kind": "current",
+                            "value": null,
+                            "precision": "none",
+                            "source": null
+                        },
+                        "fact_reference": null,
+                        "applicability": {
+                            "kind": "generic",
+                            "source": null
+                        },
+                        "supports_need_id": null
+                    }
+                ]
+            },
+            "need.n1.plan": {
+                "temporal_mode": "current",
+                "explicit_date": null,
+                "temporal_reference": null,
+                "version_transition_boundary": null,
+                "fact_date": null,
+                "requested_evidence_type": "policy_or_procedural_requirements",
+                "location_references": [],
+                "clarification_reason": null,
+                "classifier_lineage": {
+                    "provider": "openai",
+                    "model": "gpt-5-mini",
+                    "contract_schema_version": "evidence-needs-plan-v3",
+                    "prompt_version": "bounded-evidence-needs-v18",
+                    "adapter_version": "structured-chat-needs-v6",
+                    "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a"
+                },
+                "usage": []
+            },
+            "need.n1.eligibility": {
+                "outcome": "evidence_found",
+                "document_public_ids_by_side": {
+                    "primary": [
+                        "b499663d-00b3-447f-89b3-2b4a2a4221ae",
+                        "96542b91-0e37-4499-9dd2-7396a638780f",
+                        "b81d6c68-af4e-4abb-ba47-c55b6a96875e",
+                        "28e7f062-f28d-4a9e-a33b-2456604759d0",
+                        "3b30f55d-7454-4223-89e3-be3ea8e9755d",
+                        "43c59814-e067-4257-8c2a-b2abf1242af6",
+                        "e5152169-c38f-419e-a2ed-53fda2a298d0",
+                        "98e00127-6478-442a-b4cc-93ec8dfe11a8",
+                        "e761a0bc-db3c-44bd-91de-b9e1c462b9db",
+                        "030e3348-c147-40b1-ae89-95b8bc06ba81",
+                        "6e4c66ab-1907-4adb-a595-517d8cd28349",
+                        "76f8af7a-3fcf-468a-95fb-6285eac69629",
+                        "b89aaf6e-28ba-4d60-a20a-46f710c00cad",
+                        "12b0bfcf-f194-43de-8baa-d614f7a097e5",
+                        "e4d9fc1b-48e9-4e94-94d3-d88c078b2701",
+                        "43de6006-c103-4433-bc93-f7abf4b81d37",
+                        "91e7dd31-68df-48e0-9899-22220b656c49",
+                        "81b225ad-8e3d-4e1a-b471-814bdef2d21f",
+                        "6f1b9d5f-4bf3-423c-a4b1-c2bf4e2ad606",
+                        "41505cbb-45cf-4809-90d8-8155b50977b4",
+                        "99a2aaab-4bfe-4de5-8c61-8d8d9151201d",
+                        "33f663f1-9130-4190-b47e-5fe4f2998f17",
+                        "29e3e059-4943-481d-b9ba-c982e8b40c56",
+                        "df1cb996-fe27-4701-8808-4a87c6991b85",
+                        "9266e4a5-0140-4b78-b912-2fc89d5c0b71",
+                        "fee8922b-0dd6-4f64-a1eb-c344cbe57eb2",
+                        "74c42faf-9b49-4828-9f6e-ca0177051aeb",
+                        "57874cae-918b-4492-9f9e-ab6449e4b4bd",
+                        "b7fdccec-aee4-490d-b1fd-86ce97c6850c",
+                        "0374f047-d117-4a3e-811a-6a33c8febfbe",
+                        "ff6fcf9f-03f4-481a-a2b3-d06cfad942d8",
+                        "de314355-4584-4e9b-af85-8fb13aadf04e",
+                        "d26c20bc-c967-4bed-ad97-63740f1811af",
+                        "0950047e-b3f1-49a5-b8c3-ad20af468389",
+                        "ea5136c5-b15e-4922-8a3c-50d31d5ae8f5",
+                        "c945b269-a25c-484f-9e60-be477c4571cc",
+                        "3474418e-d484-41d0-95f8-6f10d12a12ff",
+                        "42107dbf-dcdd-4713-b530-34b57d43212e",
+                        "084a7de1-9075-49b8-a0ea-9317a800360d",
+                        "7738becf-1f08-47bb-9391-286f475b9c1c",
+                        "1497326a-7a56-48f3-89c1-2584f5c9fe2a",
+                        "1301925b-8e8c-48fe-b040-777bbf2562b8",
+                        "f1b44203-3725-4592-9ee1-60964d48f92e",
+                        "46cb289d-ac72-4e11-982a-af0eb8f8f86b",
+                        "23ebf6a2-3c7c-425f-83cd-a110e323c935",
+                        "81715f6c-f642-4ae4-8334-a1410fdb1883",
+                        "4395f603-6940-4367-969b-b79ec953fd6e",
+                        "c52e6423-2f9c-4aad-a3b1-1b7ab184a6c9",
+                        "f3baa0da-ce82-4d7f-b176-044b81679015",
+                        "78795245-a1e0-41ab-aabf-acf2015669e2",
+                        "7f3ea274-cefa-42c6-85a1-801ec8514743",
+                        "63bee82e-fc0e-48b2-904b-45ea4abd83af",
+                        "84e2ecaa-d0a5-4797-8754-8258c9ee0066",
+                        "8f7b44d8-945e-40f5-989d-ce362d3c73dd",
+                        "da8b1f15-bdc7-4d74-9eea-678e4bb9288f",
+                        "4ee93999-e0c6-4a3e-b660-a02ff53b0f7d",
+                        "bc0e367f-72ad-4ec1-97d3-51af9adff7c0",
+                        "09818c2a-fbb3-48e6-8837-bf6b0eb63845",
+                        "69e86b22-5b32-48d3-9a55-f56c2970028d",
+                        "02688ef1-af28-47db-b810-2fed68bcfc18",
+                        "44d3090a-fc69-4aef-b5d9-e954d6cd05bf",
+                        "38517fd8-411f-4c41-8813-59d8034df7fc",
+                        "0a2fdc22-97be-414b-9bad-80ff4e122eba",
+                        "b49e3ef5-9f99-4ea7-b1db-a74d3e0f96d0",
+                        "e7b2856b-79bc-4c50-a359-6d3e9e6f469b",
+                        "53b8deb6-2010-4960-af70-61ee29e2d081",
+                        "440c40fe-9f8a-4455-981d-226168ce50ce",
+                        "41e8dbf9-525b-4d4d-a6cb-0922d54bd92a",
+                        "fb8b9457-8083-47e8-92bb-ca71318fac43",
+                        "a8e32d8c-ae9b-4dc8-ac44-a1fb5e08a38a",
+                        "6e2a9a64-714f-411e-93a5-fb07f69f4767",
+                        "00cf1f58-7551-4743-a677-c23b153b4c70",
+                        "0eb7c74a-4222-433a-bc8f-5c0f4f1f4b7a",
+                        "9dfb3183-603d-4dec-ab17-4d61c03517e7",
+                        "2962e99e-713f-4929-989c-2e792aa024fb",
+                        "d8a026af-ae75-4665-a944-826e677f80dc",
+                        "8fd26024-ad87-41f7-98cb-6146f7a40d82",
+                        "6e5e4e7e-11a8-47d6-831c-d40ebbe1f620",
+                        "f3322e19-574e-417a-bc7f-c0dfd7e7f5f5",
+                        "ea62fd8d-3990-40ae-a414-4d3c2e96b98e",
+                        "2310f9b2-550a-4645-993e-c5b10892c556",
+                        "41a37660-05c8-4214-a376-a9a91147f7cf",
+                        "3ab17580-4744-4a09-b8df-dc28f8dd83fa",
+                        "5d3de7a8-a7da-4bbb-9ea7-e3ac6a294653",
+                        "5d8bbdf2-4543-4aaa-953e-40a3ac1e4f41",
+                        "3be850cb-8d68-4c9f-a2ac-12e606b01e70",
+                        "a16afd35-db9a-4b7c-836d-8e2c62382e12",
+                        "9e32fc4f-d094-44aa-ba2e-200982d60135",
+                        "967b0cf8-56ca-4022-94a9-11bf3b62ce77",
+                        "52e08196-c1b5-4783-8c1c-e14f23315067",
+                        "3d779c18-f012-4ad6-ace3-505cc590704f",
+                        "e7ec8215-7cce-4158-8e88-96b08873eef4",
+                        "91fe2596-7c01-4d6b-8dc8-c6092ad07767",
+                        "3cf62858-dfeb-4f59-8548-f98b696d72e5",
+                        "b7ba4849-d76d-408e-b99f-6a5dd757a2e3",
+                        "fdca6e91-8a24-4803-b630-66a5c889e3ce",
+                        "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+                        "b9eb058e-dc89-47a0-b380-c51ae42b2727",
+                        "8b50438f-0446-4556-a5f3-ea08aa15aaac",
+                        "3478a192-8ee4-4bec-84a2-a6b01ac30518",
+                        "57a2e822-aa8d-484c-a180-f4b1f675fa07",
+                        "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce",
+                        "8cb6b4e0-e0bd-46a3-ac36-642e07cb01e6",
+                        "23c48834-49e0-4c88-bb96-9f203c0780d9",
+                        "aa57d09d-c08b-4e87-aa0e-80791d1ada1c",
+                        "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+                        "b44246ef-f452-4e2e-8158-de356b24ea19",
+                        "a190775d-ae67-4fb9-8e27-8d12c8e5bd47",
+                        "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+                        "c36ac189-7e2d-483b-9635-189b03e8e76c",
+                        "5fcccfd6-4986-4667-8546-2a9c34cce5cd",
+                        "af1734e6-f1d8-4cfc-ba2f-b5f20c543f58",
+                        "4a5d8aa4-45fd-4d74-a7a3-08a6a9f81d5f",
+                        "0fcd20f7-6481-4a07-bfd3-2c5fb65b2bd2",
+                        "b8e7b8df-cbd5-482b-a294-be5022b06d54",
+                        "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+                        "d19e8dc2-777f-415b-92e9-c0c9e85109f6",
+                        "4d769f27-4a4a-432b-b37d-3ba13d4c4d38",
+                        "75532b6a-4ef2-4315-b596-2e8a8f322f59",
+                        "0626244e-a8ee-4746-813c-b50b70d79808",
+                        "636d900c-0009-47c1-a111-8bc9f0cec161",
+                        "7ac1a9bc-a42c-4bff-bbc1-6e54293647b8",
+                        "7e25a975-a8e6-436d-a897-43d1497d6451",
+                        "9b2b7b03-c84f-4e07-8bca-3e25ad07c485",
+                        "6c4c6bcb-a666-4b7a-8999-674a411a95eb",
+                        "5328b85b-493d-4fb4-a7dc-cd732cd6f9ed",
+                        "c40c8cd9-2262-4806-850c-2fb0864eb0d2",
+                        "b48abec3-3c1b-40b1-bc8f-bc5277f03469",
+                        "bd6da148-fe3f-40fe-90e2-49b4601997c0",
+                        "afd570c9-6033-429e-808e-8c95b3709c0e",
+                        "2c5492f6-8c9a-485f-a92e-011d8871269f",
+                        "c637668a-a5b6-4e7f-ad62-0e13b54c65bd",
+                        "77ed40d9-112d-4307-b8d8-e2bad64249fd",
+                        "2e5b9ce1-aa9f-4bb9-9699-9497a71329f1",
+                        "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+                        "eddeeede-5a30-430d-b8c0-8617fe4d5ded",
+                        "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                        "c6adbb71-001d-4de2-acf2-8320d6bec95a",
+                        "45ac6b3c-6d83-4d97-a252-f4600974f3e0",
+                        "e93dbc7f-ea71-43f3-bdad-daaa2e92373c",
+                        "c557ed4b-bbd2-4eb8-a9b5-cfea42c2a892",
+                        "8fba29d4-7857-488b-ae48-9be6c3799abd",
+                        "20b1afea-3efe-4c63-bc4d-a44fae224897",
+                        "f1fb4cc2-0ac7-4c6c-9b4d-371b98b8e11c",
+                        "ad956f9c-e21b-4d3a-acf3-7bc75ea70e4b",
+                        "b44a4c5f-2968-4294-85b6-19b066fc3cab",
+                        "64b73301-2992-4db3-aadd-374dc825df78",
+                        "250dc006-c10d-4392-9033-522c3137af82",
+                        "d92fec1f-d1ac-4ed0-9b40-bcda98fd326a",
+                        "822e205e-2579-4d1c-812d-7882d886bb97",
+                        "42fa73b1-1b53-433c-80de-8bd7023ee670",
+                        "95788e4b-11e2-45d6-a672-dd893a544715",
+                        "3b90395d-fcb7-4a1f-ad3b-5ed9d0740b94",
+                        "aef65ab6-e0af-4ecf-bf3b-bf1812eef549",
+                        "42371341-c476-4b66-859d-ba0d1ecad9e1",
+                        "10d27131-fa2c-493b-8f63-3aa8e3808b9c",
+                        "34505187-c14e-4484-9613-9077b2070d0d",
+                        "8393e791-8177-4568-8660-bfdd4efcfab3",
+                        "617c4320-42cf-4c5e-873a-54bde203926f",
+                        "29ee929e-38f3-4f4a-95f7-2e48c51c4556",
+                        "cb29e902-d33e-4fc7-b6c0-139f88eeba54",
+                        "7ea28d94-8750-4d49-bd23-dfb5b7b8b520",
+                        "5196e229-9261-4602-921f-261c74e21a83",
+                        "fdcb4b96-c23c-4cec-8bff-07099b27d88e",
+                        "80392f21-2006-4a4a-b0ec-77f13351e07e",
+                        "8281c116-c499-4a97-9226-6968ab3fa678",
+                        "192a315d-96f3-4cd9-a7fd-77aaed5facfb",
+                        "03bc8b5b-0f17-41d7-bb44-fff6875ff8d4",
+                        "05d2c4e1-86cd-4ca6-9e45-573765c3b6f5",
+                        "58e69592-9309-4ab2-a04d-5edd0b730083",
+                        "d14be51f-1bff-4b5a-814b-aa0f8bd1001d",
+                        "99718b7b-a32f-4e75-8c55-3aa824800e76",
+                        "29c809b2-02a4-4389-955c-eb267b7c30de",
+                        "64857a1e-ebee-4c79-a454-67c165381770",
+                        "19761c36-44da-4bd7-94c0-417bfb2145b8",
+                        "caae2df5-d3f3-4424-8a35-39406c15dfad",
+                        "7bb9c47e-ff7f-4807-8a88-90ed8b885f2f"
+                    ]
+                },
+                "reason": null,
+                "resolved_location_public_id": null
+            },
+            "need.n1.search": {
+                "candidates": [
+                    {
+                        "chunk_id": "28f7cb3c-7dce-5df0-a47c-a10c950bf19c",
+                        "document_id": "d8a026af-ae75-4665-a944-826e677f80dc",
+                        "score": 0.2777777777777778,
+                        "rank": 1,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "fbfc9ed7-f42f-5220-aaad-f7474a2c208a",
+                        "document_id": "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce",
+                        "score": 0.2777777777777778,
+                        "rank": 2,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "40515c0e-8c03-5c34-8ebc-42ef8309078e",
+                        "document_id": "d8a026af-ae75-4665-a944-826e677f80dc",
+                        "score": 0.26785714285714285,
+                        "rank": 3,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "673f5846-406d-5104-8218-a847f4294f0d",
+                        "document_id": "2962e99e-713f-4929-989c-2e792aa024fb",
+                        "score": 0.26785714285714285,
+                        "rank": 4,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "97463566-4148-556c-9fdc-5e4c9f8e2849",
+                        "document_id": "d8a026af-ae75-4665-a944-826e677f80dc",
+                        "score": 0.17142857142857143,
+                        "rank": 5,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "9101ce54-8944-559e-8437-1fea9ec71b78",
+                        "document_id": "9dfb3183-603d-4dec-ab17-4d61c03517e7",
+                        "score": 0.16783216783216784,
+                        "rank": 6,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "167ae317-840d-51ff-9d44-fc2d83aa8913",
+                        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+                        "score": 0.11145510835913312,
+                        "rank": 7,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "d15b2cf9-5950-5ec3-82b6-4905e73f89b6",
+                        "document_id": "29c809b2-02a4-4389-955c-eb267b7c30de",
+                        "score": 0.10833333333333334,
+                        "rank": 8,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "75c8c976-5c04-5204-9a53-3b05e5d06355",
+                        "document_id": "7738becf-1f08-47bb-9391-286f475b9c1c",
+                        "score": 0.1,
+                        "rank": 9,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "e6c2344b-c081-599a-a156-ec53630256c3",
+                        "document_id": "42fa73b1-1b53-433c-80de-8bd7023ee670",
+                        "score": 0.09761904761904762,
+                        "rank": 10,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "6c95ac31-3c48-50c1-9c20-f5cc0ff1ad7c",
+                        "document_id": "23ebf6a2-3c7c-425f-83cd-a110e323c935",
+                        "score": 0.09090909090909091,
+                        "rank": 11,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "0581f059-5479-5065-a852-bc0a53187f66",
+                        "document_id": "34505187-c14e-4484-9613-9077b2070d0d",
+                        "score": 0.08834586466165413,
+                        "rank": 12,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "d59769f2-6cf2-598e-a059-38e1d1461c02",
+                        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+                        "score": 0.08333333333333333,
+                        "rank": 13,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+                        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+                        "score": 0.08187134502923976,
+                        "rank": 14,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "6573ab7b-8d67-5c48-92ca-9c587a66d798",
+                        "document_id": "42fa73b1-1b53-433c-80de-8bd7023ee670",
+                        "score": 0.08116883116883117,
+                        "rank": 15,
+                        "side": "primary"
+                    }
+                ],
+                "lineage": {
+                    "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                    "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+                    "sparse_space_generation_id": "41cb5309-c5c5-4208-9ce6-c8fa416c29c5",
+                    "fusion_strategy": "rrf",
+                    "fusion_version": "1",
+                    "rrf_k": 5,
+                    "configuration_version": "provisional-r28-query-evidence-contract-v1"
+                },
+                "usage": [
+                    {
+                        "stage": "dense_embedding",
+                        "provider": "voyage",
+                        "model": "voyage-4-large",
+                        "execution": "provider_api",
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "provider_attempt_count": 1,
+                        "provider_retry_count": 0,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": 0,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": "2026-11-07T17:48:10.363347Z",
+                        "final_provider_success_at": "2026-11-07T17:48:10.651412Z",
+                        "provider_retry_elapsed_ms": 0,
+                        "input_tokens": 22,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 297.94516701076645,
+                        "cost_basis": "estimated",
+                        "cost_usd": 2.64e-6,
+                        "pricing_snapshot": "voyage-pricing-2026-08-12"
+                    },
+                    {
+                        "stage": "qdrant_dense_search",
+                        "provider": "qdrant",
+                        "model": "rag-platform-vectors-v1",
+                        "execution": "infrastructure",
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "provider_attempt_count": null,
+                        "provider_retry_count": null,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": null,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": null,
+                        "final_provider_success_at": null,
+                        "provider_retry_elapsed_ms": null,
+                        "input_tokens": null,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 21.251750004012138,
+                        "cost_basis": "unavailable",
+                        "cost_usd": null,
+                        "pricing_snapshot": null
+                    },
+                    {
+                        "stage": "sparse_encoding",
+                        "provider": "fastembed",
+                        "model": "prithivida/Splade_PP_en_v1",
+                        "execution": "local",
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "provider_attempt_count": null,
+                        "provider_retry_count": null,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": null,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": null,
+                        "final_provider_success_at": null,
+                        "provider_retry_elapsed_ms": null,
+                        "input_tokens": null,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 1822.9043760075,
+                        "cost_basis": "zero_cost_local",
+                        "cost_usd": 0,
+                        "pricing_snapshot": null
+                    },
+                    {
+                        "stage": "qdrant_sparse_search",
+                        "provider": "qdrant",
+                        "model": "rag-platform-vectors-v1",
+                        "execution": "infrastructure",
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "provider_attempt_count": null,
+                        "provider_retry_count": null,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": null,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": null,
+                        "final_provider_success_at": null,
+                        "provider_retry_elapsed_ms": null,
+                        "input_tokens": null,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 53.56358300196007,
+                        "cost_basis": "unavailable",
+                        "cost_usd": null,
+                        "pricing_snapshot": null
+                    }
+                ]
+            },
+            "need.n1.hydrated": {
+                "candidates": [
+                    {
+                        "chunk_id": "28f7cb3c-7dce-5df0-a47c-a10c950bf19c",
+                        "document_id": "d8a026af-ae75-4665-a944-826e677f80dc",
+                        "document_family_id": "1edb87c2-7a26-4dcc-9ad3-698245253554",
+                        "score": 0.2777777777777778,
+                        "rank": 1,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "fbfc9ed7-f42f-5220-aaad-f7474a2c208a",
+                        "document_id": "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce",
+                        "document_family_id": "eea3a74c-f323-41b3-8919-7d41ea4bc75b",
+                        "score": 0.2777777777777778,
+                        "rank": 2,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "40515c0e-8c03-5c34-8ebc-42ef8309078e",
+                        "document_id": "d8a026af-ae75-4665-a944-826e677f80dc",
+                        "document_family_id": "1edb87c2-7a26-4dcc-9ad3-698245253554",
+                        "score": 0.26785714285714285,
+                        "rank": 3,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "673f5846-406d-5104-8218-a847f4294f0d",
+                        "document_id": "2962e99e-713f-4929-989c-2e792aa024fb",
+                        "document_family_id": "ac540d8d-46ac-4e72-8a5b-9a3a66e6ba09",
+                        "score": 0.26785714285714285,
+                        "rank": 4,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "97463566-4148-556c-9fdc-5e4c9f8e2849",
+                        "document_id": "d8a026af-ae75-4665-a944-826e677f80dc",
+                        "document_family_id": "1edb87c2-7a26-4dcc-9ad3-698245253554",
+                        "score": 0.17142857142857143,
+                        "rank": 5,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "9101ce54-8944-559e-8437-1fea9ec71b78",
+                        "document_id": "9dfb3183-603d-4dec-ab17-4d61c03517e7",
+                        "document_family_id": "cd22db02-4f09-4a2c-9239-d6a7c027cca4",
+                        "score": 0.16783216783216784,
+                        "rank": 6,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "167ae317-840d-51ff-9d44-fc2d83aa8913",
+                        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+                        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+                        "score": 0.11145510835913312,
+                        "rank": 7,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "d15b2cf9-5950-5ec3-82b6-4905e73f89b6",
+                        "document_id": "29c809b2-02a4-4389-955c-eb267b7c30de",
+                        "document_family_id": "25a058ee-667f-4877-9abd-5fda5b8aaeaf",
+                        "score": 0.10833333333333334,
+                        "rank": 8,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "75c8c976-5c04-5204-9a53-3b05e5d06355",
+                        "document_id": "7738becf-1f08-47bb-9391-286f475b9c1c",
+                        "document_family_id": "f3fe12a2-45d7-4147-9acb-754287a4ceab",
+                        "score": 0.1,
+                        "rank": 9,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "e6c2344b-c081-599a-a156-ec53630256c3",
+                        "document_id": "42fa73b1-1b53-433c-80de-8bd7023ee670",
+                        "document_family_id": "2e077d06-0ec1-4889-852a-497423adb119",
+                        "score": 0.09761904761904762,
+                        "rank": 10,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "6c95ac31-3c48-50c1-9c20-f5cc0ff1ad7c",
+                        "document_id": "23ebf6a2-3c7c-425f-83cd-a110e323c935",
+                        "document_family_id": "537952ae-dc7c-429e-bc98-c61e1d12bcff",
+                        "score": 0.09090909090909091,
+                        "rank": 11,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "0581f059-5479-5065-a852-bc0a53187f66",
+                        "document_id": "34505187-c14e-4484-9613-9077b2070d0d",
+                        "document_family_id": "73d1a28e-c965-48d1-8cd1-34f5d0014b9f",
+                        "score": 0.08834586466165413,
+                        "rank": 12,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "d59769f2-6cf2-598e-a059-38e1d1461c02",
+                        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+                        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+                        "score": 0.08333333333333333,
+                        "rank": 13,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+                        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+                        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+                        "score": 0.08187134502923976,
+                        "rank": 14,
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "6573ab7b-8d67-5c48-92ca-9c587a66d798",
+                        "document_id": "42fa73b1-1b53-433c-80de-8bd7023ee670",
+                        "document_family_id": "2e077d06-0ec1-4889-852a-497423adb119",
+                        "score": 0.08116883116883117,
+                        "rank": 15,
+                        "side": "primary"
+                    }
+                ]
+            },
+            "need.n1.reranked": {
+                "candidates": [
+                    {
+                        "chunk_id": "673f5846-406d-5104-8218-a847f4294f0d",
+                        "side": "primary",
+                        "score": 0.7680374979972839,
+                        "rank": 1
+                    },
+                    {
+                        "chunk_id": "fbfc9ed7-f42f-5220-aaad-f7474a2c208a",
+                        "side": "primary",
+                        "score": 0.7066904306411743,
+                        "rank": 2
+                    },
+                    {
+                        "chunk_id": "28f7cb3c-7dce-5df0-a47c-a10c950bf19c",
+                        "side": "primary",
+                        "score": 0.6560428738594055,
+                        "rank": 3
+                    },
+                    {
+                        "chunk_id": "40515c0e-8c03-5c34-8ebc-42ef8309078e",
+                        "side": "primary",
+                        "score": 0.5027692914009094,
+                        "rank": 4
+                    },
+                    {
+                        "chunk_id": "167ae317-840d-51ff-9d44-fc2d83aa8913",
+                        "side": "primary",
+                        "score": 0.4554937481880188,
+                        "rank": 5
+                    },
+                    {
+                        "chunk_id": "9101ce54-8944-559e-8437-1fea9ec71b78",
+                        "side": "primary",
+                        "score": 0.4151996672153473,
+                        "rank": 6
+                    },
+                    {
+                        "chunk_id": "97463566-4148-556c-9fdc-5e4c9f8e2849",
+                        "side": "primary",
+                        "score": 0.38805800676345825,
+                        "rank": 7
+                    },
+                    {
+                        "chunk_id": "d59769f2-6cf2-598e-a059-38e1d1461c02",
+                        "side": "primary",
+                        "score": 0.3135870695114136,
+                        "rank": 8
+                    },
+                    {
+                        "chunk_id": "0581f059-5479-5065-a852-bc0a53187f66",
+                        "side": "primary",
+                        "score": 0.3018665313720703,
+                        "rank": 9
+                    },
+                    {
+                        "chunk_id": "6573ab7b-8d67-5c48-92ca-9c587a66d798",
+                        "side": "primary",
+                        "score": 0.2802734673023224,
+                        "rank": 10
+                    },
+                    {
+                        "chunk_id": "d15b2cf9-5950-5ec3-82b6-4905e73f89b6",
+                        "side": "primary",
+                        "score": 0.27894529700279236,
+                        "rank": 11
+                    },
+                    {
+                        "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+                        "side": "primary",
+                        "score": 0.27722644805908203,
+                        "rank": 12
+                    },
+                    {
+                        "chunk_id": "e6c2344b-c081-599a-a156-ec53630256c3",
+                        "side": "primary",
+                        "score": 0.2689456045627594,
+                        "rank": 13
+                    },
+                    {
+                        "chunk_id": "75c8c976-5c04-5204-9a53-3b05e5d06355",
+                        "side": "primary",
+                        "score": 0.2379445880651474,
+                        "rank": 14
+                    },
+                    {
+                        "chunk_id": "6c95ac31-3c48-50c1-9c20-f5cc0ff1ad7c",
+                        "side": "primary",
+                        "score": 0.23047024011611938,
+                        "rank": 15
+                    }
+                ],
+                "profile": {
+                    "provider": "voyage",
+                    "model": "rerank-2.5",
+                    "adapter_version": "document-metadata-v2",
+                    "truncation": false
+                },
+                "usage": [
+                    {
+                        "stage": "reranking",
+                        "provider": "voyage",
+                        "model": "rerank-2.5",
+                        "execution": "PROVIDER_API",
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "provider_attempt_count": 1,
+                        "provider_retry_count": 0,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": 0,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": "2026-11-07T17:48:13.088621Z",
+                        "final_provider_success_at": "2026-11-07T17:48:13.352208Z",
+                        "provider_retry_elapsed_ms": 0,
+                        "input_tokens": 6736,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 301.615083,
+                        "cost_basis": "UNAVAILABLE",
+                        "cost_usd": null,
+                        "pricing_snapshot": null
+                    }
+                ]
+            },
+            "needs_final_evidence": [
+                {
+                    "chunk_id": "673f5846-406d-5104-8218-a847f4294f0d",
+                    "document_id": "2962e99e-713f-4929-989c-2e792aa024fb",
+                    "document_family_id": "ac540d8d-46ac-4e72-8a5b-9a3a66e6ba09",
+                    "side": "primary",
+                    "need_id": "n1"
+                },
+                {
+                    "chunk_id": "fbfc9ed7-f42f-5220-aaad-f7474a2c208a",
+                    "document_id": "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce",
+                    "document_family_id": "eea3a74c-f323-41b3-8919-7d41ea4bc75b",
+                    "side": "primary",
+                    "need_id": "n1"
+                },
+                {
+                    "chunk_id": "28f7cb3c-7dce-5df0-a47c-a10c950bf19c",
+                    "document_id": "d8a026af-ae75-4665-a944-826e677f80dc",
+                    "document_family_id": "1edb87c2-7a26-4dcc-9ad3-698245253554",
+                    "side": "primary",
+                    "need_id": "n1"
+                },
+                {
+                    "chunk_id": "40515c0e-8c03-5c34-8ebc-42ef8309078e",
+                    "document_id": "d8a026af-ae75-4665-a944-826e677f80dc",
+                    "document_family_id": "1edb87c2-7a26-4dcc-9ad3-698245253554",
+                    "side": "primary",
+                    "need_id": "n1"
+                },
+                {
+                    "chunk_id": "167ae317-840d-51ff-9d44-fc2d83aa8913",
+                    "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+                    "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+                    "side": "primary",
+                    "need_id": "n1"
+                }
+            ],
+            "generation_input": {
+                "evidence": [
+                    {
+                        "chunk_id": "673f5846-406d-5104-8218-a847f4294f0d",
+                        "document_id": "2962e99e-713f-4929-989c-2e792aa024fb",
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "fbfc9ed7-f42f-5220-aaad-f7474a2c208a",
+                        "document_id": "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce",
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "28f7cb3c-7dce-5df0-a47c-a10c950bf19c",
+                        "document_id": "d8a026af-ae75-4665-a944-826e677f80dc",
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "40515c0e-8c03-5c34-8ebc-42ef8309078e",
+                        "document_id": "d8a026af-ae75-4665-a944-826e677f80dc",
+                        "side": "primary"
+                    },
+                    {
+                        "chunk_id": "167ae317-840d-51ff-9d44-fc2d83aa8913",
+                        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+                        "side": "primary"
+                    }
+                ]
+            }
+        },
+        "contextualisation": {
+            "status": "resolved",
+            "resolved_query": null,
+            "clarification_question": null,
+            "used_prior_context": false,
+            "interpretation_metadata": null,
+            "contextualiser_version": "authorised-user-turns-needs-v1",
+            "usage": null
+        },
+        "retrieval": {
+            "outcome": "evidence_found",
+            "clarification_source": null,
+            "clarification_reason": null,
+            "resolved_temporal_authority": [],
+            "resolved_applicability_location": [],
+            "lineage": {
+                "planner": {
+                    "provider": "openai",
+                    "model": "gpt-5-mini",
+                    "contract_schema_version": "evidence-needs-plan-v3",
+                    "prompt_version": "bounded-evidence-needs-v18",
+                    "adapter_version": "structured-chat-needs-v6",
+                    "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a"
+                },
+                "evidence_selection": "bounded-needs-k5-v2",
+                "needs": {
+                    "n1": {
+                        "planner": {
+                            "provider": "openai",
+                            "model": "gpt-5-mini",
+                            "contract_schema_version": "evidence-needs-plan-v3",
+                            "prompt_version": "bounded-evidence-needs-v18",
+                            "adapter_version": "structured-chat-needs-v6",
+                            "fingerprint": "bf0115c22d16b7517d35ff708f79c1aa61689715e6c9c29ff42faaf7a2273d3a"
+                        },
+                        "retrieval": {
+                            "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+                            "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+                            "sparse_space_generation_id": "41cb5309-c5c5-4208-9ce6-c8fa416c29c5",
+                            "fusion_strategy": "rrf",
+                            "fusion_version": "1",
+                            "rrf_k": 5,
+                            "configuration_version": "provisional-r28-query-evidence-contract-v1",
+                            "reranker_profile": {
+                                "provider": "voyage",
+                                "model": "rerank-2.5",
+                                "adapter_version": "document-metadata-v2",
+                                "truncation": false
+                            },
+                            "evidence_threshold_policy_version": "provisional-r28-query-evidence-contract-v1",
+                            "evidence_threshold_policy_fingerprint": "8adb1a507bda52e7524903b77cc29dea7f602ad8f0d082c9e6421c07ed6227fb"
+                        }
+                    }
+                },
+                "evidence_needs_plan": {
+                    "schema_version": "evidence-needs-plan-v3",
+                    "decision": "plan",
+                    "clarification": null,
+                    "needs": [
+                        {
+                            "need_id": "n1",
+                            "aspect": "Retrieve the organisation's current mileage reimbursement rate for staff mileage claims (the rate to use when reimbursing mileage).",
+                            "central": true,
+                            "question_span": {
+                                "turn_id": "user-1",
+                                "quote": "Do we reimburse mileage at 42 pence a mile?"
+                            },
+                            "operation": "retrieve",
+                            "authority": {
+                                "kind": "current",
+                                "value": null,
+                                "precision": "none",
+                                "source": null
+                            },
+                            "fact_reference": null,
+                            "applicability": {
+                                "kind": "generic",
+                                "source": null
+                            },
+                            "supports_need_id": null
+                        }
+                    ],
+                    "bindings": [
+                        {
+                            "need_id": "n1",
+                            "subject_status": "topic",
+                            "family_ids": [],
+                            "ownership": "authorised_workspace",
+                            "ownership_source": null
+                        }
+                    ]
+                }
+            },
+            "candidate_count": 5,
+            "evidence_count": 5
+        },
+        "generation": {
+            "outcome": "answered",
+            "rendered_text": "No — the supplied documents do not set a 42p per mile rate; the Mileage and Travel Expenses Claim Form records an approved rate of 45p per mile (first 10,000) and the Mileage Rate Schedule lists a 48p per mile rate (effective 1 October 2026).",
+            "scope_citations": [],
+            "unsupported_aspects": [],
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [
+                        0
+                    ],
+                    "unsupported_aspect_indices": []
+                }
+            ],
+            "aspect_results": {
+                "n1": "supported"
+            },
+            "insufficiency_reason": null,
+            "provider": "openai",
+            "model": "gpt-5-mini",
+            "generation_fingerprint": "e0d774f338053be59e8be5e71b97afd82bb1912a867acf077076495d626b4bce",
+            "usage": {
+                "stage": "generation",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "provider_api",
+                "prompt_version": "grounded-generation-needs-v6",
+                "contract_version": "generation-result-v2",
+                "adapter_version": "openai-responses-needs-v2",
+                "generation_fingerprint": "e0d774f338053be59e8be5e71b97afd82bb1912a867acf077076495d626b4bce",
+                "reasoning_effort": "low",
+                "max_output_tokens": 4096,
+                "request_count": 1,
+                "retry_count": 0,
+                "measured_input_tokens": 26107,
+                "input_tokens": 26030,
+                "cached_input_tokens": 1792,
+                "output_tokens": 1144,
+                "latency_ms": 13358.640838996507,
+                "cost_usd": 0.0083923,
+                "cost_basis": "estimated",
+                "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+                "validation_retry_count": 0,
+                "validation_attempts": [
+                    {
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "input_tokens": 26030,
+                        "output_tokens": 1144,
+                        "cached_input_tokens": 1792,
+                        "latency_ms": 13358.640838996507,
+                        "cost_usd": 0.0083923,
+                        "cost_basis": "estimated",
+                        "outcome": "accepted",
+                        "request_id": "b47354e6-cd03-4091-b344-825ce2670ff8",
+                        "retry_of_request_id": null
+                    }
+                ]
+            },
+            "parts": [
+                {
+                    "text": "No — the supplied documents do not set a 42p per mile rate; the Mileage and Travel Expenses Claim Form records an approved rate of 45p per mile (first 10,000) and the Mileage Rate Schedule lists a 48p per mile rate (effective 1 October 2026).",
+                    "evidence": [
+                        {
+                            "evidence_handle": "ev-01",
+                            "document_chunk_id": 315,
+                            "document_id": 75
+                        },
+                        {
+                            "evidence_handle": "ev-02",
+                            "document_chunk_id": 607,
+                            "document_id": 195
+                        }
+                    ]
+                }
+            ]
+        },
+        "assistant_message_kind": "grounded_answer",
+        "usage": {
+            "contextualisation": null,
+            "planner_validation_attempts": [
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 17334,
+                    "output_tokens": 518,
+                    "cached_input_tokens": null,
+                    "latency_ms": 13781.81425499497,
+                    "cost_usd": null,
+                    "cost_basis": "unavailable",
+                    "validation": null,
+                    "status": "accepted"
+                }
+            ],
+            "generation": {
+                "stage": "generation",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "provider_api",
+                "prompt_version": "grounded-generation-needs-v6",
+                "contract_version": "generation-result-v2",
+                "adapter_version": "openai-responses-needs-v2",
+                "generation_fingerprint": "e0d774f338053be59e8be5e71b97afd82bb1912a867acf077076495d626b4bce",
+                "reasoning_effort": "low",
+                "max_output_tokens": 4096,
+                "request_count": 1,
+                "retry_count": 0,
+                "measured_input_tokens": 26107,
+                "input_tokens": 26030,
+                "cached_input_tokens": 1792,
+                "output_tokens": 1144,
+                "latency_ms": 13358.640838996507,
+                "cost_usd": 0.0083923,
+                "cost_basis": "estimated",
+                "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+                "validation_retry_count": 0,
+                "validation_attempts": [
+                    {
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "input_tokens": 26030,
+                        "output_tokens": 1144,
+                        "cached_input_tokens": 1792,
+                        "latency_ms": 13358.640838996507,
+                        "cost_usd": 0.0083923,
+                        "cost_basis": "estimated",
+                        "outcome": "accepted",
+                        "request_id": "b47354e6-cd03-4091-b344-825ce2670ff8",
+                        "retry_of_request_id": null
+                    }
+                ]
+            }
+        }
+    },
+    "displayed_text": "No — the supplied documents do not set a 42p per mile rate; the Mileage and Travel Expenses Claim Form records an approved rate of 45p per mile (first 10,000) and the Mileage Rate Schedule lists a 48p per mile rate (effective 1 October 2026).",
+    "finished_at": "2026-11-07T17:48:27+00:00",
+    "needs_pipeline_exercised": true
+}
