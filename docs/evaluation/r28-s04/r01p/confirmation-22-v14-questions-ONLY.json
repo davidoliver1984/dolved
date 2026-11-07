@@ -1,0 +1,29 @@
+{
+  "set_id": "R28-INDEPENDENT-CONFIRMATION-20261106-V14",
+  "author": "Claude (Sonnet 5), read-only reviewer, not involved in the R01P diagnosis, corrections, or scoring the prior thirteen confirmations",
+  "note": "Questions only. No expected answers, sources, or hints included in this file. Freeze code (record the runtime-source aggregate hash) before running. Run once. No tuning or reruns before David's decision. For every call, set CONVERSATION_NEEDS_WORKSPACE_IDS to the primary workspace only and confirm in each trace that the needs pipeline was actually exercised.",
+  "questions": [
+    { "id": "q01", "text": "How often does a PEEP actually need reviewing?" },
+    { "id": "q02", "text": "Does my exit interview have to be done by my own line manager?" },
+    { "id": "q03", "text": "Can I get a written copy of what I said in my own exit interview?" },
+    { "id": "q04", "text": "How often do risk assessments actually need reviewing?" },
+    { "id": "q05", "text": "If I get an urgent payment request that looks like it's from the Chief Exec, can I just reply to the same email to double check first?" },
+    { "id": "q06", "text": "Will I get in trouble if I click a phishing link by mistake?" },
+    { "id": "q07", "text": "Is Central Support Office actually closed for the early May bank holiday?" },
+    { "id": "q08", "text": "Does positive feedback actually get logged anywhere, or is it just complaints that get recorded?" },
+    { "id": "q09", "text": "Has Central Support Office actually gone ahead with reserving car parking spaces for pool vehicles?" },
+    { "id": "q10", "text": "Do I need my manager's okay to go and see the mental health first aider?" },
+    { "id": "q11", "text": "Does my manager find out if I use the EAP?" },
+    { "id": "q12", "text": "Does every single supplier need their modern slavery statement checked?" },
+    { "id": "q13", "text": "Who do I actually notify internally after calling the gas emergency number?" },
+    { "id": "q14", "text": "Has the legionella control procedure actually changed, or just been reordered?" },
+    { "id": "q15", "text": "How often does the kitchen actually get a pest inspection these days?" },
+    { "id": "q16", "text": "Do we need to log a rodent sighting somewhere specific now?" },
+    { "id": "q17", "text": "Is a lone worker device still just for community visits, or does it cover anyone else now?" },
+    { "id": "q18", "text": "If someone's check-in call doesn't come through, how long before it actually gets escalated?" },
+    { "id": "q19", "text": "Quick one: how often does the kitchen get a pest inspection now, and separately, is a lone worker device still just for community visits?" },
+    { "id": "q20", "text": "Quick one: who do I notify internally after a gas leak call, and separately, has the legionella procedure actually changed?" },
+    { "id": "q21", "text": "Quick one: has Central Support Office gone ahead with reserving car parking spaces for pool vehicles, and separately, is Central Support Office actually closed for the early May bank holiday?" },
+    { "id": "q22", "text": "Under the Phishing Awareness Guidance, is it ever okay to just reply to the same email to double check an urgent request?" }
+  ]
+}
