@@ -43,7 +43,7 @@ class R28R06GovernedTest(unittest.TestCase):
             if stage == "confirmation_remaining":
                 self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][4:])
             self.assertEqual(
-                "f90f731128852e96516ab7fea05109ef95488c0d7b9441c2d31933a0fe1003d0",
+                "2a9dab579a9dbeca121780d221f9b0535f2246229587d0f2dcbe1a09780f5277",
                 identities["runtime_source_aggregate"],
             )
 
@@ -51,11 +51,14 @@ class R28R06GovernedTest(unittest.TestCase):
         execution, _, identities = governed.verify_inputs("regression")
         accepted = governed.json_file(self.authorization)
         accepted.update(identities)
+        accepted["execution_commit"] = governed.git("rev-parse", "HEAD")
         original_git = governed.git
 
         def clean_runtime_git(*args, **kwargs):
             if args[:2] == ("diff", "--name-only"):
                 return ""
+            if args == ("rev-parse", "origin/main"):
+                return original_git("rev-parse", "HEAD")
             return original_git(*args, **kwargs)
 
         with patch.object(governed, "git", side_effect=clean_runtime_git):
