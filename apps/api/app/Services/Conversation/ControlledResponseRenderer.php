@@ -35,6 +35,7 @@ final readonly class ControlledResponseRenderer
                 PlannerClarificationReason::EvidenceNeedsClarification => is_string($question) && trim($question) !== '' ? $question : null,
                 PlannerClarificationReason::UngroundedNeedsReference => 'I could not reliably link part of your question to what you wrote. Could you rephrase it, making any document, date or location reference explicit?',
                 PlannerClarificationReason::InvalidFactDateReference => 'Which date or month do you mean for that event or personal record?',
+                PlannerClarificationReason::UngroundedCalendarReference => 'Which date, month or period do you mean for this question?',
                 null => null,
             },
             RetrievalClarificationSource::EligibilityResolver => match (EligibilityClarificationReason::tryFrom($reason)) {

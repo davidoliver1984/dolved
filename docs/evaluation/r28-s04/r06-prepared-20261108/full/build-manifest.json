@@ -1,0 +1,8 @@
+{
+  "manifest_id": "R28-R07-FULL-148-V2",
+  "stage": "full",
+  "case_count": 148,
+  "population_file_sha256": "17e11317d9999056046115e17300c59423c08f0cb0453b636d5abda07ba104b5",
+  "selection_file_sha256": "43c64c2bc06949883ae0fcdd9c29a1abc6b8d46c190b028762dc17a7e6ecd466",
+  "execution_authorised": false
+}

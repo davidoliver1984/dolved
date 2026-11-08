@@ -10,4 +10,5 @@ enum PlannerClarificationReason: string
     case EvidenceNeedsClarification = 'evidence_needs_clarification';
     case UngroundedNeedsReference = 'ungrounded_needs_reference';
     case InvalidFactDateReference = 'invalid_fact_date_reference';
+    case UngroundedCalendarReference = 'ungrounded_calendar_reference';
 }

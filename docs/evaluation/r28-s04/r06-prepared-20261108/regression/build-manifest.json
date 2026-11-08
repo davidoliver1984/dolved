@@ -1,0 +1,8 @@
+{
+  "manifest_id": "R28-R06-REGRESSION-8-20261108-V1",
+  "stage": "regression",
+  "case_count": 8,
+  "population_file_sha256": "17e11317d9999056046115e17300c59423c08f0cb0453b636d5abda07ba104b5",
+  "selection_file_sha256": "43c64c2bc06949883ae0fcdd9c29a1abc6b8d46c190b028762dc17a7e6ecd466",
+  "execution_authorised": false
+}

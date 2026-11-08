@@ -1,0 +1,15 @@
+{
+  "manifest_id": "R28-R06-CONTINUATION-2-20261108-V1",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b01-06",
+      "variant_id": "v1",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-08",
+      "variant_id": "v1",
+      "scope": "security_test"
+    }
+  ]
+}

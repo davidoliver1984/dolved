@@ -192,13 +192,21 @@ final readonly class OrchestrateConversationRun
             $invalidFactDate = ($exception->validation['stage'] ?? null) === 'schema'
                 && preg_match('/^needs\.[0-2]\.fact_reference$/D', $exception->validation['field'] ?? '') === 1
                 && in_array($exception->validation['code'] ?? null, ['value_error', 'fact_date_precision', 'fact_date_interval_shape', 'fact_date_interval_reversed', 'fact_date_calendar'], true);
+            $calendarGroundingExhausted = $exception->attemptCount === 2
+                && $exception->validation === ['stage' => 'grounding', 'field' => 'root', 'code' => 'calendar_grounding']
+                && count($exception->validationAttempts) === 2
+                && count(array_filter($exception->validationAttempts, static fn (array $attempt): bool => ($attempt['status'] ?? null) === 'rejected'
+                    && ($attempt['validation'] ?? null) === ['stage' => 'grounding', 'field' => 'root', 'code' => 'calendar_grounding'])) === 2;
             if ($needsProfile !== null
                 && $exception->category === 'invalid_grounded_needs_plan'
                 && ! $exception->systemic
-                && ($invalidFactDate || $exception->validation === ['stage' => 'grounding', 'field' => 'root', 'code' => 'reference_grounding'])) {
+                && ($invalidFactDate || $calendarGroundingExhausted
+                    || $exception->validation === ['stage' => 'grounding', 'field' => 'root', 'code' => 'reference_grounding'])) {
                 $run->forceFill(['usage' => $failureUsage])->save();
                 $retrieval = new RetrievalResult(RetrievalOutcome::ClarificationRequired,
-                    reason: ($invalidFactDate ? PlannerClarificationReason::InvalidFactDateReference : PlannerClarificationReason::UngroundedNeedsReference)->value,
+                    reason: ($invalidFactDate ? PlannerClarificationReason::InvalidFactDateReference
+                        : ($calendarGroundingExhausted ? PlannerClarificationReason::UngroundedCalendarReference
+                            : PlannerClarificationReason::UngroundedNeedsReference))->value,
                     clarificationSource: RetrievalClarificationSource::Planner);
                 $snapshot = $this->persistRetrievalSnapshot($run, $retrieval, $evaluatedAt);
                 $this->completeControlledRetrieval($run, $retrieval, $snapshot);

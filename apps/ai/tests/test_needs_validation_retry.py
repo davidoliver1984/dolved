@@ -109,6 +109,15 @@ def test_correct_clarification_is_not_retried():
         (
             "invalid_grounded_needs_plan",
             200,
+            "grounding",
+            "calendar_grounding",
+            "root",
+            "stop",
+            2,
+        ),
+        (
+            "invalid_grounded_needs_plan",
+            200,
             "schema",
             "fact_date_precision",
             "needs.0.fact_reference",

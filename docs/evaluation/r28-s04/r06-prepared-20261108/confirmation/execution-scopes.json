@@ -1,0 +1,85 @@
+{
+  "manifest_id": "R28-R06-CONFIRMATION-16-20261108-V1",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b01-01",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-04",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-07",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-11",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-04",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-08",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-03",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-09",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-12",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-05",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-08",
+      "variant_id": "v1",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-02",
+      "variant_id": "v1",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-07",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-10",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-11",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-14",
+      "variant_id": "v1",
+      "scope": "security_test"
+    }
+  ]
+}

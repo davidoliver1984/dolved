@@ -1,0 +1,46 @@
+{
+  "schema_version": "r28-r06-selection-v1",
+  "selection_id": "R28-R06-20261108-V1",
+  "selected_before_live_dispatch": true,
+  "population_identity": "dolved-care-v4-evaluation-population-v2",
+  "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+  "population_file_sha256": "17e11317d9999056046115e17300c59423c08f0cb0453b636d5abda07ba104b5",
+  "selection_rule": "Fixed case and variant IDs only; questions are copied byte-for-byte from the frozen population into a separate questions-only execution input. Expectations never enter execution.",
+  "regression": {
+    "manifest_id": "R28-R06-REGRESSION-8-20261108-V1",
+    "exposure": "Previously selected or inspected engineering cases; regression evidence, not hold-out confirmation.",
+    "items": [
+      {"case_id": "v4.case.corrected-b06-05", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b06-05", "variant_id": "v2", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b03-06", "variant_id": "v2", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b02-01", "variant_id": "v2", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b06-02", "variant_id": "v2", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b02-02", "variant_id": "v1", "scope": "foreign_tenant"},
+      {"case_id": "v4.case.corrected-b01-06", "variant_id": "v1", "scope": "security_test"},
+      {"case_id": "v4.case.corrected-b03-08", "variant_id": "v1", "scope": "security_test"}
+    ]
+  },
+  "confirmation": {
+    "manifest_id": "R28-R06-CONFIRMATION-16-20261108-V1",
+    "exposure": "No exact case ID found in surviving R01P/repair-baseline references at selection time. The population and its expected answers are repository-readable engineering material, not a statistically independent hold-out.",
+    "items": [
+      {"case_id": "v4.case.corrected-b01-01", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b01-04", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b01-07", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b01-11", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b02-04", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b02-08", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b03-03", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b03-09", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b03-12", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b04-05", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b04-08", "variant_id": "v1", "scope": "security_test"},
+      {"case_id": "v4.case.corrected-b05-02", "variant_id": "v1", "scope": "foreign_tenant"},
+      {"case_id": "v4.case.corrected-b05-07", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b05-10", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b06-11", "variant_id": "v1", "scope": "primary"},
+      {"case_id": "v4.case.corrected-b06-14", "variant_id": "v1", "scope": "security_test"}
+    ]
+  },
+  "known_coverage_gap": "The frozen population contains one-turn utterances; it cannot demonstrate a multi-turn conversational clarification-and-reply journey by itself. R05.7's conversational-resolution requirement therefore needs a separately declared supplemental test, not an invented frozen-population case."
+}

@@ -1,0 +1,45 @@
+{
+  "manifest_id": "R28-R06-REGRESSION-8-20261108-V1",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-06",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-01",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-02",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-02",
+      "variant_id": "v1",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-06",
+      "variant_id": "v1",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-08",
+      "variant_id": "v1",
+      "scope": "security_test"
+    }
+  ]
+}

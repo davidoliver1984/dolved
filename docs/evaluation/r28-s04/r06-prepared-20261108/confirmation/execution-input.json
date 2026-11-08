@@ -1,0 +1,88 @@
+{
+  "schema_version": "r28-production-path-input-v1",
+  "subset_id": "R28-R06-CONFIRMATION-16-20261108-V1",
+  "population_id": "dolved-care-v4-evaluation-population-v2",
+  "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b01-01",
+      "variant_id": "v1",
+      "utterance": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-04",
+      "variant_id": "v1",
+      "utterance": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-07",
+      "variant_id": "v1",
+      "utterance": "How did both the starter and annual replacement uniform allowances change in April 2026?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-11",
+      "variant_id": "v1",
+      "utterance": "How much outstanding holiday pay will be included in my final payslip if I leave this month?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-04",
+      "variant_id": "v1",
+      "utterance": "At the home, do we evacuate residents in stages or move everyone out at once when the fire alarm sounds?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-08",
+      "variant_id": "v1",
+      "utterance": "I work at HQ and have changed desks; when do I need to redo my DSE assesment?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-03",
+      "variant_id": "v1",
+      "utterance": "A serious complaint has just landed—how fast do I actually need to get it to the Quality Lead now, and what was the old window?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-09",
+      "variant_id": "v1",
+      "utterance": "What overtime deal applied when I did that bank-holiday shift?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-12",
+      "variant_id": "v1",
+      "utterance": "How did our religious and cultural dress accommodation change from 2023 to the current rules?"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-05",
+      "variant_id": "v1",
+      "utterance": "For a borderline meds error on 3 September 2026, which severity tier should I record and how must that classification be kept?"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-08",
+      "variant_id": "v1",
+      "utterance": "Do I need the registered manager's agreement before changing a day-team shift that has already been published?"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-02",
+      "variant_id": "v1",
+      "utterance": "What internal contact reference should I use to reach our Data Protection Officer?"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-07",
+      "variant_id": "v1",
+      "utterance": "The meds fridge has packed up—who must I call now, and what extra call was added in April 2026?"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-10",
+      "variant_id": "v1",
+      "utterance": "Does Alderbridge offer language classes to employees who want to improve their English or learn another language?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-11",
+      "variant_id": "v1",
+      "utterance": "At Oakfield outreach on 1 July 2026, when did a key safe need reviewing and what had to happen when it was no longer needed?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-14",
+      "variant_id": "v1",
+      "utterance": "Does this record confirm that the listed staff completed their manual handlng refresher?"
+    }
+  ]
+}

@@ -1,0 +1,745 @@
+{
+  "manifest_id": "R28-R07-FULL-148-V2",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b01-01",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-01",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-02",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-02",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-03",
+      "variant_id": "v1",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-03",
+      "variant_id": "v2",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-04",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-04",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-05",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-05",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-06",
+      "variant_id": "v1",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-06",
+      "variant_id": "v2",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-07",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-07",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-08",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-08",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-10",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-10",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-11",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-11",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-12",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-12",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-01",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-01",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-02",
+      "variant_id": "v1",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-02",
+      "variant_id": "v2",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-03",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-03",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-04",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-04",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-05",
+      "variant_id": "v1",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-05",
+      "variant_id": "v2",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-06",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-06",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-07",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-07",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-08",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-08",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-09",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-09",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-10",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-10",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-11",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-11",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-12",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-12",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-01",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-01",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-02",
+      "variant_id": "v1",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-02",
+      "variant_id": "v2",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-03",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-03",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-04",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-04",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-05",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-05",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-06",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-06",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-07",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-07",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-08",
+      "variant_id": "v1",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-08",
+      "variant_id": "v2",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-09",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-09",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-10",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-10",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-11",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-11",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-12",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-12",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-01",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-01",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-02",
+      "variant_id": "v1",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-02",
+      "variant_id": "v2",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-03",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-03",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-04",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-04",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-05",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-05",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-06",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-06",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-07",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-07",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-08",
+      "variant_id": "v1",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-08",
+      "variant_id": "v2",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-09",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-09",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-10",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-10",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-11",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-11",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-12",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-12",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-01",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-01",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-02",
+      "variant_id": "v1",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-02",
+      "variant_id": "v2",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-03",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-03",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-04",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-04",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-05",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-05",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-06",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-06",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-07",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-07",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-08",
+      "variant_id": "v1",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-08",
+      "variant_id": "v2",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-09",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-09",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-10",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-10",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-11",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-11",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-12",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-12",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-01",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-01",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-02",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-02",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-03",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-03",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-04",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-04",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-07",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-07",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-08",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-08",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-09",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-09",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-10",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-10",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-11",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-11",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-12",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-12",
+      "variant_id": "v2",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-13",
+      "variant_id": "v1",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-13",
+      "variant_id": "v2",
+      "scope": "foreign_tenant"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-14",
+      "variant_id": "v1",
+      "scope": "security_test"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-14",
+      "variant_id": "v2",
+      "scope": "security_test"
+    }
+  ]
+}

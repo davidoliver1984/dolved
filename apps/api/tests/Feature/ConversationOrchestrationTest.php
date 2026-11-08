@@ -194,6 +194,56 @@ class ConversationOrchestrationTest extends TestCase
         return $cases;
     }
 
+    #[DataProvider('calendarGroundingFailureScenarios')]
+    public function test_only_two_exhausted_calendar_grounding_rejections_become_a_controlled_clarification(array $codes, bool $clarifies): void
+    {
+        Queue::fake();
+        [$user, $workspace] = $this->workspaceFixture();
+        config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
+        $attempts = array_map(static fn (string $code): array => [
+            'status' => 'rejected', 'request_count' => 1, 'retry_count' => 0,
+            'input_tokens' => 120, 'output_tokens' => 90, 'latency_ms' => 1,
+            'validation' => ['stage' => 'grounding', 'field' => 'root', 'code' => $code],
+        ], $codes);
+        Http::preventStrayRequests();
+        Http::fake(fn () => Http::response(['detail' => [
+            'code' => 'retrieval_planning_failed', 'category' => 'invalid_grounded_needs_plan',
+            'provider_status' => 200, 'attempt_count' => count($attempts), 'systemic' => false,
+            'validation' => end($attempts)['validation'], 'validation_attempts' => $attempts,
+            'completion' => ['finish_reason' => 'stop', 'input_tokens' => 120,
+                'output_tokens' => 90, 'reasoning_tokens' => 50],
+        ]], 503));
+        $conversation = app(CreateConversation::class)->handle($workspace, $user);
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user,
+            'How much holiday pay will I receive if I leave this month?', (string) Str::uuid());
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+
+        if ($clarifies) {
+            $this->assertSame(GenerationRunStatus::ClarificationRequired, $run->status);
+            $this->assertSame('ungrounded_calendar_reference', $run->retrievalOutcomeSnapshot->clarification_reason);
+            $this->assertSame('Which date, month or period do you mean for this question?', $run->assistantMessage->display_text);
+            $this->assertNull($run->failure_code);
+        } else {
+            $this->assertSame(GenerationRunStatus::Failed, $run->status);
+            $this->assertSame('retrieval_failed', $run->failure_code->value);
+            $this->assertNull($run->assistantMessage);
+        }
+        $this->assertCount(count($attempts), $run->usage['planner_failure']['validation_attempts']);
+        Http::assertSentCount(1);
+        $this->assertDatabaseCount('generated_answers', 0);
+    }
+
+    public static function calendarGroundingFailureScenarios(): array
+    {
+        return [
+            'exhausted calendar grounding' => [['calendar_grounding', 'calendar_grounding'], true],
+            'single calendar rejection' => [['calendar_grounding'], false],
+            'other exhausted validation' => [['binding_coverage', 'binding_coverage'], false],
+            'mixed exhausted validation' => [['binding_coverage', 'calendar_grounding'], false],
+        ];
+    }
+
     public function test_submission_is_workspace_scoped_idempotent_and_allows_only_one_active_run(): void
     {
         Queue::fake();

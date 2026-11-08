@@ -1,0 +1,48 @@
+{
+  "schema_version": "r28-production-path-input-v1",
+  "subset_id": "R28-R06-REGRESSION-8-20261108-V1",
+  "population_id": "dolved-care-v4-evaluation-population-v2",
+  "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v1",
+      "utterance": "I'm updating the ROPA for employee records. What did the old Legal basis field become, and what should I record there for employment data?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v2",
+      "utterance": "On the current ROPA, which field replaced Legal basis, and which lawful bases does the data-protection policy give for staff records?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-06",
+      "variant_id": "v2",
+      "utterance": "On 1 June 2026, could a Meadow Court care worker move from five standard days to the same contracted hours over four longer days?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-01",
+      "variant_id": "v2",
+      "utterance": "If we discover a completely new workplace hazard, what is the immediate management response and what related documentation has to be kept?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-02",
+      "variant_id": "v2",
+      "utterance": "How did the order of DNACPR, symptom management and advance care planning change in June 2026, and did their underlying requirements change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-02",
+      "variant_id": "v1",
+      "utterance": "Which internal reference prefix should I use when an absence review becomes a formal case?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-06",
+      "variant_id": "v1",
+      "utterance": "When will the approved mileage claim from last month be paid?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-08",
+      "variant_id": "v1",
+      "utterance": "What should I write on the drug chart if a dose is withheld and I've told the GP?"
+    }
+  ]
+}
