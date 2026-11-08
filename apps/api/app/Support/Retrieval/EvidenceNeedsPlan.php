@@ -27,7 +27,7 @@ final readonly class EvidenceNeedsPlan
         $identity = ClassifierLineage::fromArray($lineage);
         $observation = PlannerUsage::fromArray($usage);
         if ($identity->contractSchemaVersion !== 'evidence-needs-plan-v3'
-            || $identity->promptVersion !== 'bounded-evidence-needs-v20'
+            || $identity->promptVersion !== 'bounded-evidence-needs-v21'
             || $identity->adapterVersion !== 'structured-chat-needs-v7'
             || $identity->provider !== $observation->provider
             || $identity->model !== $observation->model) {

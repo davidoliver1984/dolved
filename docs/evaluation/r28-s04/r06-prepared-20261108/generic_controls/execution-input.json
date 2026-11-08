@@ -1,0 +1,23 @@
+{
+  "schema_version": "r28-production-path-input-v1",
+  "subset_id": "R28-R06-GENERIC-CONTROLS-3-20261108-V1",
+  "population_id": "dolved-care-v4-evaluation-population-v2",
+  "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b01-01",
+      "variant_id": "v1",
+      "utterance": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-04",
+      "variant_id": "v1",
+      "utterance": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-07",
+      "variant_id": "v1",
+      "utterance": "How did both the starter and annual replacement uniform allowances change in April 2026?"
+    }
+  ]
+}

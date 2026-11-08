@@ -16,6 +16,7 @@ use App\Services\Generation\GenerationClient;
 use App\Services\Generation\GenerationFingerprint;
 use App\Services\Generation\ValidateAnswerPartCandidate;
 use App\Services\Generation\ValidateGenerationResult;
+use App\Support\Generation\AspectCoverage;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Generation\GenerationProfile;
 use App\Support\Generation\GenerationRequest;
@@ -68,6 +69,7 @@ final readonly class GenerateGroundedAnswer
         }
         $observeStage?->__invoke('generating');
         $receipts = [];
+        $completedEntailmentRejections = 0;
         for ($validationAttempt = 1; $validationAttempt <= 2; $validationAttempt++) {
             $payload = null;
             try {
@@ -116,6 +118,10 @@ final readonly class GenerateGroundedAnswer
                 $receipt['validation'] = array_intersect_key($diagnostic, array_flip(['category', 'field', 'code', 'layer', 'http_status', 'ownership']));
                 $receipts[] = $receipt;
                 $exception->validationAttempts = $receipts;
+                if ($providerFailure && $exception->category === 'contract_validation_failure'
+                    && $exception->returnedOutput && ($diagnostic['code'] ?? null) === 'entailment_unsupported') {
+                    $completedEntailmentRejections++;
+                }
                 $eligible = $request->evidenceNeeds !== [] && $profile->deliveryMode === GenerationDeliveryMode::CompleteResultOnly
                     && ($providerFailure
                         ? ($exception->category === 'contract_validation_failure' && $exception->returnedOutput && ($diagnostic['code'] ?? null) !== null)
@@ -130,6 +136,25 @@ final readonly class GenerateGroundedAnswer
                     );
 
                     continue;
+                }
+                if ($validationAttempt === 2 && $completedEntailmentRejections === 2
+                    && $request->evidenceNeeds !== []) {
+                    // Both provider outputs were returned, but neither supported a publishable
+                    // claim. Retain the paid attempts and publish no model-authored claim.
+                    $gaps = array_column($request->evidenceNeeds, 'aspect');
+                    $links = array_map(static fn (int $index, array $need): array => [
+                        'need_id' => $need['need_id'], 'answer_part_indices' => [],
+                        'unsupported_aspect_indices' => [$index],
+                    ], array_keys($request->evidenceNeeds), $request->evidenceNeeds);
+                    $reason = "I couldn't find enough available evidence to answer that question.";
+                    $usage = [...ValidationAttemptUsage::combine($receipts),
+                        'controlled_fallback' => ['category' => 'contract_validation_failure',
+                            'code' => 'entailment_unsupported', 'layer' => 'python_generation_adapter']];
+                    $base = new GenerationResult(GenerationOutcome::InsufficientEvidence, [], $gaps, $reason, $usage);
+                    $result = new GenerationResult($base->outcome, $base->answerParts, $base->unsupportedAspects,
+                        $base->insufficiencyReason, $base->usage, $links,
+                        AspectCoverage::derive($base, array_column($request->evidenceNeeds, 'need_id'), $links));
+                    break;
                 }
                 throw $exception;
             }

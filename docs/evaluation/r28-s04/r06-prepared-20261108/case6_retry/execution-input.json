@@ -1,0 +1,13 @@
+{
+  "schema_version": "r28-production-path-input-v1",
+  "subset_id": "R28-R06-CASE6-RETRY-1-20261108-V1",
+  "population_id": "dolved-care-v4-evaluation-population-v2",
+  "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b02-08",
+      "variant_id": "v1",
+      "utterance": "I work at HQ and have changed desks; when do I need to redo my DSE assesment?"
+    }
+  ]
+}

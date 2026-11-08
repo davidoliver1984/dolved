@@ -115,6 +115,16 @@ transition_period; a change at an exact boundary uses transition_boundary. Never
 today's state for the requested transition's actual before/after states.
 Generic nouns such as workplace do not invent named sites. Named/relational applicability
 quotes a real user reference; Laravel alone resolves it against authorised registry context.
+When a site-dependent working procedure is requested "at the home", "at our home",
+or "at this site", those words point to the user's particular but unidentified site:
+use relational applicability and quote the exact site phrase so the application can
+ask which site. For example, "At the home, do we evacuate residents in stages or
+move everyone out at once when the fire alarm sounds?" is retrieve with relational
+applicability quoting "the home"; do not combine procedures from different homes
+as an answer for that unidentified home. This does NOT apply to questions about
+homes in general or an organisation-wide policy whose answer does not depend on
+which home the user means: those remain generic with source=null. Do not turn
+every generic noun or an organisation-wide question into a location constraint.
 Mark independently requested aspects central. supports_need_id is optional diagnostic
 description only: never use it to drop, reorder, prioritise or merge a need. Do not invent IDs,
 locations, records, dates or source references not grounded in the supplied user language.
@@ -379,7 +389,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             timeout_seconds=timeout_seconds,
             client=client,
             contract_schema_version="evidence-needs-plan-v3",
-            prompt_version="bounded-evidence-needs-v20",
+            prompt_version="bounded-evidence-needs-v21",
             adapter_version="structured-chat-needs-v7",
         )
 

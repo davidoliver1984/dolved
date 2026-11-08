@@ -41,6 +41,89 @@ def test_operation_boundary_matrix_is_broad_and_prompt_states_semantic_division(
     # This checks instruction and fixture coverage, not model classification quality.
 
 
+@pytest.mark.parametrize(
+    ("question", "kind", "quote"),
+    [
+        (
+            "At the home, do we evacuate residents in stages or move everyone out at once when the fire alarm sounds?",
+            "relational",
+            "the home",
+        ),
+        (
+            "At our home, which fire evacuation procedure should staff follow?",
+            "relational",
+            "our home",
+        ),
+        (
+            "What is the organisation-wide sickness policy for employees?",
+            "generic",
+            None,
+        ),
+        ("What is the general fire-safety policy for all care homes?", "generic", None),
+        (
+            "Under Thornfield's own Fire Safety Policy, is the Cinderhill House manager the Responsible Person there?",
+            "named",
+            "Cinderhill House",
+        ),
+        (
+            "Is the Cinderhill House manager definitely our Responsible Person for fire safety?",
+            "named",
+            "Cinderhill House",
+        ),
+    ],
+)
+def test_deictic_home_and_generic_policy_shapes_remain_distinct_in_real_contract(
+    question, kind, quote
+):
+    from app.retrieval.needs_planner import PROMPT
+
+    catalogue = families(1)
+    plan = deepcopy(EXAMPLES[0]["plan"])
+    plan["needs"] = plan["needs"][:1]
+    need = plan["needs"][0]
+    need.update(
+        need_id="n1",
+        aspect=question,
+        question_span={"turn_id": "u1", "quote": question},
+        operation="retrieve",
+        scope_question=None,
+        claim_under_test=None,
+        authority={
+            "kind": "current",
+            "value": None,
+            "precision": "none",
+            "source": None,
+        },
+        applicability={
+            "kind": kind,
+            "source": None if quote is None else {"turn_id": "u1", "quote": quote},
+        },
+        supports_need_id=None,
+    )
+    plan["bindings"] = [
+        {
+            "need_id": "n1",
+            "subject_status": "topic",
+            "family_ids": [],
+            "ownership": "authorised_workspace",
+            "ownership_source": None,
+        }
+    ]
+    jsonschema.validate(plan, provider_needs_schema(catalogue))
+    calls = []
+    result = adapter(plan, calls).plan_needs(
+        (UserTurn(turn_id="u1", text=question),),
+        evaluated_at="2026-11-08T12:00:00Z",
+        catalogue=catalogue,
+    )
+    assert len(calls) == 1
+    assert result.plan.needs[0].applicability.kind == kind
+    assert (result.plan.needs[0].applicability.source.quote if quote else None) == quote
+    assert '"at the home"' in PROMPT
+    assert "organisation-wide policy" in PROMPT
+    # Fake output proves schema/transport/grounding only, not live model selection.
+
+
 def families(count):
     return tuple(
         CatalogueFamily(family_id=UUID(int=i + 1), title=f"Synthetic family {i}")

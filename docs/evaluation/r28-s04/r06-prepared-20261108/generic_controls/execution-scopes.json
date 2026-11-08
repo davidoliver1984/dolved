@@ -1,0 +1,20 @@
+{
+  "manifest_id": "R28-R06-GENERIC-CONTROLS-3-20261108-V1",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b01-01",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-04",
+      "variant_id": "v1",
+      "scope": "primary"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-07",
+      "variant_id": "v1",
+      "scope": "primary"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "manifest_id": "R28-R06-CASE5-RETRY-1-20261108-V1",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b02-04",
+      "variant_id": "v1",
+      "scope": "primary"
+    }
+  ]
+}

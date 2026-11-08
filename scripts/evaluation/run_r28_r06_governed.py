@@ -32,7 +32,8 @@ INJECTION_WORKSPACE = "4db6ffe2-6974-415d-8fd3-002b8fb05d05"
 INJECTION_USER = "6972994f-c594-42ef-a747-39d01ae24fc3"
 SCHEMA = "r28-r06-production-authorization-v1"
 STAGES = {"regression": 8, "confirmation": 16, "continuation": 2,
-          "confirmation_retry": 1, "confirmation_remaining": 12}
+          "confirmation_retry": 1, "confirmation_remaining": 12,
+          "case6_retry": 1, "case5_retry": 1, "generic_controls": 3}
 COMPOSE = [
     "docker",
     "compose",
@@ -122,6 +123,14 @@ def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str,
             "manifest_id": "R28-R06-CONFIRMATION-REMAINING-12-20261108-V1",
             "items": selection["confirmation"]["items"][4:],
         }
+    elif stage in ("case6_retry", "case5_retry", "generic_controls"):
+        start, stop, manifest_id = {
+            "case6_retry": (5, 6, "R28-R06-CASE6-RETRY-1-20261108-V1"),
+            "case5_retry": (4, 5, "R28-R06-CASE5-RETRY-1-20261108-V1"),
+            "generic_controls": (0, 3, "R28-R06-GENERIC-CONTROLS-3-20261108-V1"),
+        }[stage]
+        manifest = {"manifest_id": manifest_id,
+                    "items": selection["confirmation"]["items"][start:stop]}
     else:
         manifest = selection[stage]
     if (
@@ -201,7 +210,7 @@ def verify_authorization(
     if (
         authority["schema_version"] != SCHEMA
         or authority["authorised"] is not True
-        or authority["selective_rerun_authorised"] is not (stage in {"continuation", "confirmation_retry"})
+        or authority["selective_rerun_authorised"] is not (stage in {"continuation", "confirmation_retry", "case6_retry", "case5_retry", "generic_controls"})
         or authority["approved_by"] != "David"
         or authority["stage"] != stage
         or authority["manifest_id"] != manifest_id

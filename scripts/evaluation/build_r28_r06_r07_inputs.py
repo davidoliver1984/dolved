@@ -33,7 +33,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--stage",
-        choices=("regression", "confirmation", "continuation", "confirmation_retry", "confirmation_remaining", "full"),
+        choices=("regression", "confirmation", "continuation", "confirmation_retry", "confirmation_remaining", "case6_retry", "case5_retry", "generic_controls", "full"),
         required=True,
     )
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -80,6 +80,14 @@ def main() -> None:
         selected = selection["confirmation"]["items"][4:]
         manifest_id = "R28-R06-CONFIRMATION-REMAINING-12-20261108-V1"
         expected_count = 12
+    elif args.stage in ("case6_retry", "case5_retry", "generic_controls"):
+        start, stop, manifest_id = {
+            "case6_retry": (5, 6, "R28-R06-CASE6-RETRY-1-20261108-V1"),
+            "case5_retry": (4, 5, "R28-R06-CASE5-RETRY-1-20261108-V1"),
+            "generic_controls": (0, 3, "R28-R06-GENERIC-CONTROLS-3-20261108-V1"),
+        }[args.stage]
+        selected = selection["confirmation"]["items"][start:stop]
+        expected_count = stop - start
     else:
         block = selection[args.stage]
         selected = block["items"]

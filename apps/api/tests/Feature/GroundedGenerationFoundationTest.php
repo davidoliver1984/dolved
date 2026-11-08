@@ -181,6 +181,87 @@ class GroundedGenerationFoundationTest extends TestCase
             ['invalid_then_transport', 2], ['invalid_then_replay', 2], ['transport', 1], ['insufficient', 1]];
     }
 
+    public static function exhaustedEntailmentScenarios(): array
+    {
+        return [['twice_unsupported'], ['recovered'], ['provider_failure'], ['other_validation']];
+    }
+
+    #[DataProvider('exhaustedEntailmentScenarios')]
+    public function test_exhausted_entailment_alone_degrades_to_a_cited_claim_free_outcome(string $scenario): void
+    {
+        [$base, $chunk] = $this->assemblyFixture();
+        $examples = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/examples.json'), true, flags: JSON_THROW_ON_ERROR);
+        $need = $examples[0]['plan']['needs'][1];
+        $need['need_id'] = 'n1';
+        unset($need['supports_need_id']);
+        $need += ['retrieval_outcome' => 'EVIDENCE_FOUND', 'retrieval_reason' => null,
+            'resolved_temporal_authority' => ['mode' => 'current'],
+            'resolved_applicability_location' => ['resolved_location_public_id' => null]];
+        $candidate = ['chunk_id' => $chunk->public_id, 'document_id' => $chunk->document->public_id,
+            'document_family_id' => $chunk->document->family->public_id, 'chunk_text' => $chunk->text,
+            'side' => 'primary', 'need_id' => 'n1'];
+        $input = new GenerationAssemblyInput($base->question,
+            new RetrievalResult(RetrievalOutcome::EvidenceFound, [$candidate], evidenceNeeds: [$need]),
+            [], [], $base->authorisedScope, []);
+        $calls = 0;
+        Http::preventStrayRequests();
+        Http::fake(function ($sent) use (&$calls, $scenario) {
+            $calls++;
+            $requestId = $sent->data()['request_id'];
+            if ($scenario === 'provider_failure' && $calls === 2) {
+                return Http::response(['contract_version' => 2, 'request_id' => $requestId,
+                    'status' => 'provider_error', 'error' => ['category' => 'transport_failure',
+                        'provider' => 'openai', 'model' => 'synthetic', 'http_status' => null,
+                        'attempt_count' => 1, 'latency_ms' => 10, 'returned_output' => false]]);
+            }
+            if ($scenario === 'recovered' && $calls === 2) {
+                return Http::response(['contract_version' => 2, 'request_id' => $requestId, 'status' => 'completed',
+                    'result' => ['contract_version' => 3, 'outcome' => 'answered',
+                        'answer_parts' => [['text' => 'Supported fictional statement.', 'evidence_ids' => ['ev-01']]],
+                        'unsupported_aspects' => [], 'insufficiency_reason' => null,
+                        'usage' => ['request_count' => 1, 'retry_count' => 0, 'input_tokens' => 100,
+                            'output_tokens' => 20, 'cached_input_tokens' => 0, 'latency_ms' => 10, 'cost_usd' => 0.001],
+                        'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
+                        'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]]]]);
+            }
+            $code = $scenario === 'other_validation' && $calls === 2 ? 'detached_polarity' : 'entailment_unsupported';
+
+            return Http::response(['contract_version' => 2, 'request_id' => $requestId,
+                'status' => 'provider_error', 'error' => ['category' => 'contract_validation_failure',
+                    'provider' => 'openai', 'model' => 'synthetic', 'http_status' => null,
+                    'attempt_count' => 1, 'latency_ms' => 10, 'returned_output' => true,
+                    'validation' => ['field' => 'answer_parts.text', 'code' => $code],
+                    'usage' => ['request_count' => 2, 'retry_count' => 0, 'input_tokens' => 100,
+                        'output_tokens' => 20, 'cached_input_tokens' => 0, 'latency_ms' => 10, 'cost_usd' => 0.001]]]);
+        });
+        if (in_array($scenario, ['provider_failure', 'other_validation'], true)) {
+            try {
+                app(GenerateGroundedAnswer::class)->prepare($input, app(GenerationProfileFactory::class)->configuredNeeds());
+                $this->fail('Expected the original provider error to remain terminal.');
+            } catch (GenerationProviderException $exception) {
+                $this->assertSame($scenario === 'provider_failure' ? 'transport_failure' : 'contract_validation_failure', $exception->category);
+            }
+        } else {
+            $prepared = app(GenerateGroundedAnswer::class)->prepare($input, app(GenerationProfileFactory::class)->configuredNeeds());
+            $this->assertSame($scenario === 'recovered' ? GenerationOutcome::Answered : GenerationOutcome::InsufficientEvidence,
+                $prepared->result->outcome);
+            if ($scenario === 'twice_unsupported') {
+                $this->assertSame([], $prepared->result->answerParts);
+                $this->assertSame(['n1' => 'unsupported'], $prepared->result->aspectResults);
+                $this->assertSame(4, $prepared->result->usage['request_count']);
+                $this->assertSame(0.002, $prepared->result->usage['cost_usd']);
+                $this->assertSame('entailment_unsupported', $prepared->result->usage['controlled_fallback']['code']);
+                $answer = app(PersistGeneratedAnswer::class)->handle($input->authorisedScope,
+                    $input->question, $prepared->correlationId, $prepared->request,
+                    $prepared->result, $prepared->fingerprint);
+                $this->assertSame(GenerationOutcome::InsufficientEvidence, $answer->outcome);
+                $this->assertSame([], $answer->answerParts->all());
+                $this->assertNotEmpty($answer->insufficiency_reason);
+            }
+        }
+        $this->assertSame(2, $calls);
+    }
+
     #[DataProvider('validationRetryScenarios')]
     public function test_bounded_validation_retry_refreshes_only_identity_and_retains_usage(string $scenario, int $expected): void
     {

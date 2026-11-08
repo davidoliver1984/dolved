@@ -206,7 +206,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $data = $mutate($data);
         }
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v3',
-            'prompt_version' => 'bounded-evidence-needs-v20', 'adapter_version' => 'structured-chat-needs-v7'];
+            'prompt_version' => 'bounded-evidence-needs-v21', 'adapter_version' => 'structured-chat-needs-v7'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
@@ -852,6 +852,45 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertStringContainsString('Fern House', $rendered['text']);
         $this->assertStringContainsString('Fern Lodge', $rendered['text']);
         Http::assertNothingSent();
+    }
+
+    public function test_unidentified_home_reference_clarifies_while_generic_policy_question_stays_unscoped(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $this->document($workspace, $generation, '2026-01-01');
+        $question = 'At the home, do we evacuate residents in stages or move everyone out at once when the fire alarm sounds?';
+        $relational = $this->plan(4, function ($data) use ($question) {
+            $data['turns'][0]['text'] = $question;
+            $data['plan']['needs'][0]['question_span']['quote'] = $question;
+            $data['plan']['needs'][0]['aspect'] = $question;
+            $data['plan']['needs'][0]['operation'] = 'retrieve';
+            $data['plan']['needs'][0]['scope_question'] = null;
+            $data['plan']['needs'][0]['applicability'] = ['kind' => 'relational',
+                'source' => ['turn_id' => 'u1', 'quote' => 'the home']];
+
+            return $data;
+        });
+        $resolver = app(EligibilityResolver::class);
+        $blocked = $resolver->handle($scope, $relational->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-08'));
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $blocked->outcome);
+        $this->assertSame('unresolved_location_reference', $blocked->reason);
+        $rendered = (new ControlledResponseRenderer)->clarification($blocked->clarificationSource, $blocked->reason, $blocked->clarificationQuestion);
+        $this->assertStringContainsString('site or region', $rendered['text']);
+
+        $generic = $this->plan(4, function ($data) {
+            $question = 'What is the organisation-wide sickness policy for employees?';
+            $data['turns'][0]['text'] = $question;
+            $data['plan']['needs'][0]['question_span']['quote'] = $question;
+            $data['plan']['needs'][0]['aspect'] = $question;
+            $data['plan']['needs'][0]['operation'] = 'retrieve';
+            $data['plan']['needs'][0]['scope_question'] = null;
+            $data['plan']['needs'][0]['applicability'] = ['kind' => 'generic', 'source' => null];
+
+            return $data;
+        });
+        $this->assertSame([], $generic->retrievalPlan('n1')->locationReferences);
+        $this->assertSame(RetrievalOutcome::EvidenceFound,
+            $resolver->handle($scope, $generic->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-08'))->outcome);
     }
 
     public function test_bound_subject_cannot_borrow_unrelated_history_and_support_stays_available(): void
