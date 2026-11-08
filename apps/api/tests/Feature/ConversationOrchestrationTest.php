@@ -195,7 +195,7 @@ class ConversationOrchestrationTest extends TestCase
     }
 
     #[DataProvider('calendarGroundingFailureScenarios')]
-    public function test_only_two_exhausted_calendar_grounding_rejections_become_a_controlled_clarification(array $codes, bool $clarifies): void
+    public function test_only_two_exhausted_calendar_grounding_rejections_become_a_controlled_clarification(array $codes, int $providerStatus, bool $clarifies): void
     {
         Queue::fake();
         [$user, $workspace] = $this->workspaceFixture();
@@ -208,7 +208,7 @@ class ConversationOrchestrationTest extends TestCase
         Http::preventStrayRequests();
         Http::fake(fn () => Http::response(['detail' => [
             'code' => 'retrieval_planning_failed', 'category' => 'invalid_grounded_needs_plan',
-            'provider_status' => 200, 'attempt_count' => count($attempts), 'systemic' => false,
+            'provider_status' => $providerStatus, 'attempt_count' => count($attempts), 'systemic' => false,
             'validation' => end($attempts)['validation'], 'validation_attempts' => $attempts,
             'completion' => ['finish_reason' => 'stop', 'input_tokens' => 120,
                 'output_tokens' => 90, 'reasoning_tokens' => 50],
@@ -237,10 +237,11 @@ class ConversationOrchestrationTest extends TestCase
     public static function calendarGroundingFailureScenarios(): array
     {
         return [
-            'exhausted calendar grounding' => [['calendar_grounding', 'calendar_grounding'], true],
-            'single calendar rejection' => [['calendar_grounding'], false],
-            'other exhausted validation' => [['binding_coverage', 'binding_coverage'], false],
-            'mixed exhausted validation' => [['binding_coverage', 'calendar_grounding'], false],
+            'exhausted calendar grounding' => [['calendar_grounding', 'calendar_grounding'], 200, true],
+            'single calendar rejection' => [['calendar_grounding'], 200, false],
+            'other exhausted validation' => [['binding_coverage', 'binding_coverage'], 200, false],
+            'mixed exhausted validation' => [['binding_coverage', 'calendar_grounding'], 200, false],
+            'provider failure cannot become clarification' => [['calendar_grounding', 'calendar_grounding'], 503, false],
         ];
     }
 

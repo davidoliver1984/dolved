@@ -193,6 +193,7 @@ final readonly class OrchestrateConversationRun
                 && preg_match('/^needs\.[0-2]\.fact_reference$/D', $exception->validation['field'] ?? '') === 1
                 && in_array($exception->validation['code'] ?? null, ['value_error', 'fact_date_precision', 'fact_date_interval_shape', 'fact_date_interval_reversed', 'fact_date_calendar'], true);
             $calendarGroundingExhausted = $exception->attemptCount === 2
+                && $exception->providerStatus === 200
                 && $exception->validation === ['stage' => 'grounding', 'field' => 'root', 'code' => 'calendar_grounding']
                 && count($exception->validationAttempts) === 2
                 && count(array_filter($exception->validationAttempts, static fn (array $attempt): bool => ($attempt['status'] ?? null) === 'rejected'
