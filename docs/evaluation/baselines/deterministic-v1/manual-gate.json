@@ -3,7 +3,7 @@
   "experiment_id": "r22-s03-deterministic-current-hybrid",
   "decision": "ACCEPTED",
   "reviewer": "David Oliver",
-  "decided_at": "2026-08-23T08:11:15.490917Z",
-  "reason": "Explicitly accepted the exact R22-S03 candidate at repository commit 89d407612623acf08bef99d7871fad16a2f1984e as the first deterministic orchestration-regression baseline; this is not live-provider quality evidence.",
+  "decided_at": "2026-11-08T15:49:01.323138Z",
+  "reason": "David accepted the exact current-code deterministic reference candidate at commit e46d4be447fd45ee0dce70a80461c59737522ab3, profile 40fe4078a5913fe8ddd1518d7f3eb825f8bab1165580984f02a0419f705d036a. This is the small August engineering fixture (93 chunks, 42 cases), not the V4 production corpus or live-provider quality evidence.",
   "waiver_expires_at": null
 }
