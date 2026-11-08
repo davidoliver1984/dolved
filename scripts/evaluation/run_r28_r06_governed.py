@@ -33,6 +33,8 @@ INJECTION_USER = "6972994f-c594-42ef-a747-39d01ae24fc3"
 SCHEMA = "r28-r06-production-authorization-v1"
 STAGES = {"regression": 8, "confirmation": 16, "continuation": 2,
           "confirmation_retry": 1, "confirmation_remaining": 12,
+          "confirmation_tail": 10,
+          "case8_retry": 1, "confirmation_after_case8": 8,
           "case6_retry": 1, "case5_retry": 1, "generic_controls": 3}
 COMPOSE = [
     "docker",
@@ -123,6 +125,21 @@ def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str,
             "manifest_id": "R28-R06-CONFIRMATION-REMAINING-12-20261108-V1",
             "items": selection["confirmation"]["items"][4:],
         }
+    elif stage == "confirmation_tail":
+        manifest = {
+            "manifest_id": "R28-R06-CONFIRMATION-TAIL-10-20261108-V1",
+            "items": selection["confirmation"]["items"][6:],
+        }
+    elif stage == "case8_retry":
+        manifest = {
+            "manifest_id": "R28-R06-CASE8-RETRY-1-20261108-V1",
+            "items": selection["confirmation"]["items"][7:8],
+        }
+    elif stage == "confirmation_after_case8":
+        manifest = {
+            "manifest_id": "R28-R06-CONFIRMATION-CASES-9-16-20261108-V1",
+            "items": selection["confirmation"]["items"][8:],
+        }
     elif stage in ("case6_retry", "case5_retry", "generic_controls"):
         start, stop, manifest_id = {
             "case6_retry": (5, 6, "R28-R06-CASE6-RETRY-1-20261108-V1"),
@@ -210,7 +227,7 @@ def verify_authorization(
     if (
         authority["schema_version"] != SCHEMA
         or authority["authorised"] is not True
-        or authority["selective_rerun_authorised"] is not (stage in {"continuation", "confirmation_retry", "case6_retry", "case5_retry", "generic_controls"})
+        or authority["selective_rerun_authorised"] is not (stage in {"continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls"})
         or authority["approved_by"] != "David"
         or authority["stage"] != stage
         or authority["manifest_id"] != manifest_id
@@ -507,6 +524,18 @@ def dispatch(
             ),
             flush=True,
         )
+        if stage in {"confirmation_tail", "confirmation_after_case8"} and index + 1 < len(execution["items"]):
+            try:
+                decision = input(f"REVIEW_GATE {index + 1}/{len(execution['items'])}: type continue {index + 1} after inspecting the case, or stop: ").strip()
+            except EOFError:
+                decision = "stop"
+            if decision != f"continue {index + 1}":
+                inventory = "".join(
+                    f"{sha256(path)}  {path.relative_to(run_dir)}\n"
+                    for path in sorted(run_dir.rglob("*.json"))
+                )
+                (run_dir / "checksums.sha256").write_text(inventory)
+                raise RuntimeError(f"review gate stopped after case {index + 1}; no further dispatch")
 
     if runtime_aggregate() != identities["runtime_source_aggregate"]:
         raise RuntimeError("runtime source changed after dispatch")

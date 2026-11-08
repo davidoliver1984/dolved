@@ -66,6 +66,17 @@ reference. A clarification reply may ground a reference in an earlier supplied u
 Current authority has null value/source and precision none. Distinguish dates of events or
 personal facts (fact_reference) from dates selecting governing document authority. Do not
 turn 'our training' or grammatical past tense into a historical authority selection.
+But when the user asks which rule applied to THEIR specific past event or state
+('when I did that bank-holiday shift', 'when I started', 'back when I worked there')
+and supplies no date, period, named version or other grounded selector sufficient
+to choose the governing version, do not answer from current authority. Return
+decision=clarify, no needs or bindings, and ask which date or period the event
+occurred in. Do not invent a date from evaluated_at or assume today's rules held
+then. This is about the rule governing an unidentified past event, not ordinary
+past tense in a question about a completed memo or audit, nor a current-state
+question. An explicit date/period and an old-versus-current comparison such as
+'what was the old window?' retain their existing authority paths; do not ask
+for a date merely because an already-grounded comparison is relative.
 Use compare only for document/policy changes, not a contrast of two current policy values.
 Use scope_enquiry for a deliberate question about whether a particular policy covers a
 named location, including a question whose requested requirement depends on that policy's
@@ -389,7 +400,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             timeout_seconds=timeout_seconds,
             client=client,
             contract_schema_version="evidence-needs-plan-v3",
-            prompt_version="bounded-evidence-needs-v21",
+            prompt_version="bounded-evidence-needs-v22",
             adapter_version="structured-chat-needs-v7",
         )
 

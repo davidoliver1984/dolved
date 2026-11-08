@@ -1,7 +1,7 @@
 # Evidence needs plan v3 — applicability scope enquiries
 
 ADR-0039 adds `scope_enquiry` to the existing retrieve/compare operation union.
-Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v21`,
+Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v22`,
 `structured-chat-needs-v7`. The existing request and signed transport purpose
 are retained. V2 historical contracts remain byte-identical; v3 is explicitly
 pinned for new needs runs by `bounded-needs-slice-v19`.

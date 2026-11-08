@@ -118,11 +118,12 @@ class ConversationOrchestrationTest extends TestCase
         Queue::fake();
         [$user, $workspace] = $this->workspaceFixture();
         config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
-        $question = str_repeat('Which version and site should be used? ', 10);
+        $utterance = 'What overtime deal applied when I did that bank-holiday shift?';
+        $question = 'What date or period was that bank-holiday shift?';
         Http::fake(function (Request $request) use ($question, $attempts) {
             $identity = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                 'contract_schema_version' => 'evidence-needs-plan-v3',
-                'prompt_version' => 'bounded-evidence-needs-v21', 'adapter_version' => 'structured-chat-needs-v7'];
+                'prompt_version' => 'bounded-evidence-needs-v22', 'adapter_version' => 'structured-chat-needs-v7'];
             $canonical = $identity;
             ksort($canonical);
 
@@ -140,7 +141,7 @@ class ConversationOrchestrationTest extends TestCase
                             'code' => 'binding_coverage', 'input' => 'PRIVATE-CONTENT']], range(1, $attempts))]]);
         });
         $conversation = app(CreateConversation::class)->handle($workspace, $user);
-        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, 'A synthetic ambiguous question', (string) Str::uuid());
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, $utterance, (string) Str::uuid());
         app(OrchestrateConversationRun::class)->handle($run->id);
         $run->refresh();
         $this->assertSame(GenerationRunStatus::ClarificationRequired, $run->status, json_encode($run->only(['failure_code', 'usage'])));
@@ -464,7 +465,7 @@ class ConversationOrchestrationTest extends TestCase
                 $this->assertSame([['turn_id' => 'user-1', 'text' => 'What does the current approved procedure require?']], $body['user_turns']);
                 $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                     'contract_schema_version' => 'evidence-needs-plan-v3',
-                    'prompt_version' => 'bounded-evidence-needs-v21', 'adapter_version' => 'structured-chat-needs-v7'];
+                    'prompt_version' => 'bounded-evidence-needs-v22', 'adapter_version' => 'structured-chat-needs-v7'];
                 ksort($lineage);
                 $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 

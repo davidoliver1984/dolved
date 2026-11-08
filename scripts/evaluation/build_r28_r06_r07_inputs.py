@@ -33,7 +33,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--stage",
-        choices=("regression", "confirmation", "continuation", "confirmation_retry", "confirmation_remaining", "case6_retry", "case5_retry", "generic_controls", "full"),
+        choices=("regression", "confirmation", "continuation", "confirmation_retry", "confirmation_remaining", "confirmation_tail", "case8_retry", "confirmation_after_case8", "case6_retry", "case5_retry", "generic_controls", "full"),
         required=True,
     )
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -80,6 +80,18 @@ def main() -> None:
         selected = selection["confirmation"]["items"][4:]
         manifest_id = "R28-R06-CONFIRMATION-REMAINING-12-20261108-V1"
         expected_count = 12
+    elif args.stage == "confirmation_tail":
+        selected = selection["confirmation"]["items"][6:]
+        manifest_id = "R28-R06-CONFIRMATION-TAIL-10-20261108-V1"
+        expected_count = 10
+    elif args.stage == "case8_retry":
+        selected = selection["confirmation"]["items"][7:8]
+        manifest_id = "R28-R06-CASE8-RETRY-1-20261108-V1"
+        expected_count = 1
+    elif args.stage == "confirmation_after_case8":
+        selected = selection["confirmation"]["items"][8:]
+        manifest_id = "R28-R06-CONFIRMATION-CASES-9-16-20261108-V1"
+        expected_count = 8
     elif args.stage in ("case6_retry", "case5_retry", "generic_controls"):
         start, stop, manifest_id = {
             "case6_retry": (5, 6, "R28-R06-CASE6-RETRY-1-20261108-V1"),

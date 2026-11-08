@@ -48,6 +48,96 @@ def test_prompt_distinguishes_requested_tasks_from_source_count_and_named_bindin
     # This proves instruction presence, not model judgement/generalisation.
 
 
+def test_undated_past_event_clarification_contract_and_authority_controls():
+    from app.retrieval.needs_planner import PROMPT
+
+    assert "when I did that bank-holiday shift" in PROMPT
+    assert "Return\ndecision=clarify, no needs or bindings" in PROMPT
+    assert "An explicit date/period and an old-versus-current comparison" in PROMPT
+
+    question = "What overtime deal applied when I did that bank-holiday shift?"
+    sample = deepcopy(EXAMPLES[3])
+    sample["turns"] = [{"turn_id": "u1", "text": question}]
+    sample["plan"] = {
+        "schema_version": "evidence-needs-plan-v3",
+        "decision": "clarify",
+        "clarification": "What date or period was that bank-holiday shift?",
+        "needs": [],
+        "bindings": [],
+    }
+    result = adapter(sample["plan"], []).plan_needs(
+        turns(sample), evaluated_at="2026-11-08T12:00:00Z"
+    )
+    assert result.plan.decision == "clarify"
+    assert result.plan.needs == ()
+    assert result.plan.bindings == ()
+    assert "date or period" in result.plan.clarification
+
+    # These are provider-free contract controls, not claims about model judgment.
+    for example in (EXAMPLES[0], EXAMPLES[1], EXAMPLES[2], EXAMPLES[3]):
+        control = adapter(example["plan"], []).plan_needs(
+            turns(example), evaluated_at="2026-11-08T12:00:00Z"
+        )
+        assert control.plan.model_dump(mode="json") == example["plan"]
+    assert EXAMPLES[0]["plan"]["needs"][0]["authority"]["kind"] == "previous"
+    assert EXAMPLES[1]["plan"]["needs"][0]["authority"]["kind"] == "transition_period"
+    assert EXAMPLES[2]["plan"]["needs"][0]["authority"]["kind"] == "current"
+    assert EXAMPLES[3]["plan"]["needs"][0]["authority"]["kind"] == "current"
+
+    for question, selector, kind, precision, value, operation in (
+        (
+            "What is the current deadline, and what was the old window?",
+            "old window",
+            "previous",
+            "named",
+            "old window",
+            "compare",
+        ),
+        (
+            "What rule applied on 3 September 2026?",
+            "3 September 2026",
+            "date",
+            "day",
+            "2026-09-03",
+            "retrieve",
+        ),
+        (
+            "What changed during September 2026?",
+            "September 2026",
+            "transition_period",
+            "month",
+            "2026-09",
+            "compare",
+        ),
+        (
+            "What changed on 1 March 2025?",
+            "1 March 2025",
+            "transition_boundary",
+            "day",
+            "2025-03-01",
+            "compare",
+        ),
+    ):
+        control = deepcopy(EXAMPLES[3])
+        control["turns"] = [{"turn_id": "u1", "text": question}]
+        need = control["plan"]["needs"][0]
+        need["question_span"] = {"turn_id": "u1", "quote": question}
+        need["aspect"] = question
+        need["applicability"] = {"kind": "generic", "source": None}
+        need["operation"] = operation
+        need["authority"] = {
+            "kind": kind,
+            "value": value,
+            "precision": precision,
+            "source": {"turn_id": "u1", "quote": selector},
+        }
+        result = adapter(control["plan"], []).plan_needs(
+            turns(control), evaluated_at="2026-11-08T12:00:00Z"
+        )
+        assert result.plan.decision == "plan"
+        assert result.plan.needs[0].authority.kind == kind
+
+
 @pytest.mark.parametrize(
     "question,family_title",
     [
@@ -653,7 +743,7 @@ def test_non_current_reference_still_rejects_missing_components(field):
     authority[field] = "none" if field == "precision" else None
     calls = []
     planner = adapter(example["plan"], calls)
-    assert planner.lineage().prompt_version == "bounded-evidence-needs-v21"
+    assert planner.lineage().prompt_version == "bounded-evidence-needs-v22"
     with pytest.raises(RetrievalPlanningError) as error:
         planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
     assert error.value.category == "invalid_grounded_needs_plan"

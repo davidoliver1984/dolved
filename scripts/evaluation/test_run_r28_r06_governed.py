@@ -26,6 +26,9 @@ class R28R06GovernedTest(unittest.TestCase):
             ("continuation", 2),
             ("confirmation_retry", 1),
             ("confirmation_remaining", 12),
+            ("confirmation_tail", 10),
+            ("case8_retry", 1),
+            ("confirmation_after_case8", 8),
             ("case6_retry", 1),
             ("case5_retry", 1),
             ("generic_controls", 3),
@@ -45,11 +48,17 @@ class R28R06GovernedTest(unittest.TestCase):
                 self.assertEqual([item["case_id"] for item in scopes["items"]], ["v4.case.corrected-b01-11"])
             if stage == "confirmation_remaining":
                 self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][4:])
+            if stage == "confirmation_tail":
+                self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][6:])
+            if stage == "case8_retry":
+                self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][7:8])
+            if stage == "confirmation_after_case8":
+                self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][8:])
             if stage in {"case6_retry", "case5_retry", "generic_controls"}:
                 start, stop = {"case6_retry": (5, 6), "case5_retry": (4, 5), "generic_controls": (0, 3)}[stage]
                 self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][start:stop])
             self.assertEqual(
-                "f91da9483634aaf4e5d66e32c2a70c2088093f321cfcf1a8244b3210b81771b4",
+                "f82ee77507f98fbd73b553321f8aa9a7e9964acc714ee4051e90972ead146f28",
                 identities["runtime_source_aggregate"],
             )
 
