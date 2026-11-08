@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Actions\Evaluation\BuildCurrentRetrievalEligibilityArtifact;
+use App\Models\DocumentFamily;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -59,6 +60,19 @@ final class CurrentRetrievalEligibilityArtifactTest extends TestCase
         $this->assertContains('doc.policy.v1', $versions);
         $this->assertNotContains('doc.policy.v2', $versions);
         $this->assertStringNotContainsString('evidence_unit', json_encode($this->plans(), JSON_THROW_ON_ERROR));
+    }
+
+    public function test_both_isolated_evaluation_workspaces_own_their_document_families(): void
+    {
+        $this->build();
+
+        $families = DocumentFamily::query()->with('workspace')->get();
+        $this->assertCount(3, $families);
+        foreach ($families as $family) {
+            $this->assertNotNull($family->owner_user_id);
+            $this->assertSame($family->workspace->created_by_user_id, $family->owner_user_id);
+        }
+        $this->assertCount(2, $families->pluck('workspace_id')->unique());
     }
 
     public function test_applicability_state_changes_real_resolver_scope(): void

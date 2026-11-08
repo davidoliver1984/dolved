@@ -325,7 +325,7 @@ final readonly class BuildCurrentRetrievalEligibilityArtifact
     {
         $documents = [];
         foreach ($catalog['families'] as $familyItem) {
-            $family = new DocumentFamily(['name' => $familyItem['title']]);
+            $family = new DocumentFamily(['name' => $familyItem['title'], 'owner_user_id' => $user->id]);
             $family->public_id = $this->uuid('family:'.$familyItem['family_id']);
             $family->workspace()->associate($workspace);
             $family->save();
@@ -395,7 +395,7 @@ final readonly class BuildCurrentRetrievalEligibilityArtifact
         } finally {
             Str::createUuidsNormally();
         }
-        $family = new DocumentFamily(['name' => 'Foreign policy']);
+        $family = new DocumentFamily(['name' => 'Foreign policy', 'owner_user_id' => $foreign->created_by_user_id]);
         $family->public_id = $this->uuid('foreign-family');
         $family->workspace()->associate($foreign);
         $family->save();
