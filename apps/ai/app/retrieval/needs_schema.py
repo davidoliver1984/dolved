@@ -116,4 +116,17 @@ def provider_needs_schema(catalogue: tuple[CatalogueFamily, ...]) -> dict[str, A
             )
             alternatives.append(branch)
     defs["NeedBinding"] = {"anyOf": alternatives}
+
+    # Display titles do not constrain a provider response, but the bounded
+    # 500-family schema must stay within the provider's request-size limit.
+    def without_titles(node: Any) -> None:
+        if isinstance(node, dict):
+            node.pop("title", None)
+            for child in node.values():
+                without_titles(child)
+        elif isinstance(node, list):
+            for child in node:
+                without_titles(child)
+
+    without_titles(schema)
     return schema

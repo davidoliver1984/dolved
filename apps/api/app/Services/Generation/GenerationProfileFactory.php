@@ -30,14 +30,14 @@ final class GenerationProfileFactory
 
     private function needsIdentity(): array
     {
-        return ['execution_version' => 'bounded-needs-slice-v18',
-            'scope_renderer' => 'scope-fact-renderer-v1',
-            'scope_answer_contract' => 'scope-composed-answer-v1',
+        return ['execution_version' => 'bounded-needs-slice-v19',
+            'scope_renderer' => 'scope-fact-renderer-v2',
+            'scope_answer_contract' => 'scope-composed-answer-v2',
             'planner_contract' => 'evidence-needs-plan-v3',
             'planner_provider' => config('retrieval.planner.provider'),
             'planner_model' => config('retrieval.planner.model'),
-            'planner_prompt' => 'bounded-evidence-needs-v18',
-            'planner_adapter' => 'structured-chat-needs-v6',
+            'planner_prompt' => 'bounded-evidence-needs-v20',
+            'planner_adapter' => 'structured-chat-needs-v7',
             'generation' => json_decode(json_encode($this->configuredNeeds(), JSON_THROW_ON_ERROR), true, flags: JSON_THROW_ON_ERROR),
             'generation_context_policy' => 'whole-needs-evidence-v1',
             'generation_max_context_characters' => config('generation.max_context_characters'),
@@ -64,8 +64,8 @@ final class GenerationProfileFactory
     {
         $base = $this->configured();
 
-        return new GenerationProfile($base->provider, $base->model, 'generation-result-v2',
-            'grounded-generation-needs-v6', 'openai-responses-needs-v2',
+        return new GenerationProfile($base->provider, $base->model, 'generation-result-v3',
+            'grounded-generation-needs-v8', 'openai-responses-needs-v4',
             GenerationDeliveryMode::CompleteResultOnly, $base->qualityAffectingConfiguration);
     }
 

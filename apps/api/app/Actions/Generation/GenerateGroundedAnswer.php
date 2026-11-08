@@ -60,9 +60,9 @@ final readonly class GenerateGroundedAnswer
         $observeStage?->__invoke('preparing_evidence');
         $request = $this->assembler->handle($input);
         $initialRequestId = $request->requestId;
-        if ($request->evidenceNeeds !== [] && ($profile->contractVersion !== 'generation-result-v2'
-            || $profile->promptVersion !== 'grounded-generation-needs-v6'
-            || $profile->adapterVersion !== 'openai-responses-needs-v2'
+        if ($request->evidenceNeeds !== [] && ($profile->contractVersion !== 'generation-result-v3'
+            || $profile->promptVersion !== 'grounded-generation-needs-v8'
+            || $profile->adapterVersion !== 'openai-responses-needs-v4'
             || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly)) {
             throw new GenerationException('Needs generation requires the pinned v2 complete-result profile.');
         }
@@ -100,7 +100,8 @@ final readonly class GenerateGroundedAnswer
                 $receipt = ValidationAttemptUsage::receipt($providerFailure
                     ? $exception->providerUsage : (is_array($payload) ? ($payload['usage'] ?? null) : null));
                 if ($providerFailure) {
-                    $receipt['request_count'] = $exception->attemptCount;
+                    $receipt['request_count'] = is_int($receipt['request_count'] ?? null)
+                        ? $receipt['request_count'] : $exception->attemptCount;
                     $receipt['latency_ms'] ??= $exception->latencyMs;
                 }
                 if ($exception instanceof GenerationServiceAuthenticationException) {
@@ -149,9 +150,9 @@ final readonly class GenerateGroundedAnswer
 
     private function prepareScopeAnswer(GenerationAssemblyInput $input, GenerationProfile $profile, ?callable $observeStage, ?callable $observeCandidate): PreparedGroundedAnswer
     {
-        if ($profile->contractVersion !== 'generation-result-v2'
-            || $profile->promptVersion !== 'grounded-generation-needs-v6'
-            || $profile->adapterVersion !== 'openai-responses-needs-v2'
+        if ($profile->contractVersion !== 'generation-result-v3'
+            || $profile->promptVersion !== 'grounded-generation-needs-v8'
+            || $profile->adapterVersion !== 'openai-responses-needs-v4'
             || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly) {
             throw new GenerationException('Scope composition requires the pinned complete-result needs profile.');
         }
@@ -189,7 +190,7 @@ final readonly class GenerateGroundedAnswer
             $correlation = $prepared->correlationId;
         } else {
             $request = new GenerationRequest((string) Str::uuid(), $input->authorisedScope->workspace->public_id,
-                $input->question, [], 'scope-fact-renderer-v1', 0, []);
+                $input->question, [], 'scope-fact-renderer-v2', 0, []);
             $gaps = array_column($operational, 'aspect');
             $base = new GenerationResult(GenerationOutcome::InsufficientEvidence, [], $gaps,
                 $gaps === [] ? null : 'No operational evidence was available.',
@@ -202,8 +203,8 @@ final readonly class GenerateGroundedAnswer
             $correlation = $input->correlationLineage['correlation_id'] ?? $request->requestId;
         }
         $fingerprint = $this->fingerprints->make($profile->provider, $profile->model,
-            'scope-composed-answer-v1', $profile->promptVersion, $profile->adapterVersion,
-            [...$profile->qualityAffectingConfiguration, 'scope_renderer' => 'scope-fact-renderer-v1']);
+            'scope-composed-answer-v2', $profile->promptVersion, $profile->adapterVersion,
+            [...$profile->qualityAffectingConfiguration, 'scope_renderer' => 'scope-fact-renderer-v2']);
         $outcome = $base->unsupportedAspects === [] ? GenerationOutcome::Answered : GenerationOutcome::Qualified;
         $result = new GenerationResult($outcome, $base->answerParts, $base->unsupportedAspects, null,
             $base->usage, $base->aspectLinks, $base->aspectResults, $facts, $operational === [] ? null : $base);

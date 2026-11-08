@@ -55,8 +55,10 @@ final readonly class EligibilityResolver
             return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
                 reason: 'ambiguous_document_subject', clarificationSource: RetrievalClarificationSource::EligibilityResolver);
         }
-        $location = $this->resolveLocations($authorised, $plan->locationReferences, true);
-        if (! $location instanceof OrganisationalLocation) {
+        $breadth = $need['scope_question'] === 'breadth';
+        $location = $plan->locationReferences === [] && $breadth
+            ? null : $this->resolveLocations($authorised, $plan->locationReferences, true);
+        if (! $location instanceof OrganisationalLocation && ! ($breadth && $location === null)) {
             return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
                 reason: $location?->value ?? 'unresolved_location_reference',
                 clarificationSource: RetrievalClarificationSource::EligibilityResolver);
@@ -89,24 +91,45 @@ final readonly class EligibilityResolver
         $matched = collect($path)->map(fn ($id) => $snapshot->locations->firstWhere('public_id', $id))->first(fn ($entry) => $entry !== null);
         $basis = $snapshot->scope === DocumentApplicabilityScope::Universal ? 'universal'
             : ($matched === null ? 'outside_recorded_scope'
-                : ($matched->id === $location->id ? 'direct_match' : 'inherited_match'));
+                : ($matched->id === $location?->id ? 'direct_match' : 'inherited_match'));
         $source = ['snapshot_id' => $snapshot->id, 'document_version_id' => $document->public_id,
             'scope' => $snapshot->scope->value, 'sealed_at' => $snapshot->sealed_at->toIso8601String(),
             'location_ids' => $snapshot->locations->pluck('public_id')->sort()->values()->all()];
 
+        $recordedLocations = [];
+        if ($breadth) {
+            foreach ($snapshot->locations->sortBy('public_id') as $entry) {
+                if ($entry->workspace_id !== $authorised->workspace->id) {
+                    throw new \RuntimeException('Scope location escaped authorised workspace.');
+                }
+                $ancestors = [];
+                for ($parent = $entry->parent; $parent !== null; $parent = $parent->parent) {
+                    if ($parent->workspace_id !== $authorised->workspace->id) {
+                        throw new \RuntimeException('Scope hierarchy escaped authorised workspace.');
+                    }
+                    $ancestors[] = $parent->public_id;
+                }
+                $recordedLocations[] = ['location_id' => $entry->public_id, 'name' => $entry->name,
+                    'kind' => $entry->kind, 'ancestor_ids' => $ancestors];
+            }
+        }
+
         return new ApplicabilityScopeFact([
-            'representation' => ApplicabilityScopeFact::VERSION, 'need_id' => $need['need_id'],
+            'representation' => $breadth ? ApplicabilityScopeFact::BREADTH_VERSION : ApplicabilityScopeFact::VERSION,
+            'need_id' => $need['need_id'],
             'workspace_id' => $authorised->workspace->public_id, 'policy_title' => $document->family->name,
             'family_id' => $document->family->public_id, 'document_version_id' => $document->public_id,
             'citation_type' => 'applicability_snapshot',
             'source_route' => '/api/workspaces/'.$authorised->workspace->public_id.'/document-families/'.$document->family->public_id.'/versions',
             'snapshot' => $source, 'snapshot_digest' => hash('sha256', json_encode($source, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES)),
-            'location_id' => $location->public_id, 'location_name' => $location->name,
+            'location_id' => $location?->public_id, 'location_name' => $location?->name,
             'hierarchy_path' => $path, 'matched_location_id' => $matched?->public_id,
+            ...($breadth ? ['recorded_locations' => $recordedLocations] : []),
             'evaluated_at' => $evaluatedAt->toIso8601String(),
             'temporal_mode' => $plan->temporalMode->value,
             'authority_start' => $this->timeline->authorityStart($document)?->toIso8601String(),
-            'result' => $basis === 'outside_recorded_scope' ? 'does_not_apply' : 'applies', 'basis' => $basis,
+            'result' => $breadth ? 'recorded_scope' : ($basis === 'outside_recorded_scope' ? 'does_not_apply' : 'applies'),
+            'basis' => $breadth ? 'recorded_breadth' : $basis,
             'corpus_id' => $authorised->activeCorpusGeneration?->public_id,
             'resolution' => ['query' => $plan->query, 'need' => $need,
                 'temporal_mode' => $plan->temporalMode->value, 'explicit_date' => $plan->explicitDate?->toDateString(),

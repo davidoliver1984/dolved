@@ -24,11 +24,12 @@ final class PersistGeneratedAnswer
     public function handle(AuthorisedKnowledgeScope $authorised, string $question, string $correlationId, GenerationRequest $request, GenerationResult $result, array $fingerprint, ?int $assistantMessageId = null, ?int $generationRunId = null): GeneratedAnswer
     {
         $hasNeeds = $result->aspectLinks !== [];
-        $scopeComposed = ($fingerprint['snapshot']['contract_version'] ?? null) === 'scope-composed-answer-v1';
+        $scopeComposed = in_array(($fingerprint['snapshot']['contract_version'] ?? null),
+            ['scope-composed-answer-v1', 'scope-composed-answer-v2'], true);
         if ($scopeComposed !== ($result->scopeFacts !== [])) {
             throw new GenerationException('Scope facts require their dedicated composed-answer contract.');
         }
-        if (! $scopeComposed && $hasNeeds !== (($fingerprint['snapshot']['contract_version'] ?? null) === 'generation-result-v2')) {
+        if (! $scopeComposed && $hasNeeds !== (($fingerprint['snapshot']['contract_version'] ?? null) === 'generation-result-v3')) {
             throw new GenerationException('Generation coverage does not match the pinned contract.');
         }
         $coverageResult = $scopeComposed ? $result->operationalResult : $result;

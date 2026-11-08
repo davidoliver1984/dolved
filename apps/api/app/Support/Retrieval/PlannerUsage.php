@@ -89,11 +89,13 @@ final readonly class PlannerUsage
                 'ownership_location_conflict', 'reference_grounding', 'calendar_grounding', 'need_order',
                 'fact_date_precision', 'fact_date_interval_shape', 'fact_date_interval_reversed', 'fact_date_calendar',
                 'historical_grounding', 'binding_shape', 'comparison_authority', 'authority_grounding',
-                'authority_precision', 'invalid_value', 'missing', 'literal_error', 'uuid_parsing',
+                'authority_precision', 'scope_question_required', 'scope_question_misplaced', 'scope_claim_conflict',
+                'invalid_value', 'missing', 'literal_error', 'uuid_parsing',
                 'extra_forbidden', 'json_invalid', 'string_type', 'too_short', 'too_long', 'value_error', 'output_truncated', 'output_not_completed'], true)
             && is_string($candidate['field'] ?? null)) {
             $allowed = ['root', 'unknown', 'needs', 'bindings', 'need_id', 'authority', 'kind', 'value', 'precision',
-                'source', 'question_span', 'applicability', 'fact_reference', 'supports_need_id', 'family_ids',
+                'source', 'question_span', 'applicability', 'fact_reference', 'claim_under_test', 'scope_question',
+                'relation', 'supports_need_id', 'family_ids',
                 'subject_status', 'ownership', 'ownership_source', 'turn_id', 'quote', 'operation',
                 'schema_version', 'decision', 'clarification', 'aspect', 'central'];
             $parts = explode('.', $candidate['field']);

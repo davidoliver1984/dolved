@@ -146,7 +146,7 @@
       "additionalProperties": false,
       "properties": {
         "contract_version": {
-          "const": 2,
+          "const": 3,
           "title": "Contract Version",
           "type": "integer"
         },
@@ -202,6 +202,13 @@
           "minItems": 1,
           "title": "Aspect Links",
           "type": "array"
+        },
+        "entailment_checks": {
+          "items": {
+            "$ref": "#/$defs/PartEntailment"
+          },
+          "title": "Entailment Checks",
+          "type": "array"
         }
       },
       "required": [
@@ -211,7 +218,8 @@
         "unsupported_aspects",
         "insufficiency_reason",
         "usage",
-        "aspect_links"
+        "aspect_links",
+        "entailment_checks"
       ],
       "title": "GenerationNeedsResult",
       "type": "object"
@@ -363,6 +371,9 @@
             "coverage_outcome",
             "citation_ownership",
             "missing_evidence_gap",
+            "site_scope_condition_unproven",
+            "entailment_unsupported",
+            "entailment_uncertain",
             "schema_validation"
           ],
           "title": "Code",
@@ -467,6 +478,45 @@
         "error"
       ],
       "title": "NeedsProviderResponse",
+      "type": "object"
+    },
+    "PartEntailment": {
+      "additionalProperties": false,
+      "properties": {
+        "part_index": {
+          "maximum": 127,
+          "minimum": 0,
+          "title": "Part Index",
+          "type": "integer"
+        },
+        "verdict": {
+          "enum": [
+            "supported",
+            "unsupported",
+            "uncertain"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "missing_condition": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Missing Condition"
+        }
+      },
+      "required": [
+        "part_index",
+        "verdict",
+        "missing_condition"
+      ],
+      "title": "PartEntailment",
       "type": "object"
     }
   },

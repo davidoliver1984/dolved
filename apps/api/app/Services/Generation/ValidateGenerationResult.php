@@ -20,12 +20,23 @@ final class ValidateGenerationResult
         if ($request->evidenceNeeds !== [] && array_column($request->evidenceNeeds, 'need_id') !== $needIds) {
             throw new GenerationException('Generation result needs differ from the assembled request.');
         }
-        if (! $this->hasExactKeys($payload, ['contract_version', 'outcome', 'answer_parts', 'unsupported_aspects', 'insufficiency_reason', 'usage', 'aspect_links'])
-            || ($payload['contract_version'] ?? null) !== 2 || ! is_array($payload['aspect_links'])) {
+        if (! $this->hasExactKeys($payload, ['contract_version', 'outcome', 'answer_parts', 'unsupported_aspects', 'insufficiency_reason', 'usage', 'aspect_links', 'entailment_checks'])
+            || ($payload['contract_version'] ?? null) !== 3 || ! is_array($payload['aspect_links'])
+            || ! is_array($payload['entailment_checks']) || ! is_array($payload['answer_parts'])) {
             throw new GenerationException('The needs generation result schema is invalid.');
         }
         $links = $payload['aspect_links'];
-        unset($payload['aspect_links']);
+        $checks = $payload['entailment_checks'];
+        if (count($checks) !== count($payload['answer_parts'] ?? [])) {
+            throw new GenerationException('The needs generation entailment coverage is invalid.');
+        }
+        foreach ($checks as $index => $check) {
+            if (! is_array($check) || ! $this->hasExactKeys($check, ['part_index', 'verdict', 'missing_condition'])
+                || $check['part_index'] !== $index || $check['verdict'] !== 'supported' || $check['missing_condition'] !== null) {
+                throw new GenerationException('The needs generation entailment verdict is invalid.');
+            }
+        }
+        unset($payload['aspect_links'], $payload['entailment_checks']);
         $payload['contract_version'] = 1;
         // Preserve the same citation membership and outcome invariants as v1.
         $result = $this->handle($request, $payload);

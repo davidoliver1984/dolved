@@ -1,5 +1,46 @@
 {
   "$defs": {
+    "ClaimUnderTest": {
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": "claim-under-test-v1",
+          "title": "Version",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "named_recipient",
+            "named_value",
+            "numeric_value"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "submission_destination",
+            "contact_route",
+            "numeric_rate",
+            "named_value",
+            "other_fact"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/QuestionSpan"
+        }
+      },
+      "required": [
+        "version",
+        "type",
+        "relation",
+        "source"
+      ],
+      "title": "ClaimUnderTest",
+      "type": "object"
+    },
     "EvidenceNeed": {
       "additionalProperties": false,
       "properties": {
@@ -49,6 +90,33 @@
         },
         "applicability": {
           "$ref": "#/$defs/NeedApplicability"
+        },
+        "claim_under_test": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClaimUnderTest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scope_question": {
+          "anyOf": [
+            {
+              "enum": [
+                "membership",
+                "breadth"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope Question"
         },
         "supports_need_id": {
           "anyOf": [

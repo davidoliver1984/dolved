@@ -152,10 +152,12 @@ class GroundedGenerationFoundationTest extends TestCase
             $this->assertSame(2, $sent->data()['contract_version']);
 
             return Http::response(['contract_version' => 2, 'request_id' => $sent->data()['request_id'],
-                'status' => 'completed', 'result' => ['contract_version' => 2, 'outcome' => 'answered',
+                'status' => 'completed', 'result' => ['contract_version' => 3, 'outcome' => 'answered',
                     'answer_parts' => [['text' => 'Synthetic paired answer.', 'evidence_ids' => ['ev-01', 'ev-02']],
                         ['text' => 'Independent current guidance.', 'evidence_ids' => ['ev-03']]],
                     'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+                    'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null],
+                        ['part_index' => 1, 'verdict' => 'supported', 'missing_condition' => null]],
                     'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []],
                         ['need_id' => 'n2', 'answer_part_indices' => [1], 'unsupported_aspect_indices' => []]]]]);
         });
@@ -222,10 +224,11 @@ class GroundedGenerationFoundationTest extends TestCase
             $insufficient = $scenario === 'insufficient';
 
             return Http::response(['contract_version' => 2, 'request_id' => $sent->data()['request_id'], 'status' => 'completed',
-                'result' => ['contract_version' => 2, 'outcome' => $insufficient ? 'insufficient_evidence' : 'answered',
+                'result' => ['contract_version' => 3, 'outcome' => $insufficient ? 'insufficient_evidence' : 'answered',
                     'answer_parts' => $insufficient ? [] : [['text' => 'Supported fictional statement.', 'evidence_ids' => [$invalid ? 'ev-99' : 'ev-01']]],
                     'unsupported_aspects' => $insufficient ? ['Requested information.'] : [],
                     'insufficiency_reason' => $insufficient ? 'No supporting passage.' : null, 'usage' => $usage,
+                    'entailment_checks' => $insufficient ? [] : [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
                     'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => $insufficient ? [] : [0],
                         'unsupported_aspect_indices' => $insufficient ? [0] : []]]]]);
         });
@@ -282,7 +285,8 @@ class GroundedGenerationFoundationTest extends TestCase
             $this->expectException(GenerationException::class);
         }
         $result = app(ValidateGenerationResult::class)->handleNeeds($this->simpleRequest(), $case['need_ids'],
-            [...$case['result'], 'contract_version' => 2, 'usage' => null, 'aspect_links' => $case['links']]);
+            [...$case['result'], 'contract_version' => 3, 'usage' => null, 'aspect_links' => $case['links'],
+                'entailment_checks' => array_map(fn (int $index): array => ['part_index' => $index, 'verdict' => 'supported', 'missing_condition' => null], array_keys($case['result']['answer_parts']))]);
         $this->assertSame($case['expected_statuses'], $result->aspectResults);
     }
 
@@ -291,15 +295,16 @@ class GroundedGenerationFoundationTest extends TestCase
         [$input] = $this->assemblyFixture();
         $request = app(AssembleGenerationRequest::class)->handle($input);
         $result = app(ValidateGenerationResult::class)->handleNeeds($request, ['n1', 'n2'], [
-            'contract_version' => 2, 'outcome' => 'qualified',
+            'contract_version' => 3, 'outcome' => 'qualified',
             'answer_parts' => [['text' => 'The historical change is not established. The current procedure requires recording the assessment.', 'evidence_ids' => ['ev-01']]],
             'unsupported_aspects' => ['The historical change is not established.'], 'insufficiency_reason' => null, 'usage' => null,
+            'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
             'aspect_links' => [
                 ['need_id' => 'n1', 'answer_part_indices' => [], 'unsupported_aspect_indices' => [0]],
                 ['need_id' => 'n2', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []],
             ],
         ]);
-        $fingerprint = app(GenerationFingerprint::class)->make('deterministic', 'contract-fake', 'generation-result-v2', 'test-only', 'test-only', []);
+        $fingerprint = app(GenerationFingerprint::class)->make('deterministic', 'contract-fake', 'generation-result-v3', 'test-only', 'test-only', []);
         $answer = app(PersistGeneratedAnswer::class)->handle($input->authorisedScope, $input->question,
             (string) Str::uuid(), $request, $result, $fingerprint)->fresh();
         $this->assertSame($result->aspectLinks, $answer->aspect_links);
@@ -322,9 +327,10 @@ class GroundedGenerationFoundationTest extends TestCase
                 ['need_id' => 'n1', 'evidence_ids' => []],
                 ['need_id' => 'n2', 'evidence_ids' => ['ev-01']],
             ]);
-        $payload = ['contract_version' => 2, 'outcome' => 'answered',
+        $payload = ['contract_version' => 3, 'outcome' => 'answered',
             'answer_parts' => [['text' => 'Current guidance.', 'evidence_ids' => ['ev-01']]],
             'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+            'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
             'aspect_links' => [
                 ['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []],
                 ['need_id' => 'n2', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []],
@@ -350,9 +356,10 @@ class GroundedGenerationFoundationTest extends TestCase
     {
         $this->expectException(GenerationException::class);
         app(ValidateGenerationResult::class)->handleNeeds($this->simpleRequest(), ['n1'], [
-            'contract_version' => 2, 'outcome' => 'answered',
+            'contract_version' => 3, 'outcome' => 'answered',
             'answer_parts' => [['text' => 'A claim.', 'evidence_ids' => $ids]],
             'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+            'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
             'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]],
         ]);
     }
@@ -362,9 +369,10 @@ class GroundedGenerationFoundationTest extends TestCase
         [$input] = $this->assemblyFixture();
         $request = app(AssembleGenerationRequest::class)->handle($input);
         $result = app(ValidateGenerationResult::class)->handleNeeds($request, ['n1'], [
-            'contract_version' => 2, 'outcome' => 'answered',
+            'contract_version' => 3, 'outcome' => 'answered',
             'answer_parts' => [['text' => 'A grounded claim.', 'evidence_ids' => ['ev-01']]],
             'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+            'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
             'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]],
         ]);
         $fingerprint = app(GenerationFingerprint::class)->make('deterministic', 'contract-fake', 'generation-result-v1', 'test-only', 'test-only', []);
@@ -399,9 +407,10 @@ class GroundedGenerationFoundationTest extends TestCase
 
     public function test_actual_validator_failures_have_safe_rule_diagnostics(): void
     {
-        $base = ['contract_version' => 2, 'outcome' => 'answered',
+        $base = ['contract_version' => 3, 'outcome' => 'answered',
             'answer_parts' => [['text' => 'PRIVATE-CONTENT', 'evidence_ids' => ['ev-01']]],
             'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+            'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
             'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]]];
         $mutations = [
             'needs_schema' => fn ($p) => array_replace($p, ['contract_version' => 99]),
@@ -415,7 +424,10 @@ class GroundedGenerationFoundationTest extends TestCase
             'empty_need' => fn ($p) => array_replace($p, ['aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [], 'unsupported_aspect_indices' => []]]]),
             'reference_range' => fn ($p) => array_replace($p, ['aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [99], 'unsupported_aspect_indices' => []]]]),
             'reference_list' => fn ($p) => array_replace($p, ['aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => 'PRIVATE-CONTENT', 'unsupported_aspect_indices' => []]]]),
-            'unmapped_content' => fn ($p) => array_replace($p, ['answer_parts' => [$p['answer_parts'][0], $p['answer_parts'][0]]]),
+            'unmapped_content' => fn ($p) => array_replace($p, [
+                'answer_parts' => [$p['answer_parts'][0], $p['answer_parts'][0]],
+                'entailment_checks' => [$p['entailment_checks'][0], ['part_index' => 1, 'verdict' => 'supported', 'missing_condition' => null]],
+            ]),
         ];
         foreach ($mutations as $code => $mutate) {
             try {
@@ -426,6 +438,29 @@ class GroundedGenerationFoundationTest extends TestCase
                 $this->assertSame($code, $diagnostic['code']);
                 $this->assertSame('laravel_result_validation', $diagnostic['layer']);
                 $this->assertStringNotContainsString('PRIVATE', json_encode($diagnostic));
+            }
+        }
+    }
+
+    public function test_needs_result_requires_independent_supported_entailment_for_each_part(): void
+    {
+        $base = ['contract_version' => 3, 'outcome' => 'answered',
+            'answer_parts' => [['text' => 'A synthetic grounded claim.', 'evidence_ids' => ['ev-01']]],
+            'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+            'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]],
+            'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]]];
+        app(ValidateGenerationResult::class)->handleNeeds($this->simpleRequest(), ['n1'], $base);
+        foreach ([
+            array_replace($base, ['entailment_checks' => []]),
+            array_replace($base, ['entailment_checks' => [['part_index' => 0, 'verdict' => 'uncertain', 'missing_condition' => 'site scope']]]),
+            array_replace($base, ['entailment_checks' => [['part_index' => 0, 'verdict' => 'unsupported', 'missing_condition' => 'site scope']]]),
+            array_replace($base, ['entailment_checks' => [['part_index' => 1, 'verdict' => 'supported', 'missing_condition' => null]]]),
+        ] as $payload) {
+            try {
+                app(ValidateGenerationResult::class)->handleNeeds($this->simpleRequest(), ['n1'], $payload);
+                $this->fail('Unverified answer part was accepted.');
+            } catch (GenerationException $exception) {
+                $this->assertSame('answer_parts.text', GenerationValidationDiagnostics::local($exception)['field']);
             }
         }
     }

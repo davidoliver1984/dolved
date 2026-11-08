@@ -122,7 +122,7 @@ class ConversationOrchestrationTest extends TestCase
         Http::fake(function (Request $request) use ($question, $attempts) {
             $identity = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                 'contract_schema_version' => 'evidence-needs-plan-v3',
-                'prompt_version' => 'bounded-evidence-needs-v18', 'adapter_version' => 'structured-chat-needs-v6'];
+                'prompt_version' => 'bounded-evidence-needs-v20', 'adapter_version' => 'structured-chat-needs-v7'];
             $canonical = $identity;
             ksort($canonical);
 
@@ -413,7 +413,7 @@ class ConversationOrchestrationTest extends TestCase
                 $this->assertSame([['turn_id' => 'user-1', 'text' => 'What does the current approved procedure require?']], $body['user_turns']);
                 $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                     'contract_schema_version' => 'evidence-needs-plan-v3',
-                    'prompt_version' => 'bounded-evidence-needs-v18', 'adapter_version' => 'structured-chat-needs-v6'];
+                    'prompt_version' => 'bounded-evidence-needs-v20', 'adapter_version' => 'structured-chat-needs-v7'];
                 ksort($lineage);
                 $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
@@ -473,8 +473,9 @@ class ConversationOrchestrationTest extends TestCase
                 $this->assertStringEndsWith('/generation/answer-needs', $request->url());
                 $this->assertSame(['ev-01'], $body['evidence_needs'][0]['evidence_ids']);
                 $result['contract_version'] = 2;
-                $result['result']['contract_version'] = 2;
+                $result['result']['contract_version'] = 3;
                 $result['result']['aspect_links'] = [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]];
+                $result['result']['entailment_checks'] = [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]];
 
                 return Http::response($result);
             }

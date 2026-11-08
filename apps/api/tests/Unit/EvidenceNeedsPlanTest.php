@@ -50,4 +50,47 @@ final class EvidenceNeedsPlanTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         EvidenceNeedsPlan::validate($example['plan'], $example['turns']);
     }
+
+    public function test_disputed_claim_is_grounded_and_independent_of_site_applicability(): void
+    {
+        $example = self::read('examples')[0];
+        $question = 'At Riverside House, do formal grievances go to the Brambleford Office People team?';
+        $example['turns'] = [['turn_id' => 'u1', 'text' => $question]];
+        $example['plan']['needs'] = [array_replace($example['plan']['needs'][1], [
+            'need_id' => 'n1',
+            'aspect' => 'Where formal grievances are submitted at Riverside House',
+            'question_span' => ['turn_id' => 'u1', 'quote' => $question],
+            'supports_need_id' => null,
+            'applicability' => ['kind' => 'named', 'source' => ['turn_id' => 'u1', 'quote' => 'Riverside House']],
+            'claim_under_test' => ['version' => 'claim-under-test-v1', 'type' => 'named_recipient',
+                'relation' => 'submission_destination',
+                'source' => ['turn_id' => 'u1', 'quote' => 'Brambleford Office People team']],
+        ])];
+        $example['plan']['bindings'] = [];
+        EvidenceNeedsPlan::validate($example['plan'], $example['turns']);
+        $this->addToAssertionCount(1);
+
+        $example['plan']['needs'][0]['applicability'] = ['kind' => 'generic', 'source' => null];
+        EvidenceNeedsPlan::validate($example['plan'], $example['turns']);
+        $this->addToAssertionCount(1);
+
+        $example['plan']['needs'][0]['claim_under_test']['truth_value'] = true;
+        try {
+            EvidenceNeedsPlan::validate($example['plan'], $example['turns']);
+            $this->fail('Planner-supplied truth value was accepted.');
+        } catch (InvalidArgumentException) {
+            $this->addToAssertionCount(1);
+        }
+        unset($example['plan']['needs'][0]['claim_under_test']['truth_value']);
+
+        foreach (['Brambleford Office People team altered', 'ev-99'] as $unquoted) {
+            $example['plan']['needs'][0]['claim_under_test']['source']['quote'] = $unquoted;
+            try {
+                EvidenceNeedsPlan::validate($example['plan'], $example['turns']);
+                $this->fail('Unquoted claim was accepted.');
+            } catch (InvalidArgumentException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
 }

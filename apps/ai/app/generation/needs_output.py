@@ -10,6 +10,7 @@ from pydantic import Field, TypeAdapter, model_validator
 from app.extraction.models import ImmutableModel
 from app.generation.aspect_coverage import AspectLink, validate_aspect_links
 from app.generation.diagnostics import CitationOwnershipError
+from app.generation.entailment import PartEntailment
 from app.generation.models import (
     AnswerPart,
     BoundedText,
@@ -46,18 +47,21 @@ class NeedsProviderResponse(ImmutableModel):
 
 
 class GenerationNeedsResult(ImmutableModel):
-    contract_version: Literal[2]
+    contract_version: Literal[3]
     outcome: GenerationOutcome
     answer_parts: tuple[AnswerPart, ...]
     unsupported_aspects: tuple[BoundedText, ...]
     insufficiency_reason: BoundedText | None
     usage: dict[str, object] | None
     aspect_links: tuple[AspectLink, ...] = Field(min_length=1, max_length=3)
+    entailment_checks: tuple[PartEntailment, ...]
 
     def authoritative_result(self) -> GenerationResult:
         # Reuse exactly the established shape/citation checks, not a relaxed copy.
         return GenerationResult.model_validate(
-            self.model_dump(exclude={"contract_version", "aspect_links"})
+            self.model_dump(
+                exclude={"contract_version", "aspect_links", "entailment_checks"}
+            )
         )
 
     @model_validator(mode="after")
@@ -66,6 +70,10 @@ class GenerationNeedsResult(ImmutableModel):
         for part in self.answer_parts:
             if has_invalid_leading_polarity(part.text):
                 raise ValueError("detached yes/no framing is not an evidence statement")
+        if [check.part_index for check in self.entailment_checks] != list(
+            range(len(self.answer_parts))
+        ) or any(check.verdict != "supported" for check in self.entailment_checks):
+            raise ValueError("answer entailment checks must support every answer part")
         return self
 
     def validate_against(
@@ -119,9 +127,15 @@ class OpenAIGenerationNeedsOutput(OpenAIGenerationOutput):
         request: GenerationRequest,
         need_ids: tuple[str, ...],
         usage: dict[str, object] | None = None,
+        entailment_checks: tuple[PartEntailment, ...] = (),
     ) -> GenerationNeedsResult:
         return GenerationNeedsResult.model_validate(
-            {**self.model_dump(), "contract_version": 2, "usage": usage}
+            {
+                **self.model_dump(),
+                "contract_version": 3,
+                "usage": usage,
+                "entailment_checks": [item.model_dump() for item in entailment_checks],
+            }
         ).validate_against(request, need_ids)
 
 

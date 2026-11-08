@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 from openai.lib._pydantic import to_strict_json_schema
 
+from app.generation.entailment import PartEntailment
 from app.generation.models import GenerationRequest, GenerationResult
 from app.generation.needs_output import (
     GenerationNeedsResult,
@@ -15,6 +16,13 @@ from tests.test_generation_contract import request_payload
 CASES = json.loads(
     Path("/contracts/fixtures/generation-aspect-coverage/v1.json").read_text()
 )["cases"]
+
+
+def supported_checks(output: OpenAIGenerationNeedsOutput) -> tuple[PartEntailment, ...]:
+    return tuple(
+        PartEntailment(part_index=index, verdict="supported", missing_condition=None)
+        for index in range(len(output.answer_parts))
+    )
 
 
 @pytest.mark.parametrize(
@@ -36,13 +44,16 @@ def test_detached_polarity_is_rejected_but_connected_statements_remain(text, val
     )
     if valid:
         output.to_result(
-            GenerationRequest.model_validate(request_payload()), tuple(case["need_ids"])
+            GenerationRequest.model_validate(request_payload()),
+            tuple(case["need_ids"]),
+            entailment_checks=supported_checks(output),
         )
     else:
         with pytest.raises(ValueError, match="detached yes/no"):
             output.to_result(
                 GenerationRequest.model_validate(request_payload()),
                 tuple(case["need_ids"]),
+                entailment_checks=supported_checks(output),
             )
 
 
@@ -53,9 +64,11 @@ def test_real_provider_output_and_consumer_cover_shared_cases(case):
             {**case["result"], "aspect_links": case["links"]}
         )
         result = output.to_result(
-            GenerationRequest.model_validate(request_payload()), tuple(case["need_ids"])
+            GenerationRequest.model_validate(request_payload()),
+            tuple(case["need_ids"]),
+            entailment_checks=supported_checks(output),
         )
-        assert result.contract_version == 2
+        assert result.contract_version == 3
         assert "aspect_results" not in result.model_dump()
         with pytest.raises(ValueError):
             GenerationResult.model_validate(result.model_dump())
@@ -74,7 +87,15 @@ def test_v2_keeps_canonical_duplicate_and_membership_checks(ids):
     with pytest.raises(ValueError):
         OpenAIGenerationNeedsOutput.model_validate(
             {**case["result"], "aspect_links": case["links"]}
-        ).to_result(GenerationRequest.model_validate(request_payload()), ("n1", "n2"))
+        ).to_result(
+            GenerationRequest.model_validate(request_payload()),
+            ("n1", "n2"),
+            entailment_checks=(
+                PartEntailment(
+                    part_index=0, verdict="supported", missing_condition=None
+                ),
+            ),
+        )
 
 
 def test_provider_strict_schema_has_only_reference_links_and_canonical_citations():
@@ -102,9 +123,12 @@ def test_response_rejects_model_invented_projection():
         GenerationNeedsResult.model_validate(
             {
                 **case["result"],
-                "contract_version": 2,
+                "contract_version": 3,
                 "usage": None,
                 "aspect_links": case["links"],
+                "entailment_checks": [
+                    {"part_index": 0, "verdict": "supported", "missing_condition": None}
+                ],
                 "aspect_results": {"n1": "supported"},
             }
         )
@@ -133,7 +157,7 @@ def test_answer_cannot_borrow_another_needs_citation(missing):
     incoming = GenerationNeedsRequest.model_validate(raw)
     result = GenerationNeedsResult.model_validate(
         {
-            "contract_version": 2,
+            "contract_version": 3,
             "outcome": "answered",
             "answer_parts": [
                 {"text": "Supported current guidance.", "evidence_ids": ["ev-03"]}
@@ -141,6 +165,9 @@ def test_answer_cannot_borrow_another_needs_citation(missing):
             "unsupported_aspects": [],
             "insufficiency_reason": None,
             "usage": None,
+            "entailment_checks": [
+                {"part_index": 0, "verdict": "supported", "missing_condition": None}
+            ],
             "aspect_links": [
                 {
                     "need_id": "n1",

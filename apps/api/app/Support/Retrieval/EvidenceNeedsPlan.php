@@ -27,8 +27,8 @@ final readonly class EvidenceNeedsPlan
         $identity = ClassifierLineage::fromArray($lineage);
         $observation = PlannerUsage::fromArray($usage);
         if ($identity->contractSchemaVersion !== 'evidence-needs-plan-v3'
-            || $identity->promptVersion !== 'bounded-evidence-needs-v18'
-            || $identity->adapterVersion !== 'structured-chat-needs-v6'
+            || $identity->promptVersion !== 'bounded-evidence-needs-v20'
+            || $identity->adapterVersion !== 'structured-chat-needs-v7'
             || $identity->provider !== $observation->provider
             || $identity->model !== $observation->model) {
             throw new InvalidArgumentException('Needs planner identity does not match its contract or usage.');
@@ -73,8 +73,14 @@ final readonly class EvidenceNeedsPlan
             default => null,
         };
 
+        $query = $need['aspect'];
+        $claim = $need['claim_under_test'] ?? null;
+        if ($claim !== null && mb_stripos($query, $claim['source']['quote']) === false) {
+            $query .= ' '.$claim['source']['quote'];
+        }
+
         return new RetrievalPlan(
-            $need['aspect'], $mode,
+            $query, $mode,
             $authority['kind'] === 'date' ? CarbonImmutable::createFromFormat('!Y-m-d', $authority['value']) : null,
             $reference,
             $need['applicability']['kind'] === 'generic' ? [] : [$need['applicability']['source']['quote']],
@@ -148,7 +154,24 @@ final readonly class EvidenceNeedsPlan
             if ($need['applicability']['kind'] !== 'generic' && $need['applicability']['source'] === null) {
                 throw new InvalidArgumentException('Specific applicability requires a reference.');
             }
+            $scopeQuestion = $need['scope_question'] ?? null;
+            if (($need['operation'] !== 'scope_enquiry' && $scopeQuestion !== null)
+                || ($need['operation'] === 'scope_enquiry' && $scopeQuestion === null)
+                || ($scopeQuestion !== null && ! in_array($scopeQuestion, ['membership', 'breadth'], true))
+                || ($need['operation'] === 'scope_enquiry' && ($need['claim_under_test'] ?? null) !== null)) {
+                throw new InvalidArgumentException('Scope question and disputed claim are incompatible.');
+            }
+            $claim = $need['claim_under_test'] ?? null;
+            if ($claim !== null && (($claim['version'] ?? null) !== 'claim-under-test-v1'
+                || ! in_array($claim['type'] ?? null, ['named_recipient', 'named_value', 'numeric_value'], true)
+                || ! in_array($claim['relation'] ?? null, ['submission_destination', 'contact_route', 'numeric_rate', 'named_value', 'other_fact'], true)
+                || ! is_array($claim['source'] ?? null))) {
+                throw new InvalidArgumentException('Invalid disputed claim.');
+            }
             $spans = [$need['question_span'], $authority['source'], $need['applicability']['source']];
+            if ($claim !== null) {
+                $spans[] = $claim['source'];
+            }
             if ($need['fact_reference'] !== null) {
                 $fact = $need['fact_reference'];
                 self::dateValue($fact['value'], $fact['precision']);

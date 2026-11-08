@@ -206,7 +206,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $data = $mutate($data);
         }
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v3',
-            'prompt_version' => 'bounded-evidence-needs-v18', 'adapter_version' => 'structured-chat-needs-v6'];
+            'prompt_version' => 'bounded-evidence-needs-v20', 'adapter_version' => 'structured-chat-needs-v7'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
@@ -215,15 +215,16 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 'request_count' => 1, 'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable']);
     }
 
-    private function scopePlan(Document $document, string $question = 'Does Equipment Policy cover Harbour Place?', string $location = 'Harbour Place'): EvidenceNeedsPlan
+    private function scopePlan(Document $document, string $question = 'Does Equipment Policy cover Harbour Place?', string $location = 'Harbour Place', string $scopeQuestion = 'membership'): EvidenceNeedsPlan
     {
-        return $this->plan(4, function ($data) use ($document, $question, $location) {
+        return $this->plan(4, function ($data) use ($document, $question, $location, $scopeQuestion) {
             $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
             $data['plan']['needs'] = [[
                 'need_id' => 'n1', 'aspect' => $question, 'central' => true,
                 'question_span' => ['turn_id' => 'user-1', 'quote' => $question],
                 'operation' => 'scope_enquiry', 'authority' => ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null],
                 'fact_reference' => null, 'applicability' => ['kind' => 'named', 'source' => ['turn_id' => 'user-1', 'quote' => $location]],
+                'scope_question' => $scopeQuestion, 'claim_under_test' => null,
                 'supports_need_id' => null,
             ]];
             $data['plan']['bindings'] = [['need_id' => 'n1', 'ownership' => 'authorised_workspace',
@@ -233,9 +234,159 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         });
     }
 
+    private function claimPlan(Document $document, string $question, string $claimQuote, ?string $site = null): EvidenceNeedsPlan
+    {
+        return $this->plan(0, function ($data) use ($document, $question, $claimQuote, $site) {
+            $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
+            $data['plan']['needs'] = [[
+                'need_id' => 'n1', 'aspect' => 'Where formal grievances are submitted', 'central' => true,
+                'question_span' => ['turn_id' => 'user-1', 'quote' => $question],
+                'operation' => 'retrieve', 'authority' => ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null],
+                'fact_reference' => null,
+                'applicability' => $site === null ? ['kind' => 'generic', 'source' => null]
+                    : ['kind' => 'named', 'source' => ['turn_id' => 'user-1', 'quote' => $site]],
+                'claim_under_test' => ['version' => 'claim-under-test-v1', 'type' => 'named_recipient',
+                    'relation' => 'submission_destination', 'source' => ['turn_id' => 'user-1', 'quote' => $claimQuote]],
+                'scope_question' => null, 'supports_need_id' => null,
+            ]];
+            $data['plan']['bindings'] = [['need_id' => 'n1', 'ownership' => 'authorised_workspace',
+                'ownership_source' => null, 'subject_status' => 'matched', 'family_ids' => [$document->family->public_id]]];
+
+            return $data;
+        });
+    }
+
+    public function test_disputed_recipient_is_context_not_a_location_or_tenant_permission(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        [$foreign, $foreignGeneration] = $this->scope();
+        $foreignDocument = $this->document($foreign, $foreignGeneration, '2026-01-01');
+        $question = 'Do formal grievances get raised in writing to the Brambleford Office People team?';
+        $plan = $this->claimPlan($document, $question, 'Brambleford Office People team');
+        $retrievalPlan = $plan->retrievalPlan('n1');
+        $this->assertSame([], $retrievalPlan->locationReferences);
+        $this->assertStringContainsString('Brambleford Office People team', $retrievalPlan->query);
+        $this->assertSame('Brambleford Office People team', $retrievalPlan->evidenceNeed['claim_under_test']['source']['quote']);
+        $eligible = app(EligibilityResolver::class)->handle($scope, $retrievalPlan, CarbonImmutable::parse('2026-09-08'));
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $eligible->outcome);
+        $this->assertContains($document->public_id, $eligible->documentPublicIdsBySide['primary']);
+        $this->assertNotContains($foreignDocument->public_id, $eligible->documentPublicIdsBySide['primary']);
+        $unknown = $this->claimPlan($document, 'Do grievances go to the Unknown Payroll Desk?', 'Unknown Payroll Desk');
+        $this->assertSame([], $unknown->retrievalPlan('n1')->locationReferences);
+        $this->assertSame(RetrievalOutcome::EvidenceFound,
+            app(EligibilityResolver::class)->handle($scope, $unknown->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-08'))->outcome);
+
+        $site = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Riverside House']);
+        $mixed = $this->claimPlan($document,
+            'At Riverside House, do formal grievances go to the Brambleford Office People team?',
+            'Brambleford Office People team', 'Riverside House');
+        $this->assertSame(['Riverside House'], $mixed->retrievalPlan('n1')->locationReferences);
+        $this->assertSame('claim-under-test-v1', $mixed->retrievalPlan('n1')->evidenceNeed['claim_under_test']['version']);
+        $this->assertSame(RetrievalOutcome::EvidenceFound,
+            app(EligibilityResolver::class)->handle($scope, $mixed->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-08'))->outcome);
+        $this->assertSame($workspace->id, $site->workspace_id);
+
+        foreach (['Cinderhill House', 'Unlisted Region'] as $unresolvedSite) {
+            $withSite = $this->claimPlan($document,
+                'At '.$unresolvedSite.', do formal grievances go to the Brambleford Office People team?',
+                'Brambleford Office People team', $unresolvedSite);
+            $blocked = app(EligibilityResolver::class)->handle($scope, $withSite->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-08'));
+            $this->assertSame(RetrievalOutcome::ClarificationRequired, $blocked->outcome);
+            $this->assertSame('unresolved_location_reference', $blocked->reason);
+        }
+        Http::assertNothingSent();
+    }
+
+    public function test_disputed_claim_without_authorised_evidence_stays_no_answer(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        DB::table('documents')->where('id', $document->id)->update([
+            'governance_status' => 'withdrawn', 'withdrawn_at' => '2026-02-01',
+        ]);
+        $question = 'Do grievances go to the Unknown Recipient?';
+        $plan = $this->claimPlan($document, $question, 'Unknown Recipient');
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 15, CarbonImmutable::parse('2026-09-08'));
+        $this->assertSame(RetrievalOutcome::InsufficientEvidence, $result->outcome);
+        $this->assertSame([], $result->candidates);
+        Http::assertNothingSent();
+    }
+
     public static function scopeBases(): array
     {
         return [['universal'], ['direct_match'], ['inherited_match'], ['outside_recorded_scope']];
+    }
+
+    public static function breadthShapes(): array
+    {
+        return [['universal'], ['direct'], ['inherited']];
+    }
+
+    #[DataProvider('breadthShapes')]
+    public function test_breadth_resolves_universal_direct_and_inherited_snapshots(string $shape): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        $region = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'North Region', 'kind' => 'region']);
+        $site = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Harbour Place', 'kind' => 'service', 'parent_id' => $region->id]);
+        if ($shape !== 'universal') {
+            DB::table('document_applicability_snapshots')->where('document_id', $document->id)->update(['scope' => 'specific']);
+            $document->applicabilitySnapshot->locations()->attach(
+                $shape === 'direct' ? $site->id : $region->id, ['workspace_id' => $workspace->id]);
+        }
+        $question = 'What is the full recorded scope of Equipment Policy at Harbour Place?';
+        $plan = $this->scopePlan($document, $question, 'Harbour Place', 'breadth');
+        // A breadth request need not name a location at all.
+        $planValue = $plan->value;
+        $planValue['needs'][0]['applicability'] = ['kind' => 'generic', 'source' => null];
+        $plan = $this->plan(4, fn ($data) => ['turns' => [['turn_id' => 'user-1', 'text' => $question]], 'plan' => $planValue]);
+        $fact = app(EligibilityResolver::class)->scopeFact($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-08'));
+        $this->assertInstanceOf(ApplicabilityScopeFact::class, $fact);
+        $this->assertSame('recorded_breadth', $fact->value['basis']);
+        $this->assertSame($shape === 'universal' ? [] : [$shape === 'direct' ? $site->public_id : $region->public_id],
+            array_column($fact->value['recorded_locations'], 'location_id'));
+        $this->assertStringContainsString($shape === 'universal' ? 'is universal' : ($shape === 'direct' ? 'Harbour Place' : 'North Region'),
+            $fact->renderedText());
+        Http::assertNothingSent();
+    }
+
+    public function test_breadth_scope_fact_lists_the_full_sealed_snapshot_without_operational_chunks(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        $document->family->update(['name' => 'Key Safe Procedure']);
+        $region = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Midlands Region', 'kind' => 'region']);
+        $site = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Willow Bank Community Service', 'kind' => 'service', 'parent_id' => $region->id]);
+        DB::table('document_applicability_snapshots')->where('document_id', $document->id)->update(['scope' => 'specific']);
+        $document->applicabilitySnapshot->locations()->attach([$region->id, $site->id], ['workspace_id' => $workspace->id]);
+        $question = 'Is the Key Safe Procedure still just a Willow Bank thing?';
+        $plan = $this->scopePlan($document, $question, 'Willow Bank', 'breadth');
+        $alias = new OrganisationalLocationAlias(['alias' => 'Willow Bank']);
+        $alias->workspace()->associate($workspace);
+        $alias->organisationalLocation()->associate($site);
+        $alias->save();
+        $at = CarbonImmutable::parse('2026-09-08');
+        $resolver = app(EligibilityResolver::class);
+        $fact = $resolver->scopeFact($scope, $plan->retrievalPlan('n1'), $at);
+        $this->assertInstanceOf(ApplicabilityScopeFact::class, $fact);
+        $this->assertSame(ApplicabilityScopeFact::BREADTH_VERSION, $fact->value['representation']);
+        $this->assertSame($document->applicabilitySnapshot->id, $fact->value['snapshot']['snapshot_id']);
+        $this->assertEqualsCanonicalizing([$region->public_id, $site->public_id], array_column($fact->value['recorded_locations'], 'location_id'));
+        $entry = collect($fact->value['recorded_locations'])->firstWhere('location_id', $site->public_id);
+        $this->assertContains($region->public_id, $entry['ancestor_ids']);
+        $this->assertStringContainsString('Midlands Region', $fact->renderedText());
+        $this->assertStringContainsString('Willow Bank Community Service', $fact->renderedText());
+        $this->assertStringContainsString('does not establish what action is safe or required', $fact->renderedText());
+        $resolver->recheckScopeFact($scope, $fact->value);
+        $retrieval = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 15, $at);
+        $this->assertSame([], $retrieval->candidates);
+        $this->assertSame($fact->value, $retrieval->evidenceNeeds[0]['scope_fact']);
+        Http::assertNothingSent();
     }
 
     #[DataProvider('scopeBases')]
@@ -333,7 +484,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $answer = app(GenerateGroundedAnswer::class)->handle($input,
                 app(GenerationProfileFactory::class)->configuredNeeds());
             $texts[] = $answer->renderedText();
-            $this->assertSame('scope-composed-answer-v1', $answer->contract_version);
+            $this->assertSame('scope-composed-answer-v2', $answer->contract_version);
             $this->assertSame($document->applicabilitySnapshot->id, $answer->scope_facts[0]['snapshot']['snapshot_id']);
             $this->assertCount(0, $answer->evidenceSnapshots);
             $this->assertSame(0, $answer->usage['request_count']);
@@ -345,7 +496,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_scope_only_conversation_publishes_with_a_zero_cost_local_receipt(): void
+    #[DataProvider('scopeQuestionKinds')]
+    public function test_scope_only_conversation_publishes_with_a_zero_cost_local_receipt(string $scopeQuestion): void
     {
         Queue::fake();
         Http::preventStrayRequests();
@@ -353,7 +505,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $document = $this->document($workspace, $generation, '2026-01-01');
         OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place']);
         $question = 'Does Equipment Policy cover Harbour Place?';
-        $plan = $this->scopePlan($document, $question);
+        $plan = $this->scopePlan($document, $question, scopeQuestion: $scopeQuestion);
         config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
         Http::fake(function ($request) use ($plan) {
             $this->assertStringEndsWith('/plan-needs', $request->url());
@@ -378,8 +530,16 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertSame('zero_cost_local', $usage->cost_basis);
         $this->assertSame(0, $usage->request_count);
         $this->assertSame(0.0, (float) $usage->cost_usd);
+        $this->assertSame($document->applicabilitySnapshot->id,
+            $run->generatedAnswer->scope_facts[0]['snapshot']['snapshot_id']);
+        $this->assertSame('applicability_snapshot', $run->generatedAnswer->scope_facts[0]['citation_type']);
         $this->assertDatabaseCount('evidence_snapshots', 0);
         Http::assertSentCount(1);
+    }
+
+    public static function scopeQuestionKinds(): array
+    {
+        return [['membership'], ['breadth']];
     }
 
     public function test_scope_and_operational_answer_are_isolated_through_generation_and_persistence(): void
@@ -394,6 +554,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $need = $scopeRetrieval->evidenceNeeds[0];
         unset($need['scope_fact']);
         $need = [...$need, 'need_id' => 'n2', 'aspect' => 'How are temporary workers booked?', 'operation' => 'retrieve'];
+        $need['claim_under_test'] = ['version' => 'claim-under-test-v1', 'type' => 'named_recipient',
+            'relation' => 'submission_destination', 'source' => ['turn_id' => 'user-1', 'quote' => 'Brambleford Office People team']];
         $retrieval = new RetrievalResult(RetrievalOutcome::EvidenceFound,
             [['chunk_id' => $chunk->public_id, 'document_id' => $other->public_id,
                 'document_family_id' => $other->family->public_id, 'side' => 'primary',
@@ -403,17 +565,19 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $wire = $sent->data();
             $this->assertSame('How are temporary workers booked?', $wire['question']);
             $this->assertSame(['n2'], array_column($wire['evidence_needs'], 'need_id'));
+            $this->assertSame('Brambleford Office People team', $wire['evidence_needs'][0]['claim_under_test']['source']['quote']);
             $this->assertSame([$other->id], array_column($wire['evidence'], 'document_id'));
             $this->assertStringNotContainsString($document->public_id, $sent->body());
             $this->assertStringNotContainsString('scope_fact', $sent->body());
 
             return Http::response(['contract_version' => 2, 'request_id' => $wire['request_id'],
-                'status' => 'completed', 'result' => ['contract_version' => 2, 'outcome' => 'answered',
+                'status' => 'completed', 'result' => ['contract_version' => 3, 'outcome' => 'answered',
                     'answer_parts' => [['text' => 'Use the authorised booking record.', 'evidence_ids' => ['ev-01']]],
                     'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+                    'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
                     'aspect_links' => [['need_id' => 'n2', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]]]]);
         });
-        $input = new GenerationAssemblyInput('Does this scope apply, and how do we book temporary workers?', $retrieval, [], [], $scope, []);
+        $input = new GenerationAssemblyInput('Does this scope apply, and do we book temporary workers through the Brambleford Office People team?', $retrieval, [], [], $scope, []);
         $answer = app(GenerateGroundedAnswer::class)->handle($input,
             app(GenerationProfileFactory::class)->configuredNeeds());
         $this->assertCount(1, $answer->scope_facts);
@@ -475,14 +639,15 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         Http::assertSentCount(1);
     }
 
-    public function test_ambiguous_scope_subject_still_clarifies(): void
+    #[DataProvider('scopeQuestionKinds')]
+    public function test_ambiguous_scope_subject_still_clarifies(string $scopeQuestion): void
     {
         Http::preventStrayRequests();
         [$workspace, $generation, $scope] = $this->scope();
         $document = $this->document($workspace, $generation, '2026-01-01');
         OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place']);
-        $plan = $this->plan(4, function ($data) use ($document) {
-            $data = $this->scopePlan($document)->value;
+        $plan = $this->plan(4, function ($data) use ($document, $scopeQuestion) {
+            $data = $this->scopePlan($document, scopeQuestion: $scopeQuestion)->value;
             $data['bindings'][0]['subject_status'] = 'topic';
             $data['bindings'][0]['family_ids'] = [];
 
@@ -518,8 +683,11 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         } else {
             DB::table('document_applicability_snapshots')->where('document_id', $document->id)->delete();
         }
-        $result = app(EligibilityResolver::class)->scopeFact($scope, $this->scopePlan($document)->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-08'));
-        $this->assertNotInstanceOf(ApplicabilityScopeFact::class, $result);
+        foreach (['membership', 'breadth'] as $questionType) {
+            $result = app(EligibilityResolver::class)->scopeFact($scope,
+                $this->scopePlan($document, scopeQuestion: $questionType)->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-08'));
+            $this->assertNotInstanceOf(ApplicabilityScopeFact::class, $result, $questionType);
+        }
         Http::assertNothingSent();
     }
 
@@ -544,7 +712,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $resolver->recheckScopeFact($scope, $fact->value);
     }
 
-    public function test_historical_scope_uses_the_selected_versions_snapshot_not_the_current_one(): void
+    #[DataProvider('scopeQuestionKinds')]
+    public function test_historical_scope_uses_the_selected_versions_snapshot_not_the_current_one(string $scopeQuestion): void
     {
         Http::preventStrayRequests();
         [$workspace, $generation, $scope] = $this->scope();
@@ -552,7 +721,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $new = $this->document($workspace, $generation, '2026-06-01', $old);
         OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Harbour Place']);
         DB::table('document_applicability_snapshots')->where('document_id', $new->id)->update(['scope' => 'specific']);
-        $plan = $this->scopePlan($old)->retrievalPlan('n1');
+        $plan = $this->scopePlan($old, scopeQuestion: $scopeQuestion)->retrievalPlan('n1');
         $resolver = app(EligibilityResolver::class);
         $at = CarbonImmutable::parse('2026-09-08');
         $current = $resolver->scopeFact($scope, $plan, $at);
@@ -562,9 +731,15 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             evidenceNeed: $plan->evidenceNeed);
         $past = $resolver->scopeFact($scope, $historical, $at);
         $this->assertSame($new->public_id, $current->value['document_version_id']);
-        $this->assertSame('does_not_apply', $current->value['result']);
+        $this->assertSame($scopeQuestion === 'breadth' ? 'recorded_scope' : 'does_not_apply', $current->value['result']);
         $this->assertSame($old->public_id, $past->value['document_version_id']);
-        $this->assertSame('applies', $past->value['result']);
+        $this->assertSame($scopeQuestion === 'breadth' ? 'recorded_scope' : 'applies', $past->value['result']);
+        if ($scopeQuestion === 'breadth') {
+            $this->assertSame([], $current->value['recorded_locations']);
+            $this->assertSame([], $past->value['recorded_locations']);
+            $this->assertStringContainsString('is universal', $past->renderedText());
+            $this->assertStringNotContainsString('changed from', $current->renderedText());
+        }
         $resolver->recheckScopeFact($scope, $past->value);
         Http::assertNothingSent();
     }

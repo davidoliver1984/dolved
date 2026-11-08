@@ -15,3 +15,31 @@ Both consumers additionally enforce the accepted semantic **structure**: outcome
 The provider output adds only `aspect_links`. `aspect_results` is forbidden in its output and derived by Laravel. The persistence action stores both the validated links and derived projection alongside the unchanged authoritative answer parts, gaps and evidence snapshots. Existing rows retain null coverage. Deploy the additive migration before enabling any v2 writes; rollback the profile for new runs before dropping these columns, which would discard v2 coverage history. No rollback or activation is performed by this component checkpoint.
 
 The strict provider schema reuses canonical `EvidenceId` and the existing answer-part shape. No malformed citation is repaired. Textual limitations and their placement remain generation-owned; a fixture verifies exact supplied limitation-first text survives persistence, not that an actual model has already produced it. No additional sufficiency judge or independent generated answer/status is introduced.
+
+## Claim-under-test extension (2026-11-08)
+
+The optional `claim_under_test` field on a generation need carries a neutral,
+versioned, user-grounded claimed value. It is not a location constraint or
+evidence source. The active needs generation identity is now
+`grounded-generation-needs-v7` / `openai-responses-needs-v3`. The provider is
+instructed to confirm, contradict with an explicitly supported alternative,
+or mark the need insufficient using only its owned evidence. The citation and
+need-ownership validators remain unchanged. Synthetic adapter tests prove
+transport and schema handling, not model entailment.
+
+## Entailment-gated result extension (2026-11-08)
+
+The signed request and response envelope remain wire version 2, but a completed
+needs result is now `generation-result-v3` under prompt
+`grounded-generation-needs-v8` and adapter `openai-responses-needs-v4`.
+`entailment_checks` must contain one `supported` verdict per answer part, in
+order. Laravel rejects absent, incomplete or non-supported verdicts before
+persisting any answer. The Python adapter first applies a narrow conditional
+obligation guard to cited sentences, then asks a separate structured reviewer
+to check every material claim in each answer part against its cited passages
+and application-resolved metadata. Unsupported or uncertain review results
+fail closed as bounded validation errors; the reviewer cannot add evidence,
+change eligibility or rewrite the answer. Its measured usage is included in
+the generation receipt. This is an additional fallible check, not a proof that
+all English-language claims are entailed. Provider-free tests verify the guard,
+contract and failure routing; independent live accuracy remains to be measured.

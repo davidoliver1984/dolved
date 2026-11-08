@@ -163,6 +163,9 @@ class GenerationValidationDiagnostic(ImmutableModel):
         "coverage_outcome",
         "citation_ownership",
         "missing_evidence_gap",
+        "site_scope_condition_unproven",
+        "entailment_unsupported",
+        "entailment_uncertain",
         "schema_validation",
     ]
 

@@ -15,7 +15,12 @@ from app.generation.models import (
     GenerationEvidence,
     GenerationRequest,
 )
-from app.retrieval.needs import FactReference, NeedApplicability, NeedAuthority
+from app.retrieval.needs import (
+    ClaimUnderTest,
+    FactReference,
+    NeedApplicability,
+    NeedAuthority,
+)
 
 
 class GenerationNeed(ImmutableModel):
@@ -26,6 +31,7 @@ class GenerationNeed(ImmutableModel):
     authority: NeedAuthority
     fact_reference: FactReference | None
     applicability: NeedApplicability
+    claim_under_test: ClaimUnderTest | None = None
     retrieval_outcome: BoundedText
     retrieval_reason: BoundedText | None
     evidence_ids: tuple[EvidenceId, ...]

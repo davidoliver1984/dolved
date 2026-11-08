@@ -35,7 +35,9 @@
             "kind": "generic",
             "source": null
           },
-          "supports_need_id": null
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null
         },
         {
           "need_id": "n2",
@@ -57,7 +59,9 @@
             "kind": "generic",
             "source": null
           },
-          "supports_need_id": "n1"
+          "supports_need_id": "n1",
+          "claim_under_test": null,
+          "scope_question": null
         }
       ],
       "bindings": [
@@ -114,7 +118,9 @@
             "kind": "generic",
             "source": null
           },
-          "supports_need_id": null
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null
         }
       ],
       "bindings": [
@@ -168,7 +174,9 @@
             "kind": "generic",
             "source": null
           },
-          "supports_need_id": null
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null
         }
       ],
       "bindings": [
@@ -218,7 +226,9 @@
               "quote": "workplace"
             }
           },
-          "supports_need_id": null
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null
         }
       ],
       "bindings": [
@@ -268,7 +278,9 @@
               "quote": "Riverside"
             }
           },
-          "supports_need_id": null
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null
         }
       ],
       "bindings": [
@@ -322,7 +334,9 @@
               "quote": "The outreach site"
             }
           },
-          "supports_need_id": null
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null
         }
       ],
       "bindings": [

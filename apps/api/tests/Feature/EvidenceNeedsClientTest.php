@@ -34,7 +34,7 @@ final class EvidenceNeedsClientTest extends TestCase
     {
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
             'contract_schema_version' => 'evidence-needs-plan-v3',
-            'prompt_version' => 'bounded-evidence-needs-v18', 'adapter_version' => 'structured-chat-needs-v6'];
+            'prompt_version' => 'bounded-evidence-needs-v20', 'adapter_version' => 'structured-chat-needs-v7'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
@@ -67,6 +67,39 @@ final class EvidenceNeedsClientTest extends TestCase
         Http::assertSentCount(1);
     }
 
+    public function test_m07_shaped_normalized_claim_plan_passes_real_laravel_consumer(): void
+    {
+        $question = 'Do formal grievances go to the Brambleford Office People team?';
+        $turns = [['turn_id' => 'u1', 'text' => $question]];
+        $claim = ['version' => 'claim-under-test-v1', 'type' => 'named_recipient',
+            'relation' => 'submission_destination',
+            'source' => ['turn_id' => 'u1', 'quote' => 'Brambleford Office People team']];
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) use ($question, $turns, $claim) {
+            $this->assertSame($turns, $request['user_turns']);
+            $response = $this->response($request);
+            $need = $response['plan']['needs'][0];
+            $need['aspect'] = $question;
+            $need['question_span'] = ['turn_id' => 'u1', 'quote' => $question];
+            $need['operation'] = 'retrieve';
+            $need['authority'] = ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null];
+            $need['fact_reference'] = null;
+            $need['applicability'] = ['kind' => 'generic', 'source' => null];
+            $need['claim_under_test'] = $claim;
+            $need['scope_question'] = null;
+            $need['supports_need_id'] = null;
+            $response['plan']['needs'] = [$need];
+            $response['plan']['bindings'] = [$response['plan']['bindings'][0]];
+
+            return Http::response($response);
+        });
+        $plan = app(RetrievalClient::class)->planNeeds($this->workspace(), $turns, CarbonImmutable::now());
+        $this->assertSame('retrieve', $plan->value['needs'][0]['operation']);
+        $this->assertNull($plan->value['needs'][0]['scope_question']);
+        $this->assertSame($claim, $plan->value['needs'][0]['claim_under_test']);
+        Http::assertSentCount(1);
+    }
+
     public function test_ungrounded_response_is_not_retried_or_sent_to_legacy_route(): void
     {
         Http::preventStrayRequests();
@@ -81,6 +114,7 @@ final class EvidenceNeedsClientTest extends TestCase
             $this->fail('Ungrounded plan was accepted.');
         } catch (RetrievalPlannerException $exception) {
             $this->assertSame('invalid_grounded_needs_plan', $exception->category);
+            $this->assertSame('Reference is not grounded in an authorised user turn.', $exception->validation['message']);
         }
         Http::assertSentCount(1);
     }
@@ -100,6 +134,7 @@ final class EvidenceNeedsClientTest extends TestCase
             $this->fail('Unknown catalogue identity was accepted.');
         } catch (RetrievalPlannerException $exception) {
             $this->assertSame('invalid_grounded_needs_plan', $exception->category);
+            $this->assertSame('Invalid authorised catalogue binding.', $exception->validation['message']);
         }
         Http::assertSentCount(1);
     }
@@ -118,6 +153,27 @@ final class EvidenceNeedsClientTest extends TestCase
             $this->fail('Incomplete catalogue binding was accepted.');
         } catch (RetrievalPlannerException $exception) {
             $this->assertSame('invalid_grounded_needs_plan', $exception->category);
+            $this->assertSame('Every need requires one catalogue binding.', $exception->validation['message']);
+        }
+        Http::assertSentCount(1);
+    }
+
+    public function test_wire_shape_failure_captures_only_static_safe_message(): void
+    {
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) {
+            $response = $this->response($request);
+            $response['plan']['needs'][0]['aspect'] = ['PRIVATE-CONTENT-MUST-NOT-LEAK'];
+
+            return Http::response($response);
+        });
+        try {
+            app(RetrievalClient::class)->planNeeds($this->workspace(), $this->example()['turns'], CarbonImmutable::now());
+            $this->fail('Invalid wire shape was accepted.');
+        } catch (RetrievalPlannerException $exception) {
+            $this->assertSame(['stage' => 'application_contract', 'field' => 'root',
+                'code' => 'invalid_plan', 'message' => 'Invalid evidence needs shape.'], $exception->validation);
+            $this->assertStringNotContainsString('PRIVATE-CONTENT-MUST-NOT-LEAK', json_encode($exception->validation));
         }
         Http::assertSentCount(1);
     }
@@ -141,6 +197,35 @@ final class EvidenceNeedsClientTest extends TestCase
     public static function diagnosticFields(): array
     {
         return [['bindings.0.family_ids'], ['PRIVATE-CONTENT-MUST-NOT-LEAK']];
+    }
+
+    public static function needsDiagnosticCases(): array
+    {
+        return [
+            'scope question required' => ['needs.0', 'scope_question_required'],
+            'scope question misplaced' => ['needs.0', 'scope_question_misplaced'],
+            'scope claim conflict' => ['needs.0', 'scope_claim_conflict'],
+            'missing claim relation' => ['needs.0.claim_under_test.relation', 'missing'],
+            'missing top-level needs' => ['needs', 'missing'],
+            'missing aspect' => ['needs.0.aspect', 'missing'],
+        ];
+    }
+
+    #[DataProvider('needsDiagnosticCases')]
+    public function test_safe_needs_diagnostic_survives_typed_failure_without_input(string $field, string $code): void
+    {
+        Http::preventStrayRequests();
+        Http::fake(Http::response(['detail' => ['category' => 'invalid_grounded_needs_plan',
+            'provider_status' => 200, 'attempt_count' => 1, 'systemic' => false,
+            'validation' => ['stage' => 'schema', 'field' => $field, 'code' => $code,
+                'input' => 'PRIVATE-CONTENT-MUST-NOT-LEAK']]], 503));
+        try {
+            app(RetrievalClient::class)->planNeeds($this->workspace(), $this->example()['turns'], CarbonImmutable::now());
+            $this->fail('Expected typed validation failure.');
+        } catch (RetrievalPlannerException $exception) {
+            $this->assertSame(['stage' => 'schema', 'field' => $field, 'code' => $code], $exception->validation);
+        }
+        Http::assertSentCount(1);
     }
 
     public function test_completion_failure_metadata_is_allowlisted(): void

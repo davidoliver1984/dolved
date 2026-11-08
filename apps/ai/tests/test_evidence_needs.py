@@ -6,7 +6,7 @@ from uuid import uuid4
 import httpx
 import pytest
 from fastapi.testclient import TestClient
-from pydantic import SecretStr
+from pydantic import SecretStr, ValidationError
 
 from app.main import app
 from app.retrieval.needs import (
@@ -19,6 +19,7 @@ from app.retrieval.needs import (
 from app.retrieval.needs_planner import (
     NeedsValidationFailure,
     StructuredChatNeedsPlanner,
+    _normalize_scope_claim_conflicts,
 )
 from app.retrieval.planner import RetrievalPlanningError
 from app.retrieval.routes import needs_planner_dependency
@@ -160,6 +161,44 @@ def test_safe_failure_details_exclude_input_exception_context_and_unknown_keys()
 
 
 @pytest.mark.parametrize(
+    ("operation", "scope_question", "claim_present", "code"),
+    [
+        ("scope_enquiry", None, False, "scope_question_required"),
+        ("retrieve", "membership", False, "scope_question_misplaced"),
+        ("scope_enquiry", "membership", True, "scope_claim_conflict"),
+    ],
+)
+def test_scope_claim_cross_field_failures_have_distinct_safe_codes(
+    operation, scope_question, claim_present, code
+):
+    from pydantic import ValidationError
+
+    plan = deepcopy(EXAMPLES[0]["plan"])
+    need = plan["needs"][1]
+    need["need_id"] = "n1"
+    need["supports_need_id"] = None
+    need["operation"] = operation
+    need["scope_question"] = scope_question
+    need["claim_under_test"] = (
+        {
+            "version": "claim-under-test-v1",
+            "type": "named_recipient",
+            "relation": "submission_destination",
+            "source": {"turn_id": "u1", "quote": "PRIVATE-CLAIM"},
+        }
+        if claim_present
+        else None
+    )
+    plan["needs"] = [need]
+    plan["bindings"] = [{**plan["bindings"][1], "need_id": "n1"}]
+    with pytest.raises(ValidationError) as caught:
+        EvidenceNeedsPlan.model_validate(plan)
+    safe = NeedsValidationFailure("schema", caught.value).validation
+    assert safe == {"stage": "schema", "field": "needs.0", "code": code}
+    assert "PRIVATE-CLAIM" not in json.dumps(safe)
+
+
+@pytest.mark.parametrize(
     "fault",
     [None, "foreign", "missing", "duplicate", "ownership_location", "ownership_quote"],
 )
@@ -258,6 +297,107 @@ def adapter(output, calls):
         timeout_seconds=1,
         client=httpx.Client(transport=httpx.MockTransport(handle)),
     )
+
+
+def test_scope_claim_collision_normalizes_only_operation_and_scope_question(caplog):
+    import logging
+
+    caplog.set_level(logging.INFO, logger="retrieval.needs.planner")
+    sample = deepcopy(EXAMPLES[3])
+    question = "Do formal grievances go to the Brambleford Office People team?"
+    sample["turns"] = [{"turn_id": "u1", "text": question}]
+    need = sample["plan"]["needs"][0]
+    need.update(
+        aspect=question,
+        question_span={"turn_id": "u1", "quote": question},
+        operation="scope_enquiry",
+        scope_question="membership",
+        applicability={"kind": "generic", "source": None},
+        claim_under_test={
+            "version": "claim-under-test-v1",
+            "type": "named_recipient",
+            "relation": "submission_destination",
+            "source": {"turn_id": "u1", "quote": "Brambleford Office People team"},
+        },
+    )
+    with pytest.raises(ValidationError):
+        EvidenceNeedsPlan.model_validate(sample["plan"])
+    original = deepcopy(sample["plan"])
+    calls = []
+    result = adapter(original, calls).plan_needs(
+        turns(sample), evaluated_at="2026-11-08T09:00:00Z"
+    )
+    expected = deepcopy(original)
+    expected["needs"][0]["operation"] = "retrieve"
+    expected["needs"][0]["scope_question"] = None
+    assert result.plan.model_dump(mode="json") == expected
+    assert len(calls) == 1
+    assert "Scope/claim conflict normalized." in caplog.text
+    assert "Brambleford" not in caplog.text
+
+
+def test_scope_claim_normalizer_preserves_other_needs_and_site_constraint():
+    sample = deepcopy(EXAMPLES[3]["plan"])
+    need = sample["needs"][0]
+    need["operation"] = "scope_enquiry"
+    need["scope_question"] = "membership"
+    need["claim_under_test"] = {
+        "version": "claim-under-test-v1",
+        "type": "named_recipient",
+        "relation": "submission_destination",
+        "source": {"turn_id": "u1", "quote": "workplace hazard"},
+    }
+    need["applicability"] = {
+        "kind": "named",
+        "source": {"turn_id": "u1", "quote": "workplace"},
+    }
+    before = deepcopy(sample)
+    output, count = _normalize_scope_claim_conflicts(json.dumps(sample))
+    after = json.loads(output)
+    assert count == 1
+    assert after["needs"][0] == {
+        **before["needs"][0],
+        "operation": "retrieve",
+        "scope_question": None,
+    }
+    assert after["bindings"] == before["bindings"]
+    assert after["needs"][0]["applicability"] == before["needs"][0]["applicability"]
+    for operation, claim, scope in [
+        ("scope_enquiry", None, "breadth"),
+        ("retrieve", need["claim_under_test"], None),
+    ]:
+        unchanged = deepcopy(before)
+        unchanged["needs"][0].update(
+            operation=operation, claim_under_test=claim, scope_question=scope
+        )
+        text = json.dumps(unchanged)
+        assert _normalize_scope_claim_conflicts(text) == (text, 0)
+
+
+def test_scope_claim_normalizer_keeps_malformed_and_ungrounded_claims_rejected():
+    sample = deepcopy(EXAMPLES[3])
+    need = sample["plan"]["needs"][0]
+    need.update(
+        operation="scope_enquiry",
+        scope_question="membership",
+        claim_under_test={
+            "version": "claim-under-test-v1",
+            "type": "named_recipient",
+            "relation": "submission_destination",
+            "source": {"turn_id": "u1", "quote": "not in the user turn"},
+        },
+    )
+    with pytest.raises(NeedsValidationFailure) as caught:
+        adapter(sample["plan"], []).plan_needs(
+            turns(sample), evaluated_at="2026-11-08T09:00:00Z"
+        )
+    assert caught.value.validation["code"] == "reference_grounding"
+    need["claim_under_test"]["relation"] = "invented"
+    with pytest.raises(NeedsValidationFailure) as caught:
+        adapter(sample["plan"], []).plan_needs(
+            turns(sample), evaluated_at="2026-11-08T09:00:00Z"
+        )
+    assert caught.value.validation["stage"] == "schema"
 
 
 def test_out_of_order_needs_reconcile_provenance_bindings_and_support_edges():
@@ -513,7 +653,7 @@ def test_non_current_reference_still_rejects_missing_components(field):
     authority[field] = "none" if field == "precision" else None
     calls = []
     planner = adapter(example["plan"], calls)
-    assert planner.lineage().prompt_version == "bounded-evidence-needs-v18"
+    assert planner.lineage().prompt_version == "bounded-evidence-needs-v20"
     with pytest.raises(RetrievalPlanningError) as error:
         planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
     assert error.value.category == "invalid_grounded_needs_plan"

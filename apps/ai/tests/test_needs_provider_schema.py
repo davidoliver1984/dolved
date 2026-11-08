@@ -53,6 +53,7 @@ def test_scope_enquiry_is_explicit_in_real_provider_schema_and_does_not_rewrite_
 
     plan = deepcopy(EXAMPLES[0]["plan"])
     plan["needs"][0]["operation"] = "scope_enquiry"
+    plan["needs"][0]["scope_question"] = "membership"
     plan["needs"][0]["authority"] = {
         "kind": "current",
         "value": None,
@@ -66,6 +67,115 @@ def test_scope_enquiry_is_explicit_in_real_provider_schema_and_does_not_rewrite_
     assert ordinary.needs[0].operation == EXAMPLES[0]["plan"]["needs"][0]["operation"]
     assert "never relabel empty retrieval after" in PROMPT
     assert "ONLY recorded applicability, never permission to act" in PROMPT
+
+
+@pytest.mark.parametrize(
+    ("question", "scope_question"),
+    [
+        ("Is the Key Safe Procedure still just a Willow Bank thing?", "breadth"),
+        ("Does the Key Safe Procedure cover Willow Bank?", "membership"),
+        (
+            "Under the Key Holder Procedure, is this still just for North West Region sites?",
+            "breadth",
+        ),
+    ],
+)
+def test_breadth_and_membership_examples_preserve_distinct_real_contract_shapes(
+    question, scope_question
+):
+    from app.retrieval.needs_planner import PROMPT
+
+    location = "North West Region" if "North West" in question else "Willow Bank"
+    catalogue = families(1)
+    plan = deepcopy(EXAMPLES[3]["plan"])
+    need = plan["needs"][0]
+    need.update(
+        aspect=question,
+        question_span={"turn_id": "u1", "quote": question},
+        operation="scope_enquiry",
+        scope_question=scope_question,
+        applicability={"kind": "named", "source": {"turn_id": "u1", "quote": location}},
+    )
+    plan["bindings"] = [
+        {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [str(catalogue[0].family_id)],
+            "ownership": "authorised_workspace",
+            "ownership_source": None,
+        }
+    ]
+    jsonschema.validate(plan, provider_needs_schema(catalogue))
+    calls = []
+    result = adapter(plan, calls).plan_needs(
+        (UserTurn(turn_id="u1", text=question),),
+        evaluated_at="2026-11-08T12:00:00Z",
+        catalogue=catalogue,
+    )
+    assert len(calls) == 1
+    assert result.plan.needs[0].scope_question == scope_question
+    assert result.plan.needs[0].operation == "scope_enquiry"
+    assert "still just\na Willow Bank thing?'" in PROMPT
+    # Fake output proves transport and instruction presence, not live model judgement.
+
+
+def test_disputed_claim_and_real_site_can_coexist_in_strict_planner_contract():
+    from app.retrieval.needs import UserTurn
+
+    question = (
+        "At Riverside House, do grievances go to the Brambleford Office People team?"
+    )
+    catalogue = families(1)
+    plan = deepcopy(EXAMPLES[0]["plan"])
+    plan["needs"] = [
+        {
+            "need_id": "n1",
+            "aspect": "Where grievances are submitted at Riverside House",
+            "central": True,
+            "question_span": {"turn_id": "u1", "quote": question},
+            "operation": "retrieve",
+            "authority": {
+                "kind": "current",
+                "value": None,
+                "precision": "none",
+                "source": None,
+            },
+            "fact_reference": None,
+            "applicability": {
+                "kind": "named",
+                "source": {"turn_id": "u1", "quote": "Riverside House"},
+            },
+            "claim_under_test": {
+                "version": "claim-under-test-v1",
+                "type": "named_recipient",
+                "relation": "submission_destination",
+                "source": {"turn_id": "u1", "quote": "Brambleford Office People team"},
+            },
+            "scope_question": None,
+            "supports_need_id": None,
+        }
+    ]
+    plan["bindings"] = [
+        {
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": None,
+            "subject_status": "matched",
+            "family_ids": [str(catalogue[0].family_id)],
+        }
+    ]
+    calls = []
+    result = adapter(plan, calls).plan_needs(
+        (UserTurn(turn_id="u1", text=question),),
+        evaluated_at="2026-11-08T12:00:00Z",
+        catalogue=catalogue,
+    )
+    assert len(calls) == 1
+    assert (
+        result.plan.needs[0].claim_under_test.source.quote
+        == "Brambleford Office People team"
+    )
+    assert result.plan.needs[0].applicability.source.quote == "Riverside House"
 
 
 @pytest.mark.parametrize(
@@ -128,6 +238,10 @@ def test_clause_purpose_survives_real_adapter_without_posthoc_reclassification(
                     else None,
                 },
                 "fact_reference": None,
+                "claim_under_test": None,
+                "scope_question": "membership"
+                if operation == "scope_enquiry"
+                else None,
                 "supports_need_id": None,
             }
         )
@@ -217,6 +331,8 @@ def test_document_reference_and_real_site_are_separate_applicability_fields(
                     "source": None,
                 },
                 "fact_reference": None,
+                "claim_under_test": None,
+                "scope_question": None,
                 "applicability": {
                     "kind": "named" if location_quote else "generic",
                     "source": {"turn_id": "user-1", "quote": location_quote}
@@ -289,6 +405,7 @@ def test_location_quote_excludes_incidental_trailing_qualifier_in_real_plan_cont
                 "central": True,
                 "question_span": {"turn_id": "user-1", "quote": question},
                 "operation": "scope_enquiry",
+                "scope_question": "membership",
                 "authority": {
                     "kind": "current",
                     "value": None,
@@ -438,7 +555,7 @@ def test_real_transport_sends_request_specific_schema_and_does_not_cache_other_t
         jsonschema.validate(example["plan"], schema)
         other = str(UUID(int=2 if family.family_id.int == 1 else 1))
         assert other not in json.dumps(schema)
-        assert result.lineage.adapter_version == "structured-chat-needs-v6"
+        assert result.lineage.adapter_version == "structured-chat-needs-v7"
         assert len(calls) == 1
 
 

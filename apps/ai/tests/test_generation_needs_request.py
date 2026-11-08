@@ -106,7 +106,7 @@ def test_result_is_bound_to_the_actual_assembled_request():
     incoming = GenerationNeedsRequest.model_validate(request())
     result = GenerationNeedsResult.model_validate(
         {
-            "contract_version": 2,
+            "contract_version": 3,
             "outcome": "answered",
             "answer_parts": [
                 {"text": "Synthetic claim.", "evidence_ids": ["ev-01"]},
@@ -115,6 +115,10 @@ def test_result_is_bound_to_the_actual_assembled_request():
             "unsupported_aspects": [],
             "insufficiency_reason": None,
             "usage": None,
+            "entailment_checks": [
+                {"part_index": 0, "verdict": "supported", "missing_condition": None},
+                {"part_index": 1, "verdict": "supported", "missing_condition": None},
+            ],
             "aspect_links": [
                 {
                     "need_id": "n1",

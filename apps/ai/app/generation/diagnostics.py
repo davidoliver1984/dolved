@@ -86,6 +86,10 @@ RULES: dict[str, tuple[str, str]] = {
 
 
 def validation_diagnostic(exception: ValueError) -> dict[str, object]:
+    from app.generation.entailment import EntailmentRejection
+
+    if isinstance(exception, EntailmentRejection):
+        return {"field": "answer_parts.text", "code": exception.code}
     if isinstance(exception, CitationOwnershipError):
         return {
             "field": "answer_parts.evidence_ids",

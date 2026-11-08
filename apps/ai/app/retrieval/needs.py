@@ -159,6 +159,19 @@ class NeedApplicability(ImmutableModel):
         return self
 
 
+class ClaimUnderTest(ImmutableModel):
+    version: Literal["claim-under-test-v1"]
+    type: Literal["named_recipient", "named_value", "numeric_value"]
+    relation: Literal[
+        "submission_destination",
+        "contact_route",
+        "numeric_rate",
+        "named_value",
+        "other_fact",
+    ]
+    source: QuestionSpan
+
+
 class EvidenceNeed(ImmutableModel):
     need_id: NeedId
     aspect: Text
@@ -168,6 +181,8 @@ class EvidenceNeed(ImmutableModel):
     authority: NeedAuthority
     fact_reference: FactReference | None
     applicability: NeedApplicability
+    claim_under_test: ClaimUnderTest | None = None
+    scope_question: Literal["membership", "breadth"] | None = None
     supports_need_id: NeedId | None
 
     @model_validator(mode="after")
@@ -179,6 +194,12 @@ class EvidenceNeed(ImmutableModel):
             and self.operation != "compare"
         ):
             raise ValueError("transition authority requires comparison")
+        if self.operation != "scope_enquiry" and self.scope_question is not None:
+            raise ValueError("scope question is only for scope enquiries")
+        if self.operation == "scope_enquiry" and self.scope_question is None:
+            raise ValueError("scope enquiries require a typed question")
+        if self.operation == "scope_enquiry" and self.claim_under_test is not None:
+            raise ValueError("scope enquiries cannot test a disputed value")
         return self
 
 
@@ -315,6 +336,9 @@ class EvidenceNeedsPlan(ImmutableModel):
                 need.question_span,
                 need.authority.source,
                 need.applicability.source,
+                need.claim_under_test.source
+                if need.claim_under_test is not None
+                else None,
             ]
             if need.fact_reference is not None:
                 spans.append(need.fact_reference.source)

@@ -105,8 +105,52 @@ final readonly class RetrievalClient
                 $response->json('classifier_lineage'), $response->json('usage'));
         } catch (InvalidArgumentException $exception) {
             throw new RetrievalPlannerException('The needs planner returned an invalid plan.',
-                'invalid_grounded_needs_plan', null, 1, false, $exception);
+                'invalid_grounded_needs_plan', null, 1, false, $exception,
+                ['stage' => 'application_contract', 'field' => 'root', 'code' => 'invalid_plan',
+                    'message' => self::safeNeedsValidationMessage($exception)]);
         }
+    }
+
+    private static function safeNeedsValidationMessage(InvalidArgumentException $exception): string
+    {
+        // These are literal application messages, never schema-library text or rejected values.
+        $allowed = [
+            'Invalid needs response envelope.',
+            'Invalid evidence needs shape.',
+            'Every need requires one catalogue binding.',
+            'Invalid authorised catalogue binding.',
+            'Ownership must be grounded and separate from location.',
+            'Invalid authorised user turns.',
+            'Authorised user turns are required.',
+            'Clarification needs a question and no needs.',
+            'Plan requires central needs and no clarification.',
+            'Need identifiers must be unique and sequential.',
+            'Comparison requires a historical or transition selector.',
+            'Current authority has no temporal selector.',
+            'Authority requires a grounded, precision-consistent selector.',
+            'Named historical reference must retain its wording.',
+            'Transition requires comparison.',
+            'Specific applicability requires a reference.',
+            'Scope question and disputed claim are incompatible.',
+            'Invalid disputed claim.',
+            'Reference is not grounded in an authorised user turn.',
+            'Needs must retain user question order.',
+            'Missing or cyclic support reference.',
+            'Unknown needs contract.',
+            'Year is not supported by user quote.',
+            'Calendar value or precision is not supported by user quote.',
+            'Invalid date interval.',
+            'Date does not match its precision.',
+            'Needs planner identity does not match its contract or usage.',
+            'The planner classifier lineage is incomplete.',
+            'The planner classifier lineage fingerprint is invalid.',
+            'The planner usage observation is invalid.',
+            'The planner token usage is invalid.',
+            'The planner cost observation is invalid.',
+        ];
+
+        return in_array($exception->getMessage(), $allowed, true)
+            ? $exception->getMessage() : 'Unclassified needs-plan validation failure.';
     }
 
     public function search(

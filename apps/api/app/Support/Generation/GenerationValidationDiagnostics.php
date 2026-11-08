@@ -13,6 +13,8 @@ final class GenerationValidationDiagnostics
     private const RULES = [
         'Generation result needs differ from the assembled request.' => ['aspect_links', 'request_needs'],
         'The needs generation result schema is invalid.' => ['result', 'needs_schema'],
+        'The needs generation entailment coverage is invalid.' => ['answer_parts.text', 'entailment_coverage'],
+        'The needs generation entailment verdict is invalid.' => ['answer_parts.text', 'entailment_verdict'],
         'The generation result schema is invalid.' => ['result', 'result_schema'],
         'The generation result fields are invalid.' => ['result', 'result_fields'],
         'An answer part is structurally invalid.' => ['answer_parts', 'part_shape'],
@@ -56,6 +58,8 @@ final class GenerationValidationDiagnostics
             'reference_range' => 'aspect_links', 'empty_need' => 'aspect_links',
             'unmapped_content' => 'aspect_links', 'coverage_outcome' => 'aspect_links',
             'citation_ownership' => 'answer_parts.evidence_ids', 'missing_evidence_gap' => 'aspect_links',
+            'site_scope_condition_unproven' => 'answer_parts.text',
+            'entailment_unsupported' => 'answer_parts.text', 'entailment_uncertain' => 'answer_parts.text',
             'schema_validation' => 'result',
         ];
         $code = is_array($diagnostic) ? ($diagnostic['code'] ?? null) : null;

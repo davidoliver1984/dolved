@@ -41,9 +41,9 @@ PROVIDER = "openai"
 MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
 ADAPTER_VERSION = "openai-responses-v3-claim-type"
-NEEDS_CONTRACT_VERSION = "generation-result-v2"
-NEEDS_PROMPT_VERSION = "grounded-generation-needs-v6"
-NEEDS_ADAPTER_VERSION = "openai-responses-needs-v2"
+NEEDS_CONTRACT_VERSION = "generation-result-v3"
+NEEDS_PROMPT_VERSION = "grounded-generation-needs-v8"
+NEEDS_ADAPTER_VERSION = "openai-responses-needs-v4"
 NEEDS_INSTRUCTIONS = """
 Answer directly with an evidence-supported statement. If an answer part starts with
 Yes or No, join that word to its immediate justification in the SAME sentence using
@@ -54,6 +54,12 @@ This is a structural writing rule; independently ensure the full claim agrees wi
 This request contains independent evidence_needs. Interpret comparison/current
 requirements per need, not globally. Evidence ownership, family/version identity,
 authority and applicability were resolved by Laravel and must not be changed.
+Where claim_under_test is present, use only the evidence owned by that need to
+confirm the claimed relation/value, contradict it with an explicit supported
+alternative, or state that it is insufficiently established. The claimed value
+is user input, not an authorised source or a location eligibility filter. Do
+not infer a contradiction solely because the claimed value is absent from the
+selected passages. Cite the evidence for any positive or contradictory answer.
 Each evidence item's temporal_authority may include evaluated_at, authority_start
 and authoritative_at_evaluated_at. These are application-resolved facts, not
 claims to recalculate from the passage. For a current request, when the selected
@@ -458,6 +464,7 @@ class OpenAIGenerator:
                     )
                     self._fail(category, started, attempt, None)
                 try:
+                    failure_usage = self._response_receipt(response, attempt, started)
                     provider_output = (
                         parsed
                         if isinstance(parsed, output_model)
@@ -473,18 +480,129 @@ class OpenAIGenerator:
                     )
                     validated = result.validate_against(request)
                     if needs_request is not None:
+                        from app.generation.aspect_coverage import validate_aspect_links
+                        from app.generation.diagnostics import CitationOwnershipError
+                        from app.generation.entailment import (
+                            ENTAILMENT_INSTRUCTIONS,
+                            EntailmentRejection,
+                            EntailmentReview,
+                            conditional_obligation_guard,
+                            review_input,
+                        )
                         from app.generation.needs_output import GenerationNeedsResult
 
+                        validate_aspect_links(
+                            validated,
+                            tuple(provider_output.aspect_links),
+                            tuple(
+                                need.need_id for need in needs_request.evidence_needs
+                            ),
+                        )
+                        owners = {
+                            need.need_id: set(need.evidence_ids)
+                            for need in needs_request.evidence_needs
+                        }
+                        for link in provider_output.aspect_links:
+                            for index in link.answer_part_indices:
+                                if not set(
+                                    provider_output.answer_parts[index].evidence_ids
+                                ).issubset(owners[link.need_id]):
+                                    raise CitationOwnershipError(
+                                        link.need_id,
+                                        index,
+                                        tuple(
+                                            provider_output.answer_parts[
+                                                index
+                                            ].evidence_ids
+                                        ),
+                                        owners[link.need_id],
+                                    )
+                        conditional_obligation_guard(needs_request, provider_output)
+                        verifier_receipt: dict[str, object] | None = None
+                        checks = []
+                        if provider_output.answer_parts:
+                            review_started = self._monotonic()
+                            review_response = self._client.responses.parse(
+                                model=rendered.model,
+                                instructions=ENTAILMENT_INSTRUCTIONS,
+                                input=review_input(needs_request, provider_output),
+                                text_format=EntailmentReview,
+                                max_output_tokens=1024,
+                                reasoning=cast(
+                                    Any, {"effort": rendered.reasoning_effort}
+                                ),
+                                store=False,
+                                truncation="disabled",
+                            )
+                            raw_review = getattr(review_response, "output_parsed", None)
+                            if raw_review is None:
+                                raise EntailmentRejection(
+                                    "entailment_uncertain", 0, "review unavailable"
+                                )
+                            review = (
+                                raw_review
+                                if isinstance(raw_review, EntailmentReview)
+                                else EntailmentReview.model_validate(raw_review)
+                            )
+                            checks = review.parts
+                            verifier_receipt = self._response_receipt(
+                                review_response, 1, review_started
+                            )
+                            for key in (
+                                "request_count",
+                                "input_tokens",
+                                "output_tokens",
+                                "cached_input_tokens",
+                            ):
+                                first, second = (
+                                    failure_usage.get(key),
+                                    verifier_receipt.get(key),
+                                )
+                                failure_usage[key] = (
+                                    first + second
+                                    if isinstance(first, int)
+                                    and isinstance(second, int)
+                                    else None
+                                )
+                            first_cost, second_cost = (
+                                failure_usage.get("cost_usd"),
+                                verifier_receipt.get("cost_usd"),
+                            )
+                            failure_usage["cost_usd"] = (
+                                first_cost + second_cost
+                                if isinstance(first_cost, (int, float))
+                                and isinstance(second_cost, (int, float))
+                                else None
+                            )
+                            if [check.part_index for check in checks] != list(
+                                range(len(provider_output.answer_parts))
+                            ):
+                                raise EntailmentRejection(
+                                    "entailment_uncertain",
+                                    0,
+                                    "review coverage incomplete",
+                                )
+                            for check in checks:
+                                if check.verdict != "supported":
+                                    raise EntailmentRejection(
+                                        "entailment_unsupported"
+                                        if check.verdict == "unsupported"
+                                        else "entailment_uncertain",
+                                        check.part_index,
+                                        check.missing_condition
+                                        or "condition unestablished",
+                                    )
+                        usage = {**(result.usage or {}), **failure_usage}
+                        if verifier_receipt is not None:
+                            usage["entailment_review"] = verifier_receipt
                         needs_result = GenerationNeedsResult.model_validate(
                             {
                                 **provider_output.model_dump(),
-                                "contract_version": 2,
-                                "usage": {
-                                    **(result.usage or {}),
-                                    **self._response_receipt(
-                                        response, attempt, started
-                                    ),
-                                },
+                                "contract_version": 3,
+                                "entailment_checks": [
+                                    check.model_dump() for check in checks
+                                ],
+                                "usage": usage,
                             }
                         ).validate_for_needs_request(needs_request)
                     record_dependency(
@@ -502,7 +620,7 @@ class OpenAIGenerator:
                         attempt,
                         None,
                         validation_diagnostic(exception),
-                        self._response_receipt(response, attempt, started),
+                        failure_usage,
                     )
             except GenerationProviderFailure:
                 raise
