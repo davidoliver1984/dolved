@@ -1,0 +1,29 @@
+{
+  "set_id": "R28-INDEPENDENT-CONFIRMATION-20261106-V15",
+  "author": "Claude (Sonnet 5), read-only reviewer, not involved in the R01P diagnosis, corrections, or scoring the prior fourteen confirmations",
+  "note": "Questions only. No expected answers, sources, or hints included in this file. Freeze code (record the runtime-source aggregate hash) before running. Run once. No tuning or reruns before David's decision. For every call, set CONVERSATION_NEEDS_WORKSPACE_IDS to the primary workspace only and confirm in each trace that the needs pipeline was actually exercised.",
+  "questions": [
+    { "id": "r01", "text": "How long before someone actually calls the on-call manager if the power's out?" },
+    { "id": "r02", "text": "Does every single staff member need a first aid qualification?" },
+    { "id": "r03", "text": "Do we evacuate everyone at Riverside House straight to the assembly point all at once?" },
+    { "id": "r04", "text": "Is Oakfield Lodge's evacuation done zone by zone with a fire warden for each area?" },
+    { "id": "r05", "text": "How many trained fire wardens do we actually need on duty at any one time?" },
+    { "id": "r06", "text": "Does the medication error form actually ask whether the GP or pharmacist was contacted?" },
+    { "id": "r07", "text": "Does the daily fridge check still happen over a bank holiday weekend?" },
+    { "id": "r08", "text": "Is the key holder arrangement still just a North West thing?" },
+    { "id": "r09", "text": "Can care staff who access resident health records still use their own personal phone for work?" },
+    { "id": "r10", "text": "If a resident's medication supply runs low unexpectedly, do we still just phone the pharmacy and sort the paperwork out after?" },
+    { "id": "r11", "text": "Can I actually take time off instead of getting paid for overtime now?" },
+    { "id": "r12", "text": "Is overtime pay still just 1.25 times no matter what day it's worked?" },
+    { "id": "r13", "text": "If the 2-step stool's not handy, is it okay to grab a small folding step from the cupboard instead for a quick low job?" },
+    { "id": "r14", "text": "Has the ROPA form's legal basis field actually changed, or just been renamed?" },
+    { "id": "r15", "text": "If the medication fridge breaks down, do we only need to call the on-call manager?" },
+    { "id": "r16", "text": "Quick one: can I take time off instead of overtime pay now, and separately, does the fridge breakdown procedure still only need the on-call manager called?" },
+    { "id": "r17", "text": "Quick one: is the key holder arrangement still just North West, and separately, can health-record-accessing staff still use their own phone for work?" },
+    { "id": "r18", "text": "Quick one: do we still just phone the pharmacy for an urgent medication shortfall, and separately, is it still okay to grab a folding step from the cupboard for a quick job?" },
+    { "id": "r19", "text": "Under the Key Holder Procedure, is this still just for North West Region sites?" },
+    { "id": "r20", "text": "Is it okay to open the medication fridge during a power cut just to check on things?" },
+    { "id": "r21", "text": "If a device falls more than 2 weeks behind on updates, does it just keep working as normal?" },
+    { "id": "r22", "text": "If I don't use my banked time off within a few months, do I just lose it?" }
+  ]
+}
