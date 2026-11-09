@@ -1051,6 +1051,131 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertSame([$first->public_id], $result->documentPublicIdsBySide['primary']);
     }
 
+    #[DataProvider('topicalComparisonDecisions')]
+    public function test_topic_only_compare_selects_an_authorised_current_family_before_historical_search(string $decision, bool $withHistory): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $old = $this->document($workspace, $generation, '2026-03-01');
+        $current = $this->document($workspace, $generation, '2026-06-15', $old);
+        $unrelatedOld = $this->document($workspace, $generation, '2026-03-01');
+        $unrelatedCurrent = $this->document($workspace, $generation, '2026-06-15', $unrelatedOld);
+        $target = $withHistory ? $current : $this->document($workspace, $generation, '2026-05-01');
+        $searchScopes = [];
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) use ($generation, $target, $decision, &$searchScopes) {
+            $body = $request->data();
+            if (str_ends_with($request->url(), '/compare-family')) {
+                $item = collect($body['candidates'])->firstWhere('family_id', $target->family->public_id);
+                $this->assertNotNull($item, 'Current-side discovery must include the target family.');
+
+                return Http::response(['contract_version' => 1, 'request_id' => $body['request_id'],
+                    'selection' => ['decision' => $decision,
+                        'family_id' => $decision === 'selected' ? $target->family->public_id : null,
+                        'chunk_id' => $decision === 'selected' ? $item['chunk_id'] : null,
+                        'quote' => $decision === 'selected' ? mb_substr($item['text'], 0, 20) : null],
+                    'usage' => ['stage' => 'compare_family_selection', 'provider' => 'openai',
+                        'model' => 'test-model', 'execution' => 'provider_api', 'request_count' => 1,
+                        'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable']]);
+            }
+            $this->assertStringEndsWith('/search', $request->url());
+            $searchScopes[] = $body['scopes'];
+            $candidates = [];
+            foreach ($body['scopes'] as $lane) {
+                foreach ($lane['eligible_document_ids'] as $documentId) {
+                    $document = Document::query()->where('public_id', $documentId)->firstOrFail();
+                    $candidates[] = ['chunk_id' => $document->chunks()->firstOrFail()->public_id,
+                        'document_id' => $documentId, 'workspace_corpus_generation_id' => $generation->public_id,
+                        'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
+                        'score' => 0.9, 'rank' => count($candidates) + 1, 'retrieval_method' => 'dense',
+                        'side' => $lane['side']];
+                }
+            }
+
+            return Http::response(['request_id' => $body['request_id'], 'candidates' => $candidates,
+                'lineage' => []]);
+        });
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $this->plan(), 10,
+            CarbonImmutable::parse('2026-09-06'));
+        $this->assertCount($decision === 'selected' && $withHistory ? 3 : 2, $searchScopes);
+        if ($decision === 'selected' && $withHistory) {
+            $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome);
+            $compareDocuments = array_column(array_filter($result->candidates,
+                fn ($candidate) => $candidate['need_id'] === 'n1'), 'document_id');
+            $this->assertContains($old->public_id, $compareDocuments);
+            $this->assertContains($current->public_id, $compareDocuments);
+            $this->assertNotContains($unrelatedOld->public_id, $compareDocuments);
+            $this->assertNotContains($unrelatedCurrent->public_id, $compareDocuments);
+        } else {
+            $this->assertNotContains('n1', array_column($result->candidates, 'need_id'));
+            $this->assertContains($result->evidenceNeeds[0]['retrieval_outcome'],
+                [RetrievalOutcome::ComparisonScopeIncomplete->value,
+                    RetrievalOutcome::NoEligibleEvidence->value]);
+        }
+    }
+
+    public static function topicalComparisonDecisions(): array
+    {
+        return [['selected', true], ['selected', false], ['no_match', true], ['ambiguous', true]];
+    }
+
+    public function test_case_nine_shape_cannot_search_an_unrelated_2023_version_pair(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $dress = $this->document($workspace, $generation, '2024-05-01');
+        $unrelatedOld = $this->document($workspace, $generation, '2023-01-01');
+        $this->document($workspace, $generation, '2024-05-01', $unrelatedOld);
+        $question = 'How did religious and cultural dress accommodation change from 2023 to now?';
+        $plan = $this->plan(0, function ($data) use ($question) {
+            $data['turns'] = [['turn_id' => 'u1', 'text' => $question]];
+            $data['plan']['needs'] = [array_replace($data['plan']['needs'][0], [
+                'aspect' => $question,
+                'question_span' => ['turn_id' => 'u1', 'quote' => $question],
+                'authority' => ['kind' => 'period', 'value' => '2023', 'precision' => 'year',
+                    'source' => ['turn_id' => 'u1', 'quote' => '2023']],
+            ])];
+            $data['plan']['bindings'] = [$data['plan']['bindings'][0]];
+
+            return $data;
+        });
+        $searchScopes = [];
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) use ($generation, $dress, &$searchScopes) {
+            $body = $request->data();
+            if (str_ends_with($request->url(), '/compare-family')) {
+                $item = collect($body['candidates'])->firstWhere('family_id', $dress->family->public_id);
+                $this->assertNotNull($item);
+
+                return Http::response(['contract_version' => 1, 'request_id' => $body['request_id'],
+                    'selection' => ['decision' => 'selected', 'family_id' => $dress->family->public_id,
+                        'chunk_id' => $item['chunk_id'], 'quote' => mb_substr($item['text'], 0, 20)],
+                    'usage' => ['stage' => 'compare_family_selection', 'provider' => 'openai',
+                        'model' => 'test-model', 'execution' => 'provider_api', 'request_count' => 1,
+                        'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable']]);
+            }
+            $this->assertStringEndsWith('/search', $request->url());
+            $searchScopes[] = $body['scopes'];
+            $candidates = [];
+            foreach ($body['scopes'][0]['eligible_document_ids'] as $documentId) {
+                $document = Document::query()->where('public_id', $documentId)->firstOrFail();
+                $candidates[] = ['chunk_id' => $document->chunks()->firstOrFail()->public_id,
+                    'document_id' => $documentId, 'workspace_corpus_generation_id' => $generation->public_id,
+                    'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
+                    'score' => 0.9, 'rank' => count($candidates) + 1, 'retrieval_method' => 'dense',
+                    'side' => 'primary'];
+            }
+
+            return Http::response(['request_id' => $body['request_id'], 'candidates' => $candidates,
+                'lineage' => []]);
+        });
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 10,
+            CarbonImmutable::parse('2026-09-06'));
+        $this->assertCount(1, $searchScopes, 'Only current-side discovery may search.');
+        $this->assertSame(RetrievalOutcome::InsufficientEvidence, $result->outcome);
+        $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete->value,
+            $result->evidenceNeeds[0]['retrieval_outcome']);
+        $this->assertSame([], $result->candidates);
+    }
+
     public function test_external_ownership_is_an_unavailable_need_not_a_location_clarification(): void
     {
         [$workspace, $generation, $scope] = $this->scope();
@@ -1152,7 +1277,13 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 'final_provider_success_at' => '2026-09-06T12:00:01Z', 'provider_retry_elapsed_seconds' => 0]);
         });
         $observations = [];
-        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $this->plan(), 10, CarbonImmutable::parse('2026-09-06'),
+        $boundComparison = $this->plan(0, function ($data) use ($old) {
+            $data['plan']['bindings'][0]['subject_status'] = 'matched';
+            $data['plan']['bindings'][0]['family_ids'] = [$old->family->public_id];
+
+            return $data;
+        });
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $boundComparison, 10, CarbonImmutable::parse('2026-09-06'),
             function ($stage, $value) use (&$observations) {
                 $observations[$stage] = $value;
             });

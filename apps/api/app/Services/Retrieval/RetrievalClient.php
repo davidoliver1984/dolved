@@ -153,6 +153,77 @@ final readonly class RetrievalClient
             ? $exception->getMessage() : 'Unclassified needs-plan validation failure.';
     }
 
+    /**
+     * @param  list<array<string, mixed>>  $candidates  Authorised, hydrated current-side chunks only.
+     * @return array{family_id: ?string, chunk_id: ?string, usage: array<string, mixed>, decision: string}
+     */
+    public function selectTopicalCompareFamily(Workspace $workspace, string $question, array $candidates): array
+    {
+        $bounded = array_slice($candidates, 0, 12);
+        if ($bounded === []) {
+            throw new RetrievalException('Comparison family review requires current evidence.');
+        }
+        $items = array_map(fn (array $candidate): array => [
+            'family_id' => $candidate['document_family_id'],
+            'chunk_id' => $candidate['chunk_id'],
+            'title' => mb_substr((string) $candidate['document_family_title'], 0, 255),
+            'text' => mb_substr((string) $candidate['chunk_text'], 0, 2000),
+        ], $bounded);
+        $response = $this->call('/api/internal/retrieval/compare-family', 'retrieval.compare-family', $workspace, [
+            'contract_version' => 1,
+            'workspace_id' => $workspace->public_id,
+            'question' => $question,
+            'candidates' => $items,
+        ]);
+        $selection = $response->json('selection');
+        $usage = $response->json('usage');
+        if ($response->json('contract_version') !== 1 || ! is_array($selection) || ! is_array($usage)) {
+            throw new RetrievalException('The comparison family review returned an invalid response.');
+        }
+        if (($usage['stage'] ?? null) !== 'compare_family_selection'
+            || ($usage['provider'] ?? null) !== 'openai'
+            || ! is_string($usage['model'] ?? null) || strlen($usage['model']) > 255
+            || ($usage['execution'] ?? null) !== 'provider_api'
+            || ($usage['request_count'] ?? null) !== 1
+            || ($usage['retry_count'] ?? null) !== 0
+            || ! is_numeric($usage['latency_ms'] ?? null) || $usage['latency_ms'] < 0
+            || ($usage['cost_basis'] ?? null) !== 'unavailable') {
+            throw new RetrievalException('The comparison family review returned invalid usage.');
+        }
+        foreach (['input_tokens', 'output_tokens'] as $key) {
+            if (($usage[$key] ?? null) !== null && (! is_int($usage[$key]) || $usage[$key] < 0)) {
+                throw new RetrievalException('The comparison family review returned invalid token usage.');
+            }
+        }
+        $safeUsage = ['stage' => 'compare_family_selection', 'provider' => 'openai',
+            'model' => $usage['model'], 'execution' => 'PROVIDER_API', 'request_count' => 1,
+            'retry_count' => 0, 'input_tokens' => $usage['input_tokens'] ?? null,
+            'output_tokens' => $usage['output_tokens'] ?? null,
+            'latency_ms' => (float) $usage['latency_ms'], 'cost_basis' => 'UNAVAILABLE',
+            'cost_usd' => null];
+        $decision = $selection['decision'] ?? null;
+        if (! in_array($decision, ['selected', 'ambiguous', 'no_match'], true)) {
+            throw new RetrievalException('The comparison family review returned an invalid decision.');
+        }
+        $familyId = $selection['family_id'] ?? null;
+        $chunkId = $selection['chunk_id'] ?? null;
+        $quote = $selection['quote'] ?? null;
+        if ($decision === 'selected') {
+            $matches = array_values(array_filter($items, fn (array $item): bool => $item['family_id'] === $familyId && $item['chunk_id'] === $chunkId
+                && is_string($quote) && mb_strlen($quote) >= 8 && mb_strlen($quote) <= 300
+                && str_contains($item['text'], $quote)));
+            if (count($matches) !== 1) {
+                throw new RetrievalException('The comparison family review cited no authorised current evidence.');
+            }
+        } elseif ($familyId !== null || $chunkId !== null || $quote !== null) {
+            throw new RetrievalException('The comparison family review returned inconsistent evidence.');
+        }
+
+        return ['family_id' => $decision === 'selected' ? $familyId : null,
+            'chunk_id' => $decision === 'selected' ? $chunkId : null,
+            'usage' => $safeUsage, 'decision' => $decision];
+    }
+
     public function search(
         Workspace $workspace,
         WorkspaceCorpusGeneration $corpus,

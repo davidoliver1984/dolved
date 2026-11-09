@@ -8,6 +8,7 @@ use App\Enums\EvidenceThresholdPolicyStatus;
 use App\Enums\RequestedEvidenceType;
 use App\Enums\RetrievalClarificationSource;
 use App\Enums\RetrievalOutcome;
+use App\Enums\RetrievalTemporalMode;
 use App\Exceptions\RetrievalException;
 use App\Exceptions\RetrievalExecutionException;
 use App\Models\Document;
@@ -99,6 +100,41 @@ final readonly class RetrieveWorkspaceEvidence
 
                 continue;
             }
+            if ($need['operation'] === 'compare'
+                && ($plans[$id]->evidenceNeed['subject_binding']['subject_status'] ?? null) === 'topic') {
+                try {
+                    $topical = $this->selectTopicalComparisonFamily($authorised, $plans[$id],
+                        $candidateK, $evaluatedAt);
+                } catch (RetrievalException $exception) {
+                    $failure = $exception instanceof RetrievalExecutionException
+                        ? $exception->observation->toArray()
+                        : ['stage' => 'topical_family_selection', 'category' => 'contract_failure',
+                            'request_count' => null, 'usage' => []];
+                    $observe?->__invoke('need.'.$id.'.topical_family_selection', [
+                        'decision' => 'failed', 'family_id' => null, 'chunk_id' => null,
+                        'failure' => $failure,
+                    ]);
+
+                    return new RetrievalResult(RetrievalOutcome::RetrievalFailed,
+                        reason: 'topical_family_review_failed',
+                        lineage: ['failure' => $failure],
+                        usage: [...$usage, ...(is_array($failure['usage'] ?? null) ? $failure['usage'] : [])]);
+                }
+                $usage = [...$usage, ...$topical['usage']];
+                $observe?->__invoke('need.'.$id.'.topical_family_selection', [
+                    'decision' => $topical['decision'],
+                    'family_id' => $topical['family_id'],
+                    'chunk_id' => $topical['chunk_id'],
+                    'usage' => $topical['usage'],
+                ]);
+                if ($topical['family_id'] === null) {
+                    $results[$id] = new RetrievalResult(RetrievalOutcome::ComparisonScopeIncomplete,
+                        reason: 'topic_family_unresolved');
+
+                    continue;
+                }
+                $plans[$id] = $this->comparisonPlanForFamily($plans[$id], $topical['family_id']);
+            }
             $results[$id] = $this->execute($authorised, $need['aspect'], $candidateK, $evaluatedAt,
                 observe: $observe === null ? null : fn ($stage, $value) => $observe('need.'.$id.'.'.$stage, $value),
                 planOverride: $plans[$id], recordPlannerUsage: false);
@@ -164,6 +200,75 @@ final readonly class RetrieveWorkspaceEvidence
                     ? 'no_previous_version' : null,
             lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v2',
                 'needs' => array_map(fn ($r) => $r->lineage, $results)], usage: $usage, evidenceNeeds: $coverage);
+    }
+
+    /**
+     * Current-side discovery precedes historical eligibility. No historical pair
+     * can enter search until one authorised current chunk anchors the family.
+     *
+     * @return array{decision: string, family_id: ?string, chunk_id: ?string, usage: list<array<string, mixed>>}
+     */
+    private function selectTopicalComparisonFamily(
+        AuthorisedKnowledgeScope $authorised,
+        RetrievalPlan $plan,
+        int $candidateK,
+        CarbonImmutable $evaluatedAt,
+    ): array {
+        $currentPlan = new RetrievalPlan($plan->query, RetrievalTemporalMode::Current,
+            null, null, $plan->locationReferences, null, $plan->classifierLineage,
+            $plan->classifierUsage, evidenceNeed: $plan->evidenceNeed);
+        $eligible = $this->eligibility->handle($authorised, $currentPlan, $evaluatedAt);
+        if (! $eligible->canSearch() || $authorised->activeCorpusGeneration === null) {
+            return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => []];
+        }
+        $corpus = $authorised->activeCorpusGeneration;
+        $policy = $corpus->sparse_space_generation_id === null ? null : $this->policies->handle($corpus);
+        $search = $this->client->search($authorised->workspace, $corpus, $eligible,
+            $plan->query, $candidateK, $policy);
+        $usage = $search->usage;
+        $fresh = $this->eligibility->handle($authorised, $currentPlan, $evaluatedAt);
+        $hydrated = $this->hydrateAndRecheck($search->candidates,
+            $fresh->canSearch() ? $fresh->documentPublicIdsBySide : [], $authorised);
+        if ($hydrated === []) {
+            return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => $usage];
+        }
+        if ($policy !== null) {
+            $this->policies->assertSearchLineage($policy, $search->lineage);
+            if (($search->lineage['sparse_space_generation_id'] ?? null)
+                !== $corpus->sparseSpaceGeneration?->public_id) {
+                throw new RetrievalException('Sparse generation lineage does not match the active corpus.');
+            }
+            $reranked = $this->client->rerank($authorised->workspace, $plan->query, $hydrated, $policy);
+            $this->policies->assertRerankerLineage($policy, $reranked['profile']);
+            $usage = [...$usage, ...$reranked['usage']];
+            $byChunk = collect($hydrated)->keyBy('chunk_id');
+            $hydrated = collect($reranked['candidates'])->map(
+                fn (array $item) => $byChunk->get($item['chunk_id'])
+            )->filter()->values()->all();
+        }
+        $fresh = $this->eligibility->handle($authorised, $currentPlan, $evaluatedAt);
+        $candidates = $this->hydrateAndRecheck(array_slice($hydrated, 0, 12),
+            $fresh->canSearch() ? $fresh->documentPublicIdsBySide : [], $authorised);
+        if ($candidates === []) {
+            return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => $usage];
+        }
+        $selection = $this->client->selectTopicalCompareFamily($authorised->workspace,
+            $plan->query, $candidates);
+
+        return [...$selection, 'usage' => [...$usage, $selection['usage']]];
+    }
+
+    private function comparisonPlanForFamily(RetrievalPlan $plan, string $familyId): RetrievalPlan
+    {
+        $need = $plan->evidenceNeed;
+        $binding = $need['subject_binding'];
+        $need['subject_binding'] = [...$binding, 'subject_status' => 'matched',
+            'family_ids' => [$familyId]];
+
+        return new RetrievalPlan($plan->query, $plan->temporalMode, $plan->explicitDate,
+            $plan->temporalReference, $plan->locationReferences, $plan->clarificationReason,
+            $plan->classifierLineage, $plan->classifierUsage, $plan->versionTransitionBoundary,
+            $plan->factDate, $plan->requestedEvidenceType, $need);
     }
 
     /**

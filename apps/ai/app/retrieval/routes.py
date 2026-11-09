@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 from typing import Annotated
 
+import httpx
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from opentelemetry import trace
 from opentelemetry.trace import SpanKind
@@ -16,6 +17,11 @@ from app.retrieval.authentication import (
     ReplayCache,
     RetrievalAuthenticationError,
     RetrievalCallerAuthenticator,
+)
+from app.retrieval.compare_family import (
+    CompareFamilyRequest,
+    CompareFamilyResponse,
+    CompareFamilyReviewer,
 )
 from app.retrieval.corpus_rebuild import (
     CorpusRebuildBatchRequest,
@@ -87,6 +93,20 @@ def needs_planner_dependency() -> StructuredChatNeedsPlanner:
         api_url=settings.retrieval_planner_api_url,
         api_key=settings.retrieval_planner_api_key,
         provider_name=settings.retrieval_planner_provider,
+        model=settings.retrieval_planner_model,
+        timeout_seconds=settings.retrieval_planner_timeout_seconds,
+    )
+
+
+def compare_family_reviewer_dependency() -> CompareFamilyReviewer:
+    settings = get_settings()
+    if settings.retrieval_planner_provider != "openai":
+        raise RetrievalPlanningError(
+            "unsupported comparison reviewer provider", systemic=True
+        )
+    return CompareFamilyReviewer(
+        api_url=settings.retrieval_planner_api_url,
+        api_key=settings.retrieval_planner_api_key,
         model=settings.retrieval_planner_model,
         timeout_seconds=settings.retrieval_planner_timeout_seconds,
     )
@@ -254,6 +274,39 @@ async def plan_evidence_needs(
         classifier_lineage=result.lineage,
         usage=NeedsOperationUsage.model_validate(result.usage.model_dump()),
     )
+
+
+@router.post("/compare-family", response_model=CompareFamilyResponse)
+async def review_compare_family(
+    request: Request,
+    reviewer: Annotated[
+        CompareFamilyReviewer, Depends(compare_family_reviewer_dependency)
+    ],
+) -> CompareFamilyResponse:
+    body = await authenticate(request, "retrieval.compare-family", get_settings())
+    try:
+        incoming = CompareFamilyRequest.model_validate_json(body)
+    except ValueError as exception:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
+            "Invalid comparison-family request.",
+        ) from exception
+    if str(incoming.workspace_id) != request.headers.get(
+        "X-Retrieval-Caller-Workspace-ID"
+    ) or str(incoming.request_id) != request.headers.get(
+        "X-Retrieval-Caller-Request-ID"
+    ):
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED, "Signed identity does not match body."
+        )
+    try:
+        return reviewer.review(incoming)
+    except ValueError, KeyError, TypeError, httpx.HTTPError:
+        # No raw completion or source passage is ever returned to the caller.
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            {"code": "compare_family_review_unavailable"},
+        ) from None
 
 
 @router.post("/search", response_model=SearchResponse)
