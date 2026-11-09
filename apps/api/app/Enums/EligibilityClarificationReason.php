@@ -12,6 +12,7 @@ enum EligibilityClarificationReason: string
     case AmbiguousHistoricalReference = 'ambiguous_historical_reference';
     case HistoricalReferenceUnresolved = 'historical_reference_unresolved';
     case UnresolvedLocationReference = 'unresolved_location_reference';
+    case UnresolvedRecordReference = 'unresolved_record_reference';
     case AmbiguousLocationReference = 'ambiguous_location_reference';
     case MultipleUnrelatedLocationReferences = 'multiple_unrelated_location_references';
 }

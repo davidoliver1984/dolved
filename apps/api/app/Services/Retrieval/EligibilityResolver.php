@@ -57,7 +57,7 @@ final readonly class EligibilityResolver
         }
         $breadth = $need['scope_question'] === 'breadth';
         $location = $plan->locationReferences === [] && $breadth
-            ? null : $this->resolveLocations($authorised, $plan->locationReferences, true);
+            ? null : $this->resolveLocations($authorised, $plan->locationReferences);
         if (! $location instanceof OrganisationalLocation && ! ($breadth && $location === null)) {
             return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
                 reason: $location?->value ?? 'unresolved_location_reference',
@@ -192,7 +192,16 @@ final readonly class EligibilityResolver
             }
         }
 
-        $location = $this->resolveLocations($authorised, $plan->locationReferences, $plan->evidenceNeed !== null);
+        // An unresolved demonstrative record reference is not a site constraint.
+        // It cannot authorise a record lookup, so ask for the record instead.
+        if (($plan->evidenceNeed['applicability']['kind'] ?? null) === 'relational'
+            && Str::lower(trim((string) ($plan->evidenceNeed['applicability']['source']['quote'] ?? ''))) === 'this record') {
+            return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
+                reason: EligibilityClarificationReason::UnresolvedRecordReference->value,
+                clarificationSource: RetrievalClarificationSource::EligibilityResolver);
+        }
+
+        $location = $this->resolveLocations($authorised, $plan->locationReferences);
         if ($location instanceof EligibilityClarificationReason) {
             return new EligibleRetrievalScope(
                 RetrievalOutcome::ClarificationRequired,
@@ -501,16 +510,13 @@ final readonly class EligibilityResolver
     private function resolveLocations(
         AuthorisedKnowledgeScope $authorised,
         array $references,
-        bool $exactReferences = false,
     ): OrganisationalLocation|EligibilityClarificationReason|null {
         if ($references === []) {
             return null;
         }
         $resolved = collect();
         foreach ($references as $reference) {
-            if ($exactReferences
-                ? Str::lower(trim($reference)) === Str::lower(trim($authorised->workspace->name))
-                : $this->isOrganisationReference($authorised, $reference)) {
+            if ($this->isOrganisationReference($authorised, $reference)) {
                 continue;
             }
             $match = $this->resolveLocationReference($authorised, $reference);

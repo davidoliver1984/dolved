@@ -893,6 +893,116 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $resolver->handle($scope, $generic->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-08'))->outcome);
     }
 
+    public function test_workspace_identity_is_not_a_site_but_unlisted_oakfield_outreach_still_clarifies(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $scope->workspace->update(['name' => 'Alderbridge Care Group']);
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Oakfield Lodge', 'reference_descriptor' => 'Lodge']);
+        $resolver = app(EligibilityResolver::class);
+
+        foreach (['Alderbridge', 'Alderbridge Care Group'] as $identity) {
+            $question = 'Does '.$identity.' offer language classes to employees?';
+            $plan = $this->plan(4, function ($data) use ($question, $identity) {
+                $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
+                $data['plan']['needs'][0]['question_span'] = ['turn_id' => 'user-1', 'quote' => $question];
+                $data['plan']['needs'][0]['aspect'] = $question;
+                $data['plan']['needs'][0]['operation'] = 'retrieve';
+                $data['plan']['needs'][0]['scope_question'] = null;
+                $data['plan']['needs'][0]['applicability'] = ['kind' => 'named',
+                    'source' => ['turn_id' => 'user-1', 'quote' => $identity]];
+
+                return $data;
+            });
+            $result = $resolver->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-09'));
+            $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome, $identity);
+            $this->assertContains($document->public_id, $result->documentPublicIdsBySide['primary']);
+        }
+
+        foreach ([
+            'For a borderline meds error, which severity tier should I record?',
+            'Do I need agreement before changing a published day-team shift?',
+            'What internal contact reference should I use for the Data Protection Officer?',
+            'The meds fridge has packed up—who must I call?',
+        ] as $genericQuestion) {
+            $generic = $this->plan(4, function ($data) use ($genericQuestion) {
+                $data['turns'] = [['turn_id' => 'user-1', 'text' => $genericQuestion]];
+                $data['plan']['needs'][0]['question_span'] = ['turn_id' => 'user-1', 'quote' => $genericQuestion];
+                $data['plan']['needs'][0]['aspect'] = $genericQuestion;
+                $data['plan']['needs'][0]['operation'] = 'retrieve';
+                $data['plan']['needs'][0]['scope_question'] = null;
+                $data['plan']['needs'][0]['applicability'] = ['kind' => 'generic', 'source' => null];
+
+                return $data;
+            });
+            $this->assertSame(RetrievalOutcome::EvidenceFound,
+                $resolver->handle($scope, $generic->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-09'))->outcome,
+                $genericQuestion);
+        }
+
+        $question = 'At Oakfield outreach, when does a key safe need reviewing?';
+        $unlisted = $this->plan(4, function ($data) use ($question) {
+            $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
+            $data['plan']['needs'][0]['question_span'] = ['turn_id' => 'user-1', 'quote' => $question];
+            $data['plan']['needs'][0]['aspect'] = $question;
+            $data['plan']['needs'][0]['operation'] = 'retrieve';
+            $data['plan']['needs'][0]['scope_question'] = null;
+            $data['plan']['needs'][0]['applicability'] = ['kind' => 'named',
+                'source' => ['turn_id' => 'user-1', 'quote' => 'Oakfield outreach']];
+
+            return $data;
+        });
+        $result = $resolver->handle($scope, $unlisted->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-09'));
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+        $this->assertSame('unresolved_location_reference', $result->reason);
+
+        // m03/m12-style named but genuinely unresolvable sites remain blocked.
+        foreach (['Cinderhill House', 'Unlisted Region'] as $site) {
+            $question = 'At '.$site.', who handles the local procedure?';
+            $unresolved = $this->plan(4, function ($data) use ($question, $site) {
+                $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
+                $data['plan']['needs'][0]['question_span'] = ['turn_id' => 'user-1', 'quote' => $question];
+                $data['plan']['needs'][0]['aspect'] = $question;
+                $data['plan']['needs'][0]['operation'] = 'retrieve';
+                $data['plan']['needs'][0]['scope_question'] = null;
+                $data['plan']['needs'][0]['applicability'] = ['kind' => 'named',
+                    'source' => ['turn_id' => 'user-1', 'quote' => $site]];
+
+                return $data;
+            });
+            $blocked = $resolver->handle($scope, $unresolved->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-09'));
+            $this->assertSame(RetrievalOutcome::ClarificationRequired, $blocked->outcome, $site);
+            $this->assertSame('unresolved_location_reference', $blocked->reason, $site);
+        }
+        Http::assertNothingSent();
+    }
+
+    public function test_ungrounded_this_record_asks_for_record_without_changing_site_or_generic_paths(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $this->document($workspace, $generation, '2026-01-01');
+        $question = 'Does this record confirm that the listed staff completed their refresher?';
+        $plan = $this->plan(4, function ($data) use ($question) {
+            $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
+            $data['plan']['needs'][0]['question_span'] = ['turn_id' => 'user-1', 'quote' => $question];
+            $data['plan']['needs'][0]['aspect'] = $question;
+            $data['plan']['needs'][0]['operation'] = 'retrieve';
+            $data['plan']['needs'][0]['scope_question'] = null;
+            $data['plan']['needs'][0]['applicability'] = ['kind' => 'relational',
+                'source' => ['turn_id' => 'user-1', 'quote' => 'this record']];
+
+            return $data;
+        });
+        $result = app(EligibilityResolver::class)->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-09'));
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+        $this->assertSame('unresolved_record_reference', $result->reason);
+        $rendered = app(ControlledResponseRenderer::class)->clarification($result->clarificationSource, $result->reason);
+        $this->assertSame('Which record do you mean?', $rendered['text']);
+        Http::assertNothingSent();
+    }
+
     public function test_bound_subject_cannot_borrow_unrelated_history_and_support_stays_available(): void
     {
         [$workspace, $generation, $scope] = $this->scope();
