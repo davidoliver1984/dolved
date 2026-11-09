@@ -8,7 +8,11 @@ own authorised current-side candidates before using the family for comparison.
 from __future__ import annotations
 
 import json
+import os
+import threading
 import time
+from datetime import UTC, datetime
+from pathlib import Path
 from typing import Annotated, Literal
 from uuid import UUID
 
@@ -18,6 +22,82 @@ from pydantic import Field, SecretStr, StringConstraints, model_validator
 from app.extraction.models import ImmutableModel
 from app.retrieval.models import OperationUsage
 from app.retrieval.planner import _non_negative_int
+
+_DIAGNOSTIC_PATH = Path("/tmp/dolved-compare-family-review-failures.jsonl")
+_DIAGNOSTIC_LOCK = threading.Lock()
+_MAX_DIAGNOSTIC_BODY_BYTES = 65536
+_MAX_DIAGNOSTIC_MESSAGE_CHARS = 4096
+
+
+class CompareFamilyReviewError(ValueError):
+    def __init__(self, cause: Exception, response: httpx.Response | None) -> None:
+        super().__init__("comparison family reviewer failed")
+        self.cause_type = type(cause).__name__
+        self.cause_message = str(cause)
+        self.response_body = response.text if response is not None else None
+        self.provider_status = response.status_code if response is not None else None
+
+
+def persist_review_failure(
+    *, request_id: UUID, workspace_id: UUID, error: Exception, environment: str
+) -> None:
+    """Keep raw provider diagnostics local and private; never return them to callers."""
+    if environment not in {"local", "testing", "e2e"}:
+        return
+    cause_type = (
+        error.cause_type
+        if isinstance(error, CompareFamilyReviewError)
+        else type(error).__name__
+    )
+    message = (
+        error.cause_message
+        if isinstance(error, CompareFamilyReviewError)
+        else str(error)
+    )
+    response = (
+        error.response_body
+        if isinstance(error, CompareFamilyReviewError)
+        else error.response.text
+        if isinstance(error, httpx.HTTPStatusError)
+        else None
+    )
+    provider_status = (
+        error.provider_status
+        if isinstance(error, CompareFamilyReviewError)
+        else error.response.status_code
+        if isinstance(error, httpx.HTTPStatusError)
+        else None
+    )
+    body_bytes = response.encode("utf-8") if response is not None else None
+    record = {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "request_id": str(request_id),
+        "workspace_id": str(workspace_id),
+        "exception_type": cause_type,
+        "exception_message": message[:_MAX_DIAGNOSTIC_MESSAGE_CHARS],
+        "exception_message_truncated": len(message) > _MAX_DIAGNOSTIC_MESSAGE_CHARS,
+        "provider_status": provider_status,
+        "raw_provider_response_body": (
+            body_bytes[:_MAX_DIAGNOSTIC_BODY_BYTES].decode("utf-8", errors="replace")
+            if body_bytes is not None
+            else None
+        ),
+        "raw_provider_response_truncated": (
+            len(body_bytes) > _MAX_DIAGNOSTIC_BODY_BYTES
+            if body_bytes is not None
+            else False
+        ),
+    }
+    with _DIAGNOSTIC_LOCK:
+        descriptor = os.open(
+            _DIAGNOSTIC_PATH, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600
+        )
+        with os.fdopen(descriptor, "w") as handle:
+            os.fchmod(handle.fileno(), 0o600)
+            handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+
 
 BoundedText = Annotated[str, StringConstraints(min_length=1, max_length=2000)]
 
@@ -120,6 +200,7 @@ class CompareFamilyReviewer:
 
     def review(self, request: CompareFamilyRequest) -> CompareFamilyResponse:
         started = time.perf_counter()
+        response: httpx.Response | None = None
         schema = {
             "type": "object",
             "properties": {
@@ -134,62 +215,65 @@ class CompareFamilyReviewer:
             "required": ["decision", "family_id", "chunk_id", "quote"],
             "additionalProperties": False,
         }
-        response = self.client.post(
-            self.api_url,
-            headers={"Authorization": f"Bearer {self.api_key.get_secret_value()}"},
-            json={
-                "model": self.model,
-                "max_completion_tokens": 400,
-                "reasoning_effort": "low",
-                "messages": [
-                    {"role": "system", "content": PROMPT},
-                    {
-                        "role": "user",
-                        "content": json.dumps(
-                            {
-                                "question": request.question,
-                                "candidates": [
-                                    item.model_dump(mode="json")
-                                    for item in request.candidates
-                                ],
-                            },
-                            ensure_ascii=False,
-                        ),
-                    },
-                ],
-                "response_format": {
-                    "type": "json_schema",
-                    "json_schema": {
-                        "name": "compare_family_selection",
-                        "strict": True,
-                        "schema": schema,
+        try:
+            response = self.client.post(
+                self.api_url,
+                headers={"Authorization": f"Bearer {self.api_key.get_secret_value()}"},
+                json={
+                    "model": self.model,
+                    "max_completion_tokens": 400,
+                    "reasoning_effort": "low",
+                    "messages": [
+                        {"role": "system", "content": PROMPT},
+                        {
+                            "role": "user",
+                            "content": json.dumps(
+                                {
+                                    "question": request.question,
+                                    "candidates": [
+                                        item.model_dump(mode="json")
+                                        for item in request.candidates
+                                    ],
+                                },
+                                ensure_ascii=False,
+                            ),
+                        },
+                    ],
+                    "response_format": {
+                        "type": "json_schema",
+                        "json_schema": {
+                            "name": "compare_family_selection",
+                            "strict": True,
+                            "schema": schema,
+                        },
                     },
                 },
-            },
-        )
-        response.raise_for_status()
-        payload = response.json()
-        if payload["choices"][0]["finish_reason"] != "stop":
-            raise ValueError("comparison selection did not complete")
-        selection = CompareFamilyDecision.model_validate_json(
-            payload["choices"][0]["message"]["content"]
-        )
-        selection = validate_selection(request, selection)
-        tokens = payload.get("usage") or {}
-        return CompareFamilyResponse(
-            request_id=request.request_id,
-            selection=selection,
-            usage=OperationUsage(
-                stage="compare_family_selection",
-                provider="openai",
-                model=self.model,
-                execution="provider_api",
-                request_count=1,
-                retry_count=0,
-                input_tokens=_non_negative_int(tokens.get("prompt_tokens")),
-                output_tokens=_non_negative_int(tokens.get("completion_tokens")),
-                latency_ms=(time.perf_counter() - started) * 1000,
-                cost_basis="unavailable",
-                cost_usd=None,
-            ),
-        )
+            )
+            response.raise_for_status()
+            payload = response.json()
+            if payload["choices"][0]["finish_reason"] != "stop":
+                raise ValueError("comparison selection did not complete")
+            selection = CompareFamilyDecision.model_validate_json(
+                payload["choices"][0]["message"]["content"]
+            )
+            selection = validate_selection(request, selection)
+            tokens = payload.get("usage") or {}
+            return CompareFamilyResponse(
+                request_id=request.request_id,
+                selection=selection,
+                usage=OperationUsage(
+                    stage="compare_family_selection",
+                    provider="openai",
+                    model=self.model,
+                    execution="provider_api",
+                    request_count=1,
+                    retry_count=0,
+                    input_tokens=_non_negative_int(tokens.get("prompt_tokens")),
+                    output_tokens=_non_negative_int(tokens.get("completion_tokens")),
+                    latency_ms=(time.perf_counter() - started) * 1000,
+                    cost_basis="unavailable",
+                    cost_usd=None,
+                ),
+            )
+        except (ValueError, KeyError, TypeError, httpx.HTTPError) as exception:
+            raise CompareFamilyReviewError(exception, response) from exception

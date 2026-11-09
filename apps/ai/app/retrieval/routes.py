@@ -22,6 +22,7 @@ from app.retrieval.compare_family import (
     CompareFamilyRequest,
     CompareFamilyResponse,
     CompareFamilyReviewer,
+    persist_review_failure,
 )
 from app.retrieval.corpus_rebuild import (
     CorpusRebuildBatchRequest,
@@ -301,7 +302,19 @@ async def review_compare_family(
         )
     try:
         return reviewer.review(incoming)
-    except ValueError, KeyError, TypeError, httpx.HTTPError:
+    except (ValueError, KeyError, TypeError, httpx.HTTPError) as exception:
+        try:
+            persist_review_failure(
+                request_id=incoming.request_id,
+                workspace_id=incoming.workspace_id,
+                error=exception,
+                environment=get_settings().environment,
+            )
+        except OSError:
+            logger.warning(
+                "Comparison review diagnostic could not be persisted.",
+                extra={"event_name": "retrieval.compare_family.diagnostic_failed.v1"},
+            )
         # No raw completion or source passage is ever returned to the caller.
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,

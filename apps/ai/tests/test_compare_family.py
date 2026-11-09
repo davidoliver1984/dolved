@@ -1,7 +1,7 @@
 """Provider-free checks for fail-closed topical comparison family review."""
 
 import json
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import httpx
 import pytest
@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from pydantic import SecretStr, ValidationError
 
 from app.main import app
+from app.retrieval import compare_family
 from app.retrieval.compare_family import (
     CompareFamilyDecision,
     CompareFamilyRequest,
@@ -169,3 +170,73 @@ def test_signed_comparison_review_route_rejects_replay() -> None:
             assert replay.status_code == 401
     finally:
         app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize("failure", ["transport", "provider_status", "incomplete"])
+def test_review_failure_persists_local_diagnostic_without_changing_503(
+    failure: str, tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source = request().model_copy(update={"request_id": uuid4()})
+    diagnostic = tmp_path / "compare-family-failures.jsonl"
+    monkeypatch.setattr(compare_family, "_DIAGNOSTIC_PATH", diagnostic)
+    reviewer = CompareFamilyReviewer(
+        api_url="https://provider.invalid/chat/completions",
+        api_key=SecretStr("test-only-secret"),
+        model="test-model",
+        timeout_seconds=1,
+    )
+    raw_body = '{"error":{"message":"simulated provider rejection"}}'
+
+    def handler(http_request: httpx.Request) -> httpx.Response:
+        if failure == "transport":
+            raise httpx.ConnectError("simulated network failure", request=http_request)
+        if failure == "provider_status":
+            return httpx.Response(429, text=raw_body)
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "finish_reason": "length",
+                        "message": {"content": "incomplete reviewer output"},
+                    }
+                ]
+            },
+        )
+
+    reviewer.client = httpx.Client(transport=httpx.MockTransport(handler))
+    app.dependency_overrides[compare_family_reviewer_dependency] = lambda: reviewer
+    path = "/api/internal/retrieval/compare-family"
+    body = source.model_dump_json().encode()
+    headers = signed_headers(
+        path, body, WORKSPACE, str(source.request_id), "retrieval.compare-family"
+    )
+    try:
+        with TestClient(app) as client:
+            response = client.post(path, content=body, headers=headers)
+        assert response.status_code == 503
+        assert response.json() == {
+            "detail": {"code": "compare_family_review_unavailable"}
+        }
+    finally:
+        app.dependency_overrides.clear()
+
+    record = json.loads(diagnostic.read_text().strip())
+    assert record["request_id"] == str(source.request_id)
+    assert record["workspace_id"] == WORKSPACE
+    assert diagnostic.stat().st_mode & 0o777 == 0o600
+    assert "test-only-secret" not in diagnostic.read_text()
+    if failure == "transport":
+        assert record["exception_type"] == "ConnectError"
+        assert record["exception_message"] == "simulated network failure"
+        assert record["raw_provider_response_body"] is None
+        assert record["provider_status"] is None
+    elif failure == "provider_status":
+        assert record["exception_type"] == "HTTPStatusError"
+        assert record["raw_provider_response_body"] == raw_body
+        assert record["provider_status"] == 429
+    else:
+        assert record["exception_type"] == "ValueError"
+        assert record["exception_message"] == "comparison selection did not complete"
+        assert "incomplete reviewer output" in record["raw_provider_response_body"]
+        assert record["provider_status"] == 200
