@@ -111,6 +111,8 @@ def test_provider_result_is_bounded_and_rechecked_without_a_real_call() -> None:
     def handler(http_request: httpx.Request) -> httpx.Response:
         sent = json.loads(http_request.content)
         assert sent["messages"][1]["content"]
+        assert sent["max_completion_tokens"] == 4096
+        assert sent["reasoning_effort"] == "low"
         return httpx.Response(
             200,
             json={
@@ -131,6 +133,86 @@ def test_provider_result_is_bounded_and_rechecked_without_a_real_call() -> None:
     assert result.usage.input_tokens == 53
     assert result.usage.output_tokens == 17
     assert result.usage.cost_basis == "unavailable"
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "How did both uniform allowances change in April 2026?",
+        "What was the old serious-complaint escalation window and what is it now?",
+        "What extra medication-fridge call was added in April 2026?",
+    ],
+)
+def test_larger_combined_budget_allows_output_after_old_reasoning_ceiling(
+    question: str,
+) -> None:
+    """Provider-free transport proof, not a model-quality guarantee."""
+    source = request().model_copy(update={"question": question})
+    reviewer = CompareFamilyReviewer(
+        api_url="https://provider.invalid/chat/completions",
+        api_key=SecretStr("test-only"),
+        model="test-model",
+        timeout_seconds=1,
+    )
+    calls = []
+
+    def handler(http_request: httpx.Request) -> httpx.Response:
+        sent = json.loads(http_request.content)
+        calls.append(sent)
+        assert sent["max_completion_tokens"] == 4096
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {"content": selected().model_dump_json()},
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 5102,
+                    "completion_tokens": 530,
+                    "completion_tokens_details": {"reasoning_tokens": 400},
+                },
+            },
+        )
+
+    reviewer.client = httpx.Client(transport=httpx.MockTransport(handler))
+    result = reviewer.review(source)
+    assert result.selection.family_id == UUID(FAMILY)
+    assert result.usage.output_tokens == 530
+    assert len(calls) == 1
+
+
+def test_length_exhaustion_still_fails_after_one_bounded_attempt() -> None:
+    reviewer = CompareFamilyReviewer(
+        api_url="https://provider.invalid/chat/completions",
+        api_key=SecretStr("test-only"),
+        model="test-model",
+        timeout_seconds=1,
+    )
+    calls = []
+
+    def handler(http_request: httpx.Request) -> httpx.Response:
+        calls.append(json.loads(http_request.content))
+        return httpx.Response(
+            200,
+            json={
+                "choices": [{"finish_reason": "length", "message": {"content": ""}}],
+                "usage": {
+                    "prompt_tokens": 5102,
+                    "completion_tokens": 4096,
+                    "completion_tokens_details": {"reasoning_tokens": 4096},
+                },
+            },
+        )
+
+    reviewer.client = httpx.Client(transport=httpx.MockTransport(handler))
+    with pytest.raises(ValueError, match="comparison family reviewer failed") as caught:
+        reviewer.review(request())
+    assert caught.value.cause_type == "ValueError"
+    assert caught.value.cause_message == "comparison selection did not complete"
+    assert len(calls) == 1
 
 
 def test_signed_comparison_review_route_rejects_replay() -> None:

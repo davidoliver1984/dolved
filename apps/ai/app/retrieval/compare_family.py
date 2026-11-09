@@ -190,6 +190,10 @@ def validate_selection(
 
 
 class CompareFamilyReviewer:
+    # The provider counts reasoning and schema output against one ceiling.
+    # Keep one bounded attempt, with room for both (as in the needs planner).
+    MAX_OUTPUT_TOKENS = 4096
+
     def __init__(
         self, *, api_url: str, api_key: SecretStr, model: str, timeout_seconds: float
     ) -> None:
@@ -221,7 +225,7 @@ class CompareFamilyReviewer:
                 headers={"Authorization": f"Bearer {self.api_key.get_secret_value()}"},
                 json={
                     "model": self.model,
-                    "max_completion_tokens": 400,
+                    "max_completion_tokens": self.MAX_OUTPUT_TOKENS,
                     "reasoning_effort": "low",
                     "messages": [
                         {"role": "system", "content": PROMPT},
