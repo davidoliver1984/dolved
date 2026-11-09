@@ -183,7 +183,9 @@ class GroundedGenerationFoundationTest extends TestCase
 
     public static function exhaustedEntailmentScenarios(): array
     {
-        return [['twice_unsupported'], ['recovered'], ['provider_failure'], ['other_validation']];
+        return [['twice_unsupported'], ['twice_uncertain'], ['unsupported_then_uncertain'],
+            ['uncertain_then_unsupported'], ['recovered'], ['uncertain_recovered'],
+            ['provider_failure'], ['other_validation']];
     }
 
     #[DataProvider('exhaustedEntailmentScenarios')]
@@ -214,7 +216,7 @@ class GroundedGenerationFoundationTest extends TestCase
                         'provider' => 'openai', 'model' => 'synthetic', 'http_status' => null,
                         'attempt_count' => 1, 'latency_ms' => 10, 'returned_output' => false]]);
             }
-            if ($scenario === 'recovered' && $calls === 2) {
+            if (in_array($scenario, ['recovered', 'uncertain_recovered'], true) && $calls === 2) {
                 return Http::response(['contract_version' => 2, 'request_id' => $requestId, 'status' => 'completed',
                     'result' => ['contract_version' => 3, 'outcome' => 'answered',
                         'answer_parts' => [['text' => 'Supported fictional statement.', 'evidence_ids' => ['ev-01']]],
@@ -224,7 +226,14 @@ class GroundedGenerationFoundationTest extends TestCase
                         'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
                         'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]]]]);
             }
-            $code = $scenario === 'other_validation' && $calls === 2 ? 'detached_polarity' : 'entailment_unsupported';
+            $code = match (true) {
+                $scenario === 'other_validation' && $calls === 2 => 'detached_polarity',
+                $scenario === 'twice_uncertain' => 'entailment_uncertain',
+                $scenario === 'unsupported_then_uncertain' && $calls === 2 => 'entailment_uncertain',
+                $scenario === 'uncertain_then_unsupported' && $calls === 1 => 'entailment_uncertain',
+                $scenario === 'uncertain_recovered' && $calls === 1 => 'entailment_uncertain',
+                default => 'entailment_unsupported',
+            };
 
             return Http::response(['contract_version' => 2, 'request_id' => $requestId,
                 'status' => 'provider_error', 'error' => ['category' => 'contract_validation_failure',
@@ -243,14 +252,25 @@ class GroundedGenerationFoundationTest extends TestCase
             }
         } else {
             $prepared = app(GenerateGroundedAnswer::class)->prepare($input, app(GenerationProfileFactory::class)->configuredNeeds());
-            $this->assertSame($scenario === 'recovered' ? GenerationOutcome::Answered : GenerationOutcome::InsufficientEvidence,
+            $this->assertSame(in_array($scenario, ['recovered', 'uncertain_recovered'], true)
+                ? GenerationOutcome::Answered : GenerationOutcome::InsufficientEvidence,
                 $prepared->result->outcome);
-            if ($scenario === 'twice_unsupported') {
+            if (in_array($scenario, ['twice_unsupported', 'twice_uncertain',
+                'unsupported_then_uncertain', 'uncertain_then_unsupported'], true)) {
                 $this->assertSame([], $prepared->result->answerParts);
                 $this->assertSame(['n1' => 'unsupported'], $prepared->result->aspectResults);
                 $this->assertSame(4, $prepared->result->usage['request_count']);
                 $this->assertSame(0.002, $prepared->result->usage['cost_usd']);
-                $this->assertSame('entailment_unsupported', $prepared->result->usage['controlled_fallback']['code']);
+                $expectedCodes = match ($scenario) {
+                    'twice_uncertain' => ['entailment_uncertain', 'entailment_uncertain'],
+                    'unsupported_then_uncertain' => ['entailment_unsupported', 'entailment_uncertain'],
+                    'uncertain_then_unsupported' => ['entailment_uncertain', 'entailment_unsupported'],
+                    default => ['entailment_unsupported', 'entailment_unsupported'],
+                };
+                $this->assertSame($expectedCodes, array_column(array_map(
+                    static fn (array $attempt): array => $attempt['validation'],
+                    $prepared->result->usage['validation_attempts']), 'code'));
+                $this->assertSame($expectedCodes[1], $prepared->result->usage['controlled_fallback']['code']);
                 $answer = app(PersistGeneratedAnswer::class)->handle($input->authorisedScope,
                     $input->question, $prepared->correlationId, $prepared->request,
                     $prepared->result, $prepared->fingerprint);

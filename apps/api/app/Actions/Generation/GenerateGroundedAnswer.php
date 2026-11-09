@@ -119,7 +119,8 @@ final readonly class GenerateGroundedAnswer
                 $receipts[] = $receipt;
                 $exception->validationAttempts = $receipts;
                 if ($providerFailure && $exception->category === 'contract_validation_failure'
-                    && $exception->returnedOutput && ($diagnostic['code'] ?? null) === 'entailment_unsupported') {
+                    && $exception->returnedOutput && in_array($diagnostic['code'] ?? null,
+                        ['entailment_unsupported', 'entailment_uncertain'], true)) {
                     $completedEntailmentRejections++;
                 }
                 $eligible = $request->evidenceNeeds !== [] && $profile->deliveryMode === GenerationDeliveryMode::CompleteResultOnly
@@ -139,8 +140,8 @@ final readonly class GenerateGroundedAnswer
                 }
                 if ($validationAttempt === 2 && $completedEntailmentRejections === 2
                     && $request->evidenceNeeds !== []) {
-                    // Both provider outputs were returned, but neither supported a publishable
-                    // claim. Retain the paid attempts and publish no model-authored claim.
+                    // Both provider outputs were returned, but neither passed entailment review.
+                    // Retain the paid attempts and publish no model-authored claim.
                     $gaps = array_column($request->evidenceNeeds, 'aspect');
                     $links = array_map(static fn (int $index, array $need): array => [
                         'need_id' => $need['need_id'], 'answer_part_indices' => [],
@@ -149,7 +150,7 @@ final readonly class GenerateGroundedAnswer
                     $reason = "I couldn't find enough available evidence to answer that question.";
                     $usage = [...ValidationAttemptUsage::combine($receipts),
                         'controlled_fallback' => ['category' => 'contract_validation_failure',
-                            'code' => 'entailment_unsupported', 'layer' => 'python_generation_adapter']];
+                            'code' => $diagnostic['code'], 'layer' => 'python_generation_adapter']];
                     $base = new GenerationResult(GenerationOutcome::InsufficientEvidence, [], $gaps, $reason, $usage);
                     $result = new GenerationResult($base->outcome, $base->answerParts, $base->unsupportedAspects,
                         $base->insufficiencyReason, $base->usage, $links,
