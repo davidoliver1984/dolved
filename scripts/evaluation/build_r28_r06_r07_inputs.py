@@ -33,7 +33,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--stage",
-        choices=("regression", "confirmation", "continuation", "confirmation_retry", "confirmation_remaining", "confirmation_tail", "case8_retry", "confirmation_after_case8", "case6_retry", "case5_retry", "generic_controls", "full"),
+        choices=("regression", "confirmation", "continuation", "confirmation_retry", "confirmation_remaining", "confirmation_tail", "case8_retry", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "case6_retry", "case5_retry", "generic_controls", "full", "r07_case40_retry", "r07_tail", "r07_tail_after_44", "location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12"),
         required=True,
     )
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -56,7 +56,7 @@ def main() -> None:
     if len(cases) != 74:
         raise ValueError("population case count is not 74")
 
-    if args.stage == "full":
+    if args.stage in ("full", "r07_case40_retry", "r07_tail", "r07_tail_after_44", "location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12"):
         selected = [
             {
                 "case_id": case["case_id"],
@@ -66,8 +66,37 @@ def main() -> None:
             for case in population["cases"]
             for variant in case["variants"]
         ]
-        manifest_id = "R28-R07-FULL-148-V2"
-        expected_count = 148
+        if args.stage in {"location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12"}:
+            indices = (33, 45, 122, 125, 129, 130, 69, 89, 141, 142, 101, 102, 29, 23, 147)
+            if args.stage == "location_shadow_trial_remaining":
+                indices = indices[1:]
+            elif args.stage == "location_shadow_trial_tail12":
+                indices = indices[3:]
+            selected = [selected[index - 1] for index in indices]
+            manifest_id = (
+                "R28-R07-LOCATION-SHADOW-TAIL12-20261110-V1"
+                if args.stage == "location_shadow_trial_tail12"
+                else
+                "R28-R07-LOCATION-SHADOW-REMAINING-14-20261110-V1"
+                if args.stage == "location_shadow_trial_remaining"
+                else "R28-R07-LOCATION-SHADOW-TRIAL-15-20261110-V1"
+            )
+            expected_count = len(indices)
+        elif args.stage == "r07_case40_retry":
+            selected = selected[39:40]
+            manifest_id = "R28-R07-CASE40-RETRY-1-20261109-V1"
+            expected_count = 1
+        elif args.stage == "r07_tail":
+            selected = selected[40:]
+            manifest_id = "R28-R07-TAIL-108-20261109-V1"
+            expected_count = 108
+        elif args.stage == "r07_tail_after_44":
+            selected = selected[44:]
+            manifest_id = "R28-R07-TAIL-AFTER-44-104-20261109-V1"
+            expected_count = 104
+        else:
+            manifest_id = "R28-R07-FULL-148-V2"
+            expected_count = 148
     elif args.stage == "continuation":
         selected = selection["regression"]["items"][-2:]
         manifest_id = "R28-R06-CONTINUATION-2-20261108-V1"
@@ -92,6 +121,26 @@ def main() -> None:
         selected = selection["confirmation"]["items"][8:]
         manifest_id = "R28-R06-CONFIRMATION-CASES-9-16-20261108-V1"
         expected_count = 8
+    elif args.stage == "confirmation_cases10_16":
+        selected = selection["confirmation"]["items"][9:]
+        manifest_id = "R28-R06-CONFIRMATION-CASES-10-16-20261108-V1"
+        expected_count = 7
+    elif args.stage == "case14_16_retry":
+        selected = [selection["confirmation"]["items"][index] for index in (13, 15)]
+        manifest_id = "R28-R06-CASES-14-16-RETRY-2-20261109-V1"
+        expected_count = 2
+    elif args.stage == "case9_compare_regression":
+        selected = [selection["confirmation"]["items"][index] for index in (8, 6, 12, 2)]
+        manifest_id = "R28-R06-CASE9-COMPARE-REGRESSION-4-20261109-V1"
+        expected_count = 4
+    elif args.stage == "case9_uniform_control_retry":
+        selected = [selection["confirmation"]["items"][2]]
+        manifest_id = "R28-R06-CASE9-UNIFORM-CONTROL-RETRY-1-20261109-V1"
+        expected_count = 1
+    elif args.stage == "compare_family_final_controls":
+        selected = [selection["confirmation"]["items"][index] for index in (2, 6, 12)]
+        manifest_id = "R28-R06-COMPARE-FAMILY-FINAL-CONTROLS-3-20261109-V1"
+        expected_count = 3
     elif args.stage in ("case6_retry", "case5_retry", "generic_controls"):
         start, stop, manifest_id = {
             "case6_retry": (5, 6, "R28-R06-CASE6-RETRY-1-20261108-V1"),

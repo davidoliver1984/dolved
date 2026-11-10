@@ -6,6 +6,7 @@ import copy
 import json
 import tempfile
 import unittest
+from collections import Counter
 from pathlib import Path
 from unittest.mock import patch
 
@@ -29,9 +30,12 @@ class R28R06GovernedTest(unittest.TestCase):
             ("confirmation_tail", 10),
             ("case8_retry", 1),
             ("confirmation_after_case8", 8),
+            ("confirmation_cases10_16", 7),
+            ("case14_16_retry", 2),
             ("case6_retry", 1),
             ("case5_retry", 1),
             ("generic_controls", 3),
+            ("location_shadow_trial_tail12", 12),
         ):
             execution, scopes, identities = governed.verify_inputs(stage)
             self.assertEqual(count, len(execution["items"]))
@@ -54,13 +58,56 @@ class R28R06GovernedTest(unittest.TestCase):
                 self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][7:8])
             if stage == "confirmation_after_case8":
                 self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][8:])
+            if stage == "confirmation_cases10_16":
+                self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][9:])
+            if stage == "case14_16_retry":
+                selected = governed.json_file(governed.SELECTION)["confirmation"]["items"]
+                self.assertEqual(scopes["items"], [selected[13], selected[15]])
             if stage in {"case6_retry", "case5_retry", "generic_controls"}:
                 start, stop = {"case6_retry": (5, 6), "case5_retry": (4, 5), "generic_controls": (0, 3)}[stage]
                 self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][start:stop])
+            if stage == "location_shadow_trial_tail12":
+                self.assertEqual(governed.SHADOW_TAIL12_INDICES, (125, 129, 130, 69, 89, 141, 142, 101, 102, 29, 23, 147))
+                self.assertEqual(
+                    [item["utterance"] for item in execution["items"]],
+                    [governed.shadow_baseline(index, item)["utterance"]
+                     for index, item in zip(governed.SHADOW_TAIL12_INDICES, execution["items"], strict=True)],
+                )
             self.assertEqual(
-                "f82ee77507f98fbd73b553321f8aa9a7e9964acc714ee4051e90972ead146f28",
+                "0cbbbc81c17be55db3de0dc779937803f12a00796258919072a2ffebb4a68e8e",
                 identities["runtime_source_aggregate"],
             )
+
+    def test_shadow_controlled_calendar_clarification_with_empty_trace_is_valid(self) -> None:
+        item = {
+            "case_id": "v4.case.corrected-b06-01",
+            "variant_id": "v2",
+            "utterance": "Compared with the December 2025 schedule, which staff group is listed first from June 2026 and are the supervision and appraisal frequencies the same?",
+        }
+        scope = {"scope": "primary"}
+        rejection = {
+            "request_count": 1,
+            "status": "rejected",
+            "validation": {"code": "calendar_grounding", "field": "root", "stage": "grounding"},
+        }
+        record = {
+            **item,
+            "frozen_scope": "primary",
+            "needs_opt_in": [governed.PRIMARY_WORKSPACE],
+            "needs_pipeline_exercised": True,
+            "displayed_text": "Which date, month or period do you mean for this question?",
+            "shadow_reviews": [],
+            "observation": {
+                "status": "clarification_required",
+                "production_trace": [],
+                "usage": {"planner_failure": {"attempt_count": 2, "validation_attempts": [rejection, rejection]}},
+            },
+        }
+        self.assertTrue(governed.valid_shadow_record(record, item, scope, governed.PRIMARY_WORKSPACE))
+        record["observation"]["production_trace"] = {"needs_plan": {"decision": "plan"}}
+        self.assertTrue(governed.valid_shadow_record(record, item, scope, governed.PRIMARY_WORKSPACE))
+        record["observation"]["production_trace"] = None
+        self.assertFalse(governed.valid_shadow_record(record, item, scope, governed.PRIMARY_WORKSPACE))
 
     def test_exact_authorization_passes_and_mutation_fails(self) -> None:
         execution, _, identities = governed.verify_inputs("regression")
@@ -105,6 +152,35 @@ class R28R06GovernedTest(unittest.TestCase):
             governed.write_exclusive(path, {"authorization_id": "first"})
             with self.assertRaises(FileExistsError):
                 governed.write_exclusive(path, {"authorization_id": "second"})
+
+    def test_full_r07_selection_is_exact_frozen_population(self) -> None:
+        execution, scopes, identities = governed.verify_inputs("full")
+        self.assertEqual("R28-R07-FULL-148-V2", execution["subset_id"])
+        self.assertEqual(148, len(execution["items"]))
+        self.assertEqual(148, len(scopes["items"]))
+        self.assertEqual(
+            {"primary": 124, "foreign_tenant": 12, "security_test": 12},
+            dict(Counter(item["scope"] for item in scopes["items"])),
+        )
+        self.assertEqual(64, len(identities["runtime_source_aggregate"]))
+
+    def test_r07_retry_and_tail_partition_only_unfinished_work(self) -> None:
+        full, full_scopes, _ = governed.verify_inputs("full")
+        retry, retry_scopes, _ = governed.verify_inputs("r07_case40_retry")
+        tail, tail_scopes, _ = governed.verify_inputs("r07_tail")
+        self.assertEqual(full["items"][39:40], retry["items"])
+        self.assertEqual(full_scopes["items"][39:40], retry_scopes["items"])
+        self.assertEqual(full["items"][40:], tail["items"])
+        self.assertEqual(full_scopes["items"][40:], tail_scopes["items"])
+        self.assertEqual(1, len(retry["items"]))
+        self.assertEqual(108, len(tail["items"]))
+
+    def test_r07_second_tail_excludes_all_44_attempted_utterances(self) -> None:
+        full, full_scopes, _ = governed.verify_inputs("full")
+        remaining, remaining_scopes, _ = governed.verify_inputs("r07_tail_after_44")
+        self.assertEqual(full["items"][44:], remaining["items"])
+        self.assertEqual(full_scopes["items"][44:], remaining_scopes["items"])
+        self.assertEqual(104, len(remaining["items"]))
 
     def test_controlled_planner_clarification_is_a_valid_record(self) -> None:
         item = {"case_id": "case", "variant_id": "v1", "utterance": "question"}

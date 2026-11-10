@@ -26,15 +26,38 @@ FREEZE = POPULATION.with_name("freeze-manifest.json")
 DISPATCHER = Path(__file__).with_name("r28_r06_production_case.php")
 RUNNER = Path(__file__).resolve()
 OUTPUT_ROOT = ROOT / "docs/evaluation/r28-s04/r06-governed-evidence"
+SHADOW_BASELINE = ROOT / "docs/evaluation/r28-s04/r07-consolidated-evidence-20261109/cases"
+SHADOW_INDICES = (33, 45, 122, 125, 129, 130, 69, 89, 141, 142, 101, 102, 29, 23, 147)
+SHADOW_REMAINING_INDICES = SHADOW_INDICES[1:]
+SHADOW_TAIL12_INDICES = SHADOW_INDICES[3:]
+SHADOW_STAGES = {"location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12"}
+
+
+def shadow_indices(stage: str) -> tuple[int, ...]:
+    return {
+        "location_shadow_trial": SHADOW_INDICES,
+        "location_shadow_trial_remaining": SHADOW_REMAINING_INDICES,
+        "location_shadow_trial_tail12": SHADOW_TAIL12_INDICES,
+    }[stage]
 PRIMARY_WORKSPACE = "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
 PRIMARY_USER = "ae454ce6-4d91-4c7e-9a40-b4750b696a6b"
 INJECTION_WORKSPACE = "4db6ffe2-6974-415d-8fd3-002b8fb05d05"
 INJECTION_USER = "6972994f-c594-42ef-a747-39d01ae24fc3"
 SCHEMA = "r28-r06-production-authorization-v1"
 STAGES = {"regression": 8, "confirmation": 16, "continuation": 2,
+          "full": 148,
+          "r07_case40_retry": 1, "r07_tail": 108, "r07_tail_after_44": 104,
           "confirmation_retry": 1, "confirmation_remaining": 12,
           "confirmation_tail": 10,
           "case8_retry": 1, "confirmation_after_case8": 8,
+          "confirmation_cases10_16": 7,
+          "case14_16_retry": 2,
+          "case9_compare_regression": 4,
+          "case9_uniform_control_retry": 1,
+          "compare_family_final_controls": 3,
+          "location_shadow_trial": 15,
+          "location_shadow_trial_remaining": 14,
+          "location_shadow_trial_tail12": 12,
           "case6_retry": 1, "case5_retry": 1, "generic_controls": 3}
 COMPOSE = [
     "docker",
@@ -140,6 +163,31 @@ def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str,
             "manifest_id": "R28-R06-CONFIRMATION-CASES-9-16-20261108-V1",
             "items": selection["confirmation"]["items"][8:],
         }
+    elif stage == "confirmation_cases10_16":
+        manifest = {
+            "manifest_id": "R28-R06-CONFIRMATION-CASES-10-16-20261108-V1",
+            "items": selection["confirmation"]["items"][9:],
+        }
+    elif stage == "case14_16_retry":
+        manifest = {
+            "manifest_id": "R28-R06-CASES-14-16-RETRY-2-20261109-V1",
+            "items": [selection["confirmation"]["items"][index] for index in (13, 15)],
+        }
+    elif stage == "case9_compare_regression":
+        manifest = {
+            "manifest_id": "R28-R06-CASE9-COMPARE-REGRESSION-4-20261109-V1",
+            "items": [selection["confirmation"]["items"][index] for index in (8, 6, 12, 2)],
+        }
+    elif stage == "case9_uniform_control_retry":
+        manifest = {
+            "manifest_id": "R28-R06-CASE9-UNIFORM-CONTROL-RETRY-1-20261109-V1",
+            "items": [selection["confirmation"]["items"][2]],
+        }
+    elif stage == "compare_family_final_controls":
+        manifest = {
+            "manifest_id": "R28-R06-COMPARE-FAMILY-FINAL-CONTROLS-3-20261109-V1",
+            "items": [selection["confirmation"]["items"][index] for index in (2, 6, 12)],
+        }
     elif stage in ("case6_retry", "case5_retry", "generic_controls"):
         start, stop, manifest_id = {
             "case6_retry": (5, 6, "R28-R06-CASE6-RETRY-1-20261108-V1"),
@@ -148,6 +196,39 @@ def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str,
         }[stage]
         manifest = {"manifest_id": manifest_id,
                     "items": selection["confirmation"]["items"][start:stop]}
+    elif stage in {"full", "r07_case40_retry", "r07_tail", "r07_tail_after_44", *SHADOW_STAGES}:
+        population = json_file(POPULATION)
+        items = [
+            {"case_id": case["case_id"], "variant_id": variant["variant_id"], "scope": case["scope"]}
+            for case in population["cases"]
+            for variant in case["variants"]
+        ]
+        if stage in SHADOW_STAGES:
+            indices = shadow_indices(stage)
+            items = [items[index - 1] for index in indices]
+            manifest_id = (
+                "R28-R07-LOCATION-SHADOW-TAIL12-20261110-V1"
+                if stage == "location_shadow_trial_tail12"
+                else
+                "R28-R07-LOCATION-SHADOW-REMAINING-14-20261110-V1"
+                if stage == "location_shadow_trial_remaining"
+                else "R28-R07-LOCATION-SHADOW-TRIAL-15-20261110-V1"
+            )
+        elif stage == "r07_case40_retry":
+            items = items[39:40]
+            manifest_id = "R28-R07-CASE40-RETRY-1-20261109-V1"
+        elif stage == "r07_tail":
+            items = items[40:]
+            manifest_id = "R28-R07-TAIL-108-20261109-V1"
+        elif stage == "r07_tail_after_44":
+            items = items[44:]
+            manifest_id = "R28-R07-TAIL-AFTER-44-104-20261109-V1"
+        else:
+            manifest_id = "R28-R07-FULL-148-V2"
+        manifest = {
+            "manifest_id": manifest_id,
+            "items": items,
+        }
     else:
         manifest = selection[stage]
     if (
@@ -224,17 +305,21 @@ def verify_authorization(
     }
     if set(authority) != required:
         raise ValueError("authorization fields differ from the governed schema")
+    r07_stage = stage in {"full", "r07_case40_retry", "r07_tail", "r07_tail_after_44", *SHADOW_STAGES}
+    expected_schema = "r28-r07-production-authorization-v1" if r07_stage else SCHEMA
+    expected_run_prefix = "R28-R07" if r07_stage else "R28-R06"
+    expected_auth_prefix = "R28-R07-AUTH" if r07_stage else "R28-R06-AUTH"
     if (
-        authority["schema_version"] != SCHEMA
+        authority["schema_version"] != expected_schema
         or authority["authorised"] is not True
-        or authority["selective_rerun_authorised"] is not (stage in {"continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls"})
+        or authority["selective_rerun_authorised"] is not (stage in {"continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case40_retry", *SHADOW_STAGES})
         or authority["approved_by"] != "David"
         or authority["stage"] != stage
         or authority["manifest_id"] != manifest_id
         or not re.fullmatch(
-            r"R28-R06-AUTH-[A-Z0-9-]{8,80}", authority["authorization_id"]
+            rf"{expected_auth_prefix}-[A-Z0-9-]{{8,80}}", authority["authorization_id"]
         )
-        or not re.fullmatch(r"R28-R06-[A-Z0-9-]{8,80}", authority["run_id"])
+        or not re.fullmatch(rf"{expected_run_prefix}-[A-Z0-9-]{{8,80}}", authority["run_id"])
         or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", authority["approved_on"])
         or not isinstance(authority["approval_basis"], str)
         or not authority["approval_basis"].strip()
@@ -336,6 +421,25 @@ def valid_record(
     )
 
 
+def valid_shadow_record(
+    record: dict[str, Any], item: dict[str, str], scope: dict[str, str], workspace: str
+) -> bool:
+    return (
+        record.get("case_id") == item["case_id"]
+        and record.get("variant_id") == item["variant_id"]
+        and record.get("utterance") == item["utterance"]
+        and record.get("frozen_scope") == scope["scope"]
+        and record.get("needs_opt_in") == [workspace]
+        and record.get("needs_pipeline_exercised") is True
+        and isinstance(record.get("observation"), dict)
+        and (
+            isinstance(record["observation"].get("production_trace"), dict)
+            or record["observation"].get("production_trace") == []
+        )
+        and isinstance(record.get("shadow_reviews"), list)
+    )
+
+
 def write_exclusive(path: Path, value: object) -> None:
     descriptor = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
     with os.fdopen(descriptor, "w") as handle:
@@ -343,6 +447,25 @@ def write_exclusive(path: Path, value: object) -> None:
         handle.write("\n")
         handle.flush()
         os.fsync(handle.fileno())
+
+
+def write_inventory(run_dir: Path) -> None:
+    inventory = "".join(
+        f"{sha256(path)}  {path.relative_to(run_dir)}\n"
+        for path in sorted(run_dir.rglob("*"))
+        if path.is_file() and path.name != "checksums.sha256"
+    )
+    (run_dir / "checksums.sha256").write_text(inventory)
+
+
+def shadow_baseline(source_index: int, item: dict[str, str]) -> dict[str, Any]:
+    path = SHADOW_BASELINE / f"{source_index:03d}.json"
+    baseline = json_file(path)
+    if (baseline["case_id"], baseline["variant_id"], baseline["utterance"]) != (
+        item["case_id"], item["variant_id"], item["utterance"]
+    ):
+        raise ValueError(f"R07 baseline identity differs at {source_index}")
+    return baseline
 
 
 def dispatch(
@@ -399,6 +522,9 @@ def dispatch(
             "runtime_snapshot_sha256": snapshot_digest(initial_snapshot),
             "execution_inputs": execution["items"],
             "execution_scopes": scopes["items"],
+            "location_shadow_trial": stage in SHADOW_STAGES,
+            "shadow_source_indices": list(shadow_indices(stage)) if stage in SHADOW_STAGES else [],
+            "shadow_flag_scope": "process-local only" if stage in SHADOW_STAGES else None,
         },
     )
     container_id = subprocess.run(
@@ -459,6 +585,9 @@ def dispatch(
             "workspace_id": workspace,
             "user_public_id": user,
         }
+        source_indices = shadow_indices(stage) if stage in SHADOW_STAGES else ()
+        if stage in SHADOW_STAGES:
+            baseline = shadow_baseline(source_indices[index], item)
         result = subprocess.run(
             [
                 *COMPOSE,
@@ -466,6 +595,7 @@ def dispatch(
                 "-T",
                 "-e",
                 f"CONVERSATION_NEEDS_WORKSPACE_IDS={workspace}",
+                *(["-e", "RETRIEVAL_LOCATION_REFERENCE_SHADOW=true"] if stage in SHADOW_STAGES else []),
                 "api",
                 "php",
                 script_path,
@@ -493,8 +623,64 @@ def dispatch(
                 f"production dispatch failed at case {index + 1}; no rerun: {result.stderr[-500:]}"
             )
         record = json.loads(result.stdout)
+        if stage in SHADOW_STAGES:
+            reviews = record.get("shadow_reviews")
+            if not isinstance(reviews, list):
+                raise RuntimeError(f"shadow event capture missing at case {index + 1}")
+            trace = baseline["observation"]["production_trace"]
+            old = {
+                key: value for key, value in trace.items()
+                if key.endswith(".eligibility") or key.endswith(".scope_fact")
+            }
+            current_trace = record.get("observation", {}).get("production_trace") or {}
+            current_old = {
+                key: value for key, value in current_trace.items()
+                if key.endswith(".eligibility") or key.endswith(".scope_fact")
+            }
+            record["shadow_comparison"] = {
+                "r07_source_index": source_indices[index],
+                "r07_sha256": sha256(SHADOW_BASELINE / f"{source_indices[index]:03d}.json"),
+                "baseline_authoritative_resolver": old,
+                "trial_authoritative_resolver": current_old,
+                "baseline_status": baseline["observation"]["status"],
+                "displayed_text_byte_identical": record.get("displayed_text") == baseline["displayed_text"],
+                "outcome_identical": record.get("observation", {}).get("status") == baseline["observation"]["status"],
+                "planner_needs_identical": (
+                    (current_trace.get("needs_plan") or {}).get("needs")
+                    == (trace.get("needs_plan") or {}).get("needs")
+                ),
+                "expected_direction": (
+                    "not_a_site:document_or_record" if source_indices[index] in {33, 45, 122, 125, 129, 130} else
+                    "not_a_site:incidental_phrase" if source_indices[index] in {69, 89} else
+                    "unresolved_or_ambiguous" if source_indices[index] in {141, 142} else "not_invoked"
+                ),
+            }
+            record["shadow_comparison"]["classification_comparable"] = (
+                bool(reviews)
+                and record["shadow_comparison"]["displayed_text_byte_identical"]
+                and record["shadow_comparison"]["outcome_identical"]
+            )
         write_exclusive(case_path, record)
-        if not valid_record(record, item, scope, workspace):
+        if stage in SHADOW_STAGES:
+            write_inventory(run_dir)
+            compared = record["shadow_comparison"]
+            diverged = not compared["displayed_text_byte_identical"] or not compared["outcome_identical"]
+            if reviews and diverged and compared["planner_needs_identical"] and current_old != old:
+                write_exclusive(run_dir / "stop.json", {
+                    "case": index + 1, "reason": "shadow_review_plausibly_changed_authoritative_eligibility",
+                })
+                write_exclusive(run_dir / "code-freeze-after.json", {
+                    "runtime_source_aggregate": runtime_aggregate(),
+                    "execution_commit": git("rev-parse", "HEAD"),
+                    "at_utc": datetime.now(UTC).isoformat(),
+                })
+                write_inventory(run_dir)
+                raise RuntimeError(f"shadow review plausibly changed eligibility at case {index + 1}; trial stopped")
+        record_valid = (
+            valid_shadow_record(record, item, scope, workspace)
+            if stage in SHADOW_STAGES else valid_record(record, item, scope, workspace)
+        )
+        if not record_valid:
             raise RuntimeError(
                 f"production record validation failed at case {index + 1}; no rerun"
             )
@@ -520,11 +706,18 @@ def dispatch(
                     "index": index + 1,
                     "case_id": item["case_id"],
                     "status": record["observation"]["status"],
+                    **({"r07_match": record["shadow_comparison"]["displayed_text_byte_identical"]
+                        and record["shadow_comparison"]["outcome_identical"],
+                        "shadow_reviews": len(record["shadow_reviews"])} if stage in SHADOW_STAGES else {}),
                 }
             ),
             flush=True,
         )
-        if stage in {"confirmation_tail", "confirmation_after_case8"} and index + 1 < len(execution["items"]):
+        review_gate = (
+            stage in {"confirmation_tail", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case9_compare_regression", "compare_family_final_controls"}
+            or (stage in {"full", "r07_tail", "r07_tail_after_44"} and (index + 1) % 8 == 0)
+        ) and index + 1 < len(execution["items"])
+        if review_gate:
             try:
                 decision = input(f"REVIEW_GATE {index + 1}/{len(execution['items'])}: type continue {index + 1} after inspecting the case, or stop: ").strip()
             except EOFError:
@@ -539,11 +732,13 @@ def dispatch(
 
     if runtime_aggregate() != identities["runtime_source_aggregate"]:
         raise RuntimeError("runtime source changed after dispatch")
-    inventory = "".join(
-        f"{sha256(path)}  {path.relative_to(run_dir)}\n"
-        for path in sorted(run_dir.rglob("*.json"))
-    )
-    (run_dir / "checksums.sha256").write_text(inventory)
+    if stage in SHADOW_STAGES:
+        write_exclusive(run_dir / "code-freeze-after.json", {
+            "runtime_source_aggregate": runtime_aggregate(),
+            "execution_commit": git("rev-parse", "HEAD"),
+            "at_utc": datetime.now(UTC).isoformat(),
+        })
+    write_inventory(run_dir)
     print(
         json.dumps(
             {
