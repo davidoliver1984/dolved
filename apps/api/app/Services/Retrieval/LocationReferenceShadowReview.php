@@ -68,14 +68,17 @@ final readonly class LocationReferenceShadowReview
 
                 return;
             }
-            $selection = $this->client->reviewLocationReference($authorised->workspace,
+            $review = $this->client->reviewLocationReference($authorised->workspace,
                 $reference, $question, $plan->query, $locations, $families);
+            $selection = $review['selection'];
             $this->record($base + [
                 'shadow_decision' => $selection['decision'],
                 'shadow_location_id' => $selection['location_id'],
                 'shadow_reference_type' => $selection['reference_type'],
                 'shadow_evidence_family_id' => $selection['evidence_family_id'],
+                'shadow_evidence_quote' => $selection['evidence_quote'],
                 'shadow_reason' => $selection['reason'],
+                'usage' => $review['usage'],
             ]);
         } catch (Throwable) {
             $this->record($base + ['shadow_decision' => 'unavailable', 'shadow_reason' => 'review_failed']);

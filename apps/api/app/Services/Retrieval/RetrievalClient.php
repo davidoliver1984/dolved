@@ -311,7 +311,7 @@ final readonly class RetrievalClient
             throw new RetrievalException('The location review decision is invalid.');
         }
 
-        return $selection;
+        return ['selection' => $selection, 'usage' => $usage];
     }
 
     public function search(
