@@ -36,6 +36,7 @@ class R28R06GovernedTest(unittest.TestCase):
             ("case5_retry", 1),
             ("generic_controls", 3),
             ("location_shadow_trial_tail12", 12),
+            ("location_shadow_grounding_retrial", 5),
         ):
             execution, scopes, identities = governed.verify_inputs(stage)
             self.assertEqual(count, len(execution["items"]))
@@ -73,8 +74,15 @@ class R28R06GovernedTest(unittest.TestCase):
                     [governed.shadow_baseline(index, item)["utterance"]
                      for index, item in zip(governed.SHADOW_TAIL12_INDICES, execution["items"], strict=True)],
                 )
+            if stage == "location_shadow_grounding_retrial":
+                self.assertEqual(governed.SHADOW_GROUNDING_RETRIAL_INDICES, (141, 142, 45, 125, 129))
+                self.assertEqual(
+                    [item["utterance"] for item in execution["items"]],
+                    [governed.shadow_baseline(index, item)["utterance"]
+                     for index, item in zip(governed.SHADOW_GROUNDING_RETRIAL_INDICES, execution["items"], strict=True)],
+                )
             self.assertEqual(
-                "0cbbbc81c17be55db3de0dc779937803f12a00796258919072a2ffebb4a68e8e",
+                "f58769b25df3adb6f0a2f7061117ccd92315a73a229bb30e552eaa001c474901",
                 identities["runtime_source_aggregate"],
             )
 

@@ -77,6 +77,7 @@ final readonly class LocationReferenceShadowReview
                 'shadow_reference_type' => $selection['reference_type'],
                 'shadow_evidence_family_id' => $selection['evidence_family_id'],
                 'shadow_evidence_quote' => $selection['evidence_quote'],
+                'shadow_competing_target_quote' => $selection['competing_target_quote'],
                 'shadow_reason' => $selection['reason'],
                 'usage' => $review['usage'],
             ]);
@@ -89,7 +90,7 @@ final readonly class LocationReferenceShadowReview
     private function record(array $record): void
     {
         try {
-            Log::info('retrieval.location_reference.shadow.v1', $record);
+            Log::info('retrieval.location_reference.shadow.v2', $record);
         } catch (Throwable) {
             // Shadow logging must not affect the authoritative resolver.
         }

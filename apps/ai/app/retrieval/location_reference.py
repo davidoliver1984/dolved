@@ -34,7 +34,7 @@ class DocumentFamilyCandidate(ImmutableModel):
 
 
 class LocationReferenceRequest(ImmutableModel):
-    contract_version: Literal[1]
+    contract_version: Literal[2]
     request_id: UUID
     workspace_id: UUID
     reference: ShortText
@@ -68,6 +68,7 @@ class LocationReferenceDecision(ImmutableModel):
     evidence_family_id: UUID | None
     quote: str | None
     evidence_quote: str | None
+    competing_target_quote: str | None
     reason: Literal["unresolved", "ambiguous", "insufficient_context"] | None
 
     @model_validator(mode="after")
@@ -79,6 +80,7 @@ class LocationReferenceDecision(ImmutableModel):
                 or self.reference_type is not None
                 or self.evidence_family_id is not None
                 or self.evidence_quote is not None
+                or self.competing_target_quote is not None
                 or self.reason is not None
             ):
                 raise ValueError("resolved site decision is incomplete")
@@ -95,6 +97,10 @@ class LocationReferenceDecision(ImmutableModel):
                 self.evidence_family_id is not None
             ):
                 raise ValueError("document role requires an anchored family")
+            if (self.reference_type == "document_or_record") != (
+                self.competing_target_quote is None
+            ):
+                raise ValueError("non-document role requires a competing target")
         elif (
             any(
                 value is not None
@@ -104,6 +110,7 @@ class LocationReferenceDecision(ImmutableModel):
                     self.evidence_family_id,
                     self.quote,
                     self.evidence_quote,
+                    self.competing_target_quote,
                 )
             )
             or self.reason is None
@@ -113,7 +120,7 @@ class LocationReferenceDecision(ImmutableModel):
 
 
 class LocationReferenceResponse(ImmutableModel):
-    contract_version: Literal[1] = 1
+    contract_version: Literal[2] = 2
     request_id: UUID
     selection: LocationReferenceDecision
     usage: OperationUsage
@@ -127,9 +134,12 @@ name. A document or record title, proposed answer value, or incidental pronoun i
 not a site, but return not_a_site only with grounded role evidence. For a
 document role, cite a supplied document-family ID and an exact substring of
 its title as evidence_quote. For other non-site roles, cite an exact question
-substring containing the reference. If role or site identity is
-not clear, return unresolved_or_ambiguous. Keep quote exactly equal to reference
-for resolved_site and not_a_site. Return only the specified JSON.
+substring containing the reference as evidence_quote, and separately quote the
+distinct thing the question is actually asking about instead of a site as
+competing_target_quote. Restating the clause containing the reference is not
+evidence of a competing target. If no distinct grounded target is clear, return
+unresolved_or_ambiguous. Keep quote exactly equal to reference for resolved_site
+and not_a_site. Return only the specified JSON.
 """
 
 
@@ -156,8 +166,18 @@ def validate_selection(
             for item in request.document_families
         ):
             raise LocationReferenceReviewError("document role cites no candidate title")
-    elif evidence not in request.question or request.reference not in evidence:
-        raise LocationReferenceReviewError("non-site role has no grounded context")
+    else:
+        target = selection.competing_target_quote
+        if evidence not in request.question or request.reference not in evidence:
+            raise LocationReferenceReviewError("non-site role has no grounded context")
+        if (
+            target is None
+            or not 8 <= len(target) <= 300
+            or target not in request.question
+            or request.reference.casefold() in target.casefold()
+            or len(target) < max(8, (len(request.reference) + 1) // 2)
+        ):
+            raise LocationReferenceReviewError("non-site role has no distinct target")
     return selection
 
 
@@ -195,6 +215,7 @@ class LocationReferenceReviewer:
                 "evidence_family_id": {"type": ["string", "null"]},
                 "quote": {"type": ["string", "null"]},
                 "evidence_quote": {"type": ["string", "null"]},
+                "competing_target_quote": {"type": ["string", "null"]},
                 "reason": {
                     "type": ["string", "null"],
                     "enum": ["unresolved", "ambiguous", "insufficient_context", None],
@@ -207,6 +228,7 @@ class LocationReferenceReviewer:
                 "evidence_family_id",
                 "quote",
                 "evidence_quote",
+                "competing_target_quote",
                 "reason",
             ],
             "additionalProperties": False,

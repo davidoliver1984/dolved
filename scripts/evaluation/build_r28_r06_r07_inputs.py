@@ -33,7 +33,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--stage",
-        choices=("regression", "confirmation", "continuation", "confirmation_retry", "confirmation_remaining", "confirmation_tail", "case8_retry", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "case6_retry", "case5_retry", "generic_controls", "full", "r07_case40_retry", "r07_tail", "r07_tail_after_44", "location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12"),
+        choices=("regression", "confirmation", "continuation", "confirmation_retry", "confirmation_remaining", "confirmation_tail", "case8_retry", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "case6_retry", "case5_retry", "generic_controls", "full", "r07_case40_retry", "r07_tail", "r07_tail_after_44", "location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12", "location_shadow_grounding_retrial"),
         required=True,
     )
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -56,7 +56,7 @@ def main() -> None:
     if len(cases) != 74:
         raise ValueError("population case count is not 74")
 
-    if args.stage in ("full", "r07_case40_retry", "r07_tail", "r07_tail_after_44", "location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12"):
+    if args.stage in ("full", "r07_case40_retry", "r07_tail", "r07_tail_after_44", "location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12", "location_shadow_grounding_retrial"):
         selected = [
             {
                 "case_id": case["case_id"],
@@ -66,15 +66,19 @@ def main() -> None:
             for case in population["cases"]
             for variant in case["variants"]
         ]
-        if args.stage in {"location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12"}:
+        if args.stage in {"location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12", "location_shadow_grounding_retrial"}:
             indices = (33, 45, 122, 125, 129, 130, 69, 89, 141, 142, 101, 102, 29, 23, 147)
             if args.stage == "location_shadow_trial_remaining":
                 indices = indices[1:]
             elif args.stage == "location_shadow_trial_tail12":
                 indices = indices[3:]
+            elif args.stage == "location_shadow_grounding_retrial":
+                indices = (141, 142, 45, 125, 129)
             selected = [selected[index - 1] for index in indices]
             manifest_id = (
-                "R28-R07-LOCATION-SHADOW-TAIL12-20261110-V1"
+                "R28-R07-LOCATION-SHADOW-GROUNDING-RETRIAL-5-20261110-V1"
+                if args.stage == "location_shadow_grounding_retrial"
+                else "R28-R07-LOCATION-SHADOW-TAIL12-20261110-V1"
                 if args.stage == "location_shadow_trial_tail12"
                 else
                 "R28-R07-LOCATION-SHADOW-REMAINING-14-20261110-V1"

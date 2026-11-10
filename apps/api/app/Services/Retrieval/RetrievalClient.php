@@ -239,7 +239,7 @@ final readonly class RetrievalClient
         }
         $response = $this->call('/api/internal/retrieval/location-reference-shadow',
             'retrieval.location-reference-shadow', $workspace, [
-                'contract_version' => 1,
+                'contract_version' => 2,
                 'workspace_id' => $workspace->public_id,
                 'reference' => $reference,
                 'question' => $question,
@@ -247,7 +247,7 @@ final readonly class RetrievalClient
                 'locations' => $locations,
                 'document_families' => $families,
             ]);
-        if ($response->json('contract_version') !== 1 || ! is_array($response->json('selection'))
+        if ($response->json('contract_version') !== 2 || ! is_array($response->json('selection'))
             || ! is_array($response->json('usage'))) {
             throw new RetrievalException('The location review response is invalid.');
         }
@@ -271,7 +271,7 @@ final readonly class RetrievalClient
         $selection = $response->json('selection');
         $keys = array_keys($selection);
         sort($keys);
-        if ($keys !== ['decision', 'evidence_family_id', 'evidence_quote', 'location_id',
+        if ($keys !== ['competing_target_quote', 'decision', 'evidence_family_id', 'evidence_quote', 'location_id',
             'quote', 'reason', 'reference_type']) {
             throw new RetrievalException('The location review selection shape is invalid.');
         }
@@ -280,7 +280,8 @@ final readonly class RetrievalClient
             if ($selection['quote'] !== $reference || ! is_string($selection['location_id'])
                 || ! collect($locations)->contains(fn (array $item): bool => $item['location_id'] === $selection['location_id'])
                 || $selection['reference_type'] !== null || $selection['evidence_family_id'] !== null
-                || $selection['evidence_quote'] !== null || $selection['reason'] !== null) {
+                || $selection['evidence_quote'] !== null || $selection['competing_target_quote'] !== null
+                || $selection['reason'] !== null) {
                 throw new RetrievalException('The location review selected no authorised site.');
             }
         } elseif ($decision === 'not_a_site') {
@@ -293,14 +294,19 @@ final readonly class RetrievalClient
                 throw new RetrievalException('The non-site review has no grounded role evidence.');
             }
             if ($type === 'document_or_record') {
-                if (! is_string($selection['evidence_family_id'])
+                if ($selection['competing_target_quote'] !== null || ! is_string($selection['evidence_family_id'])
                     || ! collect($families)->contains(fn (array $item): bool => $item['family_id'] === $selection['evidence_family_id']
                         && str_contains($item['title'], $evidence))) {
                     throw new RetrievalException('The non-site review cited no authorised family.');
                 }
             } elseif ($selection['evidence_family_id'] !== null
-                || ! str_contains($question, $evidence) || ! str_contains($evidence, $reference)) {
-                throw new RetrievalException('The non-site review cited an unrelated family.');
+                || ! str_contains($question, $evidence) || ! str_contains($evidence, $reference)
+                || ! is_string($selection['competing_target_quote'])
+                || mb_strlen($selection['competing_target_quote']) < max(8, intdiv(mb_strlen($reference) + 1, 2))
+                || mb_strlen($selection['competing_target_quote']) > 300
+                || ! str_contains($question, $selection['competing_target_quote'])
+                || mb_stripos($selection['competing_target_quote'], $reference) !== false) {
+                throw new RetrievalException('The non-site review cited no distinct grounded target.');
             }
         } elseif ($decision === 'unresolved_or_ambiguous') {
             if (! in_array($selection['reason'], ['unresolved', 'ambiguous', 'insufficient_context'], true)

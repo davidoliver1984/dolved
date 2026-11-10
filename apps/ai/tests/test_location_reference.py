@@ -30,7 +30,7 @@ FOREIGN = "00000000-0000-4000-8000-000000000013"
 def request(reference: str = "North West Region sites") -> LocationReferenceRequest:
     return LocationReferenceRequest.model_validate(
         {
-            "contract_version": 1,
+            "contract_version": 2,
             "request_id": str(uuid4()),
             "workspace_id": WORKSPACE,
             "reference": reference,
@@ -57,6 +57,7 @@ def decision(**changes: object) -> LocationReferenceDecision:
             "evidence_family_id": None,
             "quote": "North West Region sites",
             "evidence_quote": None,
+            "competing_target_quote": None,
             "reason": None,
             **changes,
         }
@@ -99,6 +100,51 @@ def test_non_site_role_requires_grounded_context_and_document_candidate() -> Non
             source,
             valid.model_copy(update={"evidence_quote": "A fabricated document role"}),
         )
+
+
+def test_non_document_role_rejects_containing_clause_without_distinct_target() -> None:
+    source = LocationReferenceRequest.model_validate(
+        {
+            **request("Oakfield outreach").model_dump(mode="json"),
+            "question": "At Oakfield outreach on 1 July 2026, when did a key safe need reviewing?",
+        }
+    )
+    containing_clause = source.question.removesuffix("?")
+    bypass = decision(
+        decision="not_a_site",
+        location_id=None,
+        reference_type="incidental_phrase",
+        evidence_family_id=None,
+        quote="Oakfield outreach",
+        evidence_quote=containing_clause,
+        competing_target_quote=containing_clause,
+    )
+    with pytest.raises(LocationReferenceReviewError, match="distinct target"):
+        validate_selection(source, bypass)
+    for target in ("key safe", "fabricated distinct target"):
+        with pytest.raises(LocationReferenceReviewError, match="distinct target"):
+            validate_selection(
+                source, bypass.model_copy(update={"competing_target_quote": target})
+            )
+
+
+def test_non_document_role_accepts_grounded_distinct_answer_target() -> None:
+    source = LocationReferenceRequest.model_validate(
+        {
+            **request("we").model_dump(mode="json"),
+            "question": "Do we have a staff gym?",
+        }
+    )
+    selection = decision(
+        decision="not_a_site",
+        location_id=None,
+        reference_type="incidental_phrase",
+        evidence_family_id=None,
+        quote="we",
+        evidence_quote="Do we have a staff gym?",
+        competing_target_quote="staff gym",
+    )
+    assert validate_selection(source, selection).competing_target_quote == "staff gym"
 
 
 def test_unresolved_is_fail_closed_and_malformed_decisions_are_rejected() -> None:

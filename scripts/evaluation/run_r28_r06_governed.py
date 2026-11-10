@@ -30,7 +30,8 @@ SHADOW_BASELINE = ROOT / "docs/evaluation/r28-s04/r07-consolidated-evidence-2026
 SHADOW_INDICES = (33, 45, 122, 125, 129, 130, 69, 89, 141, 142, 101, 102, 29, 23, 147)
 SHADOW_REMAINING_INDICES = SHADOW_INDICES[1:]
 SHADOW_TAIL12_INDICES = SHADOW_INDICES[3:]
-SHADOW_STAGES = {"location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12"}
+SHADOW_GROUNDING_RETRIAL_INDICES = (141, 142, 45, 125, 129)
+SHADOW_STAGES = {"location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12", "location_shadow_grounding_retrial"}
 
 
 def shadow_indices(stage: str) -> tuple[int, ...]:
@@ -38,6 +39,7 @@ def shadow_indices(stage: str) -> tuple[int, ...]:
         "location_shadow_trial": SHADOW_INDICES,
         "location_shadow_trial_remaining": SHADOW_REMAINING_INDICES,
         "location_shadow_trial_tail12": SHADOW_TAIL12_INDICES,
+        "location_shadow_grounding_retrial": SHADOW_GROUNDING_RETRIAL_INDICES,
     }[stage]
 PRIMARY_WORKSPACE = "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
 PRIMARY_USER = "ae454ce6-4d91-4c7e-9a40-b4750b696a6b"
@@ -58,6 +60,7 @@ STAGES = {"regression": 8, "confirmation": 16, "continuation": 2,
           "location_shadow_trial": 15,
           "location_shadow_trial_remaining": 14,
           "location_shadow_trial_tail12": 12,
+          "location_shadow_grounding_retrial": 5,
           "case6_retry": 1, "case5_retry": 1, "generic_controls": 3}
 COMPOSE = [
     "docker",
@@ -207,7 +210,9 @@ def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str,
             indices = shadow_indices(stage)
             items = [items[index - 1] for index in indices]
             manifest_id = (
-                "R28-R07-LOCATION-SHADOW-TAIL12-20261110-V1"
+                "R28-R07-LOCATION-SHADOW-GROUNDING-RETRIAL-5-20261110-V1"
+                if stage == "location_shadow_grounding_retrial"
+                else "R28-R07-LOCATION-SHADOW-TAIL12-20261110-V1"
                 if stage == "location_shadow_trial_tail12"
                 else
                 "R28-R07-LOCATION-SHADOW-REMAINING-14-20261110-V1"
