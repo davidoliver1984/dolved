@@ -711,6 +711,7 @@ final readonly class RetrievalClient
                         'validation_rejected:no_competing_target', 'validation_rejected:target_too_short',
                         'validation_rejected:target_too_long', 'validation_rejected:target_not_grounded',
                         'validation_rejected:target_contains_reference', 'validation_rejected:target_not_substantial',
+                        'validation_rejected:selection_schema',
                         'transport_error', 'malformed_output', 'incomplete_output',
                     ];
                     $shadowFailureReason = is_string($reason) && in_array($reason, $allowed, true) ? $reason : 'http_error';

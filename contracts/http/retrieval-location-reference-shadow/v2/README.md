@@ -33,4 +33,7 @@ bounded `failure_reason` diagnostic. Only allowlisted validation-rejection
 codes or `transport_error`, `malformed_output`, and `incomplete_output` cross
 the service boundary. The shadow log copies this into
 `shadow_failure_reason`, separate from its existing `review_failed` category.
+Invalid JSON is `malformed_output`; parseable JSON that fails the selection
+schema is `validation_rejected:selection_schema`, with the missing-target shape
+reported more specifically as `validation_rejected:no_competing_target`.
 The diagnostic is not shown to the end user and never affects eligibility.

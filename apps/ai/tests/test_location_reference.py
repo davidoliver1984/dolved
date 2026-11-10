@@ -221,7 +221,7 @@ def test_review_uses_one_bounded_provider_request_with_mock_transport() -> None:
         ),
         (
             httpx.Response(200, json={"choices": [{"finish_reason": "stop", "message": {"content": "{}"}}]}),
-            "malformed_output",
+            "validation_rejected:selection_schema",
         ),
     ],
 )

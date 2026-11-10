@@ -35,6 +35,7 @@ SAFE_FAILURE_REASONS = frozenset(
         "validation_rejected:target_not_grounded",
         "validation_rejected:target_contains_reference",
         "validation_rejected:target_not_substantial",
+        "validation_rejected:selection_schema",
         "transport_error",
         "malformed_output",
         "incomplete_output",
@@ -315,6 +316,8 @@ class LocationReferenceReviewer:
             try:
                 selection = LocationReferenceDecision.model_validate_json(content)
             except ValidationError as error:
+                if any(item["type"] == "json_invalid" for item in error.errors()):
+                    raise LocationReferenceReviewError("malformed_output") from error
                 try:
                     rejected = json.loads(content)
                 except (ValueError, TypeError):
@@ -328,7 +331,9 @@ class LocationReferenceReviewer:
                     raise LocationReferenceReviewError(
                         "validation_rejected:no_competing_target"
                     ) from error
-                raise LocationReferenceReviewError("malformed_output") from error
+                raise LocationReferenceReviewError(
+                    "validation_rejected:selection_schema"
+                ) from error
             selection = validate_selection(request, selection)
             tokens = payload.get("usage") or {}
             return LocationReferenceResponse(

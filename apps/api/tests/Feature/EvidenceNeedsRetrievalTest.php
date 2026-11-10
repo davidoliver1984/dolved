@@ -793,7 +793,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $document = $this->document($workspace, $generation, '2026-01-01');
         config(['retrieval.location_reference_shadow.enabled' => true, 'retrieval.max_attempts' => 1]);
         Log::spy();
-        $reasons = ['transport_error', 'malformed_output', 'incomplete_output',
+        $reasons = ['transport_error', 'malformed_output', 'incomplete_output', 'validation_rejected:selection_schema',
             'validation_rejected:no_competing_target'];
         Http::preventStrayRequests();
         Http::fake(function (Request $request) use ($reasons) {
