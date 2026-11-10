@@ -294,6 +294,20 @@ final readonly class RetrievalClient
                 || $selection['reason'] !== null) {
                 throw new RetrievalException('The non-site review has no grounded role evidence.');
             }
+            $normalisedReference = mb_strtolower(trim(preg_replace('/\s+/u', ' ', $reference) ?? $reference));
+            if (collect($locations)->contains(function (array $item) use ($normalisedReference): bool {
+                foreach ([$item['name'], ...$item['aliases']] as $candidate) {
+                    $normalisedCandidate = mb_strtolower(trim(preg_replace('/\s+/u', ' ', $candidate) ?? $candidate));
+                    if ($normalisedCandidate === $normalisedReference || (mb_strlen($normalisedReference) >= 4
+                        && str_starts_with($normalisedCandidate, $normalisedReference.' '))) {
+                        return true;
+                    }
+                }
+
+                return false;
+            })) {
+                throw new LocationReferenceReviewDiagnosticException('validation_rejected:site_document_conflict');
+            }
             if ($selection['competing_target_quote'] !== null || ! is_string($selection['evidence_family_id'])
                 || ! collect($families)->contains(fn (array $item): bool => $item['family_id'] === $selection['evidence_family_id']
                     && str_contains($item['title'], $evidence))) {
@@ -686,6 +700,7 @@ final readonly class RetrievalClient
                     $allowed = [
                         'validation_rejected:quote_mismatch', 'validation_rejected:unknown_location',
                         'validation_rejected:missing_role_evidence', 'validation_rejected:unknown_document_family',
+                        'validation_rejected:site_document_conflict',
                         'validation_rejected:no_competing_target', 'validation_rejected:target_too_short',
                         'validation_rejected:target_too_long', 'validation_rejected:target_not_grounded',
                         'validation_rejected:target_contains_reference', 'validation_rejected:target_not_substantial',

@@ -102,6 +102,54 @@ def test_non_site_role_requires_grounded_context_and_document_candidate() -> Non
         )
 
 
+def test_site_document_collision_rejects_a_real_riverside_site_even_with_a_real_title() -> None:
+    source = LocationReferenceRequest.model_validate(
+        {
+            **request("Riverside").model_dump(mode="json"),
+            "locations": [{"location_id": SITE, "name": "Riverside House", "aliases": []}],
+            "document_families": [
+                {"family_id": FAMILY, "title": "Riverside Key Holder Pilot"}
+            ],
+        }
+    )
+    document_reading = decision(
+        decision="not_a_site", location_id=None,
+        reference_type="document_or_record", evidence_family_id=FAMILY,
+        quote="Riverside", evidence_quote="Riverside",
+    )
+    with pytest.raises(LocationReferenceReviewError, match="site_document_conflict"):
+        validate_selection(source, document_reading)
+    exact_alias = LocationReferenceRequest.model_validate(
+        {**source.model_dump(mode="json"),
+         "locations": [{"location_id": SITE, "name": "Other House", "aliases": ["Riverside"]}]}
+    )
+    with pytest.raises(LocationReferenceReviewError, match="site_document_conflict"):
+        validate_selection(exact_alias, document_reading)
+    unrelated_site = LocationReferenceRequest.model_validate(
+        {**source.model_dump(mode="json"),
+         "locations": [{"location_id": SITE, "name": "Riverbank House", "aliases": []}]}
+    )
+    assert validate_selection(unrelated_site, document_reading).decision == "not_a_site"
+
+
+def test_existing_document_and_unregistered_site_controls_stay_valid() -> None:
+    for reference, title in (
+        ("backup policy", "Data Backup and Recovery Policy"),
+        ("the legionella procedure", "Legionella Control Procedure"),
+    ):
+        source = LocationReferenceRequest.model_validate(
+            {**request(reference).model_dump(mode="json"),
+             "document_families": [{"family_id": FAMILY, "title": title}]}
+        )
+        selection = decision(decision="not_a_site", location_id=None,
+                             reference_type="document_or_record", evidence_family_id=FAMILY,
+                             quote=reference, evidence_quote=title)
+        assert validate_selection(source, selection).decision == "not_a_site"
+    unresolved = decision(decision="unresolved_or_ambiguous", location_id=None,
+                          quote=None, reason="unresolved")
+    assert validate_selection(request("Oakfield outreach"), unresolved).decision == "unresolved_or_ambiguous"
+
+
 @pytest.mark.parametrize("reference_type", ["organisation", "answer_value", "incidental_phrase"])
 @pytest.mark.parametrize("reference", ["Oakfield outreach", "we", "the site"])
 def test_v3_schema_cannot_express_unanchored_non_site_role(

@@ -14,6 +14,7 @@ use App\Enums\GenerationRunStatus;
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
 use App\Enums\WorkspaceRole;
+use App\Exceptions\LocationReferenceReviewDiagnosticException;
 use App\Exceptions\RetrievalException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
@@ -731,6 +732,35 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->expectExceptionMessage('The non-site review has no grounded role evidence.');
         app(RetrievalClient::class)->reviewLocationReference($workspace, 'Oakfield outreach', $question,
             'when did a key safe need reviewing', [], [['family_id' => (string) Str::uuid(), 'title' => 'Key Safe Procedure']]);
+    }
+
+    public function test_location_shadow_rejects_document_title_when_reference_also_matches_real_site(): void
+    {
+        [$workspace] = $this->scope();
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) {
+            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
+
+            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
+                'selection' => ['decision' => 'not_a_site', 'location_id' => null,
+                    'reference_type' => 'document_or_record', 'evidence_family_id' => $data['document_families'][0]['family_id'],
+                    'quote' => 'Riverside', 'evidence_quote' => 'Riverside',
+                    'competing_target_quote' => null, 'reason' => null],
+                'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
+                    'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
+                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
+                    'input_tokens' => 1, 'output_tokens' => 1]], 200);
+        });
+        try {
+            app(RetrievalClient::class)->reviewLocationReference($workspace, 'Riverside',
+                'At Riverside, who monitored the key-holder pilot?', 'Who monitored the key-holder pilot?',
+                [['location_id' => (string) Str::uuid(), 'name' => 'Riverside House', 'aliases' => []]],
+                [['family_id' => (string) Str::uuid(), 'title' => 'Riverside Key Holder Pilot']]);
+            $this->fail('A real site/document collision must fail closed.');
+        } catch (LocationReferenceReviewDiagnosticException $exception) {
+            $this->assertSame('validation_rejected:site_document_conflict', $exception->failureReason);
+        }
+        Http::assertSentCount(1);
     }
 
     public function test_location_shadow_rejects_foreign_identity_and_provider_failure_without_changing_clarification(): void

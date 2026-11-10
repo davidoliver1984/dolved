@@ -29,6 +29,7 @@ SAFE_FAILURE_REASONS = frozenset(
         "validation_rejected:unknown_location",
         "validation_rejected:missing_role_evidence",
         "validation_rejected:unknown_document_family",
+        "validation_rejected:site_document_conflict",
         "validation_rejected:no_competing_target",
         "validation_rejected:target_too_short",
         "validation_rejected:target_too_long",
@@ -188,6 +189,15 @@ def validate_selection(
     evidence = selection.evidence_quote
     if evidence is None or not 8 <= len(evidence) <= 300:
         raise LocationReferenceReviewError("validation_rejected:missing_role_evidence")
+    reference = " ".join(request.reference.casefold().split())
+    if any(
+        candidate == reference
+        or (len(reference) >= 4 and candidate.startswith(reference + " "))
+        for item in request.locations
+        for value in (item.name, *item.aliases)
+        if (candidate := " ".join(value.casefold().split()))
+    ):
+        raise LocationReferenceReviewError("validation_rejected:site_document_conflict")
     if not any(
         item.family_id == selection.evidence_family_id and evidence in item.title
         for item in request.document_families

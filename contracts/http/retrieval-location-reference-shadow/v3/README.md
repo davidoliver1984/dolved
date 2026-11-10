@@ -10,6 +10,12 @@ anchored to a supplied document-family ID and title substring, or
 `unresolved_or_ambiguous`. The model schema cannot express an incidental,
 answer-value, or organisation non-site classification. The retained
 `competing_target_quote` field must be null for every v3 selection.
+Before accepting a document reading, Python and Laravel each reject it as
+`validation_rejected:site_document_conflict` if the same reference is an exact
+name/alias or a whole-word prefix of any authorised location candidate. This
+is a diagnostic fail-closed result; the existing authoritative resolver still
+supplies its site match. A document title containing a real site name cannot
+silently win over that site match.
 
 Before this reviewer is called, a separate shadow-only deterministic layer
 recognises a versioned closed list of standalone generic reference phrases.

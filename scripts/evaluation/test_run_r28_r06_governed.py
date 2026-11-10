@@ -38,6 +38,7 @@ class R28R06GovernedTest(unittest.TestCase):
             ("location_shadow_trial_tail12", 12),
             ("location_shadow_grounding_retrial", 5),
             ("location_shadow_v3_validation", 17),
+            ("location_shadow_full_population", 148),
         ):
             execution, scopes, identities = governed.verify_inputs(stage)
             self.assertEqual(count, len(execution["items"]))
@@ -90,8 +91,15 @@ class R28R06GovernedTest(unittest.TestCase):
                     [governed.shadow_baseline(index, item)["utterance"]
                      for index, item in zip(governed.SHADOW_V3_VALIDATION_INDICES, execution["items"], strict=True)],
                 )
+            if stage == "location_shadow_full_population":
+                self.assertEqual(governed.SHADOW_POPULATION_INDICES, tuple(range(1, 149)))
+                self.assertEqual(
+                    [item["utterance"] for item in execution["items"]],
+                    [governed.shadow_baseline(index, item)["utterance"]
+                     for index, item in zip(governed.SHADOW_POPULATION_INDICES, execution["items"], strict=True)],
+                )
             self.assertEqual(
-                "178c8f7a921e19136fb4375ea7881ac9abaf83e9eee86dd02617a097b8d182bc",
+                "186cacc7cd963c9655a255a97194de6b910296a8926fb0d3c362ee7a03d362cc",
                 identities["runtime_source_aggregate"],
             )
 
