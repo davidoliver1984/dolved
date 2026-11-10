@@ -30,7 +30,7 @@ FOREIGN = "00000000-0000-4000-8000-000000000013"
 def request(reference: str = "North West Region sites") -> LocationReferenceRequest:
     return LocationReferenceRequest.model_validate(
         {
-            "contract_version": 2,
+            "contract_version": 3,
             "request_id": str(uuid4()),
             "workspace_id": WORKSPACE,
             "reference": reference,
@@ -102,57 +102,23 @@ def test_non_site_role_requires_grounded_context_and_document_candidate() -> Non
         )
 
 
-def test_non_document_role_rejects_containing_clause_without_distinct_target() -> None:
-    source = LocationReferenceRequest.model_validate(
-        {
-            **request("Oakfield outreach").model_dump(mode="json"),
-            "question": "At Oakfield outreach on 1 July 2026, when did a key safe need reviewing?",
-        }
-    )
-    containing_clause = source.question.removesuffix("?")
-    bypass = decision(
+@pytest.mark.parametrize("reference_type", ["organisation", "answer_value", "incidental_phrase"])
+@pytest.mark.parametrize("reference", ["Oakfield outreach", "we", "the site"])
+def test_v3_schema_cannot_express_unanchored_non_site_role(
+    reference_type: str, reference: str
+) -> None:
+    old_selection = decision().model_dump(mode="json")
+    old_selection.update(
         decision="not_a_site",
         location_id=None,
-        reference_type="incidental_phrase",
+        reference_type=reference_type,
         evidence_family_id=None,
-        quote="Oakfield outreach",
-        evidence_quote=containing_clause,
-        competing_target_quote=containing_clause,
+        quote=reference,
+        evidence_quote=f"At {reference}, when did a key safe need reviewing?",
+        competing_target_quote="when did a key safe need reviewing",
     )
-    with pytest.raises(LocationReferenceReviewError, match="validation_rejected:target_contains_reference"):
-        validate_selection(source, bypass)
-    for target, code in (
-        ("safe", "validation_rejected:target_too_short"),
-        ("key safe", "validation_rejected:target_not_substantial"),
-        ("fabricated distinct target", "validation_rejected:target_not_grounded"),
-    ):
-        with pytest.raises(LocationReferenceReviewError, match=code):
-            validate_selection(
-                source, bypass.model_copy(update={"competing_target_quote": target})
-            )
-    with pytest.raises(LocationReferenceReviewError, match="validation_rejected:no_competing_target"):
-        validate_selection(
-            source, bypass.model_copy(update={"competing_target_quote": None})
-        )
-
-
-def test_non_document_role_accepts_grounded_distinct_answer_target() -> None:
-    source = LocationReferenceRequest.model_validate(
-        {
-            **request("we").model_dump(mode="json"),
-            "question": "Do we have a staff gym?",
-        }
-    )
-    selection = decision(
-        decision="not_a_site",
-        location_id=None,
-        reference_type="incidental_phrase",
-        evidence_family_id=None,
-        quote="we",
-        evidence_quote="Do we have a staff gym?",
-        competing_target_quote="staff gym",
-    )
-    assert validate_selection(source, selection).competing_target_quote == "staff gym"
+    with pytest.raises(ValidationError):
+        LocationReferenceDecision.model_validate(old_selection)
 
 
 def test_unresolved_is_fail_closed_and_malformed_decisions_are_rejected() -> None:
@@ -244,7 +210,7 @@ def test_review_failure_subtypes_are_bounded(
     assert error.value.raw_response_truncated is False
 
 
-def test_reviewer_preserves_case_141_grounding_rejection_code() -> None:
+def test_reviewer_rejects_case_141_old_incidental_output_at_schema() -> None:
     source = LocationReferenceRequest.model_validate(
         {
             **request("Oakfield outreach").model_dump(mode="json"),
@@ -252,15 +218,11 @@ def test_reviewer_preserves_case_141_grounding_rejection_code() -> None:
         }
     )
     clause = source.question.removesuffix("?")
-    old_bypass = decision(
-        decision="not_a_site",
-        location_id=None,
-        reference_type="incidental_phrase",
-        evidence_family_id=None,
-        quote=source.reference,
-        evidence_quote=clause,
-        competing_target_quote=clause,
-    )
+    old_bypass = decision().model_dump(mode="json")
+    old_bypass.update(decision="not_a_site", location_id=None,
+                      reference_type="incidental_phrase", evidence_family_id=None,
+                      quote=source.reference, evidence_quote=clause,
+                      competing_target_quote="when did a key safe need reviewing")
     reviewer = LocationReferenceReviewer(
         api_url="https://provider.invalid/chat/completions",
         api_key=SecretStr("test-only"),
@@ -273,7 +235,7 @@ def test_reviewer_preserves_case_141_grounding_rejection_code() -> None:
                 200,
                 json={
                     "choices": [
-                        {"finish_reason": "stop", "message": {"content": old_bypass.model_dump_json()}}
+                        {"finish_reason": "stop", "message": {"content": json.dumps(old_bypass)}}
                     ]
                 },
             )
@@ -281,27 +243,22 @@ def test_reviewer_preserves_case_141_grounding_rejection_code() -> None:
     )
     with pytest.raises(LocationReferenceReviewError) as error:
         reviewer.review(source)
-    assert error.value.code == "validation_rejected:target_contains_reference"
+    assert error.value.code == "validation_rejected:selection_schema"
     assert clause in (error.value.raw_response or "")
 
 
-def test_reviewer_labels_missing_competing_target_before_grounding() -> None:
+def test_reviewer_rejects_case_142_old_incidental_output_at_schema() -> None:
     source = LocationReferenceRequest.model_validate(
         {
-            **request("we").model_dump(mode="json"),
-            "question": "Do we have a staff gym?",
+            **request("Oakfield outreach").model_dump(mode="json"),
+            "question": "For an Oakfield outreach key safe in July 2026, what were the review triggers?",
         }
     )
-    malformed = decision(
-        decision="not_a_site",
-        location_id=None,
-        reference_type="incidental_phrase",
-        evidence_family_id=None,
-        quote="we",
-        evidence_quote=source.question,
-        competing_target_quote="staff gym",
-    ).model_dump(mode="json")
-    malformed["competing_target_quote"] = None
+    malformed = decision().model_dump(mode="json")
+    malformed.update(decision="not_a_site", location_id=None,
+                     reference_type="incidental_phrase", evidence_family_id=None,
+                     quote="Oakfield outreach", evidence_quote="Oakfield outreach",
+                     competing_target_quote="review triggers")
     reviewer = LocationReferenceReviewer(
         api_url="https://provider.invalid/chat/completions",
         api_key=SecretStr("test-only"),
@@ -322,11 +279,11 @@ def test_reviewer_labels_missing_competing_target_before_grounding() -> None:
     )
     with pytest.raises(LocationReferenceReviewError) as error:
         reviewer.review(source)
-    assert error.value.code == "validation_rejected:no_competing_target"
+    assert error.value.code == "validation_rejected:selection_schema"
     raw_completion = json.loads(error.value.raw_response or "{}")
     assert json.loads(raw_completion["choices"][0]["message"]["content"])[
-        "competing_target_quote"
-    ] is None
+        "reference_type"
+    ] == "incidental_phrase"
 
 
 def test_failed_review_raw_body_is_bounded_and_success_has_no_diagnostic() -> None:

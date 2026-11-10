@@ -41,6 +41,12 @@ final readonly class LocationReferenceShadowReview
 
                 return;
             }
+            if (GenericLocationReference::groundedInQuestion($reference, $question)) {
+                $this->record($base + ['shadow_decision' => 'generic_reference',
+                    'shadow_reason' => GenericLocationReference::VERSION]);
+
+                return;
+            }
             $locationModels = OrganisationalLocation::query()->where('workspace_id', $authorised->workspace->id)
                 ->with('aliases')->orderBy('id')->limit(201)->get();
             $familyModels = DocumentFamily::query()->where('workspace_id', $authorised->workspace->id)
@@ -101,7 +107,7 @@ final readonly class LocationReferenceShadowReview
     private function record(array $record): void
     {
         try {
-            Log::info('retrieval.location_reference.shadow.v2', $record);
+            Log::info('retrieval.location_reference.shadow.v3', $record);
         } catch (Throwable) {
             // Shadow logging must not affect the authoritative resolver.
         }

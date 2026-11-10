@@ -77,7 +77,7 @@ if (getenv('RETRIEVAL_LOCATION_REFERENCE_SHADOW') === 'true') {
     }
     Illuminate\Support\Facades\Event::listen(Illuminate\Log\Events\MessageLogged::class,
         function (Illuminate\Log\Events\MessageLogged $event) use (&$shadowReviews): void {
-            if ($event->message === 'retrieval.location_reference.shadow.v2') {
+            if ($event->message === 'retrieval.location_reference.shadow.v3') {
                 $shadowReviews[] = $event->context;
             }
         });

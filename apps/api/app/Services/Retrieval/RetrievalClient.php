@@ -240,7 +240,7 @@ final readonly class RetrievalClient
         }
         $response = $this->call('/api/internal/retrieval/location-reference-shadow',
             'retrieval.location-reference-shadow', $workspace, [
-                'contract_version' => 2,
+                'contract_version' => 3,
                 'workspace_id' => $workspace->public_id,
                 'reference' => $reference,
                 'question' => $question,
@@ -248,7 +248,7 @@ final readonly class RetrievalClient
                 'locations' => $locations,
                 'document_families' => $families,
             ]);
-        if ($response->json('contract_version') !== 2 || ! is_array($response->json('selection'))
+        if ($response->json('contract_version') !== 3 || ! is_array($response->json('selection'))
             || ! is_array($response->json('usage'))) {
             throw new RetrievalException('The location review response is invalid.');
         }
@@ -289,40 +289,15 @@ final readonly class RetrievalClient
             $evidence = $selection['evidence_quote'];
             $type = $selection['reference_type'];
             if ($selection['quote'] !== $reference || $selection['location_id'] !== null
-                || ! in_array($type, ['document_or_record', 'organisation', 'answer_value', 'incidental_phrase'], true)
+                || $type !== 'document_or_record'
                 || ! is_string($evidence) || mb_strlen($evidence) < 8 || mb_strlen($evidence) > 300
                 || $selection['reason'] !== null) {
                 throw new RetrievalException('The non-site review has no grounded role evidence.');
             }
-            if ($type === 'document_or_record') {
-                if ($selection['competing_target_quote'] !== null || ! is_string($selection['evidence_family_id'])
-                    || ! collect($families)->contains(fn (array $item): bool => $item['family_id'] === $selection['evidence_family_id']
-                        && str_contains($item['title'], $evidence))) {
-                    throw new RetrievalException('The non-site review cited no authorised family.');
-                }
-            } elseif ($selection['evidence_family_id'] !== null
-                || ! str_contains($question, $evidence) || ! str_contains($evidence, $reference)) {
-                throw new RetrievalException('The non-site review cited no distinct grounded target.');
-            } else {
-                $target = $selection['competing_target_quote'];
-                if (! is_string($target)) {
-                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:no_competing_target');
-                }
-                if (mb_strlen($target) < 8) {
-                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:target_too_short');
-                }
-                if (mb_strlen($target) > 300) {
-                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:target_too_long');
-                }
-                if (! str_contains($question, $target)) {
-                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:target_not_grounded');
-                }
-                if (mb_stripos($target, $reference) !== false) {
-                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:target_contains_reference');
-                }
-                if (mb_strlen($target) < intdiv(mb_strlen($reference) + 1, 2)) {
-                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:target_not_substantial');
-                }
+            if ($selection['competing_target_quote'] !== null || ! is_string($selection['evidence_family_id'])
+                || ! collect($families)->contains(fn (array $item): bool => $item['family_id'] === $selection['evidence_family_id']
+                    && str_contains($item['title'], $evidence))) {
+                throw new RetrievalException('The non-site review cited no authorised family.');
             }
         } elseif ($decision === 'unresolved_or_ambiguous') {
             if (! in_array($selection['reason'], ['unresolved', 'ambiguous', 'insufficient_context'], true)

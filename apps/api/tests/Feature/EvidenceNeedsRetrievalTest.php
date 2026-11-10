@@ -14,7 +14,7 @@ use App\Enums\GenerationRunStatus;
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
 use App\Enums\WorkspaceRole;
-use App\Exceptions\LocationReferenceReviewDiagnosticException;
+use App\Exceptions\RetrievalException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
 use App\Models\EmbeddingProfile;
@@ -35,6 +35,7 @@ use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
 use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Generation\GenerationProfileFactory;
 use App\Services\Retrieval\EligibilityResolver;
+use App\Services\Retrieval\GenericLocationReference;
 use App\Services\Retrieval\RetrievalClient;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Retrieval\ApplicabilityScopeFact;
@@ -509,7 +510,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                     'competing_target_quote' => null, 'reason' => 'unresolved'],
             };
 
-            return Http::response(['contract_version' => 2, 'request_id' => $data['request_id'],
+            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
                 'selection' => $selection, 'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
                     'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
                     'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
@@ -530,7 +531,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertSame(RetrievalOutcome::ClarificationRequired, $unlisted->outcome);
         $this->assertSame('unresolved_location_reference', $unlisted->reason);
         $this->assertSame(['Equipment Policy', 'North West Region sites', 'Oakfield outreach'], $sentReferences);
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
             && $record['old_decision'] === 'clarification' && $record['shadow_decision'] === 'not_a_site'
             && $record['shadow_evidence_quote'] === 'Equipment Policy'
             && $record['usage']['stage'] === 'location_reference_shadow'
@@ -540,7 +541,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             && $record['usage']['cost_basis'] === 'unavailable'
             && $record['usage']['cost_usd'] === null
             && ! array_key_exists('shadow_raw_response', $record))->once();
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
             && $record['old_decision'] === 'resolved_site' && $record['shadow_decision'] === 'resolved_site')->once();
         Http::assertSentCount(3);
     }
@@ -606,6 +607,21 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         Http::assertNothingSent();
     }
 
+    public function test_shadow_generic_reference_list_matches_only_whole_closed_phrases(): void
+    {
+        foreach (['we', 'We', 'us', 'the organisation', 'the team', 'the service', 'the department', 'the site'] as $reference) {
+            $this->assertTrue(GenericLocationReference::matches($reference), $reference);
+        }
+        foreach (['Oakfield outreach', 'the Oakfield outreach', 'Oakfield outreach team',
+            'Oakfield', 'Cinderhill House', 'the home', 'our', 'our site', 'we at Oakfield outreach'] as $reference) {
+            $this->assertFalse(GenericLocationReference::matches($reference), $reference);
+        }
+        $this->assertTrue(GenericLocationReference::groundedInQuestion('we', 'Do we have a staff gym?'));
+        $this->assertTrue(GenericLocationReference::groundedInQuestion('the site', "What is the site's safeguarding lead called now?"));
+        $this->assertFalse(GenericLocationReference::groundedInQuestion('we', 'The answer is twelve.'));
+        $this->assertFalse(GenericLocationReference::groundedInQuestion('the site', 'the sitewide policy'));
+    }
+
     public function test_location_shadow_c04_c05_c06_fixture_grid_remains_authoritatively_unresolved(): void
     {
         [$workspace, $generation, $scope] = $this->scope();
@@ -642,17 +658,16 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $sent[] = $reference;
             $selection = $fixture[4] === 'not_a_site'
                 ? ['decision' => 'not_a_site', 'location_id' => null,
-                    'reference_type' => $fixture[3] === 'named' ? 'document_or_record' : 'incidental_phrase',
-                    'evidence_family_id' => $fixture[3] === 'named' ? $document->family->public_id : null,
-                    'quote' => $reference, 'evidence_quote' => $fixture[3] === 'named' ? $document->family->name : $data['question'],
-                    'competing_target_quote' => $fixture[3] === 'named' ? null : ($reference === 'we' ? 'staff gym' : 'safeguarding lead'),
-                    'reason' => null]
+                    'reference_type' => 'document_or_record',
+                    'evidence_family_id' => $document->family->public_id,
+                    'quote' => $reference, 'evidence_quote' => $document->family->name,
+                    'competing_target_quote' => null, 'reason' => null]
                 : ['decision' => 'unresolved_or_ambiguous', 'location_id' => null,
                     'reference_type' => null, 'evidence_family_id' => null,
                     'quote' => null, 'evidence_quote' => null,
                     'competing_target_quote' => null, 'reason' => 'unresolved'];
 
-            return Http::response(['contract_version' => 2, 'request_id' => $data['request_id'],
+            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
                 'selection' => $selection, 'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
                     'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
                     'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
@@ -677,14 +692,19 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome, $id);
             $this->assertSame('unresolved_location_reference', $result->reason, $id);
         }
-        $this->assertCount(count($fixtures), $sent);
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+        $this->assertCount(count($fixtures) - 2, $sent);
+        $this->assertNotContains('we', $sent);
+        $this->assertNotContains('the site', $sent);
+        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
             && $record['old_decision'] === 'clarification'
-            && $record['shadow_decision'] === 'not_a_site')->times(8);
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+            && $record['shadow_decision'] === 'not_a_site')->times(6);
+        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
+            && $record['shadow_decision'] === 'generic_reference'
+            && $record['shadow_reason'] === GenericLocationReference::VERSION)->twice();
+        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
             && $record['old_decision'] === 'clarification'
             && $record['shadow_decision'] === 'unresolved_or_ambiguous')->twice();
-        Http::assertSentCount(count($fixtures));
+        Http::assertSentCount(count($fixtures) - 2);
     }
 
     public function test_location_shadow_rejects_a_containing_clause_as_a_competing_target(): void
@@ -696,7 +716,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         Http::fake(function (Request $request) use ($clause) {
             $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
 
-            return Http::response(['contract_version' => 2, 'request_id' => $data['request_id'],
+            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
                 'selection' => ['decision' => 'not_a_site', 'location_id' => null,
                     'reference_type' => 'incidental_phrase', 'evidence_family_id' => null,
                     'quote' => 'Oakfield outreach', 'evidence_quote' => $clause,
@@ -707,8 +727,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                     'input_tokens' => 1, 'output_tokens' => 1]], 200);
         });
 
-        $this->expectException(LocationReferenceReviewDiagnosticException::class);
-        $this->expectExceptionMessage('The location-reference shadow review failed.');
+        $this->expectException(RetrievalException::class);
+        $this->expectExceptionMessage('The non-site review has no grounded role evidence.');
         app(RetrievalClient::class)->reviewLocationReference($workspace, 'Oakfield outreach', $question,
             'when did a key safe need reviewing', [], [['family_id' => (string) Str::uuid(), 'title' => 'Key Safe Procedure']]);
     }
@@ -731,7 +751,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             }
             $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
 
-            return Http::response(['contract_version' => 2, 'request_id' => $data['request_id'],
+            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
                 'selection' => ['decision' => 'resolved_site', 'location_id' => $foreign->public_id,
                     'reference_type' => null, 'evidence_family_id' => null,
                     'quote' => $data['reference'], 'evidence_quote' => null,
@@ -748,10 +768,10 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
             $this->assertSame('unresolved_location_reference', $result->reason);
         }
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
             && $record['shadow_decision'] === 'unavailable' && $record['shadow_reason'] === 'review_failed'
             && $record['shadow_failure_reason'] === 'validation_rejected:application_contract')->once();
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
             && $record['shadow_decision'] === 'unavailable' && $record['shadow_reason'] === 'review_failed'
             && $record['shadow_failure_reason'] === 'transport_error')->once();
         Http::assertSentCount(2);
@@ -775,7 +795,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $this->scopePlan($document, $question, 'Oakfield outreach')->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-10'));
         $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
         $this->assertSame('unresolved_location_reference', $result->reason);
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
             && $record['shadow_decision'] === 'unavailable'
             && $record['shadow_failure_reason'] === 'validation_rejected:target_contains_reference'
             && $record['shadow_raw_response'] === $raw
@@ -807,7 +827,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $result = app(EligibilityResolver::class)->scopeFact($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-10'));
             $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
             $this->assertSame('unresolved_location_reference', $result->reason);
-            Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+            Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
                 && $record['shadow_decision'] === 'unavailable'
                 && $record['shadow_failure_reason'] === $reason
                 && $record['shadow_raw_response'] === ($index === 4 ? str_repeat('x', 65536) : 'provider-'.$reason)
