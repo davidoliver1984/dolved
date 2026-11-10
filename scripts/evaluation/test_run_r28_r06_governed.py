@@ -82,7 +82,7 @@ class R28R06GovernedTest(unittest.TestCase):
                      for index, item in zip(governed.SHADOW_GROUNDING_RETRIAL_INDICES, execution["items"], strict=True)],
                 )
             self.assertEqual(
-                "f58769b25df3adb6f0a2f7061117ccd92315a73a229bb30e552eaa001c474901",
+                "578e324c7b2b5d8694fa9af76b37773582a5f6676da5af9153ac34d8f7a429d3",
                 identities["runtime_source_aggregate"],
             )
 

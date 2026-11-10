@@ -26,3 +26,11 @@ is persisted. This syntactic grounding check narrows one known bypass; it does
 not prove that a model's semantic classification is correct. In particular,
 an unknown site must still resolve or remain ambiguous before any real
 eligibility cutover could be considered.
+
+On failure, the signed internal endpoint still returns HTTP 503 with
+`code: location_reference_review_unavailable`; it additionally returns a
+bounded `failure_reason` diagnostic. Only allowlisted validation-rejection
+codes or `transport_error`, `malformed_output`, and `incomplete_output` cross
+the service boundary. The shadow log copies this into
+`shadow_failure_reason`, separate from its existing `review_failed` category.
+The diagnostic is not shown to the end user and never affects eligibility.

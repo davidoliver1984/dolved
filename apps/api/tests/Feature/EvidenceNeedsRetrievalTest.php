@@ -14,7 +14,7 @@ use App\Enums\GenerationRunStatus;
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
 use App\Enums\WorkspaceRole;
-use App\Exceptions\RetrievalException;
+use App\Exceptions\LocationReferenceReviewDiagnosticException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
 use App\Models\EmbeddingProfile;
@@ -706,8 +706,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                     'input_tokens' => 1, 'output_tokens' => 1]], 200);
         });
 
-        $this->expectException(RetrievalException::class);
-        $this->expectExceptionMessage('The non-site review cited no distinct grounded target.');
+        $this->expectException(LocationReferenceReviewDiagnosticException::class);
+        $this->expectExceptionMessage('The location-reference shadow review failed.');
         app(RetrievalClient::class)->reviewLocationReference($workspace, 'Oakfield outreach', $question,
             'when did a key safe need reviewing', [], [['family_id' => (string) Str::uuid(), 'title' => 'Key Safe Procedure']]);
     }
@@ -725,7 +725,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         Http::fake(function (Request $request) use ($foreign, &$attempt) {
             $attempt++;
             if ($attempt === 2) {
-                return Http::response(['detail' => ['code' => 'location_reference_review_unavailable']], 503);
+                return Http::response(['detail' => ['code' => 'location_reference_review_unavailable',
+                    'failure_reason' => 'transport_error']], 503);
             }
             $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
 
@@ -747,8 +748,72 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $this->assertSame('unresolved_location_reference', $result->reason);
         }
         Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
-            && $record['shadow_decision'] === 'unavailable' && $record['shadow_reason'] === 'review_failed')->twice();
+            && $record['shadow_decision'] === 'unavailable' && $record['shadow_reason'] === 'review_failed'
+            && $record['shadow_failure_reason'] === 'validation_rejected:application_contract')->once();
+        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+            && $record['shadow_decision'] === 'unavailable' && $record['shadow_reason'] === 'review_failed'
+            && $record['shadow_failure_reason'] === 'transport_error')->once();
         Http::assertSentCount(2);
+    }
+
+    public function test_location_shadow_logs_case_141_bypass_as_grounding_rejection(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        config(['retrieval.location_reference_shadow.enabled' => true, 'retrieval.max_attempts' => 1]);
+        Log::spy();
+        $question = 'At Oakfield outreach on 1 July 2026, when did a key safe need reviewing?';
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) use ($question) {
+            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
+
+            return Http::response(['contract_version' => 2, 'request_id' => $data['request_id'],
+                'selection' => ['decision' => 'not_a_site', 'location_id' => null,
+                    'reference_type' => 'incidental_phrase', 'evidence_family_id' => null,
+                    'quote' => 'Oakfield outreach', 'evidence_quote' => $question,
+                    'competing_target_quote' => $question, 'reason' => null],
+                'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
+                    'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
+                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
+                    'input_tokens' => 1, 'output_tokens' => 1]], 200);
+        });
+        $result = app(EligibilityResolver::class)->scopeFact($scope,
+            $this->scopePlan($document, $question, 'Oakfield outreach')->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-10'));
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+        $this->assertSame('unresolved_location_reference', $result->reason);
+        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+            && $record['shadow_decision'] === 'unavailable'
+            && $record['shadow_failure_reason'] === 'validation_rejected:target_contains_reference')->once();
+        Http::assertSentCount(1);
+    }
+
+    public function test_location_shadow_logs_distinct_internal_failure_subtypes_without_changing_eligibility(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        config(['retrieval.location_reference_shadow.enabled' => true, 'retrieval.max_attempts' => 1]);
+        Log::spy();
+        $reasons = ['transport_error', 'malformed_output', 'incomplete_output',
+            'validation_rejected:no_competing_target'];
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) use ($reasons) {
+            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
+            $index = (int) substr($data['reference'], -1);
+
+            return Http::response(['detail' => ['code' => 'location_reference_review_unavailable',
+                'failure_reason' => $reasons[$index]]], 503);
+        });
+        foreach ($reasons as $index => $reason) {
+            $reference = 'Unlisted Site '.$index;
+            $plan = $this->scopePlan($document, 'Does Equipment Policy cover '.$reference.'?', $reference);
+            $result = app(EligibilityResolver::class)->scopeFact($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-10'));
+            $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+            $this->assertSame('unresolved_location_reference', $result->reason);
+            Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
+                && $record['shadow_decision'] === 'unavailable'
+                && $record['shadow_failure_reason'] === $reason)->once();
+        }
+        Http::assertSentCount(count($reasons));
     }
 
     public function test_scope_adversarial_framing_is_fixed_and_persists_a_real_snapshot_citation_without_a_provider(): void

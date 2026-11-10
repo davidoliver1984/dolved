@@ -8,7 +8,13 @@ from typing import Annotated, Literal
 from uuid import UUID
 
 import httpx
-from pydantic import Field, SecretStr, StringConstraints, model_validator
+from pydantic import (
+    Field,
+    SecretStr,
+    StringConstraints,
+    ValidationError,
+    model_validator,
+)
 
 from app.extraction.models import ImmutableModel
 from app.retrieval.models import OperationUsage
@@ -17,9 +23,33 @@ from app.retrieval.planner import _non_negative_int
 ShortText = Annotated[str, StringConstraints(min_length=1, max_length=500)]
 ContextText = Annotated[str, StringConstraints(min_length=1, max_length=8000)]
 
+SAFE_FAILURE_REASONS = frozenset(
+    {
+        "validation_rejected:quote_mismatch",
+        "validation_rejected:unknown_location",
+        "validation_rejected:missing_role_evidence",
+        "validation_rejected:unknown_document_family",
+        "validation_rejected:no_competing_target",
+        "validation_rejected:target_too_short",
+        "validation_rejected:target_too_long",
+        "validation_rejected:target_not_grounded",
+        "validation_rejected:target_contains_reference",
+        "validation_rejected:target_not_substantial",
+        "transport_error",
+        "malformed_output",
+        "incomplete_output",
+    }
+)
+
 
 class LocationReferenceReviewError(ValueError):
     """Never include raw question, candidate text or completion in caller errors."""
+
+    def __init__(self, code: str) -> None:
+        if code not in SAFE_FAILURE_REASONS:
+            raise ValueError("unrecognised shadow review failure code")
+        self.code = code
+        super().__init__(code)
 
 
 class LocationCandidate(ImmutableModel):
@@ -150,34 +180,38 @@ def validate_selection(
     if selection.decision == "unresolved_or_ambiguous":
         return selection
     if selection.quote != request.reference:
-        raise LocationReferenceReviewError("review quote is not the supplied reference")
+        raise LocationReferenceReviewError("validation_rejected:quote_mismatch")
     if selection.decision == "resolved_site":
         if selection.location_id not in {
             item.location_id for item in request.locations
         }:
-            raise LocationReferenceReviewError("review selected an unknown location")
+            raise LocationReferenceReviewError("validation_rejected:unknown_location")
         return selection
     evidence = selection.evidence_quote
     if evidence is None or not 8 <= len(evidence) <= 300:
-        raise LocationReferenceReviewError("non-site role has no grounded context")
+        raise LocationReferenceReviewError("validation_rejected:missing_role_evidence")
     if selection.reference_type == "document_or_record":
         if not any(
             item.family_id == selection.evidence_family_id and evidence in item.title
             for item in request.document_families
         ):
-            raise LocationReferenceReviewError("document role cites no candidate title")
+            raise LocationReferenceReviewError("validation_rejected:unknown_document_family")
     else:
         target = selection.competing_target_quote
         if evidence not in request.question or request.reference not in evidence:
-            raise LocationReferenceReviewError("non-site role has no grounded context")
-        if (
-            target is None
-            or not 8 <= len(target) <= 300
-            or target not in request.question
-            or request.reference.casefold() in target.casefold()
-            or len(target) < max(8, (len(request.reference) + 1) // 2)
-        ):
-            raise LocationReferenceReviewError("non-site role has no distinct target")
+            raise LocationReferenceReviewError("validation_rejected:missing_role_evidence")
+        if target is None:
+            raise LocationReferenceReviewError("validation_rejected:no_competing_target")
+        if len(target) < 8:
+            raise LocationReferenceReviewError("validation_rejected:target_too_short")
+        if len(target) > 300:
+            raise LocationReferenceReviewError("validation_rejected:target_too_long")
+        if target not in request.question:
+            raise LocationReferenceReviewError("validation_rejected:target_not_grounded")
+        if request.reference.casefold() in target.casefold():
+            raise LocationReferenceReviewError("validation_rejected:target_contains_reference")
+        if len(target) < (len(request.reference) + 1) // 2:
+            raise LocationReferenceReviewError("validation_rejected:target_not_substantial")
     return selection
 
 
@@ -276,10 +310,25 @@ class LocationReferenceReviewer:
             response.raise_for_status()
             payload = response.json()
             if payload["choices"][0]["finish_reason"] != "stop":
-                raise ValueError("location reference review did not complete")
-            selection = LocationReferenceDecision.model_validate_json(
-                payload["choices"][0]["message"]["content"]
-            )
+                raise LocationReferenceReviewError("incomplete_output")
+            content = payload["choices"][0]["message"]["content"]
+            try:
+                selection = LocationReferenceDecision.model_validate_json(content)
+            except ValidationError as error:
+                try:
+                    rejected = json.loads(content)
+                except (ValueError, TypeError):
+                    rejected = None
+                if (
+                    isinstance(rejected, dict)
+                    and rejected.get("decision") == "not_a_site"
+                    and rejected.get("reference_type") in {"organisation", "answer_value", "incidental_phrase"}
+                    and rejected.get("competing_target_quote") is None
+                ):
+                    raise LocationReferenceReviewError(
+                        "validation_rejected:no_competing_target"
+                    ) from error
+                raise LocationReferenceReviewError("malformed_output") from error
             selection = validate_selection(request, selection)
             tokens = payload.get("usage") or {}
             return LocationReferenceResponse(
@@ -299,7 +348,9 @@ class LocationReferenceReviewer:
                     cost_usd=None,
                 ),
             )
-        except (ValueError, KeyError, TypeError, httpx.HTTPError) as error:
-            raise LocationReferenceReviewError(
-                "location reference review failed"
-            ) from error
+        except LocationReferenceReviewError:
+            raise
+        except httpx.HTTPError as error:
+            raise LocationReferenceReviewError("transport_error") from error
+        except (ValidationError, ValueError, KeyError, TypeError) as error:
+            raise LocationReferenceReviewError("malformed_output") from error

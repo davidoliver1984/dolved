@@ -119,13 +119,21 @@ def test_non_document_role_rejects_containing_clause_without_distinct_target() -
         evidence_quote=containing_clause,
         competing_target_quote=containing_clause,
     )
-    with pytest.raises(LocationReferenceReviewError, match="distinct target"):
+    with pytest.raises(LocationReferenceReviewError, match="validation_rejected:target_contains_reference"):
         validate_selection(source, bypass)
-    for target in ("key safe", "fabricated distinct target"):
-        with pytest.raises(LocationReferenceReviewError, match="distinct target"):
+    for target, code in (
+        ("safe", "validation_rejected:target_too_short"),
+        ("key safe", "validation_rejected:target_not_substantial"),
+        ("fabricated distinct target", "validation_rejected:target_not_grounded"),
+    ):
+        with pytest.raises(LocationReferenceReviewError, match=code):
             validate_selection(
                 source, bypass.model_copy(update={"competing_target_quote": target})
             )
+    with pytest.raises(LocationReferenceReviewError, match="validation_rejected:no_competing_target"):
+        validate_selection(
+            source, bypass.model_copy(update={"competing_target_quote": None})
+        )
 
 
 def test_non_document_role_accepts_grounded_distinct_answer_target() -> None:
@@ -202,6 +210,118 @@ def test_review_uses_one_bounded_provider_request_with_mock_transport() -> None:
     assert result.usage.cost_basis == "unavailable"
 
 
+@pytest.mark.parametrize(
+    ("response", "expected_code"),
+    [
+        (httpx.Response(503, json={"error": "unavailable"}), "transport_error"),
+        (httpx.Response(200, content=b"not-json"), "malformed_output"),
+        (
+            httpx.Response(200, json={"choices": [{"finish_reason": "length", "message": {"content": ""}}]}),
+            "incomplete_output",
+        ),
+        (
+            httpx.Response(200, json={"choices": [{"finish_reason": "stop", "message": {"content": "{}"}}]}),
+            "malformed_output",
+        ),
+    ],
+)
+def test_review_failure_subtypes_are_bounded(
+    response: httpx.Response, expected_code: str
+) -> None:
+    reviewer = LocationReferenceReviewer(
+        api_url="https://provider.invalid/chat/completions",
+        api_key=SecretStr("test-only"),
+        model="test-model",
+        timeout_seconds=1,
+    )
+    reviewer.client = httpx.Client(
+        transport=httpx.MockTransport(lambda _: response)
+    )
+    with pytest.raises(LocationReferenceReviewError) as error:
+        reviewer.review(request())
+    assert error.value.code == expected_code
+
+
+def test_reviewer_preserves_case_141_grounding_rejection_code() -> None:
+    source = LocationReferenceRequest.model_validate(
+        {
+            **request("Oakfield outreach").model_dump(mode="json"),
+            "question": "At Oakfield outreach on 1 July 2026, when did a key safe need reviewing?",
+        }
+    )
+    clause = source.question.removesuffix("?")
+    old_bypass = decision(
+        decision="not_a_site",
+        location_id=None,
+        reference_type="incidental_phrase",
+        evidence_family_id=None,
+        quote=source.reference,
+        evidence_quote=clause,
+        competing_target_quote=clause,
+    )
+    reviewer = LocationReferenceReviewer(
+        api_url="https://provider.invalid/chat/completions",
+        api_key=SecretStr("test-only"),
+        model="test-model",
+        timeout_seconds=1,
+    )
+    reviewer.client = httpx.Client(
+        transport=httpx.MockTransport(
+            lambda _: httpx.Response(
+                200,
+                json={
+                    "choices": [
+                        {"finish_reason": "stop", "message": {"content": old_bypass.model_dump_json()}}
+                    ]
+                },
+            )
+        )
+    )
+    with pytest.raises(LocationReferenceReviewError) as error:
+        reviewer.review(source)
+    assert error.value.code == "validation_rejected:target_contains_reference"
+
+
+def test_reviewer_labels_missing_competing_target_before_grounding() -> None:
+    source = LocationReferenceRequest.model_validate(
+        {
+            **request("we").model_dump(mode="json"),
+            "question": "Do we have a staff gym?",
+        }
+    )
+    malformed = decision(
+        decision="not_a_site",
+        location_id=None,
+        reference_type="incidental_phrase",
+        evidence_family_id=None,
+        quote="we",
+        evidence_quote=source.question,
+        competing_target_quote="staff gym",
+    ).model_dump(mode="json")
+    malformed["competing_target_quote"] = None
+    reviewer = LocationReferenceReviewer(
+        api_url="https://provider.invalid/chat/completions",
+        api_key=SecretStr("test-only"),
+        model="test-model",
+        timeout_seconds=1,
+    )
+    reviewer.client = httpx.Client(
+        transport=httpx.MockTransport(
+            lambda _: httpx.Response(
+                200,
+                json={
+                    "choices": [
+                        {"finish_reason": "stop", "message": {"content": json.dumps(malformed)}}
+                    ]
+                },
+            )
+        )
+    )
+    with pytest.raises(LocationReferenceReviewError) as error:
+        reviewer.review(source)
+    assert error.value.code == "validation_rejected:no_competing_target"
+
+
 def test_endpoint_requires_signed_workspace_identity_and_rejects_replay() -> None:
     source = request()
 
@@ -252,7 +372,7 @@ def test_endpoint_fails_closed_on_invalid_request_or_review_failure() -> None:
         def review(
             self, incoming: LocationReferenceRequest
         ) -> LocationReferenceResponse:
-            raise LocationReferenceReviewError("simulated failure")
+            raise LocationReferenceReviewError("malformed_output")
 
     app.dependency_overrides[location_reference_reviewer_dependency] = FailingReviewer
     path = "/api/internal/retrieval/location-reference-shadow"
@@ -282,7 +402,10 @@ def test_endpoint_fails_closed_on_invalid_request_or_review_failure() -> None:
             response = client.post(path, content=body, headers=headers)
             assert response.status_code == 503
             assert response.json() == {
-                "detail": {"code": "location_reference_review_unavailable"}
+                "detail": {
+                    "code": "location_reference_review_unavailable",
+                    "failure_reason": "malformed_output",
+                }
             }
     finally:
         app.dependency_overrides.clear()

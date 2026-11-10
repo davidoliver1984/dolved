@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Retrieval;
 
+use App\Exceptions\LocationReferenceReviewDiagnosticException;
 use App\Exceptions\RetrievalException;
 use App\Exceptions\RetrievalExecutionException;
 use App\Exceptions\RetrievalPlannerException;
@@ -300,13 +301,28 @@ final readonly class RetrievalClient
                     throw new RetrievalException('The non-site review cited no authorised family.');
                 }
             } elseif ($selection['evidence_family_id'] !== null
-                || ! str_contains($question, $evidence) || ! str_contains($evidence, $reference)
-                || ! is_string($selection['competing_target_quote'])
-                || mb_strlen($selection['competing_target_quote']) < max(8, intdiv(mb_strlen($reference) + 1, 2))
-                || mb_strlen($selection['competing_target_quote']) > 300
-                || ! str_contains($question, $selection['competing_target_quote'])
-                || mb_stripos($selection['competing_target_quote'], $reference) !== false) {
+                || ! str_contains($question, $evidence) || ! str_contains($evidence, $reference)) {
                 throw new RetrievalException('The non-site review cited no distinct grounded target.');
+            } else {
+                $target = $selection['competing_target_quote'];
+                if (! is_string($target)) {
+                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:no_competing_target');
+                }
+                if (mb_strlen($target) < 8) {
+                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:target_too_short');
+                }
+                if (mb_strlen($target) > 300) {
+                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:target_too_long');
+                }
+                if (! str_contains($question, $target)) {
+                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:target_not_grounded');
+                }
+                if (mb_stripos($target, $reference) !== false) {
+                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:target_contains_reference');
+                }
+                if (mb_strlen($target) < intdiv(mb_strlen($reference) + 1, 2)) {
+                    throw new LocationReferenceReviewDiagnosticException('validation_rejected:target_not_substantial');
+                }
             }
         } elseif ($decision === 'unresolved_or_ambiguous') {
             if (! in_array($selection['reason'], ['unresolved', 'ambiguous', 'insufficient_context'], true)
@@ -631,6 +647,7 @@ final readonly class RetrievalClient
         $attempts = max(1, (int) config('retrieval.max_attempts'));
         $last = null;
         $previousTypedFailure = null;
+        $shadowFailureReason = null;
         for ($attempt = 1; $attempt <= $attempts; $attempt++) {
             $requestId = $stableRequestId ?? (string) Str::uuid();
             $attemptPayload = ['request_id' => $requestId] + $payload;
@@ -686,6 +703,18 @@ final readonly class RetrievalClient
 
                     continue;
                 }
+                if ($path === '/api/internal/retrieval/location-reference-shadow') {
+                    $reason = $response->json('detail.failure_reason');
+                    $allowed = [
+                        'validation_rejected:quote_mismatch', 'validation_rejected:unknown_location',
+                        'validation_rejected:missing_role_evidence', 'validation_rejected:unknown_document_family',
+                        'validation_rejected:no_competing_target', 'validation_rejected:target_too_short',
+                        'validation_rejected:target_too_long', 'validation_rejected:target_not_grounded',
+                        'validation_rejected:target_contains_reference', 'validation_rejected:target_not_substantial',
+                        'transport_error', 'malformed_output', 'incomplete_output',
+                    ];
+                    $shadowFailureReason = is_string($reason) && in_array($reason, $allowed, true) ? $reason : 'http_error';
+                }
                 $failure = $response->json('detail.failure');
                 if (is_array($failure)) {
                     try {
@@ -729,6 +758,9 @@ final readonly class RetrievalClient
                     break;
                 }
             } catch (ConnectionException $exception) {
+                if ($path === '/api/internal/retrieval/location-reference-shadow') {
+                    $shadowFailureReason = 'transport_error';
+                }
                 $last = in_array($path, ['/api/internal/retrieval/plan', '/api/internal/retrieval/plan-needs'], true)
                     ? new RetrievalPlannerException(
                         'The retrieval planner transport is unavailable.',
@@ -753,6 +785,10 @@ final readonly class RetrievalClient
                         false,
                     ), $exception);
             }
+        }
+
+        if ($path === '/api/internal/retrieval/location-reference-shadow' && $last !== null) {
+            throw new LocationReferenceReviewDiagnosticException($shadowFailureReason ?? 'unclassified_error', $last);
         }
 
         throw $last ?? new RetrievalException('The retrieval call failed.');

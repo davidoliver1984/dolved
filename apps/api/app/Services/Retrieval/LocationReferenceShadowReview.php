@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Retrieval;
 
 use App\Enums\EligibilityClarificationReason;
+use App\Exceptions\LocationReferenceReviewDiagnosticException;
+use App\Exceptions\RetrievalException;
 use App\Models\DocumentFamily;
 use App\Models\OrganisationalLocation;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
@@ -81,8 +83,15 @@ final readonly class LocationReferenceShadowReview
                 'shadow_reason' => $selection['reason'],
                 'usage' => $review['usage'],
             ]);
+        } catch (LocationReferenceReviewDiagnosticException $exception) {
+            $this->record($base + ['shadow_decision' => 'unavailable', 'shadow_reason' => 'review_failed',
+                'shadow_failure_reason' => $exception->failureReason]);
+        } catch (RetrievalException) {
+            $this->record($base + ['shadow_decision' => 'unavailable', 'shadow_reason' => 'review_failed',
+                'shadow_failure_reason' => 'validation_rejected:application_contract']);
         } catch (Throwable) {
-            $this->record($base + ['shadow_decision' => 'unavailable', 'shadow_reason' => 'review_failed']);
+            $this->record($base + ['shadow_decision' => 'unavailable', 'shadow_reason' => 'review_failed',
+                'shadow_failure_reason' => 'unclassified_error']);
         }
     }
 

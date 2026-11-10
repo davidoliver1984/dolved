@@ -37,6 +37,7 @@ from app.retrieval.location_reference import (
     LocationReferenceRequest,
     LocationReferenceResponse,
     LocationReferenceReviewer,
+    LocationReferenceReviewError,
 )
 from app.retrieval.models import (
     OperationUsage,
@@ -368,10 +369,15 @@ async def review_location_reference_shadow(
         )
     try:
         return reviewer.review(incoming)
+    except LocationReferenceReviewError as exception:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            {"code": "location_reference_review_unavailable", "failure_reason": exception.code},
+        ) from None
     except ValueError, KeyError, TypeError, httpx.HTTPError:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,
-            {"code": "location_reference_review_unavailable"},
+            {"code": "location_reference_review_unavailable", "failure_reason": "malformed_output"},
         ) from None
 
 
