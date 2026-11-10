@@ -35,11 +35,6 @@ class R28R06GovernedTest(unittest.TestCase):
             ("case6_retry", 1),
             ("case5_retry", 1),
             ("generic_controls", 3),
-            ("location_shadow_trial_tail12", 12),
-            ("location_shadow_grounding_retrial", 5),
-            ("location_shadow_v3_validation", 17),
-            ("location_shadow_ten_retest", 10),
-            ("location_shadow_full_population", 148),
         ):
             execution, scopes, identities = governed.verify_inputs(stage)
             self.assertEqual(count, len(execution["items"]))
@@ -70,78 +65,10 @@ class R28R06GovernedTest(unittest.TestCase):
             if stage in {"case6_retry", "case5_retry", "generic_controls"}:
                 start, stop = {"case6_retry": (5, 6), "case5_retry": (4, 5), "generic_controls": (0, 3)}[stage]
                 self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][start:stop])
-            if stage == "location_shadow_trial_tail12":
-                self.assertEqual(governed.SHADOW_TAIL12_INDICES, (125, 129, 130, 69, 89, 141, 142, 101, 102, 29, 23, 147))
-                self.assertEqual(
-                    [item["utterance"] for item in execution["items"]],
-                    [governed.shadow_baseline(index, item)["utterance"]
-                     for index, item in zip(governed.SHADOW_TAIL12_INDICES, execution["items"], strict=True)],
-                )
-            if stage == "location_shadow_grounding_retrial":
-                self.assertEqual(governed.SHADOW_GROUNDING_RETRIAL_INDICES, (141, 142, 45, 125, 129))
-                self.assertEqual(
-                    [item["utterance"] for item in execution["items"]],
-                    [governed.shadow_baseline(index, item)["utterance"]
-                     for index, item in zip(governed.SHADOW_GROUNDING_RETRIAL_INDICES, execution["items"], strict=True)],
-                )
-            if stage == "location_shadow_v3_validation":
-                self.assertEqual(governed.SHADOW_V3_VALIDATION_INDICES,
-                    (33, 45, 122, 125, 129, 130, 69, 89, 141, 142, 24, 70, 101, 102, 29, 23, 147))
-                self.assertEqual(
-                    [item["utterance"] for item in execution["items"]],
-                    [governed.shadow_baseline(index, item)["utterance"]
-                     for index, item in zip(governed.SHADOW_V3_VALIDATION_INDICES, execution["items"], strict=True)],
-                )
-            if stage == "location_shadow_ten_retest":
-                self.assertEqual(governed.SHADOW_TEN_RETEST_INDICES,
-                    (33, 45, 122, 125, 129, 130, 69, 89, 141, 142))
-                self.assertEqual(
-                    [item["utterance"] for item in execution["items"]],
-                    [governed.shadow_baseline(index, item)["utterance"]
-                     for index, item in zip(governed.SHADOW_TEN_RETEST_INDICES, execution["items"], strict=True)],
-                )
-            if stage == "location_shadow_full_population":
-                self.assertEqual(governed.SHADOW_POPULATION_INDICES, tuple(range(1, 149)))
-                self.assertEqual(
-                    [item["utterance"] for item in execution["items"]],
-                    [governed.shadow_baseline(index, item)["utterance"]
-                     for index, item in zip(governed.SHADOW_POPULATION_INDICES, execution["items"], strict=True)],
-                )
             self.assertEqual(
-                "07be31cf9d48f88672cdb6ea1d74bf897ccf4527a095535783f470bad20b427c",
+                "ccabe3411d9f748de47b216a831d71951ccee0de2e4ee0b13c9404a8ff1e6a59",
                 identities["runtime_source_aggregate"],
             )
-
-    def test_shadow_controlled_calendar_clarification_with_empty_trace_is_valid(self) -> None:
-        item = {
-            "case_id": "v4.case.corrected-b06-01",
-            "variant_id": "v2",
-            "utterance": "Compared with the December 2025 schedule, which staff group is listed first from June 2026 and are the supervision and appraisal frequencies the same?",
-        }
-        scope = {"scope": "primary"}
-        rejection = {
-            "request_count": 1,
-            "status": "rejected",
-            "validation": {"code": "calendar_grounding", "field": "root", "stage": "grounding"},
-        }
-        record = {
-            **item,
-            "frozen_scope": "primary",
-            "needs_opt_in": [governed.PRIMARY_WORKSPACE],
-            "needs_pipeline_exercised": True,
-            "displayed_text": "Which date, month or period do you mean for this question?",
-            "shadow_reviews": [],
-            "observation": {
-                "status": "clarification_required",
-                "production_trace": [],
-                "usage": {"planner_failure": {"attempt_count": 2, "validation_attempts": [rejection, rejection]}},
-            },
-        }
-        self.assertTrue(governed.valid_shadow_record(record, item, scope, governed.PRIMARY_WORKSPACE))
-        record["observation"]["production_trace"] = {"needs_plan": {"decision": "plan"}}
-        self.assertTrue(governed.valid_shadow_record(record, item, scope, governed.PRIMARY_WORKSPACE))
-        record["observation"]["production_trace"] = None
-        self.assertFalse(governed.valid_shadow_record(record, item, scope, governed.PRIMARY_WORKSPACE))
 
     def test_exact_authorization_passes_and_mutation_fails(self) -> None:
         execution, _, identities = governed.verify_inputs("regression")

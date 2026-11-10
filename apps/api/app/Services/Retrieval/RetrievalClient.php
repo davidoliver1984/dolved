@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\Retrieval;
 
-use App\Exceptions\LocationReferenceReviewDiagnosticException;
 use App\Exceptions\RetrievalException;
 use App\Exceptions\RetrievalExecutionException;
 use App\Exceptions\RetrievalPlannerException;
@@ -232,100 +231,6 @@ final readonly class RetrievalClient
      * @param  list<array{family_id: string, title: string}>  $families
      * @return array<string, mixed>
      */
-    public function reviewLocationReference(Workspace $workspace, string $reference, string $question,
-        string $aspect, array $locations, array $families): array
-    {
-        if ($locations === [] && $families === []) {
-            throw new RetrievalException('Location review requires authorised candidates.');
-        }
-        $response = $this->call('/api/internal/retrieval/location-reference-shadow',
-            'retrieval.location-reference-shadow', $workspace, [
-                'contract_version' => 3,
-                'workspace_id' => $workspace->public_id,
-                'reference' => $reference,
-                'question' => $question,
-                'aspect' => $aspect,
-                'locations' => $locations,
-                'document_families' => $families,
-            ]);
-        if ($response->json('contract_version') !== 3 || ! is_array($response->json('selection'))
-            || ! is_array($response->json('usage'))) {
-            throw new RetrievalException('The location review response is invalid.');
-        }
-        $usage = $response->json('usage');
-        if (($usage['stage'] ?? null) !== 'location_reference_shadow'
-            || ($usage['provider'] ?? null) !== 'openai'
-            || ! is_string($usage['model'] ?? null) || strlen($usage['model']) > 255
-            || ($usage['execution'] ?? null) !== 'provider_api'
-            || ($usage['request_count'] ?? null) !== 1
-            || ($usage['retry_count'] ?? null) !== 0
-            || ! is_numeric($usage['latency_ms'] ?? null) || $usage['latency_ms'] < 0
-            || ($usage['cost_basis'] ?? null) !== 'unavailable'
-            || ($usage['cost_usd'] ?? null) !== null) {
-            throw new RetrievalException('The location review usage is invalid.');
-        }
-        foreach (['input_tokens', 'output_tokens'] as $key) {
-            if (($usage[$key] ?? null) !== null && (! is_int($usage[$key]) || $usage[$key] < 0)) {
-                throw new RetrievalException('The location review token usage is invalid.');
-            }
-        }
-        $selection = $response->json('selection');
-        $keys = array_keys($selection);
-        sort($keys);
-        if ($keys !== ['competing_target_quote', 'decision', 'evidence_family_id', 'evidence_quote', 'location_id',
-            'quote', 'reason', 'reference_type']) {
-            throw new RetrievalException('The location review selection shape is invalid.');
-        }
-        $decision = $selection['decision'];
-        if ($decision === 'resolved_site') {
-            if ($selection['quote'] !== $reference || ! is_string($selection['location_id'])
-                || ! collect($locations)->contains(fn (array $item): bool => $item['location_id'] === $selection['location_id'])
-                || $selection['reference_type'] !== null || $selection['evidence_family_id'] !== null
-                || $selection['evidence_quote'] !== null || $selection['competing_target_quote'] !== null
-                || $selection['reason'] !== null) {
-                throw new RetrievalException('The location review selected no authorised site.');
-            }
-        } elseif ($decision === 'not_a_site') {
-            $evidence = $selection['evidence_quote'];
-            $type = $selection['reference_type'];
-            if ($selection['quote'] !== $reference || $selection['location_id'] !== null
-                || $type !== 'document_or_record'
-                || ! is_string($evidence) || mb_strlen($evidence) < 8 || mb_strlen($evidence) > 300
-                || $selection['reason'] !== null) {
-                throw new RetrievalException('The non-site review has no grounded role evidence.');
-            }
-            $normalisedReference = mb_strtolower(trim(preg_replace('/\s+/u', ' ', $reference) ?? $reference));
-            if (collect($locations)->contains(function (array $item) use ($normalisedReference): bool {
-                foreach ([$item['name'], ...$item['aliases']] as $candidate) {
-                    $normalisedCandidate = mb_strtolower(trim(preg_replace('/\s+/u', ' ', $candidate) ?? $candidate));
-                    if ($normalisedCandidate === $normalisedReference || (mb_strlen($normalisedReference) >= 4
-                        && str_starts_with($normalisedCandidate, $normalisedReference.' '))) {
-                        return true;
-                    }
-                }
-
-                return false;
-            })) {
-                throw new LocationReferenceReviewDiagnosticException('validation_rejected:site_document_conflict');
-            }
-            if ($selection['competing_target_quote'] !== null || ! is_string($selection['evidence_family_id'])
-                || ! collect($families)->contains(fn (array $item): bool => $item['family_id'] === $selection['evidence_family_id']
-                    && str_contains($item['title'], $evidence))) {
-                throw new RetrievalException('The non-site review cited no authorised family.');
-            }
-        } elseif ($decision === 'unresolved_or_ambiguous') {
-            if (! in_array($selection['reason'], ['unresolved', 'ambiguous', 'insufficient_context'], true)
-                || ($selection['quote'] !== null && $selection['quote'] !== $reference)
-                || collect($selection)->except(['decision', 'reason', 'quote'])->contains(fn (mixed $value): bool => $value !== null)) {
-                throw new RetrievalException('The unresolved location review claimed an identity.');
-            }
-        } else {
-            throw new RetrievalException('The location review decision is invalid.');
-        }
-
-        return ['selection' => $selection, 'usage' => $usage];
-    }
-
     public function search(
         Workspace $workspace,
         WorkspaceCorpusGeneration $corpus,
@@ -637,9 +542,6 @@ final readonly class RetrievalClient
         $attempts = max(1, (int) config('retrieval.max_attempts'));
         $last = null;
         $previousTypedFailure = null;
-        $shadowFailureReason = null;
-        $shadowRawResponse = null;
-        $shadowRawResponseTruncated = false;
         for ($attempt = 1; $attempt <= $attempts; $attempt++) {
             $requestId = $stableRequestId ?? (string) Str::uuid();
             $attemptPayload = ['request_id' => $requestId] + $payload;
@@ -695,24 +597,6 @@ final readonly class RetrievalClient
 
                     continue;
                 }
-                if ($path === '/api/internal/retrieval/location-reference-shadow') {
-                    $reason = $response->json('detail.failure_reason');
-                    $raw = $response->json('detail.raw_response');
-                    $allowed = [
-                        'validation_rejected:quote_mismatch', 'validation_rejected:unknown_location',
-                        'validation_rejected:missing_role_evidence', 'validation_rejected:unknown_document_family',
-                        'validation_rejected:site_document_conflict',
-                        'validation_rejected:no_competing_target', 'validation_rejected:target_too_short',
-                        'validation_rejected:target_too_long', 'validation_rejected:target_not_grounded',
-                        'validation_rejected:target_contains_reference', 'validation_rejected:target_not_substantial',
-                        'validation_rejected:selection_schema',
-                        'transport_error', 'malformed_output', 'incomplete_output',
-                    ];
-                    $shadowFailureReason = is_string($reason) && in_array($reason, $allowed, true) ? $reason : 'http_error';
-                    $shadowRawResponse = is_string($raw) ? mb_strcut($raw, 0, 65536, 'UTF-8') : null;
-                    $shadowRawResponseTruncated = is_string($raw)
-                        && (strlen($raw) > 65536 || $response->json('detail.raw_response_truncated') === true);
-                }
                 $failure = $response->json('detail.failure');
                 if (is_array($failure)) {
                     try {
@@ -756,11 +640,6 @@ final readonly class RetrievalClient
                     break;
                 }
             } catch (ConnectionException $exception) {
-                if ($path === '/api/internal/retrieval/location-reference-shadow') {
-                    $shadowFailureReason = 'transport_error';
-                    $shadowRawResponse = null;
-                    $shadowRawResponseTruncated = false;
-                }
                 $last = in_array($path, ['/api/internal/retrieval/plan', '/api/internal/retrieval/plan-needs'], true)
                     ? new RetrievalPlannerException(
                         'The retrieval planner transport is unavailable.',
@@ -785,11 +664,6 @@ final readonly class RetrievalClient
                         false,
                     ), $exception);
             }
-        }
-
-        if ($path === '/api/internal/retrieval/location-reference-shadow' && $last !== null) {
-            throw new LocationReferenceReviewDiagnosticException($shadowFailureReason ?? 'unclassified_error',
-                $shadowRawResponse, $shadowRawResponseTruncated, $last);
         }
 
         throw $last ?? new RetrievalException('The retrieval call failed.');

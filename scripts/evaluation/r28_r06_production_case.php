@@ -70,18 +70,6 @@ if (config('conversation.needs_workspace_ids') !== [$payload['workspace_id']]) {
 }
 $classification = $payload['scope'] === 'security_test' ? 'injection' : 'primary';
 $user = App\Models\User::query()->where('public_id', $payload['user_public_id'])->sole();
-$shadowReviews = [];
-if (getenv('RETRIEVAL_LOCATION_REFERENCE_SHADOW') === 'true') {
-    if (config('retrieval.location_reference_shadow.enabled') !== true) {
-        throw new RuntimeException('Location shadow trial flag was not enabled in Laravel config.');
-    }
-    Illuminate\Support\Facades\Event::listen(Illuminate\Log\Events\MessageLogged::class,
-        function (Illuminate\Log\Events\MessageLogged $event) use (&$shadowReviews): void {
-            if ($event->message === 'retrieval.location_reference.shadow.v3') {
-                $shadowReviews[] = $event->context;
-            }
-        });
-}
 $started = now()->toIso8601String();
 $observation = app(App\Actions\Evaluation\RunR28ProductionPathDiagnostic::class)->handleCase(
     $user,
@@ -112,7 +100,4 @@ $record = [
     'observation' => $observation,
     'displayed_text' => $run->assistantMessage?->display_text,
 ];
-if (getenv('RETRIEVAL_LOCATION_REFERENCE_SHADOW') === 'true') {
-    $record['shadow_reviews'] = $shadowReviews;
-}
 echo json_encode($record, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).PHP_EOL;

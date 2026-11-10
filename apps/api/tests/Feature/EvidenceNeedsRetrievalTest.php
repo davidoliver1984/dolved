@@ -14,7 +14,6 @@ use App\Enums\GenerationRunStatus;
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
 use App\Enums\WorkspaceRole;
-use App\Exceptions\LocationReferenceReviewDiagnosticException;
 use App\Exceptions\RetrievalException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
@@ -36,7 +35,6 @@ use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
 use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Generation\GenerationProfileFactory;
 use App\Services\Retrieval\EligibilityResolver;
-use App\Services\Retrieval\GenericLocationReference;
 use App\Services\Retrieval\RetrievalClient;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Retrieval\ApplicabilityScopeFact;
@@ -298,8 +296,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 'At '.$unresolvedSite.', do formal grievances go to the Brambleford Office People team?',
                 'Brambleford Office People team', $unresolvedSite);
             $blocked = app(EligibilityResolver::class)->handle($scope, $withSite->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-08'));
-            $this->assertSame(RetrievalOutcome::ClarificationRequired, $blocked->outcome);
-            $this->assertSame('unresolved_location_reference', $blocked->reason);
+            $this->assertSame(RetrievalOutcome::EvidenceFound, $blocked->outcome);
+            $this->assertNull($blocked->resolvedLocationPublicId);
         }
         Http::assertNothingSent();
     }
@@ -468,436 +466,10 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         foreach (['North Wester', 'Foreign Office'] as $reference) {
             $plan = $this->scopePlan($document, 'Does Equipment Policy cover '.$reference.'?', $reference);
             $result = $resolver->scopeFact($scope, $plan->retrievalPlan('n1'), $at);
-            $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome, $reference);
-            $this->assertSame('unresolved_location_reference', $result->reason, $reference);
+            $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $result->outcome, $reference);
+            $this->assertSame('scope_location_unresolved', $result->reason, $reference);
         }
         Http::assertNothingSent();
-    }
-
-    public function test_location_shadow_compares_failed_exact_match_without_changing_scope_outcomes(): void
-    {
-        [$workspace, $generation, $scope] = $this->scope();
-        $document = $this->document($workspace, $generation, '2026-01-01');
-        $document->family->update(['name' => 'Equipment Policy']);
-        $region = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'North West Region']);
-        DB::table('document_applicability_snapshots')->where('document_id', $document->id)->update(['scope' => 'specific']);
-        $document->applicabilitySnapshot->locations()->attach($region->id, ['workspace_id' => $workspace->id]);
-        [$foreign] = $this->scope();
-        OrganisationalLocation::factory()->for($foreign)->create(['name' => 'Foreign Office']);
-        config(['retrieval.location_reference_shadow.enabled' => true]);
-        Log::spy();
-        $sentReferences = [];
-        Http::preventStrayRequests();
-        Http::fake(function (Request $request) use ($workspace, $region, $document, &$sentReferences) {
-            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
-            $this->assertStringEndsWith('/api/internal/retrieval/location-reference-shadow', $request->url());
-            $this->assertSame($workspace->public_id, $data['workspace_id']);
-            $this->assertContains($region->public_id, array_column($data['locations'], 'location_id'));
-            $this->assertNotContains('Foreign Office', array_column($data['locations'], 'name'));
-            $this->assertContains($document->family->public_id, array_column($data['document_families'], 'family_id'));
-            $sentReferences[] = $data['reference'];
-            $selection = match ($data['reference']) {
-                'Equipment Policy' => ['decision' => 'not_a_site', 'location_id' => null,
-                    'reference_type' => 'document_or_record', 'evidence_family_id' => $document->family->public_id,
-                    'quote' => 'Equipment Policy', 'evidence_quote' => $document->family->name,
-                    'competing_target_quote' => null, 'reason' => null],
-                'North West Region sites' => ['decision' => 'resolved_site', 'location_id' => $region->public_id,
-                    'reference_type' => null, 'evidence_family_id' => null,
-                    'quote' => 'North West Region sites', 'evidence_quote' => null,
-                    'competing_target_quote' => null, 'reason' => null],
-                default => ['decision' => 'unresolved_or_ambiguous', 'location_id' => null,
-                    'reference_type' => null, 'evidence_family_id' => null,
-                    'quote' => null, 'evidence_quote' => null,
-                    'competing_target_quote' => null, 'reason' => 'unresolved'],
-            };
-
-            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
-                'selection' => $selection, 'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
-                    'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
-                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
-                    'input_tokens' => 1, 'output_tokens' => 1]], 200);
-        });
-        $resolver = app(EligibilityResolver::class);
-        $at = CarbonImmutable::parse('2026-11-10');
-        $documentPhrase = $resolver->scopeFact($scope,
-            $this->scopePlan($document, 'Does Equipment Policy cover Equipment Policy?', 'Equipment Policy')->retrievalPlan('n1'), $at);
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $documentPhrase->outcome);
-        $this->assertSame('unresolved_location_reference', $documentPhrase->reason);
-        $qualifiedSite = $resolver->scopeFact($scope,
-            $this->scopePlan($document, 'Does Equipment Policy cover North West Region sites?', 'North West Region sites')->retrievalPlan('n1'), $at);
-        $this->assertInstanceOf(ApplicabilityScopeFact::class, $qualifiedSite);
-        $this->assertSame($region->public_id, $qualifiedSite->value['location_id']);
-        $unlisted = $resolver->scopeFact($scope,
-            $this->scopePlan($document, 'Does Equipment Policy cover Oakfield outreach?', 'Oakfield outreach')->retrievalPlan('n1'), $at);
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $unlisted->outcome);
-        $this->assertSame('unresolved_location_reference', $unlisted->reason);
-        $this->assertSame(['Equipment Policy', 'North West Region sites', 'Oakfield outreach'], $sentReferences);
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
-            && $record['old_decision'] === 'clarification' && $record['shadow_decision'] === 'not_a_site'
-            && $record['shadow_evidence_quote'] === 'Equipment Policy'
-            && $record['usage']['stage'] === 'location_reference_shadow'
-            && $record['usage']['input_tokens'] === 1
-            && $record['usage']['output_tokens'] === 1
-            && $record['usage']['latency_ms'] === 1
-            && $record['usage']['cost_basis'] === 'unavailable'
-            && $record['usage']['cost_usd'] === null
-            && ! array_key_exists('shadow_raw_response', $record))->once();
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
-            && $record['old_decision'] === 'resolved_site' && $record['shadow_decision'] === 'resolved_site')->once();
-        Http::assertSentCount(3);
-    }
-
-    public function test_location_shadow_skips_exact_alias_organisation_and_unbound_scope_paths(): void
-    {
-        [$workspace, $generation, $scope] = $this->scope();
-        $scope->workspace->update(['name' => 'Alderbridge Care Group']);
-        $document = $this->document($workspace, $generation, '2026-01-01');
-        $document->family->update(['name' => 'Equipment Policy']);
-        $region = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Midlands Region']);
-        $site = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Riverside House', 'parent_id' => $region->id]);
-        DB::table('document_applicability_snapshots')->where('document_id', $document->id)->update(['scope' => 'specific']);
-        $document->applicabilitySnapshot->locations()->attach($region->id, ['workspace_id' => $workspace->id]);
-        $alias = new OrganisationalLocationAlias(['alias' => 'Riverside']);
-        $alias->workspace()->associate($workspace);
-        $alias->organisationalLocation()->associate($site);
-        $alias->save();
-        config(['retrieval.location_reference_shadow.enabled' => true]);
-        Http::preventStrayRequests();
-        $resolver = app(EligibilityResolver::class);
-        $at = CarbonImmutable::parse('2026-11-10');
-        foreach (['Riverside House', 'Riverside', 'Alderbridge'] as $reference) {
-            $plan = $this->scopePlan($document, 'Does Equipment Policy cover '.$reference.'?', $reference);
-            $result = $resolver->handle($scope, $plan->retrievalPlan('n1'), $at);
-            $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome, $reference);
-        }
-        $inherited = $resolver->scopeFact($scope,
-            $this->scopePlan($document, 'Does Equipment Policy cover Riverside House?', 'Riverside House')->retrievalPlan('n1'), $at);
-        $this->assertInstanceOf(ApplicabilityScopeFact::class, $inherited);
-        $this->assertSame('inherited_match', $inherited->value['basis']);
-        foreach (['Does Alderbridge have a gym?', 'Does Alderbridge have on-site childcare?'] as $question) {
-            $unbound = $this->plan(4, function ($data) use ($question) {
-                $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
-                $data['plan']['needs'][0]['question_span'] = ['turn_id' => 'user-1', 'quote' => $question];
-                $data['plan']['needs'][0]['aspect'] = $question;
-                $data['plan']['needs'][0]['operation'] = 'scope_enquiry';
-                $data['plan']['needs'][0]['scope_question'] = 'membership';
-                $data['plan']['needs'][0]['applicability'] = ['kind' => 'named',
-                    'source' => ['turn_id' => 'user-1', 'quote' => 'Alderbridge']];
-                $data['plan']['bindings'][0]['subject_status'] = 'topic';
-                $data['plan']['bindings'][0]['family_ids'] = [];
-
-                return $data;
-            });
-            $result = $resolver->scopeFact($scope, $unbound->retrievalPlan('n1'), $at);
-            $this->assertSame('ambiguous_document_subject', $result->reason);
-        }
-        $record = $this->plan(4, function ($data) {
-            $question = 'Does this record confirm the training was completed?';
-            $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
-            $data['plan']['needs'][0]['question_span'] = ['turn_id' => 'user-1', 'quote' => $question];
-            $data['plan']['needs'][0]['aspect'] = $question;
-            $data['plan']['needs'][0]['operation'] = 'retrieve';
-            $data['plan']['needs'][0]['scope_question'] = null;
-            $data['plan']['needs'][0]['applicability'] = ['kind' => 'relational',
-                'source' => ['turn_id' => 'user-1', 'quote' => 'this record']];
-
-            return $data;
-        });
-        $recordResult = $resolver->handle($scope, $record->retrievalPlan('n1'), $at);
-        $this->assertSame('unresolved_record_reference', $recordResult->reason);
-        Http::assertNothingSent();
-    }
-
-    public function test_shadow_generic_reference_list_matches_only_whole_closed_phrases(): void
-    {
-        foreach (['we', 'We', 'us', 'the organisation', 'the team', 'the service', 'the department', 'the site'] as $reference) {
-            $this->assertTrue(GenericLocationReference::matches($reference), $reference);
-        }
-        foreach (['Oakfield outreach', 'the Oakfield outreach', 'Oakfield outreach team',
-            'Oakfield', 'Cinderhill House', 'the home', 'our', 'our site', 'we at Oakfield outreach'] as $reference) {
-            $this->assertFalse(GenericLocationReference::matches($reference), $reference);
-        }
-        $this->assertTrue(GenericLocationReference::groundedInQuestion('we', 'Do we have a staff gym?'));
-        $this->assertTrue(GenericLocationReference::groundedInQuestion('the site', "What is the site's safeguarding lead called now?"));
-        $this->assertFalse(GenericLocationReference::groundedInQuestion('we', 'The answer is twelve.'));
-        $this->assertFalse(GenericLocationReference::groundedInQuestion('the site', 'the sitewide policy'));
-    }
-
-    public function test_location_shadow_c04_c05_c06_fixture_grid_remains_authoritatively_unresolved(): void
-    {
-        [$workspace, $generation, $scope] = $this->scope();
-        $document = $this->document($workspace, $generation, '2026-01-01');
-        $document->family->update(['name' => 'Data Backup and Recovery Policy']);
-        OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Oakfield Lodge']);
-        [$foreign, $foreignGeneration] = $this->scope();
-        $foreignDocument = $this->document($foreign, $foreignGeneration, '2026-01-01');
-        $foreignDocument->family->update(['name' => 'Foreign Tenant Policy']);
-        config(['retrieval.location_reference_shadow.enabled' => true]);
-        Log::spy();
-        $fixtures = [
-            ['033', 'What information should I include in the incident report structure shown in the appendix?', 'the appendix', 'named', 'not_a_site'],
-            ['045', 'What will change between the current backup policy and the policy taking effect in 2027?', 'backup policy', 'named', 'not_a_site'],
-            ['122', 'Compared with the December 2025 schedule, which staff group is listed first from June 2026?', 'the December 2025 schedule', 'named', 'not_a_site'],
-            ['125', 'What moved to the front of the legionella procedure in March 2026?', 'the legionella procedure', 'named', 'not_a_site'],
-            ['129', "I'm updating the ROPA for employee records. What did the old Legal basis field become?", 'ROPA for employee records', 'named', 'not_a_site'],
-            ['130', 'On the current ROPA, which field replaced Legal basis?', 'current ROPA', 'named', 'not_a_site'],
-            ['069', 'Do we have a staff gym?', 'we', 'relational', 'not_a_site'],
-            ['089', "What is the site's safeguarding lead called now?", 'the site', 'relational', 'not_a_site'],
-            ['141', 'At Oakfield outreach on 1 July 2026, when did a key safe need reviewing?', 'Oakfield outreach', 'named', 'unresolved_or_ambiguous'],
-            ['142', 'For an Oakfield outreach key safe in July 2026, what were the review triggers?', 'Oakfield outreach', 'named', 'unresolved_or_ambiguous'],
-        ];
-        $scripted = collect($fixtures)->keyBy(fn (array $item): string => $item[2]);
-        $sent = [];
-        Http::preventStrayRequests();
-        Http::fake(function (Request $request) use ($workspace, $document, $foreignDocument, $scripted, &$sent) {
-            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
-            $reference = $data['reference'];
-            $fixture = $scripted[$reference];
-            $this->assertSame($workspace->public_id, $data['workspace_id']);
-            $this->assertNotContains($foreignDocument->family->public_id, array_column($data['document_families'], 'family_id'));
-            $this->assertContains($document->family->public_id, array_column($data['document_families'], 'family_id'));
-            $sent[] = $reference;
-            $selection = $fixture[4] === 'not_a_site'
-                ? ['decision' => 'not_a_site', 'location_id' => null,
-                    'reference_type' => 'document_or_record',
-                    'evidence_family_id' => $document->family->public_id,
-                    'quote' => $reference, 'evidence_quote' => $document->family->name,
-                    'competing_target_quote' => null, 'reason' => null]
-                : ['decision' => 'unresolved_or_ambiguous', 'location_id' => null,
-                    'reference_type' => null, 'evidence_family_id' => null,
-                    'quote' => null, 'evidence_quote' => null,
-                    'competing_target_quote' => null, 'reason' => 'unresolved'];
-
-            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
-                'selection' => $selection, 'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
-                    'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
-                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
-                    'input_tokens' => 1, 'output_tokens' => 1]], 200);
-        });
-        $resolver = app(EligibilityResolver::class);
-        foreach ($fixtures as [$id, $question, $reference, $kind]) {
-            $plan = $this->plan(4, function ($data) use ($question, $reference, $kind) {
-                $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
-                $data['plan']['needs'][0]['question_span'] = ['turn_id' => 'user-1', 'quote' => $question];
-                $data['plan']['needs'][0]['aspect'] = $question;
-                $data['plan']['needs'][0]['operation'] = 'retrieve';
-                $data['plan']['needs'][0]['scope_question'] = null;
-                $data['plan']['needs'][0]['authority'] = ['kind' => 'current', 'value' => null,
-                    'precision' => 'none', 'source' => null];
-                $data['plan']['needs'][0]['applicability'] = ['kind' => $kind,
-                    'source' => ['turn_id' => 'user-1', 'quote' => $reference]];
-
-                return $data;
-            });
-            $result = $resolver->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-10'));
-            $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome, $id);
-            $this->assertSame('unresolved_location_reference', $result->reason, $id);
-        }
-        $this->assertCount(count($fixtures) - 2, $sent);
-        $this->assertNotContains('we', $sent);
-        $this->assertNotContains('the site', $sent);
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
-            && $record['old_decision'] === 'clarification'
-            && $record['shadow_decision'] === 'not_a_site')->times(6);
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
-            && $record['shadow_decision'] === 'generic_reference'
-            && $record['shadow_reason'] === GenericLocationReference::VERSION)->twice();
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
-            && $record['old_decision'] === 'clarification'
-            && $record['shadow_decision'] === 'unresolved_or_ambiguous')->twice();
-        Http::assertSentCount(count($fixtures) - 2);
-    }
-
-    public function test_location_shadow_rejects_a_containing_clause_as_a_competing_target(): void
-    {
-        [$workspace] = $this->scope();
-        $question = 'At Oakfield outreach on 1 July 2026, when did a key safe need reviewing?';
-        $clause = rtrim($question, '?');
-        Http::preventStrayRequests();
-        Http::fake(function (Request $request) use ($clause) {
-            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
-
-            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
-                'selection' => ['decision' => 'not_a_site', 'location_id' => null,
-                    'reference_type' => 'incidental_phrase', 'evidence_family_id' => null,
-                    'quote' => 'Oakfield outreach', 'evidence_quote' => $clause,
-                    'competing_target_quote' => $clause, 'reason' => null],
-                'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
-                    'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
-                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
-                    'input_tokens' => 1, 'output_tokens' => 1]], 200);
-        });
-
-        $this->expectException(RetrievalException::class);
-        $this->expectExceptionMessage('The non-site review has no grounded role evidence.');
-        app(RetrievalClient::class)->reviewLocationReference($workspace, 'Oakfield outreach', $question,
-            'when did a key safe need reviewing', [], [['family_id' => (string) Str::uuid(), 'title' => 'Key Safe Procedure']]);
-    }
-
-    public function test_location_shadow_rejects_document_title_when_reference_also_matches_real_site(): void
-    {
-        [$workspace] = $this->scope();
-        Http::preventStrayRequests();
-        Http::fake(function (Request $request) {
-            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
-
-            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
-                'selection' => ['decision' => 'not_a_site', 'location_id' => null,
-                    'reference_type' => 'document_or_record', 'evidence_family_id' => $data['document_families'][0]['family_id'],
-                    'quote' => 'Riverside', 'evidence_quote' => 'Riverside',
-                    'competing_target_quote' => null, 'reason' => null],
-                'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
-                    'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
-                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
-                    'input_tokens' => 1, 'output_tokens' => 1]], 200);
-        });
-        try {
-            app(RetrievalClient::class)->reviewLocationReference($workspace, 'Riverside',
-                'At Riverside, who monitored the key-holder pilot?', 'Who monitored the key-holder pilot?',
-                [['location_id' => (string) Str::uuid(), 'name' => 'Riverside House', 'aliases' => []]],
-                [['family_id' => (string) Str::uuid(), 'title' => 'Riverside Key Holder Pilot']]);
-            $this->fail('A real site/document collision must fail closed.');
-        } catch (LocationReferenceReviewDiagnosticException $exception) {
-            $this->assertSame('validation_rejected:site_document_conflict', $exception->failureReason);
-        }
-        Http::assertSentCount(1);
-    }
-
-    public function test_location_shadow_accepts_unresolved_reference_echo_but_rejects_a_mismatch(): void
-    {
-        [$workspace] = $this->scope();
-        $quote = 'Oakfield outreach';
-        $returnedQuote = $quote;
-        Http::preventStrayRequests();
-        Http::fake(function (Request $request) use (&$returnedQuote) {
-            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
-
-            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
-                'selection' => ['decision' => 'unresolved_or_ambiguous', 'location_id' => null,
-                    'reference_type' => null, 'evidence_family_id' => null, 'quote' => $returnedQuote,
-                    'evidence_quote' => null, 'competing_target_quote' => null, 'reason' => 'ambiguous'],
-                'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
-                    'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
-                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
-                    'input_tokens' => 1, 'output_tokens' => 1]], 200);
-        });
-        $question = 'At Oakfield outreach on 1 July 2026, when did a key safe need reviewing?';
-        $families = [['family_id' => (string) Str::uuid(), 'title' => 'Key Safe Procedure']];
-        $accepted = app(RetrievalClient::class)->reviewLocationReference($workspace, $quote, $question,
-            'when did a key safe need reviewing', [], $families);
-        $this->assertSame('unresolved_or_ambiguous', $accepted['selection']['decision']);
-        $returnedQuote = 'Different outreach';
-        try {
-            app(RetrievalClient::class)->reviewLocationReference($workspace, $quote, $question,
-                'when did a key safe need reviewing', [], $families);
-            $this->fail('A mismatched unresolved quote must fail closed.');
-        } catch (RetrievalException $exception) {
-            $this->assertSame('The unresolved location review claimed an identity.', $exception->getMessage());
-        }
-        Http::assertSentCount(2);
-    }
-
-    public function test_location_shadow_rejects_foreign_identity_and_provider_failure_without_changing_clarification(): void
-    {
-        [$workspace, $generation, $scope] = $this->scope();
-        $document = $this->document($workspace, $generation, '2026-01-01');
-        $foreign = OrganisationalLocation::factory()->create();
-        config(['retrieval.location_reference_shadow.enabled' => true,
-            'retrieval.max_attempts' => 1]);
-        Log::spy();
-        $attempt = 0;
-        Http::preventStrayRequests();
-        Http::fake(function (Request $request) use ($foreign, &$attempt) {
-            $attempt++;
-            if ($attempt === 2) {
-                return Http::response(['detail' => ['code' => 'location_reference_review_unavailable',
-                    'failure_reason' => 'transport_error']], 503);
-            }
-            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
-
-            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
-                'selection' => ['decision' => 'resolved_site', 'location_id' => $foreign->public_id,
-                    'reference_type' => null, 'evidence_family_id' => null,
-                    'quote' => $data['reference'], 'evidence_quote' => null,
-                    'competing_target_quote' => null, 'reason' => null],
-                'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
-                    'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
-                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
-                    'input_tokens' => 1, 'output_tokens' => 1]], 200);
-        });
-        $resolver = app(EligibilityResolver::class);
-        foreach (['Unlisted Site', 'Other Unlisted Site'] as $reference) {
-            $plan = $this->scopePlan($document, 'Does Equipment Policy cover '.$reference.'?', $reference);
-            $result = $resolver->scopeFact($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-10'));
-            $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
-            $this->assertSame('unresolved_location_reference', $result->reason);
-        }
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
-            && $record['shadow_decision'] === 'unavailable' && $record['shadow_reason'] === 'review_failed'
-            && $record['shadow_failure_reason'] === 'validation_rejected:application_contract')->once();
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
-            && $record['shadow_decision'] === 'unavailable' && $record['shadow_reason'] === 'review_failed'
-            && $record['shadow_failure_reason'] === 'transport_error')->once();
-        Http::assertSentCount(2);
-    }
-
-    public function test_location_shadow_logs_case_141_bypass_as_grounding_rejection(): void
-    {
-        [$workspace, $generation, $scope] = $this->scope();
-        $document = $this->document($workspace, $generation, '2026-01-01');
-        config(['retrieval.location_reference_shadow.enabled' => true, 'retrieval.max_attempts' => 1]);
-        Log::spy();
-        $question = 'At Oakfield outreach on 1 July 2026, when did a key safe need reviewing?';
-        $raw = '{"choices":[{"message":{"content":"At Oakfield outreach on 1 July 2026"}}]}';
-        Http::preventStrayRequests();
-        Http::fake(function (Request $request) use ($raw) {
-            return Http::response(['detail' => ['code' => 'location_reference_review_unavailable',
-                'failure_reason' => 'validation_rejected:target_contains_reference',
-                'raw_response' => $raw, 'raw_response_truncated' => false]], 503);
-        });
-        $result = app(EligibilityResolver::class)->scopeFact($scope,
-            $this->scopePlan($document, $question, 'Oakfield outreach')->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-10'));
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
-        $this->assertSame('unresolved_location_reference', $result->reason);
-        Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
-            && $record['shadow_decision'] === 'unavailable'
-            && $record['shadow_failure_reason'] === 'validation_rejected:target_contains_reference'
-            && $record['shadow_raw_response'] === $raw
-            && $record['shadow_raw_response_truncated'] === false)->once();
-        Http::assertSentCount(1);
-    }
-
-    public function test_location_shadow_logs_distinct_internal_failure_subtypes_without_changing_eligibility(): void
-    {
-        [$workspace, $generation, $scope] = $this->scope();
-        $document = $this->document($workspace, $generation, '2026-01-01');
-        config(['retrieval.location_reference_shadow.enabled' => true, 'retrieval.max_attempts' => 1]);
-        Log::spy();
-        $reasons = ['transport_error', 'malformed_output', 'incomplete_output', 'validation_rejected:selection_schema',
-            'validation_rejected:no_competing_target'];
-        Http::preventStrayRequests();
-        Http::fake(function (Request $request) use ($reasons) {
-            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
-            $index = (int) substr($data['reference'], -1);
-            $raw = $index === 4 ? str_repeat('x', 70000) : 'provider-'.$reasons[$index];
-
-            return Http::response(['detail' => ['code' => 'location_reference_review_unavailable',
-                'failure_reason' => $reasons[$index], 'raw_response' => $raw,
-                'raw_response_truncated' => false]], 503);
-        });
-        foreach ($reasons as $index => $reason) {
-            $reference = 'Unlisted Site '.$index;
-            $plan = $this->scopePlan($document, 'Does Equipment Policy cover '.$reference.'?', $reference);
-            $result = app(EligibilityResolver::class)->scopeFact($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-10'));
-            $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
-            $this->assertSame('unresolved_location_reference', $result->reason);
-            Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v3'
-                && $record['shadow_decision'] === 'unavailable'
-                && $record['shadow_failure_reason'] === $reason
-                && $record['shadow_raw_response'] === ($index === 4 ? str_repeat('x', 65536) : 'provider-'.$reason)
-                && $record['shadow_raw_response_truncated'] === ($index === 4))->once();
-        }
-        Http::assertSentCount(count($reasons));
     }
 
     public function test_scope_adversarial_framing_is_fixed_and_persists_a_real_snapshot_citation_without_a_provider(): void
@@ -1239,14 +811,15 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete, $missing->outcome);
     }
 
-    public function test_named_scope_rejects_foreign_locations_but_accepts_registered_location_qualifiers(): void
+    public function test_named_scope_drops_foreign_locations_but_accepts_registered_location_qualifiers(): void
     {
         [$workspace, $generation, $scope] = $this->scope();
         $this->document($workspace, $generation, '2026-01-01');
         OrganisationalLocation::factory()->create(['workspace_id' => Workspace::factory()->create()->id, 'name' => 'Riverside']);
         $resolver = app(EligibilityResolver::class);
         $result = $resolver->handle($scope, $this->plan(4)->retrievalPlan('n1'), CarbonImmutable::parse('2026-09-06'));
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome);
+        $this->assertNull($result->resolvedLocationPublicId);
         $riverside = OrganisationalLocation::factory()->create(['workspace_id' => $workspace->id, 'name' => 'Riverside']);
         $plan = $this->plan(4, function ($data) {
             $data['turns'][0]['text'] = 'Which policy applies at Riverside outreach?';
@@ -1260,7 +833,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertSame($riverside->public_id, $result->resolvedLocationPublicId);
     }
 
-    public function test_named_location_candidates_survive_the_needs_retrieval_and_renderer_boundary(): void
+    public function test_ambiguous_location_candidates_do_not_block_needs_retrieval(): void
     {
         [$workspace, $generation, $scope] = $this->scope();
         foreach (['House', 'Lodge'] as $descriptor) {
@@ -1278,14 +851,12 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         Http::preventStrayRequests();
         Http::fake();
         $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 40, CarbonImmutable::parse('2026-09-06'));
-        $this->assertSame('ambiguous_location_reference', $result->reason);
-        $rendered = (new ControlledResponseRenderer)->clarification($result->clarificationSource, $result->reason, $result->clarificationQuestion);
-        $this->assertStringContainsString('Fern House', $rendered['text']);
-        $this->assertStringContainsString('Fern Lodge', $rendered['text']);
+        $this->assertNull($result->clarificationQuestion);
+        $this->assertNotSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
         Http::assertNothingSent();
     }
 
-    public function test_unidentified_home_reference_clarifies_while_generic_policy_question_stays_unscoped(): void
+    public function test_unidentified_home_reference_and_generic_policy_question_both_stay_unscoped(): void
     {
         [$workspace, $generation, $scope] = $this->scope();
         $this->document($workspace, $generation, '2026-01-01');
@@ -1303,10 +874,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         });
         $resolver = app(EligibilityResolver::class);
         $blocked = $resolver->handle($scope, $relational->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-08'));
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $blocked->outcome);
-        $this->assertSame('unresolved_location_reference', $blocked->reason);
-        $rendered = (new ControlledResponseRenderer)->clarification($blocked->clarificationSource, $blocked->reason, $blocked->clarificationQuestion);
-        $this->assertStringContainsString('site or region', $rendered['text']);
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $blocked->outcome);
+        $this->assertNull($blocked->resolvedLocationPublicId);
 
         $generic = $this->plan(4, function ($data) {
             $question = 'What is the organisation-wide sickness policy for employees?';
@@ -1324,7 +893,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $resolver->handle($scope, $generic->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-08'))->outcome);
     }
 
-    public function test_workspace_identity_is_not_a_site_but_unlisted_oakfield_outreach_still_clarifies(): void
+    public function test_workspace_identity_and_unlisted_oakfield_outreach_do_not_narrow(): void
     {
         Http::preventStrayRequests();
         [$workspace, $generation, $scope] = $this->scope();
@@ -1385,10 +954,10 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             return $data;
         });
         $result = $resolver->handle($scope, $unlisted->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-09'));
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
-        $this->assertSame('unresolved_location_reference', $result->reason);
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome);
+        $this->assertNull($result->resolvedLocationPublicId);
 
-        // m03/m12-style named but genuinely unresolvable sites remain blocked.
+        // Unlisted sites no longer gate retrieval, but cannot grant cross-workspace access.
         foreach (['Cinderhill House', 'Unlisted Region'] as $site) {
             $question = 'At '.$site.', who handles the local procedure?';
             $unresolved = $this->plan(4, function ($data) use ($question, $site) {
@@ -1403,8 +972,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 return $data;
             });
             $blocked = $resolver->handle($scope, $unresolved->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-09'));
-            $this->assertSame(RetrievalOutcome::ClarificationRequired, $blocked->outcome, $site);
-            $this->assertSame('unresolved_location_reference', $blocked->reason, $site);
+            $this->assertSame(RetrievalOutcome::EvidenceFound, $blocked->outcome, $site);
+            $this->assertNull($blocked->resolvedLocationPublicId);
         }
         Http::assertNothingSent();
     }

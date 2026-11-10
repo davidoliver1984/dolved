@@ -33,12 +33,6 @@ from app.retrieval.corpus_rebuild import (
 )
 from app.retrieval.deterministic import CatalogueRetrievalPlanner
 from app.retrieval.failures import RetrievalExecutionError
-from app.retrieval.location_reference import (
-    LocationReferenceRequest,
-    LocationReferenceResponse,
-    LocationReferenceReviewer,
-    LocationReferenceReviewError,
-)
 from app.retrieval.models import (
     OperationUsage,
     PlanRequest,
@@ -112,20 +106,6 @@ def compare_family_reviewer_dependency() -> CompareFamilyReviewer:
             "unsupported comparison reviewer provider", systemic=True
         )
     return CompareFamilyReviewer(
-        api_url=settings.retrieval_planner_api_url,
-        api_key=settings.retrieval_planner_api_key,
-        model=settings.retrieval_planner_model,
-        timeout_seconds=settings.retrieval_planner_timeout_seconds,
-    )
-
-
-def location_reference_reviewer_dependency() -> LocationReferenceReviewer:
-    settings = get_settings()
-    if settings.retrieval_planner_provider != "openai":
-        raise RetrievalPlanningError(
-            "unsupported location reviewer provider", systemic=True
-        )
-    return LocationReferenceReviewer(
         api_url=settings.retrieval_planner_api_url,
         api_key=settings.retrieval_planner_api_key,
         model=settings.retrieval_planner_model,
@@ -339,50 +319,6 @@ async def review_compare_family(
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,
             {"code": "compare_family_review_unavailable"},
-        ) from None
-
-
-@router.post("/location-reference-shadow", response_model=LocationReferenceResponse)
-async def review_location_reference_shadow(
-    request: Request,
-    reviewer: Annotated[
-        LocationReferenceReviewer, Depends(location_reference_reviewer_dependency)
-    ],
-) -> LocationReferenceResponse:
-    body = await authenticate(
-        request, "retrieval.location-reference-shadow", get_settings()
-    )
-    try:
-        incoming = LocationReferenceRequest.model_validate_json(body)
-    except ValueError as exception:
-        raise HTTPException(
-            status.HTTP_422_UNPROCESSABLE_CONTENT,
-            "Invalid location-reference review request.",
-        ) from exception
-    if str(incoming.workspace_id) != request.headers.get(
-        "X-Retrieval-Caller-Workspace-ID"
-    ) or str(incoming.request_id) != request.headers.get(
-        "X-Retrieval-Caller-Request-ID"
-    ):
-        raise HTTPException(
-            status.HTTP_401_UNAUTHORIZED, "Signed identity does not match body."
-        )
-    try:
-        return reviewer.review(incoming)
-    except LocationReferenceReviewError as exception:
-        raise HTTPException(
-            status.HTTP_503_SERVICE_UNAVAILABLE,
-            {
-                "code": "location_reference_review_unavailable",
-                "failure_reason": exception.code,
-                "raw_response": exception.raw_response,
-                "raw_response_truncated": exception.raw_response_truncated,
-            },
-        ) from None
-    except ValueError, KeyError, TypeError, httpx.HTTPError:
-        raise HTTPException(
-            status.HTTP_503_SERVICE_UNAVAILABLE,
-            {"code": "location_reference_review_unavailable", "failure_reason": "malformed_output"},
         ) from None
 
 

@@ -57,21 +57,21 @@ class SemanticRetrievalTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_explicit_location_descriptors_and_candidate_clarifications_are_collision_safe(): void
+    public function test_explicit_location_descriptors_and_unmatched_references_are_collision_safe(): void
     {
         $scenarios = [
             ['unique', [['Fern House', 'House']], 'Fern', 'Fern House', null, []],
-            ['collision', [['Fern House', 'House'], ['Fern Lodge', 'Lodge']], 'Fern', null, 'ambiguous_location_reference', ['Fern House', 'Fern Lodge']],
-            ['no match', [['Fern House', 'House']], 'Zebra', null, 'unresolved_location_reference', []],
-            ['no designation', [['Fern Bank', null]], 'Fern', null, 'unresolved_location_reference', ['Fern Bank']],
+            ['collision', [['Fern House', 'House'], ['Fern Lodge', 'Lodge']], 'Fern', null],
+            ['no match', [['Fern House', 'House']], 'Zebra', null],
+            ['no designation', [['Fern Bank', null]], 'Fern', null],
             ['false collision', [['Fern Bank', null], ['Fern Lodge', 'Lodge']], 'Fern', 'Fern Lodge', null, []],
             ['whole phrase', [['Willow Bank Community Service', 'Community Service']], 'Willow Bank', 'Willow Bank Community Service', null, []],
-            ['no recursive strip', [['Willow Bank Community Service', 'Community Service']], 'Willow', null, 'unresolved_location_reference', ['Willow Bank Community Service']],
+            ['no recursive strip', [['Willow Bank Community Service', 'Community Service']], 'Willow', null],
             ['exact precedence', [['Fern', null], ['Fern House', 'House']], 'Fern', 'Fern', null, []],
-            ['typo suggestion only', [['Fern House', 'House']], 'Ferm', null, 'unresolved_location_reference', ['Fern House']],
-            ['internal word', [['House of Fern', null]], 'House of', null, 'unresolved_location_reference', ['House of Fern']],
+            ['typo suggestion only', [['Fern House', 'House']], 'Ferm', null],
+            ['internal word', [['House of Fern', null]], 'House of', null],
         ];
-        foreach ($scenarios as [$label, $locations, $reference, $expected, $reason, $candidates]) {
+        foreach ($scenarios as [$label, $locations, $reference, $expected]) {
             [$workspace, $user] = $this->retrievalWorkspace();
             foreach ($locations as [$name, $descriptor]) {
                 OrganisationalLocation::factory()->for($workspace)->create(['name' => $name, 'kind' => 'site', 'reference_descriptor' => $descriptor]);
@@ -80,18 +80,9 @@ class SemanticRetrievalTest extends TestCase
             $scope = app(BuildAuthorisedKnowledgeScope::class)->handle($user, $workspace->public_id);
             $plan = new RetrievalPlan('Question', RetrievalTemporalMode::Current, null, null, [$reference], null, $this->lineage(), $this->plannerUsage());
             $resolved = app(EligibilityResolver::class)->handle($scope, $plan, CarbonImmutable::parse('2026-03-01'));
-            $this->assertSame($reason, $resolved->reason, $label);
+            $this->assertNotSame(RetrievalOutcome::ClarificationRequired, $resolved->outcome, $label);
             $this->assertSame($expected, OrganisationalLocation::where('public_id', $resolved->resolvedLocationPublicId)->value('name'), $label);
-            if ($reason !== null) {
-                $rendered = (new ControlledResponseRenderer)->clarification($resolved->clarificationSource, $reason, $resolved->clarificationQuestion);
-                foreach ($candidates as $candidate) {
-                    $this->assertStringContainsString($candidate, $rendered['text'], $label);
-                }
-                $this->assertStringNotContainsString('Fern Court', $rendered['text'], $label);
-                if ($candidates === []) {
-                    $this->assertSame('Which organisational site or region do you mean?', $rendered['text'], $label);
-                }
-            }
+            $this->assertNull($resolved->clarificationQuestion, $label);
         }
     }
 
@@ -279,8 +270,8 @@ class SemanticRetrievalTest extends TestCase
         $ambiguous = app(EligibilityResolver::class)->handle(
             $scope, $plan, CarbonImmutable::parse('2026-03-01'),
         );
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $ambiguous->outcome);
-        $this->assertSame('ambiguous_location_reference', $ambiguous->reason);
+        $this->assertNotSame(RetrievalOutcome::ClarificationRequired, $ambiguous->outcome);
+        $this->assertNull($ambiguous->resolvedLocationPublicId);
     }
 
     public function test_period_and_historical_references_resolve_against_attained_authority(): void
@@ -614,9 +605,9 @@ class SemanticRetrievalTest extends TestCase
 
         $this->assertSame([$document->public_id], $hierarchy->documentPublicIdsBySide['primary']);
         $this->assertSame($site->public_id, $hierarchy->resolvedLocationPublicId);
-        $this->assertSame('multiple_unrelated_location_references', $unrelated->reason);
+        $this->assertNull($unrelated->resolvedLocationPublicId);
         $this->assertSame(RetrievalOutcome::NoEligibleEvidence, $exactArticle->outcome);
-        $this->assertSame('unresolved_location_reference', $generic->reason);
+        $this->assertNull($generic->resolvedLocationPublicId);
     }
 
     public function test_registered_benchmark_style_aliases_normalise_and_reduce_to_the_descendant(): void
@@ -745,14 +736,12 @@ class SemanticRetrievalTest extends TestCase
             $this->assertSame([$document->public_id], $result->documentPublicIdsBySide['primary']);
             $this->assertSame($service->public_id, $result->resolvedLocationPublicId);
         }
-        $this->assertSame('multiple_unrelated_location_references', $unrelatedReferences->reason);
+        $this->assertNull($unrelatedReferences->resolvedLocationPublicId);
         foreach ([$unknownShorthand, $suffixGuess] as $result) {
-            $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
-            $this->assertSame('unresolved_location_reference', $result->reason);
+            $this->assertNotSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
             $this->assertNull($result->resolvedLocationPublicId);
         }
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $ambiguousAlias->outcome);
-        $this->assertSame('ambiguous_location_reference', $ambiguousAlias->reason);
+        $this->assertNotSame(RetrievalOutcome::ClarificationRequired, $ambiguousAlias->outcome);
         $this->assertNull($ambiguousAlias->resolvedLocationPublicId);
     }
 
@@ -792,11 +781,11 @@ class SemanticRetrievalTest extends TestCase
         $this->assertNull($organisation->resolvedLocationPublicId);
         $this->assertSame([$document->public_id], $hierarchy->documentPublicIdsBySide['primary']);
         $this->assertSame($site->public_id, $hierarchy->resolvedLocationPublicId);
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $unknownPlace->outcome);
-        $this->assertSame('unresolved_location_reference', $unknownPlace->reason);
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $unknownPlace->outcome);
+        $this->assertNull($unknownPlace->resolvedLocationPublicId);
     }
 
-    public function test_location_resolution_is_workspace_scoped_and_unresolved_input_never_broadens_scope(): void
+    public function test_location_resolution_is_workspace_scoped_and_unresolved_input_drops_location_constraint(): void
     {
         [$workspace, $user, $generation] = $this->retrievalWorkspace();
         $otherWorkspace = Workspace::factory()->create();
@@ -819,8 +808,8 @@ class SemanticRetrievalTest extends TestCase
             [], null, $this->lineage(), $this->plannerUsage(),
         ), $evaluatedAt);
 
-        $this->assertSame(RetrievalOutcome::ClarificationRequired, $unresolved->outcome);
-        $this->assertSame('unresolved_location_reference', $unresolved->reason);
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $unresolved->outcome);
+        $this->assertSame($unscoped->documentPublicIdsBySide, $unresolved->documentPublicIdsBySide);
         $this->assertNull($unresolved->resolvedLocationPublicId);
         $this->assertSame([$document->public_id], $unscoped->documentPublicIdsBySide['primary']);
         $this->assertNull($unscoped->resolvedLocationPublicId);

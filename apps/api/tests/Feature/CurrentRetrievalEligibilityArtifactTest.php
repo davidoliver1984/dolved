@@ -34,8 +34,8 @@ final class CurrentRetrievalEligibilityArtifactTest extends TestCase
         $this->assertNotContains('doc.policy.v2', $atDate);
         $this->assertSame('evidence_found', $entries['location']['outcome']);
         $this->assertNotNull($entries['location']['resolved_location_public_id']);
-        $this->assertSame('clarification_required', $entries['unknown']['outcome']);
-        $this->assertSame('unresolved_location_reference', $entries['unknown']['reason']);
+        $this->assertSame('evidence_found', $entries['unknown']['outcome']);
+        $this->assertNull($entries['unknown']['resolved_location_public_id']);
         $this->assertSame('evidence_found', $entries['coventry']['outcome']);
         $this->assertSame('evidence_found', $entries['midlands']['outcome']);
         $this->assertSame('evidence_found', $entries['bristol-hierarchy']['outcome']);

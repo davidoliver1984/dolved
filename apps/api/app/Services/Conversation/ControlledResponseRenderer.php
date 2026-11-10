@@ -44,10 +44,7 @@ final readonly class ControlledResponseRenderer
                 EligibilityClarificationReason::UnresolvableTemporalPeriod => 'Which specific date or recognised calendar period should I use?',
                 EligibilityClarificationReason::AmbiguousHistoricalReference => 'Which historical version should I use?',
                 EligibilityClarificationReason::HistoricalReferenceUnresolved => 'Can you identify the historical version or date you mean?',
-                EligibilityClarificationReason::UnresolvedLocationReference => $question ?? 'Which organisational site or region do you mean?',
                 EligibilityClarificationReason::UnresolvedRecordReference => 'Which record do you mean?',
-                EligibilityClarificationReason::AmbiguousLocationReference => $question ?? 'Which of the matching organisational locations do you mean?',
-                EligibilityClarificationReason::MultipleUnrelatedLocationReferences => $question ?? 'Which one of those unrelated organisational locations should I use?',
                 null => null,
             },
         };
