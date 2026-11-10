@@ -32,8 +32,9 @@ SHADOW_REMAINING_INDICES = SHADOW_INDICES[1:]
 SHADOW_TAIL12_INDICES = SHADOW_INDICES[3:]
 SHADOW_GROUNDING_RETRIAL_INDICES = (141, 142, 45, 125, 129)
 SHADOW_V3_VALIDATION_INDICES = (33, 45, 122, 125, 129, 130, 69, 89, 141, 142, 24, 70, 101, 102, 29, 23, 147)
+SHADOW_TEN_RETEST_INDICES = (33, 45, 122, 125, 129, 130, 69, 89, 141, 142)
 SHADOW_POPULATION_INDICES = tuple(range(1, 149))
-SHADOW_STAGES = {"location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12", "location_shadow_grounding_retrial", "location_shadow_v3_validation", "location_shadow_full_population"}
+SHADOW_STAGES = {"location_shadow_trial", "location_shadow_trial_remaining", "location_shadow_trial_tail12", "location_shadow_grounding_retrial", "location_shadow_v3_validation", "location_shadow_ten_retest", "location_shadow_full_population"}
 
 
 def shadow_indices(stage: str) -> tuple[int, ...]:
@@ -43,6 +44,7 @@ def shadow_indices(stage: str) -> tuple[int, ...]:
         "location_shadow_trial_tail12": SHADOW_TAIL12_INDICES,
         "location_shadow_grounding_retrial": SHADOW_GROUNDING_RETRIAL_INDICES,
         "location_shadow_v3_validation": SHADOW_V3_VALIDATION_INDICES,
+        "location_shadow_ten_retest": SHADOW_TEN_RETEST_INDICES,
         "location_shadow_full_population": SHADOW_POPULATION_INDICES,
     }[stage]
 PRIMARY_WORKSPACE = "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
@@ -66,6 +68,7 @@ STAGES = {"regression": 8, "confirmation": 16, "continuation": 2,
           "location_shadow_trial_tail12": 12,
           "location_shadow_grounding_retrial": 5,
           "location_shadow_v3_validation": 17,
+          "location_shadow_ten_retest": 10,
           "location_shadow_full_population": 148,
           "case6_retry": 1, "case5_retry": 1, "generic_controls": 3}
 COMPOSE = [
@@ -218,6 +221,8 @@ def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str,
             manifest_id = (
                 "R28-R07-LOCATION-SHADOW-FULL-148-20261110-V1"
                 if stage == "location_shadow_full_population"
+                else "R28-R07-LOCATION-SHADOW-TEN-RETEST-20261110-V1"
+                if stage == "location_shadow_ten_retest"
                 else "R28-R07-LOCATION-SHADOW-V3-VALIDATION-17-20261110-V1"
                 if stage == "location_shadow_v3_validation"
                 else "R28-R07-LOCATION-SHADOW-GROUNDING-RETRIAL-5-20261110-V1"

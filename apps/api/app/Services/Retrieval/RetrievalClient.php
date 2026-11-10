@@ -315,7 +315,8 @@ final readonly class RetrievalClient
             }
         } elseif ($decision === 'unresolved_or_ambiguous') {
             if (! in_array($selection['reason'], ['unresolved', 'ambiguous', 'insufficient_context'], true)
-                || collect($selection)->except(['decision', 'reason'])->contains(fn (mixed $value): bool => $value !== null)) {
+                || ($selection['quote'] !== null && $selection['quote'] !== $reference)
+                || collect($selection)->except(['decision', 'reason', 'quote'])->contains(fn (mixed $value): bool => $value !== null)) {
                 throw new RetrievalException('The unresolved location review claimed an identity.');
             }
         } else {

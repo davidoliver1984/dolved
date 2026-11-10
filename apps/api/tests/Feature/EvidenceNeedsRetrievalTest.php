@@ -763,6 +763,40 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         Http::assertSentCount(1);
     }
 
+    public function test_location_shadow_accepts_unresolved_reference_echo_but_rejects_a_mismatch(): void
+    {
+        [$workspace] = $this->scope();
+        $quote = 'Oakfield outreach';
+        $returnedQuote = $quote;
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) use (&$returnedQuote) {
+            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
+
+            return Http::response(['contract_version' => 3, 'request_id' => $data['request_id'],
+                'selection' => ['decision' => 'unresolved_or_ambiguous', 'location_id' => null,
+                    'reference_type' => null, 'evidence_family_id' => null, 'quote' => $returnedQuote,
+                    'evidence_quote' => null, 'competing_target_quote' => null, 'reason' => 'ambiguous'],
+                'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
+                    'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
+                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
+                    'input_tokens' => 1, 'output_tokens' => 1]], 200);
+        });
+        $question = 'At Oakfield outreach on 1 July 2026, when did a key safe need reviewing?';
+        $families = [['family_id' => (string) Str::uuid(), 'title' => 'Key Safe Procedure']];
+        $accepted = app(RetrievalClient::class)->reviewLocationReference($workspace, $quote, $question,
+            'when did a key safe need reviewing', [], $families);
+        $this->assertSame('unresolved_or_ambiguous', $accepted['selection']['decision']);
+        $returnedQuote = 'Different outreach';
+        try {
+            app(RetrievalClient::class)->reviewLocationReference($workspace, $quote, $question,
+                'when did a key safe need reviewing', [], $families);
+            $this->fail('A mismatched unresolved quote must fail closed.');
+        } catch (RetrievalException $exception) {
+            $this->assertSame('The unresolved location review claimed an identity.', $exception->getMessage());
+        }
+        Http::assertSentCount(2);
+    }
+
     public function test_location_shadow_rejects_foreign_identity_and_provider_failure_without_changing_clarification(): void
     {
         [$workspace, $generation, $scope] = $this->scope();

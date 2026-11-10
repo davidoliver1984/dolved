@@ -187,6 +187,24 @@ def test_unresolved_is_fail_closed_and_malformed_decisions_are_rejected() -> Non
         LocationReferenceRequest.model_validate(data)
 
 
+def test_case_142_literal_unresolved_echo_is_accepted_but_mismatched_quote_is_not() -> None:
+    source = request("Oakfield outreach")
+    literal_completion = (
+        '{"decision":"unresolved_or_ambiguous","location_id":null,'
+        '"reference_type":null,"evidence_family_id":null,'
+        '"quote":"Oakfield outreach","evidence_quote":null,'
+        '"competing_target_quote":null,"reason":"ambiguous"}'
+    )
+    selection = LocationReferenceDecision.model_validate_json(literal_completion)
+    assert validate_selection(source, selection).decision == "unresolved_or_ambiguous"
+    with pytest.raises(LocationReferenceReviewError, match="quote_mismatch"):
+        validate_selection(source, selection.model_copy(update={"quote": "Other outreach"}))
+    with pytest.raises(ValidationError):
+        LocationReferenceDecision.model_validate_json(
+            literal_completion.replace('"location_id":null', f'"location_id":"{SITE}"')
+        )
+
+
 def test_review_uses_one_bounded_provider_request_with_mock_transport() -> None:
     source = request()
     reviewer = LocationReferenceReviewer(
@@ -199,7 +217,7 @@ def test_review_uses_one_bounded_provider_request_with_mock_transport() -> None:
     def handler(http_request: httpx.Request) -> httpx.Response:
         sent = json.loads(http_request.content)
         assert sent["max_completion_tokens"] == 4096
-        assert sent["reasoning_effort"] == "low"
+        assert sent["reasoning_effort"] == "medium"
         assert (
             json.loads(sent["messages"][1]["content"])["reference"] == source.reference
         )

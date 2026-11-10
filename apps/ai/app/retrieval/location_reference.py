@@ -141,7 +141,6 @@ class LocationReferenceDecision(ImmutableModel):
                     self.location_id,
                     self.reference_type,
                     self.evidence_family_id,
-                    self.quote,
                     self.evidence_quote,
                     self.competing_target_quote,
                 )
@@ -177,6 +176,8 @@ def validate_selection(
 ) -> LocationReferenceDecision:
     """A syntactically valid model output is not yet an authorised identity."""
     if selection.decision == "unresolved_or_ambiguous":
+        if selection.quote is not None and selection.quote != request.reference:
+            raise LocationReferenceReviewError("validation_rejected:quote_mismatch")
         return selection
     if selection.quote != request.reference:
         raise LocationReferenceReviewError("validation_rejected:quote_mismatch")
@@ -260,7 +261,7 @@ class LocationReferenceReviewer:
                 json={
                     "model": self.model,
                     "max_completion_tokens": self.MAX_OUTPUT_TOKENS,
-                    "reasoning_effort": "low",
+                    "reasoning_effort": "medium",
                     "messages": [
                         {"role": "system", "content": PROMPT},
                         {

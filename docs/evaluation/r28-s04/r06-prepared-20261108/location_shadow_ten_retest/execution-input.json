@@ -1,0 +1,58 @@
+{
+  "schema_version": "r28-production-path-input-v1",
+  "subset_id": "R28-R07-LOCATION-SHADOW-TEN-RETEST-20261110-V1",
+  "population_id": "dolved-care-v4-evaluation-population-v2",
+  "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b02-05",
+      "variant_id": "v1",
+      "utterance": "What information should I include in the incident report structure shown in the appendix?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-11",
+      "variant_id": "v1",
+      "utterance": "What will change between the current backup policy and the policy taking effect in 2027?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-01",
+      "variant_id": "v2",
+      "utterance": "Compared with the December 2025 schedule, which staff group is listed first from June 2026 and are the supervision and appraisal frequencies the same?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-03",
+      "variant_id": "v1",
+      "utterance": "What moved to the front of the legionella procedure in March 2026, and did the monitoring or flushing rules change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v1",
+      "utterance": "I'm updating the ROPA for employee records. What did the old Legal basis field become, and what should I record there for employment data?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v2",
+      "utterance": "On the current ROPA, which field replaced Legal basis, and which lawful bases does the data-protection policy give for staff records?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-11",
+      "variant_id": "v1",
+      "utterance": "Do we have a staff gym?"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-09",
+      "variant_id": "v1",
+      "utterance": "What is the site's safeguarding lead called now, and did the first-contact role itself change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-11",
+      "variant_id": "v1",
+      "utterance": "At Oakfield outreach on 1 July 2026, when did a key safe need reviewing and what had to happen when it was no longer needed?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-11",
+      "variant_id": "v2",
+      "utterance": "For an Oakfield outreach key safe in July 2026, what were the review triggers and the removal or closure steps?"
+    }
+  ]
+}
