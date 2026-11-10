@@ -224,6 +224,96 @@ final readonly class RetrievalClient
             'usage' => $safeUsage, 'decision' => $decision];
     }
 
+    /**
+     * Shadow-only classification. The caller must never use this result for eligibility.
+     *
+     * @param  list<array{location_id: string, name: string, aliases: list<string>}>  $locations
+     * @param  list<array{family_id: string, title: string}>  $families
+     * @return array<string, mixed>
+     */
+    public function reviewLocationReference(Workspace $workspace, string $reference, string $question,
+        string $aspect, array $locations, array $families): array
+    {
+        if ($locations === [] && $families === []) {
+            throw new RetrievalException('Location review requires authorised candidates.');
+        }
+        $response = $this->call('/api/internal/retrieval/location-reference-shadow',
+            'retrieval.location-reference-shadow', $workspace, [
+                'contract_version' => 1,
+                'workspace_id' => $workspace->public_id,
+                'reference' => $reference,
+                'question' => $question,
+                'aspect' => $aspect,
+                'locations' => $locations,
+                'document_families' => $families,
+            ]);
+        if ($response->json('contract_version') !== 1 || ! is_array($response->json('selection'))
+            || ! is_array($response->json('usage'))) {
+            throw new RetrievalException('The location review response is invalid.');
+        }
+        $usage = $response->json('usage');
+        if (($usage['stage'] ?? null) !== 'location_reference_shadow'
+            || ($usage['provider'] ?? null) !== 'openai'
+            || ! is_string($usage['model'] ?? null) || strlen($usage['model']) > 255
+            || ($usage['execution'] ?? null) !== 'provider_api'
+            || ($usage['request_count'] ?? null) !== 1
+            || ($usage['retry_count'] ?? null) !== 0
+            || ! is_numeric($usage['latency_ms'] ?? null) || $usage['latency_ms'] < 0
+            || ($usage['cost_basis'] ?? null) !== 'unavailable'
+            || ($usage['cost_usd'] ?? null) !== null) {
+            throw new RetrievalException('The location review usage is invalid.');
+        }
+        foreach (['input_tokens', 'output_tokens'] as $key) {
+            if (($usage[$key] ?? null) !== null && (! is_int($usage[$key]) || $usage[$key] < 0)) {
+                throw new RetrievalException('The location review token usage is invalid.');
+            }
+        }
+        $selection = $response->json('selection');
+        $keys = array_keys($selection);
+        sort($keys);
+        if ($keys !== ['decision', 'evidence_family_id', 'evidence_quote', 'location_id',
+            'quote', 'reason', 'reference_type']) {
+            throw new RetrievalException('The location review selection shape is invalid.');
+        }
+        $decision = $selection['decision'];
+        if ($decision === 'resolved_site') {
+            if ($selection['quote'] !== $reference || ! is_string($selection['location_id'])
+                || ! collect($locations)->contains(fn (array $item): bool => $item['location_id'] === $selection['location_id'])
+                || $selection['reference_type'] !== null || $selection['evidence_family_id'] !== null
+                || $selection['evidence_quote'] !== null || $selection['reason'] !== null) {
+                throw new RetrievalException('The location review selected no authorised site.');
+            }
+        } elseif ($decision === 'not_a_site') {
+            $evidence = $selection['evidence_quote'];
+            $type = $selection['reference_type'];
+            if ($selection['quote'] !== $reference || $selection['location_id'] !== null
+                || ! in_array($type, ['document_or_record', 'organisation', 'answer_value', 'incidental_phrase'], true)
+                || ! is_string($evidence) || mb_strlen($evidence) < 8 || mb_strlen($evidence) > 300
+                || $selection['reason'] !== null) {
+                throw new RetrievalException('The non-site review has no grounded role evidence.');
+            }
+            if ($type === 'document_or_record') {
+                if (! is_string($selection['evidence_family_id'])
+                    || ! collect($families)->contains(fn (array $item): bool => $item['family_id'] === $selection['evidence_family_id']
+                        && str_contains($item['title'], $evidence))) {
+                    throw new RetrievalException('The non-site review cited no authorised family.');
+                }
+            } elseif ($selection['evidence_family_id'] !== null
+                || ! str_contains($question, $evidence) || ! str_contains($evidence, $reference)) {
+                throw new RetrievalException('The non-site review cited an unrelated family.');
+            }
+        } elseif ($decision === 'unresolved_or_ambiguous') {
+            if (! in_array($selection['reason'], ['unresolved', 'ambiguous', 'insufficient_context'], true)
+                || collect($selection)->except(['decision', 'reason'])->contains(fn (mixed $value): bool => $value !== null)) {
+                throw new RetrievalException('The unresolved location review claimed an identity.');
+            }
+        } else {
+            throw new RetrievalException('The location review decision is invalid.');
+        }
+
+        return $selection;
+    }
+
     public function search(
         Workspace $workspace,
         WorkspaceCorpusGeneration $corpus,

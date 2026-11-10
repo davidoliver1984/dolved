@@ -33,6 +33,7 @@ final readonly class EligibilityResolver
         private DocumentAuthorityTimeline $timeline,
         private TemporalPeriodResolver $periods,
         private HistoricalReferenceResolver $historical,
+        private LocationReferenceShadowReview $locationShadow,
     ) {}
 
     /**
@@ -57,7 +58,7 @@ final readonly class EligibilityResolver
         }
         $breadth = $need['scope_question'] === 'breadth';
         $location = $plan->locationReferences === [] && $breadth
-            ? null : $this->resolveLocations($authorised, $plan->locationReferences);
+            ? null : $this->resolveLocations($authorised, $plan->locationReferences, $plan);
         if (! $location instanceof OrganisationalLocation && ! ($breadth && $location === null)) {
             return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
                 reason: $location?->value ?? 'unresolved_location_reference',
@@ -201,7 +202,7 @@ final readonly class EligibilityResolver
                 clarificationSource: RetrievalClarificationSource::EligibilityResolver);
         }
 
-        $location = $this->resolveLocations($authorised, $plan->locationReferences);
+        $location = $this->resolveLocations($authorised, $plan->locationReferences, $plan);
         if ($location instanceof EligibilityClarificationReason) {
             return new EligibleRetrievalScope(
                 RetrievalOutcome::ClarificationRequired,
@@ -510,6 +511,7 @@ final readonly class EligibilityResolver
     private function resolveLocations(
         AuthorisedKnowledgeScope $authorised,
         array $references,
+        RetrievalPlan $plan,
     ): OrganisationalLocation|EligibilityClarificationReason|null {
         if ($references === []) {
             return null;
@@ -519,7 +521,7 @@ final readonly class EligibilityResolver
             if ($this->isOrganisationReference($authorised, $reference)) {
                 continue;
             }
-            $match = $this->resolveLocationReference($authorised, $reference);
+            $match = $this->resolveLocationReference($authorised, $reference, $plan);
             if ($match instanceof EligibilityClarificationReason) {
                 return $match;
             }
@@ -542,9 +544,11 @@ final readonly class EligibilityResolver
     private function resolveLocationReference(
         AuthorisedKnowledgeScope $authorised,
         string $reference,
+        RetrievalPlan $plan,
     ): OrganisationalLocation|EligibilityClarificationReason {
         $normalised = Str::lower(trim($reference));
         $matches = $this->locationMatches($authorised, $normalised);
+        $exactMiss = $matches->isEmpty();
         if ($matches->isEmpty() && str_starts_with($normalised, 'the ')) {
             $withoutArticle = trim(substr($normalised, 4));
             if (! in_array($withoutArticle, ['home', 'site', 'office', 'region', 'location'], true)) {
@@ -564,14 +568,14 @@ final readonly class EligibilityResolver
         if ($matches->isEmpty()) {
             $matches = (new LocationReferenceCandidates)->shortened($authorised->workspace->id, $normalised);
         }
-        if ($matches->isEmpty()) {
-            return EligibilityClarificationReason::UnresolvedLocationReference;
-        }
-        if ($matches->count() > 1) {
-            return EligibilityClarificationReason::AmbiguousLocationReference;
+        $result = $matches->isEmpty() ? EligibilityClarificationReason::UnresolvedLocationReference
+            : ($matches->count() > 1 ? EligibilityClarificationReason::AmbiguousLocationReference : $matches->first());
+        // The old result remains authoritative; shadow review observes only failed exact/alias matches.
+        if ($exactMiss) {
+            $this->locationShadow->observe($authorised, $plan, $reference, $result);
         }
 
-        return $matches->first();
+        return $result;
     }
 
     /** @return Collection<int, OrganisationalLocation> */

@@ -52,6 +52,10 @@ return [
     'candidate_k' => (int) env('RETRIEVAL_CANDIDATE_K', 10),
     'candidate_k_max' => (int) env('RETRIEVAL_CANDIDATE_K_MAX', 100),
     'max_eligible_documents' => (int) env('RETRIEVAL_MAX_ELIGIBLE_DOCUMENTS', 500),
+    // Diagnostic only. The existing resolver remains authoritative even when enabled.
+    'location_reference_shadow' => [
+        'enabled' => (bool) env('RETRIEVAL_LOCATION_REFERENCE_SHADOW', false),
+    ],
     'planner' => [
         'provider' => env('RETRIEVAL_PLANNER_PROVIDER', 'openai'),
         'model' => env('RETRIEVAL_PLANNER_MODEL', 'gpt-5-mini'),
