@@ -41,15 +41,25 @@ SAFE_FAILURE_REASONS = frozenset(
         "incomplete_output",
     }
 )
+MAX_DIAGNOSTIC_BODY_BYTES = 65536
 
 
 class LocationReferenceReviewError(ValueError):
     """Never include raw question, candidate text or completion in caller errors."""
 
-    def __init__(self, code: str) -> None:
+    def __init__(self, code: str, response: httpx.Response | None = None) -> None:
         if code not in SAFE_FAILURE_REASONS:
             raise ValueError("unrecognised shadow review failure code")
         self.code = code
+        body = response.content if response is not None else None
+        self.raw_response = (
+            body[:MAX_DIAGNOSTIC_BODY_BYTES].decode("utf-8", errors="replace")
+            if body is not None
+            else None
+        )
+        self.raw_response_truncated = (
+            len(body) > MAX_DIAGNOSTIC_BODY_BYTES if body is not None else False
+        )
         super().__init__(code)
 
 
@@ -229,6 +239,7 @@ class LocationReferenceReviewer:
 
     def review(self, request: LocationReferenceRequest) -> LocationReferenceResponse:
         started = time.perf_counter()
+        response: httpx.Response | None = None
         schema = {
             "type": "object",
             "properties": {
@@ -353,9 +364,14 @@ class LocationReferenceReviewer:
                     cost_usd=None,
                 ),
             )
-        except LocationReferenceReviewError:
-            raise
+        except LocationReferenceReviewError as error:
+            raise LocationReferenceReviewError(error.code, response) from error
         except httpx.HTTPError as error:
-            raise LocationReferenceReviewError("transport_error") from error
+            failure_response = (
+                error.response if isinstance(error, httpx.HTTPStatusError) else response
+            )
+            raise LocationReferenceReviewError(
+                "transport_error", failure_response
+            ) from error
         except (ValidationError, ValueError, KeyError, TypeError) as error:
-            raise LocationReferenceReviewError("malformed_output") from error
+            raise LocationReferenceReviewError("malformed_output", response) from error

@@ -240,6 +240,8 @@ def test_review_failure_subtypes_are_bounded(
     with pytest.raises(LocationReferenceReviewError) as error:
         reviewer.review(request())
     assert error.value.code == expected_code
+    assert error.value.raw_response == response.text
+    assert error.value.raw_response_truncated is False
 
 
 def test_reviewer_preserves_case_141_grounding_rejection_code() -> None:
@@ -280,6 +282,7 @@ def test_reviewer_preserves_case_141_grounding_rejection_code() -> None:
     with pytest.raises(LocationReferenceReviewError) as error:
         reviewer.review(source)
     assert error.value.code == "validation_rejected:target_contains_reference"
+    assert clause in (error.value.raw_response or "")
 
 
 def test_reviewer_labels_missing_competing_target_before_grounding() -> None:
@@ -320,6 +323,29 @@ def test_reviewer_labels_missing_competing_target_before_grounding() -> None:
     with pytest.raises(LocationReferenceReviewError) as error:
         reviewer.review(source)
     assert error.value.code == "validation_rejected:no_competing_target"
+    raw_completion = json.loads(error.value.raw_response or "{}")
+    assert json.loads(raw_completion["choices"][0]["message"]["content"])[
+        "competing_target_quote"
+    ] is None
+
+
+def test_failed_review_raw_body_is_bounded_and_success_has_no_diagnostic() -> None:
+    oversized = "x" * 70000
+    reviewer = LocationReferenceReviewer(
+        api_url="https://provider.invalid/chat/completions",
+        api_key=SecretStr("test-only"),
+        model="test-model",
+        timeout_seconds=1,
+    )
+    reviewer.client = httpx.Client(
+        transport=httpx.MockTransport(
+            lambda _: httpx.Response(503, content=oversized.encode())
+        )
+    )
+    with pytest.raises(LocationReferenceReviewError) as error:
+        reviewer.review(request())
+    assert len((error.value.raw_response or "").encode()) == 65536
+    assert error.value.raw_response_truncated is True
 
 
 def test_endpoint_requires_signed_workspace_identity_and_rejects_replay() -> None:
@@ -360,6 +386,7 @@ def test_endpoint_requires_signed_workspace_identity_and_rejects_replay() -> Non
             response = client.post(path, content=body, headers=headers)
             assert response.status_code == 200
             assert response.json()["selection"]["location_id"] == SITE
+            assert "raw_response" not in response.json()
             assert client.post(path, content=body, headers=headers).status_code == 401
     finally:
         app.dependency_overrides.clear()
@@ -372,7 +399,9 @@ def test_endpoint_fails_closed_on_invalid_request_or_review_failure() -> None:
         def review(
             self, incoming: LocationReferenceRequest
         ) -> LocationReferenceResponse:
-            raise LocationReferenceReviewError("malformed_output")
+            raise LocationReferenceReviewError(
+                "malformed_output", httpx.Response(200, content=b"raw invalid reviewer output")
+            )
 
     app.dependency_overrides[location_reference_reviewer_dependency] = FailingReviewer
     path = "/api/internal/retrieval/location-reference-shadow"
@@ -405,6 +434,8 @@ def test_endpoint_fails_closed_on_invalid_request_or_review_failure() -> None:
                 "detail": {
                     "code": "location_reference_review_unavailable",
                     "failure_reason": "malformed_output",
+                    "raw_response": "raw invalid reviewer output",
+                    "raw_response_truncated": False,
                 }
             }
     finally:

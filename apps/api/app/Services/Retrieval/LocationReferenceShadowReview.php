@@ -85,7 +85,9 @@ final readonly class LocationReferenceShadowReview
             ]);
         } catch (LocationReferenceReviewDiagnosticException $exception) {
             $this->record($base + ['shadow_decision' => 'unavailable', 'shadow_reason' => 'review_failed',
-                'shadow_failure_reason' => $exception->failureReason]);
+                'shadow_failure_reason' => $exception->failureReason,
+                'shadow_raw_response' => $exception->rawResponse,
+                'shadow_raw_response_truncated' => $exception->rawResponseTruncated]);
         } catch (RetrievalException) {
             $this->record($base + ['shadow_decision' => 'unavailable', 'shadow_reason' => 'review_failed',
                 'shadow_failure_reason' => 'validation_rejected:application_contract']);

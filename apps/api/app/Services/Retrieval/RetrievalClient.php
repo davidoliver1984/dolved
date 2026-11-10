@@ -648,6 +648,8 @@ final readonly class RetrievalClient
         $last = null;
         $previousTypedFailure = null;
         $shadowFailureReason = null;
+        $shadowRawResponse = null;
+        $shadowRawResponseTruncated = false;
         for ($attempt = 1; $attempt <= $attempts; $attempt++) {
             $requestId = $stableRequestId ?? (string) Str::uuid();
             $attemptPayload = ['request_id' => $requestId] + $payload;
@@ -705,6 +707,7 @@ final readonly class RetrievalClient
                 }
                 if ($path === '/api/internal/retrieval/location-reference-shadow') {
                     $reason = $response->json('detail.failure_reason');
+                    $raw = $response->json('detail.raw_response');
                     $allowed = [
                         'validation_rejected:quote_mismatch', 'validation_rejected:unknown_location',
                         'validation_rejected:missing_role_evidence', 'validation_rejected:unknown_document_family',
@@ -715,6 +718,9 @@ final readonly class RetrievalClient
                         'transport_error', 'malformed_output', 'incomplete_output',
                     ];
                     $shadowFailureReason = is_string($reason) && in_array($reason, $allowed, true) ? $reason : 'http_error';
+                    $shadowRawResponse = is_string($raw) ? mb_strcut($raw, 0, 65536, 'UTF-8') : null;
+                    $shadowRawResponseTruncated = is_string($raw)
+                        && (strlen($raw) > 65536 || $response->json('detail.raw_response_truncated') === true);
                 }
                 $failure = $response->json('detail.failure');
                 if (is_array($failure)) {
@@ -761,6 +767,8 @@ final readonly class RetrievalClient
             } catch (ConnectionException $exception) {
                 if ($path === '/api/internal/retrieval/location-reference-shadow') {
                     $shadowFailureReason = 'transport_error';
+                    $shadowRawResponse = null;
+                    $shadowRawResponseTruncated = false;
                 }
                 $last = in_array($path, ['/api/internal/retrieval/plan', '/api/internal/retrieval/plan-needs'], true)
                     ? new RetrievalPlannerException(
@@ -789,7 +797,8 @@ final readonly class RetrievalClient
         }
 
         if ($path === '/api/internal/retrieval/location-reference-shadow' && $last !== null) {
-            throw new LocationReferenceReviewDiagnosticException($shadowFailureReason ?? 'unclassified_error', $last);
+            throw new LocationReferenceReviewDiagnosticException($shadowFailureReason ?? 'unclassified_error',
+                $shadowRawResponse, $shadowRawResponseTruncated, $last);
         }
 
         throw $last ?? new RetrievalException('The retrieval call failed.');

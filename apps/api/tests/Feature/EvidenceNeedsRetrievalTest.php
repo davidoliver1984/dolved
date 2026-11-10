@@ -538,7 +538,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             && $record['usage']['output_tokens'] === 1
             && $record['usage']['latency_ms'] === 1
             && $record['usage']['cost_basis'] === 'unavailable'
-            && $record['usage']['cost_usd'] === null)->once();
+            && $record['usage']['cost_usd'] === null
+            && ! array_key_exists('shadow_raw_response', $record))->once();
         Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
             && $record['old_decision'] === 'resolved_site' && $record['shadow_decision'] === 'resolved_site')->once();
         Http::assertSentCount(3);
@@ -763,19 +764,12 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         config(['retrieval.location_reference_shadow.enabled' => true, 'retrieval.max_attempts' => 1]);
         Log::spy();
         $question = 'At Oakfield outreach on 1 July 2026, when did a key safe need reviewing?';
+        $raw = '{"choices":[{"message":{"content":"At Oakfield outreach on 1 July 2026"}}]}';
         Http::preventStrayRequests();
-        Http::fake(function (Request $request) use ($question) {
-            $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
-
-            return Http::response(['contract_version' => 2, 'request_id' => $data['request_id'],
-                'selection' => ['decision' => 'not_a_site', 'location_id' => null,
-                    'reference_type' => 'incidental_phrase', 'evidence_family_id' => null,
-                    'quote' => 'Oakfield outreach', 'evidence_quote' => $question,
-                    'competing_target_quote' => $question, 'reason' => null],
-                'usage' => ['stage' => 'location_reference_shadow', 'provider' => 'openai',
-                    'model' => 'fake-model', 'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0,
-                    'latency_ms' => 1, 'cost_basis' => 'unavailable', 'cost_usd' => null,
-                    'input_tokens' => 1, 'output_tokens' => 1]], 200);
+        Http::fake(function (Request $request) use ($raw) {
+            return Http::response(['detail' => ['code' => 'location_reference_review_unavailable',
+                'failure_reason' => 'validation_rejected:target_contains_reference',
+                'raw_response' => $raw, 'raw_response_truncated' => false]], 503);
         });
         $result = app(EligibilityResolver::class)->scopeFact($scope,
             $this->scopePlan($document, $question, 'Oakfield outreach')->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-10'));
@@ -783,7 +777,9 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertSame('unresolved_location_reference', $result->reason);
         Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
             && $record['shadow_decision'] === 'unavailable'
-            && $record['shadow_failure_reason'] === 'validation_rejected:target_contains_reference')->once();
+            && $record['shadow_failure_reason'] === 'validation_rejected:target_contains_reference'
+            && $record['shadow_raw_response'] === $raw
+            && $record['shadow_raw_response_truncated'] === false)->once();
         Http::assertSentCount(1);
     }
 
@@ -799,9 +795,11 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         Http::fake(function (Request $request) use ($reasons) {
             $data = json_decode($request->body(), true, flags: JSON_THROW_ON_ERROR);
             $index = (int) substr($data['reference'], -1);
+            $raw = $index === 4 ? str_repeat('x', 70000) : 'provider-'.$reasons[$index];
 
             return Http::response(['detail' => ['code' => 'location_reference_review_unavailable',
-                'failure_reason' => $reasons[$index]]], 503);
+                'failure_reason' => $reasons[$index], 'raw_response' => $raw,
+                'raw_response_truncated' => false]], 503);
         });
         foreach ($reasons as $index => $reason) {
             $reference = 'Unlisted Site '.$index;
@@ -811,7 +809,9 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $this->assertSame('unresolved_location_reference', $result->reason);
             Log::shouldHaveReceived('info')->withArgs(fn (string $event, array $record): bool => $event === 'retrieval.location_reference.shadow.v2'
                 && $record['shadow_decision'] === 'unavailable'
-                && $record['shadow_failure_reason'] === $reason)->once();
+                && $record['shadow_failure_reason'] === $reason
+                && $record['shadow_raw_response'] === ($index === 4 ? str_repeat('x', 65536) : 'provider-'.$reason)
+                && $record['shadow_raw_response_truncated'] === ($index === 4))->once();
         }
         Http::assertSentCount(count($reasons));
     }

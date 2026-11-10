@@ -37,3 +37,11 @@ Invalid JSON is `malformed_output`; parseable JSON that fails the selection
 schema is `validation_rejected:selection_schema`, with the missing-target shape
 reported more specifically as `validation_rejected:no_competing_target`.
 The diagnostic is not shown to the end user and never affects eligibility.
+When the reviewer fails, the same signed internal error also carries a
+`raw_response` diagnostic: at most 65,536 UTF-8 bytes of the provider's HTTP
+response body, plus a truncation flag. Laravel re-bounds this value and writes
+it only to the default-off shadow log as `shadow_raw_response`. A transport
+failure with no response has a null value. Successful reviews have no raw
+response field in the shadow log. This deliberately mirrors the bounded raw
+failure capture used by the comparison-family reviewer; neither the raw body
+nor its diagnostic code may become an eligibility or user-facing input.

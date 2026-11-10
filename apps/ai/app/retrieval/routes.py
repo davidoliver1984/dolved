@@ -372,7 +372,12 @@ async def review_location_reference_shadow(
     except LocationReferenceReviewError as exception:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,
-            {"code": "location_reference_review_unavailable", "failure_reason": exception.code},
+            {
+                "code": "location_reference_review_unavailable",
+                "failure_reason": exception.code,
+                "raw_response": exception.raw_response,
+                "raw_response_truncated": exception.raw_response_truncated,
+            },
         ) from None
     except ValueError, KeyError, TypeError, httpx.HTTPError:
         raise HTTPException(
