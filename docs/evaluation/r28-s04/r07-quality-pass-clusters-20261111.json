@@ -1,0 +1,57 @@
+{
+  "schema_version": "r07-quality-pass-diagnostic-v1",
+  "review_date": "2026-11-11",
+  "source_run": "docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-CASE49-FULL-20261111-01/",
+  "reviewed_utterances": 148,
+  "distinct_flagged_indices": 14,
+  "classification_note": "The three requested shapes overlap. These are observed answer-quality candidates, not a full semantic-correctness score or proposed fixes. Clarifications and no-answer displays were inspected but do not satisfy a pattern requiring a substantive answer.",
+  "clusters": [
+    {
+      "cluster_id": "Q01",
+      "name": "Requested aspect absent from displayed answer",
+      "shape": "multi_part_omission",
+      "indices": [93, 102, 122, 132],
+      "count": 4,
+      "mechanism": "Generation retained the missing aspect in unsupported_aspects and marked qualified; the published answer rendered answer parts but omitted that gap. Cases 122 and 132 had separate unsupported needs.",
+      "candidate_code_locations": [
+        "apps/api/app/Support/Generation/GenerationResult.php:25",
+        "apps/api/app/Support/Generation/AspectCoverage.php:27",
+        "apps/api/app/Actions/Conversation/OrchestrateConversationRun.php:416"
+      ],
+      "safety_relevant": true,
+      "evidence_note": "93 omits 31 August closure; 102 omits monitoring frequency; 122 omits which group is listed first; 132 omits prior initial-contact and Finance Manager responsibility. All four have corresponding unsupported_aspects metadata."
+    },
+    {
+      "cluster_id": "Q02",
+      "name": "Nearby but different question sense answered",
+      "shape": "off_target_sense",
+      "indices": [21, 51, 52, 84, 96, 102, 108, 145],
+      "count": 8,
+      "mechanism": "The selected evidence supports adjacent material, but the displayed answer substitutes it for the requested personal amount, form number, event time, historical rule, pilot-review role/frequency, or radio-alert action. In 96 the planner itself converts an undated past-use question to a current-policy aspect. The other cases implicate retrieval/ranking and evidence-to-question responsiveness validation; their individual root causes are not asserted to be identical.",
+      "candidate_code_locations": [
+        "apps/ai/app/retrieval/needs_planner.py",
+        "apps/ai/app/generation/openai_adapter.py:48",
+        "apps/ai/app/generation/entailment.py:158",
+        "apps/api/app/Support/Generation/GenerationResult.php:25"
+      ],
+      "safety_relevant": true,
+      "evidence_note": "51/52 ask for a numbered form but get its title; 84/108 ask for a day/time but get incident context; 102 gets alarm-system monitoring instead of pilot review; 145 disclaims a radio-alert rule then gives general emergency/fire guidance. Cases 21 and 96 substitute policy-level rules for a personal amount and an undated past use respectively."
+    },
+    {
+      "cluster_id": "Q03",
+      "name": "Named entity coverage not established",
+      "shape": "generic_rule_for_unverified_entity",
+      "indices": [15, 21, 96, 141, 142],
+      "count": 5,
+      "mechanism": "The answer offers a parent-site, generic, or present-day rule without establishing that the narrower named outreach setting, individual balance, or past personal event is covered. For 141/142, eligibility has null resolved_location_public_id for unregistered Oakfield outreach and proceeds with generic key-safe evidence. The named-site entailment guard only evaluates site-quoted answer sentences with a detected cited condition.",
+      "candidate_code_locations": [
+        "apps/api/app/Services/Retrieval/EligibilityResolver.php:503",
+        "apps/ai/app/generation/entailment.py:180",
+        "apps/ai/app/retrieval/needs_planner.py",
+        "apps/ai/app/generation/openai_adapter.py:80"
+      ],
+      "safety_relevant": true,
+      "evidence_note": "15 displays scope membership for Oakfield Lodge while asked about Oakfield Lodge outreach; 141/142 answer for Oakfield outreach despite null resolved location; 21 lacks individual unused-leave/pay inputs; 96 answers an undated past-use question with current phone rules."
+    }
+  ]
+}
