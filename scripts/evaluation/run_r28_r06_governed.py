@@ -33,7 +33,7 @@ INJECTION_USER = "6972994f-c594-42ef-a747-39d01ae24fc3"
 SCHEMA = "r28-r06-production-authorization-v1"
 STAGES = {"regression": 8, "confirmation": 16, "continuation": 2,
           "full": 148,
-          "r07_case40_retry": 1, "r07_tail": 108, "r07_tail_after_44": 104,
+          "r07_case32_diagnostic": 1, "r07_case40_retry": 1, "r07_tail": 108, "r07_tail_after_44": 104,
           "confirmation_retry": 1, "confirmation_remaining": 12,
           "confirmation_tail": 10,
           "case8_retry": 1, "confirmation_after_case8": 8,
@@ -180,14 +180,17 @@ def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str,
         }[stage]
         manifest = {"manifest_id": manifest_id,
                     "items": selection["confirmation"]["items"][start:stop]}
-    elif stage in {"full", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}:
+    elif stage in {"full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}:
         population = json_file(POPULATION)
         items = [
             {"case_id": case["case_id"], "variant_id": variant["variant_id"], "scope": case["scope"]}
             for case in population["cases"]
             for variant in case["variants"]
         ]
-        if stage == "r07_case40_retry":
+        if stage == "r07_case32_diagnostic":
+            items = items[31:32]
+            manifest_id = "R28-R07-CASE32-DIAGNOSTIC-1-20261111-V1"
+        elif stage == "r07_case40_retry":
             items = items[39:40]
             manifest_id = "R28-R07-CASE40-RETRY-1-20261109-V1"
         elif stage == "r07_tail":
@@ -278,14 +281,14 @@ def verify_authorization(
     }
     if set(authority) != required:
         raise ValueError("authorization fields differ from the governed schema")
-    r07_stage = stage in {"full", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}
+    r07_stage = stage in {"full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}
     expected_schema = "r28-r07-production-authorization-v1" if r07_stage else SCHEMA
     expected_run_prefix = "R28-R07" if r07_stage else "R28-R06"
     expected_auth_prefix = "R28-R07-AUTH" if r07_stage else "R28-R06-AUTH"
     if (
         authority["schema_version"] != expected_schema
         or authority["authorised"] is not True
-        or authority["selective_rerun_authorised"] is not (stage in {"continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case40_retry"})
+        or authority["selective_rerun_authorised"] is not (stage in {"continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case32_diagnostic", "r07_case40_retry"})
         or authority["approved_by"] != "David"
         or authority["stage"] != stage
         or authority["manifest_id"] != manifest_id

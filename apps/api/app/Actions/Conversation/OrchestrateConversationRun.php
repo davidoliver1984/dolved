@@ -39,6 +39,7 @@ use App\Services\Generation\GenerationProfileFactory;
 use App\Services\Retrieval\RetrievalClient;
 use App\Support\Conversation\ContextualisationRequest;
 use App\Support\Conversation\ContextualisationResult;
+use App\Support\Conversation\InternalFailureDiagnostics;
 use App\Support\Generation\AnswerPartResult;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Generation\GenerationRequest;
@@ -233,8 +234,12 @@ final readonly class OrchestrateConversationRun
             $this->fail($runId, $code, [...($run->fresh()->usage ?? []),
                 'generation_validation' => GenerationValidationDiagnostics::local($exception),
                 'generation_validation_attempts' => $exception->validationAttempts]);
-        } catch (Throwable) {
-            $this->fail($runId, GenerationRunFailureCode::InternalFailure);
+        } catch (Throwable $exception) {
+            $diagnostic = InternalFailureDiagnostics::from($exception);
+            $observe?->__invoke('internal_failure', $diagnostic);
+            $priorUsage = isset($run) && $run instanceof GenerationRun ? ($run->usage ?? []) : [];
+            $this->fail($runId, GenerationRunFailureCode::InternalFailure,
+                [...$priorUsage, 'internal_failure' => $diagnostic]);
         }
     }
 

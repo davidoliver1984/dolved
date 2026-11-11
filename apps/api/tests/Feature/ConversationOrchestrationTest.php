@@ -32,6 +32,7 @@ use App\Models\WorkspaceCorpusGenerationChunk;
 use App\Models\WorkspaceMembership;
 use App\Services\Conversation\ChatDeliveryEventRecorder;
 use App\Services\Generation\GenerationProfileFactory;
+use App\Support\Conversation\InternalFailureDiagnostics;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +46,41 @@ use Tests\TestCase;
 class ConversationOrchestrationTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_internal_failure_diagnostic_bounds_and_redacts_exception_message(): void
+    {
+        $diagnostic = InternalFailureDiagnostics::from(new LogicException(
+            'token=abc123 password: open-sesame user@example.org '.str_repeat('x', 800)
+        ));
+        $this->assertSame(LogicException::class, $diagnostic['exception_class']);
+        $this->assertStringContainsString('token=[redacted]', $diagnostic['message']);
+        $this->assertStringContainsString('password=[redacted]', $diagnostic['message']);
+        $this->assertStringContainsString('[redacted-email]', $diagnostic['message']);
+        $this->assertStringNotContainsString('abc123', $diagnostic['message']);
+        $this->assertStringNotContainsString('open-sesame', $diagnostic['message']);
+        $this->assertLessThanOrEqual(600, mb_strlen($diagnostic['message']));
+    }
+
+    public function test_unclassified_exception_is_recorded_in_internal_trace_without_changing_failure_code(): void
+    {
+        Queue::fake();
+        [$user, $workspace] = $this->workspaceFixture();
+        config(['conversation.needs_workspace_ids' => []]);
+        Http::fake(fn () => throw new LogicException('Diagnostic sentinel token=secret-value'));
+        $conversation = app(CreateConversation::class)->handle($workspace, $user);
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, 'Synthetic question', (string) Str::uuid());
+        $trace = [];
+        app(OrchestrateConversationRun::class)->handle($run->id,
+            function (string $stage, mixed $value) use (&$trace): void {
+                $trace[$stage] = $value;
+            });
+        $run->refresh();
+        $this->assertSame(GenerationRunStatus::Failed, $run->status);
+        $this->assertSame(GenerationRunFailureCode::InternalFailure, $run->failure_code);
+        $this->assertSame(LogicException::class, $trace['internal_failure']['exception_class']);
+        $this->assertSame('Diagnostic sentinel token=[redacted]', $trace['internal_failure']['message']);
+        $this->assertSame($trace['internal_failure'], $run->usage['internal_failure']);
+    }
 
     public function test_needs_profile_is_immutable_survives_retry_and_rejects_deployment_drift(): void
     {

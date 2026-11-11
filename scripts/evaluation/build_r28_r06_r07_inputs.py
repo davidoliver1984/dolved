@@ -33,7 +33,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--stage",
-        choices=("regression", "confirmation", "continuation", "confirmation_retry", "confirmation_remaining", "confirmation_tail", "case8_retry", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case5_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "case6_retry", "generic_controls", "full", "r07_case40_retry", "r07_tail", "r07_tail_after_44"),
+        choices=("regression", "confirmation", "continuation", "confirmation_retry", "confirmation_remaining", "confirmation_tail", "case8_retry", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case5_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "case6_retry", "generic_controls", "full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"),
         required=True,
     )
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -56,7 +56,7 @@ def main() -> None:
     if len(cases) != 74:
         raise ValueError("population case count is not 74")
 
-    if args.stage in ("full", "r07_case40_retry", "r07_tail", "r07_tail_after_44"):
+    if args.stage in ("full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"):
         selected = [
             {
                 "case_id": case["case_id"],
@@ -66,7 +66,11 @@ def main() -> None:
             for case in population["cases"]
             for variant in case["variants"]
         ]
-        if args.stage == "r07_case40_retry":
+        if args.stage == "r07_case32_diagnostic":
+            selected = selected[31:32]
+            manifest_id = "R28-R07-CASE32-DIAGNOSTIC-1-20261111-V1"
+            expected_count = 1
+        elif args.stage == "r07_case40_retry":
             selected = selected[39:40]
             manifest_id = "R28-R07-CASE40-RETRY-1-20261109-V1"
             expected_count = 1

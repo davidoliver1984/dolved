@@ -1,0 +1,10 @@
+{
+  "manifest_id": "R28-R07-CASE32-DIAGNOSTIC-1-20261111-V1",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b02-04",
+      "variant_id": "v2",
+      "scope": "primary"
+    }
+  ]
+}

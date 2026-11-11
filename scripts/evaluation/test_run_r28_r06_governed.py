@@ -66,7 +66,7 @@ class R28R06GovernedTest(unittest.TestCase):
                 start, stop = {"case6_retry": (5, 6), "case5_retry": (4, 5), "generic_controls": (0, 3)}[stage]
                 self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][start:stop])
             self.assertEqual(
-            "c4600249902787eca7563c67edc792ea5289a335249fd6ae44f5534d078d04b4",
+            "383a8fe997843b983024aa302fe482df86f0d2e90d2ee0df7564dac07030f689",
                 identities["runtime_source_aggregate"],
             )
 
@@ -135,6 +135,13 @@ class R28R06GovernedTest(unittest.TestCase):
         self.assertEqual(full_scopes["items"][40:], tail_scopes["items"])
         self.assertEqual(1, len(retry["items"]))
         self.assertEqual(108, len(tail["items"]))
+
+    def test_case32_diagnostic_selects_only_the_frozen_v2_utterance(self) -> None:
+        full, full_scopes, _ = governed.verify_inputs("full")
+        diagnostic, diagnostic_scopes, _ = governed.verify_inputs("r07_case32_diagnostic")
+        self.assertEqual(full["items"][31:32], diagnostic["items"])
+        self.assertEqual(full_scopes["items"][31:32], diagnostic_scopes["items"])
+        self.assertEqual("v2", diagnostic["items"][0]["variant_id"])
 
     def test_r07_second_tail_excludes_all_44_attempted_utterances(self) -> None:
         full, full_scopes, _ = governed.verify_inputs("full")
