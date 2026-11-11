@@ -45,6 +45,7 @@ use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Generation\GenerationRequest;
 use App\Support\Generation\GenerationValidationDiagnostics;
 use App\Support\Generation\PreparedGroundedAnswer;
+use App\Support\Generation\UnresolvedNamedCoverageDisclosure;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\RetrievalResult;
 use App\Support\Usage\RecordWorkspaceUsage;
@@ -174,7 +175,7 @@ final readonly class OrchestrateConversationRun
                     $this->recordCandidate($run, $request, $candidate);
                 },
             );
-            $this->completeAnswer($run, $scope, $input->question, $prepared);
+            $this->completeAnswer($run, $scope, $input->question, $prepared, $retrieval->evidenceNeeds);
         } catch (GenerationCancelled) {
             $this->fail($runId, GenerationRunFailureCode::InternalFailure);
         } catch (RetrievalPlannerException $exception) {
@@ -404,16 +405,17 @@ final readonly class OrchestrateConversationRun
         });
     }
 
-    private function completeAnswer(GenerationRun $run, AuthorisedKnowledgeScope $scope, string $question, PreparedGroundedAnswer $prepared): void
+    private function completeAnswer(GenerationRun $run, AuthorisedKnowledgeScope $scope, string $question, PreparedGroundedAnswer $prepared, array $evidenceNeeds): void
     {
-        DB::transaction(function () use ($run, $scope, $question, $prepared): void {
+        DB::transaction(function () use ($run, $scope, $question, $prepared, $evidenceNeeds): void {
             $locked = $this->lockCompletableRun($run);
             if ($locked === null) {
                 return;
             }
             $text = $prepared->result->outcome === GenerationOutcome::InsufficientEvidence
                 ? (string) $prepared->result->insufficiencyReason
-                : $prepared->result->renderedText();
+                : UnresolvedNamedCoverageDisclosure::append(
+                    $prepared->result->renderedText(), $evidenceNeeds);
             $message = $this->assistantMessage($locked, MessageKind::GroundedAnswer, $text);
             $answer = $this->persistence->handle(
                 $scope,
