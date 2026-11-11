@@ -587,6 +587,9 @@ class ConversationOrchestrationTest extends TestCase
         $run->refresh();
         if ($failureCategory !== null) {
             $this->assertSame(GenerationRunStatus::Failed, $run->status);
+            $this->assertSame($failureCategory === 'contract_validation_failure'
+                ? GenerationRunFailureCode::GenerationContractInvalid
+                : GenerationRunFailureCode::ProviderUnavailable, $run->failure_code);
             $this->assertSame($failureCategory === 'PRIVATE-CONTENT' ? 'unknown_generation_failure' : $failureCategory, $run->usage['generation']['category']);
             $this->assertSame($failureStatus === 999 ? null : $failureStatus, $run->usage['generation']['http_status']);
             $this->assertSame($failureCategory === 'contract_validation_failure' ? 'answer_parts.text' : null, $run->usage['generation']['field']);

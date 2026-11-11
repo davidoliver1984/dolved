@@ -219,9 +219,11 @@ final readonly class OrchestrateConversationRun
         } catch (GenerationContextBudgetExceeded $exception) {
             $this->fail($runId, GenerationRunFailureCode::GenerationContextBudgetExceeded);
         } catch (GenerationProviderException $exception) {
-            $code = $exception->category === 'timeout'
-                ? GenerationRunFailureCode::ProviderResponseTimeout
-                : GenerationRunFailureCode::ProviderUnavailable;
+            $code = match ($exception->category) {
+                'timeout' => GenerationRunFailureCode::ProviderResponseTimeout,
+                'contract_validation_failure' => GenerationRunFailureCode::GenerationContractInvalid,
+                default => GenerationRunFailureCode::ProviderUnavailable,
+            };
             $this->fail($runId, $code, [...($run->fresh()->usage ?? []), 'generation' => $exception->safeDiagnostics()]);
         } catch (GenerationStreamException) {
             $this->fail($runId, GenerationRunFailureCode::StreamProtocolFailure);

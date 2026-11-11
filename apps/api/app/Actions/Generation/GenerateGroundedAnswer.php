@@ -69,7 +69,7 @@ final readonly class GenerateGroundedAnswer
         }
         $observeStage?->__invoke('generating');
         $receipts = [];
-        $completedEntailmentRejections = 0;
+        $completedSafetyRejections = 0;
         for ($validationAttempt = 1; $validationAttempt <= 2; $validationAttempt++) {
             $payload = null;
             try {
@@ -120,8 +120,8 @@ final readonly class GenerateGroundedAnswer
                 $exception->validationAttempts = $receipts;
                 if ($providerFailure && $exception->category === 'contract_validation_failure'
                     && $exception->returnedOutput && in_array($diagnostic['code'] ?? null,
-                        ['entailment_unsupported', 'entailment_uncertain'], true)) {
-                    $completedEntailmentRejections++;
+                        ['entailment_unsupported', 'entailment_uncertain', 'citation_ownership'], true)) {
+                    $completedSafetyRejections++;
                 }
                 $eligible = $request->evidenceNeeds !== [] && $profile->deliveryMode === GenerationDeliveryMode::CompleteResultOnly
                     && ($providerFailure
@@ -138,9 +138,10 @@ final readonly class GenerateGroundedAnswer
 
                     continue;
                 }
-                if ($validationAttempt === 2 && $completedEntailmentRejections === 2
+                if ($validationAttempt === 2 && $completedSafetyRejections === 2
                     && $request->evidenceNeeds !== []) {
-                    // Both provider outputs were returned, but neither passed entailment review.
+                    // Both provider outputs were returned, but neither passed
+                    // entailment or per-need citation ownership validation.
                     // Retain the paid attempts and publish no model-authored claim.
                     $gaps = array_column($request->evidenceNeeds, 'aspect');
                     $links = array_map(static fn (int $index, array $need): array => [

@@ -196,7 +196,9 @@ class GroundedGenerationFoundationTest extends TestCase
     public static function exhaustedEntailmentScenarios(): array
     {
         return [['twice_unsupported'], ['twice_uncertain'], ['unsupported_then_uncertain'],
-            ['uncertain_then_unsupported'], ['recovered'], ['uncertain_recovered'],
+            ['uncertain_then_unsupported'], ['uncertain_then_citation_ownership'],
+            ['citation_ownership_then_uncertain'], ['twice_citation_ownership'],
+            ['recovered'], ['uncertain_recovered'],
             ['provider_failure'], ['other_validation']];
     }
 
@@ -244,6 +246,11 @@ class GroundedGenerationFoundationTest extends TestCase
                 $scenario === 'unsupported_then_uncertain' && $calls === 2 => 'entailment_uncertain',
                 $scenario === 'uncertain_then_unsupported' && $calls === 1 => 'entailment_uncertain',
                 $scenario === 'uncertain_recovered' && $calls === 1 => 'entailment_uncertain',
+                $scenario === 'uncertain_then_citation_ownership' && $calls === 1 => 'entailment_uncertain',
+                $scenario === 'uncertain_then_citation_ownership' && $calls === 2 => 'citation_ownership',
+                $scenario === 'citation_ownership_then_uncertain' && $calls === 1 => 'citation_ownership',
+                $scenario === 'citation_ownership_then_uncertain' && $calls === 2 => 'entailment_uncertain',
+                $scenario === 'twice_citation_ownership' => 'citation_ownership',
                 default => 'entailment_unsupported',
             };
 
@@ -251,7 +258,8 @@ class GroundedGenerationFoundationTest extends TestCase
                 'status' => 'provider_error', 'error' => ['category' => 'contract_validation_failure',
                     'provider' => 'openai', 'model' => 'synthetic', 'http_status' => null,
                     'attempt_count' => 1, 'latency_ms' => 10, 'returned_output' => true,
-                    'validation' => ['field' => 'answer_parts.text', 'code' => $code],
+                    'validation' => ['field' => $code === 'citation_ownership'
+                        ? 'answer_parts.evidence_ids' : 'answer_parts.text', 'code' => $code],
                     'usage' => ['request_count' => 2, 'retry_count' => 0, 'input_tokens' => 100,
                         'output_tokens' => 20, 'cached_input_tokens' => 0, 'latency_ms' => 10,
                         'cost_usd' => 0.001, 'pricing_snapshot' => 'test-pricing-v1']]]);
@@ -269,7 +277,9 @@ class GroundedGenerationFoundationTest extends TestCase
                 ? GenerationOutcome::Answered : GenerationOutcome::InsufficientEvidence,
                 $prepared->result->outcome);
             if (in_array($scenario, ['twice_unsupported', 'twice_uncertain',
-                'unsupported_then_uncertain', 'uncertain_then_unsupported'], true)) {
+                'unsupported_then_uncertain', 'uncertain_then_unsupported',
+                'uncertain_then_citation_ownership', 'citation_ownership_then_uncertain',
+                'twice_citation_ownership'], true)) {
                 $this->assertSame([], $prepared->result->answerParts);
                 $this->assertSame(['n1' => 'unsupported'], $prepared->result->aspectResults);
                 $this->assertSame(4, $prepared->result->usage['request_count']);
@@ -283,6 +293,9 @@ class GroundedGenerationFoundationTest extends TestCase
                     'twice_uncertain' => ['entailment_uncertain', 'entailment_uncertain'],
                     'unsupported_then_uncertain' => ['entailment_unsupported', 'entailment_uncertain'],
                     'uncertain_then_unsupported' => ['entailment_uncertain', 'entailment_unsupported'],
+                    'uncertain_then_citation_ownership' => ['entailment_uncertain', 'citation_ownership'],
+                    'citation_ownership_then_uncertain' => ['citation_ownership', 'entailment_uncertain'],
+                    'twice_citation_ownership' => ['citation_ownership', 'citation_ownership'],
                     default => ['entailment_unsupported', 'entailment_unsupported'],
                 };
                 $this->assertSame($expectedCodes, array_column(array_map(
