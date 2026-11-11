@@ -114,7 +114,9 @@ _SITE_CONDITION = re.compile(
     re.IGNORECASE,
 )
 _SENTENCE = re.compile(r"(?<=[.!?])\s+|\n+")
-_ALARM = re.compile(r"\balarm\b", re.IGNORECASE)
+_UNSPECIFIED_SAFETY_SIGNAL = re.compile(
+    r"\b(?:alarm|(?:radio|emergency)\s+alert)\b", re.IGNORECASE
+)
 _FIRE_TRIGGER = re.compile(r"\b(?:fire|smoke|smoking|flames|burning)\b", re.IGNORECASE)
 _FIRE_ACTION = re.compile(
     r"\b(?:fire brigade|fire service|fire warden(?:s)?|evacuat(?:e|ion|ing))\b",
@@ -161,7 +163,9 @@ def conditional_obligation_guard(
     # A cited fire procedure proves what to do for a fire alarm, not that an
     # unspecified alarm in the user's question was a fire alarm. Keep the
     # retrieval candidates intact; reject only categorical fire-action claims.
-    if _ALARM.search(request.question) and not _FIRE_TRIGGER.search(request.question):
+    if _UNSPECIFIED_SAFETY_SIGNAL.search(request.question) and not _FIRE_TRIGGER.search(
+        request.question
+    ):
         for index, part in enumerate(output.answer_parts):
             for answer_sentence in _SENTENCE.split(part.text):
                 if _FIRE_ACTION.search(answer_sentence) and not _FIRE_CONDITION.search(

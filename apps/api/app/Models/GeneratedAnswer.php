@@ -56,15 +56,8 @@ class GeneratedAnswer extends Model
             return (string) $this->insufficiency_reason;
         }
 
-        if ($this->scope_facts !== null) {
-            return (new GenerationResult($this->outcome,
-                $this->answerParts->map(fn ($part) => new AnswerPartResult($part->text, []))->all(),
-                $this->unsupported_aspects, $this->insufficiency_reason, scopeFacts: $this->scope_facts))->renderedText();
-        }
-        $text = $this->answerParts()
-            ->pluck('text')
-            ->implode("\n\n");
-
-        return $text;
+        return (new GenerationResult($this->outcome,
+            $this->answerParts->map(fn ($part) => new AnswerPartResult($part->text, []))->all(),
+            $this->unsupported_aspects, $this->insufficiency_reason, scopeFacts: $this->scope_facts ?? []))->renderedText();
     }
 }

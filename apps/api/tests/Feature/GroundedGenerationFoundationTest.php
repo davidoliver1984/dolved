@@ -443,6 +443,8 @@ class GroundedGenerationFoundationTest extends TestCase
         $this->assertSame($result->aspectLinks, $answer->aspect_links);
         $this->assertSame($result->aspectResults, $answer->aspect_results);
         $this->assertSame($result->renderedText(), $answer->renderedText());
+        $this->assertStringContainsString('Unconfirmed requested aspects', $answer->renderedText());
+        $this->assertStringContainsString('The historical change is not established.', $answer->renderedText());
         $this->assertCount(1, $answer->evidenceSnapshots);
     }
 

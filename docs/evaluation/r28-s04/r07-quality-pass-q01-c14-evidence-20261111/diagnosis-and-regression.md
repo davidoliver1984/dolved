@@ -1,0 +1,21 @@
+# R07 Q01 display gap and case-145 safety-trigger diagnosis
+
+Base HEAD: `1d3e39ab9b71104f9001e9f21756490732b8b357`. The two pre-existing tracked documentation edits (`docs/adr/0039-define-authorised-applicability-scope-facts.md` and `docs/evaluation/r28-s04/production-repair-plan.md`) were left untouched. Runtime-source aggregate before these changes was `71910561e37b2aee523252ad938496863c73c931a7b7fac2f1765d81ef77568f`; after the bounded changes it is `758291ed3179ea18aa39aaef61b2cda345e5e77be225f66cef9b939d28c0c70e`.
+
+## Diagnosis before change
+
+Q01: cases 93, 102, 122 and 132 each persisted a qualified generation result with a specific `unsupported_aspects` entry. `GenerationResult::renderedText()` returned only answer parts, while `GeneratedAnswer::renderedText()` bypassed that renderer entirely when `scope_facts` was null. The published text therefore omitted a gap the contract had already detected. The correction routes persisted answers through the same renderer and appends the already-computed gaps only for `GenerationOutcome::Qualified`. Answered and controlled no-answer outcomes remain unchanged; no retrieval or generation decision was changed.
+
+Case 145: its question says “life-threatening emergency radio alert,” not “alarm.” `conditional_obligation_guard()` entered the categorical-fire-action check only when the *question* matched `\balarm\b`, so it never evaluated the fire actions in the answer. The answer's initial disclosure did not itself condition the later fire-brigade/evacuation instructions on this being a fire alert. The narrow deterministic generalization recognises an unspecified radio/emergency alert as an ambiguous safety signal. It still permits fire guidance if the question explicitly identifies fire, or if the answer expressly conditions the fire actions on a fire alarm; generic non-fire guidance remains outside the fire-action check. Retrieval candidates and prompt text are unchanged.
+
+## Provider-free verification
+
+- AI `tests/test_generation_entailment.py`: 16/16 passed, including the exact case-145 question shape, another emergency-alert wording, an explicit fire-radio-alert control, and conditional fire guidance.
+- Laravel `GenerationResultRenderingTest`: 5/5 passed for the four Q01 gap shapes and an answered-result control. The persistence-level `GroundedGenerationFoundationTest::test_v2_coverage_persists_with_the_authoritative_text_and_citation` also passed after the persisted-answer renderer was brought into line.
+- Ruff format check: all AI files inspected, including the final touched source/test files, passed. Pint format check: 4 touched Laravel files passed.
+
+## Full-suite attribution
+
+Raw JUnit XML is in `tests/`. AI's full command stops during collection at the same three pre-existing `IndexError: 3` errors in both trees (`test_r28_frozen_population_evaluation.py`, `test_r28_s03_materialisation.py`, `test_r28_s04_live_preflight.py`). To exercise the rest of the suite, a second clean-HEAD/changed-tree pair ignored exactly those three collection-blocked files: baseline 104 failed, 1010 passed, 4 skipped; changed tree 104 failed, 1014 passed, 4 skipped. The exact 104 failing-test-name sets are identical, with no added or removed names; the four new AI guard cases account for the pass increase. The three AI edits alone were temporarily stashed for the baseline and restored immediately; unrelated edits were untouched. The direct PHPUnit command with a 512 MB CLI ceiling ran completely: clean HEAD 816 tests, 5 errors and 10 failures; changed tree 821 tests, 5 errors and 10 failures. Its exact 15 failing-test-name sets are also identical. The additional Laravel rendering tests and persistence assertion account for the changed test count. A first changed-tree pass exposed the previously bypassed persisted renderer (`laravel-intermediate-render-path.xml`); that new failure was corrected before the final run. The ordinary `artisan test` baseline hit an unrelated 128 MB child-process limit and is preserved as `laravel-clean-head.xml`; the complete direct-PHPUnit baseline and changed-tree XML are the comparison pair.
+
+No live provider call was made in this correction. Q02 other than case 145, and Q03, remain held for later work.

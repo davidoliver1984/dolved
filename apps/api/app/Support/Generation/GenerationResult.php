@@ -31,10 +31,16 @@ final readonly class GenerationResult
             $parts[] = 'No operational evidence was available for the other requested aspect. The scope statement does not answer that operational question.';
         }
 
-        if ($scope !== [] && $parts !== []) {
-            return "Recorded policy scope\n\n".implode("\n\n", $scope)."\n\nOther requested guidance\n\n".implode("\n\n", $parts);
+        $body = $scope !== [] && $parts !== []
+            ? "Recorded policy scope\n\n".implode("\n\n", $scope)."\n\nOther requested guidance\n\n".implode("\n\n", $parts)
+            : implode("\n\n", [...$scope, ...$parts]);
+
+        if ($this->outcome !== GenerationOutcome::Qualified || $this->unsupportedAspects === []) {
+            return $body;
         }
 
-        return implode("\n\n", [...$scope, ...$parts]);
+        $gaps = array_map(fn (string $aspect): string => '- '.trim($aspect), $this->unsupportedAspects);
+
+        return $body."\n\nUnconfirmed requested aspects\n\n".implode("\n", $gaps);
     }
 }

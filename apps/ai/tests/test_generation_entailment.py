@@ -210,3 +210,36 @@ def test_other_alarm_type_does_not_license_fire_response():
     )
     with pytest.raises(EntailmentRejection):
         conditional_obligation_guard(incoming, output)
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "What action are all on-duty staff required to take when our life-threatening emergency radio alert is broadcast?",
+        "When an emergency alert sounds, what should everyone do?",
+    ],
+)
+def test_unspecified_alert_cannot_trigger_categorical_fire_response(question):
+    incoming, output = alarm_scenario(
+        question,
+        "The alert type is not established. On hearing a fire alarm, evacuate residents; call the fire brigade immediately.",
+    )
+    with pytest.raises(EntailmentRejection) as error:
+        conditional_obligation_guard(incoming, output)
+    assert error.value.code == "entailment_uncertain"
+
+
+def test_explicit_fire_radio_alert_allows_fire_guidance():
+    incoming, output = alarm_scenario(
+        "A radio alert reports a fire at Riverside House. What should staff do?",
+        "Call the fire brigade and evacuate residents immediately.",
+    )
+    conditional_obligation_guard(incoming, output)
+
+
+def test_unspecified_radio_alert_allows_conditioned_fire_guidance():
+    incoming, output = alarm_scenario(
+        "A radio alert sounded at Riverside House. What should staff do?",
+        "If this is a fire alarm, call the fire brigade and evacuate residents.",
+    )
+    conditional_obligation_guard(incoming, output)
