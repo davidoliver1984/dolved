@@ -17,6 +17,7 @@ use App\Exceptions\GenerationProviderException;
 use App\Exceptions\GenerationStreamException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
+use App\Models\GeneratedAnswer;
 use App\Models\IngestionEventClaim;
 use App\Models\User;
 use App\Models\Workspace;
@@ -446,6 +447,36 @@ class GroundedGenerationFoundationTest extends TestCase
         $this->assertStringContainsString('Unconfirmed requested aspects', $answer->renderedText());
         $this->assertStringContainsString('The historical change is not established.', $answer->renderedText());
         $this->assertCount(1, $answer->evidenceSnapshots);
+    }
+
+    public function test_reloaded_qualified_answer_suppresses_binary_claim_linked_to_unsupported_aspect(): void
+    {
+        [$input] = $this->assemblyFixture();
+        $request = app(AssembleGenerationRequest::class)->handle($input);
+        $gap = 'Whether Alderbridge operates a regular staff shuttle is not established by the supplied documents.';
+        $result = new GenerationResult(
+            GenerationOutcome::Qualified,
+            [new AnswerPartResult('No — the supplied documents do not describe a regular staff shuttle.', ['ev-01'])],
+            [$gap],
+            null,
+            aspectLinks: [[
+                'need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => [0],
+            ]],
+            aspectResults: ['n1' => 'partial'],
+        );
+        $fingerprint = app(GenerationFingerprint::class)->make(
+            'deterministic', 'contract-fake', 'generation-result-v3', 'test-only', 'test-only', [],
+        );
+        $persisted = app(PersistGeneratedAnswer::class)->handle(
+            $input->authorisedScope, $input->question, (string) Str::uuid(), $request, $result, $fingerprint,
+        );
+        $reloaded = GeneratedAnswer::query()->findOrFail($persisted->id);
+
+        $this->assertSame($result->aspectLinks, $reloaded->aspect_links);
+        $this->assertSame($result->aspectResults, $reloaded->aspect_results);
+        $this->assertSame("Unconfirmed requested aspects\n\n- ".$gap, $reloaded->renderedText());
+        $this->assertCount(1, $reloaded->answerParts);
+        $this->assertCount(1, $reloaded->evidenceSnapshots);
     }
 
     public static function invalidNeedsCitations(): array

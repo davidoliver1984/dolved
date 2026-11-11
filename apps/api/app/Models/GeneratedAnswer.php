@@ -58,6 +58,8 @@ class GeneratedAnswer extends Model
 
         return (new GenerationResult($this->outcome,
             $this->answerParts->map(fn ($part) => new AnswerPartResult($part->text, []))->all(),
-            $this->unsupported_aspects, $this->insufficiency_reason, scopeFacts: $this->scope_facts ?? []))->renderedText();
+            $this->unsupported_aspects, $this->insufficiency_reason,
+            aspectLinks: $this->aspect_links ?? [], aspectResults: $this->aspect_results ?? [],
+            scopeFacts: $this->scope_facts ?? []))->renderedText();
     }
 }

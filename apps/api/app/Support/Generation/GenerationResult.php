@@ -26,7 +26,12 @@ final readonly class GenerationResult
     {
         $scope = array_map(fn (array $fact): string => (new ApplicabilityScopeFact($fact))->renderedText(), $this->scopeFacts);
 
-        $parts = array_map(fn (AnswerPartResult $part): string => $part->text, $this->answerParts);
+        $parts = [];
+        foreach ($this->answerParts as $index => $part) {
+            if (! $this->isUnsupportedBinaryPart($index, $part)) {
+                $parts[] = $part->text;
+            }
+        }
         if ($scope !== [] && $parts === [] && $this->unsupportedAspects !== []) {
             $parts[] = 'No operational evidence was available for the other requested aspect. The scope statement does not answer that operational question.';
         }
@@ -41,6 +46,24 @@ final readonly class GenerationResult
 
         $gaps = array_map(fn (string $aspect): string => '- '.trim($aspect), $this->unsupportedAspects);
 
-        return $body."\n\nUnconfirmed requested aspects\n\n".implode("\n", $gaps);
+        $disclosure = "Unconfirmed requested aspects\n\n".implode("\n", $gaps);
+
+        return $body === '' ? $disclosure : $body."\n\n".$disclosure;
+    }
+
+    private function isUnsupportedBinaryPart(int $index, AnswerPartResult $part): bool
+    {
+        if ($this->outcome !== GenerationOutcome::Qualified
+            || preg_match('/^\s*(?:yes|no)\s*[,\x{2013}\x{2014}:!-]/iu', $part->text) !== 1) {
+            return false;
+        }
+
+        $owners = array_values(array_filter($this->aspectLinks,
+            static fn (array $link): bool => in_array($index, $link['answer_part_indices'] ?? [], true)));
+
+        // A binary assertion cannot be shown as the answer to a need whose
+        // requested fact the same result explicitly says is unestablished.
+        // Do not suppress a part shared with another, independently supported need.
+        return count($owners) === 1 && ($owners[0]['unsupported_aspect_indices'] ?? []) !== [];
     }
 }

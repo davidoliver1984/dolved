@@ -49,4 +49,56 @@ final class GenerationResultRenderingTest extends TestCase
 
         $this->assertSame('The supported answer.', $result->renderedText());
     }
+
+    public function test_qualified_binary_answer_cannot_contradict_its_own_unsupported_aspect(): void
+    {
+        $gap = 'Whether a regular staff shuttle operates is not established by the supplied documents.';
+        $result = new GenerationResult(
+            GenerationOutcome::Qualified,
+            [new AnswerPartResult('No — the supplied documents do not describe a staff shuttle.', ['ev-01'])],
+            [$gap],
+            null,
+            aspectLinks: [[
+                'need_id' => 'n1',
+                'answer_part_indices' => [0],
+                'unsupported_aspect_indices' => [0],
+            ]],
+            aspectResults: ['n1' => 'partial'],
+        );
+
+        $this->assertSame("Unconfirmed requested aspects\n\n- ".$gap, $result->renderedText());
+    }
+
+    public function test_binary_part_for_separately_supported_need_is_preserved(): void
+    {
+        $result = new GenerationResult(
+            GenerationOutcome::Qualified,
+            [new AnswerPartResult('No — the current policy excludes that exception.', ['ev-01'])],
+            ['The separate historical rule is not established.'],
+            null,
+            aspectLinks: [
+                ['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []],
+                ['need_id' => 'n2', 'answer_part_indices' => [], 'unsupported_aspect_indices' => [0]],
+            ],
+            aspectResults: ['n1' => 'supported', 'n2' => 'unsupported'],
+        );
+
+        $this->assertStringStartsWith('No — the current policy excludes that exception.', $result->renderedText());
+    }
+
+    public function test_non_binary_partial_guidance_is_preserved(): void
+    {
+        $result = new GenerationResult(
+            GenerationOutcome::Qualified,
+            [new AnswerPartResult('The policy describes pool cars for community visits.', ['ev-01'])],
+            ['Whether a staff shuttle operates is not established.'],
+            null,
+            aspectLinks: [[
+                'need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => [0],
+            ]],
+            aspectResults: ['n1' => 'partial'],
+        );
+
+        $this->assertStringStartsWith('The policy describes pool cars for community visits.', $result->renderedText());
+    }
 }
