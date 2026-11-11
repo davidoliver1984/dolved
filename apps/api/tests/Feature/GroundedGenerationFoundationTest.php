@@ -33,8 +33,10 @@ use App\Support\Generation\GenerationProfile;
 use App\Support\Generation\GenerationRequest;
 use App\Support\Generation\GenerationResult;
 use App\Support\Generation\GenerationValidationDiagnostics;
+use App\Support\Generation\ValidationAttemptUsage;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\RetrievalResult;
+use App\Support\Usage\RecordWorkspaceUsage;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -48,6 +50,16 @@ use Tests\TestCase;
 class GroundedGenerationFoundationTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_combined_paid_rejections_without_pricing_identity_degrade_to_unavailable_cost(): void
+    {
+        $receipt = ValidationAttemptUsage::receipt(['request_count' => 1,
+            'input_tokens' => 100, 'output_tokens' => 20, 'cost_usd' => 0.001]);
+        $combined = ValidationAttemptUsage::combine([$receipt, $receipt]);
+        $this->assertNull($combined['cost_usd']);
+        $this->assertNull($combined['pricing_snapshot']);
+        $this->assertSame('unavailable', $combined['cost_basis']);
+    }
 
     public function test_needs_evidence_keeps_authored_banner_and_adds_resolved_current_status(): void
     {
@@ -241,7 +253,8 @@ class GroundedGenerationFoundationTest extends TestCase
                     'attempt_count' => 1, 'latency_ms' => 10, 'returned_output' => true,
                     'validation' => ['field' => 'answer_parts.text', 'code' => $code],
                     'usage' => ['request_count' => 2, 'retry_count' => 0, 'input_tokens' => 100,
-                        'output_tokens' => 20, 'cached_input_tokens' => 0, 'latency_ms' => 10, 'cost_usd' => 0.001]]]);
+                        'output_tokens' => 20, 'cached_input_tokens' => 0, 'latency_ms' => 10,
+                        'cost_usd' => 0.001, 'pricing_snapshot' => 'test-pricing-v1']]]);
         });
         if (in_array($scenario, ['provider_failure', 'other_validation'], true)) {
             try {
@@ -261,6 +274,11 @@ class GroundedGenerationFoundationTest extends TestCase
                 $this->assertSame(['n1' => 'unsupported'], $prepared->result->aspectResults);
                 $this->assertSame(4, $prepared->result->usage['request_count']);
                 $this->assertSame(0.002, $prepared->result->usage['cost_usd']);
+                $this->assertSame('test-pricing-v1', $prepared->result->usage['pricing_snapshot']);
+                app(RecordWorkspaceUsage::class)->usage($input->authorisedScope->workspace->id,
+                    'generation_run', (string) Str::uuid(), [[...$prepared->result->usage,
+                        'stage' => 'generation', 'provider' => 'openai', 'model' => 'synthetic',
+                        'execution' => 'provider_api']]);
                 $expectedCodes = match ($scenario) {
                     'twice_uncertain' => ['entailment_uncertain', 'entailment_uncertain'],
                     'unsupported_then_uncertain' => ['entailment_unsupported', 'entailment_uncertain'],
@@ -313,7 +331,8 @@ class GroundedGenerationFoundationTest extends TestCase
                 throw new ConnectionException('synthetic transport failure');
             }
             $usage = ['request_count' => 1, 'retry_count' => 0, 'input_tokens' => 100,
-                'output_tokens' => 20, 'cached_input_tokens' => 0, 'latency_ms' => 10, 'cost_usd' => 0.001];
+                'output_tokens' => 20, 'cached_input_tokens' => 0, 'latency_ms' => 10,
+                'cost_usd' => 0.001, 'pricing_snapshot' => 'test-pricing-v1'];
             if ($scenario === 'remote_then_valid' && $count === 1) {
                 return Http::response(['contract_version' => 2, 'request_id' => $sent->data()['request_id'],
                     'status' => 'provider_error', 'error' => ['category' => 'contract_validation_failure',

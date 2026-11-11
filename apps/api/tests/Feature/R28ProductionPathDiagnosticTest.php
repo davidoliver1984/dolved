@@ -143,6 +143,9 @@ final class R28ProductionPathDiagnosticTest extends TestCase
         $this->assertArrayNotHasKey('chunk_text', $selected[0]);
         $plan = ['decision' => 'answer', 'clarification' => null, 'needs' => [['need_id' => 'n1']]];
         $this->assertSame($plan, $project->invoke($action, 'needs_plan', $plan));
+        $this->assertSame(['exception_class' => 'InvalidArgumentException', 'message' => 'Safe detail.'],
+            $project->invoke($action, 'internal_failure', ['exception_class' => 'InvalidArgumentException',
+                'message' => 'Safe detail.', 'raw_payload' => 'must not persist']));
         $this->assertNull($project->invoke($action, 'unrecognised_stage', ['raw' => 'data']));
     }
 

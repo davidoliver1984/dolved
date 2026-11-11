@@ -15,6 +15,8 @@ final class ValidationAttemptUsage
         }
         $out['request_count'] ??= 1;
         $out['retry_count'] ??= 0;
+        $snapshot = $usage['pricing_snapshot'] ?? null;
+        $out['pricing_snapshot'] = is_string($snapshot) && trim($snapshot) !== '' ? $snapshot : null;
         $out['cost_basis'] = $out['cost_usd'] === null ? 'unavailable' : 'estimated';
 
         return $out;
@@ -29,6 +31,15 @@ final class ValidationAttemptUsage
         }
         $out['retry_count'] = max(0, ($out['request_count'] ?? 1) - 1);
         $out['validation_retry_count'] = count($receipts) - 1;
+        $snapshots = array_column($receipts, 'pricing_snapshot');
+        $out['pricing_snapshot'] = count($snapshots) === count($receipts)
+            && count(array_unique($snapshots)) === 1
+            && is_string($snapshots[0]) && trim($snapshots[0]) !== ''
+                ? $snapshots[0] : null;
+        if ($out['cost_usd'] !== null && $out['pricing_snapshot'] === null) {
+            // Without a common pricing basis, a summed estimate is not auditable.
+            $out['cost_usd'] = null;
+        }
         $out['cost_basis'] = $out['cost_usd'] === null ? 'unavailable' : 'estimated';
         $out['validation_attempts'] = $receipts;
 

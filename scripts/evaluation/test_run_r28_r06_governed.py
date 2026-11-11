@@ -66,7 +66,7 @@ class R28R06GovernedTest(unittest.TestCase):
                 start, stop = {"case6_retry": (5, 6), "case5_retry": (4, 5), "generic_controls": (0, 3)}[stage]
                 self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][start:stop])
             self.assertEqual(
-            "383a8fe997843b983024aa302fe482df86f0d2e90d2ee0df7564dac07030f689",
+            "db6a5cf201ee6fcadcc07065f080923b3de3e78efccf3cec865757dac6b6e36e",
                 identities["runtime_source_aggregate"],
             )
 

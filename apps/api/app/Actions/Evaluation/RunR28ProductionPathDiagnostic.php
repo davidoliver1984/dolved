@@ -232,6 +232,10 @@ final readonly class RunR28ProductionPathDiagnostic
         if ($stage === 'generation_input') {
             return collect($value)->only(['evidence'])->all();
         }
+        if ($stage === 'internal_failure') {
+            // The orchestrator has already bounded and redacted these fields.
+            return collect($value)->only(['exception_class', 'message'])->all();
+        }
         if (in_array($stage, ['search', 'hydrated', 'reranked'], true)) {
             $candidates = $stage === 'search' ? ($value['candidates'] ?? [])
                 : ($stage === 'reranked' ? ($value['candidates'] ?? []) : $value);
