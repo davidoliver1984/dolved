@@ -42,7 +42,12 @@ class EntailmentReview(BaseModel):
 
 ENTAILMENT_INSTRUCTIONS = """You are a separate evidence-to-claim reviewer, not an answerer.
 For each answer part, examine EVERY material factual claim against only that part's
-cited passages and the application-resolved metadata supplied with those passages.
+cited passages, the user's question, and the application-resolved metadata supplied
+with those passages. Evidence that describes one kind of alarm does not establish
+that an alarm of unspecified kind in the question is that kind. Categorical
+trigger-specific safety instructions require the trigger to be established by the
+question or resolved facts; an explicit conditional answer can instead remain
+conditional. Never infer a trigger merely from the retrieved document's topic.
 Return exactly one verdict per part. Mark supported only if every material claim
 follows, including every condition attached to a duty, named-site applicability,
 temporal status, negation and quantifier. A universal manual does not establish
@@ -64,7 +69,17 @@ def review_input(
         [
             {
                 "part_index": index,
+                "user_question": request.question,
                 "claim_text": part.text,
+                "requested_aspects": [
+                    need.aspect
+                    for need in request.evidence_needs
+                    if any(
+                        link.need_id == need.need_id
+                        and index in link.answer_part_indices
+                        for link in output.aspect_links
+                    )
+                ],
                 "cited_passages": [
                     {
                         "evidence_id": handle,
@@ -99,6 +114,17 @@ _SITE_CONDITION = re.compile(
     re.IGNORECASE,
 )
 _SENTENCE = re.compile(r"(?<=[.!?])\s+|\n+")
+_ALARM = re.compile(r"\balarm\b", re.IGNORECASE)
+_FIRE_TRIGGER = re.compile(r"\b(?:fire|smoke|smoking|flames|burning)\b", re.IGNORECASE)
+_FIRE_ACTION = re.compile(
+    r"\b(?:fire brigade|fire service|fire warden(?:s)?|evacuat(?:e|ion|ing))\b",
+    re.IGNORECASE,
+)
+_FIRE_CONDITION = re.compile(
+    r"\b(?:if|when|assuming|in the event that)\b[^.!?;]{0,120}"
+    r"\b(?:fire|smoke|flames|burning)\b",
+    re.IGNORECASE,
+)
 _TERMS = re.compile(r"[a-z]{4,}")
 _STOP = frozenset(
     {
@@ -132,6 +158,20 @@ def conditional_obligation_guard(
     No substring match against a list of locations grants applicability.
     """
     evidence = {item.evidence_id: item for item in request.evidence}
+    # A cited fire procedure proves what to do for a fire alarm, not that an
+    # unspecified alarm in the user's question was a fire alarm. Keep the
+    # retrieval candidates intact; reject only categorical fire-action claims.
+    if _ALARM.search(request.question) and not _FIRE_TRIGGER.search(request.question):
+        for index, part in enumerate(output.answer_parts):
+            for answer_sentence in _SENTENCE.split(part.text):
+                if _FIRE_ACTION.search(answer_sentence) and not _FIRE_CONDITION.search(
+                    answer_sentence
+                ):
+                    raise EntailmentRejection(
+                        "entailment_uncertain",
+                        index,
+                        "the kind of alarm was not established",
+                    )
     for index, part in enumerate(output.answer_parts):
         owners = [
             need

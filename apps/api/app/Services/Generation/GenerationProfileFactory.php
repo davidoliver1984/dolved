@@ -65,7 +65,7 @@ final class GenerationProfileFactory
         $base = $this->configured();
 
         return new GenerationProfile($base->provider, $base->model, 'generation-result-v3',
-            'grounded-generation-needs-v8', 'openai-responses-needs-v4',
+            'grounded-generation-needs-v9', 'openai-responses-needs-v4',
             GenerationDeliveryMode::CompleteResultOnly, $base->qualityAffectingConfiguration);
     }
 

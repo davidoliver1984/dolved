@@ -42,7 +42,7 @@ MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
 ADAPTER_VERSION = "openai-responses-v3-claim-type"
 NEEDS_CONTRACT_VERSION = "generation-result-v3"
-NEEDS_PROMPT_VERSION = "grounded-generation-needs-v8"
+NEEDS_PROMPT_VERSION = "grounded-generation-needs-v9"
 NEEDS_ADAPTER_VERSION = "openai-responses-needs-v4"
 NEEDS_INSTRUCTIONS = """
 Answer directly with an evidence-supported statement. If an answer part starts with
@@ -80,6 +80,11 @@ unsupported_aspect_indices MUST identify an explicit limitation for that exact n
 Never count a supported answer for a different need as resolving this gap.
 Assess whether the actual content supports each requested aspect. Policy text does
 not prove personal completion, an individual's record or local feasibility.
+Keep an unspecified safety trigger unspecified. If the user says only "an alarm",
+fire-alarm evidence may support conditional fire guidance, but does not prove
+that this alarm is a fire alarm. Ask what kind of alarm it is or explicitly say
+"if this is a fire alarm" before giving fire-specific actions; do not present
+those actions as categorical instructions for every alarm.
 Authorised and version-paired does NOT mean responsive to the requested subject.
 Before answering each need, check its requested document/topic against the supplied
 document_title, document_family_title and passage content. These names are evidence

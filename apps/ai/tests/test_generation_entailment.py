@@ -9,6 +9,7 @@ from app.generation.entailment import (
     EntailmentReview,
     PartEntailment,
     conditional_obligation_guard,
+    review_input,
 )
 from app.generation.errors import GenerationProviderFailure
 from app.generation.needs_output import OpenAIGenerationNeedsOutput
@@ -153,3 +154,59 @@ def test_absent_obligation_is_blocked_by_independent_review():
         adapter.generate_needs(incoming)
     assert error.value.error.validation.code == "entailment_unsupported"
     assert len(responses.calls) == 2
+
+
+def alarm_scenario(question: str, answer: str):
+    incoming, output = scenario(
+        "If the fire alarm sounds, call the fire brigade and evacuate residents.",
+        answer,
+    )
+    raw = incoming.model_dump(mode="json")
+    raw["question"] = question
+    raw["evidence_needs"][0]["aspect"] = "What should staff do about the alarm?"
+    return GenerationNeedsRequest.model_validate(raw), output
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "An alarm sounded overnight at Riverside House. What should I do?",
+        "I've been alerted to an alarm at Riverside House — what procedure follows?",
+    ],
+)
+def test_unspecified_alarm_cannot_trigger_categorical_fire_response(question):
+    incoming, output = alarm_scenario(
+        question, "Call the fire brigade and evacuate residents immediately."
+    )
+    with pytest.raises(EntailmentRejection) as error:
+        conditional_obligation_guard(incoming, output)
+    assert error.value.code == "entailment_uncertain"
+    assert error.value.missing_condition == "the kind of alarm was not established"
+
+
+def test_explicit_fire_alarm_allows_fire_response():
+    incoming, output = alarm_scenario(
+        "The fire alarm sounded at Riverside House. What should I do?",
+        "Call the fire brigade and evacuate residents immediately.",
+    )
+    conditional_obligation_guard(incoming, output)
+
+
+def test_unspecified_alarm_allows_conditional_fire_guidance():
+    incoming, output = alarm_scenario(
+        "An alarm sounded at Riverside House. What should I do?",
+        "If it is a fire alarm, call the fire brigade and evacuate residents.",
+    )
+    conditional_obligation_guard(incoming, output)
+    assert '"user_question":"An alarm sounded at Riverside House.' in review_input(
+        incoming, output
+    )
+
+
+def test_other_alarm_type_does_not_license_fire_response():
+    incoming, output = alarm_scenario(
+        "The burglar alarm sounded at Riverside House. What should I do?",
+        "Call the fire brigade and evacuate residents immediately.",
+    )
+    with pytest.raises(EntailmentRejection):
+        conditional_obligation_guard(incoming, output)
