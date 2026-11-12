@@ -1,0 +1,21 @@
+{
+  "schema_version": "r28-r07-production-authorization-v1",
+  "authorization_id": "R28-R07-AUTH-BLOCK1-REFERENCE-BINDING-20261112-01",
+  "run_id": "R28-R07-BLOCK1-REFERENCE-BINDING-20261112-01",
+  "stage": "block1_references",
+  "manifest_id": "R28-BLOCK1-REFERENCE-BINDING-SIX-20261112-V1",
+  "authorised": true,
+  "selective_rerun_authorised": true,
+  "approved_by": "David",
+  "approved_on": "2026-11-12",
+  "approval_basis": "David authorized deterministic organisation/catalogue reference classification, focused commits/pushes and this frozen six-input production check once each, USD 2 cap. Two development regressions plus four new wordings. Existing two-attempt/checker/permission/authority controls unchanged. Stop for tenancy/authority/citation violation, unsupported categorical claim, operational failure or retry-triggering false checker flag. Review all unverifiable flags. No selective rerun. Full-suite exact failure sets match 38 AI / 2 Laravel and 21 harness tests pass. Runner fixed stage is hash-bound, with mixed pre-existing edits preserved.",
+  "execution_commit": "279cebe1838140a3dee8067ffd741d987fafd274",
+  "selection_sha256": "9291d76dd754ff09d6f2e4d154845bd95be032ff978803e443d0786f7a37587c",
+  "input_sha256": "9291d76dd754ff09d6f2e4d154845bd95be032ff978803e443d0786f7a37587c",
+  "scopes_sha256": "91317be1784b78195f3d20b0e9bde6723ea15cbfd503d93a127862372167b0f2",
+  "population_sha256": "9291d76dd754ff09d6f2e4d154845bd95be032ff978803e443d0786f7a37587c",
+  "dispatcher_sha256": "105e91a566af3dabe3d11544f9bebbbe60621d34ed51ab19a31f194741218a9a",
+  "runner_sha256": "ae2c98d07b4d1277a00ef754eea2667a2bada6c334182598025595e26cd890da",
+  "runtime_source_aggregate": "227e3f7068f74daf71ede100214e940cce2de1c8a421bbced3d8f60f7dbec751",
+  "runtime_snapshot_sha256": "f271c1ac843e53aaa16f6f0c70f6f3b642499d69dac2467d17e80c42f280d792"
+}

@@ -1,0 +1,12 @@
+{"index": 0, "case_id": "block1.citations-service", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T19:05:40.877525+00:00"}
+{"index": 0, "case_id": "block1.citations-service", "variant_id": "v1", "event": "recorded", "sha256": "73938d02366752714bed02db50ca9c9bea9eb5ade64d509a515b4a8e091e26cd", "at": "2026-11-12T19:06:04.393739+00:00"}
+{"index": 1, "case_id": "block1.relative-current-quarter", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T19:06:46.082565+00:00"}
+{"index": 1, "case_id": "block1.relative-current-quarter", "variant_id": "v1", "event": "recorded", "sha256": "bf6ca748af1fb218fb558df6aae74f1067fd7df9b6bd595cf9ec22e84d08ad1b", "at": "2026-11-12T19:07:21.453461+00:00"}
+{"index": 2, "case_id": "block1.reference-organisation", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T19:08:02.806180+00:00"}
+{"index": 2, "case_id": "block1.reference-organisation", "variant_id": "v1", "event": "recorded", "sha256": "4b9fc22a5ff928b6bc5897d5de6e2946141842dc89dae71418c277c8ad0de461", "at": "2026-11-12T19:08:25.034569+00:00"}
+{"index": 3, "case_id": "block1.reference-title", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T19:08:48.414156+00:00"}
+{"index": 3, "case_id": "block1.reference-title", "variant_id": "v1", "event": "recorded", "sha256": "2a0f17eca146a00f83fe90912f599ae5b23dd49f7edb98ca35b9511b0c5f58c3", "at": "2026-11-12T19:09:02.250661+00:00"}
+{"index": 4, "case_id": "block1.reference-site", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T19:09:33.703206+00:00"}
+{"index": 4, "case_id": "block1.reference-site", "variant_id": "v1", "event": "recorded", "sha256": "86770147fcc0b148eaac7c61d56f1903989b078489c39e1670221543f57d0a14", "at": "2026-11-12T19:09:57.872720+00:00"}
+{"index": 5, "case_id": "block1.reference-unregistered", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T19:10:24.051115+00:00"}
+{"index": 5, "case_id": "block1.reference-unregistered", "variant_id": "v1", "event": "recorded", "sha256": "d8e070dcd40972a51759efbcb82e7b1aabb10c4b17617ae36257eec4d7dda112", "at": "2026-11-12T19:10:47.692994+00:00"}

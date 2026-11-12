@@ -1,5 +1,9 @@
 # R28 — three-need capacity correction and first live checkpoint
 
+## Organisation and title reference checkpoint
+
+David authorised deterministic reference-role handling from existing workspace/catalogue data. Repair `279cebe` preserves registered sites and unmatched-place disclosure, without a new location gate or prompt change. [Six-input evidence](../evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-REFERENCE-BINDING-20261112-01/report.md) records two live organisation fixes and working registered/unregistered controls. Both title questions took generic applicability, so they do not live-verify the title branch. The ROPA paraphrase is not a registered title and remains open. All six ran once; one justified scope_added retry, no false retry flags or unverifiable flags. Baseline/changed raw JUnit has identical 38 AI/2 Laravel failures. Known-plus-estimated USD 0.08655553 is incomplete owing to unavailable reranking/infrastructure prices. The final answer's site-specific lead conflicts with its honest unresolved-coverage footer: recorded for Block 3 assembly, not patched. Block 1 remains held. Plan, build guide and local journey updated together; no further dispatch.
+
 ## Verifiable checker flags, six-question checkpoint
 
 David approved keeping semantic judgment separate from quotation verification:

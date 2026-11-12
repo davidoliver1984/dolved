@@ -1,0 +1,34 @@
+{
+    "mode": "read_only_provider_free_identity_replay_not_live_route_proof",
+    "workspace_name": "Alderbridge Care Group",
+    "classifications": [
+        {
+            "reference": "Alderbridge",
+            "kind": "organisation"
+        },
+        {
+            "reference": "Alderbridge staff",
+            "kind": "organisation"
+        },
+        {
+            "reference": "Alderbridge sites",
+            "kind": "organisation"
+        },
+        {
+            "reference": "E-Learning Platform Guidance",
+            "kind": "document"
+        },
+        {
+            "reference": "ROPA for employee records",
+            "kind": "unresolved"
+        },
+        {
+            "reference": "Oakfield outreach",
+            "kind": "unresolved"
+        },
+        {
+            "reference": "Riverside House",
+            "kind": "site"
+        }
+    ]
+}

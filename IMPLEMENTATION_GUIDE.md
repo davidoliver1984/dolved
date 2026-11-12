@@ -1,5 +1,9 @@
 # RAG Platform Implementation Guide
 
+## 2026-11-12 — Block 1 reference identity checkpoint
+
+Repair `279cebe` distinguishes own-workspace organisation identities and whole authorised family titles from unresolved sites, preserving exact site/alias precedence and carrying the distinction into coverage disclosure. No model/prompt, ranking, authority or blocking-gate change. [Evidence and every criterion](docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-REFERENCE-BINDING-20261112-01/report.md): six once-only answers; organisation paths live-exercised twice, registered/unregistered controls retained. Both title inputs used generic applicability: title matching remains provider-free only. Nonmatching ROPA wording remains open. One justified checker retry, zero false flags; unchanged full-suite failure sets (38 AI/2 Laravel), raw XML retained. Block 1 holds, not pilot readiness. The unregistered-site answer's definite lead versus disclosure is separately recorded in Block 3; no inline fix or additional run.
+
 > **Purpose:** This is the single, durable build guide for the RAG Platform.
 >
 > Update this file as implementation progresses. Do not create a new implementation

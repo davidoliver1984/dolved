@@ -39,3 +39,10 @@ vendor/bin/phpunit --log-junit`; existing host stdlib governed-runner unittest.
 No providers used by verification. Six question-only inputs and separate expectations
 frozen before outputs; the runner stage is hash-bound and archived, not silently
 absorbed with its pre-existing edits. Live result is pending in this note.
+
+Completion addendum: the initial authorization preflight caught a missing stage
+allowlist entry before consuming authorization or making any provider call. The
+bounded harness correction adds a positive/negative authorization test; final
+suite is **22 passed**, retained in `verification/harness-final.log`. Runtime was
+unchanged. The rejected unconsumed authorization is preserved. [Final live report](../r06-governed-evidence/R28-R07-BLOCK1-REFERENCE-BINDING-20261112-01/report.md)
+supersedes the pending status above; no original test log or raw run was replaced.

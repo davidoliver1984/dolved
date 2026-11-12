@@ -1,0 +1,2340 @@
+[
+  {
+    "index": 1,
+    "case_id": "block1.citations-service",
+    "variant_id": "v1",
+    "utterance": "Which confidential support service can Alderbridge staff use for personal worries, and how can they reach it?",
+    "status": "completed",
+    "answer": "Alderbridge staff can use the Employee Assistance Programme (EAP), a confidential, externally provided counselling and support service available to every employee; they may access the EAP directly and confidentially at any time for telephone counselling or self\u2011help resources.",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "named",
+            "source": {
+              "quote": "Alderbridge staff",
+              "turn_id": "user-1"
+            }
+          },
+          "aspect": "Retrieve the recorded confidential staff support service available to staff at Alderbridge for personal worries, and the contact details or routes given for reaching that service.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "Which confidential support service can Alderbridge staff use for personal worries, and how can they reach it?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "raw_path": "cases/01-block1.citations-service-v1.json",
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19435,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1033,
+          "latency_ms": 1968.0400009965524,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "named",
+                  "source": {
+                    "quote": "Alderbridge staff",
+                    "turn_id": "user-1"
+                  }
+                },
+                "aspect": "Retrieve the recorded confidential staff support service available to staff at Alderbridge for personal worries, and the contact details or routes given for reaching that service.",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "Which confidential support service can Alderbridge staff use for personal worries, and how can they reach it?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        },
+        "latency_ms": 9472.885045979638,
+        "output_tokens": 655,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "evidence": [
+      {
+        "chunk_id": "910854cb-5507-58ca-92ce-adf270501c5b",
+        "document_family_id": "ba66d271-837e-4e9d-8b62-6deae70605f2",
+        "document_id": "12b0bfcf-f194-43de-8baa-d614f7a097e5",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "94af5a33-68d1-5c80-b941-7f0d718ef223",
+        "document_family_id": "ba66d271-837e-4e9d-8b62-6deae70605f2",
+        "document_id": "12b0bfcf-f194-43de-8baa-d614f7a097e5",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "65571650-63e4-57cc-b09a-13214f8f8255",
+        "document_family_id": "5948db88-7233-4951-93c3-2a907e0ea591",
+        "document_id": "46cb289d-ac72-4e11-982a-af0eb8f8f86b",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "09ce7973-a414-5756-b89c-c99bc0bb739b",
+        "document_family_id": "ba66d271-837e-4e9d-8b62-6deae70605f2",
+        "document_id": "12b0bfcf-f194-43de-8baa-d614f7a097e5",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "63454c5b-f799-5f1e-9597-eb6979402828",
+        "document_family_id": "250d44a1-7d4e-4e82-937a-5ec3de0391da",
+        "document_id": "d14be51f-1bff-4b5a-814b-aa0f8bd1001d",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "eligibility": {
+      "need.n1.eligibility": {
+        "document_public_ids_by_side": {
+          "primary": [
+            "b499663d-00b3-447f-89b3-2b4a2a4221ae",
+            "96542b91-0e37-4499-9dd2-7396a638780f",
+            "b81d6c68-af4e-4abb-ba47-c55b6a96875e",
+            "28e7f062-f28d-4a9e-a33b-2456604759d0",
+            "3b30f55d-7454-4223-89e3-be3ea8e9755d",
+            "43c59814-e067-4257-8c2a-b2abf1242af6",
+            "e5152169-c38f-419e-a2ed-53fda2a298d0",
+            "98e00127-6478-442a-b4cc-93ec8dfe11a8",
+            "e761a0bc-db3c-44bd-91de-b9e1c462b9db",
+            "030e3348-c147-40b1-ae89-95b8bc06ba81",
+            "6e4c66ab-1907-4adb-a595-517d8cd28349",
+            "76f8af7a-3fcf-468a-95fb-6285eac69629",
+            "b89aaf6e-28ba-4d60-a20a-46f710c00cad",
+            "12b0bfcf-f194-43de-8baa-d614f7a097e5",
+            "e4d9fc1b-48e9-4e94-94d3-d88c078b2701",
+            "43de6006-c103-4433-bc93-f7abf4b81d37",
+            "91e7dd31-68df-48e0-9899-22220b656c49",
+            "81b225ad-8e3d-4e1a-b471-814bdef2d21f",
+            "6f1b9d5f-4bf3-423c-a4b1-c2bf4e2ad606",
+            "41505cbb-45cf-4809-90d8-8155b50977b4",
+            "99a2aaab-4bfe-4de5-8c61-8d8d9151201d",
+            "33f663f1-9130-4190-b47e-5fe4f2998f17",
+            "29e3e059-4943-481d-b9ba-c982e8b40c56",
+            "df1cb996-fe27-4701-8808-4a87c6991b85",
+            "9266e4a5-0140-4b78-b912-2fc89d5c0b71",
+            "fee8922b-0dd6-4f64-a1eb-c344cbe57eb2",
+            "74c42faf-9b49-4828-9f6e-ca0177051aeb",
+            "57874cae-918b-4492-9f9e-ab6449e4b4bd",
+            "b7fdccec-aee4-490d-b1fd-86ce97c6850c",
+            "0374f047-d117-4a3e-811a-6a33c8febfbe",
+            "ff6fcf9f-03f4-481a-a2b3-d06cfad942d8",
+            "de314355-4584-4e9b-af85-8fb13aadf04e",
+            "d26c20bc-c967-4bed-ad97-63740f1811af",
+            "0950047e-b3f1-49a5-b8c3-ad20af468389",
+            "ea5136c5-b15e-4922-8a3c-50d31d5ae8f5",
+            "c945b269-a25c-484f-9e60-be477c4571cc",
+            "3474418e-d484-41d0-95f8-6f10d12a12ff",
+            "42107dbf-dcdd-4713-b530-34b57d43212e",
+            "084a7de1-9075-49b8-a0ea-9317a800360d",
+            "7738becf-1f08-47bb-9391-286f475b9c1c",
+            "1497326a-7a56-48f3-89c1-2584f5c9fe2a",
+            "1301925b-8e8c-48fe-b040-777bbf2562b8",
+            "f1b44203-3725-4592-9ee1-60964d48f92e",
+            "46cb289d-ac72-4e11-982a-af0eb8f8f86b",
+            "23ebf6a2-3c7c-425f-83cd-a110e323c935",
+            "81715f6c-f642-4ae4-8334-a1410fdb1883",
+            "4395f603-6940-4367-969b-b79ec953fd6e",
+            "c52e6423-2f9c-4aad-a3b1-1b7ab184a6c9",
+            "f3baa0da-ce82-4d7f-b176-044b81679015",
+            "78795245-a1e0-41ab-aabf-acf2015669e2",
+            "7f3ea274-cefa-42c6-85a1-801ec8514743",
+            "63bee82e-fc0e-48b2-904b-45ea4abd83af",
+            "84e2ecaa-d0a5-4797-8754-8258c9ee0066",
+            "8f7b44d8-945e-40f5-989d-ce362d3c73dd",
+            "da8b1f15-bdc7-4d74-9eea-678e4bb9288f",
+            "4ee93999-e0c6-4a3e-b660-a02ff53b0f7d",
+            "bc0e367f-72ad-4ec1-97d3-51af9adff7c0",
+            "09818c2a-fbb3-48e6-8837-bf6b0eb63845",
+            "69e86b22-5b32-48d3-9a55-f56c2970028d",
+            "02688ef1-af28-47db-b810-2fed68bcfc18",
+            "44d3090a-fc69-4aef-b5d9-e954d6cd05bf",
+            "38517fd8-411f-4c41-8813-59d8034df7fc",
+            "0a2fdc22-97be-414b-9bad-80ff4e122eba",
+            "b49e3ef5-9f99-4ea7-b1db-a74d3e0f96d0",
+            "e7b2856b-79bc-4c50-a359-6d3e9e6f469b",
+            "53b8deb6-2010-4960-af70-61ee29e2d081",
+            "440c40fe-9f8a-4455-981d-226168ce50ce",
+            "41e8dbf9-525b-4d4d-a6cb-0922d54bd92a",
+            "fb8b9457-8083-47e8-92bb-ca71318fac43",
+            "a8e32d8c-ae9b-4dc8-ac44-a1fb5e08a38a",
+            "6e2a9a64-714f-411e-93a5-fb07f69f4767",
+            "00cf1f58-7551-4743-a677-c23b153b4c70",
+            "0eb7c74a-4222-433a-bc8f-5c0f4f1f4b7a",
+            "9dfb3183-603d-4dec-ab17-4d61c03517e7",
+            "2962e99e-713f-4929-989c-2e792aa024fb",
+            "d8a026af-ae75-4665-a944-826e677f80dc",
+            "8fd26024-ad87-41f7-98cb-6146f7a40d82",
+            "6e5e4e7e-11a8-47d6-831c-d40ebbe1f620",
+            "f3322e19-574e-417a-bc7f-c0dfd7e7f5f5",
+            "ea62fd8d-3990-40ae-a414-4d3c2e96b98e",
+            "2310f9b2-550a-4645-993e-c5b10892c556",
+            "41a37660-05c8-4214-a376-a9a91147f7cf",
+            "3ab17580-4744-4a09-b8df-dc28f8dd83fa",
+            "5d3de7a8-a7da-4bbb-9ea7-e3ac6a294653",
+            "5d8bbdf2-4543-4aaa-953e-40a3ac1e4f41",
+            "3be850cb-8d68-4c9f-a2ac-12e606b01e70",
+            "a16afd35-db9a-4b7c-836d-8e2c62382e12",
+            "9e32fc4f-d094-44aa-ba2e-200982d60135",
+            "967b0cf8-56ca-4022-94a9-11bf3b62ce77",
+            "52e08196-c1b5-4783-8c1c-e14f23315067",
+            "3d779c18-f012-4ad6-ace3-505cc590704f",
+            "e7ec8215-7cce-4158-8e88-96b08873eef4",
+            "91fe2596-7c01-4d6b-8dc8-c6092ad07767",
+            "3cf62858-dfeb-4f59-8548-f98b696d72e5",
+            "b7ba4849-d76d-408e-b99f-6a5dd757a2e3",
+            "fdca6e91-8a24-4803-b630-66a5c889e3ce",
+            "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+            "b9eb058e-dc89-47a0-b380-c51ae42b2727",
+            "8b50438f-0446-4556-a5f3-ea08aa15aaac",
+            "3478a192-8ee4-4bec-84a2-a6b01ac30518",
+            "57a2e822-aa8d-484c-a180-f4b1f675fa07",
+            "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce",
+            "8cb6b4e0-e0bd-46a3-ac36-642e07cb01e6",
+            "23c48834-49e0-4c88-bb96-9f203c0780d9",
+            "aa57d09d-c08b-4e87-aa0e-80791d1ada1c",
+            "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+            "b44246ef-f452-4e2e-8158-de356b24ea19",
+            "a190775d-ae67-4fb9-8e27-8d12c8e5bd47",
+            "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+            "c36ac189-7e2d-483b-9635-189b03e8e76c",
+            "5fcccfd6-4986-4667-8546-2a9c34cce5cd",
+            "af1734e6-f1d8-4cfc-ba2f-b5f20c543f58",
+            "4a5d8aa4-45fd-4d74-a7a3-08a6a9f81d5f",
+            "0fcd20f7-6481-4a07-bfd3-2c5fb65b2bd2",
+            "b8e7b8df-cbd5-482b-a294-be5022b06d54",
+            "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+            "d19e8dc2-777f-415b-92e9-c0c9e85109f6",
+            "4d769f27-4a4a-432b-b37d-3ba13d4c4d38",
+            "75532b6a-4ef2-4315-b596-2e8a8f322f59",
+            "0626244e-a8ee-4746-813c-b50b70d79808",
+            "636d900c-0009-47c1-a111-8bc9f0cec161",
+            "7ac1a9bc-a42c-4bff-bbc1-6e54293647b8",
+            "7e25a975-a8e6-436d-a897-43d1497d6451",
+            "9b2b7b03-c84f-4e07-8bca-3e25ad07c485",
+            "6c4c6bcb-a666-4b7a-8999-674a411a95eb",
+            "5328b85b-493d-4fb4-a7dc-cd732cd6f9ed",
+            "c40c8cd9-2262-4806-850c-2fb0864eb0d2",
+            "b48abec3-3c1b-40b1-bc8f-bc5277f03469",
+            "bd6da148-fe3f-40fe-90e2-49b4601997c0",
+            "afd570c9-6033-429e-808e-8c95b3709c0e",
+            "2c5492f6-8c9a-485f-a92e-011d8871269f",
+            "c637668a-a5b6-4e7f-ad62-0e13b54c65bd",
+            "77ed40d9-112d-4307-b8d8-e2bad64249fd",
+            "2e5b9ce1-aa9f-4bb9-9699-9497a71329f1",
+            "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+            "eddeeede-5a30-430d-b8c0-8617fe4d5ded",
+            "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+            "c6adbb71-001d-4de2-acf2-8320d6bec95a",
+            "45ac6b3c-6d83-4d97-a252-f4600974f3e0",
+            "e93dbc7f-ea71-43f3-bdad-daaa2e92373c",
+            "c557ed4b-bbd2-4eb8-a9b5-cfea42c2a892",
+            "8fba29d4-7857-488b-ae48-9be6c3799abd",
+            "20b1afea-3efe-4c63-bc4d-a44fae224897",
+            "f1fb4cc2-0ac7-4c6c-9b4d-371b98b8e11c",
+            "ad956f9c-e21b-4d3a-acf3-7bc75ea70e4b",
+            "b44a4c5f-2968-4294-85b6-19b066fc3cab",
+            "64b73301-2992-4db3-aadd-374dc825df78",
+            "250dc006-c10d-4392-9033-522c3137af82",
+            "d92fec1f-d1ac-4ed0-9b40-bcda98fd326a",
+            "822e205e-2579-4d1c-812d-7882d886bb97",
+            "42fa73b1-1b53-433c-80de-8bd7023ee670",
+            "95788e4b-11e2-45d6-a672-dd893a544715",
+            "3b90395d-fcb7-4a1f-ad3b-5ed9d0740b94",
+            "aef65ab6-e0af-4ecf-bf3b-bf1812eef549",
+            "42371341-c476-4b66-859d-ba0d1ecad9e1",
+            "10d27131-fa2c-493b-8f63-3aa8e3808b9c",
+            "34505187-c14e-4484-9613-9077b2070d0d",
+            "8393e791-8177-4568-8660-bfdd4efcfab3",
+            "617c4320-42cf-4c5e-873a-54bde203926f",
+            "29ee929e-38f3-4f4a-95f7-2e48c51c4556",
+            "cb29e902-d33e-4fc7-b6c0-139f88eeba54",
+            "7ea28d94-8750-4d49-bd23-dfb5b7b8b520",
+            "5196e229-9261-4602-921f-261c74e21a83",
+            "fdcb4b96-c23c-4cec-8bff-07099b27d88e",
+            "80392f21-2006-4a4a-b0ec-77f13351e07e",
+            "8281c116-c499-4a97-9226-6968ab3fa678",
+            "192a315d-96f3-4cd9-a7fd-77aaed5facfb",
+            "03bc8b5b-0f17-41d7-bb44-fff6875ff8d4",
+            "05d2c4e1-86cd-4ca6-9e45-573765c3b6f5",
+            "58e69592-9309-4ab2-a04d-5edd0b730083",
+            "d14be51f-1bff-4b5a-814b-aa0f8bd1001d",
+            "99718b7b-a32f-4e75-8c55-3aa824800e76",
+            "29c809b2-02a4-4389-955c-eb267b7c30de",
+            "64857a1e-ebee-4c79-a454-67c165381770",
+            "19761c36-44da-4bd7-94c0-417bfb2145b8",
+            "caae2df5-d3f3-4424-8a35-39406c15dfad",
+            "7bb9c47e-ff7f-4807-8a88-90ed8b885f2f"
+          ]
+        },
+        "outcome": "evidence_found",
+        "reason": null,
+        "reference_classifications": [
+          {
+            "kind": "organisation",
+            "reference": "Alderbridge staff"
+          }
+        ],
+        "resolved_location_public_id": null
+      }
+    },
+    "notice": false,
+    "generation": {
+      "aspect_links": [
+        {
+          "answer_part_indices": [
+            0
+          ],
+          "need_id": "n1",
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "aspect_results": {
+        "n1": "supported"
+      },
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "insufficiency_reason": null,
+      "model": "gpt-5-mini",
+      "outcome": "answered",
+      "parts": [
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 69,
+              "document_id": 14,
+              "evidence_handle": "ev-01"
+            },
+            {
+              "document_chunk_id": 70,
+              "document_id": 14,
+              "evidence_handle": "ev-02"
+            },
+            {
+              "document_chunk_id": 72,
+              "document_id": 14,
+              "evidence_handle": "ev-04"
+            }
+          ],
+          "text": "Alderbridge staff can use the Employee Assistance Programme (EAP), a confidential, externally provided counselling and support service available to every employee; they may access the EAP directly and confidentially at any time for telephone counselling or self\u2011help resources."
+        }
+      ],
+      "provider": "openai",
+      "rendered_text": "Alderbridge staff can use the Employee Assistance Programme (EAP), a confidential, externally provided counselling and support service available to every employee; they may access the EAP directly and confidentially at any time for telephone counselling or self\u2011help resources.",
+      "scope_citations": [],
+      "unsupported_aspects": [],
+      "usage": {
+        "adapter_version": "openai-responses-needs-v4",
+        "cached_input_tokens": 9728,
+        "contract_version": "generation-result-v3",
+        "cost_basis": "estimated",
+        "cost_usd": 0.0094812,
+        "entailment_review": {
+          "cached_input_tokens": 3840,
+          "cost_basis": "estimated",
+          "cost_usd": 0.00326275,
+          "input_tokens": 15067,
+          "latency_ms": 2863.6011680064257,
+          "model": "gpt-5-mini",
+          "output_tokens": 180,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "stage": "generation"
+        },
+        "execution": "provider_api",
+        "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+        "input_tokens": 41976,
+        "latency_ms": 5479.593669006135,
+        "max_output_tokens": 4096,
+        "measured_input_tokens": 26986,
+        "model": "gpt-5-mini",
+        "output_tokens": 588,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "prompt_version": "grounded-generation-needs-v11",
+        "provider": "openai",
+        "reasoning_effort": "low",
+        "request_count": 2,
+        "retry_count": 1,
+        "stage": "generation",
+        "validation_attempts": [
+          {
+            "cached_input_tokens": 9728,
+            "cost_basis": "estimated",
+            "cost_usd": 0.0094812,
+            "input_tokens": 41976,
+            "latency_ms": 5479.593669006135,
+            "outcome": "accepted",
+            "output_tokens": 588,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "request_count": 2,
+            "request_id": "659fa61a-e8f7-42f5-9307-785b4eeb0912",
+            "retry_count": 0,
+            "retry_of_request_id": null
+          }
+        ],
+        "validation_retry_count": 0
+      }
+    },
+    "run_id": "c1426ea9-fef9-4305-b2f3-9e446c534e44"
+  },
+  {
+    "index": 2,
+    "case_id": "block1.relative-current-quarter",
+    "variant_id": "v1",
+    "utterance": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+    "status": "completed",
+    "answer": "For the quarter 2026-10-01 to 2026-12-31, the E-Learning Platform Guidance records that the IT service desk handles login and access problems (the Training Team no longer handles platform access issues).",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Retrieve, for the period quoted as \"this quarter\", which team is recorded as responsible for handling login problems in the E-Learning Platform Guidance.",
+          "authority": {
+            "kind": "period",
+            "precision": "interval",
+            "source": {
+              "quote": "this quarter",
+              "turn_id": "user-1"
+            },
+            "value": "2026-10-01/2026-12-31"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "raw_path": "cases/02-block1.relative-current-quarter-v1.json",
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19578,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "checker_code": "scope_added",
+          "citation": {
+            "inspected_need_ids": [
+              "n1"
+            ],
+            "need_id": "n1",
+            "plan_field": "aspect",
+            "plan_quote": "and any named contact point or escalation route specified for those issues.",
+            "user_quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+            "user_turn_id": "user-1"
+          },
+          "citation_verification": "verified",
+          "code": "scope_added",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1085,
+          "latency_ms": 3988.2376689929515,
+          "model": "gpt-5-mini",
+          "output_tokens": 343,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [
+                  "17278f8a-fa84-4a14-a98e-261d19682c66"
+                ],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Under the document 'E-Learning Platform Guidance', for the period 'this quarter' (2026-10-01/2026-12-31), identify which team is responsible for handling login problems and any named contact point or escalation route specified for those issues.",
+                "authority": {
+                  "kind": "period",
+                  "precision": "interval",
+                  "source": {
+                    "quote": "this quarter",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-10-01/2026-12-31"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        },
+        "latency_ms": 13419.35675701825,
+        "output_tokens": 1162,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "rejected",
+        "validation": {
+          "code": "scope_added",
+          "field": "root",
+          "stage": "interpretation"
+        }
+      },
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19636,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1060,
+          "latency_ms": 2305.6724600028247,
+          "model": "gpt-5-mini",
+          "output_tokens": 151,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [
+                  "17278f8a-fa84-4a14-a98e-261d19682c66"
+                ],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Retrieve, for the period quoted as \"this quarter\", which team is recorded as responsible for handling login problems in the E-Learning Platform Guidance.",
+                "authority": {
+                  "kind": "period",
+                  "precision": "interval",
+                  "source": {
+                    "quote": "this quarter",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-10-01/2026-12-31"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        },
+        "latency_ms": 11249.146631016629,
+        "output_tokens": 1009,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "evidence": [
+      {
+        "chunk_id": "e6eef862-161a-56f0-adef-a7cef552af6c",
+        "document_family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+        "document_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "eligibility": {
+      "need.n1.eligibility": {
+        "document_public_ids_by_side": {
+          "primary": [
+            "6cf50cb0-0cdb-484d-9841-899c5e3b84f3"
+          ]
+        },
+        "outcome": "evidence_found",
+        "reason": null,
+        "reference_classifications": [],
+        "resolved_location_public_id": null
+      }
+    },
+    "notice": false,
+    "generation": {
+      "aspect_links": [
+        {
+          "answer_part_indices": [
+            0
+          ],
+          "need_id": "n1",
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "aspect_results": {
+        "n1": "supported"
+      },
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "insufficiency_reason": null,
+      "model": "gpt-5-mini",
+      "outcome": "answered",
+      "parts": [
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 660,
+              "document_id": 213,
+              "evidence_handle": "ev-01"
+            }
+          ],
+          "text": "For the quarter 2026-10-01 to 2026-12-31, the E-Learning Platform Guidance records that the IT service desk handles login and access problems (the Training Team no longer handles platform access issues)."
+        }
+      ],
+      "provider": "openai",
+      "rendered_text": "For the quarter 2026-10-01 to 2026-12-31, the E-Learning Platform Guidance records that the IT service desk handles login and access problems (the Training Team no longer handles platform access issues).",
+      "scope_citations": [],
+      "unsupported_aspects": [],
+      "usage": {
+        "adapter_version": "openai-responses-needs-v4",
+        "cached_input_tokens": 1792,
+        "contract_version": "generation-result-v3",
+        "cost_basis": "estimated",
+        "cost_usd": 0.0015298,
+        "entailment_review": {
+          "cached_input_tokens": 0,
+          "cost_basis": "estimated",
+          "cost_usd": 0.0005785,
+          "input_tokens": 930,
+          "latency_ms": 3070.592542993836,
+          "model": "gpt-5-mini",
+          "output_tokens": 173,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "stage": "generation"
+        },
+        "execution": "provider_api",
+        "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+        "input_tokens": 3844,
+        "latency_ms": 4386.008750996552,
+        "max_output_tokens": 4096,
+        "measured_input_tokens": 2991,
+        "model": "gpt-5-mini",
+        "output_tokens": 486,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "prompt_version": "grounded-generation-needs-v11",
+        "provider": "openai",
+        "reasoning_effort": "low",
+        "request_count": 2,
+        "retry_count": 1,
+        "stage": "generation",
+        "validation_attempts": [
+          {
+            "cached_input_tokens": 1792,
+            "cost_basis": "estimated",
+            "cost_usd": 0.0015298,
+            "input_tokens": 3844,
+            "latency_ms": 4386.008750996552,
+            "outcome": "accepted",
+            "output_tokens": 486,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "request_count": 2,
+            "request_id": "34adfbe0-bbb5-48be-80c8-a694d34a9d73",
+            "retry_count": 0,
+            "retry_of_request_id": null
+          }
+        ],
+        "validation_retry_count": 0
+      }
+    },
+    "run_id": "f402f7b3-1aba-4f48-bb13-2d4bd63807a9"
+  },
+  {
+    "index": 3,
+    "case_id": "block1.reference-organisation",
+    "variant_id": "v1",
+    "utterance": "At Alderbridge Care Group, how much is the initial uniform payment for a new employee in a uniformed role?",
+    "status": "completed",
+    "answer": "A new starter in a uniformed role is paid a one-off initial uniform allowance of \u00a355 in their first month\u2019s pay.",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "named",
+            "source": {
+              "quote": "At Alderbridge Care Group",
+              "turn_id": "user-1"
+            }
+          },
+          "aspect": "What is the required initial uniform payment amount for a new employee appointed to a uniformed role at Alderbridge Care Group? (seeking the current governing amount or payment rule.)",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "At Alderbridge Care Group, how much is the initial uniform payment for a new employee in a uniformed role?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "raw_path": "cases/03-block1.reference-organisation-v1.json",
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19452,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1047,
+          "latency_ms": 1652.7325010101777,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "named",
+                  "source": {
+                    "quote": "At Alderbridge Care Group",
+                    "turn_id": "user-1"
+                  }
+                },
+                "aspect": "What is the required initial uniform payment amount for a new employee appointed to a uniformed role at Alderbridge Care Group? (seeking the current governing amount or payment rule.)",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "At Alderbridge Care Group, how much is the initial uniform payment for a new employee in a uniformed role?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        },
+        "latency_ms": 8186.532253981568,
+        "output_tokens": 666,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "evidence": [
+      {
+        "chunk_id": "c943d6d2-b8ba-5878-b26a-ec32d30d7ecc",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "22237a20-285b-5953-bbb6-902ae376723f",
+        "document_family_id": "e0f6b30d-79a2-4f8d-8565-4881f1e9cf22",
+        "document_id": "e4d9fc1b-48e9-4e94-94d3-d88c078b2701",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "f8362c93-3fc9-5c0d-8edc-1dc367ecf327",
+        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "469dd077-58d5-59b3-aa83-dd57217cf193",
+        "document_family_id": "25a058ee-667f-4877-9abd-5fda5b8aaeaf",
+        "document_id": "29c809b2-02a4-4389-955c-eb267b7c30de",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "eligibility": {
+      "need.n1.eligibility": {
+        "document_public_ids_by_side": {
+          "primary": [
+            "b499663d-00b3-447f-89b3-2b4a2a4221ae",
+            "96542b91-0e37-4499-9dd2-7396a638780f",
+            "b81d6c68-af4e-4abb-ba47-c55b6a96875e",
+            "28e7f062-f28d-4a9e-a33b-2456604759d0",
+            "3b30f55d-7454-4223-89e3-be3ea8e9755d",
+            "43c59814-e067-4257-8c2a-b2abf1242af6",
+            "e5152169-c38f-419e-a2ed-53fda2a298d0",
+            "98e00127-6478-442a-b4cc-93ec8dfe11a8",
+            "e761a0bc-db3c-44bd-91de-b9e1c462b9db",
+            "030e3348-c147-40b1-ae89-95b8bc06ba81",
+            "6e4c66ab-1907-4adb-a595-517d8cd28349",
+            "76f8af7a-3fcf-468a-95fb-6285eac69629",
+            "b89aaf6e-28ba-4d60-a20a-46f710c00cad",
+            "12b0bfcf-f194-43de-8baa-d614f7a097e5",
+            "e4d9fc1b-48e9-4e94-94d3-d88c078b2701",
+            "43de6006-c103-4433-bc93-f7abf4b81d37",
+            "91e7dd31-68df-48e0-9899-22220b656c49",
+            "81b225ad-8e3d-4e1a-b471-814bdef2d21f",
+            "6f1b9d5f-4bf3-423c-a4b1-c2bf4e2ad606",
+            "41505cbb-45cf-4809-90d8-8155b50977b4",
+            "99a2aaab-4bfe-4de5-8c61-8d8d9151201d",
+            "33f663f1-9130-4190-b47e-5fe4f2998f17",
+            "29e3e059-4943-481d-b9ba-c982e8b40c56",
+            "df1cb996-fe27-4701-8808-4a87c6991b85",
+            "9266e4a5-0140-4b78-b912-2fc89d5c0b71",
+            "fee8922b-0dd6-4f64-a1eb-c344cbe57eb2",
+            "74c42faf-9b49-4828-9f6e-ca0177051aeb",
+            "57874cae-918b-4492-9f9e-ab6449e4b4bd",
+            "b7fdccec-aee4-490d-b1fd-86ce97c6850c",
+            "0374f047-d117-4a3e-811a-6a33c8febfbe",
+            "ff6fcf9f-03f4-481a-a2b3-d06cfad942d8",
+            "de314355-4584-4e9b-af85-8fb13aadf04e",
+            "d26c20bc-c967-4bed-ad97-63740f1811af",
+            "0950047e-b3f1-49a5-b8c3-ad20af468389",
+            "ea5136c5-b15e-4922-8a3c-50d31d5ae8f5",
+            "c945b269-a25c-484f-9e60-be477c4571cc",
+            "3474418e-d484-41d0-95f8-6f10d12a12ff",
+            "42107dbf-dcdd-4713-b530-34b57d43212e",
+            "084a7de1-9075-49b8-a0ea-9317a800360d",
+            "7738becf-1f08-47bb-9391-286f475b9c1c",
+            "1497326a-7a56-48f3-89c1-2584f5c9fe2a",
+            "1301925b-8e8c-48fe-b040-777bbf2562b8",
+            "f1b44203-3725-4592-9ee1-60964d48f92e",
+            "46cb289d-ac72-4e11-982a-af0eb8f8f86b",
+            "23ebf6a2-3c7c-425f-83cd-a110e323c935",
+            "81715f6c-f642-4ae4-8334-a1410fdb1883",
+            "4395f603-6940-4367-969b-b79ec953fd6e",
+            "c52e6423-2f9c-4aad-a3b1-1b7ab184a6c9",
+            "f3baa0da-ce82-4d7f-b176-044b81679015",
+            "78795245-a1e0-41ab-aabf-acf2015669e2",
+            "7f3ea274-cefa-42c6-85a1-801ec8514743",
+            "63bee82e-fc0e-48b2-904b-45ea4abd83af",
+            "84e2ecaa-d0a5-4797-8754-8258c9ee0066",
+            "8f7b44d8-945e-40f5-989d-ce362d3c73dd",
+            "da8b1f15-bdc7-4d74-9eea-678e4bb9288f",
+            "4ee93999-e0c6-4a3e-b660-a02ff53b0f7d",
+            "bc0e367f-72ad-4ec1-97d3-51af9adff7c0",
+            "09818c2a-fbb3-48e6-8837-bf6b0eb63845",
+            "69e86b22-5b32-48d3-9a55-f56c2970028d",
+            "02688ef1-af28-47db-b810-2fed68bcfc18",
+            "44d3090a-fc69-4aef-b5d9-e954d6cd05bf",
+            "38517fd8-411f-4c41-8813-59d8034df7fc",
+            "0a2fdc22-97be-414b-9bad-80ff4e122eba",
+            "b49e3ef5-9f99-4ea7-b1db-a74d3e0f96d0",
+            "e7b2856b-79bc-4c50-a359-6d3e9e6f469b",
+            "53b8deb6-2010-4960-af70-61ee29e2d081",
+            "440c40fe-9f8a-4455-981d-226168ce50ce",
+            "41e8dbf9-525b-4d4d-a6cb-0922d54bd92a",
+            "fb8b9457-8083-47e8-92bb-ca71318fac43",
+            "a8e32d8c-ae9b-4dc8-ac44-a1fb5e08a38a",
+            "6e2a9a64-714f-411e-93a5-fb07f69f4767",
+            "00cf1f58-7551-4743-a677-c23b153b4c70",
+            "0eb7c74a-4222-433a-bc8f-5c0f4f1f4b7a",
+            "9dfb3183-603d-4dec-ab17-4d61c03517e7",
+            "2962e99e-713f-4929-989c-2e792aa024fb",
+            "d8a026af-ae75-4665-a944-826e677f80dc",
+            "8fd26024-ad87-41f7-98cb-6146f7a40d82",
+            "6e5e4e7e-11a8-47d6-831c-d40ebbe1f620",
+            "f3322e19-574e-417a-bc7f-c0dfd7e7f5f5",
+            "ea62fd8d-3990-40ae-a414-4d3c2e96b98e",
+            "2310f9b2-550a-4645-993e-c5b10892c556",
+            "41a37660-05c8-4214-a376-a9a91147f7cf",
+            "3ab17580-4744-4a09-b8df-dc28f8dd83fa",
+            "5d3de7a8-a7da-4bbb-9ea7-e3ac6a294653",
+            "5d8bbdf2-4543-4aaa-953e-40a3ac1e4f41",
+            "3be850cb-8d68-4c9f-a2ac-12e606b01e70",
+            "a16afd35-db9a-4b7c-836d-8e2c62382e12",
+            "9e32fc4f-d094-44aa-ba2e-200982d60135",
+            "967b0cf8-56ca-4022-94a9-11bf3b62ce77",
+            "52e08196-c1b5-4783-8c1c-e14f23315067",
+            "3d779c18-f012-4ad6-ace3-505cc590704f",
+            "e7ec8215-7cce-4158-8e88-96b08873eef4",
+            "91fe2596-7c01-4d6b-8dc8-c6092ad07767",
+            "3cf62858-dfeb-4f59-8548-f98b696d72e5",
+            "b7ba4849-d76d-408e-b99f-6a5dd757a2e3",
+            "fdca6e91-8a24-4803-b630-66a5c889e3ce",
+            "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+            "b9eb058e-dc89-47a0-b380-c51ae42b2727",
+            "8b50438f-0446-4556-a5f3-ea08aa15aaac",
+            "3478a192-8ee4-4bec-84a2-a6b01ac30518",
+            "57a2e822-aa8d-484c-a180-f4b1f675fa07",
+            "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce",
+            "8cb6b4e0-e0bd-46a3-ac36-642e07cb01e6",
+            "23c48834-49e0-4c88-bb96-9f203c0780d9",
+            "aa57d09d-c08b-4e87-aa0e-80791d1ada1c",
+            "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+            "b44246ef-f452-4e2e-8158-de356b24ea19",
+            "a190775d-ae67-4fb9-8e27-8d12c8e5bd47",
+            "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+            "c36ac189-7e2d-483b-9635-189b03e8e76c",
+            "5fcccfd6-4986-4667-8546-2a9c34cce5cd",
+            "af1734e6-f1d8-4cfc-ba2f-b5f20c543f58",
+            "4a5d8aa4-45fd-4d74-a7a3-08a6a9f81d5f",
+            "0fcd20f7-6481-4a07-bfd3-2c5fb65b2bd2",
+            "b8e7b8df-cbd5-482b-a294-be5022b06d54",
+            "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+            "d19e8dc2-777f-415b-92e9-c0c9e85109f6",
+            "4d769f27-4a4a-432b-b37d-3ba13d4c4d38",
+            "75532b6a-4ef2-4315-b596-2e8a8f322f59",
+            "0626244e-a8ee-4746-813c-b50b70d79808",
+            "636d900c-0009-47c1-a111-8bc9f0cec161",
+            "7ac1a9bc-a42c-4bff-bbc1-6e54293647b8",
+            "7e25a975-a8e6-436d-a897-43d1497d6451",
+            "9b2b7b03-c84f-4e07-8bca-3e25ad07c485",
+            "6c4c6bcb-a666-4b7a-8999-674a411a95eb",
+            "5328b85b-493d-4fb4-a7dc-cd732cd6f9ed",
+            "c40c8cd9-2262-4806-850c-2fb0864eb0d2",
+            "b48abec3-3c1b-40b1-bc8f-bc5277f03469",
+            "bd6da148-fe3f-40fe-90e2-49b4601997c0",
+            "afd570c9-6033-429e-808e-8c95b3709c0e",
+            "2c5492f6-8c9a-485f-a92e-011d8871269f",
+            "c637668a-a5b6-4e7f-ad62-0e13b54c65bd",
+            "77ed40d9-112d-4307-b8d8-e2bad64249fd",
+            "2e5b9ce1-aa9f-4bb9-9699-9497a71329f1",
+            "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+            "eddeeede-5a30-430d-b8c0-8617fe4d5ded",
+            "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+            "c6adbb71-001d-4de2-acf2-8320d6bec95a",
+            "45ac6b3c-6d83-4d97-a252-f4600974f3e0",
+            "e93dbc7f-ea71-43f3-bdad-daaa2e92373c",
+            "c557ed4b-bbd2-4eb8-a9b5-cfea42c2a892",
+            "8fba29d4-7857-488b-ae48-9be6c3799abd",
+            "20b1afea-3efe-4c63-bc4d-a44fae224897",
+            "f1fb4cc2-0ac7-4c6c-9b4d-371b98b8e11c",
+            "ad956f9c-e21b-4d3a-acf3-7bc75ea70e4b",
+            "b44a4c5f-2968-4294-85b6-19b066fc3cab",
+            "64b73301-2992-4db3-aadd-374dc825df78",
+            "250dc006-c10d-4392-9033-522c3137af82",
+            "d92fec1f-d1ac-4ed0-9b40-bcda98fd326a",
+            "822e205e-2579-4d1c-812d-7882d886bb97",
+            "42fa73b1-1b53-433c-80de-8bd7023ee670",
+            "95788e4b-11e2-45d6-a672-dd893a544715",
+            "3b90395d-fcb7-4a1f-ad3b-5ed9d0740b94",
+            "aef65ab6-e0af-4ecf-bf3b-bf1812eef549",
+            "42371341-c476-4b66-859d-ba0d1ecad9e1",
+            "10d27131-fa2c-493b-8f63-3aa8e3808b9c",
+            "34505187-c14e-4484-9613-9077b2070d0d",
+            "8393e791-8177-4568-8660-bfdd4efcfab3",
+            "617c4320-42cf-4c5e-873a-54bde203926f",
+            "29ee929e-38f3-4f4a-95f7-2e48c51c4556",
+            "cb29e902-d33e-4fc7-b6c0-139f88eeba54",
+            "7ea28d94-8750-4d49-bd23-dfb5b7b8b520",
+            "5196e229-9261-4602-921f-261c74e21a83",
+            "fdcb4b96-c23c-4cec-8bff-07099b27d88e",
+            "80392f21-2006-4a4a-b0ec-77f13351e07e",
+            "8281c116-c499-4a97-9226-6968ab3fa678",
+            "192a315d-96f3-4cd9-a7fd-77aaed5facfb",
+            "03bc8b5b-0f17-41d7-bb44-fff6875ff8d4",
+            "05d2c4e1-86cd-4ca6-9e45-573765c3b6f5",
+            "58e69592-9309-4ab2-a04d-5edd0b730083",
+            "d14be51f-1bff-4b5a-814b-aa0f8bd1001d",
+            "99718b7b-a32f-4e75-8c55-3aa824800e76",
+            "29c809b2-02a4-4389-955c-eb267b7c30de",
+            "64857a1e-ebee-4c79-a454-67c165381770",
+            "19761c36-44da-4bd7-94c0-417bfb2145b8",
+            "caae2df5-d3f3-4424-8a35-39406c15dfad",
+            "7bb9c47e-ff7f-4807-8a88-90ed8b885f2f"
+          ]
+        },
+        "outcome": "evidence_found",
+        "reason": null,
+        "reference_classifications": [
+          {
+            "kind": "organisation",
+            "reference": "At Alderbridge Care Group"
+          }
+        ],
+        "resolved_location_public_id": null
+      }
+    },
+    "notice": false,
+    "generation": {
+      "aspect_links": [
+        {
+          "answer_part_indices": [
+            0
+          ],
+          "need_id": "n1",
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "aspect_results": {
+        "n1": "supported"
+      },
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "insufficiency_reason": null,
+      "model": "gpt-5-mini",
+      "outcome": "answered",
+      "parts": [
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 594,
+              "document_id": 190,
+              "evidence_handle": "ev-01"
+            },
+            {
+              "document_chunk_id": 595,
+              "document_id": 190,
+              "evidence_handle": "ev-02"
+            }
+          ],
+          "text": "A new starter in a uniformed role is paid a one-off initial uniform allowance of \u00a355 in their first month\u2019s pay."
+        }
+      ],
+      "provider": "openai",
+      "rendered_text": "A new starter in a uniformed role is paid a one-off initial uniform allowance of \u00a355 in their first month\u2019s pay.",
+      "scope_citations": [],
+      "unsupported_aspects": [],
+      "usage": {
+        "adapter_version": "openai-responses-needs-v4",
+        "cached_input_tokens": 9728,
+        "contract_version": "generation-result-v3",
+        "cost_basis": "estimated",
+        "cost_usd": 0.00808445,
+        "entailment_review": {
+          "cached_input_tokens": 3840,
+          "cost_basis": "estimated",
+          "cost_usd": 0.00186625,
+          "input_tokens": 10089,
+          "latency_ms": 2054.004042001907,
+          "model": "gpt-5-mini",
+          "output_tokens": 104,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "stage": "generation"
+        },
+        "execution": "provider_api",
+        "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+        "input_tokens": 37005,
+        "latency_ms": 8150.478752999334,
+        "max_output_tokens": 4096,
+        "measured_input_tokens": 26993,
+        "model": "gpt-5-mini",
+        "output_tokens": 511,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "prompt_version": "grounded-generation-needs-v11",
+        "provider": "openai",
+        "reasoning_effort": "low",
+        "request_count": 2,
+        "retry_count": 1,
+        "stage": "generation",
+        "validation_attempts": [
+          {
+            "cached_input_tokens": 9728,
+            "cost_basis": "estimated",
+            "cost_usd": 0.00808445,
+            "input_tokens": 37005,
+            "latency_ms": 8150.478752999334,
+            "outcome": "accepted",
+            "output_tokens": 511,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "request_count": 2,
+            "request_id": "e7d2efe7-13d8-4855-a201-dace1709a111",
+            "retry_count": 0,
+            "retry_of_request_id": null
+          }
+        ],
+        "validation_retry_count": 0
+      }
+    },
+    "run_id": "2744c429-7342-4b5b-bffa-e253aeaee0ee"
+  },
+  {
+    "index": 4,
+    "case_id": "block1.reference-title",
+    "variant_id": "v1",
+    "utterance": "Under the Uniform Allowance Guidance, which month is the replacement payment made each year?",
+    "status": "completed",
+    "answer": "The guidance states that the replacement allowance is paid every April each year.",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "From the named document 'Uniform Allowance Guidance', state which month each year the 'replacement payment' is made.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "Under the Uniform Allowance Guidance, which month is the replacement payment made each year?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "raw_path": "cases/04-block1.reference-title-v1.json",
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19426,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1027,
+          "latency_ms": 1340.4525420046411,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [
+                  "78df2038-574c-4fc5-8216-b78b41e4e912"
+                ],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "From the named document 'Uniform Allowance Guidance', state which month each year the 'replacement payment' is made.",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "Under the Uniform Allowance Guidance, which month is the replacement payment made each year?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        },
+        "latency_ms": 6732.667545002187,
+        "output_tokens": 524,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "evidence": [
+      {
+        "chunk_id": "c943d6d2-b8ba-5878-b26a-ec32d30d7ecc",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "eligibility": {
+      "need.n1.eligibility": {
+        "document_public_ids_by_side": {
+          "primary": [
+            "580ef1bd-1bb8-4f2e-b839-b790b6b17738"
+          ]
+        },
+        "outcome": "evidence_found",
+        "reason": null,
+        "reference_classifications": [],
+        "resolved_location_public_id": null
+      }
+    },
+    "notice": false,
+    "generation": {
+      "aspect_links": [
+        {
+          "answer_part_indices": [
+            0
+          ],
+          "need_id": "n1",
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "aspect_results": {
+        "n1": "supported"
+      },
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "insufficiency_reason": null,
+      "model": "gpt-5-mini",
+      "outcome": "answered",
+      "parts": [
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 594,
+              "document_id": 190,
+              "evidence_handle": "ev-01"
+            },
+            {
+              "document_chunk_id": 595,
+              "document_id": 190,
+              "evidence_handle": "ev-02"
+            }
+          ],
+          "text": "The guidance states that the replacement allowance is paid every April each year."
+        }
+      ],
+      "provider": "openai",
+      "rendered_text": "The guidance states that the replacement allowance is paid every April each year.",
+      "scope_citations": [],
+      "unsupported_aspects": [],
+      "usage": {
+        "adapter_version": "openai-responses-needs-v4",
+        "cached_input_tokens": 1792,
+        "contract_version": "generation-result-v3",
+        "cost_basis": "estimated",
+        "cost_usd": 0.0016293000000000002,
+        "entailment_review": {
+          "cached_input_tokens": 0,
+          "cost_basis": "estimated",
+          "cost_usd": 0.00068075,
+          "input_tokens": 1635,
+          "latency_ms": 1655.1371680106968,
+          "model": "gpt-5-mini",
+          "output_tokens": 136,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "stage": "generation"
+        },
+        "execution": "provider_api",
+        "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+        "input_tokens": 5266,
+        "latency_ms": 2690.5638339812867,
+        "max_output_tokens": 4096,
+        "measured_input_tokens": 3708,
+        "model": "gpt-5-mini",
+        "output_tokens": 358,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "prompt_version": "grounded-generation-needs-v11",
+        "provider": "openai",
+        "reasoning_effort": "low",
+        "request_count": 2,
+        "retry_count": 1,
+        "stage": "generation",
+        "validation_attempts": [
+          {
+            "cached_input_tokens": 1792,
+            "cost_basis": "estimated",
+            "cost_usd": 0.0016293000000000002,
+            "input_tokens": 5266,
+            "latency_ms": 2690.5638339812867,
+            "outcome": "accepted",
+            "output_tokens": 358,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "request_count": 2,
+            "request_id": "f6f3482b-b648-432b-8bcc-7ffa0cbf0d16",
+            "retry_count": 0,
+            "retry_of_request_id": null
+          }
+        ],
+        "validation_retry_count": 0
+      }
+    },
+    "run_id": "1652fe39-0373-4d76-943a-fbe710178238"
+  },
+  {
+    "index": 5,
+    "case_id": "block1.reference-site",
+    "variant_id": "v1",
+    "utterance": "At Riverside House, what initial uniform allowance is available to a new starter in a uniformed role?",
+    "status": "completed",
+    "answer": "The Uniform Allowance Guidance applies to every site (including Riverside House) and specifies a one-off initial uniform allowance of \u00a355, paid in a new starter\u2019s first month\u2019s pay.",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "named",
+            "source": {
+              "quote": "Riverside House",
+              "turn_id": "user-1"
+            }
+          },
+          "aspect": "Retrieve the governing guidance that states the initial uniform allowance available to a new starter in a uniformed role at Riverside House.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "At Riverside House, what initial uniform allowance is available to a new starter in a uniformed role?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "raw_path": "cases/05-block1.reference-site-v1.json",
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19430,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1028,
+          "latency_ms": 1479.304292006418,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "named",
+                  "source": {
+                    "quote": "Riverside House",
+                    "turn_id": "user-1"
+                  }
+                },
+                "aspect": "Retrieve the governing guidance that states the initial uniform allowance available to a new starter in a uniformed role at Riverside House.",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "At Riverside House, what initial uniform allowance is available to a new starter in a uniformed role?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        },
+        "latency_ms": 11062.793880002573,
+        "output_tokens": 842,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "evidence": [
+      {
+        "chunk_id": "c943d6d2-b8ba-5878-b26a-ec32d30d7ecc",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "22237a20-285b-5953-bbb6-902ae376723f",
+        "document_family_id": "e0f6b30d-79a2-4f8d-8565-4881f1e9cf22",
+        "document_id": "e4d9fc1b-48e9-4e94-94d3-d88c078b2701",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "f8362c93-3fc9-5c0d-8edc-1dc367ecf327",
+        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "070dfce2-e754-53ff-86c4-e03cb412bcec",
+        "document_family_id": "e0f6b30d-79a2-4f8d-8565-4881f1e9cf22",
+        "document_id": "e4d9fc1b-48e9-4e94-94d3-d88c078b2701",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "eligibility": {
+      "need.n1.eligibility": {
+        "document_public_ids_by_side": {
+          "primary": [
+            "b499663d-00b3-447f-89b3-2b4a2a4221ae",
+            "96542b91-0e37-4499-9dd2-7396a638780f",
+            "b81d6c68-af4e-4abb-ba47-c55b6a96875e",
+            "28e7f062-f28d-4a9e-a33b-2456604759d0",
+            "3b30f55d-7454-4223-89e3-be3ea8e9755d",
+            "43c59814-e067-4257-8c2a-b2abf1242af6",
+            "e5152169-c38f-419e-a2ed-53fda2a298d0",
+            "98e00127-6478-442a-b4cc-93ec8dfe11a8",
+            "e761a0bc-db3c-44bd-91de-b9e1c462b9db",
+            "030e3348-c147-40b1-ae89-95b8bc06ba81",
+            "6e4c66ab-1907-4adb-a595-517d8cd28349",
+            "76f8af7a-3fcf-468a-95fb-6285eac69629",
+            "b89aaf6e-28ba-4d60-a20a-46f710c00cad",
+            "12b0bfcf-f194-43de-8baa-d614f7a097e5",
+            "e4d9fc1b-48e9-4e94-94d3-d88c078b2701",
+            "43de6006-c103-4433-bc93-f7abf4b81d37",
+            "91e7dd31-68df-48e0-9899-22220b656c49",
+            "81b225ad-8e3d-4e1a-b471-814bdef2d21f",
+            "41505cbb-45cf-4809-90d8-8155b50977b4",
+            "99a2aaab-4bfe-4de5-8c61-8d8d9151201d",
+            "33f663f1-9130-4190-b47e-5fe4f2998f17",
+            "29e3e059-4943-481d-b9ba-c982e8b40c56",
+            "df1cb996-fe27-4701-8808-4a87c6991b85",
+            "9266e4a5-0140-4b78-b912-2fc89d5c0b71",
+            "fee8922b-0dd6-4f64-a1eb-c344cbe57eb2",
+            "74c42faf-9b49-4828-9f6e-ca0177051aeb",
+            "b7fdccec-aee4-490d-b1fd-86ce97c6850c",
+            "0374f047-d117-4a3e-811a-6a33c8febfbe",
+            "ff6fcf9f-03f4-481a-a2b3-d06cfad942d8",
+            "de314355-4584-4e9b-af85-8fb13aadf04e",
+            "d26c20bc-c967-4bed-ad97-63740f1811af",
+            "0950047e-b3f1-49a5-b8c3-ad20af468389",
+            "ea5136c5-b15e-4922-8a3c-50d31d5ae8f5",
+            "c945b269-a25c-484f-9e60-be477c4571cc",
+            "3474418e-d484-41d0-95f8-6f10d12a12ff",
+            "42107dbf-dcdd-4713-b530-34b57d43212e",
+            "084a7de1-9075-49b8-a0ea-9317a800360d",
+            "7738becf-1f08-47bb-9391-286f475b9c1c",
+            "1497326a-7a56-48f3-89c1-2584f5c9fe2a",
+            "1301925b-8e8c-48fe-b040-777bbf2562b8",
+            "f1b44203-3725-4592-9ee1-60964d48f92e",
+            "46cb289d-ac72-4e11-982a-af0eb8f8f86b",
+            "23ebf6a2-3c7c-425f-83cd-a110e323c935",
+            "81715f6c-f642-4ae4-8334-a1410fdb1883",
+            "c52e6423-2f9c-4aad-a3b1-1b7ab184a6c9",
+            "f3baa0da-ce82-4d7f-b176-044b81679015",
+            "78795245-a1e0-41ab-aabf-acf2015669e2",
+            "7f3ea274-cefa-42c6-85a1-801ec8514743",
+            "63bee82e-fc0e-48b2-904b-45ea4abd83af",
+            "84e2ecaa-d0a5-4797-8754-8258c9ee0066",
+            "8f7b44d8-945e-40f5-989d-ce362d3c73dd",
+            "4ee93999-e0c6-4a3e-b660-a02ff53b0f7d",
+            "bc0e367f-72ad-4ec1-97d3-51af9adff7c0",
+            "09818c2a-fbb3-48e6-8837-bf6b0eb63845",
+            "69e86b22-5b32-48d3-9a55-f56c2970028d",
+            "02688ef1-af28-47db-b810-2fed68bcfc18",
+            "44d3090a-fc69-4aef-b5d9-e954d6cd05bf",
+            "38517fd8-411f-4c41-8813-59d8034df7fc",
+            "0a2fdc22-97be-414b-9bad-80ff4e122eba",
+            "b49e3ef5-9f99-4ea7-b1db-a74d3e0f96d0",
+            "53b8deb6-2010-4960-af70-61ee29e2d081",
+            "440c40fe-9f8a-4455-981d-226168ce50ce",
+            "41e8dbf9-525b-4d4d-a6cb-0922d54bd92a",
+            "fb8b9457-8083-47e8-92bb-ca71318fac43",
+            "a8e32d8c-ae9b-4dc8-ac44-a1fb5e08a38a",
+            "6e2a9a64-714f-411e-93a5-fb07f69f4767",
+            "00cf1f58-7551-4743-a677-c23b153b4c70",
+            "0eb7c74a-4222-433a-bc8f-5c0f4f1f4b7a",
+            "9dfb3183-603d-4dec-ab17-4d61c03517e7",
+            "2962e99e-713f-4929-989c-2e792aa024fb",
+            "d8a026af-ae75-4665-a944-826e677f80dc",
+            "8fd26024-ad87-41f7-98cb-6146f7a40d82",
+            "6e5e4e7e-11a8-47d6-831c-d40ebbe1f620",
+            "f3322e19-574e-417a-bc7f-c0dfd7e7f5f5",
+            "ea62fd8d-3990-40ae-a414-4d3c2e96b98e",
+            "2310f9b2-550a-4645-993e-c5b10892c556",
+            "41a37660-05c8-4214-a376-a9a91147f7cf",
+            "3ab17580-4744-4a09-b8df-dc28f8dd83fa",
+            "3be850cb-8d68-4c9f-a2ac-12e606b01e70",
+            "a16afd35-db9a-4b7c-836d-8e2c62382e12",
+            "9e32fc4f-d094-44aa-ba2e-200982d60135",
+            "967b0cf8-56ca-4022-94a9-11bf3b62ce77",
+            "52e08196-c1b5-4783-8c1c-e14f23315067",
+            "3d779c18-f012-4ad6-ace3-505cc590704f",
+            "e7ec8215-7cce-4158-8e88-96b08873eef4",
+            "91fe2596-7c01-4d6b-8dc8-c6092ad07767",
+            "3cf62858-dfeb-4f59-8548-f98b696d72e5",
+            "b7ba4849-d76d-408e-b99f-6a5dd757a2e3",
+            "fdca6e91-8a24-4803-b630-66a5c889e3ce",
+            "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+            "b9eb058e-dc89-47a0-b380-c51ae42b2727",
+            "8b50438f-0446-4556-a5f3-ea08aa15aaac",
+            "3478a192-8ee4-4bec-84a2-a6b01ac30518",
+            "57a2e822-aa8d-484c-a180-f4b1f675fa07",
+            "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce",
+            "8cb6b4e0-e0bd-46a3-ac36-642e07cb01e6",
+            "23c48834-49e0-4c88-bb96-9f203c0780d9",
+            "aa57d09d-c08b-4e87-aa0e-80791d1ada1c",
+            "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+            "b44246ef-f452-4e2e-8158-de356b24ea19",
+            "a190775d-ae67-4fb9-8e27-8d12c8e5bd47",
+            "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+            "c36ac189-7e2d-483b-9635-189b03e8e76c",
+            "5fcccfd6-4986-4667-8546-2a9c34cce5cd",
+            "af1734e6-f1d8-4cfc-ba2f-b5f20c543f58",
+            "4a5d8aa4-45fd-4d74-a7a3-08a6a9f81d5f",
+            "0fcd20f7-6481-4a07-bfd3-2c5fb65b2bd2",
+            "b8e7b8df-cbd5-482b-a294-be5022b06d54",
+            "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+            "d19e8dc2-777f-415b-92e9-c0c9e85109f6",
+            "4d769f27-4a4a-432b-b37d-3ba13d4c4d38",
+            "75532b6a-4ef2-4315-b596-2e8a8f322f59",
+            "0626244e-a8ee-4746-813c-b50b70d79808",
+            "636d900c-0009-47c1-a111-8bc9f0cec161",
+            "7ac1a9bc-a42c-4bff-bbc1-6e54293647b8",
+            "7e25a975-a8e6-436d-a897-43d1497d6451",
+            "9b2b7b03-c84f-4e07-8bca-3e25ad07c485",
+            "6c4c6bcb-a666-4b7a-8999-674a411a95eb",
+            "5328b85b-493d-4fb4-a7dc-cd732cd6f9ed",
+            "c40c8cd9-2262-4806-850c-2fb0864eb0d2",
+            "b48abec3-3c1b-40b1-bc8f-bc5277f03469",
+            "bd6da148-fe3f-40fe-90e2-49b4601997c0",
+            "afd570c9-6033-429e-808e-8c95b3709c0e",
+            "2c5492f6-8c9a-485f-a92e-011d8871269f",
+            "c637668a-a5b6-4e7f-ad62-0e13b54c65bd",
+            "77ed40d9-112d-4307-b8d8-e2bad64249fd",
+            "2e5b9ce1-aa9f-4bb9-9699-9497a71329f1",
+            "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+            "eddeeede-5a30-430d-b8c0-8617fe4d5ded",
+            "c6adbb71-001d-4de2-acf2-8320d6bec95a",
+            "45ac6b3c-6d83-4d97-a252-f4600974f3e0",
+            "e93dbc7f-ea71-43f3-bdad-daaa2e92373c",
+            "c557ed4b-bbd2-4eb8-a9b5-cfea42c2a892",
+            "8fba29d4-7857-488b-ae48-9be6c3799abd",
+            "20b1afea-3efe-4c63-bc4d-a44fae224897",
+            "f1fb4cc2-0ac7-4c6c-9b4d-371b98b8e11c",
+            "ad956f9c-e21b-4d3a-acf3-7bc75ea70e4b",
+            "b44a4c5f-2968-4294-85b6-19b066fc3cab",
+            "64b73301-2992-4db3-aadd-374dc825df78",
+            "250dc006-c10d-4392-9033-522c3137af82",
+            "d92fec1f-d1ac-4ed0-9b40-bcda98fd326a",
+            "822e205e-2579-4d1c-812d-7882d886bb97",
+            "42fa73b1-1b53-433c-80de-8bd7023ee670",
+            "95788e4b-11e2-45d6-a672-dd893a544715",
+            "3b90395d-fcb7-4a1f-ad3b-5ed9d0740b94",
+            "aef65ab6-e0af-4ecf-bf3b-bf1812eef549",
+            "42371341-c476-4b66-859d-ba0d1ecad9e1",
+            "10d27131-fa2c-493b-8f63-3aa8e3808b9c",
+            "34505187-c14e-4484-9613-9077b2070d0d",
+            "8393e791-8177-4568-8660-bfdd4efcfab3",
+            "617c4320-42cf-4c5e-873a-54bde203926f",
+            "29ee929e-38f3-4f4a-95f7-2e48c51c4556",
+            "cb29e902-d33e-4fc7-b6c0-139f88eeba54",
+            "7ea28d94-8750-4d49-bd23-dfb5b7b8b520",
+            "5196e229-9261-4602-921f-261c74e21a83",
+            "fdcb4b96-c23c-4cec-8bff-07099b27d88e",
+            "80392f21-2006-4a4a-b0ec-77f13351e07e",
+            "8281c116-c499-4a97-9226-6968ab3fa678",
+            "192a315d-96f3-4cd9-a7fd-77aaed5facfb",
+            "03bc8b5b-0f17-41d7-bb44-fff6875ff8d4",
+            "05d2c4e1-86cd-4ca6-9e45-573765c3b6f5",
+            "58e69592-9309-4ab2-a04d-5edd0b730083",
+            "d14be51f-1bff-4b5a-814b-aa0f8bd1001d",
+            "99718b7b-a32f-4e75-8c55-3aa824800e76",
+            "29c809b2-02a4-4389-955c-eb267b7c30de",
+            "64857a1e-ebee-4c79-a454-67c165381770",
+            "19761c36-44da-4bd7-94c0-417bfb2145b8",
+            "caae2df5-d3f3-4424-8a35-39406c15dfad",
+            "7bb9c47e-ff7f-4807-8a88-90ed8b885f2f"
+          ]
+        },
+        "outcome": "evidence_found",
+        "reason": null,
+        "reference_classifications": [
+          {
+            "kind": "site",
+            "reference": "Riverside House"
+          }
+        ],
+        "resolved_location_public_id": "c2db9bba-c9ee-4736-b8bb-1ade44e1a766"
+      }
+    },
+    "notice": false,
+    "generation": {
+      "aspect_links": [
+        {
+          "answer_part_indices": [
+            0
+          ],
+          "need_id": "n1",
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "aspect_results": {
+        "n1": "supported"
+      },
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "insufficiency_reason": null,
+      "model": "gpt-5-mini",
+      "outcome": "answered",
+      "parts": [
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 594,
+              "document_id": 190,
+              "evidence_handle": "ev-01"
+            },
+            {
+              "document_chunk_id": 73,
+              "document_id": 15,
+              "evidence_handle": "ev-03"
+            }
+          ],
+          "text": "The Uniform Allowance Guidance applies to every site (including Riverside House) and specifies a one-off initial uniform allowance of \u00a355, paid in a new starter\u2019s first month\u2019s pay."
+        }
+      ],
+      "provider": "openai",
+      "rendered_text": "The Uniform Allowance Guidance applies to every site (including Riverside House) and specifies a one-off initial uniform allowance of \u00a355, paid in a new starter\u2019s first month\u2019s pay.",
+      "scope_citations": [],
+      "unsupported_aspects": [],
+      "usage": {
+        "adapter_version": "openai-responses-needs-v4",
+        "cached_input_tokens": 1792,
+        "contract_version": "generation-result-v3",
+        "cost_basis": "estimated",
+        "cost_usd": 0.00999505,
+        "entailment_review": {
+          "cached_input_tokens": 0,
+          "cost_basis": "estimated",
+          "cost_usd": 0.00278275,
+          "input_tokens": 9883,
+          "latency_ms": 2029.8117090133019,
+          "model": "gpt-5-mini",
+          "output_tokens": 156,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "stage": "generation"
+        },
+        "execution": "provider_api",
+        "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+        "input_tokens": 35889,
+        "latency_ms": 5579.675920016598,
+        "max_output_tokens": 4096,
+        "measured_input_tokens": 26083,
+        "model": "gpt-5-mini",
+        "output_tokens": 713,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "prompt_version": "grounded-generation-needs-v11",
+        "provider": "openai",
+        "reasoning_effort": "low",
+        "request_count": 2,
+        "retry_count": 1,
+        "stage": "generation",
+        "validation_attempts": [
+          {
+            "cached_input_tokens": 1792,
+            "cost_basis": "estimated",
+            "cost_usd": 0.00999505,
+            "input_tokens": 35889,
+            "latency_ms": 5579.675920016598,
+            "outcome": "accepted",
+            "output_tokens": 713,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "request_count": 2,
+            "request_id": "69766383-0d66-42f7-bb8d-cca03700d745",
+            "retry_count": 0,
+            "retry_of_request_id": null
+          }
+        ],
+        "validation_retry_count": 0
+      }
+    },
+    "run_id": "6208c9d7-2a25-465f-bba3-60933cba4b54"
+  },
+  {
+    "index": 6,
+    "case_id": "block1.reference-unregistered",
+    "variant_id": "v1",
+    "utterance": "At Oakfield outreach, what initial uniform allowance would a new starter in a uniformed role receive?",
+    "status": "completed",
+    "answer": "A new starter in a uniformed role at Oakfield outreach would receive a one-off initial uniform allowance of \u00a355 in their first month's pay, per the Uniform Allowance Guidance which applies to every site.\n\nLocation coverage not established\n\nThe named location in your question could not be matched to a registered site. The guidance above is general; its applicability to that location has not been established.",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "named",
+            "source": {
+              "quote": "Oakfield outreach",
+              "turn_id": "user-1"
+            }
+          },
+          "aspect": "Retrieve the recorded initial uniform allowance amount or items for a new starter in a uniformed role at the Oakfield outreach site, referencing any guidance that sets the allowance.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "At Oakfield outreach, what initial uniform allowance would a new starter in a uniformed role receive?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "raw_path": "cases/06-block1.reference-unregistered-v1.json",
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19438,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1036,
+          "latency_ms": 1953.991917980602,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "named",
+                  "source": {
+                    "quote": "Oakfield outreach",
+                    "turn_id": "user-1"
+                  }
+                },
+                "aspect": "Retrieve the recorded initial uniform allowance amount or items for a new starter in a uniformed role at the Oakfield outreach site, referencing any guidance that sets the allowance.",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "At Oakfield outreach, what initial uniform allowance would a new starter in a uniformed role receive?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        },
+        "latency_ms": 11176.68429701007,
+        "output_tokens": 850,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "evidence": [
+      {
+        "chunk_id": "c943d6d2-b8ba-5878-b26a-ec32d30d7ecc",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "22237a20-285b-5953-bbb6-902ae376723f",
+        "document_family_id": "e0f6b30d-79a2-4f8d-8565-4881f1e9cf22",
+        "document_id": "e4d9fc1b-48e9-4e94-94d3-d88c078b2701",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "070dfce2-e754-53ff-86c4-e03cb412bcec",
+        "document_family_id": "e0f6b30d-79a2-4f8d-8565-4881f1e9cf22",
+        "document_id": "e4d9fc1b-48e9-4e94-94d3-d88c078b2701",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "f8362c93-3fc9-5c0d-8edc-1dc367ecf327",
+        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "eligibility": {
+      "need.n1.eligibility": {
+        "document_public_ids_by_side": {
+          "primary": [
+            "b499663d-00b3-447f-89b3-2b4a2a4221ae",
+            "96542b91-0e37-4499-9dd2-7396a638780f",
+            "b81d6c68-af4e-4abb-ba47-c55b6a96875e",
+            "28e7f062-f28d-4a9e-a33b-2456604759d0",
+            "3b30f55d-7454-4223-89e3-be3ea8e9755d",
+            "43c59814-e067-4257-8c2a-b2abf1242af6",
+            "e5152169-c38f-419e-a2ed-53fda2a298d0",
+            "98e00127-6478-442a-b4cc-93ec8dfe11a8",
+            "e761a0bc-db3c-44bd-91de-b9e1c462b9db",
+            "030e3348-c147-40b1-ae89-95b8bc06ba81",
+            "6e4c66ab-1907-4adb-a595-517d8cd28349",
+            "76f8af7a-3fcf-468a-95fb-6285eac69629",
+            "b89aaf6e-28ba-4d60-a20a-46f710c00cad",
+            "12b0bfcf-f194-43de-8baa-d614f7a097e5",
+            "e4d9fc1b-48e9-4e94-94d3-d88c078b2701",
+            "43de6006-c103-4433-bc93-f7abf4b81d37",
+            "91e7dd31-68df-48e0-9899-22220b656c49",
+            "81b225ad-8e3d-4e1a-b471-814bdef2d21f",
+            "6f1b9d5f-4bf3-423c-a4b1-c2bf4e2ad606",
+            "41505cbb-45cf-4809-90d8-8155b50977b4",
+            "99a2aaab-4bfe-4de5-8c61-8d8d9151201d",
+            "33f663f1-9130-4190-b47e-5fe4f2998f17",
+            "29e3e059-4943-481d-b9ba-c982e8b40c56",
+            "df1cb996-fe27-4701-8808-4a87c6991b85",
+            "9266e4a5-0140-4b78-b912-2fc89d5c0b71",
+            "fee8922b-0dd6-4f64-a1eb-c344cbe57eb2",
+            "74c42faf-9b49-4828-9f6e-ca0177051aeb",
+            "57874cae-918b-4492-9f9e-ab6449e4b4bd",
+            "b7fdccec-aee4-490d-b1fd-86ce97c6850c",
+            "0374f047-d117-4a3e-811a-6a33c8febfbe",
+            "ff6fcf9f-03f4-481a-a2b3-d06cfad942d8",
+            "de314355-4584-4e9b-af85-8fb13aadf04e",
+            "d26c20bc-c967-4bed-ad97-63740f1811af",
+            "0950047e-b3f1-49a5-b8c3-ad20af468389",
+            "ea5136c5-b15e-4922-8a3c-50d31d5ae8f5",
+            "c945b269-a25c-484f-9e60-be477c4571cc",
+            "3474418e-d484-41d0-95f8-6f10d12a12ff",
+            "42107dbf-dcdd-4713-b530-34b57d43212e",
+            "084a7de1-9075-49b8-a0ea-9317a800360d",
+            "7738becf-1f08-47bb-9391-286f475b9c1c",
+            "1497326a-7a56-48f3-89c1-2584f5c9fe2a",
+            "1301925b-8e8c-48fe-b040-777bbf2562b8",
+            "f1b44203-3725-4592-9ee1-60964d48f92e",
+            "46cb289d-ac72-4e11-982a-af0eb8f8f86b",
+            "23ebf6a2-3c7c-425f-83cd-a110e323c935",
+            "81715f6c-f642-4ae4-8334-a1410fdb1883",
+            "4395f603-6940-4367-969b-b79ec953fd6e",
+            "c52e6423-2f9c-4aad-a3b1-1b7ab184a6c9",
+            "f3baa0da-ce82-4d7f-b176-044b81679015",
+            "78795245-a1e0-41ab-aabf-acf2015669e2",
+            "7f3ea274-cefa-42c6-85a1-801ec8514743",
+            "63bee82e-fc0e-48b2-904b-45ea4abd83af",
+            "84e2ecaa-d0a5-4797-8754-8258c9ee0066",
+            "8f7b44d8-945e-40f5-989d-ce362d3c73dd",
+            "da8b1f15-bdc7-4d74-9eea-678e4bb9288f",
+            "4ee93999-e0c6-4a3e-b660-a02ff53b0f7d",
+            "bc0e367f-72ad-4ec1-97d3-51af9adff7c0",
+            "09818c2a-fbb3-48e6-8837-bf6b0eb63845",
+            "69e86b22-5b32-48d3-9a55-f56c2970028d",
+            "02688ef1-af28-47db-b810-2fed68bcfc18",
+            "44d3090a-fc69-4aef-b5d9-e954d6cd05bf",
+            "38517fd8-411f-4c41-8813-59d8034df7fc",
+            "0a2fdc22-97be-414b-9bad-80ff4e122eba",
+            "b49e3ef5-9f99-4ea7-b1db-a74d3e0f96d0",
+            "e7b2856b-79bc-4c50-a359-6d3e9e6f469b",
+            "53b8deb6-2010-4960-af70-61ee29e2d081",
+            "440c40fe-9f8a-4455-981d-226168ce50ce",
+            "41e8dbf9-525b-4d4d-a6cb-0922d54bd92a",
+            "fb8b9457-8083-47e8-92bb-ca71318fac43",
+            "a8e32d8c-ae9b-4dc8-ac44-a1fb5e08a38a",
+            "6e2a9a64-714f-411e-93a5-fb07f69f4767",
+            "00cf1f58-7551-4743-a677-c23b153b4c70",
+            "0eb7c74a-4222-433a-bc8f-5c0f4f1f4b7a",
+            "9dfb3183-603d-4dec-ab17-4d61c03517e7",
+            "2962e99e-713f-4929-989c-2e792aa024fb",
+            "d8a026af-ae75-4665-a944-826e677f80dc",
+            "8fd26024-ad87-41f7-98cb-6146f7a40d82",
+            "6e5e4e7e-11a8-47d6-831c-d40ebbe1f620",
+            "f3322e19-574e-417a-bc7f-c0dfd7e7f5f5",
+            "ea62fd8d-3990-40ae-a414-4d3c2e96b98e",
+            "2310f9b2-550a-4645-993e-c5b10892c556",
+            "41a37660-05c8-4214-a376-a9a91147f7cf",
+            "3ab17580-4744-4a09-b8df-dc28f8dd83fa",
+            "5d3de7a8-a7da-4bbb-9ea7-e3ac6a294653",
+            "5d8bbdf2-4543-4aaa-953e-40a3ac1e4f41",
+            "3be850cb-8d68-4c9f-a2ac-12e606b01e70",
+            "a16afd35-db9a-4b7c-836d-8e2c62382e12",
+            "9e32fc4f-d094-44aa-ba2e-200982d60135",
+            "967b0cf8-56ca-4022-94a9-11bf3b62ce77",
+            "52e08196-c1b5-4783-8c1c-e14f23315067",
+            "3d779c18-f012-4ad6-ace3-505cc590704f",
+            "e7ec8215-7cce-4158-8e88-96b08873eef4",
+            "91fe2596-7c01-4d6b-8dc8-c6092ad07767",
+            "3cf62858-dfeb-4f59-8548-f98b696d72e5",
+            "b7ba4849-d76d-408e-b99f-6a5dd757a2e3",
+            "fdca6e91-8a24-4803-b630-66a5c889e3ce",
+            "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+            "b9eb058e-dc89-47a0-b380-c51ae42b2727",
+            "8b50438f-0446-4556-a5f3-ea08aa15aaac",
+            "3478a192-8ee4-4bec-84a2-a6b01ac30518",
+            "57a2e822-aa8d-484c-a180-f4b1f675fa07",
+            "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce",
+            "8cb6b4e0-e0bd-46a3-ac36-642e07cb01e6",
+            "23c48834-49e0-4c88-bb96-9f203c0780d9",
+            "aa57d09d-c08b-4e87-aa0e-80791d1ada1c",
+            "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+            "b44246ef-f452-4e2e-8158-de356b24ea19",
+            "a190775d-ae67-4fb9-8e27-8d12c8e5bd47",
+            "6ee43148-7ddd-439a-a4fd-2b6e0409783a",
+            "c36ac189-7e2d-483b-9635-189b03e8e76c",
+            "5fcccfd6-4986-4667-8546-2a9c34cce5cd",
+            "af1734e6-f1d8-4cfc-ba2f-b5f20c543f58",
+            "4a5d8aa4-45fd-4d74-a7a3-08a6a9f81d5f",
+            "0fcd20f7-6481-4a07-bfd3-2c5fb65b2bd2",
+            "b8e7b8df-cbd5-482b-a294-be5022b06d54",
+            "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+            "d19e8dc2-777f-415b-92e9-c0c9e85109f6",
+            "4d769f27-4a4a-432b-b37d-3ba13d4c4d38",
+            "75532b6a-4ef2-4315-b596-2e8a8f322f59",
+            "0626244e-a8ee-4746-813c-b50b70d79808",
+            "636d900c-0009-47c1-a111-8bc9f0cec161",
+            "7ac1a9bc-a42c-4bff-bbc1-6e54293647b8",
+            "7e25a975-a8e6-436d-a897-43d1497d6451",
+            "9b2b7b03-c84f-4e07-8bca-3e25ad07c485",
+            "6c4c6bcb-a666-4b7a-8999-674a411a95eb",
+            "5328b85b-493d-4fb4-a7dc-cd732cd6f9ed",
+            "c40c8cd9-2262-4806-850c-2fb0864eb0d2",
+            "b48abec3-3c1b-40b1-bc8f-bc5277f03469",
+            "bd6da148-fe3f-40fe-90e2-49b4601997c0",
+            "afd570c9-6033-429e-808e-8c95b3709c0e",
+            "2c5492f6-8c9a-485f-a92e-011d8871269f",
+            "c637668a-a5b6-4e7f-ad62-0e13b54c65bd",
+            "77ed40d9-112d-4307-b8d8-e2bad64249fd",
+            "2e5b9ce1-aa9f-4bb9-9699-9497a71329f1",
+            "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+            "eddeeede-5a30-430d-b8c0-8617fe4d5ded",
+            "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+            "c6adbb71-001d-4de2-acf2-8320d6bec95a",
+            "45ac6b3c-6d83-4d97-a252-f4600974f3e0",
+            "e93dbc7f-ea71-43f3-bdad-daaa2e92373c",
+            "c557ed4b-bbd2-4eb8-a9b5-cfea42c2a892",
+            "8fba29d4-7857-488b-ae48-9be6c3799abd",
+            "20b1afea-3efe-4c63-bc4d-a44fae224897",
+            "f1fb4cc2-0ac7-4c6c-9b4d-371b98b8e11c",
+            "ad956f9c-e21b-4d3a-acf3-7bc75ea70e4b",
+            "b44a4c5f-2968-4294-85b6-19b066fc3cab",
+            "64b73301-2992-4db3-aadd-374dc825df78",
+            "250dc006-c10d-4392-9033-522c3137af82",
+            "d92fec1f-d1ac-4ed0-9b40-bcda98fd326a",
+            "822e205e-2579-4d1c-812d-7882d886bb97",
+            "42fa73b1-1b53-433c-80de-8bd7023ee670",
+            "95788e4b-11e2-45d6-a672-dd893a544715",
+            "3b90395d-fcb7-4a1f-ad3b-5ed9d0740b94",
+            "aef65ab6-e0af-4ecf-bf3b-bf1812eef549",
+            "42371341-c476-4b66-859d-ba0d1ecad9e1",
+            "10d27131-fa2c-493b-8f63-3aa8e3808b9c",
+            "34505187-c14e-4484-9613-9077b2070d0d",
+            "8393e791-8177-4568-8660-bfdd4efcfab3",
+            "617c4320-42cf-4c5e-873a-54bde203926f",
+            "29ee929e-38f3-4f4a-95f7-2e48c51c4556",
+            "cb29e902-d33e-4fc7-b6c0-139f88eeba54",
+            "7ea28d94-8750-4d49-bd23-dfb5b7b8b520",
+            "5196e229-9261-4602-921f-261c74e21a83",
+            "fdcb4b96-c23c-4cec-8bff-07099b27d88e",
+            "80392f21-2006-4a4a-b0ec-77f13351e07e",
+            "8281c116-c499-4a97-9226-6968ab3fa678",
+            "192a315d-96f3-4cd9-a7fd-77aaed5facfb",
+            "03bc8b5b-0f17-41d7-bb44-fff6875ff8d4",
+            "05d2c4e1-86cd-4ca6-9e45-573765c3b6f5",
+            "58e69592-9309-4ab2-a04d-5edd0b730083",
+            "d14be51f-1bff-4b5a-814b-aa0f8bd1001d",
+            "99718b7b-a32f-4e75-8c55-3aa824800e76",
+            "29c809b2-02a4-4389-955c-eb267b7c30de",
+            "64857a1e-ebee-4c79-a454-67c165381770",
+            "19761c36-44da-4bd7-94c0-417bfb2145b8",
+            "caae2df5-d3f3-4424-8a35-39406c15dfad",
+            "7bb9c47e-ff7f-4807-8a88-90ed8b885f2f"
+          ]
+        },
+        "outcome": "evidence_found",
+        "reason": null,
+        "reference_classifications": [
+          {
+            "kind": "unresolved",
+            "reference": "Oakfield outreach"
+          }
+        ],
+        "resolved_location_public_id": null
+      }
+    },
+    "notice": true,
+    "generation": {
+      "aspect_links": [
+        {
+          "answer_part_indices": [
+            0
+          ],
+          "need_id": "n1",
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "aspect_results": {
+        "n1": "supported"
+      },
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "insufficiency_reason": null,
+      "model": "gpt-5-mini",
+      "outcome": "answered",
+      "parts": [
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 594,
+              "document_id": 190,
+              "evidence_handle": "ev-01"
+            },
+            {
+              "document_chunk_id": 595,
+              "document_id": 190,
+              "evidence_handle": "ev-02"
+            },
+            {
+              "document_chunk_id": 980,
+              "document_id": 300,
+              "evidence_handle": "ev-05"
+            }
+          ],
+          "text": "A new starter in a uniformed role at Oakfield outreach would receive a one-off initial uniform allowance of \u00a355 in their first month's pay, per the Uniform Allowance Guidance which applies to every site."
+        }
+      ],
+      "provider": "openai",
+      "rendered_text": "A new starter in a uniformed role at Oakfield outreach would receive a one-off initial uniform allowance of \u00a355 in their first month's pay, per the Uniform Allowance Guidance which applies to every site.",
+      "scope_citations": [],
+      "unsupported_aspects": [],
+      "usage": {
+        "adapter_version": "openai-responses-needs-v4",
+        "cached_input_tokens": 5888,
+        "contract_version": "generation-result-v3",
+        "cost_basis": "estimated",
+        "cost_usd": 0.0103007,
+        "entailment_review": {
+          "cached_input_tokens": 0,
+          "cost_basis": "estimated",
+          "cost_usd": 0.0041595,
+          "input_tokens": 15046,
+          "latency_ms": 2583.059375989251,
+          "model": "gpt-5-mini",
+          "output_tokens": 199,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "stage": "generation"
+        },
+        "execution": "provider_api",
+        "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+        "input_tokens": 41950,
+        "latency_ms": 3853.8575019920245,
+        "max_output_tokens": 4096,
+        "measured_input_tokens": 26981,
+        "model": "gpt-5-mini",
+        "output_tokens": 569,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "prompt_version": "grounded-generation-needs-v11",
+        "provider": "openai",
+        "reasoning_effort": "low",
+        "request_count": 2,
+        "retry_count": 1,
+        "stage": "generation",
+        "validation_attempts": [
+          {
+            "cached_input_tokens": 5888,
+            "cost_basis": "estimated",
+            "cost_usd": 0.0103007,
+            "input_tokens": 41950,
+            "latency_ms": 3853.8575019920245,
+            "outcome": "accepted",
+            "output_tokens": 569,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "request_count": 2,
+            "request_id": "0f450eb7-abbe-487e-897d-2e438ffcd928",
+            "retry_count": 0,
+            "retry_of_request_id": null
+          }
+        ],
+        "validation_retry_count": 0
+      }
+    },
+    "run_id": "f5fb8ba1-3c9b-4ab7-ac18-cb48468fc256"
+  }
+]

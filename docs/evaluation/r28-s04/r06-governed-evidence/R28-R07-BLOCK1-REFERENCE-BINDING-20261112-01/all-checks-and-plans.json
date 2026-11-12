@@ -1,0 +1,462 @@
+[
+  {
+    "case_id": "block1.citations-service",
+    "attempt": 1,
+    "cached_input_tokens": null,
+    "checker_code": "accepted",
+    "citation": null,
+    "citation_verification": "not_applicable",
+    "code": "accepted",
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "input_tokens": 1033,
+    "latency_ms": 1968.0400009965524,
+    "model": "gpt-5-mini",
+    "output_tokens": 87,
+    "pricing_snapshot": null,
+    "provider": "openai",
+    "request_count": 1,
+    "retry_count": 0,
+    "reviewed_plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "named",
+            "source": {
+              "quote": "Alderbridge staff",
+              "turn_id": "user-1"
+            }
+          },
+          "aspect": "Retrieve the recorded confidential staff support service available to staff at Alderbridge for personal worries, and the contact details or routes given for reaching that service.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "Which confidential support service can Alderbridge staff use for personal worries, and how can they reach it?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "verification_reason": null,
+    "version": "interpretation-check-v2"
+  },
+  {
+    "case_id": "block1.relative-current-quarter",
+    "attempt": 1,
+    "cached_input_tokens": null,
+    "checker_code": "scope_added",
+    "citation": {
+      "inspected_need_ids": [
+        "n1"
+      ],
+      "need_id": "n1",
+      "plan_field": "aspect",
+      "plan_quote": "and any named contact point or escalation route specified for those issues.",
+      "user_quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+      "user_turn_id": "user-1"
+    },
+    "citation_verification": "verified",
+    "code": "scope_added",
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "input_tokens": 1085,
+    "latency_ms": 3988.2376689929515,
+    "model": "gpt-5-mini",
+    "output_tokens": 343,
+    "pricing_snapshot": null,
+    "provider": "openai",
+    "request_count": 1,
+    "retry_count": 0,
+    "reviewed_plan": {
+      "bindings": [
+        {
+          "family_ids": [
+            "17278f8a-fa84-4a14-a98e-261d19682c66"
+          ],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "matched"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Under the document 'E-Learning Platform Guidance', for the period 'this quarter' (2026-10-01/2026-12-31), identify which team is responsible for handling login problems and any named contact point or escalation route specified for those issues.",
+          "authority": {
+            "kind": "period",
+            "precision": "interval",
+            "source": {
+              "quote": "this quarter",
+              "turn_id": "user-1"
+            },
+            "value": "2026-10-01/2026-12-31"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "verification_reason": null,
+    "version": "interpretation-check-v2"
+  },
+  {
+    "case_id": "block1.relative-current-quarter",
+    "attempt": 2,
+    "cached_input_tokens": null,
+    "checker_code": "accepted",
+    "citation": null,
+    "citation_verification": "not_applicable",
+    "code": "accepted",
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "input_tokens": 1060,
+    "latency_ms": 2305.6724600028247,
+    "model": "gpt-5-mini",
+    "output_tokens": 151,
+    "pricing_snapshot": null,
+    "provider": "openai",
+    "request_count": 1,
+    "retry_count": 0,
+    "reviewed_plan": {
+      "bindings": [
+        {
+          "family_ids": [
+            "17278f8a-fa84-4a14-a98e-261d19682c66"
+          ],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "matched"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Retrieve, for the period quoted as \"this quarter\", which team is recorded as responsible for handling login problems in the E-Learning Platform Guidance.",
+          "authority": {
+            "kind": "period",
+            "precision": "interval",
+            "source": {
+              "quote": "this quarter",
+              "turn_id": "user-1"
+            },
+            "value": "2026-10-01/2026-12-31"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "verification_reason": null,
+    "version": "interpretation-check-v2"
+  },
+  {
+    "case_id": "block1.reference-organisation",
+    "attempt": 1,
+    "cached_input_tokens": null,
+    "checker_code": "accepted",
+    "citation": null,
+    "citation_verification": "not_applicable",
+    "code": "accepted",
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "input_tokens": 1047,
+    "latency_ms": 1652.7325010101777,
+    "model": "gpt-5-mini",
+    "output_tokens": 87,
+    "pricing_snapshot": null,
+    "provider": "openai",
+    "request_count": 1,
+    "retry_count": 0,
+    "reviewed_plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "named",
+            "source": {
+              "quote": "At Alderbridge Care Group",
+              "turn_id": "user-1"
+            }
+          },
+          "aspect": "What is the required initial uniform payment amount for a new employee appointed to a uniformed role at Alderbridge Care Group? (seeking the current governing amount or payment rule.)",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "At Alderbridge Care Group, how much is the initial uniform payment for a new employee in a uniformed role?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "verification_reason": null,
+    "version": "interpretation-check-v2"
+  },
+  {
+    "case_id": "block1.reference-title",
+    "attempt": 1,
+    "cached_input_tokens": null,
+    "checker_code": "accepted",
+    "citation": null,
+    "citation_verification": "not_applicable",
+    "code": "accepted",
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "input_tokens": 1027,
+    "latency_ms": 1340.4525420046411,
+    "model": "gpt-5-mini",
+    "output_tokens": 87,
+    "pricing_snapshot": null,
+    "provider": "openai",
+    "request_count": 1,
+    "retry_count": 0,
+    "reviewed_plan": {
+      "bindings": [
+        {
+          "family_ids": [
+            "78df2038-574c-4fc5-8216-b78b41e4e912"
+          ],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "matched"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "From the named document 'Uniform Allowance Guidance', state which month each year the 'replacement payment' is made.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "Under the Uniform Allowance Guidance, which month is the replacement payment made each year?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "verification_reason": null,
+    "version": "interpretation-check-v2"
+  },
+  {
+    "case_id": "block1.reference-site",
+    "attempt": 1,
+    "cached_input_tokens": null,
+    "checker_code": "accepted",
+    "citation": null,
+    "citation_verification": "not_applicable",
+    "code": "accepted",
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "input_tokens": 1028,
+    "latency_ms": 1479.304292006418,
+    "model": "gpt-5-mini",
+    "output_tokens": 87,
+    "pricing_snapshot": null,
+    "provider": "openai",
+    "request_count": 1,
+    "retry_count": 0,
+    "reviewed_plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "named",
+            "source": {
+              "quote": "Riverside House",
+              "turn_id": "user-1"
+            }
+          },
+          "aspect": "Retrieve the governing guidance that states the initial uniform allowance available to a new starter in a uniformed role at Riverside House.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "At Riverside House, what initial uniform allowance is available to a new starter in a uniformed role?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "verification_reason": null,
+    "version": "interpretation-check-v2"
+  },
+  {
+    "case_id": "block1.reference-unregistered",
+    "attempt": 1,
+    "cached_input_tokens": null,
+    "checker_code": "accepted",
+    "citation": null,
+    "citation_verification": "not_applicable",
+    "code": "accepted",
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "input_tokens": 1036,
+    "latency_ms": 1953.991917980602,
+    "model": "gpt-5-mini",
+    "output_tokens": 87,
+    "pricing_snapshot": null,
+    "provider": "openai",
+    "request_count": 1,
+    "retry_count": 0,
+    "reviewed_plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "named",
+            "source": {
+              "quote": "Oakfield outreach",
+              "turn_id": "user-1"
+            }
+          },
+          "aspect": "Retrieve the recorded initial uniform allowance amount or items for a new starter in a uniformed role at the Oakfield outreach site, referencing any guidance that sets the allowance.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "At Oakfield outreach, what initial uniform allowance would a new starter in a uniformed role receive?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "verification_reason": null,
+    "version": "interpretation-check-v2"
+  }
+]

@@ -1,0 +1,2311 @@
+{
+  "receipts": [
+    {
+      "case_id": "block1.citations-service",
+      "stage": "planner",
+      "model": "gpt-5-mini",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 19435,
+      "interpretation_check": {
+        "cached_input_tokens": null,
+        "checker_code": "accepted",
+        "citation": null,
+        "citation_verification": "not_applicable",
+        "code": "accepted",
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 1033,
+        "latency_ms": 1968.0400009965524,
+        "model": "gpt-5-mini",
+        "output_tokens": 87,
+        "pricing_snapshot": null,
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "reviewed_plan": {
+          "bindings": [
+            {
+              "family_ids": [],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "topic"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "named",
+                "source": {
+                  "quote": "Alderbridge staff",
+                  "turn_id": "user-1"
+                }
+              },
+              "aspect": "Retrieve the recorded confidential staff support service available to staff at Alderbridge for personal worries, and the contact details or routes given for reaching that service.",
+              "authority": {
+                "kind": "current",
+                "precision": "none",
+                "source": null,
+                "value": null
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "Which confidential support service can Alderbridge staff use for personal worries, and how can they reach it?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "verification_reason": null,
+        "version": "interpretation-check-v2"
+      },
+      "latency_ms": 9472.885045979638,
+      "output_tokens": 655,
+      "pricing_snapshot": null,
+      "request_count": 2,
+      "retry_count": 0,
+      "status": "accepted",
+      "validation": null
+    },
+    {
+      "case_id": "block1.citations-service",
+      "adapter_version": "openai-responses-needs-v4",
+      "cached_input_tokens": 9728,
+      "contract_version": "generation-result-v3",
+      "cost_basis": "estimated",
+      "cost_usd": 0.0094812,
+      "entailment_review": {
+        "cached_input_tokens": 3840,
+        "cost_basis": "estimated",
+        "cost_usd": 0.00326275,
+        "input_tokens": 15067,
+        "latency_ms": 2863.6011680064257,
+        "model": "gpt-5-mini",
+        "output_tokens": 180,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "stage": "generation"
+      },
+      "execution": "provider_api",
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "input_tokens": 41976,
+      "latency_ms": 5479.593669006135,
+      "max_output_tokens": 4096,
+      "measured_input_tokens": 26986,
+      "model": "gpt-5-mini",
+      "output_tokens": 588,
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+      "prompt_version": "grounded-generation-needs-v11",
+      "provider": "openai",
+      "reasoning_effort": "low",
+      "request_count": 2,
+      "retry_count": 1,
+      "stage": "generation",
+      "validation_attempts": [
+        {
+          "cached_input_tokens": 9728,
+          "cost_basis": "estimated",
+          "cost_usd": 0.0094812,
+          "input_tokens": 41976,
+          "latency_ms": 5479.593669006135,
+          "outcome": "accepted",
+          "output_tokens": 588,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "request_count": 2,
+          "request_id": "659fa61a-e8f7-42f5-9307-785b4eeb0912",
+          "retry_count": 0,
+          "retry_of_request_id": null
+        }
+      ],
+      "validation_retry_count": 0
+    },
+    {
+      "case_id": "block1.citations-service",
+      "path": "need.n1.reranked",
+      "cached_input_tokens": null,
+      "cost_basis": "UNAVAILABLE",
+      "cost_usd": null,
+      "execution": "PROVIDER_API",
+      "final_provider_success_at": "2026-11-12T19:05:55.158467Z",
+      "first_provider_attempt_at": "2026-11-12T19:05:54.853403Z",
+      "input_tokens": 7091,
+      "latency_ms": 320.114625,
+      "model": "rerank-2.5",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "reranking"
+    },
+    {
+      "case_id": "block1.citations-service",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "estimated",
+      "cost_usd": 3.48e-06,
+      "execution": "provider_api",
+      "final_provider_success_at": "2026-11-12T19:05:51.407557Z",
+      "first_provider_attempt_at": "2026-11-12T19:05:51.089607Z",
+      "input_tokens": 29,
+      "latency_ms": 326.8323749944102,
+      "model": "voyage-4-large",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": "voyage-pricing-2026-08-12",
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "dense_embedding"
+    },
+    {
+      "case_id": "block1.citations-service",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 58.42374998610467,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_dense_search"
+    },
+    {
+      "case_id": "block1.citations-service",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "zero_cost_local",
+      "cost_usd": 0,
+      "execution": "local",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 2662.139625987038,
+      "model": "prithivida/Splade_PP_en_v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "fastembed",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "sparse_encoding"
+    },
+    {
+      "case_id": "block1.citations-service",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 72.46962501085363,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_sparse_search"
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "stage": "planner",
+      "model": "gpt-5-mini",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 19578,
+      "interpretation_check": {
+        "cached_input_tokens": null,
+        "checker_code": "scope_added",
+        "citation": {
+          "inspected_need_ids": [
+            "n1"
+          ],
+          "need_id": "n1",
+          "plan_field": "aspect",
+          "plan_quote": "and any named contact point or escalation route specified for those issues.",
+          "user_quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+          "user_turn_id": "user-1"
+        },
+        "citation_verification": "verified",
+        "code": "scope_added",
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 1085,
+        "latency_ms": 3988.2376689929515,
+        "model": "gpt-5-mini",
+        "output_tokens": 343,
+        "pricing_snapshot": null,
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "reviewed_plan": {
+          "bindings": [
+            {
+              "family_ids": [
+                "17278f8a-fa84-4a14-a98e-261d19682c66"
+              ],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "matched"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "Under the document 'E-Learning Platform Guidance', for the period 'this quarter' (2026-10-01/2026-12-31), identify which team is responsible for handling login problems and any named contact point or escalation route specified for those issues.",
+              "authority": {
+                "kind": "period",
+                "precision": "interval",
+                "source": {
+                  "quote": "this quarter",
+                  "turn_id": "user-1"
+                },
+                "value": "2026-10-01/2026-12-31"
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "verification_reason": null,
+        "version": "interpretation-check-v2"
+      },
+      "latency_ms": 13419.35675701825,
+      "output_tokens": 1162,
+      "pricing_snapshot": null,
+      "request_count": 2,
+      "retry_count": 0,
+      "status": "rejected",
+      "validation": {
+        "code": "scope_added",
+        "field": "root",
+        "stage": "interpretation"
+      }
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "stage": "planner",
+      "model": "gpt-5-mini",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 19636,
+      "interpretation_check": {
+        "cached_input_tokens": null,
+        "checker_code": "accepted",
+        "citation": null,
+        "citation_verification": "not_applicable",
+        "code": "accepted",
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 1060,
+        "latency_ms": 2305.6724600028247,
+        "model": "gpt-5-mini",
+        "output_tokens": 151,
+        "pricing_snapshot": null,
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "reviewed_plan": {
+          "bindings": [
+            {
+              "family_ids": [
+                "17278f8a-fa84-4a14-a98e-261d19682c66"
+              ],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "matched"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "Retrieve, for the period quoted as \"this quarter\", which team is recorded as responsible for handling login problems in the E-Learning Platform Guidance.",
+              "authority": {
+                "kind": "period",
+                "precision": "interval",
+                "source": {
+                  "quote": "this quarter",
+                  "turn_id": "user-1"
+                },
+                "value": "2026-10-01/2026-12-31"
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "verification_reason": null,
+        "version": "interpretation-check-v2"
+      },
+      "latency_ms": 11249.146631016629,
+      "output_tokens": 1009,
+      "pricing_snapshot": null,
+      "request_count": 2,
+      "retry_count": 0,
+      "status": "accepted",
+      "validation": null
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "adapter_version": "openai-responses-needs-v4",
+      "cached_input_tokens": 1792,
+      "contract_version": "generation-result-v3",
+      "cost_basis": "estimated",
+      "cost_usd": 0.0015298,
+      "entailment_review": {
+        "cached_input_tokens": 0,
+        "cost_basis": "estimated",
+        "cost_usd": 0.0005785,
+        "input_tokens": 930,
+        "latency_ms": 3070.592542993836,
+        "model": "gpt-5-mini",
+        "output_tokens": 173,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "stage": "generation"
+      },
+      "execution": "provider_api",
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "input_tokens": 3844,
+      "latency_ms": 4386.008750996552,
+      "max_output_tokens": 4096,
+      "measured_input_tokens": 2991,
+      "model": "gpt-5-mini",
+      "output_tokens": 486,
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+      "prompt_version": "grounded-generation-needs-v11",
+      "provider": "openai",
+      "reasoning_effort": "low",
+      "request_count": 2,
+      "retry_count": 1,
+      "stage": "generation",
+      "validation_attempts": [
+        {
+          "cached_input_tokens": 1792,
+          "cost_basis": "estimated",
+          "cost_usd": 0.0015298,
+          "input_tokens": 3844,
+          "latency_ms": 4386.008750996552,
+          "outcome": "accepted",
+          "output_tokens": 486,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "request_count": 2,
+          "request_id": "34adfbe0-bbb5-48be-80c8-a694d34a9d73",
+          "retry_count": 0,
+          "retry_of_request_id": null
+        }
+      ],
+      "validation_retry_count": 0
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "path": "need.n1.reranked",
+      "cached_input_tokens": null,
+      "cost_basis": "UNAVAILABLE",
+      "cost_usd": null,
+      "execution": "PROVIDER_API",
+      "final_provider_success_at": "2026-11-12T19:07:13.784925Z",
+      "first_provider_attempt_at": "2026-11-12T19:07:13.422293Z",
+      "input_tokens": 201,
+      "latency_ms": 374.615334,
+      "model": "rerank-2.5",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "reranking"
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "estimated",
+      "cost_usd": 3.36e-06,
+      "execution": "provider_api",
+      "final_provider_success_at": "2026-11-12T19:07:11.889473Z",
+      "first_provider_attempt_at": "2026-11-12T19:07:11.191311Z",
+      "input_tokens": 28,
+      "latency_ms": 710.0659589923453,
+      "model": "voyage-4-large",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": "voyage-pricing-2026-08-12",
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "dense_embedding"
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 28.281374979997054,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_dense_search"
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "zero_cost_local",
+      "cost_usd": 0,
+      "execution": "local",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 1398.3222499955446,
+      "model": "prithivida/Splade_PP_en_v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "fastembed",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "sparse_encoding"
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 47.96870797872543,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_sparse_search"
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "stage": "planner",
+      "model": "gpt-5-mini",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 19452,
+      "interpretation_check": {
+        "cached_input_tokens": null,
+        "checker_code": "accepted",
+        "citation": null,
+        "citation_verification": "not_applicable",
+        "code": "accepted",
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 1047,
+        "latency_ms": 1652.7325010101777,
+        "model": "gpt-5-mini",
+        "output_tokens": 87,
+        "pricing_snapshot": null,
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "reviewed_plan": {
+          "bindings": [
+            {
+              "family_ids": [],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "topic"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "named",
+                "source": {
+                  "quote": "At Alderbridge Care Group",
+                  "turn_id": "user-1"
+                }
+              },
+              "aspect": "What is the required initial uniform payment amount for a new employee appointed to a uniformed role at Alderbridge Care Group? (seeking the current governing amount or payment rule.)",
+              "authority": {
+                "kind": "current",
+                "precision": "none",
+                "source": null,
+                "value": null
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "At Alderbridge Care Group, how much is the initial uniform payment for a new employee in a uniformed role?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "verification_reason": null,
+        "version": "interpretation-check-v2"
+      },
+      "latency_ms": 8186.532253981568,
+      "output_tokens": 666,
+      "pricing_snapshot": null,
+      "request_count": 2,
+      "retry_count": 0,
+      "status": "accepted",
+      "validation": null
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "adapter_version": "openai-responses-needs-v4",
+      "cached_input_tokens": 9728,
+      "contract_version": "generation-result-v3",
+      "cost_basis": "estimated",
+      "cost_usd": 0.00808445,
+      "entailment_review": {
+        "cached_input_tokens": 3840,
+        "cost_basis": "estimated",
+        "cost_usd": 0.00186625,
+        "input_tokens": 10089,
+        "latency_ms": 2054.004042001907,
+        "model": "gpt-5-mini",
+        "output_tokens": 104,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "stage": "generation"
+      },
+      "execution": "provider_api",
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "input_tokens": 37005,
+      "latency_ms": 8150.478752999334,
+      "max_output_tokens": 4096,
+      "measured_input_tokens": 26993,
+      "model": "gpt-5-mini",
+      "output_tokens": 511,
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+      "prompt_version": "grounded-generation-needs-v11",
+      "provider": "openai",
+      "reasoning_effort": "low",
+      "request_count": 2,
+      "retry_count": 1,
+      "stage": "generation",
+      "validation_attempts": [
+        {
+          "cached_input_tokens": 9728,
+          "cost_basis": "estimated",
+          "cost_usd": 0.00808445,
+          "input_tokens": 37005,
+          "latency_ms": 8150.478752999334,
+          "outcome": "accepted",
+          "output_tokens": 511,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "request_count": 2,
+          "request_id": "e7d2efe7-13d8-4855-a201-dace1709a111",
+          "retry_count": 0,
+          "retry_of_request_id": null
+        }
+      ],
+      "validation_retry_count": 0
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "path": "need.n1.reranked",
+      "cached_input_tokens": null,
+      "cost_basis": "UNAVAILABLE",
+      "cost_usd": null,
+      "execution": "PROVIDER_API",
+      "final_provider_success_at": "2026-11-12T19:08:14.192259Z",
+      "first_provider_attempt_at": "2026-11-12T19:08:13.919508Z",
+      "input_tokens": 7438,
+      "latency_ms": 280.419125,
+      "model": "rerank-2.5",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "reranking"
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "estimated",
+      "cost_usd": 4.2e-06,
+      "execution": "provider_api",
+      "final_provider_success_at": "2026-11-12T19:08:11.934280Z",
+      "first_provider_attempt_at": "2026-11-12T19:08:11.656816Z",
+      "input_tokens": 35,
+      "latency_ms": 285.4898750083521,
+      "model": "voyage-4-large",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": "voyage-pricing-2026-08-12",
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "dense_embedding"
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 24.631292006233707,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_dense_search"
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "zero_cost_local",
+      "cost_usd": 0,
+      "execution": "local",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 1269.533833983587,
+      "model": "prithivida/Splade_PP_en_v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "fastembed",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "sparse_encoding"
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 48.063291993457824,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_sparse_search"
+    },
+    {
+      "case_id": "block1.reference-title",
+      "stage": "planner",
+      "model": "gpt-5-mini",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 19426,
+      "interpretation_check": {
+        "cached_input_tokens": null,
+        "checker_code": "accepted",
+        "citation": null,
+        "citation_verification": "not_applicable",
+        "code": "accepted",
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 1027,
+        "latency_ms": 1340.4525420046411,
+        "model": "gpt-5-mini",
+        "output_tokens": 87,
+        "pricing_snapshot": null,
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "reviewed_plan": {
+          "bindings": [
+            {
+              "family_ids": [
+                "78df2038-574c-4fc5-8216-b78b41e4e912"
+              ],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "matched"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "From the named document 'Uniform Allowance Guidance', state which month each year the 'replacement payment' is made.",
+              "authority": {
+                "kind": "current",
+                "precision": "none",
+                "source": null,
+                "value": null
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "Under the Uniform Allowance Guidance, which month is the replacement payment made each year?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "verification_reason": null,
+        "version": "interpretation-check-v2"
+      },
+      "latency_ms": 6732.667545002187,
+      "output_tokens": 524,
+      "pricing_snapshot": null,
+      "request_count": 2,
+      "retry_count": 0,
+      "status": "accepted",
+      "validation": null
+    },
+    {
+      "case_id": "block1.reference-title",
+      "adapter_version": "openai-responses-needs-v4",
+      "cached_input_tokens": 1792,
+      "contract_version": "generation-result-v3",
+      "cost_basis": "estimated",
+      "cost_usd": 0.0016293000000000002,
+      "entailment_review": {
+        "cached_input_tokens": 0,
+        "cost_basis": "estimated",
+        "cost_usd": 0.00068075,
+        "input_tokens": 1635,
+        "latency_ms": 1655.1371680106968,
+        "model": "gpt-5-mini",
+        "output_tokens": 136,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "stage": "generation"
+      },
+      "execution": "provider_api",
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "input_tokens": 5266,
+      "latency_ms": 2690.5638339812867,
+      "max_output_tokens": 4096,
+      "measured_input_tokens": 3708,
+      "model": "gpt-5-mini",
+      "output_tokens": 358,
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+      "prompt_version": "grounded-generation-needs-v11",
+      "provider": "openai",
+      "reasoning_effort": "low",
+      "request_count": 2,
+      "retry_count": 1,
+      "stage": "generation",
+      "validation_attempts": [
+        {
+          "cached_input_tokens": 1792,
+          "cost_basis": "estimated",
+          "cost_usd": 0.0016293000000000002,
+          "input_tokens": 5266,
+          "latency_ms": 2690.5638339812867,
+          "outcome": "accepted",
+          "output_tokens": 358,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "request_count": 2,
+          "request_id": "f6f3482b-b648-432b-8bcc-7ffa0cbf0d16",
+          "retry_count": 0,
+          "retry_of_request_id": null
+        }
+      ],
+      "validation_retry_count": 0
+    },
+    {
+      "case_id": "block1.reference-title",
+      "path": "need.n1.reranked",
+      "cached_input_tokens": null,
+      "cost_basis": "UNAVAILABLE",
+      "cost_usd": null,
+      "execution": "PROVIDER_API",
+      "final_provider_success_at": "2026-11-12T19:08:57.705605Z",
+      "first_provider_attempt_at": "2026-11-12T19:08:57.487932Z",
+      "input_tokens": 836,
+      "latency_ms": 232.914791,
+      "model": "rerank-2.5",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "reranking"
+    },
+    {
+      "case_id": "block1.reference-title",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "estimated",
+      "cost_usd": 2.64e-06,
+      "execution": "provider_api",
+      "final_provider_success_at": "2026-11-12T19:08:55.915633Z",
+      "first_provider_attempt_at": "2026-11-12T19:08:55.611700Z",
+      "input_tokens": 22,
+      "latency_ms": 312.1940419950988,
+      "model": "voyage-4-large",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": "voyage-pricing-2026-08-12",
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "dense_embedding"
+    },
+    {
+      "case_id": "block1.reference-title",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 73.73670800006948,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_dense_search"
+    },
+    {
+      "case_id": "block1.reference-title",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "zero_cost_local",
+      "cost_usd": 0,
+      "execution": "local",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 1303.6670420260634,
+      "model": "prithivida/Splade_PP_en_v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "fastembed",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "sparse_encoding"
+    },
+    {
+      "case_id": "block1.reference-title",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 84.56991700222716,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_sparse_search"
+    },
+    {
+      "case_id": "block1.reference-site",
+      "stage": "planner",
+      "model": "gpt-5-mini",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 19430,
+      "interpretation_check": {
+        "cached_input_tokens": null,
+        "checker_code": "accepted",
+        "citation": null,
+        "citation_verification": "not_applicable",
+        "code": "accepted",
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 1028,
+        "latency_ms": 1479.304292006418,
+        "model": "gpt-5-mini",
+        "output_tokens": 87,
+        "pricing_snapshot": null,
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "reviewed_plan": {
+          "bindings": [
+            {
+              "family_ids": [],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "topic"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "named",
+                "source": {
+                  "quote": "Riverside House",
+                  "turn_id": "user-1"
+                }
+              },
+              "aspect": "Retrieve the governing guidance that states the initial uniform allowance available to a new starter in a uniformed role at Riverside House.",
+              "authority": {
+                "kind": "current",
+                "precision": "none",
+                "source": null,
+                "value": null
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "At Riverside House, what initial uniform allowance is available to a new starter in a uniformed role?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "verification_reason": null,
+        "version": "interpretation-check-v2"
+      },
+      "latency_ms": 11062.793880002573,
+      "output_tokens": 842,
+      "pricing_snapshot": null,
+      "request_count": 2,
+      "retry_count": 0,
+      "status": "accepted",
+      "validation": null
+    },
+    {
+      "case_id": "block1.reference-site",
+      "adapter_version": "openai-responses-needs-v4",
+      "cached_input_tokens": 1792,
+      "contract_version": "generation-result-v3",
+      "cost_basis": "estimated",
+      "cost_usd": 0.00999505,
+      "entailment_review": {
+        "cached_input_tokens": 0,
+        "cost_basis": "estimated",
+        "cost_usd": 0.00278275,
+        "input_tokens": 9883,
+        "latency_ms": 2029.8117090133019,
+        "model": "gpt-5-mini",
+        "output_tokens": 156,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "stage": "generation"
+      },
+      "execution": "provider_api",
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "input_tokens": 35889,
+      "latency_ms": 5579.675920016598,
+      "max_output_tokens": 4096,
+      "measured_input_tokens": 26083,
+      "model": "gpt-5-mini",
+      "output_tokens": 713,
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+      "prompt_version": "grounded-generation-needs-v11",
+      "provider": "openai",
+      "reasoning_effort": "low",
+      "request_count": 2,
+      "retry_count": 1,
+      "stage": "generation",
+      "validation_attempts": [
+        {
+          "cached_input_tokens": 1792,
+          "cost_basis": "estimated",
+          "cost_usd": 0.00999505,
+          "input_tokens": 35889,
+          "latency_ms": 5579.675920016598,
+          "outcome": "accepted",
+          "output_tokens": 713,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "request_count": 2,
+          "request_id": "69766383-0d66-42f7-bb8d-cca03700d745",
+          "retry_count": 0,
+          "retry_of_request_id": null
+        }
+      ],
+      "validation_retry_count": 0
+    },
+    {
+      "case_id": "block1.reference-site",
+      "path": "need.n1.reranked",
+      "cached_input_tokens": null,
+      "cost_basis": "UNAVAILABLE",
+      "cost_usd": null,
+      "execution": "PROVIDER_API",
+      "final_provider_success_at": "2026-11-12T19:09:49.160919Z",
+      "first_provider_attempt_at": "2026-11-12T19:09:48.856700Z",
+      "input_tokens": 7271,
+      "latency_ms": 322.115583,
+      "model": "rerank-2.5",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "reranking"
+    },
+    {
+      "case_id": "block1.reference-site",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "estimated",
+      "cost_usd": 2.76e-06,
+      "execution": "provider_api",
+      "final_provider_success_at": "2026-11-12T19:09:45.966149Z",
+      "first_provider_attempt_at": "2026-11-12T19:09:45.625295Z",
+      "input_tokens": 23,
+      "latency_ms": 346.5190010028891,
+      "model": "voyage-4-large",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": "voyage-pricing-2026-08-12",
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "dense_embedding"
+    },
+    {
+      "case_id": "block1.reference-site",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 34.33229200891219,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_dense_search"
+    },
+    {
+      "case_id": "block1.reference-site",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "zero_cost_local",
+      "cost_usd": 0,
+      "execution": "local",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 1898.6362919968087,
+      "model": "prithivida/Splade_PP_en_v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "fastembed",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "sparse_encoding"
+    },
+    {
+      "case_id": "block1.reference-site",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 51.398292009253055,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_sparse_search"
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "stage": "planner",
+      "model": "gpt-5-mini",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 19438,
+      "interpretation_check": {
+        "cached_input_tokens": null,
+        "checker_code": "accepted",
+        "citation": null,
+        "citation_verification": "not_applicable",
+        "code": "accepted",
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 1036,
+        "latency_ms": 1953.991917980602,
+        "model": "gpt-5-mini",
+        "output_tokens": 87,
+        "pricing_snapshot": null,
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "reviewed_plan": {
+          "bindings": [
+            {
+              "family_ids": [],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "topic"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "named",
+                "source": {
+                  "quote": "Oakfield outreach",
+                  "turn_id": "user-1"
+                }
+              },
+              "aspect": "Retrieve the recorded initial uniform allowance amount or items for a new starter in a uniformed role at the Oakfield outreach site, referencing any guidance that sets the allowance.",
+              "authority": {
+                "kind": "current",
+                "precision": "none",
+                "source": null,
+                "value": null
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "At Oakfield outreach, what initial uniform allowance would a new starter in a uniformed role receive?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "verification_reason": null,
+        "version": "interpretation-check-v2"
+      },
+      "latency_ms": 11176.68429701007,
+      "output_tokens": 850,
+      "pricing_snapshot": null,
+      "request_count": 2,
+      "retry_count": 0,
+      "status": "accepted",
+      "validation": null
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "adapter_version": "openai-responses-needs-v4",
+      "cached_input_tokens": 5888,
+      "contract_version": "generation-result-v3",
+      "cost_basis": "estimated",
+      "cost_usd": 0.0103007,
+      "entailment_review": {
+        "cached_input_tokens": 0,
+        "cost_basis": "estimated",
+        "cost_usd": 0.0041595,
+        "input_tokens": 15046,
+        "latency_ms": 2583.059375989251,
+        "model": "gpt-5-mini",
+        "output_tokens": 199,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "stage": "generation"
+      },
+      "execution": "provider_api",
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "input_tokens": 41950,
+      "latency_ms": 3853.8575019920245,
+      "max_output_tokens": 4096,
+      "measured_input_tokens": 26981,
+      "model": "gpt-5-mini",
+      "output_tokens": 569,
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+      "prompt_version": "grounded-generation-needs-v11",
+      "provider": "openai",
+      "reasoning_effort": "low",
+      "request_count": 2,
+      "retry_count": 1,
+      "stage": "generation",
+      "validation_attempts": [
+        {
+          "cached_input_tokens": 5888,
+          "cost_basis": "estimated",
+          "cost_usd": 0.0103007,
+          "input_tokens": 41950,
+          "latency_ms": 3853.8575019920245,
+          "outcome": "accepted",
+          "output_tokens": 569,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "request_count": 2,
+          "request_id": "0f450eb7-abbe-487e-897d-2e438ffcd928",
+          "retry_count": 0,
+          "retry_of_request_id": null
+        }
+      ],
+      "validation_retry_count": 0
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "path": "need.n1.reranked",
+      "cached_input_tokens": null,
+      "cost_basis": "UNAVAILABLE",
+      "cost_usd": null,
+      "execution": "PROVIDER_API",
+      "final_provider_success_at": "2026-11-12T19:10:39.874097Z",
+      "first_provider_attempt_at": "2026-11-12T19:10:39.597359Z",
+      "input_tokens": 7444,
+      "latency_ms": 290.604084,
+      "model": "rerank-2.5",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "reranking"
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "estimated",
+      "cost_usd": 3.84e-06,
+      "execution": "provider_api",
+      "final_provider_success_at": "2026-11-12T19:10:36.654448Z",
+      "first_provider_attempt_at": "2026-11-12T19:10:35.968187Z",
+      "input_tokens": 32,
+      "latency_ms": 692.329499986954,
+      "model": "voyage-4-large",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": "voyage-pricing-2026-08-12",
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "dense_embedding"
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 60.673040978144854,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_dense_search"
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "zero_cost_local",
+      "cost_usd": 0,
+      "execution": "local",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 2214.956167008495,
+      "model": "prithivida/Splade_PP_en_v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "fastembed",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "sparse_encoding"
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 85.02983397920616,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_sparse_search"
+    }
+  ],
+  "checks": [
+    {
+      "case_id": "block1.citations-service",
+      "attempt": 1,
+      "cached_input_tokens": null,
+      "checker_code": "accepted",
+      "citation": null,
+      "citation_verification": "not_applicable",
+      "code": "accepted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 1033,
+      "latency_ms": 1968.0400009965524,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "pricing_snapshot": null,
+      "provider": "openai",
+      "request_count": 1,
+      "retry_count": 0,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "topic"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "named",
+              "source": {
+                "quote": "Alderbridge staff",
+                "turn_id": "user-1"
+              }
+            },
+            "aspect": "Retrieve the recorded confidential staff support service available to staff at Alderbridge for personal worries, and the contact details or routes given for reaching that service.",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "Which confidential support service can Alderbridge staff use for personal worries, and how can they reach it?",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "verification_reason": null,
+      "version": "interpretation-check-v2"
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "attempt": 1,
+      "cached_input_tokens": null,
+      "checker_code": "scope_added",
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "aspect",
+        "plan_quote": "and any named contact point or escalation route specified for those issues.",
+        "user_quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+        "user_turn_id": "user-1"
+      },
+      "citation_verification": "verified",
+      "code": "scope_added",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 1085,
+      "latency_ms": 3988.2376689929515,
+      "model": "gpt-5-mini",
+      "output_tokens": 343,
+      "pricing_snapshot": null,
+      "provider": "openai",
+      "request_count": 1,
+      "retry_count": 0,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [
+              "17278f8a-fa84-4a14-a98e-261d19682c66"
+            ],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "matched"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "Under the document 'E-Learning Platform Guidance', for the period 'this quarter' (2026-10-01/2026-12-31), identify which team is responsible for handling login problems and any named contact point or escalation route specified for those issues.",
+            "authority": {
+              "kind": "period",
+              "precision": "interval",
+              "source": {
+                "quote": "this quarter",
+                "turn_id": "user-1"
+              },
+              "value": "2026-10-01/2026-12-31"
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "verification_reason": null,
+      "version": "interpretation-check-v2"
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "attempt": 2,
+      "cached_input_tokens": null,
+      "checker_code": "accepted",
+      "citation": null,
+      "citation_verification": "not_applicable",
+      "code": "accepted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 1060,
+      "latency_ms": 2305.6724600028247,
+      "model": "gpt-5-mini",
+      "output_tokens": 151,
+      "pricing_snapshot": null,
+      "provider": "openai",
+      "request_count": 1,
+      "retry_count": 0,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [
+              "17278f8a-fa84-4a14-a98e-261d19682c66"
+            ],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "matched"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "Retrieve, for the period quoted as \"this quarter\", which team is recorded as responsible for handling login problems in the E-Learning Platform Guidance.",
+            "authority": {
+              "kind": "period",
+              "precision": "interval",
+              "source": {
+                "quote": "this quarter",
+                "turn_id": "user-1"
+              },
+              "value": "2026-10-01/2026-12-31"
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "verification_reason": null,
+      "version": "interpretation-check-v2"
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "attempt": 1,
+      "cached_input_tokens": null,
+      "checker_code": "accepted",
+      "citation": null,
+      "citation_verification": "not_applicable",
+      "code": "accepted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 1047,
+      "latency_ms": 1652.7325010101777,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "pricing_snapshot": null,
+      "provider": "openai",
+      "request_count": 1,
+      "retry_count": 0,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "topic"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "named",
+              "source": {
+                "quote": "At Alderbridge Care Group",
+                "turn_id": "user-1"
+              }
+            },
+            "aspect": "What is the required initial uniform payment amount for a new employee appointed to a uniformed role at Alderbridge Care Group? (seeking the current governing amount or payment rule.)",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "At Alderbridge Care Group, how much is the initial uniform payment for a new employee in a uniformed role?",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "verification_reason": null,
+      "version": "interpretation-check-v2"
+    },
+    {
+      "case_id": "block1.reference-title",
+      "attempt": 1,
+      "cached_input_tokens": null,
+      "checker_code": "accepted",
+      "citation": null,
+      "citation_verification": "not_applicable",
+      "code": "accepted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 1027,
+      "latency_ms": 1340.4525420046411,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "pricing_snapshot": null,
+      "provider": "openai",
+      "request_count": 1,
+      "retry_count": 0,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [
+              "78df2038-574c-4fc5-8216-b78b41e4e912"
+            ],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "matched"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "From the named document 'Uniform Allowance Guidance', state which month each year the 'replacement payment' is made.",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "Under the Uniform Allowance Guidance, which month is the replacement payment made each year?",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "verification_reason": null,
+      "version": "interpretation-check-v2"
+    },
+    {
+      "case_id": "block1.reference-site",
+      "attempt": 1,
+      "cached_input_tokens": null,
+      "checker_code": "accepted",
+      "citation": null,
+      "citation_verification": "not_applicable",
+      "code": "accepted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 1028,
+      "latency_ms": 1479.304292006418,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "pricing_snapshot": null,
+      "provider": "openai",
+      "request_count": 1,
+      "retry_count": 0,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "topic"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "named",
+              "source": {
+                "quote": "Riverside House",
+                "turn_id": "user-1"
+              }
+            },
+            "aspect": "Retrieve the governing guidance that states the initial uniform allowance available to a new starter in a uniformed role at Riverside House.",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "At Riverside House, what initial uniform allowance is available to a new starter in a uniformed role?",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "verification_reason": null,
+      "version": "interpretation-check-v2"
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "attempt": 1,
+      "cached_input_tokens": null,
+      "checker_code": "accepted",
+      "citation": null,
+      "citation_verification": "not_applicable",
+      "code": "accepted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 1036,
+      "latency_ms": 1953.991917980602,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "pricing_snapshot": null,
+      "provider": "openai",
+      "request_count": 1,
+      "retry_count": 0,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "topic"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "named",
+              "source": {
+                "quote": "Oakfield outreach",
+                "turn_id": "user-1"
+              }
+            },
+            "aspect": "Retrieve the recorded initial uniform allowance amount or items for a new starter in a uniformed role at the Oakfield outreach site, referencing any guidance that sets the allowance.",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "At Oakfield outreach, what initial uniform allowance would a new starter in a uniformed role receive?",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "verification_reason": null,
+      "version": "interpretation-check-v2"
+    }
+  ],
+  "priced_usd": 0.04104078,
+  "openai_estimates": [
+    {
+      "case_id": "block1.citations-service",
+      "cost_usd": 0.006168750000000001
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "cost_usd": 0.007218500000000001
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "cost_usd": 0.006927
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "cost_usd": 0.006195
+    },
+    {
+      "case_id": "block1.reference-title",
+      "cost_usd": 0.0059045
+    },
+    {
+      "case_id": "block1.reference-site",
+      "cost_usd": 0.0065415
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "cost_usd": 0.0065595
+    }
+  ],
+  "known_plus_estimated_usd": 0.08655552999999999,
+  "unavailable": [
+    {
+      "case_id": "block1.citations-service",
+      "stage": "reranking",
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "input_tokens": 7091,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.citations-service",
+      "stage": "qdrant_dense_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.citations-service",
+      "stage": "qdrant_sparse_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "stage": "reranking",
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "input_tokens": 201,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "stage": "qdrant_dense_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.relative-current-quarter",
+      "stage": "qdrant_sparse_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "stage": "reranking",
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "input_tokens": 7438,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "stage": "qdrant_dense_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-organisation",
+      "stage": "qdrant_sparse_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-title",
+      "stage": "reranking",
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "input_tokens": 836,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-title",
+      "stage": "qdrant_dense_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-title",
+      "stage": "qdrant_sparse_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-site",
+      "stage": "reranking",
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "input_tokens": 7271,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-site",
+      "stage": "qdrant_dense_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-site",
+      "stage": "qdrant_sparse_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "stage": "reranking",
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "input_tokens": 7444,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "stage": "qdrant_dense_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "block1.reference-unregistered",
+      "stage": "qdrant_sparse_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "input_tokens": null,
+      "request_count": 1
+    }
+  ],
+  "basis": "Retained repository GPT-5-mini 0.25/M input, 2/M output estimate, not invoice. Nested checker/entailment included in parents, not counted twice; unpriced reranking/infrastructure excluded."
+}
