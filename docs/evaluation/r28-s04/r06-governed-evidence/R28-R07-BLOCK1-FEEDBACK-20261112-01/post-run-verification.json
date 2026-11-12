@@ -1,0 +1,15 @@
+{
+  "execution_commit": "817c307b98b52f30cdbc8f9af01b561165e92b9c",
+  "verified_on": "2026-11-12",
+  "runtime_source_aggregate_before": "4bd179c16a4fefbb49d20f1cf948434cad3ecb0a7a3485e75d46563a35dc7ae0",
+  "runtime_source_aggregate_after": "4bd179c16a4fefbb49d20f1cf948434cad3ecb0a7a3485e75d46563a35dc7ae0",
+  "runtime_snapshot_sha256_before": "f271c1ac843e53aaa16f6f0c70f6f3b642499d69dac2467d17e80c42f280d792",
+  "runtime_snapshot_sha256_after": "f271c1ac843e53aaa16f6f0c70f6f3b642499d69dac2467d17e80c42f280d792",
+  "case_count": 4,
+  "planner_requests": 5,
+  "first_attempt_accepted": 3,
+  "second_attempt_accepted": 1,
+  "second_attempt_exhausted": 0,
+  "coverage_review_silent_omissions_found": 0,
+  "caveat": "Second-attempt schema acceptance is not a complete semantic pass: b01-06 retains last month but labels it duration. No rejected payload was retained or used in feedback."
+}

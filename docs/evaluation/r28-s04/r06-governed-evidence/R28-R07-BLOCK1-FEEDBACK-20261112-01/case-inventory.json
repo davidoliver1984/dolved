@@ -1,0 +1,365 @@
+[
+  {
+    "file": "cases/01-v4.case.corrected-b01-04-v1.json",
+    "case_id": "v4.case.corrected-b01-04",
+    "status": "retrieval_no_answer",
+    "displayed_text": "I couldn't find enough available evidence to answer that question.",
+    "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+    "needs_opt_in": [
+      "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
+    ],
+    "needs_pipeline_exercised": true,
+    "planner_attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 18308,
+        "latency_ms": 10104.37296301825,
+        "output_tokens": 1081,
+        "pricing_snapshot": null,
+        "request_count": 1,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Compare the required repositioning frequency for highest-risk residents before January 2026 with the interval required after the change.",
+          "authority": {
+            "kind": "before",
+            "precision": "month",
+            "source": {
+              "quote": "before January 2026",
+              "turn_id": "user-1"
+            },
+            "value": "2026-01"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "compare",
+          "question_span": {
+            "quote": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "final_evidence": [],
+    "generation_outcome": null,
+    "unsupported_aspects": []
+  },
+  {
+    "file": "cases/02-v4.case.corrected-b01-06-v1.json",
+    "case_id": "v4.case.corrected-b01-06",
+    "status": "completed",
+    "displayed_text": "The approved mileage claim will be paid with your next salary run, per the Expenses Policy's approval process.\n\nUnconfirmed requested aspects\n\n- The evidence does not specify specific payroll run dates, payroll cut-off deadlines, or a regular payment interval that would allow determining exactly which date counts as the \"next salary run\".",
+    "workspace_id": "4db6ffe2-6974-415d-8fd3-002b8fb05d05",
+    "needs_opt_in": [
+      "4db6ffe2-6974-415d-8fd3-002b8fb05d05"
+    ],
+    "needs_pipeline_exercised": true,
+    "planner_attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 6855,
+        "latency_ms": 6990.544086002046,
+        "output_tokens": 645,
+        "pricing_snapshot": null,
+        "request_count": 1,
+        "retry_count": 0,
+        "status": "rejected",
+        "validation": {
+          "code": "fact_date_precision",
+          "field": "needs.0.fact_reference",
+          "stage": "schema"
+        }
+      },
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 6942,
+        "latency_ms": 8244.397003989434,
+        "output_tokens": 715,
+        "pricing_snapshot": null,
+        "request_count": 1,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Retrieve the recorded payment timing rule or schedule that governs when an \"approved mileage claim from last month\" is paid, including any payroll run dates, cut-offs or expected payment intervals.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": {
+            "precision": "duration",
+            "source": {
+              "quote": "last month",
+              "turn_id": "user-1"
+            },
+            "value": "last month"
+          },
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "When will the approved mileage claim from last month be paid?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "final_evidence": [
+      {
+        "chunk_id": "821176a0-d6ae-5aff-bbb1-55dfcf5c7da7",
+        "document_family_id": "28a84f66-cd05-4910-a3cf-e434de23cc0a",
+        "document_id": "4b7496ae-445a-4cd9-a089-e5691c9e19b4",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "generation_outcome": "qualified",
+    "unsupported_aspects": [
+      "The evidence does not specify specific payroll run dates, payroll cut-off deadlines, or a regular payment interval that would allow determining exactly which date counts as the \"next salary run\"."
+    ]
+  },
+  {
+    "file": "cases/03-block1.feedback-unfamiliar-mixed-v1.json",
+    "case_id": "block1.feedback-unfamiliar-mixed",
+    "status": "completed",
+    "displayed_text": "Before July 2026, access issues with the e-learning platform (such as locked out or course not showing) were handled by the Training Team, which the guidance instructed users to contact by email for access issues.\n\nAfter the handover (following the platform migration), responsibility moved to the IT service desk \u2014 the guidance states support contact was moved from the Training Team to the IT service desk and instructs users to contact the IT service desk for access issues.",
+    "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+    "needs_opt_in": [
+      "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
+    ],
+    "needs_pipeline_exercised": true,
+    "planner_attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 18307,
+        "latency_ms": 13873.26954799937,
+        "output_tokens": 1480,
+        "pricing_snapshot": null,
+        "request_count": 1,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Identify who was responsible for handling missing e-learning courses before July 2026, and identify who took over responsibility after the handover; cite the recorded guidance or role assignments that show the change.",
+          "authority": {
+            "kind": "before",
+            "precision": "month",
+            "source": {
+              "quote": "before July 2026",
+              "turn_id": "user-1"
+            },
+            "value": "2026-07"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "compare",
+          "question_span": {
+            "quote": "Who handled missing e-learning courses before July 2026, and who took over after the handover?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "final_evidence": [
+      {
+        "chunk_id": "e6eef862-161a-56f0-adef-a7cef552af6c",
+        "document_family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+        "document_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "beadddeb-ae25-53ea-8352-37746469a5d7",
+        "document_family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+        "document_id": "37860f89-10f6-4521-95f0-2fa9a4b18a4a",
+        "need_id": "n1",
+        "side": "comparison"
+      }
+    ],
+    "generation_outcome": "answered",
+    "unsupported_aspects": []
+  },
+  {
+    "file": "cases/04-v4.case.corrected-b01-07-v1.json",
+    "case_id": "v4.case.corrected-b01-07",
+    "status": "completed",
+    "displayed_text": "The one-off starter (initial) allowance was increased: the earlier version set the initial allowance at \u00a340, and the version effective in April 2026 sets it at \u00a355 (an increase of \u00a315).\n\nThe annual replacement allowance paid every April was increased: the earlier version set the replacement allowance at \u00a325, and the version effective in April 2026 sets it at \u00a335 (an increase of \u00a310).",
+    "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+    "needs_opt_in": [
+      "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
+    ],
+    "needs_pipeline_exercised": true,
+    "planner_attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 18303,
+        "latency_ms": 5688.500919990474,
+        "output_tokens": 513,
+        "pricing_snapshot": null,
+        "request_count": 1,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Compare the recorded rules or values for the 'starter' uniform allowance and the 'annual replacement' uniform allowance and state how each changed at the transition in April 2026.",
+          "authority": {
+            "kind": "transition_period",
+            "precision": "month",
+            "source": {
+              "quote": "in April 2026",
+              "turn_id": "user-1"
+            },
+            "value": "2026-04"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "compare",
+          "question_span": {
+            "quote": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "final_evidence": [
+      {
+        "chunk_id": "c943d6d2-b8ba-5878-b26a-ec32d30d7ecc",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "c374ef9c-5170-5ae8-b50b-746e2a8c98bb",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b",
+        "need_id": "n1",
+        "side": "comparison"
+      },
+      {
+        "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "5ea460a7-9a67-5cf3-903c-21842e4db198",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b",
+        "need_id": "n1",
+        "side": "comparison"
+      }
+    ],
+    "generation_outcome": "answered",
+    "unsupported_aspects": []
+  }
+]
