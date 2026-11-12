@@ -147,6 +147,17 @@ final class R28ProductionPathDiagnosticTest extends TestCase
             $project->invoke($action, 'internal_failure', ['exception_class' => 'InvalidArgumentException',
                 'message' => 'Safe detail.', 'raw_payload' => 'must not persist']));
         $this->assertNull($project->invoke($action, 'unrecognised_stage', ['raw' => 'data']));
+        foreach (['discovery_eligibility', 'discovery_search', 'discovery_hydration', 'discovery_recheck', 'reviewer_result'] as $stop) {
+            $event = $project->invoke($action, 'need.n1.topical_family_selection', [
+                'decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => [],
+                'diagnostics' => ['stop_stage' => $stop, 'reviewer_invoked' => $stop === 'reviewer_result',
+                    'search_candidate_count' => 0, 'raw_text' => 'must not persist'],
+                'raw_payload' => 'must not persist',
+            ]);
+            $this->assertSame($stop, $event['diagnostics']['stop_stage']);
+            $this->assertArrayNotHasKey('raw_text', $event['diagnostics']);
+            $this->assertArrayNotHasKey('raw_payload', $event);
+        }
     }
 
     public function test_diagnostic_boundary_delegates_instead_of_reimplementing_retrieval(): void

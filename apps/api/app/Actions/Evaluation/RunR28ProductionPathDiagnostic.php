@@ -209,6 +209,15 @@ final readonly class RunR28ProductionPathDiagnostic
         if ($stage === 'needs_plan') {
             return collect($value)->only(['decision', 'clarification', 'needs'])->all();
         }
+        if ($stage === 'topical_family_selection') {
+            $result = collect($value)->only(['decision', 'family_id', 'chunk_id', 'usage', 'failure'])->all();
+            $result['diagnostics'] = collect(is_array($value['diagnostics'] ?? null) ? $value['diagnostics'] : [])
+                ->only(['stop_stage', 'eligibility_outcome', 'eligibility_reason', 'active_corpus_present',
+                    'search_candidate_count', 'hydrated_candidate_count', 'reranked_candidate_count',
+                    'reviewer_candidate_count', 'reviewer_invoked'])->all();
+
+            return $result;
+        }
         if ($stage === 'scope_fact') {
             return collect($value)->except(['resolution'])->all();
         }

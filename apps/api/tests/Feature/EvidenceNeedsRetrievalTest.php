@@ -14,7 +14,6 @@ use App\Enums\GenerationRunStatus;
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
 use App\Enums\WorkspaceRole;
-use App\Exceptions\RetrievalException;
 use App\Models\Document;
 use App\Models\DocumentChunk;
 use App\Models\EmbeddingProfile;
@@ -35,7 +34,6 @@ use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
 use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Generation\GenerationProfileFactory;
 use App\Services\Retrieval\EligibilityResolver;
-use App\Services\Retrieval\RetrievalClient;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Retrieval\ApplicabilityScopeFact;
 use App\Support\Retrieval\EvidenceNeedsPlan;
@@ -48,7 +46,6 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -1052,7 +1049,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
     }
 
     #[DataProvider('topicalComparisonDecisions')]
-    public function test_topic_only_compare_selects_an_authorised_current_family_before_historical_search(string $decision, bool $withHistory): void
+    public function test_topic_only_compare_selects_an_authorised_current_family_before_historical_search(string $decision, bool $withHistory, bool $emptySearch = false): void
     {
         [$workspace, $generation, $scope] = $this->scope();
         $old = $this->document($workspace, $generation, '2026-03-01');
@@ -1062,7 +1059,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $target = $withHistory ? $current : $this->document($workspace, $generation, '2026-05-01');
         $searchScopes = [];
         Http::preventStrayRequests();
-        Http::fake(function (Request $request) use ($generation, $target, $decision, &$searchScopes) {
+        Http::fake(function (Request $request) use ($generation, $target, $decision, $emptySearch, &$searchScopes) {
             $body = $request->data();
             if (str_ends_with($request->url(), '/compare-family')) {
                 $item = collect($body['candidates'])->firstWhere('family_id', $target->family->public_id);
@@ -1081,24 +1078,45 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $searchScopes[] = $body['scopes'];
             $candidates = [];
             foreach ($body['scopes'] as $lane) {
+                $laneRank = 0;
                 foreach ($lane['eligible_document_ids'] as $documentId) {
                     $document = Document::query()->where('public_id', $documentId)->firstOrFail();
                     $candidates[] = ['chunk_id' => $document->chunks()->firstOrFail()->public_id,
                         'document_id' => $documentId, 'workspace_corpus_generation_id' => $generation->public_id,
                         'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
-                        'score' => 0.9, 'rank' => count($candidates) + 1, 'retrieval_method' => 'dense',
+                        'score' => 0.9, 'rank' => ++$laneRank, 'retrieval_method' => 'dense',
                         'side' => $lane['side']];
                 }
             }
 
-            return Http::response(['request_id' => $body['request_id'], 'candidates' => $candidates,
-                'lineage' => []]);
+            return Http::response(['request_id' => $body['request_id'], 'candidates' => $emptySearch ? [] : $candidates,
+                'lineage' => [], 'diagnostics' => []]);
         });
-        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $this->plan(), 10,
-            CarbonImmutable::parse('2026-09-06'));
-        $this->assertCount($decision === 'selected' && $withHistory ? 3 : 2, $searchScopes);
+        $trace = [];
+        // Isolate comparison discovery from the example's unrelated record need.
+        $plan = $this->plan(0, function ($data) {
+            $data['plan']['needs'] = array_slice($data['plan']['needs'], 0, 1);
+            $data['plan']['bindings'] = array_slice($data['plan']['bindings'], 0, 1);
+
+            return $data;
+        });
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 10,
+            CarbonImmutable::parse('2026-09-06'), observe: function ($stage, $value) use (&$trace) {
+                $trace[$stage] = $value;
+            });
+        $diagnostic = $trace['need.n1.topical_family_selection'];
+        $this->assertSame($decision, $diagnostic['decision']);
+        $this->assertSame(! $emptySearch, $diagnostic['diagnostics']['reviewer_invoked']);
+        $this->assertSame($emptySearch ? 'discovery_search' : 'reviewer_result', $diagnostic['diagnostics']['stop_stage']);
+        if ($emptySearch) {
+            $this->assertSame(0, $diagnostic['diagnostics']['search_candidate_count']);
+        } else {
+            $this->assertGreaterThan(0, $diagnostic['diagnostics']['reviewer_candidate_count']);
+        }
+        $this->assertCount($decision === 'selected' && $withHistory ? 2 : 1, $searchScopes);
         if ($decision === 'selected' && $withHistory) {
-            $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome);
+            $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome,
+                json_encode(['reason' => $result->reason, 'trace' => $trace], JSON_THROW_ON_ERROR));
             $compareDocuments = array_column(array_filter($result->candidates,
                 fn ($candidate) => $candidate['need_id'] === 'n1'), 'document_id');
             $this->assertContains($old->public_id, $compareDocuments);
@@ -1111,11 +1129,33 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 [RetrievalOutcome::ComparisonScopeIncomplete->value,
                     RetrievalOutcome::NoEligibleEvidence->value]);
         }
+        $withoutObserver = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 10,
+            CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame($result->outcome, $withoutObserver->outcome);
+        $this->assertSame($result->candidates, $withoutObserver->candidates);
+        $this->assertSame($result->evidenceNeeds, $withoutObserver->evidenceNeeds);
     }
 
     public static function topicalComparisonDecisions(): array
     {
-        return [['selected', true], ['selected', false], ['no_match', true], ['ambiguous', true]];
+        return [['selected', true], ['selected', false], ['no_match', true], ['ambiguous', true], ['no_match', true, true]];
+    }
+
+    public function test_topical_discovery_ineligible_is_logged_without_provider_work(): void
+    {
+        [, , $scope] = $this->scope();
+        Http::preventStrayRequests();
+        Http::fake();
+        $trace = [];
+        app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $this->plan(), 10,
+            CarbonImmutable::parse('2026-09-06'), observe: function ($stage, $value) use (&$trace) {
+                $trace[$stage] = $value;
+            });
+        $diagnostic = $trace['need.n1.topical_family_selection']['diagnostics'];
+        $this->assertSame('discovery_eligibility', $diagnostic['stop_stage']);
+        $this->assertFalse($diagnostic['reviewer_invoked']);
+        $this->assertNull($diagnostic['search_candidate_count']);
+        Http::assertNothingSent();
     }
 
     public function test_case_nine_shape_cannot_search_an_unrelated_2023_version_pair(): void

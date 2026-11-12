@@ -31,7 +31,7 @@ PRIMARY_USER = "ae454ce6-4d91-4c7e-9a40-b4750b696a6b"
 INJECTION_WORKSPACE = "4db6ffe2-6974-415d-8fd3-002b8fb05d05"
 INJECTION_USER = "6972994f-c594-42ef-a747-39d01ae24fc3"
 SCHEMA = "r28-r06-production-authorization-v1"
-STAGES = {"regression": 8, "confirmation": 16, "continuation": 2,
+STAGES = {"topical_diagnostics": 8, "regression": 8, "confirmation": 16, "continuation": 2,
           "full": 148,
           "r07_case32_diagnostic": 1, "r07_case40_retry": 1, "r07_tail": 108, "r07_tail_after_44": 104,
           "confirmation_retry": 1, "confirmation_remaining": 12,
@@ -180,14 +180,17 @@ def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str,
         }[stage]
         manifest = {"manifest_id": manifest_id,
                     "items": selection["confirmation"]["items"][start:stop]}
-    elif stage in {"full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}:
+    elif stage in {"topical_diagnostics", "full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}:
         population = json_file(POPULATION)
         items = [
             {"case_id": case["case_id"], "variant_id": variant["variant_id"], "scope": case["scope"]}
             for case in population["cases"]
             for variant in case["variants"]
         ]
-        if stage == "r07_case32_diagnostic":
+        if stage == "topical_diagnostics":
+            items = [items[index - 1] for index in (17, 18, 124, 128, 67, 89, 105, 132)]
+            manifest_id = "R28-R07-TOPICAL-DIAGNOSTICS-8-20261112-V1"
+        elif stage == "r07_case32_diagnostic":
             items = items[31:32]
             manifest_id = "R28-R07-CASE32-DIAGNOSTIC-1-20261111-V1"
         elif stage == "r07_case40_retry":
@@ -281,14 +284,14 @@ def verify_authorization(
     }
     if set(authority) != required:
         raise ValueError("authorization fields differ from the governed schema")
-    r07_stage = stage in {"full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}
+    r07_stage = stage in {"topical_diagnostics", "full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}
     expected_schema = "r28-r07-production-authorization-v1" if r07_stage else SCHEMA
     expected_run_prefix = "R28-R07" if r07_stage else "R28-R06"
     expected_auth_prefix = "R28-R07-AUTH" if r07_stage else "R28-R06-AUTH"
     if (
         authority["schema_version"] != expected_schema
         or authority["authorised"] is not True
-        or authority["selective_rerun_authorised"] is not (stage in {"continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case32_diagnostic", "r07_case40_retry"})
+        or authority["selective_rerun_authorised"] is not (stage in {"topical_diagnostics", "continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case32_diagnostic", "r07_case40_retry"})
         or authority["approved_by"] != "David"
         or authority["stage"] != stage
         or authority["manifest_id"] != manifest_id
@@ -595,7 +598,7 @@ def dispatch(
             flush=True,
         )
         review_gate = (
-            stage in {"confirmation_tail", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case9_compare_regression", "compare_family_final_controls"}
+            stage in {"topical_diagnostics", "confirmation_tail", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case9_compare_regression", "compare_family_final_controls"}
             or (stage in {"full", "r07_tail", "r07_tail_after_44"} and (index + 1) % 8 == 0)
         ) and index + 1 < len(execution["items"])
         if review_gate:

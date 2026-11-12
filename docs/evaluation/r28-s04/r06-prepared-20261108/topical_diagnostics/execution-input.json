@@ -1,0 +1,48 @@
+{
+  "schema_version": "r28-production-path-input-v1",
+  "subset_id": "R28-R07-TOPICAL-DIAGNOSTICS-8-20261112-V1",
+  "population_id": "dolved-care-v4-evaluation-population-v2",
+  "population_digest": "adc9aa22646fc0f131ab7aa747dce91874655b95479cebc318653c3173e40f4c",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "variant_id": "v1",
+      "utterance": "What deadline and review step changed for a DoLS outcome notification in November 2025?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "variant_id": "v2",
+      "utterance": "How did the timing and pre-submission responsibility for DoLS notifications change under the November 2025 procedure?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-02",
+      "variant_id": "v2",
+      "utterance": "How did the order of DNACPR, symptom management and advance care planning change in June 2026, and did their underlying requirements change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-04",
+      "variant_id": "v2",
+      "utterance": "For a suspected cyber incident involving a lost work device, how did the earlier guidance change in the encryption name, severity ownership, DPO deadline and regional escalation contact?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-10",
+      "variant_id": "v1",
+      "utterance": "Did the Birmingham home need an asbestos-register check before January 2026, and does it now?"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-09",
+      "variant_id": "v1",
+      "utterance": "What is the site's safeguarding lead called now, and did the first-contact role itself change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-05",
+      "variant_id": "v1",
+      "utterance": "For a hard-to-fill role, who can approve extending the recruitment timescale now, and who held that decision before February 2026?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "variant_id": "v2",
+      "utterance": "For a suspected problem with a resident's personal allowance, how did the initial contact and Finance Manager's responsibility change, and what safeguarding terminology and multi-agency route apply now?"
+    }
+  ]
+}

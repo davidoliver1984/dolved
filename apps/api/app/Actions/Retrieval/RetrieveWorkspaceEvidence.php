@@ -126,6 +126,7 @@ final readonly class RetrieveWorkspaceEvidence
                     'family_id' => $topical['family_id'],
                     'chunk_id' => $topical['chunk_id'],
                     'usage' => $topical['usage'],
+                    'diagnostics' => $topical['diagnostics'],
                 ]);
                 if ($topical['family_id'] === null) {
                     $results[$id] = new RetrievalResult(RetrievalOutcome::ComparisonScopeIncomplete,
@@ -218,19 +219,28 @@ final readonly class RetrieveWorkspaceEvidence
             null, null, $plan->locationReferences, null, $plan->classifierLineage,
             $plan->classifierUsage, evidenceNeed: $plan->evidenceNeed);
         $eligible = $this->eligibility->handle($authorised, $currentPlan, $evaluatedAt);
+        $diagnostics = ['stop_stage' => 'discovery_eligibility',
+            'eligibility_outcome' => $eligible->outcome->value, 'eligibility_reason' => $eligible->reason,
+            'active_corpus_present' => $authorised->activeCorpusGeneration !== null,
+            'search_candidate_count' => null, 'hydrated_candidate_count' => null,
+            'reranked_candidate_count' => null, 'reviewer_candidate_count' => null,
+            'reviewer_invoked' => false];
         if (! $eligible->canSearch() || $authorised->activeCorpusGeneration === null) {
-            return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => []];
+            return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => [], 'diagnostics' => $diagnostics];
         }
         $corpus = $authorised->activeCorpusGeneration;
         $policy = $corpus->sparse_space_generation_id === null ? null : $this->policies->handle($corpus);
         $search = $this->client->search($authorised->workspace, $corpus, $eligible,
             $plan->query, $candidateK, $policy);
         $usage = $search->usage;
+        $diagnostics['search_candidate_count'] = count($search->candidates);
         $fresh = $this->eligibility->handle($authorised, $currentPlan, $evaluatedAt);
         $hydrated = $this->hydrateAndRecheck($search->candidates,
             $fresh->canSearch() ? $fresh->documentPublicIdsBySide : [], $authorised);
+        $diagnostics['hydrated_candidate_count'] = count($hydrated);
+        $diagnostics['stop_stage'] = $search->candidates === [] ? 'discovery_search' : 'discovery_hydration';
         if ($hydrated === []) {
-            return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => $usage];
+            return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => $usage, 'diagnostics' => $diagnostics];
         }
         if ($policy !== null) {
             $this->policies->assertSearchLineage($policy, $search->lineage);
@@ -239,6 +249,7 @@ final readonly class RetrieveWorkspaceEvidence
                 throw new RetrievalException('Sparse generation lineage does not match the active corpus.');
             }
             $reranked = $this->client->rerank($authorised->workspace, $plan->query, $hydrated, $policy);
+            $diagnostics['reranked_candidate_count'] = count($reranked['candidates']);
             $this->policies->assertRerankerLineage($policy, $reranked['profile']);
             $usage = [...$usage, ...$reranked['usage']];
             $byChunk = collect($hydrated)->keyBy('chunk_id');
@@ -249,13 +260,17 @@ final readonly class RetrieveWorkspaceEvidence
         $fresh = $this->eligibility->handle($authorised, $currentPlan, $evaluatedAt);
         $candidates = $this->hydrateAndRecheck(array_slice($hydrated, 0, 12),
             $fresh->canSearch() ? $fresh->documentPublicIdsBySide : [], $authorised);
+        $diagnostics['reviewer_candidate_count'] = count($candidates);
+        $diagnostics['stop_stage'] = 'discovery_recheck';
         if ($candidates === []) {
-            return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => $usage];
+            return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => $usage, 'diagnostics' => $diagnostics];
         }
         $selection = $this->client->selectTopicalCompareFamily($authorised->workspace,
             $plan->query, $candidates);
+        $diagnostics['reviewer_invoked'] = true;
+        $diagnostics['stop_stage'] = 'reviewer_result';
 
-        return [...$selection, 'usage' => [...$usage, $selection['usage']]];
+        return [...$selection, 'usage' => [...$usage, $selection['usage']], 'diagnostics' => $diagnostics];
     }
 
     private function comparisonPlanForFamily(RetrievalPlan $plan, string $familyId): RetrievalPlan
