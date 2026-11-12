@@ -22,6 +22,32 @@ they are not instructions to recreate or maintain a second tracker.
 
 ## Working conventions
 
+### R28 Block 1 closing increment — 2026-11-12, held
+
+Approved interpretation check and London relative-calendar rules landed in
+`8ece1e305c8c8efc7f8a910f5b98153f9f4a7397`, following decision record `3c6f3b1`.
+The check sees question turns and plan only; rejection uses closed codes within
+two total planner attempts. Exhaustion retains honest interpretation failure.
+Python/PHP calendar grounding agrees on evaluated_at, London boundaries and
+duration exclusion. Temporal answers are instructed to identify the selected
+version/range. Tenancy, evidence allocation and authority timeline remain unchanged.
+
+Full Docker AI/Laravel suite commands, raw JUnit, exact failing-name comparison,
+focused proofs and infrastructure/transient attribution are retained in
+`docs/evaluation/r28-s04/block1-closing-20261112/verification.md`: zero new/resolved
+failures (38/2 retained), 26/6 additional passing tests. Changed-module Ruff/mypy,
+PHP formatting and 17 provider-free governed harness tests also passed.
+
+The one-use `--stage block1_closing` checkpoint first ran four fixed question/plan
+probes through the real check (all clause_omitted), then the production path at the
+exact pushed commit. The first production result still missed the expected Champion
+role distinction, and the manual gate was stopped before input 2. No corrective
+iteration or further provider call followed. Evidence, exact command binding,
+authorization, accounting and before/after freezes are in
+`docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-CLOSING-20261112-01/`.
+This is an implemented, partially live-measured increment, not Block 1 completion;
+the living repair plan records the remaining criterion and held inputs.
+
 Each implementation stage should contain:
 
 1. Objective

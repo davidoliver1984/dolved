@@ -1,5 +1,33 @@
 # R28 — three-need capacity correction and first live checkpoint
 
+## Closing interpretation checkpoint — held
+
+David approved a bounded independent question-to-plan check before execution,
+superseding the earlier no-additional-call constraint. It receives turns and plan,
+not the catalogue; closed rejection codes use the existing second planner attempt,
+with no additional retries. Commit `8ece1e305c8c8efc7f8a910f5b98153f9f4a7397`
+also implements mirrored Europe/London relative-calendar grounding and explicit
+temporal-version identification in generation instructions. Full-suite raw JUnit
+shows identical failing-name sets (38 AI / 2 Laravel), with 26 and six additional
+passing tests respectively. The initial clean Laravel baseline had a nonrecurring
+snapshot-immutability error; both baseline artifacts are retained rather than hidden.
+
+The [closing checkpoint](../evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-CLOSING-20261112-01/report.md)
+rejected all four frozen omission plans, including whole-question-span variants.
+It then stopped after the first production question: b06-06 again recommended the
+organisation-level Safeguarding Lead instead of meeting the expected site Champion
+role distinction. The check accepted the plan, which retained all literal clauses
+but narrowed the role wording. This does not prove the original question alone
+unambiguously expresses that domain distinction. It does prove the predeclared
+Block 1 target is not closed. No tuning, additional live call or reassignment followed;
+the other thirteen inputs, including calendar and budget-disclosure probes, did not run.
+
+The check added 1.577 seconds and 972/83 input/output tokens to that question.
+Priced-plus-offline-OpenAI estimated spend was USD 0.02307993, not a complete invoice:
+Voyage reranking and infrastructure prices remain unavailable. Before/after runtime
+and corpus identities match. The plan, implementation guide and local living journey
+were updated together. Block 1 stays open for David's decision.
+
 ## Approved Block 1 follow-up
 
 ### Bounded correction-feedback follow-up

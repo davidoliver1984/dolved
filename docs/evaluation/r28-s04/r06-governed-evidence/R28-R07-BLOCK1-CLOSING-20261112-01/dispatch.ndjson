@@ -1,0 +1,6 @@
+{"event": "interpretation_probe_started", "probe_id": "attempt-1-whole-span-false", "at": "2026-11-12T15:35:09.930269+00:00"}
+{"event": "interpretation_probe_started", "probe_id": "attempt-1-whole-span-true", "at": "2026-11-12T15:35:14.744153+00:00"}
+{"event": "interpretation_probe_started", "probe_id": "attempt-2-whole-span-false", "at": "2026-11-12T15:35:18.584029+00:00"}
+{"event": "interpretation_probe_started", "probe_id": "attempt-2-whole-span-true", "at": "2026-11-12T15:35:22.383794+00:00"}
+{"index": 0, "case_id": "v4.case.corrected-b06-06", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T15:35:26.871411+00:00"}
+{"index": 0, "case_id": "v4.case.corrected-b06-06", "variant_id": "v1", "event": "recorded", "sha256": "b029e810eae7bb51a9d596e9680dd7d94466751671be52197ea8b20cbf08a84f", "at": "2026-11-12T15:36:03.808895+00:00"}
