@@ -210,7 +210,13 @@ final readonly class RunR28ProductionPathDiagnostic
             return collect($value)->only(['decision', 'clarification', 'needs'])->all();
         }
         if ($stage === 'topical_family_selection') {
-            $result = collect($value)->only(['decision', 'family_id', 'chunk_id', 'usage', 'failure'])->all();
+            $result = collect($value)->only(['decision', 'family_id', 'chunk_id', 'usage', 'failure',
+                'original_decision', 'validation_rejection_code'])->all();
+            $result['candidate_identities'] = collect(is_array($value['candidate_identities'] ?? null) ? $value['candidate_identities'] : [])
+                ->take(12)->filter(fn ($item): bool => is_array($item)
+                    && is_string($item['family_id'] ?? null) && Str::isUuid($item['family_id'])
+                    && is_string($item['chunk_id'] ?? null) && Str::isUuid($item['chunk_id']))
+                ->map(fn (array $item): array => collect($item)->only(['family_id', 'chunk_id'])->all())->values()->all();
             $result['diagnostics'] = collect(is_array($value['diagnostics'] ?? null) ? $value['diagnostics'] : [])
                 ->only(['stop_stage', 'eligibility_outcome', 'eligibility_reason', 'active_corpus_present',
                     'search_candidate_count', 'hydrated_candidate_count', 'reranked_candidate_count',

@@ -219,8 +219,24 @@ final readonly class RetrievalClient
             throw new RetrievalException('The comparison family review returned inconsistent evidence.');
         }
 
+        // Additive diagnostics only: absent/invalid metadata never changes selection.
+        $originalDecision = $response->json('original_decision');
+        $rejectionCode = $response->json('validation_rejection_code');
+        if (! in_array($originalDecision, ['selected', 'ambiguous', 'no_match'], true)
+            || ! (($originalDecision === $decision && $rejectionCode === null)
+                || ($originalDecision === 'selected' && $decision === 'no_match'
+                    && in_array($rejectionCode, ['identity_mismatch', 'quote_length', 'quote_not_in_candidate'], true)))) {
+            $originalDecision = null;
+            $rejectionCode = null;
+        }
+
         return ['family_id' => $decision === 'selected' ? $familyId : null,
             'chunk_id' => $decision === 'selected' ? $chunkId : null,
+            'original_decision' => $originalDecision,
+            'validation_rejection_code' => $rejectionCode,
+            'candidate_identities' => array_map(fn (array $item): array => [
+                'family_id' => $item['family_id'], 'chunk_id' => $item['chunk_id'],
+            ], $items),
             'usage' => $safeUsage, 'decision' => $decision];
     }
 

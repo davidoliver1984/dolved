@@ -29,3 +29,19 @@ unless the provider supplies a defensible price basis. The reviewer treats
 candidate text as untrusted data. Provider-free contract tests establish
 bounds and identity checks, not the correctness of the model's relevance
 judgment; live acceptance is required for that.
+
+## Additive validation diagnostics (2026-11-12)
+
+`selection.decision` remains the effective, validated decision used for execution.
+`original_decision` separately records the parsed reviewer's `selected`,
+`ambiguous`, or `no_match` decision. `validation_rejection_code` is null unless
+an original selection was converted to effective `no_match`; its closed values
+are `identity_mismatch`, `quote_length`, and `quote_not_in_candidate` (checks in
+that order). No rejected quotation or raw model response is included.
+`candidate_identities` contains at most 12 family/chunk UUID pairs, in the order
+actually supplied to the reviewer, with no titles or text. Python derives these
+from the request; Laravel independently records the pairs from its bounded sent
+request, rather than trusting echoed identities. These fields are diagnostics
+only; legacy responses have unknown original decision (null), not an inferred
+one. Invalid diagnostic metadata is discarded, never used to change selection.
+Prompts, validation criteria, request count and effective decisions are unchanged.

@@ -90,6 +90,93 @@ def test_non_selection_cannot_smuggle_a_family_or_quote() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    "decision,changes,effective,rejection",
+    [
+        ("no_match", {}, "no_match", None),
+        ("ambiguous", {}, "ambiguous", None),
+        ("selected", {}, "selected", None),
+        ("selected", {"family_id": str(UUID(int=4))}, "no_match", "identity_mismatch"),
+        ("selected", {"chunk_id": str(UUID(int=4))}, "no_match", "identity_mismatch"),
+        (
+            "selected",
+            {"quote": "invented quotation"},
+            "no_match",
+            "quote_not_in_candidate",
+        ),
+        ("selected", {"quote": "dress"}, "no_match", "quote_length"),
+    ],
+)
+def test_original_and_effective_decisions_survive_signed_route(
+    decision, changes, effective, rejection
+) -> None:
+    source = request().model_copy(update={"request_id": uuid4()})
+    proposed = (
+        selected(**changes)
+        if decision == "selected"
+        else CompareFamilyDecision(
+            decision=decision, family_id=None, chunk_id=None, quote=None
+        )
+    )
+    reviewer = CompareFamilyReviewer(
+        api_url="https://provider.invalid/chat/completions",
+        api_key=SecretStr("test-only-secret"),
+        model="test-model",
+        timeout_seconds=1,
+    )
+    calls = []
+
+    def handler(http_request):
+        calls.append(json.loads(http_request.content))
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {"content": proposed.model_dump_json()},
+                    }
+                ]
+            },
+        )
+
+    reviewer.client = httpx.Client(transport=httpx.MockTransport(handler))
+    app.dependency_overrides[compare_family_reviewer_dependency] = lambda: reviewer
+    path = "/api/internal/retrieval/compare-family"
+    body = source.model_dump_json().encode()
+    try:
+        with TestClient(app) as client:
+            response = client.post(
+                path,
+                content=body,
+                headers=signed_headers(
+                    path,
+                    body,
+                    WORKSPACE,
+                    str(source.request_id),
+                    "retrieval.compare-family",
+                ),
+            )
+        assert response.status_code == 200
+        result = response.json()
+        assert result["original_decision"] == decision
+        assert result["selection"] == validate_selection(source, proposed).model_dump(
+            mode="json"
+        )
+        assert result["selection"]["decision"] == effective
+        assert result["validation_rejection_code"] == rejection
+        assert result["candidate_identities"] == [
+            {"family_id": FAMILY, "chunk_id": CHUNK}
+        ]
+        assert len(calls) == 1
+        assert calls[0]["messages"][0]["content"] == compare_family.PROMPT
+        assert "test-only-secret" not in response.text
+        if rejection:
+            assert result["selection"]["quote"] is None
+    finally:
+        app.dependency_overrides.clear()
+
+
 def test_duplicate_or_oversized_candidate_set_is_rejected() -> None:
     source = request().model_dump(mode="json")
     source["candidates"].append(source["candidates"][0])

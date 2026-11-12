@@ -1066,6 +1066,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 $this->assertNotNull($item, 'Current-side discovery must include the target family.');
 
                 return Http::response(['contract_version' => 1, 'request_id' => $body['request_id'],
+                    'original_decision' => $decision, 'validation_rejection_code' => null,
                     'selection' => ['decision' => $decision,
                         'family_id' => $decision === 'selected' ? $target->family->public_id : null,
                         'chunk_id' => $decision === 'selected' ? $item['chunk_id'] : null,
@@ -1105,6 +1106,9 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 $trace[$stage] = $value;
             });
         $diagnostic = $trace['need.n1.topical_family_selection'];
+        $this->assertSame($emptySearch ? null : $decision, $diagnostic['original_decision']);
+        $this->assertNull($diagnostic['validation_rejection_code']);
+        $this->assertSame(! $emptySearch, $diagnostic['candidate_identities'] !== []);
         $this->assertSame($decision, $diagnostic['decision']);
         $this->assertSame(! $emptySearch, $diagnostic['diagnostics']['reviewer_invoked']);
         $this->assertSame($emptySearch ? 'discovery_search' : 'reviewer_result', $diagnostic['diagnostics']['stop_stage']);

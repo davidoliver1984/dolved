@@ -123,6 +123,9 @@ final readonly class RetrieveWorkspaceEvidence
                 $usage = [...$usage, ...$topical['usage']];
                 $observe?->__invoke('need.'.$id.'.topical_family_selection', [
                     'decision' => $topical['decision'],
+                    'original_decision' => $topical['original_decision'] ?? null,
+                    'validation_rejection_code' => $topical['validation_rejection_code'] ?? null,
+                    'candidate_identities' => $topical['candidate_identities'] ?? [],
                     'family_id' => $topical['family_id'],
                     'chunk_id' => $topical['chunk_id'],
                     'usage' => $topical['usage'],
