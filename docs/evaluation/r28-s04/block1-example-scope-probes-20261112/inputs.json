@@ -1,0 +1,151 @@
+{
+  "items": [
+    {
+      "probe_id": "v4.case.corrected-b01-01",
+      "user_turns": [
+        {
+          "turn_id": "user-1",
+          "text": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v3",
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "Retrieve current organisational guidance listing the staff wellbeing services new starters should be made aware of (e.g. counselling, employee assistance programmes, peer-support, occupational health, activities/wellbeing programmes and any external referral contacts).",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "which wellbeing services should I know about",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          },
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "Retrieve the current induction documentation/process that explains how the induction will check a new starter's knowledge of how to access wellbeing services (for example induction checklist items, buddy scheme checks, demonstrations, signposting, confirmations or recorded competencies).",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n2",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "how will my induction check that I know how to access them?",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ]
+      },
+      "source": "docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-CLOSING-TAIL-20261112-01/cases/01-v4.case.corrected-b01-01-v1.json",
+      "source_sha256": "39a321ff1be54017f410f00dece247ecc1c71c5ee2cefcba765454b1c1f75476"
+    },
+    {
+      "probe_id": "v4.case.corrected-b03-05",
+      "user_turns": [
+        {
+          "turn_id": "user-1",
+          "text": "I'm resigning after three years. How much notice do I give, and what else do I need to do before I leave?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v3",
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "For an employee who is resigning after three years' service, what contractual or policy length of notice must they give (and how is that notice period calculated)?",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": {
+              "precision": "duration",
+              "source": {
+                "quote": "after three years",
+                "turn_id": "user-1"
+              },
+              "value": "three years"
+            },
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "How much notice do I give",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          },
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "What practical steps, obligations and handovers (for example returning equipment, completing handover notes, final payroll/pension steps, IT access removal, and any exit interview) does an employee need to complete before leaving when they resign after three years' service?",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": {
+              "precision": "duration",
+              "source": {
+                "quote": "after three years",
+                "turn_id": "user-1"
+              },
+              "value": "three years"
+            },
+            "need_id": "n2",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "what else do I need to do before I leave?",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ]
+      },
+      "source": "docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-CLOSING-TAIL-20261112-01/cases/02-v4.case.corrected-b03-05-v1.json",
+      "source_sha256": "0100fa4e0254490a42b7ee8a63dfd71312f3eedf230a6dccb2b7c12a52e7003f"
+    }
+  ],
+  "adaptation": "Only schema_version envelope restored; every recorded need and original user turn unchanged."
+}

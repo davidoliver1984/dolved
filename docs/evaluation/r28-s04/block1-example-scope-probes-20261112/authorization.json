@@ -1,0 +1,15 @@
+{
+  "authorized_by": "David, direct user message 2026-11-12",
+  "scope": "two existing accepted plans; current check only, once each; no planner/retrieval/generation",
+  "max_usd": 0.5,
+  "max_calls": 2,
+  "max_completion_tokens_per_call": 4096,
+  "input_sha256": "faa1a4f8a55560aaa5f9cacdb9f59d2eb15c045fc8460dea01a1b730c629abaf",
+  "runtime": {
+    "head": "82b3dd653689b9b95a01d31ad836e579893f3d31",
+    "runtime_aggregate": "227e3f7068f74daf71ede100214e940cce2de1c8a421bbced3d8f60f7dbec751",
+    "checker_sha256": "ba4d8069e42d52c35fe03037e8742982b30d150ff56df790ab11bbe495634348"
+  },
+  "criterion": "Each must be scope_added or meaning_changed with citation_verification verified.",
+  "pricing_basis": "Retained gpt-5-mini snapshot: USD 0.25/M input, 2/M output; estimate, not billed invoice."
+}

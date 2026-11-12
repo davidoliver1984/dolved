@@ -1,0 +1,75 @@
+{
+  "probe_id": "v4.case.corrected-b01-01",
+  "receipt": {
+    "version": "interpretation-check-v2",
+    "code": "accepted",
+    "checker_code": "accepted",
+    "citation": null,
+    "citation_verification": "not_applicable",
+    "verification_reason": null,
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "request_count": 1,
+    "input_tokens": 1159,
+    "output_tokens": 87,
+    "latency_ms": 3822.6566270168405,
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "reviewed_plan": {
+      "schema_version": "evidence-needs-plan-v3",
+      "decision": "plan",
+      "clarification": null,
+      "needs": [
+        {
+          "need_id": "n1",
+          "aspect": "Retrieve current organisational guidance listing the staff wellbeing services new starters should be made aware of (e.g. counselling, employee assistance programmes, peer-support, occupational health, activities/wellbeing programmes and any external referral contacts).",
+          "central": true,
+          "question_span": {
+            "turn_id": "user-1",
+            "quote": "which wellbeing services should I know about"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "claim_under_test": null,
+          "scope_question": null,
+          "supports_need_id": null
+        },
+        {
+          "need_id": "n2",
+          "aspect": "Retrieve the current induction documentation/process that explains how the induction will check a new starter's knowledge of how to access wellbeing services (for example induction checklist items, buddy scheme checks, demonstrations, signposting, confirmations or recorded competencies).",
+          "central": true,
+          "question_span": {
+            "turn_id": "user-1",
+            "quote": "how will my induction check that I know how to access them?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "claim_under_test": null,
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "bindings": []
+    }
+  }
+}
