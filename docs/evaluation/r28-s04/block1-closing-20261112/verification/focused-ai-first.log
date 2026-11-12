@@ -1,0 +1,68 @@
+ Container rag-platform-ai-run-2b7450a56b43 Creating 
+ Container rag-platform-ai-run-2b7450a56b43 Created 
+........................................................................ [ 52%]
+............................F................F....................       [100%]
+=================================== FAILURES ===================================
+__ test_real_transport_preserves_month_and_mixed_needs_without_normalisation ___
+
+    def test_real_transport_preserves_month_and_mixed_needs_without_normalisation():
+        for example in EXAMPLES[:3]:
+            calls = []
+            result = adapter(example["plan"], calls).plan_needs(
+                turns(example), evaluated_at="2026-09-06T12:00:00Z"
+            )
+            assert result.plan.model_dump(mode="json") == example["plan"]
+            assert result.lineage.contract_schema_version == "evidence-needs-plan-v3"
+>           assert result.usage.request_count == 1
+E           AssertionError: assert 2 == 1
+E            +  where 2 = NeedsOperationUsage(stage='planner', provider='openai', model='gpt-5-mini', execution='provider_api', request_count=2,...t_count': 1, 'input_tokens': 0, 'output_tokens': 0, 'latency_ms': 0, 'cost_basis': 'unavailable', 'cost_usd': None}},)).request_count
+E            +    where NeedsOperationUsage(stage='planner', provider='openai', model='gpt-5-mini', execution='provider_api', request_count=2,...t_count': 1, 'input_tokens': 0, 'output_tokens': 0, 'latency_ms': 0, 'cost_basis': 'unavailable', 'cost_usd': None}},)) = NeedsPlanningResult(plan=EvidenceNeedsPlan(schema_version='evidence-needs-plan-v3', decision='plan', clarification=Non..._count': 1, 'input_tokens': 0, 'output_tokens': 0, 'latency_ms': 0, 'cost_basis': 'unavailable', 'cost_usd': None}},))).usage
+
+tests/test_evidence_needs.py:762: AssertionError
+___________ test_one_bounded_feedback_retry_with_both_receipts[True] ___________
+
+second_valid = True
+
+    @pytest.mark.parametrize("second_valid", [True, False])
+    def test_one_bounded_feedback_retry_with_both_receipts(second_valid):
+        good = deepcopy(EXAMPLES[0]["plan"])
+        bad = deepcopy(good)
+        bad["bindings"] = []
+        requests = []
+    
+        def handle(request):
+            requests.append(request.content)
+            plan = good if len(requests) == 2 and second_valid else bad
+            return httpx.Response(
+                200,
+                json={
+                    "choices": [
+                        {"finish_reason": "stop", "message": {"content": json.dumps(plan)}}
+                    ],
+                    "usage": {"prompt_tokens": 100, "completion_tokens": 20},
+                },
+            )
+    
+        planner = StructuredChatNeedsPlanner(
+            api_url="https://not-dispatched.invalid",
+            api_key=SecretStr("fake"),
+            provider_name="openai",
+            model="gpt-5-mini",
+            timeout_seconds=1,
+            client=httpx.Client(transport=httpx.MockTransport(handle)),
+        )
+        if second_valid:
+            result = planner.plan_needs(
+                turns(EXAMPLES[0]), evaluated_at="2026-09-07T12:00:00Z"
+            )
+>           assert result.usage.request_count == 2
+E           AssertionError: assert 3 == 2
+E            +  where 3 = NeedsOperationUsage(stage='planner', provider='openai', model='gpt-5-mini', execution='provider_api', request_count=3,...st_count': 1, 'input_tokens': 0, 'output_tokens': 0, 'latency_ms': 0, 'cost_basis': 'unavailable', 'cost_usd': None}})).request_count
+E            +    where NeedsOperationUsage(stage='planner', provider='openai', model='gpt-5-mini', execution='provider_api', request_count=3,...st_count': 1, 'input_tokens': 0, 'output_tokens': 0, 'latency_ms': 0, 'cost_basis': 'unavailable', 'cost_usd': None}})) = NeedsPlanningResult(plan=EvidenceNeedsPlan(schema_version='evidence-needs-plan-v3', decision='plan', clarification=Non...t_count': 1, 'input_tokens': 0, 'output_tokens': 0, 'latency_ms': 0, 'cost_basis': 'unavailable', 'cost_usd': None}}))).usage
+
+tests/test_needs_validation_retry.py:49: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_evidence_needs.py::test_real_transport_preserves_month_and_mixed_needs_without_normalisation
+FAILED tests/test_needs_validation_retry.py::test_one_bounded_feedback_retry_with_both_receipts[True]
+2 failed, 136 passed in 2.01s
+

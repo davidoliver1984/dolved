@@ -3,6 +3,8 @@ from copy import deepcopy
 
 import httpx
 import pytest
+
+pytestmark = pytest.mark.usefixtures("accepted_interpretation")
 from pydantic import SecretStr
 
 from app.retrieval.needs_planner import (
@@ -44,7 +46,7 @@ def test_one_bounded_feedback_retry_with_both_receipts(second_valid):
         result = planner.plan_needs(
             turns(EXAMPLES[0]), evaluated_at="2026-09-07T12:00:00Z"
         )
-        assert result.usage.request_count == 2
+        assert result.usage.request_count == 3  # two planner requests plus one check
         assert result.usage.retry_count == 1
         assert result.usage.input_tokens == 200
         assert result.usage.output_tokens == 40

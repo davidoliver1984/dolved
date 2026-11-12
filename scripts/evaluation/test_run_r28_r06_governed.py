@@ -14,6 +14,16 @@ import run_r28_r06_governed as governed
 
 
 class R28R06GovernedTest(unittest.TestCase):
+    def test_closing_checkpoint_is_fixed_and_preserves_security_scope(self) -> None:
+        execution, scopes, identities = governed.verify_inputs("block1_closing")
+        self.assertEqual(14, len(execution["items"]))
+        self.assertEqual("507fff88a4e029c11d890efd426a17da8aa5530f5813fa13c942f6096324cbe4", identities["input_sha256"])
+        self.assertEqual(["primary"] * 5 + ["security_test"] + ["primary"] * 8, [x["scope"] for x in scopes["items"]])
+        self.assertTrue(all(set(x) == {"case_id", "variant_id", "utterance"} for x in execution["items"]))
+        probes = governed.json_file(governed.ROOT / "docs/evaluation/r28-s04/block1-closing-20261112/omission-probes.json")
+        self.assertEqual(4, len(probes["items"]))
+        self.assertTrue(all(set(x) == {"probe_id", "user_turns", "plan"} for x in probes["items"]))
+
     def test_feedback_checkpoint_freezes_four_inputs_and_original_security_scope(self) -> None:
         execution, scopes, identities = governed.verify_inputs("block1_feedback")
         self.assertEqual(4, len(execution["items"]))

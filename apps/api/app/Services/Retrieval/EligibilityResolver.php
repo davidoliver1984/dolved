@@ -316,7 +316,7 @@ final readonly class EligibilityResolver
     ): EligibleRetrievalScope {
         $window = $authority['kind'] === 'transition_boundary'
             ? [CarbonImmutable::parse($authority['value'])->startOfDay(), CarbonImmutable::parse($authority['value'])->addDay()->startOfDay()]
-            : $this->periods->window($authority['value']);
+            : $this->periods->window($authority['value'], $authority['source']['quote'] ?? null);
         if ($window === null) {
             return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
                 reason: EligibilityClarificationReason::UnresolvableTemporalPeriod->value,
@@ -365,7 +365,7 @@ final readonly class EligibilityResolver
         $authority = $plan->evidenceNeed['authority'] ?? [];
 
         return in_array($authority['kind'] ?? null, ['before', 'after'], true)
-            ? $this->periods->resolveAdjacent($family, $plan->temporalReference['value'], $authority['kind'])
+            ? $this->periods->resolveAdjacent($family, $plan->temporalReference['value'], $authority['kind'], $authority['source']['quote'] ?? null)
             : $this->periods->resolve($family, $plan->temporalReference['value'], $authority['source']['quote'] ?? null);
     }
 

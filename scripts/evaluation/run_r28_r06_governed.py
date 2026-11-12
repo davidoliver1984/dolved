@@ -31,7 +31,8 @@ PRIMARY_USER = "ae454ce6-4d91-4c7e-9a40-b4750b696a6b"
 INJECTION_WORKSPACE = "4db6ffe2-6974-415d-8fd3-002b8fb05d05"
 INJECTION_USER = "6972994f-c594-42ef-a747-39d01ae24fc3"
 SCHEMA = "r28-r06-production-authorization-v1"
-STAGES = {"block1_feedback": 4, "block1_remaining": 4, "block1_checkpoint": 7, "capacity_overflow": 1, "capacity_checkpoint": 5, "topical_diagnostics": 8, "regression": 8, "confirmation": 16, "continuation": 2,
+CLOSING_PROBE_RUNNER_SHA256 = "360b6828960b72831f14d0dbae302ee66e0b0c90c9061f0607d82a8b195ca51c"
+STAGES = {"block1_closing": 14, "block1_feedback": 4, "block1_remaining": 4, "block1_checkpoint": 7, "capacity_overflow": 1, "capacity_checkpoint": 5, "topical_diagnostics": 8, "regression": 8, "confirmation": 16, "continuation": 2,
           "full": 148,
           "r07_case32_diagnostic": 1, "r07_case40_retry": 1, "r07_tail": 108, "r07_tail_after_44": 104,
           "confirmation_retry": 1, "confirmation_remaining": 12,
@@ -93,12 +94,44 @@ def runtime_aggregate() -> str:
     return hashlib.sha256(lines).hexdigest()
 
 
+def run_interpretation_probes(run_dir: Path, ledger: Path) -> None:
+    """Part of this one-use checkpoint, not a new authorization mechanism."""
+    probes = json_file(ROOT / "docs/evaluation/r28-s04/block1-closing-20261112/omission-probes.json")
+    code = Path(__file__).with_name("block1_interpretation_probe.py").read_text()
+    for index, item in enumerate(probes["items"], 1):
+        with ledger.open("a") as handle:
+            handle.write(json.dumps({"event": "interpretation_probe_started", "probe_id": item["probe_id"], "at": datetime.now(UTC).isoformat()}) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        result = subprocess.run([*COMPOSE, "exec", "-T", "ai", "/app/.venv/bin/python", "-c", code],
+            cwd=ROOT, input=json.dumps(item), text=True, capture_output=True, timeout=240)
+        if result.returncode != 0:
+            write_exclusive(run_dir / f"interpretation-probe-{index}.json", {"probe_id": item["probe_id"], "execution_failed": True})
+            write_inventory(run_dir)
+            raise RuntimeError("interpretation probe failed; no retry or production dispatch")
+        record = json.loads(result.stdout)
+        write_exclusive(run_dir / f"interpretation-probe-{index}.json", record)
+        if record.get("receipt", {}).get("code") != "clause_omitted":
+            write_inventory(run_dir)
+            raise RuntimeError("omission counterexample acceptance failed; stop without tuning")
+    print(json.dumps({"interpretation_probes": "4/4 rejected clause_omitted"}), flush=True)
+
+
 def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str, str]]:
-    if stage in {"block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_checkpoint", "capacity_overflow"}:
+    if stage in {"block1_closing", "block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_checkpoint", "capacity_overflow"}:
         # Explicit development selection, not an amendment to the frozen R07 population.
         path = ROOT / "docs/evaluation/r28-s04/capacity-checkpoint-20261112/execution-input.json"
         digest = "00c5838a3a9228ef84f7daeee76c9b286f6b61e5b208734e1080baec0fe209a4"
         subset, count = "R28-CAPACITY-FIVE-20261112-V1", 5
+        if stage == "block1_closing":
+            path = ROOT / "docs/evaluation/r28-s04/block1-closing-20261112/execution-input.json"
+            digest = "507fff88a4e029c11d890efd426a17da8aa5530f5813fa13c942f6096324cbe4"
+            subset, count = "R28-BLOCK1-CLOSING-FOURTEEN-20261112-V1", 14
+            probes = path.with_name("omission-probes.json")
+            if sha256(probes) != "db98f89e518739cfc76e27910912e36fcfc9e00196125745525c7cfd94d5afaa":
+                raise ValueError("interpretation probe freeze mismatch")
+            if sha256(Path(__file__).with_name("block1_interpretation_probe.py")) != CLOSING_PROBE_RUNNER_SHA256:
+                raise ValueError("interpretation probe runner drift")
         if stage == "block1_feedback":
             path = ROOT / "docs/evaluation/r28-s04/block1-feedback-20261112/execution-input.json"
             digest = "49047353fca0c8831a199510d584b1ebd233eb65dd6a9c5315eed590026566e7"
@@ -121,7 +154,7 @@ def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str,
             execution = {"subset_id": "R28-BLOCK1-REMAINING-20261112-V1", "items": execution["items"][3:7]}
         scopes = {"manifest_id": execution["subset_id"], "items": [
             {"case_id": item["case_id"], "variant_id": item["variant_id"],
-             "scope": "security_test" if stage == "block1_feedback" and item["case_id"] == "v4.case.corrected-b01-06" else "primary"}
+             "scope": "security_test" if stage in {"block1_closing", "block1_feedback"} and item["case_id"] == "v4.case.corrected-b01-06" else "primary"}
             for item in execution["items"]
         ]}
         return execution, scopes, {
@@ -321,14 +354,14 @@ def verify_authorization(
     }
     if set(authority) != required:
         raise ValueError("authorization fields differ from the governed schema")
-    r07_stage = stage in {"block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_overflow", "capacity_checkpoint", "topical_diagnostics", "full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}
+    r07_stage = stage in {"block1_closing", "block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_overflow", "capacity_checkpoint", "topical_diagnostics", "full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}
     expected_schema = "r28-r07-production-authorization-v1" if r07_stage else SCHEMA
     expected_run_prefix = "R28-R07" if r07_stage else "R28-R06"
     expected_auth_prefix = "R28-R07-AUTH" if r07_stage else "R28-R06-AUTH"
     if (
         authority["schema_version"] != expected_schema
         or authority["authorised"] is not True
-        or authority["selective_rerun_authorised"] is not (stage in {"block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_overflow", "capacity_checkpoint", "topical_diagnostics", "continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case32_diagnostic", "r07_case40_retry"})
+        or authority["selective_rerun_authorised"] is not (stage in {"block1_closing", "block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_overflow", "capacity_checkpoint", "topical_diagnostics", "continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case32_diagnostic", "r07_case40_retry"})
         or authority["approved_by"] != "David"
         or authority["stage"] != stage
         or authority["manifest_id"] != manifest_id
@@ -499,7 +532,7 @@ def dispatch(
             "run_id": authority["run_id"],
             "stage": stage,
             "manifest_id": execution["subset_id"],
-            "population_identity": "block1-feedback-four-v1" if stage == "block1_feedback" else ("block1-development-seven-v1" if stage in {"block1_checkpoint", "block1_remaining"} else ("capacity-development-five-v1" if stage in {"capacity_checkpoint", "capacity_overflow"} else "dolved-care-v4-evaluation-population-v2")),
+            "population_identity": "block1-closing-fourteen-v1" if stage == "block1_closing" else "block1-feedback-four-v1" if stage == "block1_feedback" else ("block1-development-seven-v1" if stage in {"block1_checkpoint", "block1_remaining"} else ("capacity-development-five-v1" if stage in {"capacity_checkpoint", "capacity_overflow"} else "dolved-care-v4-evaluation-population-v2")),
             "case_count": len(execution["items"]),
             "execution_boundary": "RunR28ProductionPathDiagnostic.handleCase -> OrchestrateConversationRun",
             "concurrency": 1,
@@ -529,6 +562,8 @@ def dispatch(
     )
 
     ledger = run_dir / "dispatch.ndjson"
+    if stage == "block1_closing":
+        run_interpretation_probes(run_dir, ledger)
     for index, (item, scope) in enumerate(
         zip(execution["items"], scopes["items"], strict=True)
     ):
@@ -635,7 +670,7 @@ def dispatch(
             flush=True,
         )
         review_gate = (
-            stage in {"block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_checkpoint", "topical_diagnostics", "confirmation_tail", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case9_compare_regression", "compare_family_final_controls"}
+            stage in {"block1_closing", "block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_checkpoint", "topical_diagnostics", "confirmation_tail", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case9_compare_regression", "compare_family_final_controls"}
             or (stage in {"full", "r07_tail", "r07_tail_after_44"} and (index + 1) % 8 == 0)
         ) and index + 1 < len(execution["items"])
         if review_gate:

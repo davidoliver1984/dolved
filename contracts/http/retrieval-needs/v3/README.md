@@ -1,13 +1,40 @@
 # Evidence needs plan v3 — applicability scope enquiries
 
 ADR-0039 adds `scope_enquiry` to the existing retrieve/compare operation union.
-Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v24`,
-`structured-chat-needs-v8`. The existing request and signed transport purpose
+Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v25`,
+`structured-chat-needs-v9`. The existing request and signed transport purpose
 are retained. V2 historical contracts remain byte-identical; v3 is explicitly
 pinned for new needs runs by `bounded-needs-slice-v20` (three executable needs,
 four search lanes, five final evidence slots; scope facts do not consume search lanes).
 
 ### Block 1 additive interpretation rules (2026-11-12)
+
+The v25/v9 adapter adds `interpretation-check-v1` after all existing schema,
+grounding and catalogue checks and before execution. Its bounded input is only
+question turns plus the proposed plan; no catalogue or evidence. It returns only
+`accepted`, `clause_omitted`, `meaning_changed`, or `scope_added`. Malformed,
+incomplete or unavailable checks cannot accept a plan. There remain two planner
+attempts total, with no reviewer retries; a check rejection uses the existing
+second attempt with closed stage/field/code feedback, never reviewer prose or
+the rejected plan. Exhaustion uses the honest interpretation-failure outcome.
+Clarification-only plans do not execute needs and do not invoke the check.
+`validation_attempts[].interpretation_check` records version, closed code,
+provider/model, tokens, latency and unavailable cost explicitly. Parent usage
+includes these physical requests/tokens, so nested receipts are not additive again.
+The schema-validated `reviewed_plan` is retained for independent interpretation
+assessment, bounded/revalidated by Laravel, never raw completion or reviewer prose,
+never supplied as correction feedback, and never an alternate executable plan.
+
+Explicit `last`/`this` month/quarter/year expressions are resolved against the
+request's `evaluated_at` in Europe/London in both services. Calendar windows are
+start-inclusive/end-exclusive; existing interval wire values retain inclusive
+last days. Source quotes and turn IDs remain verbatim. Relative dates cannot be
+encoded as duration/quantity; unknown event dates are not inferred. Python receives
+application-computed calendar values; PHP independently verifies them against
+the same request anchor and resolves relative authority windows in London time.
+The shared `relative-calendar-examples.json` freezes timezone/leap/year boundaries.
+
+Historical v24/v8 behaviour (superseded by the approved addition above):
 
 The v24/v8 adapter retains the maximum two attempts and every existing validator.
 Only the second eligible attempt receives `validation_feedback` containing the
@@ -25,7 +52,7 @@ Day boundaries exclude that whole named day. For example, before July is the ins
 before 1 July, not a lookup within July; after July starts at 1 August. The existing
 authority timeline, approvals, applicability and workspace checks remain authoritative.
 Follow-ups may quote a calendar selector from an earlier authorised user turn and
-the relation from the current question span. No relative-calendar arithmetic is added.
+the relation from the current question span. That increment added no relative-calendar arithmetic.
 
 Fact references also accept `duration` and `quantity`, retaining exact user wording.
 These are policy-rule context, never `fact_date` filters; duration requires an explicit

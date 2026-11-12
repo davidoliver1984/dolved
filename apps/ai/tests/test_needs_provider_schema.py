@@ -6,6 +6,8 @@ from uuid import UUID
 import jsonschema
 import pytest
 
+pytestmark = pytest.mark.usefixtures("accepted_interpretation")
+
 from app.retrieval.needs import CatalogueFamily, EvidenceNeedsPlan, UserTurn
 from app.retrieval.needs_schema import provider_needs_schema
 from app.retrieval.planner import RetrievalPlanningError
@@ -638,7 +640,7 @@ def test_real_transport_sends_request_specific_schema_and_does_not_cache_other_t
         jsonschema.validate(example["plan"], schema)
         other = str(UUID(int=2 if family.family_id.int == 1 else 1))
         assert other not in json.dumps(schema)
-        assert result.lineage.adapter_version == "structured-chat-needs-v8"
+        assert result.lineage.adapter_version == "structured-chat-needs-v9"
         assert len(calls) == 1
 
 

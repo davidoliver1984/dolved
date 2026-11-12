@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import httpx
 from pydantic import SecretStr, ValidationError
 
+from app.retrieval.interpretation import InterpretationCheckError, review_interpretation
 from app.retrieval.models import PlannerLineage
 from app.retrieval.needs import (
     CatalogueFamily,
@@ -22,6 +23,7 @@ from app.retrieval.planner import (
     _non_negative_int,
     _provider_failure,
 )
+from app.retrieval.relative_calendar import grounded_periods
 
 logger = logging.getLogger("retrieval.needs.planner")
 
@@ -325,6 +327,8 @@ class NeedsValidationFailure(RetrievalPlanningError):
             "scope enquiries cannot test a disputed value": "scope_claim_conflict",
             "non-current authority requires a grounded reference": "authority_grounding",
             "authority kind and precision disagree": "authority_precision",
+            "relative calendar is not a duration or quantity": "calendar_grounding",
+            "relative calendar reference requires one anchored period": "calendar_grounding",
         }
         field = "root"
         code = reasons.get(str(exception), "invalid_value")
@@ -393,6 +397,7 @@ class NeedsValidationFailure(RetrievalPlanningError):
                 code = reasons.get(error["msg"].removeprefix("Value error, "), code)
         self.validation = {"stage": stage, "field": field, "code": code}
         self.completion: dict[str, str | int | None] = {}
+        self.interpretation_check: dict[str, object] | None = None
 
 
 class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
@@ -417,8 +422,8 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             timeout_seconds=timeout_seconds,
             client=client,
             contract_schema_version="evidence-needs-plan-v3",
-            prompt_version="bounded-evidence-needs-v24",
-            adapter_version="structured-chat-needs-v8",
+            prompt_version="bounded-evidence-needs-v25",
+            adapter_version="structured-chat-needs-v9",
         )
 
     def plan_needs(
@@ -439,13 +444,46 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                     catalogue=catalogue,
                     validation_feedback=feedback,
                 )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+                        raise failure
             except RetrievalPlanningError as failure:
                 completion = getattr(failure, "completion", {})
                 validation = getattr(failure, "validation", {})
+                check = getattr(failure, "interpretation_check", None)
                 receipts.append(
                     {
                         "attempt": number,
-                        "request_count": 1,
+                        "request_count": 1 + int(check is not None),
                         "retry_count": 0,
                         "status": "rejected",
                         "category": failure.category,
@@ -456,6 +494,9 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                         "latency_ms": (time.perf_counter() - started) * 1000,
                         "cost_usd": None,
                         "cost_basis": "unavailable",
+                        **(
+                            {"interpretation_check": check} if check is not None else {}
+                        ),
                     }
                 )
                 failure.validation_attempts = receipts
@@ -464,29 +505,38 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                     isinstance(failure, NeedsValidationFailure)
                     and failure.provider_status == 200
                     and completion.get("finish_reason") == "stop"
-                    and validation.get("stage") in {"schema", "grounding", "catalogue"}
+                    and validation.get("stage")
+                    in {"schema", "grounding", "catalogue", "interpretation"}
                 )
                 if number == 1 and eligible:
                     # NeedsValidationFailure produces closed codes and bounded fields.
                     # Never feed exception text, rejected output or receipts back.
                     feedback = {
-                        key: failure.validation[key]
-                        for key in ("stage", "field", "code")
+                        key: validation[key] for key in ("stage", "field", "code")
                     }
                     continue
                 raise
             receipts.append(
                 {
                     "attempt": number,
-                    "request_count": 1,
+                    "request_count": 1 + int(check is not None),
                     "retry_count": 0,
                     "status": "accepted",
                     "category": None,
-                    "input_tokens": result.usage.input_tokens,
-                    "output_tokens": result.usage.output_tokens,
-                    "latency_ms": result.usage.latency_ms,
+                    "input_tokens": self._combined_tokens(
+                        result.usage.input_tokens, check.get("input_tokens")
+                    )
+                    if check
+                    else result.usage.input_tokens,
+                    "output_tokens": self._combined_tokens(
+                        result.usage.output_tokens, check.get("output_tokens")
+                    )
+                    if check
+                    else result.usage.output_tokens,
+                    "latency_ms": (time.perf_counter() - started) * 1000,
                     "cost_usd": result.usage.cost_usd,
                     "cost_basis": result.usage.cost_basis,
+                    **({"interpretation_check": check} if check else {}),
                 }
             )
 
@@ -501,12 +551,12 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             usage = NeedsOperationUsage.model_validate(
                 {
                     **result.usage.model_dump(),
-                    "request_count": number,
+                    "request_count": total("request_count"),
                     "retry_count": number - 1,
                     "input_tokens": total("input_tokens"),
                     "output_tokens": total("output_tokens"),
                     "cached_input_tokens": result.usage.cached_input_tokens
-                    if number == 1
+                    if number == 1 and check is None
                     else None,
                     "latency_ms": sum(
                         v
@@ -518,6 +568,14 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             )
             return NeedsPlanningResult(result.plan, result.lineage, usage)
         raise AssertionError("bounded validation attempts exhausted")
+
+    @staticmethod
+    def _combined_tokens(first: object, second: object) -> int | None:
+        return (
+            first + second
+            if isinstance(first, int) and isinstance(second, int)
+            else None
+        )
 
     def _plan_needs_once(
         self,
@@ -546,6 +604,9 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                             "content": PROMPT
                             + "\nEvaluated at: "
                             + evaluated_at
+                            + "\nApplication-resolved relative calendar periods (start inclusive, end exclusive; interval wire values have inclusive last days): "
+                            + json.dumps(grounded_periods(turns, evaluated_at))
+                            + "\nUse these values/precisions only for their quoted relative expressions, retaining the exact turn/quote. They are calendar references, never duration/quantity. Decide authority versus a record's fact date from the question, not from the calendar table. An undated personal event still needs its date; do not invent one. After a named period means authority immediately after its end."
                             + (
                                 "\nThe previous attempt failed validation. The user payload "
                                 "contains only bounded validation_feedback, not that output. "
@@ -650,7 +711,9 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                 )
             plan = EvidenceNeedsPlan.model_validate_json(content)
             validation_stage = "grounding"
-            plan.validate_grounding(turns, require_order=False)
+            plan.validate_grounding(
+                turns, require_order=False, evaluated_at=evaluated_at
+            )
             validation_stage = "catalogue"
             plan.validate_catalogue(catalogue, turns)
             plan = plan.in_question_order(turns)

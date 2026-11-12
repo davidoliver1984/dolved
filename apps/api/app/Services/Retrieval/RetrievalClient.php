@@ -102,7 +102,7 @@ final readonly class RetrievalClient
             EvidenceNeedsPlan::validateCatalogue($response->json('plan'), $catalogue, $userTurns);
 
             return EvidenceNeedsPlan::fromArray($response->json('plan'), $userTurns,
-                $response->json('classifier_lineage'), $response->json('usage'));
+                $response->json('classifier_lineage'), $response->json('usage'), $evaluatedAt->toIso8601String());
         } catch (InvalidArgumentException $exception) {
             throw new RetrievalPlannerException('The needs planner returned an invalid plan.',
                 'invalid_grounded_needs_plan', null, 1, false, $exception,

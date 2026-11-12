@@ -1,0 +1,64 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit;
+
+use App\Services\Retrieval\TemporalPeriodResolver;
+use App\Support\Retrieval\EvidenceNeedsPlan;
+use App\Support\Retrieval\PlannerUsage;
+use App\Support\Retrieval\RelativeCalendar;
+use InvalidArgumentException;
+use Tests\TestCase;
+
+final class BlockOneClosingTest extends TestCase
+{
+    public function test_shared_relative_calendar_rules_and_timezone_boundaries(): void
+    {
+        $cases = json_decode(file_get_contents('/contracts/http/retrieval-needs/v3/relative-calendar-examples.json'), true, flags: JSON_THROW_ON_ERROR);
+        foreach ($cases as $case) {
+            $period = RelativeCalendar::period($case['quote'], $case['at']);
+            $this->assertSame($case['precision'], $period['precision']);
+            $this->assertSame($case['value'], $period['value']);
+            $this->assertSame($case['start'], $period['start_inclusive']);
+            $this->assertSame($case['end'], $period['end_exclusive']);
+            [$start, $end] = app(TemporalPeriodResolver::class)->window($case['value'], $case['quote']);
+            $this->assertSame($case['start'], $start->toIso8601String());
+            $this->assertSame($case['end'], $end->toIso8601String());
+        }
+        $this->assertNull(RelativeCalendar::period('when I did that shift', '2026-11-12T12:00:00Z'));
+    }
+
+    public function test_relative_fact_date_is_revalidated_against_followup_anchor(): void
+    {
+        $examples = json_decode(file_get_contents('/contracts/http/retrieval-needs/v3/examples.json'), true, flags: JSON_THROW_ON_ERROR);
+        $plan = $examples[0]['plan'];
+        $need = $plan['needs'][1];
+        $need['need_id'] = 'n1';
+        $need['supports_need_id'] = null;
+        $need['question_span'] = ['turn_id' => 'u2', 'quote' => 'When is it paid?'];
+        $need['authority'] = ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null];
+        $need['operation'] = 'retrieve';
+        $need['fact_reference'] = ['value' => '2026-02', 'precision' => 'month', 'source' => ['turn_id' => 'u1', 'quote' => 'last month']];
+        $plan['needs'] = [$need];
+        $plan['bindings'] = [array_replace($plan['bindings'][1], ['need_id' => 'n1'])];
+        $turns = [['turn_id' => 'u1', 'text' => 'My claim was approved last month.'], ['turn_id' => 'u2', 'text' => 'When is it paid?']];
+        EvidenceNeedsPlan::validate($plan, $turns, '2026-03-01T00:00:00Z');
+        $this->expectException(InvalidArgumentException::class);
+        EvidenceNeedsPlan::validate($plan, $turns, '2026-04-01T00:00:00Z');
+    }
+
+    public function test_interpretation_codes_and_receipts_survive_without_prose(): void
+    {
+        foreach (['clause_omitted', 'meaning_changed', 'scope_added', 'interpretation_check_unavailable'] as $code) {
+            $validation = ['stage' => 'interpretation', 'field' => 'root', 'code' => $code];
+            $receipt = PlannerUsage::safeAttempts([['validation' => $validation, 'status' => 'rejected',
+                'interpretation_check' => ['version' => 'interpretation-check-v1', 'code' => 'clause_omitted',
+                    'input_tokens' => 123, 'output_tokens' => 45, 'latency_ms' => 67, 'raw_output' => 'not retained']]])[0];
+            $this->assertSame($validation, $receipt['validation']);
+            $this->assertSame(123, $receipt['interpretation_check']['input_tokens']);
+            $this->assertSame(67, $receipt['interpretation_check']['latency_ms']);
+            $this->assertArrayNotHasKey('raw_output', $receipt['interpretation_check']);
+        }
+    }
+}

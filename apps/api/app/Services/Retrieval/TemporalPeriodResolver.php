@@ -7,6 +7,7 @@ namespace App\Services\Retrieval;
 use App\Enums\EligibilityClarificationReason;
 use App\Models\DocumentFamily;
 use App\Support\Documents\DocumentAuthorityTimeline;
+use App\Support\Retrieval\RelativeCalendar;
 use App\Support\Retrieval\TemporalResolution;
 use Carbon\CarbonImmutable;
 
@@ -16,7 +17,7 @@ final readonly class TemporalPeriodResolver
 
     public function resolve(DocumentFamily $family, string $reference, ?string $sourceQuote = null): TemporalResolution
     {
-        $window = $this->window($reference);
+        $window = $this->window($reference, $sourceQuote);
         if ($window === null) {
             return TemporalResolution::unresolved(
                 EligibilityClarificationReason::UnresolvableTemporalPeriod,
@@ -76,12 +77,12 @@ final readonly class TemporalPeriodResolver
     }
 
     /** Adjacent boundary semantics are application-owned; no model-selected version. */
-    public function adjacentBoundary(string $reference, string $relation): ?CarbonImmutable
+    public function adjacentBoundary(string $reference, string $relation, ?string $sourceQuote = null): ?CarbonImmutable
     {
         if (! in_array($relation, ['before', 'after'], true)) {
             return null;
         }
-        $window = $this->window($reference);
+        $window = $this->window($reference, $sourceQuote);
         if ($window === null && preg_match('/^\d{4}-\d{2}-\d{2}$/D', $reference) === 1) {
             $start = $this->boundaryStart($reference);
             $window = $start === null ? null : [$start, $start->addDay()];
@@ -90,9 +91,9 @@ final readonly class TemporalPeriodResolver
         return $window === null ? null : ($relation === 'before' ? $window[0]->subMicrosecond() : $window[1]);
     }
 
-    public function resolveAdjacent(DocumentFamily $family, string $reference, string $relation): TemporalResolution
+    public function resolveAdjacent(DocumentFamily $family, string $reference, string $relation, ?string $sourceQuote = null): TemporalResolution
     {
-        $at = $this->adjacentBoundary($reference, $relation);
+        $at = $this->adjacentBoundary($reference, $relation, $sourceQuote);
         if ($at === null) {
             return TemporalResolution::unresolved(EligibilityClarificationReason::UnresolvableTemporalPeriod);
         }
@@ -102,17 +103,18 @@ final readonly class TemporalPeriodResolver
     }
 
     /** @return array{CarbonImmutable, CarbonImmutable}|null */
-    public function window(string $reference): ?array
+    public function window(string $reference, ?string $sourceQuote = null): ?array
     {
         $value = trim($reference);
+        $zone = $sourceQuote !== null && preg_match(RelativeCalendar::PATTERN, $sourceQuote) === 1 ? 'Europe/London' : null;
         if (preg_match('/^\d{4}-\d{2}$/D', $value) === 1) {
-            $start = CarbonImmutable::createFromFormat('!Y-m', $value);
+            $start = CarbonImmutable::createFromFormat('!Y-m', $value, $zone);
 
             return $start !== false && $start->format('Y-m') === $value ? [$start, $start->addMonth()] : null;
         }
         if (preg_match('/^(\d{4}-\d{2}-\d{2})\/(\d{4}-\d{2}-\d{2})$/D', $value, $matches) === 1) {
-            $start = CarbonImmutable::createFromFormat('!Y-m-d', $matches[1]);
-            $end = CarbonImmutable::createFromFormat('!Y-m-d', $matches[2]);
+            $start = CarbonImmutable::createFromFormat('!Y-m-d', $matches[1], $zone);
+            $end = CarbonImmutable::createFromFormat('!Y-m-d', $matches[2], $zone);
 
             return $start !== false && $end !== false && $start->format('Y-m-d') === $matches[1]
                 && $end->format('Y-m-d') === $matches[2] && $start->lte($end)
@@ -124,7 +126,7 @@ final readonly class TemporalPeriodResolver
             return $start === false ? null : [$start, $start->addMonth()];
         }
         if (preg_match('/^(?:(?:in|during)\s+)?(\d{4})$/i', $value, $matches) === 1) {
-            $start = CarbonImmutable::createFromFormat('!Y', $matches[1]);
+            $start = CarbonImmutable::createFromFormat('!Y', $matches[1], $zone);
 
             return $start === false ? null : [$start, $start->addYear()];
         }

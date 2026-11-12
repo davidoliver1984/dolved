@@ -33,7 +33,7 @@ transport and schema handling, not model entailment.
 
 The signed request and response envelope remain wire version 2, but a completed
 needs result is now `generation-result-v3` under prompt
-`grounded-generation-needs-v9` and adapter `openai-responses-needs-v4`.
+`grounded-generation-needs-v10` and adapter `openai-responses-needs-v4`.
 `entailment_checks` must contain one `supported` verdict per answer part, in
 order. Laravel rejects absent, incomplete or non-supported verdicts before
 persisting any answer. The Python adapter first applies a narrow conditional

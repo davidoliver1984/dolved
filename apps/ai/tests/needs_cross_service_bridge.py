@@ -51,6 +51,25 @@ def execute(value):
         SearchRequest.model_validate(body)
 
     def planner_transport(request):
+        if (
+            json.loads(request.content)
+            .get("response_format", {})
+            .get("json_schema", {})
+            .get("name")
+            == "interpretation_check"
+        ):
+            return httpx.Response(
+                200,
+                json={
+                    "choices": [
+                        {
+                            "finish_reason": "stop",
+                            "message": {"content": '{"code":"accepted"}'},
+                        }
+                    ],
+                    "usage": {"prompt_tokens": 20, "completion_tokens": 5},
+                },
+            )
         observations.append({"stage": "planner_transport"})
         return httpx.Response(
             200,

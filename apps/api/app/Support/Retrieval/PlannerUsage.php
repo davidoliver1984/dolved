@@ -84,12 +84,13 @@ final readonly class PlannerUsage
     {
         $validation = null;
         if (is_array($candidate)
-            && in_array($candidate['stage'] ?? null, ['completion', 'envelope', 'schema', 'grounding', 'catalogue'], true)
+            && in_array($candidate['stage'] ?? null, ['completion', 'envelope', 'schema', 'grounding', 'catalogue', 'interpretation'], true)
             && in_array($candidate['code'] ?? null, ['binding_coverage', 'unknown_family', 'ownership_grounding',
                 'ownership_location_conflict', 'reference_grounding', 'calendar_grounding', 'temporal_relation_grounding', 'need_order',
                 'fact_date_precision', 'fact_date_interval_shape', 'fact_date_interval_reversed', 'fact_date_calendar',
                 'historical_grounding', 'binding_shape', 'comparison_authority', 'authority_grounding',
                 'authority_precision', 'scope_question_required', 'scope_question_misplaced', 'scope_claim_conflict',
+                'clause_omitted', 'meaning_changed', 'scope_added', 'interpretation_check_unavailable',
                 'invalid_value', 'missing', 'literal_error', 'uuid_parsing',
                 'extra_forbidden', 'json_invalid', 'string_type', 'too_short', 'too_long', 'value_error', 'output_truncated', 'output_not_completed'], true)
             && is_string($candidate['field'] ?? null)) {
@@ -114,9 +115,35 @@ final readonly class PlannerUsage
             $attempt = is_array($attempt) ? $attempt : [];
 
             return [...ValidationAttemptUsage::receipt($attempt),
+                ...(isset($attempt['interpretation_check']) ? ['interpretation_check' => self::safeInterpretationCheck($attempt['interpretation_check'])] : []),
                 'validation' => self::safeValidation($attempt['validation'] ?? null),
                 'status' => in_array($attempt['status'] ?? null, ['accepted', 'rejected'], true) ? $attempt['status'] : 'unknown'];
         }, is_array($attempts) ? array_slice($attempts, 0, 2) : []);
+    }
+
+    private static function safeInterpretationCheck(mixed $check): ?array
+    {
+        if (! is_array($check) || ($check['version'] ?? null) !== 'interpretation-check-v1'
+            || ! in_array($check['code'] ?? null, ['accepted', 'clause_omitted', 'meaning_changed', 'scope_added', 'unavailable'], true)) {
+            return null;
+        }
+
+        $plan = $check['reviewed_plan'] ?? null;
+        if (is_array($plan) && strlen(json_encode($plan, JSON_THROW_ON_ERROR)) <= 100000) {
+            try {
+                EvidenceNeedsPlan::validateWireShape($plan, 'plan');
+            } catch (InvalidArgumentException) {
+                $plan = null;
+            }
+        } else {
+            $plan = null;
+        }
+
+        return [...ValidationAttemptUsage::receipt($check),
+            'reviewed_plan' => $plan,
+            'version' => 'interpretation-check-v1', 'code' => $check['code'],
+            'provider' => is_string($check['provider'] ?? null) ? substr($check['provider'], 0, 100) : null,
+            'model' => is_string($check['model'] ?? null) ? substr($check['model'], 0, 100) : null];
     }
 
     /** @return array<string, mixed> */

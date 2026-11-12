@@ -5,6 +5,8 @@ from uuid import uuid4
 
 import httpx
 import pytest
+
+pytestmark = pytest.mark.usefixtures("accepted_interpretation")
 from fastapi.testclient import TestClient
 from pydantic import SecretStr, ValidationError
 
@@ -757,7 +759,7 @@ def test_real_transport_preserves_month_and_mixed_needs_without_normalisation():
         )
         assert result.plan.model_dump(mode="json") == example["plan"]
         assert result.lineage.contract_schema_version == "evidence-needs-plan-v3"
-        assert result.usage.request_count == 1
+        assert result.usage.request_count == 2  # planner plus interpretation check
         assert result.usage.input_tokens == 120
         assert len(calls) == 1
         assert calls[0]["max_completion_tokens"] == 25000
@@ -880,7 +882,7 @@ def test_non_current_reference_still_rejects_missing_components(field):
     authority[field] = "none" if field == "precision" else None
     calls = []
     planner = adapter(example["plan"], calls)
-    assert planner.lineage().prompt_version == "bounded-evidence-needs-v24"
+    assert planner.lineage().prompt_version == "bounded-evidence-needs-v25"
     with pytest.raises(RetrievalPlanningError) as error:
         planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
     assert error.value.category == "invalid_grounded_needs_plan"

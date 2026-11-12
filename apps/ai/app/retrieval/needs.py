@@ -9,14 +9,23 @@ from pydantic import Field, StrictBool, StringConstraints, model_validator
 
 from app.extraction.models import ImmutableModel
 from app.retrieval.models import OperationUsage, PlannerLineage
+from app.retrieval.relative_calendar import PATTERN as RELATIVE_CALENDAR
+from app.retrieval.relative_calendar import relative_period
 
 Text = Annotated[str, StringConstraints(min_length=1, pattern=r"\S")]
 NeedId = Literal["n1", "n2", "n3"]
 Precision = Literal["day", "month", "year", "interval"]
 
 
-def validate_date_grounding(value: str, precision: str, quote: str) -> None:
+def validate_date_grounding(
+    value: str, precision: str, quote: str, evaluated_at: str | None = None
+) -> None:
     """Recognise explicit calendar notation only, never infer temporal intent."""
+    relative = relative_period(quote, evaluated_at)
+    if relative is not None:
+        if (value, precision) != (relative["value"], relative["precision"]):
+            raise ValueError("calendar value/precision is not supported by user quote")
+        return
     if precision == "interval":
         for endpoint in value.split("/"):
             validate_date_grounding(endpoint, "day", quote)
@@ -144,6 +153,8 @@ class FactReference(ImmutableModel):
     @model_validator(mode="after")
     def coherent_date(self) -> FactReference:
         if self.precision in {"duration", "quantity"}:
+            if RELATIVE_CALENDAR.search(self.source.quote):
+                raise ValueError("relative calendar is not a duration or quantity")
             if self.value not in self.source.quote:
                 raise ValueError("quantity must retain its user wording")
             if (
@@ -346,7 +357,11 @@ class EvidenceNeedsPlan(ImmutableModel):
         return result
 
     def validate_grounding(
-        self, turns: tuple[UserTurn, ...], *, require_order: bool = True
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        require_order: bool = True,
+        evaluated_at: str | None = None,
     ) -> None:
         by_id = {turn.turn_id: turn.text for turn in turns}
         if len(by_id) != len(turns):
@@ -383,6 +398,7 @@ class EvidenceNeedsPlan(ImmutableModel):
                     need.authority.value,
                     need.authority.precision,
                     need.authority.source.quote,
+                    evaluated_at,
                 )
                 if (
                     need.authority.kind in {"before", "after"}
@@ -409,6 +425,7 @@ class EvidenceNeedsPlan(ImmutableModel):
                     need.fact_reference.value,
                     need.fact_reference.precision,
                     need.fact_reference.source.quote,
+                    evaluated_at,
                 )
 
 

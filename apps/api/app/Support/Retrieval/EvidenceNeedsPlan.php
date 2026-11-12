@@ -21,14 +21,14 @@ final readonly class EvidenceNeedsPlan
         public PlannerUsage $usage,
     ) {}
 
-    public static function fromArray(array $value, array $turns, array $lineage, array $usage): self
+    public static function fromArray(array $value, array $turns, array $lineage, array $usage, ?string $evaluatedAt = null): self
     {
-        self::validate($value, $turns);
+        self::validate($value, $turns, $evaluatedAt);
         $identity = ClassifierLineage::fromArray($lineage);
         $observation = PlannerUsage::fromArray($usage);
         if ($identity->contractSchemaVersion !== 'evidence-needs-plan-v3'
-            || $identity->promptVersion !== 'bounded-evidence-needs-v24'
-            || $identity->adapterVersion !== 'structured-chat-needs-v8'
+            || $identity->promptVersion !== 'bounded-evidence-needs-v25'
+            || $identity->adapterVersion !== 'structured-chat-needs-v9'
             || $identity->provider !== $observation->provider
             || $identity->model !== $observation->model) {
             throw new InvalidArgumentException('Needs planner identity does not match its contract or usage.');
@@ -91,7 +91,7 @@ final readonly class EvidenceNeedsPlan
         );
     }
 
-    public static function validate(array $value, array $turns): void
+    public static function validate(array $value, array $turns, ?string $evaluatedAt = null): void
     {
         self::validateWireShape($value, 'plan');
         $texts = [];
@@ -144,7 +144,7 @@ final readonly class EvidenceNeedsPlan
                     throw new InvalidArgumentException('Authority requires a grounded, precision-consistent selector.');
                 }
                 self::dateValue($authority['value'], $authority['precision']);
-                self::dateGrounding($authority['value'], $authority['precision'], $authority['source']['quote']);
+                self::dateGrounding($authority['value'], $authority['precision'], $authority['source']['quote'], $evaluatedAt);
                 if ($authority['kind'] === 'period' && preg_match('/^\s*(?:before|after)\b/i', $authority['source']['quote']) === 1) {
                     throw new InvalidArgumentException('Temporal relation is not grounded.');
                 }
@@ -183,13 +183,16 @@ final readonly class EvidenceNeedsPlan
             if ($need['fact_reference'] !== null) {
                 $fact = $need['fact_reference'];
                 if (in_array($fact['precision'], ['duration', 'quantity'], true)) {
+                    if (preg_match(RelativeCalendar::PATTERN, $fact['source']['quote']) === 1) {
+                        throw new InvalidArgumentException('Relative calendar is not a duration or quantity.');
+                    }
                     if (! str_contains($fact['source']['quote'], $fact['value'])
                         || ($fact['precision'] === 'duration' && preg_match('/\b(?:seconds?|minutes?|hours?|days?|weeks?|months?|years?)\b/i', $fact['value']) !== 1)) {
                         throw new InvalidArgumentException('Quantity or duration is not grounded.');
                     }
                 } else {
                     self::dateValue($fact['value'], $fact['precision']);
-                    self::dateGrounding($fact['value'], $fact['precision'], $fact['source']['quote']);
+                    self::dateGrounding($fact['value'], $fact['precision'], $fact['source']['quote'], $evaluatedAt);
                 }
                 $spans[] = $fact['source'];
             }
@@ -254,8 +257,16 @@ final readonly class EvidenceNeedsPlan
         }
     }
 
-    private static function dateGrounding(string $value, string $precision, string $quote): void
+    private static function dateGrounding(string $value, string $precision, string $quote, ?string $evaluatedAt = null): void
     {
+        $relative = RelativeCalendar::period($quote, $evaluatedAt);
+        if ($relative !== null) {
+            if ($relative['value'] !== $value || $relative['precision'] !== $precision) {
+                throw new InvalidArgumentException('Calendar value or precision is not supported by user quote.');
+            }
+
+            return;
+        }
         if ($precision === 'interval') {
             foreach (explode('/', $value) as $endpoint) {
                 self::dateGrounding($endpoint, 'day', $quote);

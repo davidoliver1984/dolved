@@ -159,7 +159,7 @@ class ConversationOrchestrationTest extends TestCase
         Http::fake(function (Request $request) use ($question, $attempts) {
             $identity = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                 'contract_schema_version' => 'evidence-needs-plan-v3',
-                'prompt_version' => 'bounded-evidence-needs-v24', 'adapter_version' => 'structured-chat-needs-v8'];
+                'prompt_version' => 'bounded-evidence-needs-v25', 'adapter_version' => 'structured-chat-needs-v9'];
             $canonical = $identity;
             ksort($canonical);
 
@@ -242,7 +242,7 @@ class ConversationOrchestrationTest extends TestCase
         $attempts = array_map(static fn (string $code): array => [
             'status' => 'rejected', 'request_count' => 1, 'retry_count' => 0,
             'input_tokens' => 120, 'output_tokens' => 90, 'latency_ms' => 1,
-            'validation' => ['stage' => 'grounding', 'field' => 'root', 'code' => $code],
+            'validation' => ['stage' => in_array($code, ['clause_omitted', 'meaning_changed', 'scope_added'], true) ? 'interpretation' : 'grounding', 'field' => 'root', 'code' => $code],
         ], $codes);
         Http::preventStrayRequests();
         Http::fake(fn () => Http::response(['detail' => [
@@ -278,6 +278,9 @@ class ConversationOrchestrationTest extends TestCase
     {
         return [
             'exhausted calendar grounding' => [['calendar_grounding', 'calendar_grounding'], 200, true],
+            'exhausted omitted clause' => [['clause_omitted', 'clause_omitted'], 200, true],
+            'exhausted changed meaning' => [['meaning_changed', 'meaning_changed'], 200, true],
+            'exhausted added scope' => [['scope_added', 'scope_added'], 200, true],
             'single legacy rejection' => [['calendar_grounding'], 200, true],
             'other exhausted validation' => [['binding_coverage', 'binding_coverage'], 200, true],
             'mixed exhausted validation' => [['binding_coverage', 'calendar_grounding'], 200, true],
@@ -504,7 +507,7 @@ class ConversationOrchestrationTest extends TestCase
                 $this->assertSame([['turn_id' => 'user-1', 'text' => 'What does the current approved procedure require?']], $body['user_turns']);
                 $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                     'contract_schema_version' => 'evidence-needs-plan-v3',
-                    'prompt_version' => 'bounded-evidence-needs-v24', 'adapter_version' => 'structured-chat-needs-v8'];
+                    'prompt_version' => 'bounded-evidence-needs-v25', 'adapter_version' => 'structured-chat-needs-v9'];
                 ksort($lineage);
                 $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 

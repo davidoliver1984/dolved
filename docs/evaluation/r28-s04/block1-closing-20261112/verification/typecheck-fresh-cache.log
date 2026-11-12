@@ -1,0 +1,7 @@
+ Container rag-platform-ai-run-ffc79c748b52 Creating 
+ Container rag-platform-ai-run-ffc79c748b52 Created 
+app/retrieval/relative_calendar.py:48: error: Unpacked dict entry 2 has incompatible type "dict[str, str] | None"; expected "SupportsKeysAndGetItem[str, object]"  [dict-item]
+app/retrieval/needs_planner.py:476: error: "NeedsValidationFailure" has no attribute "interpretation_check"  [attr-defined]
+app/retrieval/needs_planner.py:516: error: "RetrievalPlanningError" has no attribute "validation"  [attr-defined]
+Found 3 errors in 2 files (checked 4 source files)
+

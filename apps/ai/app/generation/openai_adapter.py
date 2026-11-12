@@ -42,7 +42,7 @@ MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
 ADAPTER_VERSION = "openai-responses-v3-claim-type"
 NEEDS_CONTRACT_VERSION = "generation-result-v3"
-NEEDS_PROMPT_VERSION = "grounded-generation-needs-v9"
+NEEDS_PROMPT_VERSION = "grounded-generation-needs-v10"
 NEEDS_ADAPTER_VERSION = "openai-responses-needs-v4"
 NEEDS_INSTRUCTIONS = """
 Answer directly with an evidence-supported statement. If an answer part starts with
@@ -71,6 +71,8 @@ but do not repeat its outdated pending-status framing as today's status.
 For historical or comparison requests, retain the requested temporal lane:
 false at the present evaluated_at does not invalidate a version selected for a
 past date. Do not re-resolve eligibility, version order or authority yourself.
+For before/after-period answers, name the application-selected version or date
+range used, so the boundary interpretation is visible; never infer a new version.
 Current-only evidence can answer its own need even when another need lacks history;
 it cannot substitute for a missing comparison side. Empty evidence_ids identify a
 mechanical gap, not permission to borrow evidence from another need.

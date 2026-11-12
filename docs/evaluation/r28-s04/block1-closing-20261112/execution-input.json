@@ -1,0 +1,19 @@
+{
+  "subset_id": "R28-BLOCK1-CLOSING-FOURTEEN-20261112-V1",
+  "items": [
+    {"case_id":"v4.case.corrected-b06-06","variant_id":"v1","utterance":"I'm updating our safeguarding card for a resident-money discrepancy. Who receives the first escalation now, what part does Finance keep, and which current role name and outside-agency sharing route should the card use?"},
+    {"case_id":"v4.case.corrected-b01-01","variant_id":"v1","utterance":"As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?"},
+    {"case_id":"v4.case.corrected-b03-05","variant_id":"v1","utterance":"I'm resigning after three years. How much notice do I give, and what else do I need to do before I leave?"},
+    {"case_id":"v4.case.corrected-b05-01","variant_id":"v1","utterance":"Who do I go to now if I'm locked out of e-learnng or a course is missing, and who handled it before July 2026?"},
+    {"case_id":"v4.case.corrected-b01-04","variant_id":"v1","utterance":"How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?"},
+    {"case_id":"v4.case.corrected-b01-06","variant_id":"v1","utterance":"When will the approved mileage claim from last month be paid?"},
+    {"case_id":"block1.closing-three-part","variant_id":"v1","utterance":"I am joining in a uniformed role. What starter allowance do I receive, what confidential wellbeing support is available, and who should I contact if my e-learning course is missing?"},
+    {"case_id":"block1.closing-relative","variant_id":"v1","utterance":"Under the E-Learning Platform Guidance, who handled missing courses last quarter?"},
+    {"case_id":"block1.closing-after","variant_id":"v1","utterance":"After August 2026, who handled login trouble under the E-Learning Platform Guidance?"},
+    {"case_id":"block1.closing-mixed","variant_id":"v1","utterance":"Who handled a missing e-learning course before July 2026, and which contact applied when I first used the system?"},
+    {"case_id":"block1.closing-scope","variant_id":"v1","utterance":"What wellbeing support can a new member of staff access, and how do they get in touch?"},
+    {"case_id":"block1.closing-budget-one","variant_id":"v1","utterance":"Please give the complete current guidance in three areas: the wellbeing support and access arrangements in Staff Handbook Full Manual; the notice and leaving responsibilities in Employee Handbook Terms Full; and reporting, Finance responsibilities and external information sharing in Resident Finances and Appointeeship Policy."},
+    {"case_id":"block1.closing-budget-two","variant_id":"v1","utterance":"Using the current Staff Handbook Full Manual, explain wellbeing benefits and the return-to-work process. Separately, using Uniform Allowance Guidance, explain eligibility, both payments and payroll checks. Finally, using Resident Finances and Appointeeship Policy, explain financial safeguarding, escalation, record keeping and external sharing."},
+    {"case_id":"v4.case.corrected-b01-07","variant_id":"v1","utterance":"How did both the starter and annual replacement uniform allowances change in April 2026?"}
+  ]
+}

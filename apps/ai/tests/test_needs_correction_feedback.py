@@ -5,6 +5,8 @@ from copy import deepcopy
 
 import httpx
 import pytest
+
+pytestmark = pytest.mark.usefixtures("accepted_interpretation")
 from pydantic import SecretStr
 
 from app.retrieval.needs import UserTurn

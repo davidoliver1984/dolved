@@ -1,0 +1,8 @@
+ Container rag-platform-api-run-74ace154cb24 Creating 
+ Container rag-platform-api-run-74ace154cb24 Created 
+
+Notice: file_get_contents(): Read of 28248 bytes failed with errno=5 I/O error in /repo/apps/api/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/Validator/Validator.php on line 28
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+DOMDocument::schemaValidateSource(): Argument #1 ($source) must not be empty
+

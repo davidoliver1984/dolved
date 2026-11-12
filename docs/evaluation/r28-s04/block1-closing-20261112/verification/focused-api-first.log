@@ -1,0 +1,16 @@
+ Container rag-platform-api-run-ad606e4457ac Creating 
+ Container rag-platform-api-run-ad606e4457ac Created 
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.25
+Configuration: /app/phpunit.xml
+
+
+Notice: file_get_contents(): Read of 149706 bytes failed with errno=5 I/O error in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 100
+...                                                                 3 / 3 (100%)
+Notice: file_put_contents(): Write of 346 bytes failed with errno=35 Resource deadlock would occur in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:00.345, Memory: 44.50 MB
+
+[30;42mOK (3 tests, 66 assertions)[0m
