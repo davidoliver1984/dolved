@@ -31,7 +31,7 @@ PRIMARY_USER = "ae454ce6-4d91-4c7e-9a40-b4750b696a6b"
 INJECTION_WORKSPACE = "4db6ffe2-6974-415d-8fd3-002b8fb05d05"
 INJECTION_USER = "6972994f-c594-42ef-a747-39d01ae24fc3"
 SCHEMA = "r28-r06-production-authorization-v1"
-STAGES = {"capacity_checkpoint": 5, "topical_diagnostics": 8, "regression": 8, "confirmation": 16, "continuation": 2,
+STAGES = {"capacity_overflow": 1, "capacity_checkpoint": 5, "topical_diagnostics": 8, "regression": 8, "confirmation": 16, "continuation": 2,
           "full": 148,
           "r07_case32_diagnostic": 1, "r07_case40_retry": 1, "r07_tail": 108, "r07_tail_after_44": 104,
           "confirmation_retry": 1, "confirmation_remaining": 12,
@@ -94,7 +94,7 @@ def runtime_aggregate() -> str:
 
 
 def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str, str]]:
-    if stage == "capacity_checkpoint":
+    if stage in {"capacity_checkpoint", "capacity_overflow"}:
         # Explicit development selection, not an amendment to the frozen R07 population.
         path = ROOT / "docs/evaluation/r28-s04/capacity-checkpoint-20261112/execution-input.json"
         if sha256(path) != "00c5838a3a9228ef84f7daeee76c9b286f6b61e5b208734e1080baec0fe209a4":
@@ -105,6 +105,8 @@ def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str,
         for item in execution["items"]:
             if set(item) != {"case_id", "variant_id", "utterance"}:
                 raise ValueError("execution input contains non-question material")
+        if stage == "capacity_overflow":
+            execution = {"subset_id": "R28-CAPACITY-OVERFLOW-20261112-V1", "items": execution["items"][4:5]}
         scopes = {"manifest_id": execution["subset_id"], "items": [
             {"case_id": item["case_id"], "variant_id": item["variant_id"], "scope": "primary"}
             for item in execution["items"]
@@ -306,14 +308,14 @@ def verify_authorization(
     }
     if set(authority) != required:
         raise ValueError("authorization fields differ from the governed schema")
-    r07_stage = stage in {"capacity_checkpoint", "topical_diagnostics", "full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}
+    r07_stage = stage in {"capacity_overflow", "capacity_checkpoint", "topical_diagnostics", "full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}
     expected_schema = "r28-r07-production-authorization-v1" if r07_stage else SCHEMA
     expected_run_prefix = "R28-R07" if r07_stage else "R28-R06"
     expected_auth_prefix = "R28-R07-AUTH" if r07_stage else "R28-R06-AUTH"
     if (
         authority["schema_version"] != expected_schema
         or authority["authorised"] is not True
-        or authority["selective_rerun_authorised"] is not (stage in {"capacity_checkpoint", "topical_diagnostics", "continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case32_diagnostic", "r07_case40_retry"})
+        or authority["selective_rerun_authorised"] is not (stage in {"capacity_overflow", "capacity_checkpoint", "topical_diagnostics", "continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case32_diagnostic", "r07_case40_retry"})
         or authority["approved_by"] != "David"
         or authority["stage"] != stage
         or authority["manifest_id"] != manifest_id
@@ -484,7 +486,7 @@ def dispatch(
             "run_id": authority["run_id"],
             "stage": stage,
             "manifest_id": execution["subset_id"],
-            "population_identity": "capacity-development-five-v1" if stage == "capacity_checkpoint" else "dolved-care-v4-evaluation-population-v2",
+            "population_identity": "capacity-development-five-v1" if stage in {"capacity_checkpoint", "capacity_overflow"} else "dolved-care-v4-evaluation-population-v2",
             "case_count": len(execution["items"]),
             "execution_boundary": "RunR28ProductionPathDiagnostic.handleCase -> OrchestrateConversationRun",
             "concurrency": 1,

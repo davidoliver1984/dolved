@@ -86,6 +86,14 @@ class R28R06GovernedTest(unittest.TestCase):
             _, _, identities = governed.verify_inputs("regression")
         self.assertEqual("a" * 64, identities["runtime_source_aggregate"])
 
+    def test_capacity_overflow_selects_only_frozen_fifth_input(self) -> None:
+        full, _, full_identity = governed.verify_inputs("capacity_checkpoint")
+        execution, scopes, identity = governed.verify_inputs("capacity_overflow")
+        self.assertEqual(full["items"][4:5], execution["items"])
+        self.assertEqual("capacity.overflow", execution["items"][0]["case_id"])
+        self.assertEqual(["primary"], [item["scope"] for item in scopes["items"]])
+        self.assertEqual(full_identity["input_sha256"], identity["input_sha256"])
+
     def test_exact_authorization_passes_and_mutation_fails(self) -> None:
         execution, _, identities = governed.verify_inputs("regression")
         accepted = governed.json_file(self.authorization)
