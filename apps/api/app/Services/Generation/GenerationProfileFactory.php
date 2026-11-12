@@ -30,7 +30,7 @@ final class GenerationProfileFactory
 
     private function needsIdentity(): array
     {
-        return ['execution_version' => 'bounded-needs-slice-v19',
+        return ['execution_version' => 'bounded-needs-slice-v20',
             'scope_renderer' => 'scope-fact-renderer-v2',
             'scope_answer_contract' => 'scope-composed-answer-v2',
             'planner_contract' => 'evidence-needs-plan-v3',

@@ -44,7 +44,7 @@ class GenerationNeedsRequest(ImmutableModel):
     question: BoundedText
     evidence: tuple[GenerationEvidence, ...] = Field(min_length=1, max_length=5)
     constraints: GenerationConstraints
-    evidence_needs: tuple[GenerationNeed, ...] = Field(min_length=1, max_length=2)
+    evidence_needs: tuple[GenerationNeed, ...] = Field(min_length=1, max_length=3)
 
     def legacy_request(self) -> GenerationRequest:
         return GenerationRequest.model_validate(

@@ -1,0 +1,30 @@
+Bytecode compiled 15519 files in 756ms
+
+==================================== ERRORS ====================================
+_______ ERROR collecting tests/test_r28_frozen_population_evaluation.py ________
+tests/test_r28_frozen_population_evaluation.py:11: in <module>
+    ROOT = Path(__file__).resolve().parents[3]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/pathlib/__init__.py:68: in __getitem__
+    raise IndexError(idx)
+E   IndexError: 3
+____________ ERROR collecting tests/test_r28_s03_materialisation.py ____________
+tests/test_r28_s03_materialisation.py:10: in <module>
+    ROOT = Path(__file__).resolve().parents[3]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/pathlib/__init__.py:68: in __getitem__
+    raise IndexError(idx)
+E   IndexError: 3
+____________ ERROR collecting tests/test_r28_s04_live_preflight.py _____________
+tests/test_r28_s04_live_preflight.py:14: in <module>
+    ROOT = Path(__file__).resolve().parents[3]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/pathlib/__init__.py:68: in __getitem__
+    raise IndexError(idx)
+E   IndexError: 3
+=========================== short test summary info ============================
+ERROR tests/test_r28_frozen_population_evaluation.py - IndexError: 3
+ERROR tests/test_r28_s03_materialisation.py - IndexError: 3
+ERROR tests/test_r28_s04_live_preflight.py - IndexError: 3
+!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!!
+3 errors in 3.40s

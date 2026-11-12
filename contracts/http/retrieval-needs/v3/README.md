@@ -4,7 +4,8 @@ ADR-0039 adds `scope_enquiry` to the existing retrieve/compare operation union.
 Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v22`,
 `structured-chat-needs-v7`. The existing request and signed transport purpose
 are retained. V2 historical contracts remain byte-identical; v3 is explicitly
-pinned for new needs runs by `bounded-needs-slice-v19`.
+pinned for new needs runs by `bounded-needs-slice-v20` (three executable needs,
+four search lanes, five final evidence slots; scope facts do not consume search lanes).
 
 Scope enquiries are explicit, grounded planner choices with a required
 `scope_question` of `membership` or `breadth`. They do not result from an empty

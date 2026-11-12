@@ -1,0 +1,158 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\EvidenceNeedsPlanTest[39m
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "mixed"[39m[90m                      [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "transition month"[39m
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "dated fact"[39m
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "generic"[39m
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "named ambiguous"[39m
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "clarification reply"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "fabricated quote"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "foreign turn"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "model authority i d[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "duplicate need"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "missing support"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "self support"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "support cycle"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "invalid central typ[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "clarification with needs"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "empty plan"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "invented current date"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "month narrowed to day"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "invalid calendar month"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "transition without comparison"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "ungrounded date source"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "invalid fact day"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "missing location grounding"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "invented location"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "whitespace aspect"[39m[90m  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "model aspect status"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "wrong valid year"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "wrong valid month"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "wrong valid fact day"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "current comparison without selector"[39m
+  [32;1m✓[39;22m[90m [39m[90mdisputed claim is grounded and independent of site applicability[39m[90m    [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\NeedsEvidenceSelectionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpair and current support survive global cap and descriptive edge ha[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcurrent evidence cannot supply a missing comparison side[39m
+  [32;1m✓[39;22m[90m [39m[90msame document on both sides cannot form a pair[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo comparisons preserve both pairs within k5[39m
+  [32;1m✓[39;22m[90m [39m[90mfive search lanes still exceed slice fanout[39m
+  [32;1m✓[39;22m[90m [39m[90mthree ordinary needs retain multiple passages within five slots[39m
+  [32;1m✓[39;22m[90m [39m[90mcomparison and two ordinary needs keep pair and two passage support[39m
+  [32;1m✓[39;22m[90m [39m[90mpair ranking considers both sides before chunk identity[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ConversationOrchestrationTest[39m
+  [32;1m✓[39;22m[90m [39m[90minternal failure diagnostic bounds and redacts exception message[39m[90m    [39m [90m0.50s[39m  
+  [32;1m✓[39;22m[90m [39m[90munclassified exception is recorded in internal trace without changi[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds profile is immutable survives retry and rejects deployment dr[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds planner failure retains safe typed detail and stops before re[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds clarification keeps text separate from the bounded reason cod[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds clarification keeps text separate from the bounded reason cod[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly two exhausted calendar grounding rejections become a controlle[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly two exhausted calendar grounding rejections become a controlle[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly two exhausted calendar grounding rejections become a controlle[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly two exhausted calendar grounding rejections become a controlle[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly two exhausted calendar grounding rejections become a controlle[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90msubmission is workspace scoped idempotent and allows only one activ[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfailed run reports when provisional content was retracted[39m[90m           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mqueued cancellation is terminal and retry is idempotent[39m[90m             [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontextualisation clarification completes without retrieval or gene[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno eligible evidence maps to durable controlled no answer[39m[90m           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevidence found runs the complete generation and persists one author[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevidence found runs the complete generation and persists one author[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevidence found runs the complete generation and persists one author[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevidence found runs the complete generation and persists one author[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevidence found runs the complete generation and persists one author[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90msse replays after last event id and closes on terminal event[39m[90m        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90me2e event limit closes after one durable event for native reconnect[39m[90m [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mopen sse stream terminates before delivering more events after memb[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmessage role invariants and immutability fail closed[39m[90m                [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale active runs fail closed and stale cancellation is acknowledge[39m[90m…[39m [90m0.01s[39m  
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\EvidenceNeedsRetrievalTest[39m
+  [33;1m-[39;22m[90m [39m[90mcross service mixed conversation uses real python fusion and genera[39m[90m…[39m [90m0.02s[39m  
+  [33;1m-[39;22m[90m [39m[90mcross service mixed conversation uses real python fusion and genera[39m[90m…[39m [90m0.01s[39m  
+  [33;1m-[39;22m[90m [39m[90mcross service mixed conversation uses real python fusion and genera[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisputed recipient is context not a location or tenant permission[39m[90m   [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisputed claim without authorised evidence stays no answer[39m[90m          [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbreadth resolves universal direct and inherited snapshots with data[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbreadth resolves universal direct and inherited snapshots with data[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbreadth resolves universal direct and inherited snapshots with data[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbreadth scope fact lists the full sealed snapshot without operation[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope facts use real resolver and never dispatch or read operationa[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope facts use real resolver and never dispatch or read operationa[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope facts use real resolver and never dispatch or read operationa[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope facts use real resolver and never dispatch or read operationa[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope location alias and singular or plural qualifiers resolve with[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope adversarial framing is fixed and persists a real snapshot cit[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope only conversation publishes with a zero cost local receipt wi[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope only conversation publishes with a zero cost local receipt wi[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope and operational answer are isolated through generation and pe[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90munavailable scope record publishes controlled no answer with data s[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90munavailable scope record publishes controlled no answer with data s[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mambiguous scope subject still clarifies with data set #0[39m[90m            [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mambiguous scope subject still clarifies with data set #1[39m[90m            [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope fact publication rechecks corpus and source identity[39m[90m          [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistorical scope uses the selected versions snapshot not the curren[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistorical scope uses the selected versions snapshot not the curren[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverified single version previous need is not an ambiguous reference[39m[90m [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mjune pair is march june while ordinary comparison is june september[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmultiple transitions require clarification and missing history is n[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnamed scope drops foreign locations but accepts registered location[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mambiguous location candidates do not block needs retrieval[39m[90m          [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90munidentified home reference and generic policy question both stay u[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworkspace identity and unlisted oakfield outreach do not narrow[39m[90m     [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded this record asks for record without changing site or gen[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbound subject cannot borrow unrelated history and support stays ava[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopical current scope remains broad but named binding remains exclu[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopic only compare selects an authorised current family before hist[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopic only compare selects an authorised current family before hist[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopic only compare selects an authorised current family before hist[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopic only compare selects an authorised current family before hist[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopic only compare selects an authorised current family before hist[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopical discovery ineligible is logged without provider work[39m[90m        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcase nine shape cannot search an unrelated 2023 version pair[39m[90m        [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexternal ownership is an unavailable need not a location clarificat[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbound family cannot cross workspace even after planning[39m[90m             [39m [90m0.02s[39m  
+  [31;1m⨯[39;22m[90m [39m[90mcapacity overflow is a displayable limit not user ambiguity[39m[90m         [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal retrieval action dispatches each need and rechecks final autho[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal retrieval action dispatches each need and rechecks final autho[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal retrieval action dispatches each need and rechecks final autho[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal retrieval action dispatches each need and rechecks final autho[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal retrieval action dispatches each need and rechecks final autho[39m[90m…[39m [90m0.05s[39m  
+  [31m────────────────────────────────────────────────────────────────────────────[39m  
+  [41;1m FAILED [49;22m [1mTests\Feature\EvidenceNeedsRetrievalTes[22m… [41;1m InvalidArgumentException [49;22m  
+[39;1m  Needs must retain user question order.[39;22m
+
+  at [32mapp/Support/Retrieval/EvidenceNeedsPlan.php[39m:[32m189[39m
+    185▕             }
+    186▕             $questionSpan = $need['question_span'];
+    187▕             $position = [$turnOrder[$questionSpan['turn_id']], strpos($texts[$questionSpan['turn_id']], $questionSpan['quote'])];
+    188▕             if ($position < $previousPosition) {
+  ➜ 189▕                 throw new InvalidArgumentException('Needs must retain user question order.');
+    190▕             }
+    191▕             $previousPosition = $position;
+    192▕         }
+    193▕         foreach (array_keys($edges) as $origin) {
+
+  [33m1   [39m[39;1mapp/Support/Retrieval/EvidenceNeedsPlan.php[39;22m:[39;1m189[39;22m
+  [33m2   [39m[39;1mapp/Support/Retrieval/EvidenceNeedsPlan.php[39;22m:[39;1m26[39;22m
+
+
+  [90mTests:[39m    [31;1m1 failed[39;22m[90m,[39m[39m [39m[33;1m3 skipped[39;22m[90m,[39m[39m [39m[32;1m124 passed[39;22m[90m (842 assertions)[39m
+  [90mDuration:[39m [39m3.35s[39m
+

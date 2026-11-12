@@ -1,0 +1,993 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\AlignDocumentComparisonTest[39m
+  [32;1m✓[39;22m[90m [39m[90mit aligns insertions modifications and moves without equal ordinal assumptions[39m
+  [32;1m✓[39;22m[90m [39m[90mit reports partial and unavailable alignment truthfully[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\AspectCoverageTest[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "all-supported"[39m[90m                [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "qualified-separate-needs"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "partial-is-not-supported"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "all-unsupported"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "unknown-need"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "duplicate-need"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "missing-need"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "empty-need"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "negative-index"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "out-of-range"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "duplicate-reference"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "boolean-index"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "string-index"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "float-index"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "unmapped-answer"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "unmapped-gap"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "model-status-forbidden"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "model-text-forbidden"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "contradictory-outcome"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "invalid-request-need"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "unknown-request-need"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "missing-gap-reference"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared aspect contract with data set "model-order-does-not-change-request-order"[39m
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\CalExp0002DefinitionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdefinition binds the compatible v3 population and frozen pipeline[39m[90m   [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcommand has no split or dirty override[39m[90m                              [39m [90m0.05s[39m  
+  [33;1m-[39;22m[90m [39m[90misolated population and compatibility lineage loads[39m[90m [39m[33m→ The isolated[39m[90m… [39m [90m0.03s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Unit\CalExp0003DefinitionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdefinition binds unchanged population pipeline and hardened planner[39m[90m [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistorical definition retains its approved planner fingerprint[39m[90m      [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcommand has no split or dirty override[39m[90m                              [39m [90m0.02s[39m  
+  [33;1m-[39;22m[90m [39m[90misolated population and compatibility lineage loads[39m[90m [39m[33m→ The isolated[39m[90m… [39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\DocumentIngestionRequestedContractTest[39m
+  [32;1m✓[39;22m[90m [39m[90mvalid example matches the canonical v1 schema[39m[90m                       [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid fixture fails for the intended keyword with data set "invalid-missing-workspace-id.json"[39m
+  [32;1m✓[39;22m[90m [39m[90minvalid fixture fails for the intended keyword with data set "invalid-unknown-field.json"[39m
+  [32;1m✓[39;22m[90m [39m[90minvalid fixture fails for the intended keyword with data set "invalid-unsupported-version.json"[39m
+  [32;1m✓[39;22m[90m [39m[90minvalid fixture fails for the intended keyword with data set "invalid-zero-byte-size.json"[39m
+  [32;1m✓[39;22m[90m [39m[90mevery shared invalid fixture has an expected reason[39m
+{"timestamp":"2026-11-12T10:28:18+00:00","level":"error","service":"rag-platform-api","environment":"testing","event_name":"application.unclassified.v1","exception_type":"RuntimeException","exception_frames":[{"file":"TestCase.php","function":"test_storage_provider_failure_is_replaced_with_a_safe_typed_error","line":1318},{"file":"TestCase.php","function":"invokeTestMethod","line":1355},{"file":"TestCase.php","function":"runTest","line":521},{"file":"TestRunner.php","function":"runBare","line":99},{"file":"TestCase.php","function":"run","line":361},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestRunner.php","function":"run","line":64},{"file":"Application.php","function":"run","line":229},{"file":"phpunit","function":"run","line":104}]}
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\DocumentObjectStorageSecurityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpresigned upload is content type bound and expires at the configure[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstorage provider failure is replaced with a safe typed error[39m[90m        [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\DocumentStatusTest[39m
+  [32;1m✓[39;22m[90m [39m[90mit contains exactly the accepted lifecycle states[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\EngineeringBenchmarkExperimentProgressTest[39m
+  [32;1m✓[39;22m[90m [39m[90mprogress is atomic resumable and lineage bound[39m[90m                      [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcorrupted observation fails closed[39m[90m                                  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompleted observation cannot be replaced[39m[90m                            [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpartial checkpoint is ignored and final order is explicit[39m[90m           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcheckpoint discovery fails closed for wrong lineage and duplicate i[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlarge checkpoint execution and finalisation remain bounded[39m[90m         [39m [90m11.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv3 population checkpoints exactly ten cases and thirty one variants[39m[90m [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfinalisation fails closed when an expected v3 variant is missing[39m[90m    [39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\EngineeringBenchmarkSourceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mengineering snapshot is digest bound and contains only the fixed en[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mengineering experiment runner loads only the engineering snapshot[39m[90m   [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexp 0003 runner freezes reliability lineage[39m[90m                         [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\EngineeringRetrievalConfigurationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexp 0004 freezes only the engineering rrf value[39m[90m                     [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\EvidenceNeedsPlanTest[39m
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "mixed"[39m[90m                      [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "transition month"[39m
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "dated fact"[39m
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "generic"[39m
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "named ambiguous"[39m
+  [32;1m✓[39;22m[90m [39m[90mgrounded shared examples with data set "clarification reply"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "fabricated quote"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "foreign turn"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "model authority i d"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "duplicate need"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "missing support"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "self support"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "support cycle"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "invalid central type"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "clarification with needs"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "empty plan"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "invented current date"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "month narrowed to day"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "invalid calendar month"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "transition without comparison"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "ungrounded date source"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "invalid fact day"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "missing location grounding"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "invented location"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "whitespace aspect"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "model aspect status"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "wrong valid year"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "wrong valid month"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "wrong valid fact day"[39m
+  [32;1m✓[39;22m[90m [39m[90mshared invalid plans fail closed with data set "current comparison without selector"[39m
+  [32;1m✓[39;22m[90m [39m[90mdisputed claim is grounded and independent of site applicability[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ExampleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mthat true is true[39m[90m                                                   [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Exp0004DefinitionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexp 0004 identity and sole variable are immutable[39m[90m                   [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexp 0004 fails closed when the control configuration drifts[39m[90m         [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexp 0004 uses only the engineering snapshot and isolated output roo[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexp 0003 command remains unchanged and exp 0004 command has no dirt[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprovisioning record digest mismatch fails closed[39m[90m                    [39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Exp0005DefinitionTest[39m
+  [32;1m✓[39;22m[90m [39m[90midentity planner population and retrieval lineage are immutable[39m[90m     [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfrozen engineering policy is accepted and drift fails closed[39m[90m        [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mplanner lineage drift fails closed[39m[90m                                  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprovisioning lineage is accepted and drift fails closed[39m[90m             [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcommand has no dirty override and runner uses engineering populatio[39m[90m…[39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Exp0006DefinitionTest[39m
+  [32;1m✓[39;22m[90m [39m[90midentity planner population and retrieval lineage are immutable[39m[90m     [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfrozen policy and planner lineage fail closed on drift[39m[90m              [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprovisioning lineage is accepted and drift fails closed[39m[90m             [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcommand has no dirty override and runner uses engineering populatio[39m[90m…[39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Exp0007DefinitionTest[39m
+  [32;1m✓[39;22m[90m [39m[90midentity population planner retrieval and generation are immutable[39m[90m  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mincomplete or drifted materialisation fails closed[39m[90m                  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistorical execution source fails closed after population supersess[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexp 0007 uses v3 state and source without changing historical modes[39m[90m [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Exp0008DefinitionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcurrent population planner retrieval and reused generation are immu[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mincomplete or drifted reused materialisation fails closed[39m[90m           [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcurrent v3 execution source contains exact population and expectati[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexp 0008 has a fresh command mode and checkpoint identity[39m[90m           [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ExtractionProjectionPolicyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdeclared projection limits fail closed with data set "unsupported s[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeclared projection limits fail closed with data set "element count[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeclared projection limits fail closed with data set "warning count[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90melement text and projection timeout fail with typed codes[39m[90m           [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\GenerationDiagnosticBoundaryTest[39m
+  [32;1m✓[39;22m[90m [39m[90monly bounded ownership identifiers survive[39m
+  [32;1m✓[39;22m[90m [39m[90munspecified authentication rejection is not assumed to be replay[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\GenerationResultRenderingTest[39m
+  [32;1m✓[39;22m[90m [39m[90mqualified answer displays each requested gap with data set "93 august closure"[39m
+  [32;1m✓[39;22m[90m [39m[90mqualified answer displays each requested gap with data set "102 monitoring frequency"[39m
+  [32;1m✓[39;22m[90m [39m[90mqualified answer displays each requested gap with data set "122 first staff group"[39m
+  [32;1m✓[39;22m[90m [39m[90mqualified answer displays each requested gap with data set "132 finance responsibility"[39m
+  [32;1m✓[39;22m[90m [39m[90manswered result does not gain a gap section[39m
+  [32;1m✓[39;22m[90m [39m[90mqualified binary answer cannot contradict its own unsupported aspect[39m
+  [32;1m✓[39;22m[90m [39m[90mbinary part for separately supported need is preserved[39m
+  [32;1m✓[39;22m[90m [39m[90mnon binary partial guidance is preserved[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ImportStagingPrivacyTest[39m
+  [32;1m✓[39;22m[90m [39m[90mstaging key is exact workspace item scoped and contains no filename[39m[90m [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcross workspace and substituted keys fail before storage access[39m[90m     [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpresigned operation is content type time and exact key bounded[39m[90m      [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfiguration reuses private upload disk without public visibility[39m[90m  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreflight read is exact key and lease time bounded[39m[90m                  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcleanup addresses only the bound exact key[39m[90m                          [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\IngestionCanonicaliserTest[39m
+  [32;1m✓[39;22m[90m [39m[90mshared cross language canonicalisation vector[39m[90m                       [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Logging\PrivacySafeJsonFormatterTest[39m
+  [32;1m✓[39;22m[90m [39m[90mit only serializes allowlisted context[39m
+  [32;1m✓[39;22m[90m [39m[90mit sanitizes throwables without messages or arguments[39m
+  [32;1m✓[39;22m[90m [39m[90mstream failures are isolated[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\NeedsEvidenceSelectionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpair and current support survive global cap and descriptive edge has no effect[39m
+  [32;1m✓[39;22m[90m [39m[90mcurrent evidence cannot supply a missing comparison side[39m
+  [32;1m✓[39;22m[90m [39m[90msame document on both sides cannot form a pair[39m
+  [32;1m✓[39;22m[90m [39m[90mtwo comparisons preserve both pairs within k5[39m
+  [32;1m✓[39;22m[90m [39m[90mfive search lanes still exceed slice fanout[39m
+  [32;1m✓[39;22m[90m [39m[90mthree ordinary needs retain multiple passages within five slots[39m
+  [32;1m✓[39;22m[90m [39m[90mcomparison and two ordinary needs keep pair and two passage support[39m
+  [32;1m✓[39;22m[90m [39m[90mpair ranking considers both sides before chunk identity[39m
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Unit\PlannerConfigurationTest[39m
+  [31;1m⨯[39;22m[90m [39m[90mcurrent planner lineage matches adr 0022 v5[39m[90m                         [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ResolveBulkOperationTerminalStateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mnormative terminal mapping is total with data set "freeze failure"[39m[90m  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormative terminal mapping is total with data set "zero targets"[39m[90m    [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormative terminal mapping is total with data set "non terminal"[39m[90m    [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormative terminal mapping is total with data set "cancelled before[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormative terminal mapping is total with data set "cancelled after[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormative terminal mapping is total with data set "exception"[39m[90m       [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormative terminal mapping is total with data set "defensive cancel[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormative terminal mapping is total with data set "exclusions"[39m[90m      [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnormative terminal mapping is total with data set "completed"[39m[90m       [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\RetrievalCallSignerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mit matches adr 0018 normative vector[39m[90m                                [39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\RetrievalContractTest[39m
+  [32;1m✓[39;22m[90m [39m[90mshared rc1 valid and negative fixtures cover every schema[39m[90m           [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlaravel request shapes match shared rc1 schemas[39m[90m                     [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgeneration response schema rejects mixed missing unknown and smuggled shapes[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\SingleByteRangeTest[39m
+  [32;1m✓[39;22m[90m [39m[90mit parses the complete single range grammar with data set "closed"[39m
+  [32;1m✓[39;22m[90m [39m[90mit parses the complete single range grammar with data set "clamped end"[39m
+  [32;1m✓[39;22m[90m [39m[90mit parses the complete single range grammar with data set "open end"[39m
+  [32;1m✓[39;22m[90m [39m[90mit parses the complete single range grammar with data set "suffix"[39m
+  [32;1m✓[39;22m[90m [39m[90mit parses the complete single range grammar with data set "large suffix"[39m
+  [32;1m✓[39;22m[90m [39m[90mit rejects invalid or unsatisfiable ranges with data set "reverse"[39m
+  [32;1m✓[39;22m[90m [39m[90mit rejects invalid or unsatisfiable ranges with data set "past end"[39m
+  [32;1m✓[39;22m[90m [39m[90mit rejects invalid or unsatisfiable ranges with data set "zero suffix"[39m
+  [32;1m✓[39;22m[90m [39m[90mit rejects invalid or unsatisfiable ranges with data set "multiple"[39m
+  [32;1m✓[39;22m[90m [39m[90mit rejects invalid or unsatisfiable ranges with data set "unit"[39m
+  [32;1m✓[39;22m[90m [39m[90mit rejects invalid or unsatisfiable ranges with data set "empty object"[39m
+  [32;1m✓[39;22m[90m [39m[90mit rejects invalid or unsatisfiable ranges with data set "whitespace"[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\StructuredExtractionCanonicaliserTest[39m
+  [32;1m✓[39;22m[90m [39m[90mshared vector matches schema and all three digests[39m[90m                  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90muuid and unicode rules are canonical without content normalisation[39m
+  [32;1m✓[39;22m[90m [39m[90mnon finite numbers fail closed[39m
+  [32;1m✓[39;22m[90m [39m[90mshared rfc8785 number vectors preserve full precision[39m
+  [32;1m✓[39;22m[90m [39m[90mschema rejects ownership fields[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ThresholdCalibrationDefinitionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdefinition freezes the calibration split and retrieval configuratio[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcalibration command has no dirty or split override[39m[90m                  [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\UnresolvedNamedCoverageDisclosureTest[39m
+  [32;1m✓[39;22m[90m [39m[90mnamed unresolved retrieval discloses coverage once with data set "141 two needs"[39m
+  [32;1m✓[39;22m[90m [39m[90mnamed unresolved retrieval discloses coverage once with data set "142 one need"[39m
+  [32;1m✓[39;22m[90m [39m[90mscope fact and generic second need do not change case 15 display[39m
+  [32;1m✓[39;22m[90m [39m[90mresolved named location and non evidence outcome are unchanged[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\V3EngineeringBenchmarkSourceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mprovider free population and provisioning lineage load fail closed[39m[90m  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mindependence evidence has no calibration overlap[39m[90m                    [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\V3EngineeringExecutionHarnessTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdefinition does not claim materialisation[39m[90m                           [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexact v3 source bytes are validated[39m[90m                                 [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 and v3 identities and state paths are separate[39m[90m                   [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mincomplete v3 state cannot claim materialisation[39m[90m                    [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthoritative aliases and hierarchy load from v3[39m[90m                    [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno v3 reset command can target historical v2 state[39m[90m                  [39m [90m0.03s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\WorkerHttpContractTest[39m
+  [32;1m✓[39;22m[90m [39m[90mshared worker operation vectors validate and fail closed[39m[90m            [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclaim fixtures also match the authoritative event contracts[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AuthenticationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mregistration normalises email and sends a signed laravel verificati[39m[90m…[39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mregistration can be disabled without changing the contract[39m[90m          [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcanonical email is unique[39m[90m                                           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90minitial password policy is enforced[39m[90m                                 [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlogin uses canonical email and returns the user[39m[90m                     [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated login attempt fails with json instead of redirecting[39m[90m  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated registration attempt fails with json without creating[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlogin failure does not reveal account existence[39m[90m                     [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlogin rate limit is keyed by canonical email and ip[39m[90m                 [39m [90m1.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90munverified user can read identity and logout but not use platform[39m[90m   [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverified user can use platform functionality[39m[90m                        [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msigned verification endpoint verifies and redirects to next[39m[90m         [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90msigned verification link preserves an authenticated return instead[39m[90m… [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverification notification can be resent before verification[39m[90m         [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpassword reset request is generic for known and unknown accounts[39m[90m    [39m [90m0.42s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpassword reset rejects malformed email with useful validation[39m[90m       [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpassword reset invalidates all database sessions and rotates rememb[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mxsrf cookie is readable while session cookie is http only[39m[90m           [39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BulkOperationExecutionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mconfirmation is actor bound audited idempotent and dispatches exact[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdatabase local item executes once and parent converges with complet[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchanged expected state is not applied and never retried[39m[90m             [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mterminal unincorporated generation blocks next claim until finalize[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired attempt is abandoned and incorporated before retry generati[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcancellation stops unattempted items but does not rewrite open atte[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcancellation converges a later retryable failure without opening an[39m[90m…[39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale worker cannot mutate after its generation was abandoned[39m[90m       [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromotion subordinate is recorded then reconciled from its terminal[39m[90m…[39m [90m0.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\BulkOperationFoundationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcomplete bulk relational foundation is present[39m[90m                      [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mowner freezes current page approval with honest preflight and deter[39m[90m…[39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90midempotency conflict fails closed without changing membership[39m[90m       [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mall filtered membership is server resolved bounded and immutable[39m[90m    [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembers cannot create bulk operations and other workspaces are conc[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mowner can read bounded workspace history and members cannot[39m[90m         [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevery v1 operation has a frozen typed preflight result[39m[90m              [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mparent bound operation discriminator and one target per operation a[39m[90m…[39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CompareFamilyDiagnosticsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mconsumer and exporter preserve diagnostics not execution with data[39m[90m… [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconsumer and exporter preserve diagnostics not execution with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconsumer and exporter preserve diagnostics not execution with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconsumer and exporter preserve diagnostics not execution with data[39m[90m… [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconsumer and exporter preserve diagnostics not execution with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconsumer and exporter preserve diagnostics not execution with data[39m[90m… [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ContentCloneFoundationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mclone schema and origin index are present[39m[90m                           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpipeline identity is write once for legacy attempts[39m[90m                 [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mordinary callback authorizer rejects clone origin[39m[90m                   [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworkspace usage never merges clone failures into ingestion[39m[90m          [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ConversationOrchestrationTest[39m
+  [32;1m✓[39;22m[90m [39m[90minternal failure diagnostic bounds and redacts exception message[39m[90m    [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90munclassified exception is recorded in internal trace without changi[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds profile is immutable survives retry and rejects deployment dr[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds planner failure retains safe typed detail and stops before re[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds clarification keeps text separate from the bounded reason cod[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds clarification keeps text separate from the bounded reason cod[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded needs reference uses existing typed clarification withou[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly two exhausted calendar grounding rejections become a controlle[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly two exhausted calendar grounding rejections become a controlle[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly two exhausted calendar grounding rejections become a controlle[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly two exhausted calendar grounding rejections become a controlle[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly two exhausted calendar grounding rejections become a controlle[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90msubmission is workspace scoped idempotent and allows only one activ[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfailed run reports when provisional content was retracted[39m[90m           [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mqueued cancellation is terminal and retry is idempotent[39m[90m             [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontextualisation clarification completes without retrieval or gene[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno eligible evidence maps to durable controlled no answer[39m[90m           [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevidence found runs the complete generation and persists one author[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevidence found runs the complete generation and persists one author[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevidence found runs the complete generation and persists one author[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevidence found runs the complete generation and persists one author[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevidence found runs the complete generation and persists one author[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90msse replays after last event id and closes on terminal event[39m[90m        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90me2e event limit closes after one durable event for native reconnect[39m[90m [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mopen sse stream terminates before delivering more events after memb[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmessage role invariants and immutability fail closed[39m[90m                [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale active runs fail closed and stale cancellation is acknowledge[39m[90m…[39m [90m0.03s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\CurrentRetrievalEligibilityArtifactTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreal resolver exports typed temporal comparison location and contro[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthority state changes real resolver scope without expected eviden[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mboth isolated evaluation workspaces own their document families[39m[90m     [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapplicability state changes real resolver scope[39m[90m                     [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconsole boundary refuses non e2e identity[39m[90m                           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno public route exposes the evaluation boundary[39m[90m                     [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DeletedDocumentFamilyApiTest[39m
+  [32;1m✓[39;22m[90m [39m[90mowner reads tombstone history with truthful reason date actor and a[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistory is owner admin only and cross workspace is concealed[39m[90m        [39m [90m0.02s[39m  
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.published.v1","correlation_id":"4f7be9ed-67d5-4d1a-93bf-83adaa69b8a5","document_id":"726d20f8-a718-3363-81d2-62d5c6e5b2ba","event_id":"192be9ea-dea0-4457-bc48-883484dd9b72","outbox_marked_published":true,"transport_message_id":"deletion-message-id","workspace_id":"c5a40322-268c-3406-a51b-cee33724dcb9"}
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentAdministrationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mactive members can list only their workspace documents[39m[90m              [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcross workspace document detail fails closed[39m[90m                        [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdocument detail conceals deleted sources but keeps live sources ava[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mretry is owner only and idempotent per document key[39m[90m                 [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdelete is owner only single operation and waits for quiescence[39m[90m      [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mquiescent deletion dispatches one immutable event[39m[90m                   [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeletion waits for snapshotted attempt then emits its exact vector[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeletion cancellation is terminal without becoming ingestion failur[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverified zero scope completion removes source and marks deleted[39m[90m     [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentContentCloneAcceptanceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mclone publishes all layers atomically with target owned lineage[39m[90m     [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmid sequence vector failure never indexes and cleanup precedes fall[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclone compatibility rejects pipeline drift and non active generatio[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclone materialiser rejects an ordinary ingestion attempt[39m[90m            [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclone completion rechecks the verified live source under the checks[39m[90m…[39m [90m0.04s[39m  
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":10,"document_id":"fc110abc-fc18-3544-831a-9b4e1e2c5043","requested_range":null,"result_status":200,"workspace_id":"36d05a07-accd-397b-9714-c5219cc7dfac"}
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"fc110abc-fc18-3544-831a-9b4e1e2c5043","requested_range":null,"result_status":200,"workspace_id":"36d05a07-accd-397b-9714-c5219cc7dfac"}
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":4,"document_id":"fc110abc-fc18-3544-831a-9b4e1e2c5043","requested_range":"bytes=2-5","result_status":206,"workspace_id":"36d05a07-accd-397b-9714-c5219cc7dfac"}
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"fc110abc-fc18-3544-831a-9b4e1e2c5043","requested_range":"bytes=-3","result_status":206,"workspace_id":"36d05a07-accd-397b-9714-c5219cc7dfac"}
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":3,"document_id":"fc110abc-fc18-3544-831a-9b4e1e2c5043","requested_range":"bytes=7-","result_status":206,"workspace_id":"36d05a07-accd-397b-9714-c5219cc7dfac"}
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"fc110abc-fc18-3544-831a-9b4e1e2c5043","requested_range":"bytes=20-","result_status":416,"workspace_id":"36d05a07-accd-397b-9714-c5219cc7dfac"}
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"fc110abc-fc18-3544-831a-9b4e1e2c5043","requested_range":"bytes=20-","result_status":416,"workspace_id":"36d05a07-accd-397b-9714-c5219cc7dfac"}
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":6,"document_id":"90ba3d12-e4f6-3951-b4e8-b5612455696f","requested_range":null,"result_status":200,"workspace_id":"56e0d318-3ac6-3b18-b07b-f34d8eedeeaf"}
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"48ffb0b2-f1d6-349c-91e5-67b77160aa82","requested_range":"bytes=0-","result_status":416,"workspace_id":"59805dfd-5394-32ff-9db3-7f73eac2478e"}
+{"timestamp":"2026-11-12T10:28:36+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"48ffb0b2-f1d6-349c-91e5-67b77160aa82","requested_range":"bytes=0-","result_status":416,"workspace_id":"59805dfd-5394-32ff-9db3-7f73eac2478e"}
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentContentDeliveryTest[39m
+  [32;1m✓[39;22m[90m [39m[90msource delivery supports full range head and unsatisfiable requests[39m[90m [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90msource stream is closed after delivery[39m[90m                              [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mzero length source fails closed for get and head[39m[90m                    [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90msource delivery conceals other tenants before storage metadata is d[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mextracted text is active generation only bounded searchable and pro[39m[90m…[39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentFamilyDeletionTest[39m
+  [32;1m✓[39;22m[90m [39m[90mpreview is read only state bound and tenant concealed[39m[90m               [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfirm rejects stale state without mutation[39m[90m                        [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfirm freezes children preserves draft truth and is idempotent[39m[90m    [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreserved export hold seam blocks before any mutation[39m[90m                [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mopen clone is reported and blocks confirmation[39m[90m                      [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mparent converges to tombstone or partial failure from children[39m[90m      [39m [90m0.03s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentGovernanceEmailDeliveryTest[39m
+  [32;1m✓[39;22m[90m [39m[90mimmediate and digest envelopes have deterministic membership and se[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworkspace gate suppresses without consuming an attempt[39m[90m              [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclaim verification and acceptance are fenced and idempotent[39m[90m         [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired attempt is abandoned and envelope becomes retryable[39m[90m         [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdigest tampering fails closed before any provider boundary[39m[90m          [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mimmediate email uses dolved fallback safe copy and a live allowlist[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfenced dispatch records transport acceptance once[39m[90m                   [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mretryable transport failure is recorded without retry to success[39m[90m    [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90munknown template identity fails permanently before transport[39m[90m        [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalid resolved tenant branding uses the same safe template[39m[90m          [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid logo and low contrast accent fall back without delaying ren[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdue digest is sealed once and queued with ordered safe members[39m[90m      [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmulti family digest includes and renders every authorised member[39m[90m    [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmulti family digest suppresses only family a when its authority is[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmulti family digest suppresses only family b regardless of member o[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmulti family digest with no authorised members is terminally suppre[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mretry reuses frozen multi family decisions after authority changes[39m[90m  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcross workspace member lineage fails closed at generation one prefl[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpreferences are scoped and workspace settings require an administra[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdaily scanner uses occurrence identity as the only idempotency auth[39m[90m…[39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentGovernanceInboxTest[39m
+  [32;1m✓[39;22m[90m [39m[90minbox is recipient scoped and resolves only live authorised targets[39m[90m [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mimport batch notification resolves to the exact batch detail[39m[90m        [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mread and dismiss are idempotent and do not change actionable work[39m[90m   [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactionable work uses live domain state and current role[39m[90m             [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnotification endpoints conceal other users and workspaces[39m[90m           [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentGovernanceNotificationFoundationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mv1 event vocabulary is closed and exactly twenty entries[39m[90m            [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90moccurrence identity is idempotent and dispatches only the bound eve[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprojection resolves current recipients and replay is idempotent[39m[90m     [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthority loss after resolution suppresses delivery without cross w[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership loss reconciliation emits one event per owned family and[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser disablement creates durable reconciliation source and work[39m[90m     [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mowner change api advances generation and replays without a second a[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlegacy owner sweep uses assignment generation and replays safely[39m[90m    [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeletion detector distinguishes stuck and permanent failure within[39m[90m… [39m [90m0.02s[39m  
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"claimed","correlation_id":"772ddfc8-8ced-4ae4-9361-17340c6a443e","document_id":"6ad1ca36-6680-3ca4-a061-f5afbd72b2b3","document_status":"processing","event_id":"59867f3b-9079-4d40-8cc2-8e0b03468dec","workspace_id":"74c230d5-35de-333e-9a00-39bdc4c7179e"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"claimed","correlation_id":"da7ff07f-f07e-49fe-b9f0-ed84f9ff4e56","document_id":"d6453e55-09cb-3b3e-aa1e-8460ecfd7afb","document_status":"processing","event_id":"3fa81779-39c4-4b57-997a-099672ea5ed0","workspace_id":"3e493f63-07de-347b-8c98-e8cda94a7765"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"owned_by_another_worker","correlation_id":"da7ff07f-f07e-49fe-b9f0-ed84f9ff4e56","document_id":"d6453e55-09cb-3b3e-aa1e-8460ecfd7afb","document_status":"processing","event_id":"3fa81779-39c4-4b57-997a-099672ea5ed0","workspace_id":"3e493f63-07de-347b-8c98-e8cda94a7765"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"claimed","correlation_id":"75c58d63-d145-41d3-bed9-2ab80f58fa31","document_id":"2b3be4a3-c606-3649-b2df-53e34608a7a1","document_status":"processing","event_id":"4e3adf38-f40e-48f8-b3a0-e9c75a10a833","workspace_id":"b997a51b-e155-35e5-818b-b2acd6259031"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"claimed","correlation_id":"793a5351-ffe8-49dc-8b27-813ad65ff556","document_id":"753f6f76-7ce2-3c08-80f5-3473c63e79f7","document_status":"processing","event_id":"f357b827-da3f-48ae-9b9d-79cf1da1ea5d","workspace_id":"17f7cafe-6e18-37b2-a42a-9b4716ef574d"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41","key_id":"local-v1","verification_outcome":"signature_format"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":null,"key_id":null,"verification_outcome":"key_id"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"2bc4a0e1-812c-4685-bf65-f32e59855d29","key_id":"test-primary","verification_outcome":"signature_mismatch"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"2bc4a0e1-812c-4685-bf65-f32e59855d29","key_id":"unknown-key","verification_outcome":"unknown_key"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"d9cbbdec-7855-4f20-84e2-068b6980c89b","key_id":"test-primary","verification_outcome":"timestamp_window"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"d9cbbdec-7855-4f20-84e2-068b6980c89b","key_id":"test-primary","verification_outcome":"timestamp_window"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"10e4b811-cb3b-4835-b409-001503e5efd4","key_id":"test-primary","verification_outcome":"signature_mismatch"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"10e4b811-cb3b-4835-b409-001503e5efd4","key_id":"test-primary","verification_outcome":"signature_mismatch"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"10e4b811-cb3b-4835-b409-001503e5efd4","key_id":"test-primary","verification_outcome":"signature_mismatch"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"e0b297df-76b3-40a9-939e-541476fbe50a","key_id":"test-primary","verification_outcome":"route_event_id"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"10e4b811-cb3b-4835-b409-001503e5efd4","key_id":"test-primary","verification_outcome":"query_string"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"claimed","correlation_id":"8e2b6007-1504-4d98-896a-83536949ad7a","document_id":"f694d76e-53b3-33bf-a6db-f79e3507a852","document_status":"processing","event_id":"193b129c-f1cc-4059-9b9f-8f9b98c33d9a","workspace_id":"7680fd9d-eaee-38e2-ae00-eb4d440dfcf6"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"stale_event","correlation_id":"d10becfe-6c09-4fb3-af6d-50aa2493a7df","document_id":"ef7c6180-27ae-3744-a783-c0973006f3a4","document_status":"processing","event_id":"b4ec9c10-4acc-43a0-a25c-c2772fb4cde4","workspace_id":"7a172e5b-ecb1-3999-a3e9-c8ac60ceabf4"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"stale_event","correlation_id":"3bae68bd-4c97-4eb1-8979-cce55aba2bb6","document_id":"85c6edb7-0e92-3616-ae61-6a5ed09a360e","document_status":"indexed","event_id":"42ebd66d-863f-480a-97b0-2cedb61d64f9","workspace_id":"9d97f9ff-8d7d-315a-a488-1314cca61aa6"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"stale_event","correlation_id":"599ce7cb-2468-4216-bbcc-311a69470dc8","document_id":"dae0b58c-c245-3913-b0f5-1df4c1d8c249","document_status":"failed","event_id":"8cf32f09-1611-4bab-938c-a9fe7b7e49fc","workspace_id":"788acf4d-297e-3a02-b2a3-78741055d275"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"stale_event","correlation_id":"f2670690-a75c-4edf-b42d-a814678aec9e","document_id":"3f35f6ee-2341-31f8-bdfd-b38b5c09faf3","document_status":"deleting","event_id":"73d04487-af3c-4303-a6f2-05302d91d54a","workspace_id":"b05f436c-a3a3-3a1b-b5f4-b7758e9faf1c"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"stale_event","correlation_id":"1d144537-e0d8-49eb-a41a-6bc31f3d6ac0","document_id":"cbdc21b6-2173-3978-8a41-ec06c3ab7737","document_status":"deleted","event_id":"fef35933-5237-473f-bcd9-7265c75d880b","workspace_id":"57c20276-6a4d-3630-be5b-735a6d550128"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"ineligible_state","correlation_id":"e921c110-5b11-46ae-8013-15e9d70b581c","document_id":"9f74b87c-fcbe-3d84-9ef5-e502e3504673","document_status":"uploading","event_id":"8b1ce04f-61cf-45a1-b51d-2cbac23c6423","workspace_id":"ece628d9-af0e-3a4f-9951-95f9a2eeeb3b"}
+{"timestamp":"2026-11-12T10:28:37+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"ineligible_state","correlation_id":"8fbf80fa-17aa-4e42-b090-abc1d6592465","document_id":"1f77b085-0c6f-349c-8cf2-892684465fee","document_status":"uploaded","event_id":"5e3e1ae0-be08-4c80-956c-fdd698411fff","workspace_id":"dd5b195f-7e7a-3ff4-b067-a2e4466c4ba4"}
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentIngestionClaimTest[39m
+  [32;1m✓[39;22m[90m [39m[90mvalid worker request atomically claims a queued document[39m[90m            [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mduplicate delivery cannot take over a live lease[39m[90m                    [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprimary and secondary keys can overlap during rotation[39m[90m              [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mversion one signatures are rejected after the bounded cutover[39m[90m       [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing invalid and unknown credentials fail generically[39m[90m            [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpast and future timestamps outside the window are rejected[39m[90m          [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmethod path body and event identifier are bound to the signature[39m[90m    [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbody event identifier must match the signed path identifier[39m[90m         [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontract invalid event is poison and does not claim[39m[90m                 [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90msigned malformed json is poison and does not claim[39m[90m                  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreusing an event identifier for changed payload is rejected[39m[90m         [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlater lifecycle states are safe stale events with data set "process[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlater lifecycle states are safe stale events with data set "indexed[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlater lifecycle states are safe stale events with data set "failed"[39m[90m [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlater lifecycle states are safe stale events with data set "deletin[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlater lifecycle states are safe stale events with data set "deleted[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mearlier lifecycle states are poison ineligible events with data set[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mearlier lifecycle states are poison ineligible events with data set[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworkspace identity is enforced in the document lookup[39m[90m               [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclaim insert failure rolls back the lifecycle transition[39m[90m            [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlifecycle write failure rolls back the claim insert[39m[90m                 [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclaim identifier is unique and claim is immutable[39m[90m                   [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclean migration creates claim columns and indexes[39m[90m                   [39m [90m0.01s[39m  
+{"timestamp":"2026-11-12T10:28:38+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.published.v1","correlation_id":"a56f9760-b56c-3469-b594-07fce4fa96ad","document_id":"665c14b3-14a7-3364-9457-67923e4fb636","event_id":"97796782-8d03-3a13-baaa-28b62e5c4053","outbox_marked_published":true,"transport_message_id":"transport-message-id","workspace_id":"d2f9e86d-e7e5-301d-8026-9299e0ce1d45"}
+{"timestamp":"2026-11-12T10:28:38+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.publication_retry.v1","attempt_count":1,"correlation_id":"3e7cb30e-ef16-32f1-9c37-ad9d9eb547b9","document_id":"e88d9f4e-07d8-3c5e-9c17-a8522c30d8ec","event_id":"f4d1dde9-532d-32dc-8d68-24143b887251","retry_delay_seconds":5,"workspace_id":"1515b4ab-5366-3802-99d1-c2e686b44921"}
+{"timestamp":"2026-11-12T10:28:38+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.published.v1","correlation_id":"3e7cb30e-ef16-32f1-9c37-ad9d9eb547b9","document_id":"e88d9f4e-07d8-3c5e-9c17-a8522c30d8ec","event_id":"f4d1dde9-532d-32dc-8d68-24143b887251","outbox_marked_published":true,"transport_message_id":"transport-message-id","workspace_id":"1515b4ab-5366-3802-99d1-c2e686b44921"}
+{"timestamp":"2026-11-12T10:28:38+00:00","level":"error","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.contract_failed.v1","correlation_id":"b2a8e963-18f8-3a41-82e3-911ad14827cf","document_id":"4c4ab08c-b6df-3671-95fd-ed60ba690617","event_id":"562e65c9-68f7-38e6-99ee-48395c7f19e8","workspace_id":"b29701ce-a94a-301c-bc90-1e6e97ee193e"}
+{"timestamp":"2026-11-12T10:28:38+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.published.v1","correlation_id":"99688849-bd7c-389e-a124-55eda597176b","document_id":"43aa66bd-fb92-391d-86fe-2446e089ff44","event_id":"2b7ac6b0-bc69-3eda-b57a-86e82d5687a1","outbox_marked_published":true,"transport_message_id":"message-id","workspace_id":"3d6a00c8-8c2d-31f7-942b-ec2fc832acd8"}
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentIngestionPublicationTest[39m
+  [32;1m✓[39;22m[90m [39m[90muploaded document transitions and records publication intent atomic[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing or invalid correlation header is replaced server side[39m[90m       [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mall workspace roles can request ingestion[39m[90m                           [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mqueued and processing requests are idempotent with data set "queued[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mqueued and processing requests are idempotent with data set "proces[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mineligible lifecycle states return conflict with data set "uploadin[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mineligible lifecycle states return conflict with data set "indexed"[39m[90m [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mineligible lifecycle states return conflict with data set "failed"[39m[90m  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mineligible lifecycle states return conflict with data set "deleting[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mineligible lifecycle states return conflict with data set "deleted"[39m[90m [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mendpoint requires authentication verification and workspace access[39m[90m  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcross workspace document lookup fails closed[39m[90m                        [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90moutbox failure rolls back the lifecycle transition[39m[90m                  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpublisher validates publishes and marks the same event[39m[90m              [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtransient failure remains retryable and later publishes[39m[90m             [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid payload is set aside without transport publication[39m[90m          [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactive claim is not stolen but expired lease is reclaimed[39m[90m           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mone shot command reports an empty batch successfully[39m[90m                [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclean migration creates outbox columns and indexes[39m[90m                  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevent identifier is unique at database level[39m[90m                        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevent identity and payload are immutable[39m[90m                            [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpersisted trace context is immutable[39m[90m                                [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentLibraryTest[39m
+  [32;1m✓[39;22m[90m [39m[90mlibrary returns one family row with authoritative current version[39m[90m   [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlibrary states are truthful and historical is opt in[39m[90m                [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing summary uses family creation and exact rebuild repairs futu[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwithdrawn successor does not resurrect or expose its predecessor by[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid query values degrade to the documented defaults[39m[90m             [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlive producers advance activity monotonically in their authoritativ[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mquery count is bounded for a full page[39m[90m                              [39m [90m0.20s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentMetadataApiTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmembers can read workspace metadata but only administrators can mut[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90madministrator updates family metadata and owner through their separ[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mowner eligibility is checked live and cross workspace identities ar[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtag assignment replaces the locked final set and rejects more than[39m[90m… [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtwo contending nineteen plus one tag sets serialize on the family r[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtaxonomy mutations are workspace scoped and categories archive with[39m[90m…[39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentMetadataBackfillTest[39m
+  [32;1m✓[39;22m[90m [39m[90mbackfill streams checksums reinterprets titles and is resumable[39m[90m     [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfirmed absence and size mismatch are truthfully unavailable[39m[90m      [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtransient storage failure remains pending and retryable[39m[90m             [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mowner backfill uses lineage root identity and records system proven[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mowner backfill falls back to workspace creator when a family has no[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbatch size bounds each lane and command rejects invalid values[39m[90m      [39m [90m0.03s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Feature\DocumentMetadataFoundationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmetadata foundation schema is available[39m[90m                             [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcategory and tag names are normalised per workspace[39m[90m                 [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mthe same normalised name can exist in another workspace[39m[90m             [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfamily metadata relationships are workspace bound[39m[90m                   [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnew document family is owned by the creator[39m[90m                         [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverified checksum identity is immutable[39m[90m                             [39m [90m0.02s[39m  
+  [33;1m-[39;22m[90m [39m[90mchecksum shape constraint rejects every inconsistent state[39m[90m [39m[33m→ The ch[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mversion scoped publisher and source url are immutable[39m[90m               [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnew version defaults source metadata from its immediate predecessor[39m[90m [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mversion governance audit records family and actor shape[39m[90m             [39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentPersistenceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdocument creation persists identity ownership and provenance[39m[90m        [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser filename never becomes part of the storage key[39m[90m                 [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworkspace and provenance relationships are available[39m[90m                [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfactory supports every lifecycle state and enum casting[39m[90m             [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdatabase defaults lifecycle to uploading[39m[90m                            [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdatabase rejects an unknown lifecycle state[39m[90m                         [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfailed document requires diagnostic information[39m[90m                     [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcross workspace lookup fails closed[39m[90m                                 [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworkspace scoped lookup returns the owned document[39m[90m                  [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresource does not expose storage or failure details[39m[90m                 [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreuploading the same filename creates independent documents[39m[90m         [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdocument public id is unique[39m[90m                                        [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdocument public id is immutable[39m[90m                                     [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworkspace ownership and creation provenance are immutable[39m[90m           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstorage identity and source metadata are immutable[39m[90m                  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcreation rejects invalid intrinsic metadata[39m[90m                         [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreferenced workspace and creator cannot be deleted[39m[90m                  [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclean migration creates document columns and indexes[39m[90m                [39m [90m0.03s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentUploadWorkflowTest[39m
+  [32;1m✓[39;22m[90m [39m[90mauthenticated member can read upload configuration[39m[90m                  [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mevery active workspace role can initialise an upload[39m[90m                [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90minitialisation creates uploading document and safe presigned respon[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90minitialisation requires authentication and verification[39m[90m             [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90minitialisation rejects an inaccessible workspace without disclosure[39m[90m [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90minitialisation rejects unsupported or inconsistent metadata[39m[90m         [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90minitialisation rejects malicious or ambiguous filenames[39m[90m             [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstorage failure is generic and does not leak internals[39m[90m              [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90msupported formats can be initialised[39m[90m                                [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompletion verifies object and transitions only to uploaded[39m[90m         [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompletion streams the retained object and records its sha256[39m[90m       [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90minitialisation accepts safe source metadata and rejects unsafe urls[39m[90m [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompletion rejects missing object without advancing state[39m[90m           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompletion rejects size mismatch without advancing state[39m[90m            [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompletion rejects invalid lifecycle transition[39m[90m                     [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrepeated completion is idempotent[39m[90m                                   [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcross workspace document completion fails closed[39m[90m                    [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentVersionGovernanceApiTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmembers read tenant scoped version history but cannot govern it[39m[90m     [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistory derives current authority and exact state bound capabilitie[39m[90m…[39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcomparison is family bound distinct and truthful when projection is[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcomparison defaults are lineage bound and single version is truthfu[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeleted comparison side retains metadata and marks content unavaila[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmatching completed command replays and conflicting binding fails cl[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90msame key is independent across purposes and invalid state is typed[39m[90m  [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreschedule and owner only historical correction use durable command[39m[90m…[39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcommand target is structurally bound to its workspace[39m[90m               [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentVersioningAndTemporalAuthorityTest[39m
+  [32;1m✓[39;22m[90m [39m[90mquote narrowing retains real ambiguity and unknown history has no m[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mupload creation atomically creates family and sealed universal snap[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90msuccessor preserves family lineage and copies applicability[39m[90m         [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcurrent and valid at date are derived from effective and approval f[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwithdrawal ends authority without resurrecting a predecessor[39m[90m        [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcancelled future successor is skipped without creating a gap[39m[90m        [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapproval rejects non monotonic authority in lineage[39m[90m                 [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapproved future version can be rescheduled only before attaining au[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistorical correction is owner only requires reason and is audited[39m[90m  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapplicability supports arbitrary depth and sealed snapshots are imm[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcross workspace lineage and applicability fail closed[39m[90m               [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mschema has foundation constraints and no stored current flag[39m[90m        [39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\E2eBootstrapCommandTest[39m
+  [32;1m✓[39;22m[90m [39m[90mit provisions a verified owner through the real workspace action[39m[90m    [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90msame identity is repeatable without duplicate user or workspace[39m[90m     [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit refuses every non e2e environment[39m[90m                                [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit refuses missing resource and database markers[39m[90m                    [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mno public workspace creation route exists[39m[90m                           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit approves an e2e document through the real governance action[39m[90m      [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdocument approval refuses non e2e environments[39m[90m                      [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfrozen governance replays version authority without wall clock coll[39m[90m…[39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\E2eProvisionRetrievalCommandTest[39m
+  [32;1m✓[39;22m[90m [39m[90mit provisions the deterministic dense and sparse profile idempotent[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit refuses an ambiguous resource or database identity[39m[90m               [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit rejects a stale profile under the v3 fingerprint[39m[90m                 [39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\EvidenceNeedsClientTest[39m
+  [32;1m✓[39;22m[90m [39m[90mreal consumer sends signed needs contract and checks both schemas[39m[90m   [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mm07 shaped normalized claim plan passes real laravel consumer[39m[90m       [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded response is not retried or sent to legacy route[39m[90m          [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90munknown catalogue identity is rejected before retrieval[39m[90m             [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing binding is rejected before retrieval[39m[90m                        [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwire shape failure captures only static safe message[39m[90m                [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtyped needs failure preserves status and does not retry[39m[90m             [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msafe needs diagnostic survives typed failure without input with dat[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msafe needs diagnostic survives typed failure without input with dat[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msafe needs diagnostic survives typed failure without input with dat[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msafe needs diagnostic survives typed failure without input with dat[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msafe needs diagnostic survives typed failure without input with dat[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msafe needs diagnostic survives typed failure without input with dat[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcompletion failure metadata is allowlisted[39m[90m                          [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msafe validation detail survives without arbitrary content with data[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msafe validation detail survives without arbitrary content with data[39m[90m…[39m [90m0.01s[39m  
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\EvidenceNeedsRetrievalTest[39m
+  [33;1m-[39;22m[90m [39m[90mcross service mixed conversation uses real python fusion and genera[39m[90m…[39m [90m0.02s[39m  
+  [33;1m-[39;22m[90m [39m[90mcross service mixed conversation uses real python fusion and genera[39m[90m…[39m [90m0.01s[39m  
+  [33;1m-[39;22m[90m [39m[90mcross service mixed conversation uses real python fusion and genera[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisputed recipient is context not a location or tenant permission[39m[90m   [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisputed claim without authorised evidence stays no answer[39m[90m          [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbreadth resolves universal direct and inherited snapshots with data[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbreadth resolves universal direct and inherited snapshots with data[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbreadth resolves universal direct and inherited snapshots with data[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbreadth scope fact lists the full sealed snapshot without operation[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope facts use real resolver and never dispatch or read operationa[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope facts use real resolver and never dispatch or read operationa[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope facts use real resolver and never dispatch or read operationa[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope facts use real resolver and never dispatch or read operationa[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope location alias and singular or plural qualifiers resolve with[39m[90m…[39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope adversarial framing is fixed and persists a real snapshot cit[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope only conversation publishes with a zero cost local receipt wi[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope only conversation publishes with a zero cost local receipt wi[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope and operational answer are isolated through generation and pe[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90munavailable scope record publishes controlled no answer with data s[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90munavailable scope record publishes controlled no answer with data s[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mambiguous scope subject still clarifies with data set #0[39m[90m            [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mambiguous scope subject still clarifies with data set #1[39m[90m            [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope enquiry preserves access authority and snapshot prerequisites[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscope fact publication rechecks corpus and source identity[39m[90m          [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistorical scope uses the selected versions snapshot not the curren[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistorical scope uses the selected versions snapshot not the curren[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverified single version previous need is not an ambiguous reference[39m[90m [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mjune pair is march june while ordinary comparison is june september[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmultiple transitions require clarification and missing history is n[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnamed scope drops foreign locations but accepts registered location[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mambiguous location candidates do not block needs retrieval[39m[90m          [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90munidentified home reference and generic policy question both stay u[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworkspace identity and unlisted oakfield outreach do not narrow[39m[90m     [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mungrounded this record asks for record without changing site or gen[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbound subject cannot borrow unrelated history and support stays ava[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopical current scope remains broad but named binding remains exclu[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopic only compare selects an authorised current family before hist[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopic only compare selects an authorised current family before hist[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopic only compare selects an authorised current family before hist[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopic only compare selects an authorised current family before hist[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopic only compare selects an authorised current family before hist[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtopical discovery ineligible is logged without provider work[39m[90m        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcase nine shape cannot search an unrelated 2023 version pair[39m[90m        [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexternal ownership is an unavailable need not a location clarificat[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbound family cannot cross workspace even after planning[39m[90m             [39m [90m0.02s[39m  
+  [31;1m⨯[39;22m[90m [39m[90mcapacity overflow is a displayable limit not user ambiguity[39m[90m         [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal retrieval action dispatches each need and rechecks final autho[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal retrieval action dispatches each need and rechecks final autho[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal retrieval action dispatches each need and rechecks final autho[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal retrieval action dispatches each need and rechecks final autho[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreal retrieval action dispatches each need and rechecks final autho[39m[90m…[39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExampleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mthe application returns a successful response[39m[90m                       [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExtractionArtifactUploadTest[39m
+  [32;1m✓[39;22m[90m [39m[90macknowledgement route targets the existing controller method[39m[90m        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcurrent lease authorises exact conditional key and acknowledges obs[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale generation and conflicting acknowledgement fail closed[39m[90m        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverified artifact is streamed verified and atomically published[39m[90m     [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprojection digest mismatch fails closed without active generation[39m[90m   [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90morphan sweep waits for live lease then deletes only exact expired k[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90morphan sweep never deletes a published artifact key[39m[90m                 [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90morphan sweep persists bounded failure and exposes exhaustion[39m[90m        [39m [90m0.03s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\GroundedGenerationFoundationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcombined paid rejections without pricing identity degrade to unavai[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds evidence keeps authored banner and adds resolved current stat[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds assembly preserves owned pairs and current support with data[39m[90m… [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds assembly preserves owned pairs and current support with data[39m[90m… [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds assembly preserves owned pairs and current support with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds assembly preserves owned pairs and current support with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexhausted entailment alone degrades to a cited claim free outcome w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbounded validation retry refreshes only identity and retains usage[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbounded validation retry refreshes only identity and retains usage[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbounded validation retry refreshes only identity and retains usage[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbounded validation retry refreshes only identity and retains usage[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbounded validation retry refreshes only identity and retains usage[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbounded validation retry refreshes only identity and retains usage[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbounded validation retry refreshes only identity and retains usage[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 consumer validates shared coverage and derives status with data[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 coverage persists with the authoritative text and citation[39m[90m       [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreloaded qualified answer suppresses binary claim linked to unsuppo[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmissing need cannot borrow another needs answer[39m[90m                     [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 does not relax citation validation with data set #0[39m[90m              [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 does not relax citation validation with data set #1[39m[90m              [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 does not relax citation validation with data set #2[39m[90m              [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 does not relax citation validation with data set #3[39m[90m              [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mv2 result cannot be persisted under a legacy profile[39m[90m                [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90moutcome and citation validation fail closed[39m[90m                         [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactual validator failures have safe rule diagnostics[39m[90m                [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds result requires independent supported entailment for each par[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprovider cannot supply persistent answer part identity[39m[90m              [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90minsufficiency reason is structurally bounded[39m[90m                        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcontext packing preserves compare sides and fails when structural m[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcurrent context packing preserves whole evidence and deterministic[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgeneration persists one stable snapshot reused by multiple parts[39m[90m    [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfractional provider latency persists with answer parts and citation[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid provider latency is rejected without persisting an answer w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid provider latency is rejected without persisting an answer w[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid provider latency is rejected without persisting an answer w[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid provider latency is rejected without persisting an answer w[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid provider latency is rejected without persisting an answer w[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchild persistence failure rolls back the complete answer graph[39m[90m      [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcross workspace evidence cannot enter generation request[39m[90m            [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgeneration fingerprint is deterministic and quality sensitive[39m[90m       [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfigured openai generation profile matches python adapter lineage[39m[90m [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrc1 budget failure remains typed and distinct[39m[90m                       [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrc1 provider failure remains typed and distinct[39m[90m                     [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrc1 generation stream validates sequence and returns independent te[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrc1 generation stream fails closed on sequence gap[39m[90m                  [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\HybridRetrievalFoundationTest[39m
+  [32;1m✓[39;22m[90m [39m[90msparse profiles spaces and threshold policies preserve lineage[39m[90m      [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprovisional document aware policy is idempotent and keeps reviewed[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprovisional policy provisioning rejects incompatible existing ident[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprovisional policy retires the prior compatible active identity[39m[90m     [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhybrid generation requires compatible available sparse space and ve[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpolicy rejects non monotonic candidate configuration[39m[90m                [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msparse space provisioning is explicit idempotent and fingerprinted[39m[90m  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhybrid rebuild is complete resumable and activates atomically[39m[90m       [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrollback reverifies then atomically promotes and audits[39m[90m             [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrollback rejects incomplete vector projection[39m[90m                       [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclean schema contains hybrid lineage without raw vectors[39m[90m            [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ImportDomainFoundationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcomplete import relational foundation is present[39m[90m                    [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msnapshot and replacement bindings are item batch and workspace scop[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnullable predecision and unreplaced states are valid[39m[90m                [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcross workspace snapshot and self replacement are rejected[39m[90m          [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromotion identity is actor scoped generated and fail closed[39m[90m        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90monly one open attempt and one failure per lease generation are allo[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdecision canonical bytes and digest are deterministic[39m[90m               [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmodel guards preserve verified source snapshot and reservation iden[39m[90m…[39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ImportMatchingTest[39m
+  [32;1m✓[39;22m[90m [39m[90mverified checksum matches are workspace scoped and classified by li[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfamily candidates use only normalised filename and title with deter[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmatching fails closed for unverified or unsafe source identity[39m[90m      [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mworkspace checksum lock requires a transaction and persists one ide[39m[90m…[39m [90m0.02s[39m  
+{"timestamp":"2026-11-12T10:28:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"f32bd8ca-80cf-4fd0-a53b-99786c134eb8","workspace_id":"0d213a31-386f-3547-9a30-90851f234817"}
+{"timestamp":"2026-11-12T10:28:47+00:00","level":"error","service":"rag-platform-api","environment":"testing","event_name":"application.unclassified.v1","exception_type":"RuntimeException","exception_frames":[{"file":"TestCase.php","function":"test_expired_generation_remains_recoverable_when_successor_dispatch_is_temporarily_unavailable","line":1318},{"file":"TestCase.php","function":"invokeTestMethod","line":1355},{"file":"TestCase.php","function":"runTest","line":521},{"file":"TestRunner.php","function":"runBare","line":99},{"file":"TestCase.php","function":"run","line":361},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestRunner.php","function":"run","line":64},{"file":"Application.php","function":"run","line":229},{"file":"phpunit","function":"run","line":104}]}
+{"timestamp":"2026-11-12T10:28:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"application.unclassified.v1"}
+{"timestamp":"2026-11-12T10:28:47+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"fcdd103f-6cdb-4556-9f78-c5519fa1d2f8","workspace_id":"0e752613-5977-3e0f-a47b-32198918df6d"}
+{"timestamp":"2026-11-12T10:28:47+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"786d37b8-926d-478f-98db-b1d57b1981b5","workspace_id":"6b56d25f-ba97-3a1f-adcf-c9f0e54aba9b"}
+{"timestamp":"2026-11-12T10:28:47+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"38eff02a-7a71-4d75-ae5e-4d7aecb292a4","workspace_id":"57d33fc4-db37-3ea8-959d-4185f545b387"}
+{"timestamp":"2026-11-12T10:28:47+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"b5ad8c4f-4b9f-4ffd-a2e3-76a3b7b9aa13","workspace_id":"57d33fc4-db37-3ea8-959d-4185f545b387"}
+{"timestamp":"2026-11-12T10:28:47+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"38b7c19c-d7e8-4002-ac25-02c4a411cc60","workspace_id":"b3770cf5-55d0-34a7-994c-69844bbcbbf7"}
+{"timestamp":"2026-11-12T10:28:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":null,"key_id":null,"verification_outcome":"key_id"}
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ImportPreflightBoundaryTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdispatch is atomic exact object scoped and contains both lease auth[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreadable callback is incorporated once and conflicting replay fails[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale generation and mismatched token mutate nothing[39m[90m                [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired generation is terminalised before successor dispatch[39m[90m        [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpired generation remains recoverable when successor dispatch is t[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdetected rejection maps to rejected but operational failure remains[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbatch outcome is recorded only after every active item finishes pre[39m[90m…[39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90minbound callback requires the exact purpose scoped hmac[39m[90m             [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mzero byte source is rejected by laravel without dispatch[39m[90m            [39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ImportPromotionStateMachineTest[39m
+  [32;1m✓[39;22m[90m [39m[90mverified item promotes atomically with version bound storage and in[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mduplicate and live authorization changes terminalise as conflicts[39m[90m   [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcancellation failure ceiling and reconciliation are lease gated and[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromotion job records a durable failure before retrying[39m[90m             [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90madoption requires an authorised new decision and new actor identity[39m[90m [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstale lease cannot write and a changed decision terminalises the cu[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalidated existing family fails closed and terminal object cleanu[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcommitted object ownership prevents promotion cleanup[39m[90m               [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcommitted document identity is structurally bound to the attempt wo[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mversioned backend reuses verified content and document reads remain[39m[90m…[39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ImportWorkflowApiTest[39m
+  [32;1m✓[39;22m[90m [39m[90mmember can create a private import batch and resume it[39m[90m              [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconfiguration is bounded and cross workspace batches are concealed[39m[90m  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90minvalid files fail before any import identity is created[39m[90m            [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mduplicate source can be replaced once inside the same batch[39m[90m         [39m [90m0.02s[39m  
+{"timestamp":"2026-11-12T10:28:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"e1199552-50e6-45e1-9550-e27ea0bbff9e","key_id":"test-v2","verification_outcome":"purpose"}
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\IngestionOrchestrationFeatureTest[39m
+  [32;1m✓[39;22m[90m [39m[90msuccessful saga is idempotent and atomically indexes the document[39m[90m   [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchunk conflicts and stale leases fail closed[39m[90m                        [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90msealed reclaim preserves and pages authoritative chunks[39m[90m             [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpython provenance shapes survive the http boundary and persist with[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90munknown or malformed source location fields are rejected[39m[90m            [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mintentionally incorrect cross service digest still fails closed[39m[90m     [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcanonical chunk exemption does not disable ordinary request normali[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpermanent failure is authoritative and idempotent[39m[90m                   [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclean migration contains attempt evidence audit and chunk scope[39m[90m     [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msignature for one purpose cannot authorise another operation[39m[90m        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90membedding space provisioning is explicit and idempotent[39m[90m             [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mclaim fails closed when no embedding space is available[39m[90m             [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\LegacyUploadCutoverTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtransition window initialization is marked and gate closure refuses[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90minventory is bounded idempotent and gate close has reconstructable[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfinal remainder ceiling fails closed then restarts without duplicat[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmarked completion and ingestion continue after cutover but unmarked[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpiry is narrow and drain closes only after all browser upload sta[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexpiry rejects unmarked noneligible and in window documents[39m[90m         [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90minternal ingestion action remains available for nonlegacy promoted[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmarker identity is model immutable after assignment[39m[90m                 [39m [90m0.02s[39m  
+{"timestamp":"2026-11-12T10:28:48+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"observability.reconciliation.authentication_rejected.v1","verification_outcome":"replay"}
+{"timestamp":"2026-11-12T10:28:48+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"observability.reconciliation.authentication_rejected.v1","verification_outcome":"shape"}
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ObservabilityPolicyReconciliationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdesired policy is versioned and never self declares active[39m[90m          [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated plan and acknowledgement advance only the current att[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90midentical delivery is idempotent conflict fails and superseded atte[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mattempt identity cannot be replayed across policy targets[39m[90m           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthentication rejects replay wrong purpose and wrong environment g[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcollector is the only sampling target and sampler is configured[39m[90m     [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PlatformOperationsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mplatform authority is live and independent of workspace roles in bo[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mplatform role mutation is atomic idempotent audited and protects th[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdeployment credential is versioned rotatable and rejected before mu[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mnon browser command reads secret from protected prompt[39m[90m              [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdisable and delete invalidate database sessions and public identity[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmetrics reader uses only predefined queries and fails soft without[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90msignup cannot self assign platform authority[39m[90m                        [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mslo and alert adapter preserve controlled outcomes and filter speci[39m[90m…[39m [90m0.02s[39m  
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Feature\PostgresLegacyUploadCutoverSerializationTest[39m
+  [33;1m-[39;22m[90m [39m[90minitializer waiting behind gate closure observes closed gate[39m[90m [39m[33m→ PostgreSQL row-lock semantics require the isolated PostgreSQL test profile.[39m
+
+  [30;43;1m WARN [39;49;22m[39m Tests\Feature\PostgresWorkspaceChecksumSerializationTest[39m
+  [33;1m-[39;22m[90m [39m[90mconcurrent first creation serializes and rollback remains recoverable[39m[90m [39m[33m→ PostgreSQL row-lock semantics require the isolated PostgreSQL test profile.[39m
+  [33;1m-[39;22m[90m [39m[90mpreexisting reservation blocks same workspace but not another workspace[39m[90m [39m[33m→ PostgreSQL row-lock semantics require the isolated PostgreSQL test profile.[39m
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\R28FullPopulationPlumbingTest[39m
+  [31;1m⨯[39;22m[90m [39m[90mall frozen question shapes persist without provider transport[39m[90m       [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\R28ProductionPathDiagnosticTest[39m
+  [32;1m✓[39;22m[90m [39m[90mquestion only subset runs through the production conversation orche[39m[90m…[39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexecution input rejects scoring truth[39m[90m                               [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mneeds diagnostic keeps per need stages without raw chunk payloads[39m[90m   [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdiagnostic boundary delegates instead of reimplementing retrieval[39m[90m   [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcommand writes bounded resumable case records and routes injection[39m[90m… [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90munseen confirmation manifest routes all five cases only to the prim[39m[90m…[39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ResolvedEvidenceTemporalStatusTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcurrent future historical and withdrawn status uses the existing ti[39m[90m…[39m [90m0.02s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SavedViewApiTest[39m
+  [32;1m✓[39;22m[90m [39m[90muser can create open rename and delete a live saved view[39m[90m            [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdefinition is strict bounded and names are normalised per owner[39m[90m     [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcross user and cross workspace saved views are concealed[39m[90m            [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmembership end removes views but disabled user views remain inert[39m[90m   [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90munsupported stored fields are dropped on open with a visible notice[39m[90m [39m [90m0.01s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SemanticRetrievalTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexplicit location descriptors and unmatched references are collisio[39m[90m…[39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation descriptor must be a trailing phrase not the whole name[39m[90m    [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation name cannot leave a stale descriptor when renamed[39m[90m          [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcurrent valid at date and compare resolve only indexed corpus evide[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcomparison requires distinct paired authority states and excludes f[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtransition boundary selects immediately before and from even with l[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfamily metadata and owner eligibility do not change retrieval autho[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation alias narrows by ancestor and ambiguous reference clarifie[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mperiod and historical references resolve against attained authority[39m[90m [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mperiod ambiguity is scoped to each family across top level and comp[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mall ambiguous period families preserve the controlled clarification[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhistorical ambiguity is scoped to each family without resurrecting[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mempty period resolution remains no eligible evidence[39m[90m                [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mplural location references select descendant and fail closed for un[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mregistered benchmark style aliases normalise and reduce to the desc[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation alias resolution remains exact hierarchical and fail close[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90morganisation identity is not a location and registered site suffixe[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocation resolution is workspace scoped and unresolved input drops[39m[90m… [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresponse v2 plan validation rejects inconsistent or free text contr[39m[90m…[39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated endpoint hydrates candidates and rechecks scope[39m[90m       [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90munauthorised workspace is concealed and clarification never searche[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfinal recheck drops a candidate that became ineligible[39m[90m              [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbounded retry mints a fresh signed request id[39m[90m                       [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlaravel to python calls propagate the active w3c trace context[39m[90m      [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msemantic planner failure is typed and is not retried to success[39m[90m     [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90msystemic planner failure is typed and aborts without retry[39m[90m          [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlaravel does not replay an exhausted provider rate limit failure[39m[90m    [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlaravel does not replay an exhausted reranker rate limit failure[39m[90m    [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreranker cannot move an eligible candidate to the wrong comparison[39m[90m… [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlaravel preserves provider and outer attempt history when infrastru[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlaravel preserves outer history when infrastructure retry recovers[39m[90m  [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhealthy retrieval records one outer attempt without retry[39m[90m           [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mretrieval timeout must contain the derived inner budget[39m[90m             [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdefault timeout contains search and two sided reranker budgets[39m[90m      [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mincomplete comparison and empty eligible scope are controlled outco[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mempty search returns no retrieval candidates[39m[90m                        [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90moperational failure is distinct from an empty search[39m[90m                [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocal evaluation preserves typed retrieval failure without fabricat[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhybrid path reranks rechecks and applies laravel threshold[39m[90m          [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhybrid path returns qualified lineage[39m[90m                               [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpolicy metadata cannot prove a personal record and foreign metadata[39m[90m…[39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhybrid path rejects mismatched sparse lineage[39m[90m                       [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlocal evaluation pair shares one plan and keeps calibrating policy[39m[90m… [39m [90m0.03s[39m  
+
+Fatal error: Allowed memory size of 134217728 bytes exhausted (tried to allocate 65536 bytes) in /app/vendor/open-telemetry/sdk/Trace/SpanSuppression/NoopSuppressionStrategy/NoopSuppressionStrategy.php on line 16
+Fatal error: Premature end of PHP process when running Tests\Feature\TelemetryTest::test_http_trace_uses_route_template_and_propagates_parent_context.

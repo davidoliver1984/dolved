@@ -21,6 +21,38 @@ def test_request_preserves_independent_current_support_and_pair():
     assert len(parsed.legacy_request().evidence) == 3
 
 
+@pytest.mark.parametrize("comparison", [False, True])
+def test_three_needs_keep_all_owners_and_multiple_passages(comparison):
+    raw = request()
+    if not comparison:
+        raw["evidence_needs"][0]["operation"] = "retrieve"
+        raw["evidence"][1]["side"] = "primary"
+        raw["constraints"]["required_sides"] = ["primary"]
+    third = copy.deepcopy(raw["evidence_needs"][1])
+    third["need_id"] = "n3"
+    third["evidence_ids"] = ["ev-04", "ev-05"]
+    raw["evidence_needs"].append(third)
+    for handle in third["evidence_ids"]:
+        passage = copy.deepcopy(raw["evidence"][2])
+        passage["evidence_id"] = handle
+        passage["temporal_authority"]["need_id"] = "n3"
+        raw["evidence"].append(passage)
+    parsed = GenerationNeedsRequest.model_validate(raw)
+    assert len(parsed.evidence_needs) == 3
+    assert len(parsed.evidence) == 5
+    assert parsed.evidence_needs[2].evidence_ids == ("ev-04", "ev-05")
+    from jsonschema import Draft202012Validator
+
+    schema = json.loads(
+        Path("/contracts/http/generation-needs/v2/request.schema.json").read_text()
+    )
+    Draft202012Validator(schema).validate(raw)
+    fourth = copy.deepcopy(third)
+    raw["evidence_needs"].append(fourth)
+    with pytest.raises(ValueError):
+        GenerationNeedsRequest.model_validate(raw)
+
+
 def test_two_comparison_pairs_keep_separate_ownership_within_k5():
     raw = request()
     second = raw["evidence_needs"][1]

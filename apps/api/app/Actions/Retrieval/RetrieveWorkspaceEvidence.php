@@ -65,12 +65,18 @@ final readonly class RetrieveWorkspaceEvidence
         $needs = $plan->value['needs'];
         $usage = [$plan->usage->toArray()];
         $observe?->__invoke('needs_plan', $plan->value);
-        if ($plan->value['decision'] === 'clarify' || count($needs) > 2
-            || array_sum(array_map(fn ($need) => $need['operation'] === 'compare' ? 2 : 1, $needs)) > 4) {
+        if ($plan->value['decision'] === 'clarify') {
             return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
                 reason: 'evidence_needs_clarification',
                 clarificationSource: RetrievalClarificationSource::Planner, usage: $usage,
-                clarificationQuestion: $plan->value['clarification'] ?? 'Please narrow this question to at most two requested aspects.');
+                clarificationQuestion: $plan->value['clarification']);
+        }
+        if (count($needs) > NeedsEvidenceSelection::MAX_NEEDS
+            || NeedsEvidenceSelection::searchLanes($needs) > NeedsEvidenceSelection::MAX_SEARCH_LANES) {
+            return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
+                reason: 'evidence_needs_capacity',
+                clarificationSource: RetrievalClarificationSource::Planner, usage: $usage,
+                clarificationQuestion: 'I can handle up to three requested aspects and four searches at once; a version comparison uses two searches. Which parts would you like me to address first?');
         }
         $results = [];
         $plans = [];
@@ -202,7 +208,7 @@ final readonly class RetrieveWorkspaceEvidence
             $selected, reason: $selected === [] && $coverage !== []
                 && count(array_filter($coverage, fn ($need) => $need['retrieval_reason'] === 'no_previous_version')) === count($coverage)
                     ? 'no_previous_version' : null,
-            lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v2',
+            lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v3',
                 'needs' => array_map(fn ($r) => $r->lineage, $results)], usage: $usage, evidenceNeeds: $coverage);
     }
 

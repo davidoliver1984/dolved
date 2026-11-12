@@ -1,0 +1,12 @@
+{
+  "baseline_failures": [
+    "Tests.Feature.R28FullPopulationPlumbingTest::test_all_frozen_question_shapes_persist_without_provider_transport",
+    "Tests.Unit.PlannerConfigurationTest::test_current_planner_lineage_matches_adr_0022_v5"
+  ],
+  "changed_failures": [
+    "Tests.Feature.R28FullPopulationPlumbingTest::test_all_frozen_question_shapes_persist_without_provider_transport",
+    "Tests.Unit.PlannerConfigurationTest::test_current_planner_lineage_matches_adr_0022_v5"
+  ],
+  "new": [],
+  "baseline_only": []
+}

@@ -30,6 +30,25 @@ EXAMPLES = json.loads((ROOT / "examples.json").read_text())
 MUTATIONS = json.loads((ROOT / "invalid-mutations.json").read_text())
 
 
+def test_three_need_planner_output_survives_adapter_and_grounding():
+    sample = deepcopy(EXAMPLES[0])
+    sample["plan"]["needs"].append(
+        {**deepcopy(sample["plan"]["needs"][1]), "need_id": "n3"}
+    )
+    sample["plan"]["bindings"].append(
+        {**deepcopy(sample["plan"]["bindings"][1]), "need_id": "n3"}
+    )
+    result = adapter(sample["plan"], []).plan_needs(
+        turns(sample), evaluated_at="2026-11-12T12:00:00Z"
+    )
+    assert [need.need_id for need in result.plan.needs] == ["n1", "n2", "n3"]
+    assert [need.operation for need in result.plan.needs] == [
+        "compare",
+        "retrieve",
+        "retrieve",
+    ]
+
+
 def test_prompt_distinguishes_requested_tasks_from_source_count_and_named_binding():
     from app.retrieval.needs_planner import PROMPT
 

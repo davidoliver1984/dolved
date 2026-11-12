@@ -66,9 +66,25 @@ class R28R06GovernedTest(unittest.TestCase):
                 start, stop = {"case6_retry": (5, 6), "case5_retry": (4, 5), "generic_controls": (0, 3)}[stage]
                 self.assertEqual(scopes["items"], governed.json_file(governed.SELECTION)["confirmation"]["items"][start:stop])
             self.assertEqual(
-            "71910561e37b2aee523252ad938496863c73c931a7b7fac2f1765d81ef77568f",
+                governed.runtime_aggregate(),
                 identities["runtime_source_aggregate"],
             )
+
+    def test_capacity_checkpoint_is_fixed_question_only_and_primary_scoped(self) -> None:
+        execution, scopes, identities = governed.verify_inputs("capacity_checkpoint")
+        self.assertEqual(5, len(execution["items"]))
+        self.assertEqual({"primary"}, {item["scope"] for item in scopes["items"]})
+        self.assertEqual(governed.runtime_aggregate(), identities["runtime_source_aggregate"])
+        for item in execution["items"]:
+            self.assertEqual({"case_id", "variant_id", "utterance"}, set(item))
+        with patch.object(governed, "sha256", return_value="0" * 64):
+            with self.assertRaisesRegex(ValueError, "freeze mismatch"):
+                governed.verify_inputs("capacity_checkpoint")
+
+    def test_current_runtime_fingerprint_is_derived_not_a_historical_constant(self) -> None:
+        with patch.object(governed, "runtime_aggregate", return_value="a" * 64):
+            _, _, identities = governed.verify_inputs("regression")
+        self.assertEqual("a" * 64, identities["runtime_source_aggregate"])
 
     def test_exact_authorization_passes_and_mutation_fails(self) -> None:
         execution, _, identities = governed.verify_inputs("regression")

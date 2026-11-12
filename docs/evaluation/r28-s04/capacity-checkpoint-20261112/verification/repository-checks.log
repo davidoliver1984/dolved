@@ -1,0 +1,3 @@
+docker compose exec -T web npm run lint
+service "web" is not running
+make: *** [format-check-web] Error 1

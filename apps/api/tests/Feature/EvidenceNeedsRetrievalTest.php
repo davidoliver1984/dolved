@@ -1256,7 +1256,28 @@ final class EvidenceNeedsRetrievalTest extends TestCase
 
     public static function retrievalMutations(): array
     {
-        return [['none'], ['corpus_cutover'], ['comparison_removed']];
+        return [['none'], ['corpus_cutover'], ['comparison_removed'], ['three_ordinary'], ['three_mixed']];
+    }
+
+    public function test_capacity_overflow_is_a_displayable_limit_not_user_ambiguity(): void
+    {
+        Http::preventStrayRequests();
+        Http::fake();
+        [, , $scope] = $this->scope();
+        $plan = $this->plan(0, function ($data) {
+            $data['plan']['needs'][] = [...$data['plan']['needs'][0], 'need_id' => 'n3',
+                'question_span' => $data['plan']['needs'][1]['question_span']];
+            $data['plan']['bindings'][] = [...$data['plan']['bindings'][0], 'need_id' => 'n3'];
+
+            return $data;
+        });
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 15, CarbonImmutable::parse('2026-09-06'));
+        $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+        $this->assertSame('evidence_needs_capacity', $result->reason);
+        $display = app(ControlledResponseRenderer::class)->clarification($result->clarificationSource, $result->reason, $result->clarificationQuestion);
+        $this->assertStringContainsString('four searches', $display['text']);
+        $this->assertStringNotContainsString('ambiguous', $display['text']);
+        Http::assertNothingSent();
     }
 
     #[DataProvider('retrievalMutations')]
@@ -1267,10 +1288,26 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $new = $this->document($workspace, $generation, '2026-06-15', $old);
         $support = $this->document($workspace, $generation, '2026-04-01');
         $generation->load(['embeddingSpaceGeneration.embeddingProfile', 'sparseSpaceGeneration']);
+        $threeNeeds = str_starts_with($mutation, 'three_');
+        $third = $threeNeeds ? $this->document($workspace, $generation, '2026-04-02') : null;
         $searchScopes = [];
         Http::preventStrayRequests();
         Http::fake(function (Request $request) use ($workspace, $generation, $policy, $old, $mutation, &$searchScopes) {
             $body = $request->data();
+            if (str_ends_with($request->url(), '/answer-needs')) {
+                $this->assertCount(3, $body['evidence_needs']);
+                $parts = $links = [];
+                foreach ($body['evidence_needs'] as $index => $need) {
+                    $this->assertNotEmpty($need['evidence_ids']);
+                    $parts[] = ['text' => 'Verified synthetic '.$need['need_id'].'.', 'evidence_ids' => $need['evidence_ids']];
+                    $links[] = ['need_id' => $need['need_id'], 'answer_part_indices' => [$index], 'unsupported_aspect_indices' => []];
+                }
+
+                return Http::response(['contract_version' => 2, 'request_id' => $body['request_id'], 'status' => 'completed',
+                    'result' => ['contract_version' => 3, 'outcome' => 'answered', 'answer_parts' => $parts,
+                        'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+                        'aspect_links' => $links, 'entailment_checks' => array_map(fn ($i) => ['part_index' => $i, 'verdict' => 'supported', 'missing_condition' => null], [0, 1, 2])]]);
+            }
             if (str_ends_with($request->url(), '/search')) {
                 $this->assertArrayHasKey('hybrid_configuration', $body);
                 $searchScopes[] = $body['scopes'];
@@ -1321,9 +1358,19 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 'final_provider_success_at' => '2026-09-06T12:00:01Z', 'provider_retry_elapsed_seconds' => 0]);
         });
         $observations = [];
-        $boundComparison = $this->plan(0, function ($data) use ($old) {
+        $boundComparison = $this->plan(0, function ($data) use ($old, $support, $third, $mutation) {
             $data['plan']['bindings'][0]['subject_status'] = 'matched';
             $data['plan']['bindings'][0]['family_ids'] = [$old->family->public_id];
+            if ($third !== null) {
+                $data['plan']['bindings'][1]['subject_status'] = 'matched';
+                $data['plan']['bindings'][1]['family_ids'] = [$support->family->public_id];
+                $data['plan']['needs'][] = [...$data['plan']['needs'][1], 'need_id' => 'n3', 'aspect' => 'Independent third current guidance'];
+                $data['plan']['bindings'][] = [...$data['plan']['bindings'][1], 'need_id' => 'n3', 'family_ids' => [$third->family->public_id]];
+                if ($mutation === 'three_ordinary') {
+                    $data['plan']['needs'][0]['operation'] = 'retrieve';
+                    $data['plan']['needs'][0]['authority'] = ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null];
+                }
+            }
 
             return $data;
         });
@@ -1339,20 +1386,34 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             return;
         }
         $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome, json_encode($observations));
-        $this->assertCount(2, $searchScopes);
+        $this->assertCount($threeNeeds ? 3 : 2, $searchScopes);
         $this->assertNotContains($support->public_id, $searchScopes[0][0]['eligible_document_ids']);
         $this->assertContains($support->public_id, $searchScopes[1][0]['eligible_document_ids']);
         $this->assertContains($support->public_id, array_column($result->candidates, 'document_id'));
         if ($mutation === 'comparison_removed') {
             $this->assertNotContains($old->public_id, array_column($result->candidates, 'document_id'));
             $this->assertNotContains('n1', array_column($result->candidates, 'need_id'));
-        } else {
+        } elseif ($mutation !== 'three_ordinary') {
             $this->assertContains($old->public_id, array_column($result->candidates, 'document_id'));
             $this->assertContains($new->public_id, array_column($result->candidates, 'document_id'));
         }
         $this->assertLessThanOrEqual(5, count($result->candidates));
         $this->assertCount(1, array_filter($result->usage, fn ($u) => $u['stage'] === 'planner'));
         $this->assertArrayNotHasKey('supports_need_id', $result->evidenceNeeds[1]);
-        Http::assertSentCount(4);
+        if ($threeNeeds) {
+            $this->assertSame(['n1', 'n2', 'n3'], array_column($result->evidenceNeeds, 'need_id'));
+            $this->assertSame($mutation === 'three_mixed' ? 4 : 3, array_sum(array_map('count', $searchScopes)));
+            $this->assertContains($third->public_id, array_column($result->candidates, 'document_id'));
+            $answer = app(GenerateGroundedAnswer::class)->handle(new GenerationAssemblyInput(
+                'Three synthetic requested aspects', $result, [], [], $scope, []),
+                app(GenerationProfileFactory::class)->configuredNeeds());
+            $fresh = $answer->fresh();
+            $this->assertSame(['n1' => 'supported', 'n2' => 'supported', 'n3' => 'supported'], $fresh->aspect_results);
+            foreach (['n1', 'n2', 'n3'] as $id) {
+                $this->assertStringContainsString('Verified synthetic '.$id.'.', $fresh->renderedText());
+            }
+            $this->assertSame($answer->renderedText(), $fresh->renderedText());
+        }
+        Http::assertSentCount($threeNeeds ? 7 : 4);
     }
 }

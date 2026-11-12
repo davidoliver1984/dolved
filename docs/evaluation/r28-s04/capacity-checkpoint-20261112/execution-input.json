@@ -1,0 +1,10 @@
+{
+  "subset_id": "R28-CAPACITY-FIVE-20261112-V1",
+  "items": [
+    {"case_id": "v4.case.corrected-b06-06", "variant_id": "v1", "utterance": "I'm updating our safeguarding card for a resident-money discrepancy. Who receives the first escalation now, what part does Finance keep, and which current role name and outside-agency sharing route should the card use?"},
+    {"case_id": "capacity.unfamiliar-three", "variant_id": "v1", "utterance": "I have three separate new-starter questions: under Uniform Allowance Guidance, what is the initial payment; under Staff Handbook Full Manual, what wellbeing support is available; and under Resident Finances and Appointeeship Policy, who receives a financial concern now?"},
+    {"case_id": "capacity.named-comparison", "variant_id": "v1", "utterance": "Please compare the current Uniform Allowance Guidance with its previous version for the starter and annual replacement payments. Separately, what wellbeing services does the current Staff Handbook Full Manual offer, and who receives a financial concern under the current Resident Finances and Appointeeship Policy?"},
+    {"case_id": "v4.case.corrected-b01-01", "variant_id": "v1", "utterance": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?"},
+    {"case_id": "capacity.overflow", "variant_id": "v1", "utterance": "Compare the current Uniform Allowance Guidance with its previous version for both payments; compare the current Overtime Payment Guidance with its previous version for pay and time off in lieu; and compare the current Medication Fridge Breakdown Procedure with its previous version for who must be called."}
+  ]
+}

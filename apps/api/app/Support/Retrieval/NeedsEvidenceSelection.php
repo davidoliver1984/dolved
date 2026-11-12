@@ -11,11 +11,24 @@ final class NeedsEvidenceSelection
 {
     public const FINAL_K = 5;
 
+    public const MAX_NEEDS = 3;
+
+    public const MAX_SEARCH_LANES = 4;
+
+    public static function searchLanes(array $needs): int
+    {
+        return array_sum(array_map(fn ($need) => match ($need['operation']) {
+            'scope_enquiry' => 0,
+            'compare' => 2,
+            default => 1,
+        }, $needs));
+    }
+
     /** @param list<array<string, mixed>> $needs @param array<string, RetrievalResult> $results */
     public function select(array $needs, array $results): array
     {
-        if (count($needs) > 2 || array_sum(array_map(fn ($n) => $n['operation'] === 'compare' ? 2 : 1, $needs)) > 4) {
-            throw new InvalidArgumentException('The production slice permits two needs and four lanes.');
+        if (count($needs) > self::MAX_NEEDS || self::searchLanes($needs) > self::MAX_SEARCH_LANES) {
+            throw new InvalidArgumentException('The production slice permits three needs and four search lanes.');
         }
         $unitsByNeed = [];
         foreach ($needs as $need) {

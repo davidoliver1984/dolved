@@ -13,6 +13,7 @@ use App\Models\DocumentChunk;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Generation\GenerationEvidence;
 use App\Support\Generation\GenerationRequest;
+use App\Support\Retrieval\NeedsEvidenceSelection;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 
@@ -40,7 +41,7 @@ final readonly class AssembleGenerationRequest
             ->get()->keyBy('public_id');
         $evidence = [];
         $needs = collect($input->retrievalResult->evidenceNeeds)->keyBy('need_id');
-        if ($needs->count() !== count($input->retrievalResult->evidenceNeeds) || $needs->count() > 2) {
+        if ($needs->count() !== count($input->retrievalResult->evidenceNeeds) || $needs->count() > NeedsEvidenceSelection::MAX_NEEDS) {
             throw new GenerationException('Invalid bounded generation needs.');
         }
         foreach ($input->retrievalResult->candidates as $index => $candidate) {
@@ -97,7 +98,7 @@ final readonly class AssembleGenerationRequest
         } else {
             $policyVersion = 'whole-needs-evidence-v1';
             $units = array_sum(array_map(fn ($item) => mb_strlen($item->text, 'UTF-8'), $evidence));
-            if (count($evidence) > 5 || $units > $maximum) {
+            if (count($evidence) > NeedsEvidenceSelection::FINAL_K || $units > $maximum) {
                 throw new GenerationContextBudgetExceeded($policyVersion, $units, $maximum);
             }
             // Preserve the already-selected bounded units whole; never split a pair.
@@ -123,7 +124,7 @@ final readonly class AssembleGenerationRequest
                     'retrieval_outcome', 'retrieval_reason',
                 ])) + ['evidence_ids' => array_map(fn ($item) => $item->evidenceId, $items)];
             }
-            if ($needs->sum(fn ($need) => $need['operation'] === 'compare' ? 2 : 1) > 4) {
+            if (NeedsEvidenceSelection::searchLanes($needs->values()->all()) > NeedsEvidenceSelection::MAX_SEARCH_LANES) {
                 throw new GenerationException('Generation needs exceed the accepted slice fanout.');
             }
         }

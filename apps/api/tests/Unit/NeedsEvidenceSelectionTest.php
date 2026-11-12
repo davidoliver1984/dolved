@@ -71,10 +71,39 @@ final class NeedsEvidenceSelectionTest extends TestCase
         }
     }
 
-    public function test_three_needs_still_exceed_slice_fanout(): void
+    public function test_five_search_lanes_still_exceed_slice_fanout(): void
     {
         $this->expectException(InvalidArgumentException::class);
         (new NeedsEvidenceSelection)->select([['need_id' => 'n1', 'operation' => 'compare'], ['need_id' => 'n2', 'operation' => 'compare'], ['need_id' => 'n3', 'operation' => 'retrieve']], []);
+    }
+
+    public function test_three_ordinary_needs_retain_multiple_passages_within_five_slots(): void
+    {
+        $needs = array_map(fn ($id) => ['need_id' => $id, 'operation' => 'retrieve'], ['n1', 'n2', 'n3']);
+        $results = [];
+        foreach (['n1' => 2, 'n2' => 1, 'n3' => 2] as $id => $count) {
+            $results[$id] = new RetrievalResult(RetrievalOutcome::EvidenceFound,
+                array_map(fn ($rank) => $this->candidate($id.'-'.$rank, $id, 'primary', $rank), range(1, $count)));
+        }
+        $selected = (new NeedsEvidenceSelection)->select($needs, $results);
+        $this->assertCount(5, $selected);
+        $this->assertSame(['n1' => 2, 'n2' => 1, 'n3' => 2], array_count_values(array_column($selected, 'need_id')));
+    }
+
+    public function test_comparison_and_two_ordinary_needs_keep_pair_and_two_passage_support(): void
+    {
+        $needs = [['need_id' => 'n1', 'operation' => 'compare'], ['need_id' => 'n2', 'operation' => 'retrieve'], ['need_id' => 'n3', 'operation' => 'retrieve']];
+        $results = [
+            'n1' => new RetrievalResult(RetrievalOutcome::EvidenceFound, [$this->candidate('old', 'a', 'comparison', 1), $this->candidate('new', 'a', 'primary', 1)]),
+            'n2' => new RetrievalResult(RetrievalOutcome::EvidenceFound, [$this->candidate('support-a', 'b', 'primary', 1), $this->candidate('support-b', 'b', 'primary', 2)]),
+            'n3' => new RetrievalResult(RetrievalOutcome::EvidenceFound, [$this->candidate('third', 'c', 'primary', 1)]),
+        ];
+        $selected = (new NeedsEvidenceSelection)->select($needs, $results);
+        $this->assertCount(5, $selected);
+        $this->assertSame(['n1' => 2, 'n2' => 2, 'n3' => 1], array_count_values(array_column($selected, 'need_id')));
+        $this->assertSame(4, NeedsEvidenceSelection::searchLanes($needs));
+        $needs[2]['operation'] = 'scope_enquiry';
+        $this->assertSame(3, NeedsEvidenceSelection::searchLanes($needs));
     }
 
     public function test_pair_ranking_considers_both_sides_before_chunk_identity(): void

@@ -444,7 +444,7 @@
       "items": {
         "$ref": "#/$defs/GenerationNeed"
       },
-      "maxItems": 2,
+      "maxItems": 3,
       "minItems": 1,
       "title": "Evidence Needs",
       "type": "array"
