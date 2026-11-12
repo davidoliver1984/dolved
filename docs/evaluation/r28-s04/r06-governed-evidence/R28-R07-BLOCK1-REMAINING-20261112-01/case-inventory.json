@@ -1,0 +1,312 @@
+[
+  {
+    "file": "cases/01-v4.case.corrected-b01-10-v1.json",
+    "case_id": "v4.case.corrected-b01-10",
+    "status": "retrieval_no_answer",
+    "displayed_text": "I couldn't find enough available evidence to answer that question.",
+    "plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Compare the organisation's guidance before and after the renaming described as \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d to determine whether the rule about which remedies may be given changed.",
+          "authority": {
+            "kind": "previous",
+            "precision": "named",
+            "source": {
+              "quote": "\u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d",
+              "turn_id": "user-1"
+            },
+            "value": "\u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "compare",
+          "question_span": {
+            "quote": "\u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "selection_coverage": {
+      "n1": {
+        "budget_cut_unit_count": 0,
+        "eligible_unit_count": 0,
+        "selected_unit_count": 0
+      }
+    },
+    "final_evidence": [],
+    "generation_outcome": null,
+    "unsupported_aspects": []
+  },
+  {
+    "file": "cases/02-block1.unfamiliar-duration-v1.json",
+    "case_id": "block1.unfamiliar-duration",
+    "status": "completed",
+    "displayed_text": "For an employee with four completed years of service, the handbook requires a notice period of one week per completed year of service for employees with \"2 years or more,\" which for four completed years is four weeks (the clause is subject to the stated statutory maximum).\n\nOn resignation a staff member must return any issued Alderbridge property \u2014 the handbook explicitly lists issued equipment, a key or an access card, and elsewhere also refers to issued uniform, device or other items of Alderbridge property as items the employee is responsible for and must return or report loss of.",
+    "plan": {
+      "bindings": [
+        {
+          "family_ids": [
+            "4d5e16ae-a46b-46a2-9724-d6a4960005d0"
+          ],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "matched"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Retrieve from the specified 'Employee Handbook \u2014 Terms and Conditions' what resignation notice is required after \"four completed years of service\" and list any employer-issued items the employee must return on resignation.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": {
+            "precision": "duration",
+            "source": {
+              "quote": "four completed years of service",
+              "turn_id": "user-1"
+            },
+            "value": "four completed years of service"
+          },
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "After four completed years of service, what resignation notice does the Employee Handbook Terms Full require, and what issued items must I return?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "selection_coverage": {
+      "n1": {
+        "budget_cut_unit_count": 0,
+        "eligible_unit_count": 4,
+        "selected_unit_count": 4
+      }
+    },
+    "final_evidence": [
+      {
+        "chunk_id": "167ae317-840d-51ff-9d44-fc2d83aa8913",
+        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "f8362c93-3fc9-5c0d-8edc-1dc367ecf327",
+        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "d59769f2-6cf2-598e-a059-38e1d1461c02",
+        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "ad0292c4-19ba-51e7-9e7b-d7bca365a37b",
+        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "generation_outcome": "answered",
+    "unsupported_aspects": []
+  },
+  {
+    "file": "cases/03-block1.unfamiliar-after-v1.json",
+    "case_id": "block1.unfamiliar-after",
+    "status": "completed",
+    "displayed_text": "Immediately after July 2026, the IT service desk handled missing courses \u2014 contact the IT service desk rather than the Training Team for locked-out users or courses not showing.",
+    "plan": {
+      "bindings": [
+        {
+          "family_ids": [
+            "17278f8a-fa84-4a14-a98e-261d19682c66"
+          ],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "matched"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Under the named document 'E-Learning Platform Guidance', retrieve who handled a missing course in the period immediately after July 2026.",
+          "authority": {
+            "kind": "after",
+            "precision": "month",
+            "source": {
+              "quote": "immediately after July 2026",
+              "turn_id": "user-1"
+            },
+            "value": "2026-07"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "Under the E-Learning Platform Guidance, who handled a missing course immediately after July 2026?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "selection_coverage": {
+      "n1": {
+        "budget_cut_unit_count": 0,
+        "eligible_unit_count": 1,
+        "selected_unit_count": 1
+      }
+    },
+    "final_evidence": [
+      {
+        "chunk_id": "e6eef862-161a-56f0-adef-a7cef552af6c",
+        "document_family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+        "document_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "generation_outcome": "answered",
+    "unsupported_aspects": []
+  },
+  {
+    "file": "cases/04-v4.case.corrected-b01-07-v1.json",
+    "case_id": "v4.case.corrected-b01-07",
+    "status": "completed",
+    "displayed_text": "For new starters, the guidance changed in April 2026 from a one-off initial allowance of \u00a340 to an increased one-off initial allowance of \u00a355, i.e. a rise of \u00a315 applied from the new version effective April 2026.\n\nFor the annual replacement allowance paid each April, the guidance changed in April 2026 from \u00a325 to an increased \u00a335, i.e. a rise of \u00a310 applied from the new version effective April 2026.",
+    "plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Compare the recorded rules for the uniform allowance for new starters ('starter') and for the annual replacement allowance, showing what each allowance was immediately before and immediately after the change and describing how they changed in April 2026.",
+          "authority": {
+            "kind": "transition_period",
+            "precision": "month",
+            "source": {
+              "quote": "in April 2026",
+              "turn_id": "user-1"
+            },
+            "value": "2026-04"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "compare",
+          "question_span": {
+            "quote": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "selection_coverage": {
+      "n1": {
+        "budget_cut_unit_count": 0,
+        "eligible_unit_count": 4,
+        "selected_unit_count": 4
+      }
+    },
+    "final_evidence": [
+      {
+        "chunk_id": "c943d6d2-b8ba-5878-b26a-ec32d30d7ecc",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "c374ef9c-5170-5ae8-b50b-746e2a8c98bb",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b",
+        "need_id": "n1",
+        "side": "comparison"
+      },
+      {
+        "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "5ea460a7-9a67-5cf3-903c-21842e4db198",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b",
+        "need_id": "n1",
+        "side": "comparison"
+      }
+    ],
+    "generation_outcome": "answered",
+    "unsupported_aspects": []
+  }
+]
