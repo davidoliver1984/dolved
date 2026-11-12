@@ -27,8 +27,8 @@ final readonly class EvidenceNeedsPlan
         $identity = ClassifierLineage::fromArray($lineage);
         $observation = PlannerUsage::fromArray($usage);
         if ($identity->contractSchemaVersion !== 'evidence-needs-plan-v3'
-            || $identity->promptVersion !== 'bounded-evidence-needs-v23'
-            || $identity->adapterVersion !== 'structured-chat-needs-v7'
+            || $identity->promptVersion !== 'bounded-evidence-needs-v24'
+            || $identity->adapterVersion !== 'structured-chat-needs-v8'
             || $identity->provider !== $observation->provider
             || $identity->model !== $observation->model) {
             throw new InvalidArgumentException('Needs planner identity does not match its contract or usage.');

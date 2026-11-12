@@ -2,6 +2,10 @@
 
 ## Approved Block 1 follow-up
 
+### Bounded correction-feedback follow-up
+
+Provider-free diagnosis identified b01-04's exact schema invariant: an ordinary period with a quote starting before/after. The rejected payload is not retained, so the quote could be calendar-anchored “before January 2026” or event-anchored “after the change”; this remains unresolved. The previous second attempt received no error feedback. David approved adding only safe stage/field/code feedback, retaining all validators and the two-attempt ceiling. A separate coverage preflight accepted omitted clauses with either a partial or whole-question span. David chose to preserve validators and require independent coverage review at the four-input USD 2 checkpoint, not invent a production semantic validator in this task. The plan assigns that general first/second-attempt limitation to Block 1 alongside input-4 drift and makes omission a Block 4 readiness failure. Live results are pending; no success is presumed from provider-free scripted correction.
+
 ### Final bounded result
 
 Runtime correction `b00b4a346cfce980987e5a328c9748f2ca29d90b` was committed and pushed after exact full-suite failure-name parity: AI 38 retained failures, Laravel 2, with 17 additional passing tests and raw JUnit retained. Seven frozen questions were each attempted once, producing five real answers and two no-answers. The original and unfamiliar duration questions exercised the non-calendar duration path; before-July and unfamiliar after-July questions selected the correct e-learning authority. The uniform transition comparison stayed correct.

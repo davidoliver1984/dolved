@@ -1,0 +1,23 @@
+ Container rag-platform-ai-run-99f61a0e80f7 Creating 
+ Container rag-platform-ai-run-99f61a0e80f7 Created 
+test_all_inputs_are_frozen_question_only (test_run_r28_r06_governed.R28R06GovernedTest.test_all_inputs_are_frozen_question_only) ... ok
+test_block1_checkpoint_is_fixed_and_question_only (test_run_r28_r06_governed.R28R06GovernedTest.test_block1_checkpoint_is_fixed_and_question_only) ... ok
+test_block1_continuation_contains_only_the_four_never_dispatched_inputs (test_run_r28_r06_governed.R28R06GovernedTest.test_block1_continuation_contains_only_the_four_never_dispatched_inputs) ... ok
+test_capacity_checkpoint_is_fixed_question_only_and_primary_scoped (test_run_r28_r06_governed.R28R06GovernedTest.test_capacity_checkpoint_is_fixed_question_only_and_primary_scoped) ... ok
+test_capacity_overflow_selects_only_frozen_fifth_input (test_run_r28_r06_governed.R28R06GovernedTest.test_capacity_overflow_selects_only_frozen_fifth_input) ... ok
+test_case32_diagnostic_selects_only_the_frozen_v2_utterance (test_run_r28_r06_governed.R28R06GovernedTest.test_case32_diagnostic_selects_only_the_frozen_v2_utterance) ... ok
+test_controlled_planner_clarification_is_a_valid_record (test_run_r28_r06_governed.R28R06GovernedTest.test_controlled_planner_clarification_is_a_valid_record) ... ok
+test_current_runtime_fingerprint_is_derived_not_a_historical_constant (test_run_r28_r06_governed.R28R06GovernedTest.test_current_runtime_fingerprint_is_derived_not_a_historical_constant) ... ok
+test_exact_authorization_passes_and_mutation_fails (test_run_r28_r06_governed.R28R06GovernedTest.test_exact_authorization_passes_and_mutation_fails) ... ok
+test_feedback_checkpoint_freezes_four_inputs_and_original_security_scope (test_run_r28_r06_governed.R28R06GovernedTest.test_feedback_checkpoint_freezes_four_inputs_and_original_security_scope) ... ok
+test_full_r07_selection_is_exact_frozen_population (test_run_r28_r06_governed.R28R06GovernedTest.test_full_r07_selection_is_exact_frozen_population) ... ok
+test_full_review_gate_can_acknowledge_valid_record_without_stdin (test_run_r28_r06_governed.R28R06GovernedTest.test_full_review_gate_can_acknowledge_valid_record_without_stdin) ... ok
+test_interactive_review_gate_still_stops_on_eof (test_run_r28_r06_governed.R28R06GovernedTest.test_interactive_review_gate_still_stops_on_eof) ... ok
+test_one_use_marker_rejects_second_claim (test_run_r28_r06_governed.R28R06GovernedTest.test_one_use_marker_rejects_second_claim) ... ok
+test_r07_retry_and_tail_partition_only_unfinished_work (test_run_r28_r06_governed.R28R06GovernedTest.test_r07_retry_and_tail_partition_only_unfinished_work) ... ok
+test_r07_second_tail_excludes_all_44_attempted_utterances (test_run_r28_r06_governed.R28R06GovernedTest.test_r07_second_tail_excludes_all_44_attempted_utterances) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 5.544s
+
+OK

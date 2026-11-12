@@ -159,7 +159,7 @@ class ConversationOrchestrationTest extends TestCase
         Http::fake(function (Request $request) use ($question, $attempts) {
             $identity = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                 'contract_schema_version' => 'evidence-needs-plan-v3',
-                'prompt_version' => 'bounded-evidence-needs-v23', 'adapter_version' => 'structured-chat-needs-v7'];
+                'prompt_version' => 'bounded-evidence-needs-v24', 'adapter_version' => 'structured-chat-needs-v8'];
             $canonical = $identity;
             ksort($canonical);
 
@@ -504,7 +504,7 @@ class ConversationOrchestrationTest extends TestCase
                 $this->assertSame([['turn_id' => 'user-1', 'text' => 'What does the current approved procedure require?']], $body['user_turns']);
                 $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                     'contract_schema_version' => 'evidence-needs-plan-v3',
-                    'prompt_version' => 'bounded-evidence-needs-v23', 'adapter_version' => 'structured-chat-needs-v7'];
+                    'prompt_version' => 'bounded-evidence-needs-v24', 'adapter_version' => 'structured-chat-needs-v8'];
                 ksort($lineage);
                 $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 

@@ -13,7 +13,7 @@ from tests.test_evidence_needs import EXAMPLES, turns
 
 
 @pytest.mark.parametrize("second_valid", [True, False])
-def test_one_identical_validation_retry_with_both_receipts(second_valid):
+def test_one_bounded_feedback_retry_with_both_receipts(second_valid):
     good = deepcopy(EXAMPLES[0]["plan"])
     bad = deepcopy(good)
     bad["bindings"] = []
@@ -55,7 +55,19 @@ def test_one_identical_validation_retry_with_both_receipts(second_valid):
         assert caught.value.attempt_count == 2
         assert len(caught.value.validation_attempts) == 2
     assert len(requests) == 2
-    assert requests[0] == requests[1]
+    first, second = [json.loads(request) for request in requests]
+    first_user, second_user = [
+        json.loads(r["messages"][1]["content"]) for r in (first, second)
+    ]
+    assert second_user.pop("validation_feedback") == {
+        "stage": "catalogue",
+        "field": "root",
+        "code": "binding_coverage",
+    }
+    assert first_user == second_user
+    assert first["response_format"] == second["response_format"]
+    assert first["model"] == second["model"]
+    assert first["max_completion_tokens"] == second["max_completion_tokens"]
 
 
 def test_correct_clarification_is_not_retried():
@@ -184,7 +196,18 @@ def test_retry_trigger_includes_invalid_output_but_excludes_provider_failures(
     assert len(calls) == expected
     assert len(caught.value.validation_attempts) == expected
     if expected == 2:
-        assert calls[0] == calls[1]
+        first_args, first_kwargs = calls[0]
+        second_args, second_kwargs = calls[1]
+        assert first_args == second_args
+        assert first_kwargs["validation_feedback"] is None
+        assert second_kwargs["validation_feedback"] == {
+            "stage": stage,
+            "field": field,
+            "code": code,
+        }
+        assert {
+            k: v for k, v in first_kwargs.items() if k != "validation_feedback"
+        } == {k: v for k, v in second_kwargs.items() if k != "validation_feedback"}
 
 
 def test_second_transport_failure_preserves_first_validation_receipt(monkeypatch):

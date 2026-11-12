@@ -14,6 +14,17 @@ import run_r28_r06_governed as governed
 
 
 class R28R06GovernedTest(unittest.TestCase):
+    def test_feedback_checkpoint_freezes_four_inputs_and_original_security_scope(self) -> None:
+        execution, scopes, identities = governed.verify_inputs("block1_feedback")
+        self.assertEqual(4, len(execution["items"]))
+        self.assertEqual("49047353fca0c8831a199510d584b1ebd233eb65dd6a9c5315eed590026566e7", identities["input_sha256"])
+        self.assertEqual(["primary", "security_test", "primary", "primary"], [i["scope"] for i in scopes["items"]])
+        population = governed.json_file(governed.POPULATION)
+        case = next(c for c in population["cases"] if c["case_id"] == "v4.case.corrected-b01-06")
+        self.assertEqual(case["scope"], scopes["items"][1]["scope"])
+        self.assertEqual(case["variants"][0]["utterance"], execution["items"][1]["utterance"])
+        self.assertTrue(all(set(i) == {"case_id", "variant_id", "utterance"} for i in execution["items"]))
+
     def test_block1_continuation_contains_only_the_four_never_dispatched_inputs(self) -> None:
         full, _, _ = governed.verify_inputs("block1_checkpoint")
         tail, _, _ = governed.verify_inputs("block1_remaining")

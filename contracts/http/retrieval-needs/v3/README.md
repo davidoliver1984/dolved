@@ -1,15 +1,24 @@
 # Evidence needs plan v3 — applicability scope enquiries
 
 ADR-0039 adds `scope_enquiry` to the existing retrieve/compare operation union.
-Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v23`,
-`structured-chat-needs-v7`. The existing request and signed transport purpose
+Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v24`,
+`structured-chat-needs-v8`. The existing request and signed transport purpose
 are retained. V2 historical contracts remain byte-identical; v3 is explicitly
 pinned for new needs runs by `bounded-needs-slice-v20` (three executable needs,
 four search lanes, five final evidence slots; scope facts do not consume search lanes).
 
 ### Block 1 additive interpretation rules (2026-11-12)
 
-Deploy the v23 producer, generated schemas and Laravel consumer together. Authority
+The v24/v8 adapter retains the maximum two attempts and every existing validator.
+Only the second eligible attempt receives `validation_feedback` containing the
+safe diagnostic `stage`, `field`, and `code`. Rejected output, exception messages,
+receipts and candidate answers are never added to the request. A fixed instruction
+requires preserving every requested part. This is not a completeness validator:
+schema-valid plans can omit a requested clause on either attempt. Independent
+clause review is mandatory in the bounded development checkpoint; silent omission
+fails it. No new coverage mechanism or provider retry is introduced.
+
+Deploy the v24 producer, generated schemas and Laravel consumer together. Authority
 `before`/`after` retains a quoted day/month/year and the relation; Laravel resolves
 the version immediately before the period starts / immediately after it ends.
 Day boundaries exclude that whole named day. For example, before July is the instant

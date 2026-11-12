@@ -417,8 +417,8 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             timeout_seconds=timeout_seconds,
             client=client,
             contract_schema_version="evidence-needs-plan-v3",
-            prompt_version="bounded-evidence-needs-v23",
-            adapter_version="structured-chat-needs-v7",
+            prompt_version="bounded-evidence-needs-v24",
+            adapter_version="structured-chat-needs-v8",
         )
 
     def plan_needs(
@@ -429,11 +429,15 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
         catalogue: tuple[CatalogueFamily, ...] = (),
     ) -> NeedsPlanningResult:
         receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
         for number in (1, 2):
             started = time.perf_counter()
             try:
                 result = self._plan_needs_once(
-                    turns, evaluated_at=evaluated_at, catalogue=catalogue
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
                 )
             except RetrievalPlanningError as failure:
                 completion = getattr(failure, "completion", {})
@@ -463,6 +467,12 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                     and validation.get("stage") in {"schema", "grounding", "catalogue"}
                 )
                 if number == 1 and eligible:
+                    # NeedsValidationFailure produces closed codes and bounded fields.
+                    # Never feed exception text, rejected output or receipts back.
+                    feedback = {
+                        key: failure.validation[key]
+                        for key in ("stage", "field", "code")
+                    }
                     continue
                 raise
             receipts.append(
@@ -515,6 +525,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
         *,
         evaluated_at: str,
         catalogue: tuple[CatalogueFamily, ...] = (),
+        validation_feedback: dict[str, str] | None = None,
     ) -> NeedsPlanningResult:
         if not turns or len({t.turn_id for t in turns}) != len(turns):
             raise RetrievalPlanningError("invalid authorised user turns")
@@ -532,7 +543,19 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                     "messages": [
                         {
                             "role": "system",
-                            "content": PROMPT + "\nEvaluated at: " + evaluated_at,
+                            "content": PROMPT
+                            + "\nEvaluated at: "
+                            + evaluated_at
+                            + (
+                                "\nThe previous attempt failed validation. The user payload "
+                                "contains only bounded validation_feedback, not that output. "
+                                "Reinterpret the original authorised turns under the same "
+                                "contract. Preserve every requested part and its temporal "
+                                "meaning; do not evade validation by dropping a clause or "
+                                "merging away a distinct request. All validators still apply."
+                                if validation_feedback is not None
+                                else ""
+                            ),
                         },
                         {
                             "role": "user",
@@ -542,6 +565,11 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                                     "catalogue": [
                                         f.model_dump(mode="json") for f in catalogue
                                     ],
+                                    **(
+                                        {"validation_feedback": validation_feedback}
+                                        if validation_feedback is not None
+                                        else {}
+                                    ),
                                 },
                                 ensure_ascii=False,
                             ),

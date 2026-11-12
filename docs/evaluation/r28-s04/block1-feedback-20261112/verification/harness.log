@@ -1,0 +1,150 @@
+ Container rag-platform-ai-run-1b9aba10e89f Creating 
+ Container rag-platform-ai-run-1b9aba10e89f Created 
+test_all_inputs_are_frozen_question_only (test_run_r28_r06_governed.R28R06GovernedTest.test_all_inputs_are_frozen_question_only) ... ok
+test_block1_checkpoint_is_fixed_and_question_only (test_run_r28_r06_governed.R28R06GovernedTest.test_block1_checkpoint_is_fixed_and_question_only) ... ok
+test_block1_continuation_contains_only_the_four_never_dispatched_inputs (test_run_r28_r06_governed.R28R06GovernedTest.test_block1_continuation_contains_only_the_four_never_dispatched_inputs) ... ok
+test_capacity_checkpoint_is_fixed_question_only_and_primary_scoped (test_run_r28_r06_governed.R28R06GovernedTest.test_capacity_checkpoint_is_fixed_question_only_and_primary_scoped) ... ok
+test_capacity_overflow_selects_only_frozen_fifth_input (test_run_r28_r06_governed.R28R06GovernedTest.test_capacity_overflow_selects_only_frozen_fifth_input) ... ok
+test_case32_diagnostic_selects_only_the_frozen_v2_utterance (test_run_r28_r06_governed.R28R06GovernedTest.test_case32_diagnostic_selects_only_the_frozen_v2_utterance) ... ok
+test_controlled_planner_clarification_is_a_valid_record (test_run_r28_r06_governed.R28R06GovernedTest.test_controlled_planner_clarification_is_a_valid_record) ... ok
+test_current_runtime_fingerprint_is_derived_not_a_historical_constant (test_run_r28_r06_governed.R28R06GovernedTest.test_current_runtime_fingerprint_is_derived_not_a_historical_constant) ... ok
+test_exact_authorization_passes_and_mutation_fails (test_run_r28_r06_governed.R28R06GovernedTest.test_exact_authorization_passes_and_mutation_fails) ... ok
+test_feedback_checkpoint_freezes_four_inputs_and_original_security_scope (test_run_r28_r06_governed.R28R06GovernedTest.test_feedback_checkpoint_freezes_four_inputs_and_original_security_scope) ... ok
+test_full_r07_selection_is_exact_frozen_population (test_run_r28_r06_governed.R28R06GovernedTest.test_full_r07_selection_is_exact_frozen_population) ... ok
+test_full_review_gate_can_acknowledge_valid_record_without_stdin (test_run_r28_r06_governed.R28R06GovernedTest.test_full_review_gate_can_acknowledge_valid_record_without_stdin) ... ok
+test_interactive_review_gate_still_stops_on_eof (test_run_r28_r06_governed.R28R06GovernedTest.test_interactive_review_gate_still_stops_on_eof) ... ok
+test_one_use_marker_rejects_second_claim (test_run_r28_r06_governed.R28R06GovernedTest.test_one_use_marker_rejects_second_claim) ... ok
+test_r07_retry_and_tail_partition_only_unfinished_work (test_run_r28_r06_governed.R28R06GovernedTest.test_r07_retry_and_tail_partition_only_unfinished_work) ... ok
+test_r07_second_tail_excludes_all_44_attempted_utterances (test_run_r28_r06_governed.R28R06GovernedTest.test_r07_second_tail_excludes_all_44_attempted_utterances) ... ok
+test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) ... 
+  test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) (name='actual persisted empty-trace interpretation failure') ... ERROR
+  test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) (name='provider_status') ... ERROR
+  test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) (name='category') ... ERROR
+  test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) (name='systemic') ... ERROR
+  test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) (name='unrelated no-answer') ... ERROR
+
+======================================================================
+ERROR: test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) (name='actual persisted empty-trace interpretation failure')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/repo/scripts/evaluation/test_r28_interpretation_observation.py", line 25, in test_completed_interpretation_failure_and_negative_controls
+    result = subprocess.run(["docker", "compose", "run", "--rm", "--no-deps", "-v", f"{ROOT}:/repo", "api", "php", "/repo/scripts/evaluation/r28_r06_production_case.php", "--test-interpretation-observation"],
+        cwd=ROOT, input=json.dumps(observation), text=True, capture_output=True, check=True)
+  File "/usr/local/lib/python3.14/subprocess.py", line 555, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/subprocess.py", line 1990, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'docker'
+
+======================================================================
+ERROR: test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) (name='provider_status')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/repo/scripts/evaluation/test_r28_interpretation_observation.py", line 25, in test_completed_interpretation_failure_and_negative_controls
+    result = subprocess.run(["docker", "compose", "run", "--rm", "--no-deps", "-v", f"{ROOT}:/repo", "api", "php", "/repo/scripts/evaluation/r28_r06_production_case.php", "--test-interpretation-observation"],
+        cwd=ROOT, input=json.dumps(observation), text=True, capture_output=True, check=True)
+  File "/usr/local/lib/python3.14/subprocess.py", line 555, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/subprocess.py", line 1990, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'docker'
+
+======================================================================
+ERROR: test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) (name='category')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/repo/scripts/evaluation/test_r28_interpretation_observation.py", line 25, in test_completed_interpretation_failure_and_negative_controls
+    result = subprocess.run(["docker", "compose", "run", "--rm", "--no-deps", "-v", f"{ROOT}:/repo", "api", "php", "/repo/scripts/evaluation/r28_r06_production_case.php", "--test-interpretation-observation"],
+        cwd=ROOT, input=json.dumps(observation), text=True, capture_output=True, check=True)
+  File "/usr/local/lib/python3.14/subprocess.py", line 555, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/subprocess.py", line 1990, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'docker'
+
+======================================================================
+ERROR: test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) (name='systemic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/repo/scripts/evaluation/test_r28_interpretation_observation.py", line 25, in test_completed_interpretation_failure_and_negative_controls
+    result = subprocess.run(["docker", "compose", "run", "--rm", "--no-deps", "-v", f"{ROOT}:/repo", "api", "php", "/repo/scripts/evaluation/r28_r06_production_case.php", "--test-interpretation-observation"],
+        cwd=ROOT, input=json.dumps(observation), text=True, capture_output=True, check=True)
+  File "/usr/local/lib/python3.14/subprocess.py", line 555, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/subprocess.py", line 1990, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'docker'
+
+======================================================================
+ERROR: test_completed_interpretation_failure_and_negative_controls (test_r28_interpretation_observation.InterpretationObservationTest.test_completed_interpretation_failure_and_negative_controls) (name='unrelated no-answer')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/repo/scripts/evaluation/test_r28_interpretation_observation.py", line 25, in test_completed_interpretation_failure_and_negative_controls
+    result = subprocess.run(["docker", "compose", "run", "--rm", "--no-deps", "-v", f"{ROOT}:/repo", "api", "php", "/repo/scripts/evaluation/r28_r06_production_case.php", "--test-interpretation-observation"],
+        cwd=ROOT, input=json.dumps(observation), text=True, capture_output=True, check=True)
+  File "/usr/local/lib/python3.14/subprocess.py", line 555, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/subprocess.py", line 1990, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'docker'
+
+----------------------------------------------------------------------
+Ran 17 tests in 13.773s
+
+FAILED (errors=5)
+
