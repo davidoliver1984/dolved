@@ -37,6 +37,16 @@ and exact-name attribution are retained in that package. The single authorised
 closing rerun remains gated on the provider-free comparison; b06-06 is development
 regression, not independent confirmation. No live result is claimed by this entry.
 
+Implementation pushed as `83fdf18`. The subsequent once-only governed rerun is
+`R28-R07-BLOCK1-CLOSING-20261112-02`: four omission probes rejected; input 1 now
+names both roles but n2 adds a money-portion reading to Finance's role question,
+accepted by the unchanged checker. Stopped at review gate 1 with no further
+dispatch/tuning. Inputs 2–14 remain unattempted. Full JUnit shows 38/2 identical
+failure names with three additional passing tests per service. Runtime/corpus
+freezes unchanged; complete receipts, literal answer, independent meaning review
+and hold criteria are retained in the new run report. This supersedes the pending
+execution statement above, not the history. Block 1 remains open for David.
+
 ### R28 Block 1 closing increment — 2026-11-12, held
 
 Approved interpretation check and London relative-calendar rules landed in

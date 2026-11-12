@@ -1,0 +1,273 @@
+[
+  {
+    "case_id": "v4.case.corrected-b06-06",
+    "path": "cases/01-v4.case.corrected-b06-06-v1.json",
+    "utterance": "I'm updating our safeguarding card for a resident-money discrepancy. Who receives the first escalation now, what part does Finance keep, and which current role name and outside-agency sharing route should the card use?",
+    "status": "completed",
+    "displayed_text": "Escalate the resident-money discrepancy directly to the organisation-level Safeguarding Lead as the first escalation contact; the worked example describes a staff member reporting to the registered manager who then escalates the concern the same day to the Safeguarding Lead as a financial concern.\n\nThe Finance Manager is not the initial escalation recipient but provides the financial-record and audit support once the Safeguarding Lead has taken the concern forward; site record-keeping applies only to the portion of funds the site actually holds on the resident\u2019s behalf, and appointeeship-held funds and related transaction records are retained per the Records Retention Schedule (and reconciled/passed to executor or next of kin on death with the final transaction record retained).\n\nUse the current safeguarding role terminology consistently: the card should show the organisation-level title 'Safeguarding Lead' for escalation (with site-level support from the 'Safeguarding Champion' where relevant), and follow the multi\u2011agency information\u2011sharing principle\u2014share what is necessary and proportionate with the local authority safeguarding team and with the police where relevant.",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Retrieve the current recorded first escalation recipient to appear on a safeguarding card for a resident-money discrepancy (who should receive the first escalation now).",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "Who receives the first escalation now",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        },
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Retrieve the current recorded instruction for what portion/part of recovered or discrepant resident money Finance should retain (what part does Finance keep).",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n2",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "what part does Finance keep",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        },
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Retrieve the current recorded role title to display on the card and the authorised outside-agency sharing route to use (which current role name and outside-agency sharing route should the card use?).",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n3",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "which current role name and outside-agency sharing route should the card use?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "final_evidence": [
+      {
+        "chunk_id": "bb5292d4-051c-5819-af65-3075a622c8bf",
+        "document_family_id": "25fd5936-86de-41a4-b80a-a5391364bcb2",
+        "document_id": "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "bb5292d4-051c-5819-af65-3075a622c8bf",
+        "document_family_id": "25fd5936-86de-41a4-b80a-a5391364bcb2",
+        "document_id": "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+        "need_id": "n2",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "afd325b1-df26-51f5-bbc2-fe2e69b23c1c",
+        "document_family_id": "0804eb2e-ede8-4856-8fc2-f5d77fbaf8c5",
+        "document_id": "822e205e-2579-4d1c-812d-7882d886bb97",
+        "need_id": "n3",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "45932cf8-f4c7-5f9e-9c3e-7befd34b3d3d",
+        "document_family_id": "25fd5936-86de-41a4-b80a-a5391364bcb2",
+        "document_id": "81ec9c41-1b30-4a8a-9993-c0fa78d0f60b",
+        "need_id": "n2",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "b7698763-0d7b-5806-9bc3-db8d2f67522b",
+        "document_family_id": "0804eb2e-ede8-4856-8fc2-f5d77fbaf8c5",
+        "document_id": "822e205e-2579-4d1c-812d-7882d886bb97",
+        "need_id": "n3",
+        "side": "primary"
+      }
+    ],
+    "selection_coverage": {
+      "n1": {
+        "budget_cut_unit_count": 4,
+        "eligible_unit_count": 5,
+        "selected_unit_count": 1
+      },
+      "n2": {
+        "budget_cut_unit_count": 0,
+        "eligible_unit_count": 2,
+        "selected_unit_count": 2
+      },
+      "n3": {
+        "budget_cut_unit_count": 3,
+        "eligible_unit_count": 5,
+        "selected_unit_count": 2
+      }
+    },
+    "planner_attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19402,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 980,
+          "latency_ms": 2014.1545420046896,
+          "model": "gpt-5-mini",
+          "output_tokens": 83,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              },
+              {
+                "family_ids": [],
+                "need_id": "n2",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              },
+              {
+                "family_ids": [],
+                "need_id": "n3",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Retrieve the current recorded first escalation recipient to appear on a safeguarding card for a resident-money discrepancy (who should receive the first escalation now).",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "Who receives the first escalation now",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              },
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Retrieve the current recorded instruction for what portion/part of recovered or discrepant resident money Finance should retain (what part does Finance keep).",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n2",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "what part does Finance keep",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              },
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Retrieve the current recorded role title to display on the card and the authorised outside-agency sharing route to use (which current role name and outside-agency sharing route should the card use?).",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n3",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "which current role name and outside-agency sharing route should the card use?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "version": "interpretation-check-v1"
+        },
+        "latency_ms": 12206.102297001053,
+        "output_tokens": 1131,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ]
+  }
+]

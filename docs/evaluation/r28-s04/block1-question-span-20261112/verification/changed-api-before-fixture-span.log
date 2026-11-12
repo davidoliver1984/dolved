@@ -1,0 +1,147 @@
+ Container rag-platform-api-run-c2f3d4a154db Creating 
+ Container rag-platform-api-run-c2f3d4a154db Created 
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.25
+Configuration: /app/phpunit.xml
+
+
+Notice: file_get_contents(): Read of 149706 bytes failed with errno=5 I/O error in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 100
+..............................[36;1mS[0m...[36;1mS[0m.......{"timestamp":"2026-11-12T15:54:26+00:00","level":"error","service":"rag-platform-api","environment":"testing","event_name":"application.unclassified.v1","exception_type":"RuntimeException","exception_frames":[{"file":"TestCase.php","function":"test_storage_provider_failure_is_replaced_with_a_safe_typed_error","line":1318},{"file":"TestCase.php","function":"invokeTestMethod","line":1355},{"file":"TestCase.php","function":"runTest","line":521},{"file":"TestRunner.php","function":"runBare","line":99},{"file":"TestCase.php","function":"run","line":361},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestRunner.php","function":"run","line":64},{"file":"Application.php","function":"run","line":229},{"file":"phpunit","function":"run","line":104},{"file":"phpunit","function":"include","line":122}]}
+.....................  63 / 857 (  7%)
+............................................................... 126 / 857 ( 14%)
+...................[41;37mF[0m........................................... 189 / 857 ( 22%)
+............................................................... 252 / 857 ( 29%)
+.................................{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.published.v1","correlation_id":"de124234-98af-40a8-b013-be345bdcf7d5","document_id":"bbe8465f-24e5-34fb-9bef-bba7eedbb55e","event_id":"599bca7c-739d-4ad9-87ab-4dd4a66bf2df","outbox_marked_published":true,"transport_message_id":"deletion-message-id","workspace_id":"2e302dd4-410e-341a-9d6a-6af1a982e62b"}
+.........{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":10,"document_id":"2e6aab84-9ae9-3184-afff-82b42e8a8fce","requested_range":null,"result_status":200,"workspace_id":"4709c4b8-b702-38f9-9eee-e86793ced505"}
+{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"2e6aab84-9ae9-3184-afff-82b42e8a8fce","requested_range":null,"result_status":200,"workspace_id":"4709c4b8-b702-38f9-9eee-e86793ced505"}
+{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":4,"document_id":"2e6aab84-9ae9-3184-afff-82b42e8a8fce","requested_range":"bytes=2-5","result_status":206,"workspace_id":"4709c4b8-b702-38f9-9eee-e86793ced505"}
+{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"2e6aab84-9ae9-3184-afff-82b42e8a8fce","requested_range":"bytes=-3","result_status":206,"workspace_id":"4709c4b8-b702-38f9-9eee-e86793ced505"}
+{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":3,"document_id":"2e6aab84-9ae9-3184-afff-82b42e8a8fce","requested_range":"bytes=7-","result_status":206,"workspace_id":"4709c4b8-b702-38f9-9eee-e86793ced505"}
+{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"2e6aab84-9ae9-3184-afff-82b42e8a8fce","requested_range":"bytes=20-","result_status":416,"workspace_id":"4709c4b8-b702-38f9-9eee-e86793ced505"}
+{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"2e6aab84-9ae9-3184-afff-82b42e8a8fce","requested_range":"bytes=20-","result_status":416,"workspace_id":"4709c4b8-b702-38f9-9eee-e86793ced505"}
+.{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":6,"document_id":"e15828f9-8b6f-3778-90c0-037d34be9f06","requested_range":null,"result_status":200,"workspace_id":"8d1aca87-7b48-36b3-a672-d002a3f5b32f"}
+.{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"a4b68e39-6f86-392f-b4ef-af7ed5a30899","requested_range":"bytes=0-","result_status":416,"workspace_id":"5ecf90a4-77f8-390e-9028-291d3b7c50bc"}
+{"timestamp":"2026-11-12T15:54:46+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.source.delivered.v1","byte_count":0,"document_id":"a4b68e39-6f86-392f-b4ef-af7ed5a30899","requested_range":"bytes=0-","result_status":416,"workspace_id":"5ecf90a4-77f8-390e-9028-291d3b7c50bc"}
+................... 315 / 857 ( 36%)
+........................{"timestamp":"2026-11-12T15:54:47+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"claimed","correlation_id":"c22be687-ce01-4285-b9e2-2d735d8b4877","document_id":"81321ac7-ce0b-309d-b136-af21c2543889","document_status":"processing","event_id":"6a0811eb-2601-4ae0-8868-ee16075cf4fb","workspace_id":"553526cd-8bfa-3d6d-a023-8fb0bba425ba"}
+.{"timestamp":"2026-11-12T15:54:47+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"claimed","correlation_id":"6d6097f2-5892-4588-b6f4-f2d7287b0285","document_id":"e47ac58b-edab-315e-a4ff-ea954321e4ba","document_status":"processing","event_id":"def67147-cef0-4512-b1e5-aeb33aac63a2","workspace_id":"3d92ff7e-f9c1-3398-8954-b7c7b178d56e"}
+{"timestamp":"2026-11-12T15:54:47+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"owned_by_another_worker","correlation_id":"6d6097f2-5892-4588-b6f4-f2d7287b0285","document_id":"e47ac58b-edab-315e-a4ff-ea954321e4ba","document_status":"processing","event_id":"def67147-cef0-4512-b1e5-aeb33aac63a2","workspace_id":"3d92ff7e-f9c1-3398-8954-b7c7b178d56e"}
+.{"timestamp":"2026-11-12T15:54:47+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"claimed","correlation_id":"dc9aa846-0b30-43b8-93a2-0680ac1cf64f","document_id":"e5e20bd9-8d5f-387f-9905-da2b85bbc852","document_status":"processing","event_id":"b8792074-9834-4739-9c47-757ca69b1ad5","workspace_id":"d53e333a-ddf3-3728-92d9-51d0883e46c0"}
+{"timestamp":"2026-11-12T15:54:47+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"claimed","correlation_id":"5bf84b38-3b18-4cad-898f-a68c311c424b","document_id":"e2140023-a302-3380-b4d3-c0ae6d7e3977","document_status":"processing","event_id":"1af311d4-4294-48ad-b13d-e5fb081f258f","workspace_id":"3864fcd0-61c9-313e-991d-c2f6372162af"}
+.{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"5a1e9c3e-3b3a-4e2a-9c7d-1f6b6f0a2b41","key_id":"local-v1","verification_outcome":"signature_format"}
+.{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":null,"key_id":null,"verification_outcome":"key_id"}
+{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"69fc5299-1e16-4481-9d86-3459fe077554","key_id":"test-primary","verification_outcome":"signature_mismatch"}
+{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"69fc5299-1e16-4481-9d86-3459fe077554","key_id":"unknown-key","verification_outcome":"unknown_key"}
+.{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"f4416e01-39a4-45cc-826c-5f192df995b9","key_id":"test-primary","verification_outcome":"timestamp_window"}
+{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"f4416e01-39a4-45cc-826c-5f192df995b9","key_id":"test-primary","verification_outcome":"timestamp_window"}
+.{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"ab64892b-7a2e-49dd-87e6-b5d8f075ea32","key_id":"test-primary","verification_outcome":"signature_mismatch"}
+{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"ab64892b-7a2e-49dd-87e6-b5d8f075ea32","key_id":"test-primary","verification_outcome":"signature_mismatch"}
+{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"ab64892b-7a2e-49dd-87e6-b5d8f075ea32","key_id":"test-primary","verification_outcome":"signature_mismatch"}
+{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"fd176cd7-e95e-43ee-8198-695f853c5db3","key_id":"test-primary","verification_outcome":"route_event_id"}
+{"timestamp":"2026-11-12T15:54:47+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"ab64892b-7a2e-49dd-87e6-b5d8f075ea32","key_id":"test-primary","verification_outcome":"query_string"}
+....{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"claimed","correlation_id":"0fa6991b-53ca-4f55-9f01-593bb81c2780","document_id":"b0c2f7b8-6164-30d0-b389-12b20bf7a035","document_status":"processing","event_id":"8df70a26-77ef-4c4d-83cf-d4464d82d310","workspace_id":"da4e4924-113f-3032-986a-6f3b39b79a0b"}
+.{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"stale_event","correlation_id":"ef51630a-d790-4409-ae50-ab20fb408137","document_id":"f3f85b3b-c42d-392e-be79-258356138aa9","document_status":"processing","event_id":"9ce4d92b-9e7b-4766-a174-ba02b5d76940","workspace_id":"ab106791-8e38-38fe-9609-3faf14aa5779"}
+.{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"stale_event","correlation_id":"ee13e467-de8a-4fd1-91b8-67c7ecc145c0","document_id":"4ab91438-23a7-3ebe-bbf2-e69ca3e25574","document_status":"indexed","event_id":"9ab4e6a2-5dd7-4917-a63c-cbb697eff9d3","workspace_id":"3c8d70b6-c768-3519-a27e-417f6f88cce8"}
+.{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"stale_event","correlation_id":"9afc0dc5-3f83-40c6-b56f-4227135337a9","document_id":"1ec8cd7f-1d0a-3a2a-9e93-a5a0589c7d7e","document_status":"failed","event_id":"cab37848-6b42-4bc3-86ff-6a70a37a433a","workspace_id":"d59cd8e0-04e0-38f6-b483-ff8d9b2494e5"}
+.{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"stale_event","correlation_id":"66fc3d0b-9214-4b27-a66d-7938631f9544","document_id":"3802bd65-2315-3c37-ae5e-c3c98d119fe8","document_status":"deleting","event_id":"f12588a3-3f13-4e41-8fd0-9940b6d78199","workspace_id":"74639079-f57d-3012-b92b-665ec4695ec8"}
+.{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"stale_event","correlation_id":"c3e48ebe-d382-4381-a636-255d20f70478","document_id":"2d2d77af-cac6-35b5-8061-99c7ae853209","document_status":"deleted","event_id":"d44d0749-5af6-415a-bd6b-4bd612ead7d8","workspace_id":"26ad96bb-ef61-3300-b3f7-6913eab1c50d"}
+.{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"ineligible_state","correlation_id":"aafdd509-b618-4391-90df-7bec3839cb44","document_id":"141cbbab-99b6-37d2-a683-ff0016c5f70e","document_status":"uploading","event_id":"67e8909c-6af0-407e-86a4-d9a8481f7e88","workspace_id":"7f618eaf-d391-3bfc-8336-eb429e945de0"}
+.{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.claim_resolved.v1","claim_outcome":"ineligible_state","correlation_id":"de0890e4-a6d7-4fb5-bd00-2273af6e901a","document_id":"bac41491-e6f2-33e4-879e-b1f2d1d5629c","document_status":"uploaded","event_id":"fdf1f8d3-ba10-4813-a543-e153373980e9","workspace_id":"d761c4ce-137f-31fb-97fb-0bba45936b92"}
+...................{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.published.v1","correlation_id":"fb37f024-d91f-3aad-8f9b-a9c728a25ea6","document_id":"54fd443f-3e98-3402-9a8e-61f79e9799d8","event_id":"32a84d4a-2d16-3b91-ad5b-9f94ce210246","outbox_marked_published":true,"transport_message_id":"transport-message-id","workspace_id":"d8ff71b8-64a6-3736-a2b7-4b5e84e001e2"}
+.{"timestamp":"2026-11-12T15:54:48+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.publication_retry.v1","attempt_count":1,"correlation_id":"b206e941-7e07-3b1b-8710-ffad4ea49b34","document_id":"6042e9fa-a823-342c-bda1-040a407b9fc9","event_id":"82da765e-de7b-3de2-beb3-bd6e15e207c8","retry_delay_seconds":5,"workspace_id":"570911f5-873b-39c3-a765-def9e5f22c0f"}
+{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.published.v1","correlation_id":"b206e941-7e07-3b1b-8710-ffad4ea49b34","document_id":"6042e9fa-a823-342c-bda1-040a407b9fc9","event_id":"82da765e-de7b-3de2-beb3-bd6e15e207c8","outbox_marked_published":true,"transport_message_id":"transport-message-id","workspace_id":"570911f5-873b-39c3-a765-def9e5f22c0f"}
+.{"timestamp":"2026-11-12T15:54:48+00:00","level":"error","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.contract_failed.v1","correlation_id":"fe5a1366-3a20-34b7-aa9d-b1114522b416","document_id":"ba567a80-ac1e-330a-ab2a-e52501972843","event_id":"4d8fc6c6-a190-396b-9fba-5ed246c2a98c","workspace_id":"66a3a5f9-4c26-3d25-a575-672bcd822ed7"}
+. 378 / 857 ( 44%)
+{"timestamp":"2026-11-12T15:54:48+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.published.v1","correlation_id":"255bf71e-2943-314b-b6f5-64aa5af7f212","document_id":"49e2d688-9de4-390c-bb7b-a240160e0c5f","event_id":"3fbe3e7b-b0eb-3fea-aa3c-0eab8bab88ea","outbox_marked_published":true,"transport_message_id":"message-id","workspace_id":"c49d95d6-a9e0-34b6-b429-1a6374aeb2a3"}
+...............................[36;1mS[0m............................... 441 / 857 ( 51%)
+........................................................[36;1mS[0m[36;1mS[0m[36;1mS[0m.... 504 / 857 ( 58%)
+...........[41;37mF[0m................................................... 567 / 857 ( 66%)
+............................................................... 630 / 857 ( 73%)
+......................................{"timestamp":"2026-11-12T15:54:58+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"c36e7c40-8ca2-48d0-a0e6-6286ceadb8b9","workspace_id":"887e4a82-d7f0-3eec-a016-1f8790f45b92"}
+...{"timestamp":"2026-11-12T15:54:58+00:00","level":"error","service":"rag-platform-api","environment":"testing","event_name":"application.unclassified.v1","exception_type":"RuntimeException","exception_frames":[{"file":"TestCase.php","function":"test_expired_generation_remains_recoverable_when_successor_dispatch_is_temporarily_unavailable","line":1318},{"file":"TestCase.php","function":"invokeTestMethod","line":1355},{"file":"TestCase.php","function":"runTest","line":521},{"file":"TestRunner.php","function":"runBare","line":99},{"file":"TestCase.php","function":"run","line":361},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestSuite.php","function":"run","line":374},{"file":"TestRunner.php","function":"run","line":64},{"file":"Application.php","function":"run","line":229},{"file":"phpunit","function":"run","line":104},{"file":"phpunit","function":"include","line":122}]}
+{"timestamp":"2026-11-12T15:54:58+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"application.unclassified.v1"}
+.{"timestamp":"2026-11-12T15:54:58+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"67be3b41-10bd-4f38-84f2-f6d08a37504a","workspace_id":"2ad5626f-6938-3e54-937b-a117e199c704"}
+{"timestamp":"2026-11-12T15:54:58+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"490b2568-1b48-4ba6-851c-88f288afad9e","workspace_id":"292e00f6-9ec1-3197-8d6c-1db3b03f31ba"}
+.{"timestamp":"2026-11-12T15:54:58+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"e97a4df9-a35d-4bf9-bd0b-5bce2a423167","workspace_id":"af1d873d-7fb9-3220-be5b-369d95590c4e"}
+{"timestamp":"2026-11-12T15:54:59+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"84b7a952-45d1-4f9d-a2d0-e993eb0fd6dd","workspace_id":"af1d873d-7fb9-3220-be5b-369d95590c4e"}
+.{"timestamp":"2026-11-12T15:54:59+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"import.preflight.callback_recorded.v1","event_id":"95605d6b-cb78-469d-8c14-e1906a2287b3","workspace_id":"0eaf9871-e938-3daf-a1b9-6e01625dcb9c"}
+{"timestamp":"2026-11-12T15:54:59+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":null,"key_id":null,"verification_outcome":"key_id"}
+................... 693 / 857 ( 80%)
+......{"timestamp":"2026-11-12T15:55:00+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"ingestion.authentication.rejected.v1","event_id":"1e4e8b8c-a744-417c-9c21-1e8dfa463692","key_id":"test-v2","verification_outcome":"purpose"}
+...............{"timestamp":"2026-11-12T15:55:01+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"observability.reconciliation.authentication_rejected.v1","verification_outcome":"replay"}
+{"timestamp":"2026-11-12T15:55:01+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"observability.reconciliation.authentication_rejected.v1","verification_outcome":"shape"}
+..........[36;1mS[0m[36;1mS[0m[36;1mS[0m[41;37mF[0m............................ 756 / 857 ( 88%)
+..............................{"timestamp":"2026-11-12T15:55:04+00:00","level":"info","service":"rag-platform-api","environment":"testing","event_name":"document.ingestion.published.v1","trace_id":"55555555555555555555555555555555","span_id":"28986875ba48ad11","correlation_id":"70457d59-d050-3d9b-87f5-9c93e1583e0a","document_id":"04b1bd1d-a59e-3426-83a3-dbd5abe6efd5","event_id":"da95aa89-6c1a-338d-b61a-34f347fdb727","outbox_marked_published":true,"transport_message_id":"transport-message-id","workspace_id":"44ea775f-d36a-34aa-b319-a17c840db013"}
+................................. 819 / 857 ( 95%)
+.....{"timestamp":"2026-11-12T15:55:05+00:00","level":"warning","service":"rag-platform-api","environment":"testing","event_name":"workspace.invitation.delivery_unavailable.v1","correlation_id":"f1f67ddc-576a-4348-8d16-9e6f1bb3f594","invitation_id":"8e032a73-82c9-4a2f-aae7-c0c8b456579e","workspace_id":"cb50eca7-5856-3e58-83fd-836946314c5d"}
+.................................                          857 / 857 (100%)
+Notice: file_put_contents(): Write of 107836 bytes failed with errno=35 Resource deadlock would occur in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:40.665, Memory: 131.00 MB
+
+There were 3 failures:
+
+1) Tests\Unit\PlannerConfigurationTest::test_current_planner_lineage_matches_adr_0022_v5
+Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+-'plan-response-v2'
++'plan-response-v3'
+
+/app/tests/Unit/PlannerConfigurationTest.php:27
+
+2) Tests\Feature\EvidenceNeedsRetrievalTest::test_scope_and_operational_answer_are_isolated_through_generation_and_persistence
+Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+-'How are temporary workers booked?'
++'Does Equipment Policy cover Harbour Place?'
+
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:603
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/Factory.php:334
+/app/vendor/laravel/framework/src/Illuminate/Collections/HigherOrderCollectionProxy.php:66
+/app/vendor/laravel/framework/src/Illuminate/Collections/HigherOrderCollectionProxy.php:66
+/app/vendor/laravel/framework/src/Illuminate/Collections/Arr.php:830
+/app/vendor/laravel/framework/src/Illuminate/Collections/Collection.php:827
+/app/vendor/laravel/framework/src/Illuminate/Collections/HigherOrderCollectionProxy.php:63
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1765
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1736
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1722
+/app/vendor/guzzlehttp/guzzle/src/PrepareBodyMiddleware.php:64
+/app/vendor/guzzlehttp/guzzle/src/Middleware.php:38
+/app/vendor/guzzlehttp/guzzle/src/RedirectMiddleware.php:72
+/app/vendor/guzzlehttp/guzzle/src/Middleware.php:63
+/app/vendor/guzzlehttp/guzzle/src/HandlerStack.php:75
+/app/vendor/guzzlehttp/guzzle/src/Client.php:1085
+/app/vendor/guzzlehttp/guzzle/src/Client.php:243
+/app/vendor/guzzlehttp/guzzle/src/Client.php:273
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1352
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1072
+/app/vendor/laravel/framework/src/Illuminate/Support/helpers.php:328
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1070
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:914
+/app/app/Services/Generation/GenerationClient.php:41
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:84
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:212
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:59
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:43
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:618
+
+3) Tests\Feature\R28FullPopulationPlumbingTest::test_all_frozen_question_shapes_persist_without_provider_transport
+v4.case.corrected-b01-01::v1
+Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+-'clarification_required'
++'failed'
+
+/app/tests/Feature/R28FullPopulationPlumbingTest.php:96
+
+[37;41mFAILURES![0m
+[37;41mTests: 857[0m[37;41m, Assertions: 4695[0m[37;41m, Failures: 3[0m[37;41m, Skipped: 9[0m[37;41m.[0m
+

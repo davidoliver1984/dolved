@@ -13,6 +13,16 @@ b06-06 is explicitly development evidence. Verification and eventual rerun resul
 are recorded separately rather than assuming this contract correction guarantees
 the model will answer both roles.
 
+The correction was committed/pushed as `83fdf18`. Full-suite exact failure sets
+remained 38 AI and 2 Laravel, with three extra passing tests in each. The authorised
+rerun caught all four omission plans and then answered the first production input
+with both Lead and Champion. Independent review nevertheless found Finance's
+responsibility rewritten as a portion of recovered money, with added retention
+prose; the checker accepted it. The frozen meaning-drift stop rule was applied at
+case 1. No inputs 2–14 were dispatched, no further repair was attempted, and all
+remaining work stays in Block 1. [Full rerun evidence](../evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-CLOSING-20261112-02/report.md)
+records the improvement, limit, costs and unexercised routes separately.
+
 ## Closing interpretation checkpoint — held
 
 David approved a bounded independent question-to-plan check before execution,

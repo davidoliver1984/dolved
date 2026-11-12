@@ -1,0 +1,17 @@
+ Container rag-platform-api-run-faf7f20867c4 Creating 
+ Container rag-platform-api-run-faf7f20867c4 Created 
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.25
+Configuration: /app/phpunit.xml
+
+
+Notice: file_get_contents(): Read of 149706 bytes failed with errno=5 I/O error in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 100
+................................................................. 65 / 80 ( 81%)
+...............                                                   80 / 80 (100%)
+Notice: file_put_contents(): Write of 11386 bytes failed with errno=35 Resource deadlock would occur in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:02.507, Memory: 81.00 MB
+
+[30;42mOK (80 tests, 363 assertions)[0m

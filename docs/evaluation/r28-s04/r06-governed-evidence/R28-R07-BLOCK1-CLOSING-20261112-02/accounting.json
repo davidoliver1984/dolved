@@ -1,0 +1,987 @@
+{
+  "receipts": [
+    {
+      "case_id": "attempt-1-whole-span-false",
+      "stage": "interpretation_probe",
+      "code": "clause_omitted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 570,
+      "latency_ms": 2792.74175100727,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "provider": "openai",
+      "request_count": 1,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "topic"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "What interval applies after the change?",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "what interval applies after the change?",
+              "turn_id": "u1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "version": "interpretation-check-v1"
+    },
+    {
+      "case_id": "attempt-1-whole-span-true",
+      "stage": "interpretation_probe",
+      "code": "clause_omitted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 585,
+      "latency_ms": 1829.8517510120291,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "provider": "openai",
+      "request_count": 1,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "topic"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "What interval applies after the change?",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?",
+              "turn_id": "u1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "version": "interpretation-check-v1"
+    },
+    {
+      "case_id": "attempt-2-whole-span-false",
+      "stage": "interpretation_probe",
+      "code": "clause_omitted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 570,
+      "latency_ms": 2500.7509179995395,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "provider": "openai",
+      "request_count": 1,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "topic"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "What interval applies after the change?",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "what interval applies after the change?",
+              "turn_id": "u1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "version": "interpretation-check-v1"
+    },
+    {
+      "case_id": "attempt-2-whole-span-true",
+      "stage": "interpretation_probe",
+      "code": "clause_omitted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 585,
+      "latency_ms": 1579.6685840177815,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "provider": "openai",
+      "request_count": 1,
+      "reviewed_plan": {
+        "bindings": [
+          {
+            "family_ids": [],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "topic"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "aspect": "What interval applies after the change?",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "fact_reference": null,
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?",
+              "turn_id": "u1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v3"
+      },
+      "version": "interpretation-check-v1"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "planner",
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 19402,
+      "interpretation_check": {
+        "cached_input_tokens": null,
+        "code": "accepted",
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 980,
+        "latency_ms": 2014.1545420046896,
+        "model": "gpt-5-mini",
+        "output_tokens": 83,
+        "pricing_snapshot": null,
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "reviewed_plan": {
+          "bindings": [
+            {
+              "family_ids": [],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "topic"
+            },
+            {
+              "family_ids": [],
+              "need_id": "n2",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "topic"
+            },
+            {
+              "family_ids": [],
+              "need_id": "n3",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "topic"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "Retrieve the current recorded first escalation recipient to appear on a safeguarding card for a resident-money discrepancy (who should receive the first escalation now).",
+              "authority": {
+                "kind": "current",
+                "precision": "none",
+                "source": null,
+                "value": null
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "Who receives the first escalation now",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            },
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "Retrieve the current recorded instruction for what portion/part of recovered or discrepant resident money Finance should retain (what part does Finance keep).",
+              "authority": {
+                "kind": "current",
+                "precision": "none",
+                "source": null,
+                "value": null
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n2",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "what part does Finance keep",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            },
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "Retrieve the current recorded role title to display on the card and the authorised outside-agency sharing route to use (which current role name and outside-agency sharing route should the card use?).",
+              "authority": {
+                "kind": "current",
+                "precision": "none",
+                "source": null,
+                "value": null
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n3",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "which current role name and outside-agency sharing route should the card use?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "version": "interpretation-check-v1"
+      },
+      "latency_ms": 12206.102297001053,
+      "output_tokens": 1131,
+      "pricing_snapshot": null,
+      "request_count": 2,
+      "retry_count": 0,
+      "status": "accepted",
+      "validation": null
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "adapter_version": "openai-responses-needs-v4",
+      "cached_input_tokens": 3840,
+      "contract_version": "generation-result-v3",
+      "cost_basis": "estimated",
+      "cost_usd": 0.01531225,
+      "entailment_review": {
+        "cached_input_tokens": 3840,
+        "cost_basis": "estimated",
+        "cost_usd": 0.0062635,
+        "input_tokens": 25414,
+        "latency_ms": 5972.250128019368,
+        "model": "gpt-5-mini",
+        "output_tokens": 387,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "provider": "openai",
+        "request_count": 1,
+        "retry_count": 0,
+        "stage": "generation"
+      },
+      "execution": "provider_api",
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "input_tokens": 52769,
+      "latency_ms": 15317.749965004623,
+      "max_output_tokens": 4096,
+      "measured_input_tokens": 27432,
+      "model": "gpt-5-mini",
+      "output_tokens": 1492,
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+      "prompt_version": "grounded-generation-needs-v11",
+      "provider": "openai",
+      "reasoning_effort": "low",
+      "request_count": 2,
+      "retry_count": 1,
+      "stage": "generation",
+      "validation_attempts": [
+        {
+          "cached_input_tokens": 3840,
+          "cost_basis": "estimated",
+          "cost_usd": 0.01531225,
+          "input_tokens": 52769,
+          "latency_ms": 15317.749965004623,
+          "outcome": "accepted",
+          "output_tokens": 1492,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "request_count": 2,
+          "request_id": "842721ad-59ad-4251-8d4d-b24e65ca2843",
+          "retry_count": 0,
+          "retry_of_request_id": null
+        }
+      ],
+      "validation_retry_count": 0
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n1.reranked",
+      "cached_input_tokens": null,
+      "cost_basis": "UNAVAILABLE",
+      "cost_usd": null,
+      "execution": "PROVIDER_API",
+      "final_provider_success_at": "2026-11-12T15:58:39.598057Z",
+      "first_provider_attempt_at": "2026-11-12T15:58:39.153951Z",
+      "input_tokens": 7897,
+      "latency_ms": 472.803459,
+      "model": "rerank-2.5",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "reranking"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "estimated",
+      "cost_usd": 3.24e-06,
+      "execution": "provider_api",
+      "final_provider_success_at": "2026-11-12T15:58:35.083017Z",
+      "first_provider_attempt_at": "2026-11-12T15:58:34.754969Z",
+      "input_tokens": 27,
+      "latency_ms": 333.4306250035297,
+      "model": "voyage-4-large",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": "voyage-pricing-2026-08-12",
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "dense_embedding"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 83.75929199974053,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_dense_search"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "zero_cost_local",
+      "cost_usd": 0,
+      "execution": "local",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 2961.89708498423,
+      "model": "prithivida/Splade_PP_en_v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "fastembed",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "sparse_encoding"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n1.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 64.87066601403058,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_sparse_search"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n2.reranked",
+      "cached_input_tokens": null,
+      "cost_basis": "UNAVAILABLE",
+      "cost_usd": null,
+      "execution": "PROVIDER_API",
+      "final_provider_success_at": "2026-11-12T15:58:42.928926Z",
+      "first_provider_attempt_at": "2026-11-12T15:58:42.629610Z",
+      "input_tokens": 7299,
+      "latency_ms": 319.78575,
+      "model": "rerank-2.5",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "reranking"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n2.search",
+      "cached_input_tokens": null,
+      "cost_basis": "estimated",
+      "cost_usd": 3.12e-06,
+      "execution": "provider_api",
+      "final_provider_success_at": "2026-11-12T15:58:40.513689Z",
+      "first_provider_attempt_at": "2026-11-12T15:58:40.197106Z",
+      "input_tokens": 26,
+      "latency_ms": 321.10029098112136,
+      "model": "voyage-4-large",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": "voyage-pricing-2026-08-12",
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "dense_embedding"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n2.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 51.631166017614305,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_dense_search"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n2.search",
+      "cached_input_tokens": null,
+      "cost_basis": "zero_cost_local",
+      "cost_usd": 0,
+      "execution": "local",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 1448.8004590093624,
+      "model": "prithivida/Splade_PP_en_v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "fastembed",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "sparse_encoding"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n2.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 48.30895800841972,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_sparse_search"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n3.reranked",
+      "cached_input_tokens": null,
+      "cost_basis": "UNAVAILABLE",
+      "cost_usd": null,
+      "execution": "PROVIDER_API",
+      "final_provider_success_at": "2026-11-12T15:58:46.464728Z",
+      "first_provider_attempt_at": "2026-11-12T15:58:46.089350Z",
+      "input_tokens": 8176,
+      "latency_ms": 386.217167,
+      "model": "rerank-2.5",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "reranking"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n3.search",
+      "cached_input_tokens": null,
+      "cost_basis": "estimated",
+      "cost_usd": 4.32e-06,
+      "execution": "provider_api",
+      "final_provider_success_at": "2026-11-12T15:58:43.990585Z",
+      "first_provider_attempt_at": "2026-11-12T15:58:43.676274Z",
+      "input_tokens": 36,
+      "latency_ms": 318.9643330115359,
+      "model": "voyage-4-large",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": "voyage-pricing-2026-08-12",
+      "provider": "voyage",
+      "provider_attempt_count": 1,
+      "provider_retry_count": 0,
+      "provider_retry_elapsed_ms": 0,
+      "rate_limit_event_count": 0,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "dense_embedding"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n3.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 34.10104202339426,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_dense_search"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n3.search",
+      "cached_input_tokens": null,
+      "cost_basis": "zero_cost_local",
+      "cost_usd": 0,
+      "execution": "local",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 1314.1359179862775,
+      "model": "prithivida/Splade_PP_en_v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "fastembed",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "sparse_encoding"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "path": "need.n3.search",
+      "cached_input_tokens": null,
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "execution": "infrastructure",
+      "final_provider_success_at": null,
+      "first_provider_attempt_at": null,
+      "input_tokens": null,
+      "latency_ms": 47.06308399909176,
+      "model": "rag-platform-vectors-v1",
+      "outer_attempt_count": 1,
+      "outer_retry_count": 0,
+      "output_tokens": null,
+      "pricing_snapshot": null,
+      "provider": "qdrant",
+      "provider_attempt_count": null,
+      "provider_retry_count": null,
+      "provider_retry_elapsed_ms": null,
+      "rate_limit_event_count": null,
+      "request_count": 1,
+      "retry_count": 0,
+      "retry_delays": [],
+      "stage": "qdrant_sparse_search"
+    }
+  ],
+  "known_priced_receipt_sum_usd": 0.01532293,
+  "offline_missing_openai_price_estimates": [
+    {
+      "case_id": "attempt-1-whole-span-false",
+      "stage": "interpretation_probe",
+      "cost_usd": 0.0003165,
+      "basis": "retained repository rate; estimate, not invoice"
+    },
+    {
+      "case_id": "attempt-1-whole-span-true",
+      "stage": "interpretation_probe",
+      "cost_usd": 0.00032025,
+      "basis": "retained repository rate; estimate, not invoice"
+    },
+    {
+      "case_id": "attempt-2-whole-span-false",
+      "stage": "interpretation_probe",
+      "cost_usd": 0.0003165,
+      "basis": "retained repository rate; estimate, not invoice"
+    },
+    {
+      "case_id": "attempt-2-whole-span-true",
+      "stage": "interpretation_probe",
+      "cost_usd": 0.00032025,
+      "basis": "retained repository rate; estimate, not invoice"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "planner",
+      "cost_usd": 0.0071125,
+      "basis": "retained repository rate; estimate, not invoice"
+    }
+  ],
+  "known_plus_offline_openai_estimate_usd": 0.02370893,
+  "still_unpriced": [
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "reranking",
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "execution": "PROVIDER_API",
+      "input_tokens": 7897,
+      "request_count": 1
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "qdrant_dense_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "execution": "infrastructure",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "qdrant_sparse_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "execution": "infrastructure",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "reranking",
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "execution": "PROVIDER_API",
+      "input_tokens": 7299,
+      "request_count": 1
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "qdrant_dense_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "execution": "infrastructure",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "qdrant_sparse_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "execution": "infrastructure",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "reranking",
+      "provider": "voyage",
+      "model": "rerank-2.5",
+      "execution": "PROVIDER_API",
+      "input_tokens": 8176,
+      "request_count": 1
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "qdrant_dense_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "execution": "infrastructure",
+      "input_tokens": null,
+      "request_count": 1
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "stage": "qdrant_sparse_search",
+      "provider": "qdrant",
+      "model": "rag-platform-vectors-v1",
+      "execution": "infrastructure",
+      "input_tokens": null,
+      "request_count": 1
+    }
+  ],
+  "check_overhead": [
+    {
+      "case_id": "attempt-1-whole-span-false",
+      "code": "clause_omitted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 570,
+      "latency_ms": 2792.74175100727,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "provider": "openai",
+      "request_count": 1,
+      "version": "interpretation-check-v1"
+    },
+    {
+      "case_id": "attempt-1-whole-span-true",
+      "code": "clause_omitted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 585,
+      "latency_ms": 1829.8517510120291,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "provider": "openai",
+      "request_count": 1,
+      "version": "interpretation-check-v1"
+    },
+    {
+      "case_id": "attempt-2-whole-span-false",
+      "code": "clause_omitted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 570,
+      "latency_ms": 2500.7509179995395,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "provider": "openai",
+      "request_count": 1,
+      "version": "interpretation-check-v1"
+    },
+    {
+      "case_id": "attempt-2-whole-span-true",
+      "code": "clause_omitted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 585,
+      "latency_ms": 1579.6685840177815,
+      "model": "gpt-5-mini",
+      "output_tokens": 87,
+      "provider": "openai",
+      "request_count": 1,
+      "version": "interpretation-check-v1"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "cached_input_tokens": null,
+      "code": "accepted",
+      "cost_basis": "unavailable",
+      "cost_usd": null,
+      "input_tokens": 980,
+      "latency_ms": 2014.1545420046896,
+      "model": "gpt-5-mini",
+      "output_tokens": 83,
+      "pricing_snapshot": null,
+      "provider": "openai",
+      "request_count": 1,
+      "retry_count": 0,
+      "version": "interpretation-check-v1"
+    }
+  ],
+  "physical_provider_requests": 14,
+  "note": "Not a complete invoice. Parent planner includes check usage; generation includes entailment. Nested check totals are not added twice. Unavailable pricing explicit."
+}

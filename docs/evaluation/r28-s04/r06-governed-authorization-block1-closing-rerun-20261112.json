@@ -1,0 +1,21 @@
+{
+  "schema_version": "r28-r07-production-authorization-v1",
+  "authorization_id": "R28-R07-AUTH-BLOCK1-CLOSING-20261112-02",
+  "run_id": "R28-R07-BLOCK1-CLOSING-20261112-02",
+  "stage": "block1_closing",
+  "manifest_id": "R28-BLOCK1-CLOSING-FOURTEEN-20261112-V1",
+  "authorised": true,
+  "selective_rerun_authorised": true,
+  "approved_by": "David",
+  "approved_on": "2026-11-12",
+  "approval_basis": "David authorised grounded question-span propagation and one closing checkpoint correction cycle: same fourteen frozen inputs once each, USD 5 cumulative including existing four omission probes and check overhead, no selective reruns. b06-06 is development regression and must distinguish organisation escalation Lead from renamed site Champion plus Finance and multi-agency route; inputs 2-14 remain unseen confirmation. Preserve original expectations and scopes. Independently review every plan, zero false flags on clear questions; stop on a repeated Block 1 criterion failure, no further fixes/reruns or Block 2 work. Interpretation check, validators, retrieval and two-attempt ceiling unchanged.",
+  "execution_commit": "83fdf18a4751526a5584f4c10d1a41169112276c",
+  "selection_sha256": "507fff88a4e029c11d890efd426a17da8aa5530f5813fa13c942f6096324cbe4",
+  "input_sha256": "507fff88a4e029c11d890efd426a17da8aa5530f5813fa13c942f6096324cbe4",
+  "scopes_sha256": "975e781019938a6fc8b130585fd38d23d84ebfd19fd286d642b988cb0d210d72",
+  "population_sha256": "507fff88a4e029c11d890efd426a17da8aa5530f5813fa13c942f6096324cbe4",
+  "dispatcher_sha256": "105e91a566af3dabe3d11544f9bebbbe60621d34ed51ab19a31f194741218a9a",
+  "runner_sha256": "71965194767d69692d93384aa7805cc4532dd997f95c497a8bccec21d4fc140d",
+  "runtime_source_aggregate": "38471251369aa0b4b317ca5ef93023ae3dcb692fe406514b07404812e98c8cdc",
+  "runtime_snapshot_sha256": "f271c1ac843e53aaa16f6f0c70f6f3b642499d69dac2467d17e80c42f280d792"
+}

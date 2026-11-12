@@ -1,0 +1,7 @@
+ Container rag-platform-ai-run-90e892b87123 Creating 
+ Container rag-platform-ai-run-90e892b87123 Created 
+app/generation/openai_adapter.py:511: error: "OpenAIGenerationOutput" has no attribute "aspect_links"  [attr-defined]
+app/generation/openai_adapter.py:520: error: "OpenAIGenerationOutput" has no attribute "aspect_links"  [attr-defined]
+app/generation/entailment.py:80: error: "OpenAIGenerationOutput" has no attribute "aspect_links"  [attr-defined]
+Found 3 errors in 2 files (checked 3 source files)
+

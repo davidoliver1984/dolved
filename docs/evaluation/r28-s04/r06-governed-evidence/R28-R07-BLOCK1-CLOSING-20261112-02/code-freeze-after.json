@@ -1,0 +1,6 @@
+{
+  "execution_commit": "83fdf18a4751526a5584f4c10d1a41169112276c",
+  "runtime_source_aggregate": "38471251369aa0b4b317ca5ef93023ae3dcb692fe406514b07404812e98c8cdc",
+  "runtime_snapshot_sha256": "f271c1ac843e53aaa16f6f0c70f6f3b642499d69dac2467d17e80c42f280d792",
+  "verification": "Read-only governed runtime_aggregate/runtime_snapshot after explicit stop at case 1; both equal preflight. No further provider calls."
+}
