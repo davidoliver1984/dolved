@@ -1,0 +1,9 @@
+{
+  "execution_commit": "34adbcb4d51beb8df3e5dcac270221140d37599d",
+  "runtime_source_aggregate": "263ef24beabc4348f573904e3e390a71b3a16bb9c2fd9cd72bb8e65637182727",
+  "runtime_snapshot_sha256": "f271c1ac843e53aaa16f6f0c70f6f3b642499d69dac2467d17e80c42f280d792",
+  "status": "stopped_at_review_gate_4",
+  "attempted": 4,
+  "remaining_unattempted": 1,
+  "note": "Read-only post-stop snapshot and runtime hash match preflight. No retry or fifth dispatch."
+}
