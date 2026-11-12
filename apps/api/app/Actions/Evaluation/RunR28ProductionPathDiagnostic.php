@@ -257,7 +257,7 @@ final readonly class RunR28ProductionPathDiagnostic
         }
         if ($stage === 'eligibility') {
             return collect($value)->only([
-                'outcome', 'document_public_ids_by_side', 'reason', 'resolved_location_public_id',
+                'outcome', 'document_public_ids_by_side', 'reason', 'resolved_location_public_id', 'reference_classifications',
             ])->all();
         }
         if ($stage === 'generation_input') {

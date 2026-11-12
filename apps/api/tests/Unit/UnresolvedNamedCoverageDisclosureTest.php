@@ -58,4 +58,17 @@ final class UnresolvedNamedCoverageDisclosureTest extends TestCase
             'resolved_applicability_location' => ['resolved_location_public_id' => $location],
         ];
     }
+
+    public function test_only_positive_non_site_classifications_suppress_unresolved_notice(): void
+    {
+        foreach (['organisation', 'document'] as $kind) {
+            $need = $this->need('retrieve', 'named', null);
+            $need['applicability_reference_classifications'] = [['reference' => 'grounded reference', 'kind' => $kind]];
+            $this->assertSame('Guidance.', UnresolvedNamedCoverageDisclosure::append('Guidance.', [$need]));
+            $need['applicability_reference_classifications'][] = ['reference' => 'Willow outreach', 'kind' => 'unresolved'];
+            $this->assertStringContainsString('Location coverage not established', UnresolvedNamedCoverageDisclosure::append('Guidance.', [$need]));
+        }
+        $need['applicability_reference_classifications'] = [['kind' => 'model_said_generic']];
+        $this->assertStringContainsString('Location coverage not established', UnresolvedNamedCoverageDisclosure::append('Guidance.', [$need]));
+    }
 }

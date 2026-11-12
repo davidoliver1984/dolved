@@ -1,0 +1,10 @@
+ Container rag-platform-api-run-130325688bb4 Creating 
+ Container rag-platform-api-run-130325688bb4 Created 
+
+  ✓..✓.
+
+  ──────────────────────────────────────────────────────────────────── Laravel  
+    FIXED   .................................... 5 files, 2 style issues fixed  
+  ✓ app/Services/Retrieval/EligibilityResolver.php unary_operator_spaces, bra…  
+  ✓ tests/Feature/EvidenceNeedsRetrievalTest.php fully_qualified_strict_types…  
+

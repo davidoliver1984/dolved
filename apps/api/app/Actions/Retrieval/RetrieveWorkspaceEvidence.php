@@ -197,6 +197,8 @@ final readonly class RetrieveWorkspaceEvidence
             unset($need['supports_need_id']);
             $result = $results[$id];
             $coverage[] = [...$need, 'retrieval_outcome' => $result->outcome->value,
+                'applicability_reference_classifications' => isset($scopeFacts[$id]) ? []
+                    : $this->eligibility->referenceClassifications($authorised, $plans[$id]->locationReferences),
                 'selection_coverage' => $selection['coverage'][$id],
                 ...(isset($scopeFacts[$id]) ? ['scope_fact' => $scopeFacts[$id]->value] : []),
                 'retrieval_reason' => $result->reason,
@@ -456,6 +458,7 @@ final readonly class RetrieveWorkspaceEvidence
                 'reason' => $eligible->reason,
                 'resolved_location_public_id' => $eligible->resolvedLocationPublicId,
                 'clarification_question' => $eligible->clarificationQuestion,
+                'reference_classifications' => $this->eligibility->referenceClassifications($authorised, $plan->locationReferences),
             ]);
             if (! $eligible->canSearch()) {
                 return new RetrievalResult(

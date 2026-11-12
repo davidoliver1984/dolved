@@ -518,10 +518,7 @@ final readonly class EligibilityResolver
         }
         $resolved = collect();
         foreach ($references as $reference) {
-            if ($this->isOrganisationReference($authorised, $reference)) {
-                continue;
-            }
-            $match = $this->resolveLocationReference($authorised, $reference);
+            [$match] = $this->classifyReference($authorised, $reference);
             if ($match === null) {
                 continue;
             }
@@ -537,6 +534,55 @@ final readonly class EligibilityResolver
         $mostSpecific = $resolved->filter(fn (OrganisationalLocation $candidate): bool => $resolved->every(fn (OrganisationalLocation $ancestor): bool => $this->isDescendantOrSame($candidate, $ancestor)));
 
         return $mostSpecific->count() === 1 ? $mostSpecific->first() : null;
+    }
+
+    /**
+     * Application-owned provenance for disclosure, never a model classification.
+     *
+     * @param  list<string>  $references
+     * @return list<array{reference: string, kind: string}>
+     */
+    public function referenceClassifications(AuthorisedKnowledgeScope $authorised, array $references): array
+    {
+        return array_map(function (string $reference) use ($authorised): array {
+            [, $kind] = $this->classifyReference($authorised, $reference);
+
+            return ['reference' => $reference, 'kind' => $kind];
+        }, $references);
+    }
+
+    /** @return array{?OrganisationalLocation, string} */
+    private function classifyReference(AuthorisedKnowledgeScope $authorised, string $reference): array
+    {
+        // A real name/alias wins even when it is also an organisation or title.
+        $exact = $this->locationMatches($authorised, Str::lower(trim($reference)));
+        if ($exact->isEmpty()) {
+            $exact = $this->locationMatches($authorised, $this->referenceIdentity($reference));
+        }
+        if ($exact->isNotEmpty()) {
+            return [$exact->count() === 1 ? $exact->first() : null, $exact->count() === 1 ? 'site' : 'unresolved'];
+        }
+        if ($this->isOrganisationReference($authorised, $reference)) {
+            return [null, 'organisation'];
+        }
+        $identity = $this->referenceIdentity($reference);
+        $titleMatch = DocumentFamily::query()->where('workspace_id', $authorised->workspace->id)
+            ->whereNull('tombstoned_at')->pluck('name')
+            ->contains(fn (string $title): bool => $this->normaliseIdentity($title) === $identity);
+        if ($titleMatch) {
+            return [null, 'document'];
+        }
+        $location = $this->resolveLocationReference($authorised, $reference);
+
+        return [$location, $location === null ? 'unresolved' : 'site'];
+    }
+
+    private function referenceIdentity(string $reference): string
+    {
+        $identity = $this->normaliseIdentity($reference);
+
+        // Only whole-reference wrappers; never substring/title-prefix matching.
+        return preg_replace('/^(?:(?:at|in|under|across|within|for) )?(?:the )?/u', '', $identity) ?? $identity;
     }
 
     private function resolveLocationReference(
@@ -583,11 +629,9 @@ final readonly class EligibilityResolver
         AuthorisedKnowledgeScope $authorised,
         string $reference,
     ): bool {
-        $reference = $this->normaliseIdentity($reference);
+        $reference = $this->referenceIdentity($reference);
         $organisation = $this->normaliseIdentity($authorised->workspace->name);
-        if ($reference === $organisation) {
-            return true;
-        }
+        $names = [$organisation];
 
         $genericSuffixes = [
             'care', 'group', 'organisation', 'organization', 'services',
@@ -598,7 +642,16 @@ final readonly class EligibilityResolver
             array_pop($parts);
         }
 
-        return $parts !== [] && $reference === implode(' ', $parts);
+        if ($parts !== []) {
+            $names[] = implode(' ', $parts);
+        }
+        foreach (array_unique($names) as $name) {
+            if ($name !== '' && preg_match('/^'.preg_quote($name, '/').'(?: s)?(?: staff| employees| sites)?$/u', $reference) === 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function normaliseIdentity(string $value): string

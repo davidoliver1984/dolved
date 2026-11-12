@@ -35,6 +35,7 @@ use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Generation\GenerationProfileFactory;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Support\Generation\GenerationAssemblyInput;
+use App\Support\Generation\UnresolvedNamedCoverageDisclosure;
 use App\Support\Retrieval\ApplicabilityScopeFact;
 use App\Support\Retrieval\EvidenceNeedsPlan;
 use App\Support\Retrieval\RetrievalPlan;
@@ -927,6 +928,104 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertSame([], $generic->retrievalPlan('n1')->locationReferences);
         $this->assertSame(RetrievalOutcome::EvidenceFound,
             $resolver->handle($scope, $generic->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-08'))->outcome);
+    }
+
+    public function test_reference_identity_provenance_distinguishes_organisation_titles_and_places(): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $workspace->update(['name' => 'Cedar Care Group']);
+        $scope->workspace->refresh();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        $document->family->update(['name' => 'Equipment Maintenance Policy']);
+        $site = OrganisationalLocation::factory()->for($workspace)->create(['name' => 'Birch House']);
+        $alias = new OrganisationalLocationAlias(['alias' => 'Birch']);
+        $alias->workspace()->associate($workspace);
+        $alias->organisationalLocation()->associate($site);
+        $alias->save();
+        [$foreign, $foreignGeneration] = $this->scope(true);
+        $foreign->update(['name' => 'Juniper Care Group']);
+        $foreignDocument = $this->document($foreign, $foreignGeneration, '2026-01-01');
+        $foreignDocument->family->update(['name' => 'Foreign Benefits Handbook']);
+        $resolver = app(EligibilityResolver::class);
+        $examples = [
+            'Cedar' => 'organisation', 'Cedar Care Group' => 'organisation',
+            'at Cedar' => 'organisation', 'Cedar employees' => 'organisation',
+            'Cedar staff' => 'organisation', 'Cedar sites' => 'organisation',
+            "Cedar's employees" => 'organisation', 'Cedar’s sites' => 'organisation',
+            "Cedar Care Group's" => 'organisation',
+            'Ceda' => 'unresolved', 'Cedar Clinic' => 'unresolved',
+            'Juniper' => 'unresolved', 'Juniper Care Group staff' => 'unresolved',
+            'Equipment Maintenance Policy' => 'document',
+            'the Equipment Maintenance Policy' => 'document',
+            'under the Equipment Maintenance Policy' => 'document',
+            'Equipment Maintenance' => 'unresolved', 'Foreign Benefits Handbook' => 'unresolved',
+            'Birch House' => 'site', 'the Birch House' => 'site', 'Birch' => 'site',
+            'Willow outreach' => 'unresolved', 'Oakfield outreach' => 'unresolved',
+        ];
+        foreach ($examples as $quote => $expected) {
+            $this->assertSame([['reference' => $quote, 'kind' => $expected]],
+                $resolver->referenceClassifications($scope, [$quote]), $quote);
+        }
+        // Whole title matching must not swallow a real place or its alias, even
+        // with a wrapper, nor match only the place-shaped prefix of a title.
+        $document->family->update(['name' => 'Birch House']);
+        $this->assertSame('site', $resolver->referenceClassifications($scope, ['under the Birch House'])[0]['kind']);
+        $document->family->update(['name' => 'Birch House Maintenance Policy']);
+        $this->assertSame('site', $resolver->referenceClassifications($scope, ['Birch House'])[0]['kind']);
+        $this->assertSame('document', $resolver->referenceClassifications($scope, ['Birch House Maintenance Policy'])[0]['kind']);
+
+        $base = $this->plan()->retrievalPlan('n1');
+        $plan = new RetrievalPlan('Which rules apply at Cedar, Birch House?', RetrievalTemporalMode::Current,
+            null, null, ['Cedar', 'Birch House'], null, $base->classifierLineage, $base->classifierUsage);
+        $this->assertSame($site->public_id, $resolver->handle($scope, $plan, CarbonImmutable::parse('2026-11-12'))->resolvedLocationPublicId);
+        $this->assertSame(['organisation', 'site'], array_column($resolver->referenceClassifications($scope, $plan->locationReferences), 'kind'));
+    }
+
+    public function test_non_site_identity_survives_production_retrieval_to_coverage_disclosure(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $workspace->update(['name' => 'Cedar Care Group']);
+        $scope->workspace->refresh();
+        $document = $this->document($workspace, $generation, '2026-01-01');
+        $document->family->update(['name' => 'Equipment Maintenance Policy']);
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) use ($generation, $document) {
+            $body = $request->data();
+            $this->assertStringEndsWith('/search', $request->url());
+            $this->assertSame([$document->public_id], $body['scopes'][0]['eligible_document_ids']);
+
+            return Http::response(['request_id' => $body['request_id'], 'candidates' => [[
+                'chunk_id' => $document->chunks()->firstOrFail()->public_id,
+                'document_id' => $document->public_id, 'workspace_corpus_generation_id' => $generation->public_id,
+                'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
+                'score' => 0.9, 'rank' => 1, 'retrieval_method' => 'dense', 'side' => 'primary',
+            ]], 'lineage' => [], 'diagnostics' => []]);
+        });
+        foreach (['Cedar staff' => 'organisation', 'under the Equipment Maintenance Policy' => 'document', 'Willow outreach' => 'unresolved'] as $reference => $kind) {
+            $question = 'For '.$reference.', what maintenance is required?';
+            $plan = $this->plan(4, function ($data) use ($reference, $question, $document) {
+                $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
+                $data['plan']['needs'][0]['question_span'] = ['turn_id' => 'user-1', 'quote' => $question];
+                $data['plan']['needs'][0]['aspect'] = $question;
+                $data['plan']['needs'][0]['operation'] = 'retrieve';
+                $data['plan']['needs'][0]['scope_question'] = null;
+                $data['plan']['needs'][0]['applicability'] = ['kind' => 'named', 'source' => ['turn_id' => 'user-1', 'quote' => $reference]];
+                $data['plan']['bindings'][0]['family_ids'] = [$document->family->public_id];
+
+                return $data;
+            });
+            $trace = [];
+            $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 10, CarbonImmutable::parse('2026-11-12'),
+                observe: function ($stage, $value) use (&$trace) {
+                    $trace[$stage] = $value;
+                });
+            $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome);
+            $this->assertSame($kind, $trace['need.n1.eligibility']['reference_classifications'][0]['kind']);
+            $this->assertSame($kind, $result->evidenceNeeds[0]['applicability_reference_classifications'][0]['kind']);
+            $display = UnresolvedNamedCoverageDisclosure::append('Guidance.', $result->evidenceNeeds);
+            $this->assertSame($kind === 'unresolved', str_contains($display, 'Location coverage not established'));
+        }
     }
 
     public function test_workspace_identity_and_unlisted_oakfield_outreach_do_not_narrow(): void

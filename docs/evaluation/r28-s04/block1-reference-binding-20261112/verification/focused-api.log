@@ -1,0 +1,26 @@
+ Container rag-platform-api-run-135a0bfc1e34 Creating 
+ Container rag-platform-api-run-135a0bfc1e34 Created 
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.25
+Configuration: /app/phpunit.xml
+
+
+Notice: file_get_contents(): Read of 149706 bytes failed with errno=5 I/O error in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 100
+.....[31;1mE[0m                                                              6 / 6 (100%)
+Notice: file_put_contents(): Write of 967 bytes failed with errno=35 Resource deadlock would occur in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:00.573, Memory: 71.00 MB
+
+There was 1 error:
+
+1) Tests\Feature\EvidenceNeedsRetrievalTest::test_reference_identity_provenance_distinguishes_organisation_titles_and_places
+ArgumentCountError: App\Support\Retrieval\RetrievalPlan::__construct(): Argument #3 ($explicitDate) not passed
+
+/app/app/Support/Retrieval/RetrievalPlan.php:21
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:978
+
+[37;41mERRORS![0m
+[37;41mTests: 6[0m[37;41m, Assertions: 40[0m[37;41m, Errors: 1[0m[37;41m.[0m
+

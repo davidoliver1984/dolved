@@ -12,6 +12,14 @@ final class UnresolvedNamedCoverageDisclosure
     {
         foreach ($evidenceNeeds as $need) {
             $location = $need['resolved_applicability_location'] ?? null;
+            $classifications = $need['applicability_reference_classifications'] ?? [];
+            // Only positive application-owned non-site matches suppress the notice.
+            // Empty/old metadata and mixed unresolved references keep the safety net.
+            if ($classifications !== [] && is_array($classifications)
+                && array_all($classifications, fn ($item): bool => is_array($item)
+                    && in_array($item['kind'] ?? null, ['organisation', 'document'], true))) {
+                continue;
+            }
             if (($need['operation'] ?? null) === 'scope_enquiry'
                 || ($need['applicability']['kind'] ?? null) !== 'named'
                 || ($need['retrieval_outcome'] ?? null) !== 'evidence_found'

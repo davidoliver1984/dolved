@@ -1,0 +1,11 @@
+{
+  "subset_id": "R28-BLOCK1-REFERENCE-BINDING-SIX-20261112-V1",
+  "items": [
+    {"case_id":"block1.citations-service","variant_id":"v1","utterance":"Which confidential support service can Alderbridge staff use for personal worries, and how can they reach it?"},
+    {"case_id":"block1.relative-current-quarter","variant_id":"v1","utterance":"For this quarter, which team handles login problems under the E-Learning Platform Guidance?"},
+    {"case_id":"block1.reference-organisation","variant_id":"v1","utterance":"At Alderbridge Care Group, how much is the initial uniform payment for a new employee in a uniformed role?"},
+    {"case_id":"block1.reference-title","variant_id":"v1","utterance":"Under the Uniform Allowance Guidance, which month is the replacement payment made each year?"},
+    {"case_id":"block1.reference-site","variant_id":"v1","utterance":"At Riverside House, what initial uniform allowance is available to a new starter in a uniformed role?"},
+    {"case_id":"block1.reference-unregistered","variant_id":"v1","utterance":"At Oakfield outreach, what initial uniform allowance would a new starter in a uniformed role receive?"}
+  ]
+}
