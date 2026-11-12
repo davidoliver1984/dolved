@@ -1,0 +1,17 @@
+{
+  "status_counts": {
+    "completed": 6
+  },
+  "checker_codes": {
+    "scope_added": 2,
+    "accepted": 4
+  },
+  "verification_counts": {
+    "unverifiable": 2,
+    "not_applicable": 4
+  },
+  "check_input_tokens": 6305,
+  "check_output_tokens": 1135,
+  "check_latency_ms": 17567.176174983615,
+  "known_plus_estimated_usd": 0.06565953
+}

@@ -1,0 +1,22 @@
+ Container rag-platform-api-run-cd766e8ed71c Creating 
+ Container rag-platform-api-run-cd766e8ed71c Created 
+
+  ..
+
+  ──────────────────────────────────────────────────────────────────── Laravel  
+    PASS   ........................................................... 2 files  
+
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.25
+Configuration: /app/phpunit.xml
+
+
+Notice: file_get_contents(): Read of 149706 bytes failed with errno=5 I/O error in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 100
+......                                                              6 / 6 (100%)
+Notice: file_put_contents(): Write of 671 bytes failed with errno=35 Resource deadlock would occur in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:00.644, Memory: 56.50 MB
+
+[30;42mOK (6 tests, 137 assertions)[0m

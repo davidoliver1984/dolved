@@ -1,0 +1,90 @@
+{
+  "runtime_source_aggregate": "9ae989fe980d62e3da04dec90ea228583002e54e492d7e2cdec6fe91ef0f2ac2",
+  "runtime_snapshot_sha256": "f271c1ac843e53aaa16f6f0c70f6f3b642499d69dac2467d17e80c42f280d792",
+  "source_unchanged": true,
+  "snapshot_unchanged": true,
+  "runtime_snapshot": {
+    "environment": "local",
+    "workspaces": [
+      {
+        "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+        "user_public_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+        "generation_public_id": "b24a79c2-875e-4f7c-8fa9-3681db92ae73",
+        "generation_status": "active",
+        "expected_point_count": 982,
+        "assigned_point_count": 986,
+        "foreign_chunk_assignments": 0,
+        "point_manifest_digest": "9b3acad2659bd9d959e41819345123389c9d642029b1215a72b01b12b5f6bf80",
+        "dense_provider": "voyage",
+        "dense_model": "voyage-4-large",
+        "dense_dimensions": 1024,
+        "sparse_provider": "fastembed",
+        "sparse_model": "prithivida/Splade_PP_en_v1"
+      },
+      {
+        "workspace_id": "be22830b-ddf1-4de5-b852-f7f4c111cf8e",
+        "user_public_id": null,
+        "generation_public_id": "044a9260-b265-4179-8e34-3c0708b55b67",
+        "generation_status": "active",
+        "expected_point_count": 12,
+        "assigned_point_count": 12,
+        "foreign_chunk_assignments": 0,
+        "point_manifest_digest": "3ec7e01436f7f002e844be385434189fc43d5a82ddb97c4a957e76c6858b81bd",
+        "dense_provider": "voyage",
+        "dense_model": "voyage-4-large",
+        "dense_dimensions": 1024,
+        "sparse_provider": "fastembed",
+        "sparse_model": "prithivida/Splade_PP_en_v1"
+      },
+      {
+        "workspace_id": "4db6ffe2-6974-415d-8fd3-002b8fb05d05",
+        "user_public_id": "6972994f-c594-42ef-a747-39d01ae24fc3",
+        "generation_public_id": "461b4f51-c1d7-4a61-aceb-3ddc08581a3c",
+        "generation_status": "active",
+        "expected_point_count": 6,
+        "assigned_point_count": 6,
+        "foreign_chunk_assignments": 0,
+        "point_manifest_digest": "3b1c0712b927237221507b83f8aa54e39b4a24725d842aa1c7907de8f4673975",
+        "dense_provider": "voyage",
+        "dense_model": "voyage-4-large",
+        "dense_dimensions": 1024,
+        "sparse_provider": "fastembed",
+        "sparse_model": "prithivida/Splade_PP_en_v1"
+      }
+    ],
+    "generation_model": "gpt-5-mini",
+    "planner": {
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "contract_schema_version": "plan-response-v3",
+      "prompt_version": "query-evidence-contract-v1",
+      "adapter_version": "structured-chat-v5"
+    },
+    "retrieval_limits": {
+      "timeout_seconds": 480,
+      "timeout_budget": {
+        "embedding_attempts": 4,
+        "embedding_request_timeout_seconds": 10,
+        "embedding_initial_backoff_seconds": 15,
+        "embedding_maximum_backoff_seconds": 120,
+        "provider_cooldown_maximum_seconds": 120,
+        "qdrant_request_timeout_seconds": 10,
+        "maximum_qdrant_requests": 4,
+        "local_execution_allowance_seconds": 20,
+        "safety_margin_seconds": 20,
+        "search_minimum_timeout_seconds": 480,
+        "reranker_attempts_per_side": 3,
+        "reranker_request_timeout_seconds": 10,
+        "reranker_initial_backoff_seconds": 15,
+        "reranker_maximum_backoff_seconds": 90,
+        "reranker_provider_cooldown_maximum_seconds": 90,
+        "reranker_maximum_sides": 2,
+        "reranker_minimum_timeout_seconds": 460
+      },
+      "max_attempts": 2,
+      "candidate_k": 10,
+      "candidate_k_max": 100,
+      "max_eligible_documents": 500
+    }
+  }
+}

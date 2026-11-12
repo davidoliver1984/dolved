@@ -12,8 +12,8 @@ Laravel baseline 859 tests / 2 failures / 9 skipped; changed860 / same2 / 9 skip
 Focused checker tests passed32 before the final lossless-merge test; all33 pass
 in the full suite. Mirrored PHP6 tests /137 assertions pass. One PHPUnit result-cache
 write notice occurred in the focused Docker run; raw log retained, tests passed.
-Twenty governed-runner tests pass. Scoped Ruff and PHP Pint pass; static check
-outcome retained separately, not inferred from unit-test success.
+Twenty governed-runner tests pass. Scoped Ruff and PHP Pint pass. Mypy 2.3.0
+crashed internally; `verification/static.log` is retained, no clean typecheck claim.
 
 Coverage: citation-valid and unverifiable flags for each code; first/second-attempt
 unverifiable flags retain the plan without an extra attempt; verified rejection

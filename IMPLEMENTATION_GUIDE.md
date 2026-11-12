@@ -8,6 +8,23 @@
 
 ## Document ownership
 
+**2026-11-12 checker-citation checkpoint:** `737776d` separates semantic checker
+codes from deterministic citation verification. Unverifiable flags retain the
+validated plan without spending an attempt; no extra call, validator relaxation
+or question-specific examples. Full-suite baseline/changed JUnit shows identical
+38 AI / 2 Laravel failing-name sets, with 21 additional passing tests; scoped
+Ruff/Pint pass, Mypy crashes internally (not a clean typecheck). The governed
+six-input run completed once each on first plans: two app-grounded-date flags
+were correctly discarded, zero retry-triggering false flags, and no material
+safety/authority/citation or operational stop. [Report and every reviewed flag/plan](docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-CHECKER-CITATIONS-20261112-01/report.md).
+Block 1 remains held: the checker accepted the employee audience as a location
+in the EAP question, causing a misleading location notice; another plan retained
+only the quarter in question_span, although its aspect and answer kept the full
+request. No tuning or rerun. These remain Block 1 findings, not later-block work.
+Runtime/corpus freeze unchanged; USD 0.06565953 priced-plus-estimated receipts
+exclude unavailable reranking/infrastructure prices. Plan, journal and local
+journey updated together. The previous checkpoint account below is historical.
+
 **Relative checkpoint result:** `2456a08` pushed; all five relative inputs passed
 calendar grounding, with four answers/two authority-window clarifications across
 the six-input set. Full-suite exact failure-name parity is 38 AI / 2 Laravel;

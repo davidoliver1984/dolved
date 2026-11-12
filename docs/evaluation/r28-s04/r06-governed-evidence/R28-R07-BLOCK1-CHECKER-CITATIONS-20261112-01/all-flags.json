@@ -1,0 +1,152 @@
+[
+  {
+    "case_id": "v4.case.corrected-b01-06",
+    "attempt": 1,
+    "cached_input_tokens": null,
+    "checker_code": "scope_added",
+    "citation": {
+      "inspected_need_ids": [
+        "n1"
+      ],
+      "need_id": "n1",
+      "plan_field": "fact_reference.value",
+      "plan_quote": "2026-10",
+      "user_quote": "When will the approved mileage claim from last month be paid?",
+      "user_turn_id": "user-1"
+    },
+    "citation_verification": "unverifiable",
+    "code": "accepted",
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "input_tokens": 1032,
+    "latency_ms": 4727.2492939955555,
+    "model": "gpt-5-mini",
+    "output_tokens": 268,
+    "pricing_snapshot": null,
+    "provider": "openai",
+    "request_count": 1,
+    "retry_count": 0,
+    "reviewed_plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "What is the scheduled payment timing or payroll run for an already-approved mileage claim (an expenses mileage reimbursement) submitted for 'last month'?",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": {
+            "precision": "month",
+            "source": {
+              "quote": "last month",
+              "turn_id": "user-1"
+            },
+            "value": "2026-10"
+          },
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "When will the approved mileage claim from last month be paid?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "verification_reason": "application_grounded_period",
+    "version": "interpretation-check-v2"
+  },
+  {
+    "case_id": "block1.relative-current-quarter",
+    "attempt": 1,
+    "cached_input_tokens": null,
+    "checker_code": "scope_added",
+    "citation": {
+      "inspected_need_ids": [],
+      "need_id": "n1",
+      "plan_field": "authority.value",
+      "plan_quote": "2026-10-01/2026-12-31",
+      "user_quote": "this quarter",
+      "user_turn_id": "user-1"
+    },
+    "citation_verification": "unverifiable",
+    "code": "accepted",
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "input_tokens": 1047,
+    "latency_ms": 5513.731044018641,
+    "model": "gpt-5-mini",
+    "output_tokens": 519,
+    "pricing_snapshot": null,
+    "provider": "openai",
+    "request_count": 1,
+    "retry_count": 0,
+    "reviewed_plan": {
+      "bindings": [
+        {
+          "family_ids": [
+            "17278f8a-fa84-4a14-a98e-261d19682c66"
+          ],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "matched"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "From the E-Learning Platform Guidance, for the period 'this quarter', retrieve which team is responsible for handling login problems reported on the e-learning platform.",
+          "authority": {
+            "kind": "period",
+            "precision": "interval",
+            "source": {
+              "quote": "this quarter",
+              "turn_id": "user-1"
+            },
+            "value": "2026-10-01/2026-12-31"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "this quarter",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "verification_reason": "application_grounded_period",
+    "version": "interpretation-check-v2"
+  }
+]

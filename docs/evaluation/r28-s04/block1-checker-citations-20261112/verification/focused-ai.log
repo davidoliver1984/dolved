@@ -1,0 +1,30 @@
+ Container rag-platform-ai-run-e8f69b9de78b Creating 
+ Container rag-platform-ai-run-e8f69b9de78b Created 
+Bytecode compiled 15519 files in 1.86s
+SIM102 Use a single `if` statement instead of nested `if` statements
+  --> app/retrieval/interpretation.py:45:5
+   |
+43 |       texts = {t.turn_id: t.text for t in turns}
+44 |       needs = {n.need_id: n.model_dump(mode="json") for n in plan.needs}
+45 | /     if decision.code in {"clause_omitted", "meaning_changed"}:
+46 | |         if not citation.user_quote or citation.user_turn_id not in texts or citation.user_quote not in texts[citation.user_turn_id]:
+   | |____________________________________________________________________________________________________________________________________^
+47 |               return "unverifiable", "user_quote_not_found"
+48 |       if decision.code == "clause_omitted":
+   |
+help: Combine `if` statements using `and`
+
+C408 Unnecessary `dict()` call (rewrite as a literal)
+  --> tests/test_interpretation_check.py:24:12
+   |
+23 |   def citation(**values):
+24 |       return dict(user_turn_id=None, user_quote=None, need_id=None, plan_field=None,
+   |  ____________^
+25 | |                 plan_quote=None, inspected_need_ids=[]) | values
+   | |_______________________________________________________^
+   |
+help: Rewrite as a literal
+
+Found 3 errors (1 fixed, 2 remaining).
+No fixes available (1 hidden fix can be enabled with the `--unsafe-fixes` option).
+

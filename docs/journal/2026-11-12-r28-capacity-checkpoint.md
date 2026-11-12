@@ -1,5 +1,38 @@
 # R28 — three-need capacity correction and first live checkpoint
 
+## Verifiable checker flags, six-question checkpoint
+
+David approved keeping semantic judgment separate from quotation verification:
+a copied question span is provenance, not proof of coverage. `737776d` implements
+bounded citations, closed verification reasons and unchanged two-attempt control.
+Unverifiable flags do not spend a retry. All four frozen omission plans still have
+actionable verified citations provider-free, including both whole-span probes.
+No extra checker call or question-specific prompt examples were introduced.
+
+Raw baseline/changed JUnit records identical 38 AI and 2 Laravel failing-name sets,
+with 20 additional AI passes and one Laravel pass. Twenty harness tests pass;
+Ruff/Pint pass, while Mypy crashed internally and is explicitly not called passing.
+The exact mixed-worktree runner was hash-bound and archived rather than absorbing
+pre-existing edits into the source commit.
+
+The [six-input live report](../evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-CHECKER-CITATIONS-20261112-01/report.md)
+records six answers, no second planner attempt and zero retry-triggering false
+flags. Two scope flags cited application-calculated dates; both were recorded as
+unverifiable and manually reviewed with their complete plans. Neither discarded
+flag concealed a real omission or added scope. However, the accepted EAP plan
+treats “Alderbridge staff” as a location and displays a misleading coverage notice.
+The current-quarter plan also retains only the date phrase as its question_span,
+although the executable aspect and answer retain the requested team/login fact.
+Those remain Block 1 interpretation findings. The policy claims and historical
+uniform amounts were checked against the frozen passages; no safety stop occurred.
+
+The citation safeguard is verified, but the recommendation is to hold Block 1 for
+accepted reference-role drift, recurring from the previous title/location reading.
+No tuning, fix or additional dispatch followed. The checker added 6,305 input and
+1,135 output tokens across six calls, mean 2.93 seconds. Known-plus-estimated cost
+USD 0.06565953 excludes unpriced reranking/infrastructure; source/corpus freezes
+match. Plan, build guide and local journey were updated together.
+
 ## Grounded question wording, one authorised correction cycle
 
 Provider-free inspection confirmed that the final n3 passage already named both
