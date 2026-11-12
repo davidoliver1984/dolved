@@ -1,0 +1,5 @@
+{"index": 0, "case_id": "v4.case.corrected-b03-05", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T11:38:12.288599+00:00"}
+{"index": 0, "case_id": "v4.case.corrected-b03-05", "variant_id": "v1", "event": "recorded", "sha256": "abe048a0bacb5aeeef2540ffdc5e123238eaf91dbfa10f874df0da2bd74edde6", "at": "2026-11-12T11:38:52.091316+00:00"}
+{"index": 1, "case_id": "v4.case.corrected-b05-01", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T11:39:26.405448+00:00"}
+{"index": 1, "case_id": "v4.case.corrected-b05-01", "variant_id": "v1", "event": "recorded", "sha256": "5d177fdc22ae96e95e79a7b141ac99923e9559d3fa05b7de0c6f1c16d11850ee", "at": "2026-11-12T11:40:08.696613+00:00"}
+{"index": 2, "case_id": "v4.case.corrected-b01-04", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T11:40:27.255355+00:00"}

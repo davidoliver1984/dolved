@@ -1,0 +1,1 @@
+{"at_utc": "2026-11-12T11:44:16.577529+00:00", "execution_commit": "b00b4a346cfce980987e5a328c9748f2ca29d90b", "runtime_snapshot_sha256": "f271c1ac843e53aaa16f6f0c70f6f3b642499d69dac2467d17e80c42f280d792", "runtime_source_aggregate": "716430fb0be16f0ee1607fb2a2abab30b71b20c34141f1ba6c9be1ceb4da6de6", "stop": "harness pipeline-exercised detection mismatch; no app drift"}

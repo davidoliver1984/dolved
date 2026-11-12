@@ -1,0 +1,286 @@
+[
+  {
+    "file": "cases/01-v4.case.corrected-b03-05-v1.json",
+    "case_id": "v4.case.corrected-b03-05",
+    "status": "completed",
+    "displayed_text": "Per the handbook's notice table, where service is 2 years or more notice is one week per completed year of service\u2014so after three years you give three weeks' notice (the policy also notes this is subject to any statutory maximum).\n\nBefore leaving, follow the HR exit process: provide notice as above; return any Alderbridge property and issued equipment (including keys or access cards and any devices); HR will make a final pay calculation and issue a final payslip reflecting any outstanding holiday pay; and, where you agree, participate in an exit interview. Also ensure any required IT account/device steps per the Password and Account Access and Mobile Device Management guidance are followed and that references or verification requests are handled via HR per the Staff Reference Request Procedure.",
+    "plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        },
+        {
+          "family_ids": [],
+          "need_id": "n2",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "What statutory or contractual notice period I must give when resigning after three years' service?",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": {
+            "precision": "duration",
+            "source": {
+              "quote": "after three years",
+              "turn_id": "user-1"
+            },
+            "value": "three years"
+          },
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "How much notice do I give",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        },
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "What actions and tasks I need to complete (for example return of equipment, handover, final pay/benefits steps, IT access, and exit interview) before leaving after resigning?",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": {
+            "precision": "duration",
+            "source": {
+              "quote": "after three years",
+              "turn_id": "user-1"
+            },
+            "value": "three years"
+          },
+          "need_id": "n2",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "what else do I need to do before I leave",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "selection_coverage": {
+      "n1": {
+        "budget_cut_unit_count": 2,
+        "eligible_unit_count": 5,
+        "selected_unit_count": 3
+      },
+      "n2": {
+        "budget_cut_unit_count": 3,
+        "eligible_unit_count": 5,
+        "selected_unit_count": 2
+      }
+    },
+    "final_evidence": [
+      {
+        "chunk_id": "f8362c93-3fc9-5c0d-8edc-1dc367ecf327",
+        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "469dd077-58d5-59b3-aa83-dd57217cf193",
+        "document_family_id": "25a058ee-667f-4877-9abd-5fda5b8aaeaf",
+        "document_id": "29c809b2-02a4-4389-955c-eb267b7c30de",
+        "need_id": "n2",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "167ae317-840d-51ff-9d44-fc2d83aa8913",
+        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+        "need_id": "n2",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "469dd077-58d5-59b3-aa83-dd57217cf193",
+        "document_family_id": "25a058ee-667f-4877-9abd-5fda5b8aaeaf",
+        "document_id": "29c809b2-02a4-4389-955c-eb267b7c30de",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "167ae317-840d-51ff-9d44-fc2d83aa8913",
+        "document_family_id": "4d5e16ae-a46b-46a2-9724-d6a4960005d0",
+        "document_id": "58e69592-9309-4ab2-a04d-5edd0b730083",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "generation_outcome": "answered",
+    "unsupported_aspects": []
+  },
+  {
+    "file": "cases/02-v4.case.corrected-b05-01-v1.json",
+    "case_id": "v4.case.corrected-b05-01",
+    "status": "completed",
+    "displayed_text": "For current access problems \u2014 locked out or a course not showing \u2014 contact the IT service desk rather than the Training Team; the e-learning platform now uses the same single sign-on as the care records system and the Training Team no longer handles platform access issues.\n\nBefore July 2026 these access issues were handled by the Training Team, who were the recorded contact for access problems (listed with an internal training email address).",
+    "plan": {
+      "bindings": [
+        {
+          "family_ids": [],
+          "need_id": "n1",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        },
+        {
+          "family_ids": [],
+          "need_id": "n2",
+          "ownership": "authorised_workspace",
+          "ownership_source": null,
+          "subject_status": "topic"
+        }
+      ],
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Identify who staff should contact now when they are locked out of the e-learning platform or find a course missing (current contact/role/process for resolving e\u2011learning access or missing course issues).",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "Who do I go to now if I'm locked out of e-learnng or a course is missing",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        },
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Identify who (which role, team or contact) handled e-learning lockouts or missing-course reports before July 2026 (the recorded responsible contact/role prior to July 2026).",
+          "authority": {
+            "kind": "before",
+            "precision": "month",
+            "source": {
+              "quote": "before July 2026",
+              "turn_id": "user-1"
+            },
+            "value": "2026-07"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n2",
+          "operation": "compare",
+          "question_span": {
+            "quote": "who handled it before July 2026",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ],
+      "schema_version": "evidence-needs-plan-v3"
+    },
+    "selection_coverage": {
+      "n1": {
+        "budget_cut_unit_count": 2,
+        "eligible_unit_count": 5,
+        "selected_unit_count": 3
+      },
+      "n2": {
+        "budget_cut_unit_count": 0,
+        "eligible_unit_count": 1,
+        "selected_unit_count": 1
+      }
+    },
+    "final_evidence": [
+      {
+        "chunk_id": "e6eef862-161a-56f0-adef-a7cef552af6c",
+        "document_family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+        "document_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "e6eef862-161a-56f0-adef-a7cef552af6c",
+        "document_family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+        "document_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+        "need_id": "n2",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "beadddeb-ae25-53ea-8352-37746469a5d7",
+        "document_family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+        "document_id": "37860f89-10f6-4521-95f0-2fa9a4b18a4a",
+        "need_id": "n2",
+        "side": "comparison"
+      },
+      {
+        "chunk_id": "33609231-2c49-54e6-98f3-de67ce8d78b7",
+        "document_family_id": "ef40b4ed-dbbe-4a48-84db-ac26ffd6f3b2",
+        "document_id": "41e8dbf9-525b-4d4d-a6cb-0922d54bd92a",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "418d02ca-111b-5310-9b3c-cfcd0daa27c1",
+        "document_family_id": "9d14e8e8-dbf9-4418-9c61-0f14d317efe6",
+        "document_id": "9b2b7b03-c84f-4e07-8bca-3e25ad07c485",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "generation_outcome": "answered",
+    "unsupported_aspects": []
+  },
+  {
+    "file": "cases/03-v4.case.corrected-b01-04-v1.json",
+    "case_id": "v4.case.corrected-b01-04",
+    "status": "retrieval_no_answer",
+    "displayed_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question.",
+    "plan": {},
+    "selection_coverage": null,
+    "final_evidence": [],
+    "generation_outcome": null,
+    "unsupported_aspects": []
+  }
+]

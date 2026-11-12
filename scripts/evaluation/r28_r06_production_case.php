@@ -2,6 +2,26 @@
 
 declare(strict_types=1);
 
+function completedNeedsInterpretationFailure(array $observation): bool
+{
+    $failure = $observation['usage']['planner_failure'] ?? [];
+    $retrieval = $observation['retrieval'] ?? [];
+    $outcome = $retrieval['outcome'] ?? null;
+
+    return ($observation['status'] ?? null) === 'retrieval_no_answer'
+        && ($outcome instanceof BackedEnum ? $outcome->value : $outcome) === 'interpretation_failed'
+        && ($retrieval['clarification_reason'] ?? null) === 'planner_validation_failed'
+        && ($failure['category'] ?? null) === 'invalid_grounded_needs_plan'
+        && ($failure['provider_status'] ?? null) === 200
+        && ($failure['completion']['finish_reason'] ?? null) === 'stop'
+        && ($failure['systemic'] ?? true) === false;
+}
+
+if (($argv[1] ?? null) === '--test-interpretation-observation') {
+    echo json_encode(completedNeedsInterpretationFailure(json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR)));
+    exit;
+}
+
 // This adapter invokes the existing production action once. The host-side
 // governed runner verifies and consumes one-use authority before invoking it.
 require '/app/vendor/autoload.php';
@@ -94,7 +114,7 @@ $record = [
     'utterance' => $payload['utterance'],
     'frozen_scope' => $payload['scope'],
     'needs_opt_in' => config('conversation.needs_workspace_ids'),
-    'needs_pipeline_exercised' => (is_array($plan) && array_key_exists('needs', $plan)) || $plannerClarification,
+    'needs_pipeline_exercised' => (is_array($plan) && array_key_exists('needs', $plan)) || $plannerClarification || completedNeedsInterpretationFailure($observation),
     'started_at' => $started,
     'finished_at' => now()->toIso8601String(),
     'observation' => $observation,

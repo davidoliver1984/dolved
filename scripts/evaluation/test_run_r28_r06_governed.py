@@ -14,6 +14,12 @@ import run_r28_r06_governed as governed
 
 
 class R28R06GovernedTest(unittest.TestCase):
+    def test_block1_continuation_contains_only_the_four_never_dispatched_inputs(self) -> None:
+        full, _, _ = governed.verify_inputs("block1_checkpoint")
+        tail, _, _ = governed.verify_inputs("block1_remaining")
+        self.assertEqual(full["items"][3:7], tail["items"])
+        self.assertEqual(4, len(tail["items"]))
+
     def test_block1_checkpoint_is_fixed_and_question_only(self) -> None:
         execution, scopes, identities = governed.verify_inputs("block1_checkpoint")
         self.assertEqual(7, len(execution["items"]))
