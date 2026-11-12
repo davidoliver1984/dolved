@@ -22,6 +22,21 @@ they are not instructions to recreate or maintain a second tracker.
 
 ## Working conventions
 
+### R28 grounded-question propagation — 2026-11-12
+
+David authorised one Block 1 correction across the generation contract: preserve
+each already-grounded question_span rather than letting aspect paraphrases define
+the request. AssembleGenerationRequest now forwards it; Python accepts the additive
+field, generation v11 treats it as requested meaning, and existing entailment
+input uses it. Mixed scope/operational composition retains operational user words.
+Retrieval, ranking, authority, ownership validators, interpretation check and
+attempt ceilings remain unchanged. Diagnosis and predeclared acceptance are in
+`docs/evaluation/r28-s04/block1-question-span-20261112/diagnosis.md`.
+Docker pytest/phpunit full-suite baseline and changed-tree raw JUnit, focused tests
+and exact-name attribution are retained in that package. The single authorised
+closing rerun remains gated on the provider-free comparison; b06-06 is development
+regression, not independent confirmation. No live result is claimed by this entry.
+
 ### R28 Block 1 closing increment — 2026-11-12, held
 
 Approved interpretation check and London relative-calendar rules landed in

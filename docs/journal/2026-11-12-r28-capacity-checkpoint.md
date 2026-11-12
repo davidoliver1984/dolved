@@ -1,5 +1,18 @@
 # R28 — three-need capacity correction and first live checkpoint
 
+## Grounded question wording, one authorised correction cycle
+
+Provider-free inspection confirmed that the final n3 passage already named both
+site Champion and organisation Lead. The planner added an organisation-level
+qualifier; assembly omitted the user's grounded span, and the independent check
+accepted the plan. David authorised retaining that span through generation, with
+aspect treated only as retrieval guidance. The change also covers mixed scope
+composition and the existing entailment input, without changing retrieval or
+tuning the check. The frozen closing selection and acceptance remain unchanged;
+b06-06 is explicitly development evidence. Verification and eventual rerun results
+are recorded separately rather than assuming this contract correction guarantees
+the model will answer both roles.
+
 ## Closing interpretation checkpoint — held
 
 David approved a bounded independent question-to-plan check before execution,

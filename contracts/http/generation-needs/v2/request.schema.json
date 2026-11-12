@@ -193,6 +193,17 @@
           "title": "Aspect",
           "type": "string"
         },
+        "question_span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "central": {
           "title": "Central",
           "type": "boolean"

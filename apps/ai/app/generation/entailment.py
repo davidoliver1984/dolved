@@ -72,7 +72,7 @@ def review_input(
                 "user_question": request.question,
                 "claim_text": part.text,
                 "requested_aspects": [
-                    need.aspect
+                    need.question_span.quote if need.question_span else need.aspect
                     for need in request.evidence_needs
                     if any(
                         link.need_id == need.need_id

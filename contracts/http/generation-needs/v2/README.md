@@ -33,7 +33,15 @@ transport and schema handling, not model entailment.
 
 The signed request and response envelope remain wire version 2, but a completed
 needs result is now `generation-result-v3` under prompt
-`grounded-generation-needs-v10` and adapter `openai-responses-needs-v4`.
+`grounded-generation-needs-v11` and adapter `openai-responses-needs-v4`.
+
+The additive `question_span` (turn_id and exact quote) carries the already-grounded
+user request on each production need. Generation and its entailment input use
+that wording as requested meaning; `aspect` remains retrieval guidance, not a
+licence to narrow, widen, or redirect it. Older retained v2 requests may omit the
+field; they retain original-question context. Deploy the compatible Python reader
+before the PHP producer. Ownership, authority, output validation and retries are
+unchanged. Mixed scope/operational composition also uses operational user spans.
 `entailment_checks` must contain one `supported` verdict per answer part, in
 order. Laravel rejects absent, incomplete or non-supported verdicts before
 persisting any answer. The Python adapter first applies a narrow conditional

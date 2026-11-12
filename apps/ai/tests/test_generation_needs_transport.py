@@ -108,6 +108,34 @@ def test_real_adapter_preserves_needs_schema_accounting_and_profile():
     assert sent["truncation"] == "disabled"
 
 
+@pytest.mark.parametrize(
+    "aspect",
+    [
+        "Find the organisation-level role name.",
+        "Find the induction check in buddy schemes or onboarding checklists.",
+        "Find who receives reports.",
+    ],
+)
+def test_user_span_survives_paraphrase_drift_into_generation_and_review(aspect):
+    raw, adapter, responses = prepared()
+    span = {
+        "turn_id": "user-1",
+        "quote": "Who receives reports and which role name and sharing route should we use?",
+    }
+    raw["evidence_needs"][0].update(aspect=aspect, question_span=span)
+    parsed = GenerationNeedsRequest.model_validate(raw)
+    adapter.generate_needs(parsed)
+    sent = responses.calls[0]
+    assert json.dumps(span, separators=(",", ":"), sort_keys=True) in sent["input"]
+    assert "aspect is retrieval guidance only" in sent["instructions"]
+    review = json.loads(responses.calls[1]["input"])
+    assert review[0]["requested_aspects"] == [span["quote"]]
+    assert parsed.evidence_needs[0].evidence_ids == ("ev-01", "ev-02")
+    raw["evidence_needs"][0]["evidence_ids"].append("ev-03")
+    with pytest.raises(ValueError):
+        GenerationNeedsRequest.model_validate(raw)
+
+
 def test_resolved_temporal_status_reaches_model_without_rewriting_authored_banner():
     raw, adapter, responses = prepared()
     banner = "Not yet effective; becomes authoritative on 1 September 2026."

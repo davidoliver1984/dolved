@@ -62,7 +62,7 @@ final readonly class GenerateGroundedAnswer
         $request = $this->assembler->handle($input);
         $initialRequestId = $request->requestId;
         if ($request->evidenceNeeds !== [] && ($profile->contractVersion !== 'generation-result-v3'
-            || $profile->promptVersion !== 'grounded-generation-needs-v10'
+            || $profile->promptVersion !== 'grounded-generation-needs-v11'
             || $profile->adapterVersion !== 'openai-responses-needs-v4'
             || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly)) {
             throw new GenerationException('Needs generation requires the pinned v2 complete-result profile.');
@@ -179,7 +179,7 @@ final readonly class GenerateGroundedAnswer
     private function prepareScopeAnswer(GenerationAssemblyInput $input, GenerationProfile $profile, ?callable $observeStage, ?callable $observeCandidate): PreparedGroundedAnswer
     {
         if ($profile->contractVersion !== 'generation-result-v3'
-            || $profile->promptVersion !== 'grounded-generation-needs-v10'
+            || $profile->promptVersion !== 'grounded-generation-needs-v11'
             || $profile->adapterVersion !== 'openai-responses-needs-v4'
             || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly) {
             throw new GenerationException('Scope composition requires the pinned complete-result needs profile.');
@@ -205,8 +205,8 @@ final readonly class GenerateGroundedAnswer
         }
         if ($operational !== [] && $candidates !== []) {
             // Do not send the compound question or scope fact to the operational model.
-            // Each aspect is the planner's already-grounded standalone request.
-            $question = implode("\n", array_column($operational, 'aspect'));
+            // Preserve grounded user wording, not the retrieval paraphrase.
+            $question = implode("\n", array_map(fn ($need) => $need['question_span']['quote'] ?? $need['aspect'], $operational));
             $retrieval = new RetrievalResult(RetrievalOutcome::EvidenceFound,
                 $candidates, evidenceNeeds: $operational);
             $prepared = $this->prepare(new GenerationAssemblyInput($question, $retrieval,

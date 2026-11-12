@@ -120,7 +120,7 @@ final readonly class AssembleGenerationRequest
                     }
                 }
                 $generationNeeds[] = array_intersect_key($need, array_flip([
-                    'need_id', 'aspect', 'central', 'operation', 'authority', 'fact_reference', 'applicability', 'claim_under_test',
+                    'need_id', 'aspect', 'question_span', 'central', 'operation', 'authority', 'fact_reference', 'applicability', 'claim_under_test',
                     'retrieval_outcome', 'retrieval_reason',
                 ])) + ['evidence_ids' => array_map(fn ($item) => $item->evidenceId, $items)];
             }

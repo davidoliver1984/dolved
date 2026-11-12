@@ -591,6 +591,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $need = $scopeRetrieval->evidenceNeeds[0];
         unset($need['scope_fact']);
         $need = [...$need, 'need_id' => 'n2', 'aspect' => 'How are temporary workers booked?', 'operation' => 'retrieve'];
+        $need['question_span'] = ['turn_id' => 'user-1', 'quote' => 'do we book temporary workers through the Brambleford Office People team'];
         $need['claim_under_test'] = ['version' => 'claim-under-test-v1', 'type' => 'named_recipient',
             'relation' => 'submission_destination', 'source' => ['turn_id' => 'user-1', 'quote' => 'Brambleford Office People team']];
         $retrieval = new RetrievalResult(RetrievalOutcome::EvidenceFound,
@@ -600,7 +601,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             evidenceNeeds: [$scopeRetrieval->evidenceNeeds[0], $need]);
         Http::fake(function ($sent) use ($other, $document) {
             $wire = $sent->data();
-            $this->assertSame('How are temporary workers booked?', $wire['question']);
+            $this->assertSame('do we book temporary workers through the Brambleford Office People team', $wire['question']);
+            $this->assertSame($wire['question'], $wire['evidence_needs'][0]['question_span']['quote']);
             $this->assertSame(['n2'], array_column($wire['evidence_needs'], 'need_id'));
             $this->assertSame('Brambleford Office People team', $wire['evidence_needs'][0]['claim_under_test']['source']['quote']);
             $this->assertSame([$other->id], array_column($wire['evidence'], 'document_id'));

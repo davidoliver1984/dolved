@@ -20,12 +20,16 @@ from app.retrieval.needs import (
     FactReference,
     NeedApplicability,
     NeedAuthority,
+    QuestionSpan,
 )
 
 
 class GenerationNeed(ImmutableModel):
     need_id: Literal["n1", "n2", "n3"]
     aspect: BoundedText
+    # Additive compatibility for retained v2 requests; production forwards the
+    # span already grounded by the planner contract, without re-paraphrasing it.
+    question_span: QuestionSpan | None = None
     central: StrictBool
     operation: Literal["retrieve", "compare"]
     authority: NeedAuthority

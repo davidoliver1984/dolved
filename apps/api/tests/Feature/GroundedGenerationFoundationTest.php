@@ -1013,6 +1013,40 @@ class GroundedGenerationFoundationTest extends TestCase
     }
 
     /** @return array{GenerationAssemblyInput, DocumentChunk} */
+    #[DataProvider('driftingAspects')]
+    public function test_grounded_user_span_survives_assembly_without_weakening_evidence_identity(string $aspect): void
+    {
+        [$base, $chunk] = $this->assemblyFixture();
+        $span = ['turn_id' => 'user-1', 'quote' => 'Who receives reports and which role name and sharing route should we use?'];
+        $need = ['need_id' => 'n1', 'aspect' => $aspect, 'question_span' => $span,
+            'central' => true, 'operation' => 'retrieve',
+            'authority' => ['kind' => 'current', 'precision' => 'none', 'value' => null, 'source' => null],
+            'fact_reference' => null, 'applicability' => ['kind' => 'generic', 'source' => null],
+            'retrieval_outcome' => 'evidence_found', 'retrieval_reason' => null,
+            'resolved_temporal_authority' => ['mode' => 'current'], 'resolved_applicability_location' => []];
+        $candidate = $base->retrievalResult->candidates[0] + ['need_id' => 'n1',
+            'document_family_id' => $chunk->document->family->public_id];
+        $input = new GenerationAssemblyInput($span['quote'], new RetrievalResult(
+            RetrievalOutcome::EvidenceFound, [$candidate], evidenceNeeds: [$need]),
+            [], [], $base->authorisedScope, $base->correlationLineage);
+        $wire = app(AssembleGenerationRequest::class)->handle($input)->toArray();
+        $this->assertSame($span, $wire['evidence_needs'][0]['question_span']);
+        $this->assertSame($aspect, $wire['evidence_needs'][0]['aspect']);
+        $this->assertSame(['ev-01'], $wire['evidence_needs'][0]['evidence_ids']);
+        $candidate['chunk_text'] = 'Invented evidence';
+        $this->expectException(GenerationException::class);
+        app(AssembleGenerationRequest::class)->handle(new GenerationAssemblyInput($span['quote'],
+            new RetrievalResult(RetrievalOutcome::EvidenceFound, [$candidate], evidenceNeeds: [$need]),
+            [], [], $base->authorisedScope, $base->correlationLineage));
+    }
+
+    public static function driftingAspects(): array
+    {
+        return [['Find the organisation-level role name.'],
+            ['Find the check in buddy schemes or onboarding checklists.'],
+            ['Find who receives reports.']];
+    }
+
     private function assemblyFixture(): array
     {
         $user = User::factory()->create();

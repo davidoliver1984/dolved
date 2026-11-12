@@ -42,7 +42,7 @@ MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
 ADAPTER_VERSION = "openai-responses-v3-claim-type"
 NEEDS_CONTRACT_VERSION = "generation-result-v3"
-NEEDS_PROMPT_VERSION = "grounded-generation-needs-v10"
+NEEDS_PROMPT_VERSION = "grounded-generation-needs-v11"
 NEEDS_ADAPTER_VERSION = "openai-responses-needs-v4"
 NEEDS_INSTRUCTIONS = """
 Answer directly with an evidence-supported statement. If an answer part starts with
@@ -54,6 +54,14 @@ This is a structural writing rule; independently ensure the full claim agrees wi
 This request contains independent evidence_needs. Interpret comparison/current
 requirements per need, not globally. Evidence ownership, family/version identity,
 authority and applicability were resolved by Laravel and must not be changed.
+Each need's question_span is the user's own grounded wording and defines what is
+asked, read in the context of the question. Its aspect is retrieval guidance only:
+it must not narrow, widen, or redirect the request, add example scopes, or discard
+any part of that span. Answer every requested part from that need's owned evidence
+or explicitly disclose what is unsupported. User wording is not evidence and does
+not grant permission to borrow another need's citations or override authority.
+For retained requests without question_span, use the original question as the
+source of requested meaning, not an aspect's added assumptions.
 Where claim_under_test is present, use only the evidence owned by that need to
 confirm the claimed relation/value, contradict it with an explicit supported
 alternative, or state that it is insufficiently established. The claimed value
