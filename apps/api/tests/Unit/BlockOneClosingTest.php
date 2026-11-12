@@ -13,6 +13,34 @@ use Tests\TestCase;
 
 final class BlockOneClosingTest extends TestCase
 {
+    public function test_citation_diagnostics_preserve_verification_separately_from_judgement(): void
+    {
+        foreach (['missing_citation', 'user_quote_not_found', 'inspected_needs_mismatch', 'unknown_need', 'plan_quote_not_found', 'plan_quote_in_user_turns', 'application_grounded_period'] as $reason) {
+            $check = ['version' => 'interpretation-check-v2', 'code' => 'accepted', 'checker_code' => 'scope_added',
+                'citation_verification' => 'unverifiable', 'verification_reason' => $reason,
+                'citation' => ['need_id' => 'n1', 'plan_field' => 'aspect', 'plan_quote' => 'for agency staff',
+                    'user_turn_id' => null, 'user_quote' => null, 'inspected_need_ids' => [], 'raw_response' => 'private'],
+                'input_tokens' => 42, 'output_tokens' => 7, 'latency_ms' => 12];
+            $safe = PlannerUsage::safeAttempts([['status' => 'accepted', 'interpretation_check' => $check]])[0]['interpretation_check'];
+            $this->assertSame('accepted', $safe['code']);
+            $this->assertSame('scope_added', $safe['checker_code']);
+            $this->assertSame('unverifiable', $safe['citation_verification']);
+            $this->assertSame($reason, $safe['verification_reason']);
+            $this->assertSame('for agency staff', $safe['citation']['plan_quote']);
+            $this->assertArrayNotHasKey('raw_response', $safe['citation']);
+            $this->assertSame(42, $safe['input_tokens']);
+        }
+        foreach (['clause_omitted', 'meaning_changed', 'scope_added'] as $code) {
+            $check['code'] = $check['checker_code'] = $code;
+            $check['citation_verification'] = 'verified';
+            $check['verification_reason'] = null;
+            $safe = PlannerUsage::safeAttempts([['status' => 'rejected', 'interpretation_check' => $check]])[0]['interpretation_check'];
+            $this->assertSame($code, $safe['checker_code']);
+            $this->assertSame('verified', $safe['citation_verification']);
+            $this->assertNull($safe['verification_reason']);
+        }
+    }
+
     public function test_application_owns_relative_arithmetic_without_changing_quotes_or_intent(): void
     {
         foreach ([['this year', '2026', 'year'], ['last year', '2025', 'year'],

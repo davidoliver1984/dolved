@@ -123,7 +123,7 @@ final readonly class PlannerUsage
 
     private static function safeInterpretationCheck(mixed $check): ?array
     {
-        if (! is_array($check) || ($check['version'] ?? null) !== 'interpretation-check-v1'
+        if (! is_array($check) || ! in_array($check['version'] ?? null, ['interpretation-check-v1', 'interpretation-check-v2'], true)
             || ! in_array($check['code'] ?? null, ['accepted', 'clause_omitted', 'meaning_changed', 'scope_added', 'unavailable'], true)) {
             return null;
         }
@@ -139,9 +139,29 @@ final readonly class PlannerUsage
             $plan = null;
         }
 
-        return [...ValidationAttemptUsage::receipt($check),
+        $verification = [];
+        if ($check['version'] === 'interpretation-check-v2') {
+            $citation = is_array($check['citation'] ?? null) ? $check['citation'] : null;
+            if ($citation !== null) {
+                $bounded = [];
+                foreach (['user_turn_id' => 100, 'user_quote' => 1000, 'need_id' => 10, 'plan_field' => 100, 'plan_quote' => 1000] as $field => $limit) {
+                    $bounded[$field] = is_string($citation[$field] ?? null) ? mb_substr($citation[$field], 0, $limit) : null;
+                }
+                $bounded['inspected_need_ids'] = array_map(fn ($id) => is_string($id) ? mb_substr($id, 0, 10) : null,
+                    array_slice(is_array($citation['inspected_need_ids'] ?? null) ? $citation['inspected_need_ids'] : [], 0, 3));
+                $citation = $bounded;
+            }
+            $verification = [
+                'checker_code' => in_array($check['checker_code'] ?? null, ['accepted', 'clause_omitted', 'meaning_changed', 'scope_added', 'unavailable'], true) ? $check['checker_code'] : 'unavailable',
+                'citation' => $citation,
+                'citation_verification' => in_array($check['citation_verification'] ?? null, ['verified', 'unverifiable', 'not_applicable'], true) ? $check['citation_verification'] : 'unverifiable',
+                'verification_reason' => in_array($check['verification_reason'] ?? null, ['missing_citation', 'user_quote_not_found', 'inspected_needs_mismatch', 'unknown_need', 'plan_quote_not_found', 'plan_quote_in_user_turns', 'application_grounded_period'], true) ? $check['verification_reason'] : null,
+            ];
+        }
+
+        return [...ValidationAttemptUsage::receipt($check), ...$verification,
             'reviewed_plan' => $plan,
-            'version' => 'interpretation-check-v1', 'code' => $check['code'],
+            'version' => $check['version'], 'code' => $check['code'],
             'provider' => is_string($check['provider'] ?? null) ? substr($check['provider'], 0, 100) : null,
             'model' => is_string($check['model'] ?? null) ? substr($check['model'], 0, 100) : null];
     }

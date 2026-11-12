@@ -458,6 +458,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                             provider=self._provider_name,
                             turns=turns,
                             plan=result.plan,
+                            evaluated_at=evaluated_at,
                         )
                     except InterpretationCheckError as error:
                         check = error.receipt

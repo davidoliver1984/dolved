@@ -1,0 +1,11 @@
+{
+  "subset_id": "R28-BLOCK1-CHECKER-CITATIONS-SIX-20261112-V1",
+  "items": [
+    {"case_id":"v4.case.corrected-b01-06","variant_id":"v1","utterance":"When will the approved mileage claim from last month be paid?"},
+    {"case_id":"block1.relative-current-quarter","variant_id":"v1","utterance":"For this quarter, which team handles login problems under the E-Learning Platform Guidance?"},
+    {"case_id":"block1.citations-two-facts","variant_id":"v1","utterance":"For an employee in a uniformed role, what are the current starter payment and the recurring replacement payment, and when is each paid?"},
+    {"case_id":"block1.citations-historical","variant_id":"v1","utterance":"In May 2025, what initial allowance did the Uniform Allowance Guidance provide for a new starter?"},
+    {"case_id":"block1.citations-service","variant_id":"v1","utterance":"Which confidential support service can Alderbridge staff use for personal worries, and how can they reach it?"},
+    {"case_id":"block1.citations-comparison","variant_id":"v1","utterance":"What changed between the versions of Uniform Allowance Guidance on either side of April 2026 for the annual replacement payment?"}
+  ]
+}
