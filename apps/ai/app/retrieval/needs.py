@@ -322,9 +322,11 @@ class EvidenceNeedsPlan(ImmutableModel):
                 node = edges[node]
         return self
 
-    def in_question_order(self, turns: tuple[UserTurn, ...]) -> EvidenceNeedsPlan:
+    def in_question_order(
+        self, turns: tuple[UserTurn, ...], *, evaluated_at: str | None = None
+    ) -> EvidenceNeedsPlan:
         """Reconcile presentation order, preserving every grounded need and edge."""
-        self.validate_grounding(turns, require_order=False)
+        self.validate_grounding(turns, require_order=False, evaluated_at=evaluated_at)
         if [b.need_id for b in self.bindings] != [n.need_id for n in self.needs]:
             raise ValueError("every need requires exactly one catalogue binding")
         positions = {t.turn_id: (i, t.text) for i, t in enumerate(turns)}
@@ -353,7 +355,7 @@ class EvidenceNeedsPlan(ImmutableModel):
             for n in ordered
         ]
         result = EvidenceNeedsPlan.model_validate(value)
-        result.validate_grounding(turns)
+        result.validate_grounding(turns, evaluated_at=evaluated_at)
         return result
 
     def validate_grounding(

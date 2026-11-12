@@ -19,7 +19,7 @@ final class RelativeCalendar
             return null;
         }
         $relations = array_unique(array_map(fn ($m) => strtolower($m[1].' '.$m[2]), $matches));
-        if (count($relations) !== 1 || $evaluatedAt === null
+        if (count($matches) !== 1 || $evaluatedAt === null
             || preg_match('/(?:Z|[+-]\d{2}:\d{2})$/', $evaluatedAt) !== 1) {
             throw new InvalidArgumentException('Relative calendar reference requires one anchored period.');
         }
@@ -44,5 +44,29 @@ final class RelativeCalendar
             },
             'start_inclusive' => $start->toIso8601String(), 'end_exclusive' => $end->toIso8601String(),
             'timezone' => 'Europe/London'];
+    }
+
+    /** Recompute model arithmetic from an exact authorised quote, never its intent. */
+    public static function canonicalize(array $value, array $turns, ?string $evaluatedAt): array
+    {
+        $texts = array_column($turns, 'text', 'turn_id');
+        foreach ($value['needs'] ?? [] as $index => $need) {
+            foreach (['authority', 'fact_reference'] as $field) {
+                $source = $need[$field]['source'] ?? null;
+                if (! is_array($source) || ! is_string($source['quote'] ?? null)
+                    || preg_match(self::PATTERN, $source['quote']) !== 1) {
+                    continue;
+                }
+                if (! isset($texts[$source['turn_id'] ?? ''])
+                    || ! str_contains($texts[$source['turn_id']], $source['quote'])) {
+                    throw new InvalidArgumentException('Reference is not grounded in an authorised user turn.');
+                }
+                $period = self::period($source['quote'], $evaluatedAt);
+                $value['needs'][$index][$field]['value'] = $period['value'];
+                $value['needs'][$index][$field]['precision'] = $period['precision'];
+            }
+        }
+
+        return $value;
     }
 }

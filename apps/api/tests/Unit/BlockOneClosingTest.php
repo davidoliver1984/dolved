@@ -13,6 +13,37 @@ use Tests\TestCase;
 
 final class BlockOneClosingTest extends TestCase
 {
+    public function test_application_owns_relative_arithmetic_without_changing_quotes_or_intent(): void
+    {
+        foreach ([['this year', '2026', 'year'], ['last year', '2025', 'year'],
+            ['this quarter', '2026-01-01/2026-03-31', 'interval'],
+            ['Please check last month for me.', '2025-12', 'month']] as [$quote, $expected, $precision]) {
+            foreach (['authority', 'fact_reference'] as $field) {
+                $reference = ['source' => ['turn_id' => 'u1', 'quote' => $quote], 'value' => '1900', 'precision' => 'year'];
+                if ($field === 'authority') {
+                    $reference['kind'] = 'period';
+                }
+                $plan = ['needs' => [[$field => $reference]]];
+                $normal = RelativeCalendar::canonicalize($plan, [['turn_id' => 'u1', 'text' => $quote]], '2026-01-01T00:00:00Z');
+                $this->assertSame(array_replace($reference, ['value' => $expected, 'precision' => $precision]), $normal['needs'][0][$field]);
+            }
+        }
+        $this->assertNull(RelativeCalendar::period('and the month before?', '2026-01-01T00:00:00Z'));
+    }
+
+    public function test_relative_quotes_must_be_grounded_and_single(): void
+    {
+        foreach (['last month and this year', 'last month then last month', 'invented last year'] as $quote) {
+            try {
+                RelativeCalendar::canonicalize(['needs' => [['authority' => ['source' => ['turn_id' => 'u1', 'quote' => $quote]]]]],
+                    [['turn_id' => 'u1', 'text' => 'last month and this year; last month then last month']], '2026-01-01T00:00:00Z');
+                $this->fail('Invalid reference must not be canonicalized.');
+            } catch (InvalidArgumentException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
     public function test_shared_relative_calendar_rules_and_timezone_boundaries(): void
     {
         $cases = json_decode(file_get_contents('/contracts/http/retrieval-needs/v3/relative-calendar-examples.json'), true, flags: JSON_THROW_ON_ERROR);
@@ -44,6 +75,14 @@ final class BlockOneClosingTest extends TestCase
         $plan['bindings'] = [array_replace($plan['bindings'][1], ['need_id' => 'n1'])];
         $turns = [['turn_id' => 'u1', 'text' => 'My claim was approved last month.'], ['turn_id' => 'u2', 'text' => 'When is it paid?']];
         EvidenceNeedsPlan::validate($plan, $turns, '2026-03-01T00:00:00Z');
+        $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v3',
+            'prompt_version' => 'bounded-evidence-needs-v25', 'adapter_version' => 'structured-chat-needs-v9'];
+        ksort($lineage);
+        $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+        $result = EvidenceNeedsPlan::fromArray($plan, $turns, $lineage,
+            ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini', 'execution' => 'provider_api',
+                'request_count' => 1, 'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable'], '2026-04-01T00:00:00Z');
+        $this->assertSame('2026-03', $result->retrievalPlan('n1')->factDate);
         $this->expectException(InvalidArgumentException::class);
         EvidenceNeedsPlan::validate($plan, $turns, '2026-04-01T00:00:00Z');
     }

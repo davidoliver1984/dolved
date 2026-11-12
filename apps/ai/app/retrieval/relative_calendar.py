@@ -1,6 +1,7 @@
 """Application-owned London calendar periods; never infer an event date."""
 
 import re
+from copy import deepcopy
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
@@ -8,7 +9,7 @@ PATTERN = re.compile(r"\b(last|this)\s+(month|quarter|year)\b", re.IGNORECASE)
 
 
 def relative_period(quote: str, evaluated_at: str | None) -> dict[str, str] | None:
-    matches = {(m[0].lower(), m[1].lower()) for m in PATTERN.findall(quote)}
+    matches = [(m[0].lower(), m[1].lower()) for m in PATTERN.findall(quote)]
     if not matches:
         return None
     if len(matches) != 1 or evaluated_at is None:
@@ -38,6 +39,35 @@ def relative_period(quote: str, evaluated_at: str | None) -> dict[str, str] | No
         "end_exclusive": end.isoformat(),
         "timezone": "Europe/London",
     }
+
+
+def canonicalize_relative_periods(value, turns, evaluated_at):
+    """Adapt model arithmetic only; preserve intent, quotes and all validators."""
+    result = deepcopy(value)
+    texts = {turn.turn_id: turn.text for turn in turns}
+    if not isinstance(result, dict) or not isinstance(result.get("needs"), list):
+        return result
+    for need in result["needs"]:
+        if not isinstance(need, dict):
+            continue
+        for field in ("authority", "fact_reference"):
+            reference = need.get(field)
+            if not isinstance(reference, dict):
+                continue
+            source = reference.get("source")
+            if not isinstance(source, dict) or not isinstance(source.get("quote"), str):
+                continue
+            quote = source["quote"]
+            if not PATTERN.search(quote):
+                continue
+            if (
+                source.get("turn_id") not in texts
+                or quote not in texts[source["turn_id"]]
+            ):
+                raise ValueError("reference is not grounded")
+            period = relative_period(quote, evaluated_at)
+            reference.update(value=period["value"], precision=period["precision"])
+    return result
 
 
 def grounded_periods(turns, evaluated_at: str) -> list[dict[str, object]]:

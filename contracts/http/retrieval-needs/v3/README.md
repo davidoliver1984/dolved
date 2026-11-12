@@ -135,3 +135,16 @@ dropping it would destroy citation history. Do not reinterpret in-flight v2 pins
 The API now exposes scope citations, but no new browser citation-card design is
 claimed by this bounded backend correction. Independent verification must inspect
 the stored typed records as well as the rendered answer.
+
+## Relative-calendar arithmetic ownership (2026-11-12)
+
+At provider adaptation, a grounded authority/fact-reference quote containing one
+explicit `last|this month|quarter|year` expression is canonicalized by the
+application using `evaluated_at` in Europe/London. The model's value/precision are
+replaced; its intent/kind, source and other fields are not. Laravel independently
+derives the same values before consuming the plan. Existing schema and grounding
+validators remain strict, including after presentation ordering (which retains
+the evaluation anchor). No schema field, prompt, retry ceiling or authority rule
+changes. Boundaries remain start-inclusive/end-exclusive as computed by the shared
+calendar rules. Multiple expressions, even repetitions, are not one period.
+Ungrounded quotes fail; event dates and elliptical follow-ups are never inferred.

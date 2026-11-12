@@ -23,6 +23,7 @@ final readonly class EvidenceNeedsPlan
 
     public static function fromArray(array $value, array $turns, array $lineage, array $usage, ?string $evaluatedAt = null): self
     {
+        $value = RelativeCalendar::canonicalize($value, $turns, $evaluatedAt);
         self::validate($value, $turns, $evaluatedAt);
         $identity = ClassifierLineage::fromArray($lineage);
         $observation = PlannerUsage::fromArray($usage);

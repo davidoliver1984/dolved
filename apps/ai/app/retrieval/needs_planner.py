@@ -23,7 +23,10 @@ from app.retrieval.planner import (
     _non_negative_int,
     _provider_failure,
 )
-from app.retrieval.relative_calendar import grounded_periods
+from app.retrieval.relative_calendar import (
+    canonicalize_relative_periods,
+    grounded_periods,
+)
 
 logger = logging.getLogger("retrieval.needs.planner")
 
@@ -709,14 +712,22 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                         "normalized_need_count": normalized_count,
                     },
                 )
-            plan = EvidenceNeedsPlan.model_validate_json(content)
+            try:
+                decoded = json.loads(content)
+            except json.JSONDecodeError:
+                # Preserve the contract's original malformed-JSON diagnostic.
+                plan = EvidenceNeedsPlan.model_validate_json(content)
+            else:
+                plan = EvidenceNeedsPlan.model_validate(
+                    canonicalize_relative_periods(decoded, turns, evaluated_at)
+                )
             validation_stage = "grounding"
             plan.validate_grounding(
                 turns, require_order=False, evaluated_at=evaluated_at
             )
             validation_stage = "catalogue"
             plan.validate_catalogue(catalogue, turns)
-            plan = plan.in_question_order(turns)
+            plan = plan.in_question_order(turns, evaluated_at=evaluated_at)
         except (KeyError, IndexError, TypeError, ValueError) as exception:
             # Never expose model text, prompt contents or credentials in failures.
             failure = NeedsValidationFailure(validation_stage, exception)
