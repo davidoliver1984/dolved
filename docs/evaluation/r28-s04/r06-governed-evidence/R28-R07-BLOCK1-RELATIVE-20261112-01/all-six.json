@@ -1,0 +1,1856 @@
+[
+  {
+    "index": 1,
+    "raw_path": "cases/01-v4.case.corrected-b01-06-v1.json",
+    "case_id": "v4.case.corrected-b01-06",
+    "question": "When will the approved mileage claim from last month be paid?",
+    "answer": "The supplied email states that an approved mileage claim for last month \u201cwill be paid with your next salary run,\u201d attributing that timing to the Expenses Policy\u2019s approval process.\n\nUnconfirmed requested aspects\n\n- The supplied evidence does not state any specific payment-run dates or cut-off deadlines that determine whether a claim for the referenced month will be included in a particular salary run.",
+    "status": "completed",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Retrieve the current payroll/expenses payment timing rule that answers: 'When will the approved mileage claim from last month be paid?' including any stated payment run or cut-off dates that determine when an approved claim from the referenced period is paid.",
+          "authority": {
+            "kind": "current",
+            "precision": "none",
+            "source": null,
+            "value": null
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": {
+            "precision": "month",
+            "source": {
+              "quote": "last month",
+              "turn_id": "user-1"
+            },
+            "value": "2026-10"
+          },
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "When will the approved mileage claim from last month be paid?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "run_id": "d7a6384f-75d9-4308-b36b-150aa6ba1b57",
+    "evidence": [
+      {
+        "chunk_id": "821176a0-d6ae-5aff-bbb1-55dfcf5c7da7",
+        "document_family_id": "28a84f66-cd05-4910-a3cf-e434de23cc0a",
+        "document_id": "4b7496ae-445a-4cd9-a089-e5691c9e19b4",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "retrieval": {
+      "candidate_count": 1,
+      "clarification_reason": null,
+      "clarification_source": null,
+      "evidence_count": 1,
+      "lineage": {
+        "evidence_needs_plan": {
+          "bindings": [
+            {
+              "family_ids": [],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "topic"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "Retrieve the current payroll/expenses payment timing rule that answers: 'When will the approved mileage claim from last month be paid?' including any stated payment run or cut-off dates that determine when an approved claim from the referenced period is paid.",
+              "authority": {
+                "kind": "current",
+                "precision": "none",
+                "source": null,
+                "value": null
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": {
+                "precision": "month",
+                "source": {
+                  "quote": "last month",
+                  "turn_id": "user-1"
+                },
+                "value": "2026-10"
+              },
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "When will the approved mileage claim from last month be paid?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "evidence_selection": "bounded-needs-k5-v3",
+        "needs": {
+          "n1": {
+            "planner": {
+              "adapter_version": "structured-chat-needs-v9",
+              "contract_schema_version": "evidence-needs-plan-v3",
+              "fingerprint": "551ef7c15d0e2f38e873b16347c1e8f44c5211538cbfbc43d7cf09e6c7c8a0a0",
+              "model": "gpt-5-mini",
+              "prompt_version": "bounded-evidence-needs-v25",
+              "provider": "openai"
+            },
+            "retrieval": {
+              "configuration_version": "provisional-r28-query-evidence-contract-v1",
+              "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+              "evidence_threshold_policy_fingerprint": "8adb1a507bda52e7524903b77cc29dea7f602ad8f0d082c9e6421c07ed6227fb",
+              "evidence_threshold_policy_version": "provisional-r28-query-evidence-contract-v1",
+              "fusion_strategy": "rrf",
+              "fusion_version": "1",
+              "reranker_profile": {
+                "adapter_version": "document-metadata-v2",
+                "model": "rerank-2.5",
+                "provider": "voyage",
+                "truncation": false
+              },
+              "rrf_k": 5,
+              "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+              "sparse_space_generation_id": "41cb5309-c5c5-4208-9ce6-c8fa416c29c5"
+            }
+          }
+        },
+        "planner": {
+          "adapter_version": "structured-chat-needs-v9",
+          "contract_schema_version": "evidence-needs-plan-v3",
+          "fingerprint": "551ef7c15d0e2f38e873b16347c1e8f44c5211538cbfbc43d7cf09e6c7c8a0a0",
+          "model": "gpt-5-mini",
+          "prompt_version": "bounded-evidence-needs-v25",
+          "provider": "openai"
+        },
+        "selection_coverage": {
+          "n1": {
+            "budget_cut_unit_count": 0,
+            "eligible_unit_count": 1,
+            "selected_unit_count": 1
+          }
+        }
+      },
+      "outcome": "evidence_found",
+      "resolved_applicability_location": [],
+      "resolved_temporal_authority": []
+    },
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 7671,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "code": "scope_added",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 635,
+          "latency_ms": 3277.3922930064145,
+          "model": "gpt-5-mini",
+          "output_tokens": 212,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Retrieve the current payroll/expenses guidance or schedule that states when an \"approved mileage claim\" submitted \"last month\" will be paid, including any timelines for payment after approval and any payroll cut-off dates referenced.",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": {
+                  "precision": "month",
+                  "source": {
+                    "quote": "last month",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-10"
+                },
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "When will the approved mileage claim from last month be paid?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "version": "interpretation-check-v1"
+        },
+        "latency_ms": 12027.422339015175,
+        "output_tokens": 807,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "rejected",
+        "validation": {
+          "code": "scope_added",
+          "field": "root",
+          "stage": "interpretation"
+        }
+      },
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 7759,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 640,
+          "latency_ms": 2183.561751007801,
+          "model": "gpt-5-mini",
+          "output_tokens": 147,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Retrieve the current payroll/expenses payment timing rule that answers: 'When will the approved mileage claim from last month be paid?' including any stated payment run or cut-off dates that determine when an approved claim from the referenced period is paid.",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": {
+                  "precision": "month",
+                  "source": {
+                    "quote": "last month",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-10"
+                },
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "When will the approved mileage claim from last month be paid?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "version": "interpretation-check-v1"
+        },
+        "latency_ms": 8515.204462019028,
+        "output_tokens": 683,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "generation": {
+      "aspect_links": [
+        {
+          "answer_part_indices": [
+            0
+          ],
+          "need_id": "n1",
+          "unsupported_aspect_indices": [
+            0
+          ]
+        }
+      ],
+      "aspect_results": {
+        "n1": "partial"
+      },
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "insufficiency_reason": null,
+      "model": "gpt-5-mini",
+      "outcome": "qualified",
+      "parts": [
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 998,
+              "document_id": 316,
+              "evidence_handle": "ev-01"
+            }
+          ],
+          "text": "The supplied email states that an approved mileage claim for last month \u201cwill be paid with your next salary run,\u201d attributing that timing to the Expenses Policy\u2019s approval process."
+        }
+      ],
+      "provider": "openai",
+      "rendered_text": "The supplied email states that an approved mileage claim for last month \u201cwill be paid with your next salary run,\u201d attributing that timing to the Expenses Policy\u2019s approval process.\n\nUnconfirmed requested aspects\n\n- The supplied evidence does not state any specific payment-run dates or cut-off deadlines that determine whether a claim for the referenced month will be included in a particular salary run.",
+      "scope_citations": [],
+      "unsupported_aspects": [
+        "The supplied evidence does not state any specific payment-run dates or cut-off deadlines that determine whether a claim for the referenced month will be included in a particular salary run."
+      ],
+      "usage": {
+        "adapter_version": "openai-responses-needs-v4",
+        "cached_input_tokens": 0,
+        "contract_version": "generation-result-v3",
+        "cost_basis": "estimated",
+        "cost_usd": 0.00218225,
+        "entailment_review": {
+          "cached_input_tokens": 0,
+          "cost_basis": "estimated",
+          "cost_usd": 0.00048,
+          "input_tokens": 1016,
+          "latency_ms": 2090.30762600014,
+          "model": "gpt-5-mini",
+          "output_tokens": 113,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "stage": "generation"
+        },
+        "execution": "provider_api",
+        "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+        "input_tokens": 4049,
+        "latency_ms": 7113.7370849901345,
+        "max_output_tokens": 4096,
+        "measured_input_tokens": 3110,
+        "model": "gpt-5-mini",
+        "output_tokens": 585,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "prompt_version": "grounded-generation-needs-v11",
+        "provider": "openai",
+        "reasoning_effort": "low",
+        "request_count": 2,
+        "retry_count": 1,
+        "stage": "generation",
+        "validation_attempts": [
+          {
+            "cached_input_tokens": 0,
+            "cost_basis": "estimated",
+            "cost_usd": 0.00218225,
+            "input_tokens": 4049,
+            "latency_ms": 7113.7370849901345,
+            "outcome": "accepted",
+            "output_tokens": 585,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "request_count": 2,
+            "request_id": "9d2e0114-15c0-4698-8025-9ecd4924dc06",
+            "retry_count": 0,
+            "retry_of_request_id": null
+          }
+        ],
+        "validation_retry_count": 0
+      }
+    }
+  },
+  {
+    "index": 2,
+    "raw_path": "cases/02-block1.closing-relative-v1.json",
+    "case_id": "block1.closing-relative",
+    "question": "Under the E-Learning Platform Guidance, who handled missing courses last quarter?",
+    "answer": "Which date within that period should I use?",
+    "status": "clarification_required",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Find, in the E-Learning Platform Guidance, the recorded person or role who handled missing courses during the period 'last quarter' (2026-07-01/2026-09-30).",
+          "authority": {
+            "kind": "period",
+            "precision": "interval",
+            "source": {
+              "quote": "last quarter",
+              "turn_id": "user-1"
+            },
+            "value": "2026-07-01/2026-09-30"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": {
+            "precision": "interval",
+            "source": {
+              "quote": "last quarter",
+              "turn_id": "user-1"
+            },
+            "value": "2026-07-01/2026-09-30"
+          },
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "Under the E-Learning Platform Guidance, who handled missing courses last quarter?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "run_id": "ac267fdb-f328-4781-86fe-22e8b0b6f34e",
+    "evidence": null,
+    "retrieval": {
+      "candidate_count": 0,
+      "clarification_reason": "ambiguous_authority_window_for_period",
+      "clarification_source": "eligibility_resolver",
+      "evidence_count": 0,
+      "lineage": {
+        "evidence_needs_plan": {
+          "bindings": [
+            {
+              "family_ids": [
+                "17278f8a-fa84-4a14-a98e-261d19682c66"
+              ],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "matched"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "Find, in the E-Learning Platform Guidance, the recorded person or role who handled missing courses during the period 'last quarter' (2026-07-01/2026-09-30).",
+              "authority": {
+                "kind": "period",
+                "precision": "interval",
+                "source": {
+                  "quote": "last quarter",
+                  "turn_id": "user-1"
+                },
+                "value": "2026-07-01/2026-09-30"
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": {
+                "precision": "interval",
+                "source": {
+                  "quote": "last quarter",
+                  "turn_id": "user-1"
+                },
+                "value": "2026-07-01/2026-09-30"
+              },
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "Under the E-Learning Platform Guidance, who handled missing courses last quarter?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        }
+      },
+      "outcome": "clarification_required",
+      "resolved_applicability_location": [],
+      "resolved_temporal_authority": []
+    },
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19191,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 700,
+          "latency_ms": 2953.6784180090763,
+          "model": "gpt-5-mini",
+          "output_tokens": 83,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [
+                  "17278f8a-fa84-4a14-a98e-261d19682c66"
+                ],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Find, in the E-Learning Platform Guidance, the recorded person or role who handled missing courses during the period 'last quarter' (2026-07-01/2026-09-30).",
+                "authority": {
+                  "kind": "period",
+                  "precision": "interval",
+                  "source": {
+                    "quote": "last quarter",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-07-01/2026-09-30"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": {
+                  "precision": "interval",
+                  "source": {
+                    "quote": "last quarter",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-07-01/2026-09-30"
+                },
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "Under the E-Learning Platform Guidance, who handled missing courses last quarter?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "version": "interpretation-check-v1"
+        },
+        "latency_ms": 13913.698590011336,
+        "output_tokens": 940,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "generation": null
+  },
+  {
+    "index": 3,
+    "raw_path": "cases/03-block1.relative-year-v1.json",
+    "case_id": "block1.relative-year",
+    "question": "During this year, who should staff contact about a missing e-learning course under the E-Learning Platform Guidance?",
+    "answer": "Which date within that period should I use?",
+    "status": "clarification_required",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Under the 'E-Learning Platform Guidance', during 2026, who should staff contact about a missing e-learning course?",
+          "authority": {
+            "kind": "period",
+            "precision": "year",
+            "source": {
+              "quote": "this year",
+              "turn_id": "user-1"
+            },
+            "value": "2026"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "During this year, who should staff contact about a missing e-learning course under the E-Learning Platform Guidance?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "run_id": "288f2438-b126-435f-8a21-cf891100b0c1",
+    "evidence": null,
+    "retrieval": {
+      "candidate_count": 0,
+      "clarification_reason": "ambiguous_authority_window_for_period",
+      "clarification_source": "eligibility_resolver",
+      "evidence_count": 0,
+      "lineage": {
+        "evidence_needs_plan": {
+          "bindings": [
+            {
+              "family_ids": [
+                "17278f8a-fa84-4a14-a98e-261d19682c66"
+              ],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "matched"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "Under the 'E-Learning Platform Guidance', during 2026, who should staff contact about a missing e-learning course?",
+              "authority": {
+                "kind": "period",
+                "precision": "year",
+                "source": {
+                  "quote": "this year",
+                  "turn_id": "user-1"
+                },
+                "value": "2026"
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "During this year, who should staff contact about a missing e-learning course under the E-Learning Platform Guidance?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        }
+      },
+      "outcome": "clarification_required",
+      "resolved_applicability_location": [],
+      "resolved_temporal_authority": []
+    },
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19131,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 644,
+          "latency_ms": 2922.6927930139937,
+          "model": "gpt-5-mini",
+          "output_tokens": 147,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [
+                  "17278f8a-fa84-4a14-a98e-261d19682c66"
+                ],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Under the 'E-Learning Platform Guidance', during 2026, who should staff contact about a missing e-learning course?",
+                "authority": {
+                  "kind": "period",
+                  "precision": "year",
+                  "source": {
+                    "quote": "this year",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "During this year, who should staff contact about a missing e-learning course under the E-Learning Platform Guidance?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "version": "interpretation-check-v1"
+        },
+        "latency_ms": 9949.677962984424,
+        "output_tokens": 803,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "generation": null
+  },
+  {
+    "index": 4,
+    "raw_path": "cases/04-block1.relative-prior-year-v1.json",
+    "case_id": "block1.relative-prior-year",
+    "question": "Looking back at last year, what starter uniform allowance did the Uniform Allowance Guidance specify?",
+    "answer": "The 2025 version of the Uniform Allowance Guidance specifies a one-off starter (initial) uniform allowance of \u00a340 to be paid in a new starter\u2019s first month.",
+    "status": "completed",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Retrieve the version of the document named 'Uniform Allowance Guidance' that applied in 2025 and report what 'starter uniform allowance' that version specified.",
+          "authority": {
+            "kind": "period",
+            "precision": "year",
+            "source": {
+              "quote": "last year",
+              "turn_id": "user-1"
+            },
+            "value": "2025"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "Looking back at last year, what starter uniform allowance did the Uniform Allowance Guidance specify?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "run_id": "09f5ccd7-75f7-4549-87d0-3989cea52a21",
+    "evidence": [
+      {
+        "chunk_id": "c374ef9c-5170-5ae8-b50b-746e2a8c98bb",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "5ea460a7-9a67-5cf3-903c-21842e4db198",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "retrieval": {
+      "candidate_count": 2,
+      "clarification_reason": null,
+      "clarification_source": null,
+      "evidence_count": 2,
+      "lineage": {
+        "evidence_needs_plan": {
+          "bindings": [
+            {
+              "family_ids": [
+                "78df2038-574c-4fc5-8216-b78b41e4e912"
+              ],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "matched"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "Retrieve the version of the document named 'Uniform Allowance Guidance' that applied in 2025 and report what 'starter uniform allowance' that version specified.",
+              "authority": {
+                "kind": "period",
+                "precision": "year",
+                "source": {
+                  "quote": "last year",
+                  "turn_id": "user-1"
+                },
+                "value": "2025"
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "Looking back at last year, what starter uniform allowance did the Uniform Allowance Guidance specify?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "evidence_selection": "bounded-needs-k5-v3",
+        "needs": {
+          "n1": {
+            "planner": {
+              "adapter_version": "structured-chat-needs-v9",
+              "contract_schema_version": "evidence-needs-plan-v3",
+              "fingerprint": "551ef7c15d0e2f38e873b16347c1e8f44c5211538cbfbc43d7cf09e6c7c8a0a0",
+              "model": "gpt-5-mini",
+              "prompt_version": "bounded-evidence-needs-v25",
+              "provider": "openai"
+            },
+            "retrieval": {
+              "configuration_version": "provisional-r28-query-evidence-contract-v1",
+              "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+              "evidence_threshold_policy_fingerprint": "8adb1a507bda52e7524903b77cc29dea7f602ad8f0d082c9e6421c07ed6227fb",
+              "evidence_threshold_policy_version": "provisional-r28-query-evidence-contract-v1",
+              "fusion_strategy": "rrf",
+              "fusion_version": "1",
+              "reranker_profile": {
+                "adapter_version": "document-metadata-v2",
+                "model": "rerank-2.5",
+                "provider": "voyage",
+                "truncation": false
+              },
+              "rrf_k": 5,
+              "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+              "sparse_space_generation_id": "41cb5309-c5c5-4208-9ce6-c8fa416c29c5"
+            }
+          }
+        },
+        "planner": {
+          "adapter_version": "structured-chat-needs-v9",
+          "contract_schema_version": "evidence-needs-plan-v3",
+          "fingerprint": "551ef7c15d0e2f38e873b16347c1e8f44c5211538cbfbc43d7cf09e6c7c8a0a0",
+          "model": "gpt-5-mini",
+          "prompt_version": "bounded-evidence-needs-v25",
+          "provider": "openai"
+        },
+        "selection_coverage": {
+          "n1": {
+            "budget_cut_unit_count": 0,
+            "eligible_unit_count": 2,
+            "selected_unit_count": 2
+          }
+        }
+      },
+      "outcome": "evidence_found",
+      "resolved_applicability_location": [],
+      "resolved_temporal_authority": []
+    },
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19126,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 643,
+          "latency_ms": 2329.147626005579,
+          "model": "gpt-5-mini",
+          "output_tokens": 83,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [
+                  "78df2038-574c-4fc5-8216-b78b41e4e912"
+                ],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Retrieve the version of the document named 'Uniform Allowance Guidance' that applied in 2025 and report what 'starter uniform allowance' that version specified.",
+                "authority": {
+                  "kind": "period",
+                  "precision": "year",
+                  "source": {
+                    "quote": "last year",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2025"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "Looking back at last year, what starter uniform allowance did the Uniform Allowance Guidance specify?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "version": "interpretation-check-v1"
+        },
+        "latency_ms": 11978.402173001086,
+        "output_tokens": 806,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "generation": {
+      "aspect_links": [
+        {
+          "answer_part_indices": [
+            0
+          ],
+          "need_id": "n1",
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "aspect_results": {
+        "n1": "supported"
+      },
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "insufficiency_reason": null,
+      "model": "gpt-5-mini",
+      "outcome": "answered",
+      "parts": [
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 355,
+              "document_id": 105,
+              "evidence_handle": "ev-01"
+            },
+            {
+              "document_chunk_id": 356,
+              "document_id": 105,
+              "evidence_handle": "ev-02"
+            }
+          ],
+          "text": "The 2025 version of the Uniform Allowance Guidance specifies a one-off starter (initial) uniform allowance of \u00a340 to be paid in a new starter\u2019s first month."
+        }
+      ],
+      "provider": "openai",
+      "rendered_text": "The 2025 version of the Uniform Allowance Guidance specifies a one-off starter (initial) uniform allowance of \u00a340 to be paid in a new starter\u2019s first month.",
+      "scope_citations": [],
+      "unsupported_aspects": [],
+      "usage": {
+        "adapter_version": "openai-responses-needs-v4",
+        "cached_input_tokens": 1792,
+        "contract_version": "generation-result-v3",
+        "cost_basis": "estimated",
+        "cost_usd": 0.0020563,
+        "entailment_review": {
+          "cached_input_tokens": 0,
+          "cost_basis": "estimated",
+          "cost_usd": 0.00092425,
+          "input_tokens": 1673,
+          "latency_ms": 4451.925125991693,
+          "model": "gpt-5-mini",
+          "output_tokens": 253,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "stage": "generation"
+        },
+        "execution": "provider_api",
+        "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+        "input_tokens": 5342,
+        "latency_ms": 4099.018002016237,
+        "max_output_tokens": 4096,
+        "measured_input_tokens": 3746,
+        "model": "gpt-5-mini",
+        "output_tokens": 562,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "prompt_version": "grounded-generation-needs-v11",
+        "provider": "openai",
+        "reasoning_effort": "low",
+        "request_count": 2,
+        "retry_count": 1,
+        "stage": "generation",
+        "validation_attempts": [
+          {
+            "cached_input_tokens": 1792,
+            "cost_basis": "estimated",
+            "cost_usd": 0.0020563,
+            "input_tokens": 5342,
+            "latency_ms": 4099.018002016237,
+            "outcome": "accepted",
+            "output_tokens": 562,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "request_count": 2,
+            "request_id": "76ff92fc-856a-448c-9f7f-fad0336766be",
+            "retry_count": 0,
+            "retry_of_request_id": null
+          }
+        ],
+        "validation_retry_count": 0
+      }
+    }
+  },
+  {
+    "index": 5,
+    "raw_path": "cases/05-block1.relative-current-quarter-v1.json",
+    "case_id": "block1.relative-current-quarter",
+    "question": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+    "answer": "The IT service desk is responsible for handling login problems on the e\u2011learning platform for this quarter; the Training Team no longer handles platform access issues after the migration to single sign-on.\n\nLocation coverage not established\n\nThe named location in your question could not be matched to a registered site. The guidance above is general; its applicability to that location has not been established.",
+    "status": "completed",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "named",
+            "source": {
+              "quote": "E-Learning Platform Guidance",
+              "turn_id": "user-1"
+            }
+          },
+          "aspect": "Under the E-Learning Platform Guidance, for the period \"For this quarter\", which team is responsible for handling login problems on the e-learning platform?",
+          "authority": {
+            "kind": "period",
+            "precision": "interval",
+            "source": {
+              "quote": "For this quarter",
+              "turn_id": "user-1"
+            },
+            "value": "2026-10-01/2026-12-31"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "retrieve",
+          "question_span": {
+            "quote": "For this quarter",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "run_id": "2ded4768-beef-4cb5-ba17-2a45cfdaa20b",
+    "evidence": [
+      {
+        "chunk_id": "e6eef862-161a-56f0-adef-a7cef552af6c",
+        "document_family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+        "document_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+        "need_id": "n1",
+        "side": "primary"
+      }
+    ],
+    "retrieval": {
+      "candidate_count": 1,
+      "clarification_reason": null,
+      "clarification_source": null,
+      "evidence_count": 1,
+      "lineage": {
+        "evidence_needs_plan": {
+          "bindings": [
+            {
+              "family_ids": [
+                "17278f8a-fa84-4a14-a98e-261d19682c66"
+              ],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "matched"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "named",
+                "source": {
+                  "quote": "E-Learning Platform Guidance",
+                  "turn_id": "user-1"
+                }
+              },
+              "aspect": "Under the E-Learning Platform Guidance, for the period \"For this quarter\", which team is responsible for handling login problems on the e-learning platform?",
+              "authority": {
+                "kind": "period",
+                "precision": "interval",
+                "source": {
+                  "quote": "For this quarter",
+                  "turn_id": "user-1"
+                },
+                "value": "2026-10-01/2026-12-31"
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "retrieve",
+              "question_span": {
+                "quote": "For this quarter",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "evidence_selection": "bounded-needs-k5-v3",
+        "needs": {
+          "n1": {
+            "planner": {
+              "adapter_version": "structured-chat-needs-v9",
+              "contract_schema_version": "evidence-needs-plan-v3",
+              "fingerprint": "551ef7c15d0e2f38e873b16347c1e8f44c5211538cbfbc43d7cf09e6c7c8a0a0",
+              "model": "gpt-5-mini",
+              "prompt_version": "bounded-evidence-needs-v25",
+              "provider": "openai"
+            },
+            "retrieval": {
+              "configuration_version": "provisional-r28-query-evidence-contract-v1",
+              "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+              "evidence_threshold_policy_fingerprint": "8adb1a507bda52e7524903b77cc29dea7f602ad8f0d082c9e6421c07ed6227fb",
+              "evidence_threshold_policy_version": "provisional-r28-query-evidence-contract-v1",
+              "fusion_strategy": "rrf",
+              "fusion_version": "1",
+              "reranker_profile": {
+                "adapter_version": "document-metadata-v2",
+                "model": "rerank-2.5",
+                "provider": "voyage",
+                "truncation": false
+              },
+              "rrf_k": 5,
+              "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+              "sparse_space_generation_id": "41cb5309-c5c5-4208-9ce6-c8fa416c29c5"
+            }
+          }
+        },
+        "planner": {
+          "adapter_version": "structured-chat-needs-v9",
+          "contract_schema_version": "evidence-needs-plan-v3",
+          "fingerprint": "551ef7c15d0e2f38e873b16347c1e8f44c5211538cbfbc43d7cf09e6c7c8a0a0",
+          "model": "gpt-5-mini",
+          "prompt_version": "bounded-evidence-needs-v25",
+          "provider": "openai"
+        },
+        "selection_coverage": {
+          "n1": {
+            "budget_cut_unit_count": 0,
+            "eligible_unit_count": 1,
+            "selected_unit_count": 1
+          }
+        }
+      },
+      "outcome": "evidence_found",
+      "resolved_applicability_location": [],
+      "resolved_temporal_authority": []
+    },
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19149,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "code": "scope_added",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 656,
+          "latency_ms": 2339.902751002228,
+          "model": "gpt-5-mini",
+          "output_tokens": 148,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [
+                  "17278f8a-fa84-4a14-a98e-261d19682c66"
+                ],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Under the named document 'E-Learning Platform Guidance', for the period \"this quarter\", retrieve which team is recorded as responsible for handling login problems on the E-Learning platform.",
+                "authority": {
+                  "kind": "period",
+                  "precision": "interval",
+                  "source": {
+                    "quote": "this quarter",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-10-01/2026-12-31"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "For this quarter, which team handles login problems under the E-Learning Platform Guidance?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "version": "interpretation-check-v1"
+        },
+        "latency_ms": 11838.781464000931,
+        "output_tokens": 821,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "rejected",
+        "validation": {
+          "code": "scope_added",
+          "field": "root",
+          "stage": "interpretation"
+        }
+      },
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19231,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 655,
+          "latency_ms": 3639.214252005331,
+          "model": "gpt-5-mini",
+          "output_tokens": 275,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [
+                  "17278f8a-fa84-4a14-a98e-261d19682c66"
+                ],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "named",
+                  "source": {
+                    "quote": "E-Learning Platform Guidance",
+                    "turn_id": "user-1"
+                  }
+                },
+                "aspect": "Under the E-Learning Platform Guidance, for the period \"For this quarter\", which team is responsible for handling login problems on the e-learning platform?",
+                "authority": {
+                  "kind": "period",
+                  "precision": "interval",
+                  "source": {
+                    "quote": "For this quarter",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-10-01/2026-12-31"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "For this quarter",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "version": "interpretation-check-v1"
+        },
+        "latency_ms": 11702.05446399632,
+        "output_tokens": 1080,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "generation": {
+      "aspect_links": [
+        {
+          "answer_part_indices": [
+            0
+          ],
+          "need_id": "n1",
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "aspect_results": {
+        "n1": "supported"
+      },
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "insufficiency_reason": null,
+      "model": "gpt-5-mini",
+      "outcome": "answered",
+      "parts": [
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 660,
+              "document_id": 213,
+              "evidence_handle": "ev-01"
+            }
+          ],
+          "text": "The IT service desk is responsible for handling login problems on the e\u2011learning platform for this quarter; the Training Team no longer handles platform access issues after the migration to single sign-on."
+        }
+      ],
+      "provider": "openai",
+      "rendered_text": "The IT service desk is responsible for handling login problems on the e\u2011learning platform for this quarter; the Training Team no longer handles platform access issues after the migration to single sign-on.",
+      "scope_citations": [],
+      "unsupported_aspects": [],
+      "usage": {
+        "adapter_version": "openai-responses-needs-v4",
+        "cached_input_tokens": 1792,
+        "contract_version": "generation-result-v3",
+        "cost_basis": "estimated",
+        "cost_usd": 0.0015490500000000002,
+        "entailment_review": {
+          "cached_input_tokens": 0,
+          "cost_basis": "estimated",
+          "cost_usd": 0.00060075,
+          "input_tokens": 907,
+          "latency_ms": 3228.3888770034537,
+          "model": "gpt-5-mini",
+          "output_tokens": 187,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "stage": "generation"
+        },
+        "execution": "provider_api",
+        "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+        "input_tokens": 3825,
+        "latency_ms": 3320.5047090013977,
+        "max_output_tokens": 4096,
+        "measured_input_tokens": 2995,
+        "model": "gpt-5-mini",
+        "output_tokens": 498,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "prompt_version": "grounded-generation-needs-v11",
+        "provider": "openai",
+        "reasoning_effort": "low",
+        "request_count": 2,
+        "retry_count": 1,
+        "stage": "generation",
+        "validation_attempts": [
+          {
+            "cached_input_tokens": 1792,
+            "cost_basis": "estimated",
+            "cost_usd": 0.0015490500000000002,
+            "input_tokens": 3825,
+            "latency_ms": 3320.5047090013977,
+            "outcome": "accepted",
+            "output_tokens": 498,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "request_count": 2,
+            "request_id": "7335d6ef-75d7-492e-bc30-438e25e68809",
+            "retry_count": 0,
+            "retry_of_request_id": null
+          }
+        ],
+        "validation_retry_count": 0
+      }
+    }
+  },
+  {
+    "index": 6,
+    "raw_path": "cases/06-v4.case.corrected-b01-07-v1.json",
+    "case_id": "v4.case.corrected-b01-07",
+    "question": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+    "answer": "Immediately before April 2026, the guidance prescribed a one-off starter (initial) uniform allowance of \u00a340 paid in a new starter's first month's pay, and an annual replacement allowance of \u00a325 paid each April.\n\nFrom the version effective in April 2026, the starter (initial) allowance was increased to \u00a355 (an increase from \u00a340) and the annual replacement allowance was increased to \u00a335 (an increase from \u00a325); the new version and its increased amounts apply from that version's effective date in April 2026.",
+    "status": "completed",
+    "plan": {
+      "clarification": null,
+      "decision": "plan",
+      "needs": [
+        {
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "aspect": "Compare the recorded rules that governed the starter uniform allowance and the annual replacement uniform allowance immediately before April 2026 and immediately after April 2026, and report how each changed.",
+          "authority": {
+            "kind": "transition_period",
+            "precision": "month",
+            "source": {
+              "quote": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+              "turn_id": "user-1"
+            },
+            "value": "2026-04"
+          },
+          "central": true,
+          "claim_under_test": null,
+          "fact_reference": null,
+          "need_id": "n1",
+          "operation": "compare",
+          "question_span": {
+            "quote": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+            "turn_id": "user-1"
+          },
+          "scope_question": null,
+          "supports_need_id": null
+        }
+      ]
+    },
+    "run_id": "2c4e370d-dac6-471d-82f6-689ccc064731",
+    "evidence": [
+      {
+        "chunk_id": "c943d6d2-b8ba-5878-b26a-ec32d30d7ecc",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "c374ef9c-5170-5ae8-b50b-746e2a8c98bb",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b",
+        "need_id": "n1",
+        "side": "comparison"
+      },
+      {
+        "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738",
+        "need_id": "n1",
+        "side": "primary"
+      },
+      {
+        "chunk_id": "5ea460a7-9a67-5cf3-903c-21842e4db198",
+        "document_family_id": "78df2038-574c-4fc5-8216-b78b41e4e912",
+        "document_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b",
+        "need_id": "n1",
+        "side": "comparison"
+      }
+    ],
+    "retrieval": {
+      "candidate_count": 4,
+      "clarification_reason": null,
+      "clarification_source": null,
+      "evidence_count": 4,
+      "lineage": {
+        "evidence_needs_plan": {
+          "bindings": [
+            {
+              "family_ids": [],
+              "need_id": "n1",
+              "ownership": "authorised_workspace",
+              "ownership_source": null,
+              "subject_status": "topic"
+            }
+          ],
+          "clarification": null,
+          "decision": "plan",
+          "needs": [
+            {
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "aspect": "Compare the recorded rules that governed the starter uniform allowance and the annual replacement uniform allowance immediately before April 2026 and immediately after April 2026, and report how each changed.",
+              "authority": {
+                "kind": "transition_period",
+                "precision": "month",
+                "source": {
+                  "quote": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+                  "turn_id": "user-1"
+                },
+                "value": "2026-04"
+              },
+              "central": true,
+              "claim_under_test": null,
+              "fact_reference": null,
+              "need_id": "n1",
+              "operation": "compare",
+              "question_span": {
+                "quote": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+                "turn_id": "user-1"
+              },
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "schema_version": "evidence-needs-plan-v3"
+        },
+        "evidence_selection": "bounded-needs-k5-v3",
+        "needs": {
+          "n1": {
+            "planner": {
+              "adapter_version": "structured-chat-needs-v9",
+              "contract_schema_version": "evidence-needs-plan-v3",
+              "fingerprint": "551ef7c15d0e2f38e873b16347c1e8f44c5211538cbfbc43d7cf09e6c7c8a0a0",
+              "model": "gpt-5-mini",
+              "prompt_version": "bounded-evidence-needs-v25",
+              "provider": "openai"
+            },
+            "retrieval": {
+              "configuration_version": "provisional-r28-query-evidence-contract-v1",
+              "embedding_profile_fingerprint": "ac57bb349ef16e2977756edaf39945974797da2339307510209e6ae402cbb86c",
+              "evidence_threshold_policy_fingerprint": "8adb1a507bda52e7524903b77cc29dea7f602ad8f0d082c9e6421c07ed6227fb",
+              "evidence_threshold_policy_version": "provisional-r28-query-evidence-contract-v1",
+              "fusion_strategy": "rrf",
+              "fusion_version": "1",
+              "reranker_profile": {
+                "adapter_version": "document-metadata-v2",
+                "model": "rerank-2.5",
+                "provider": "voyage",
+                "truncation": false
+              },
+              "rrf_k": 5,
+              "sparse_profile_fingerprint": "e7bc2e4760b30c129c4d948ff3b34e1c89193ffc57cc072391cd5a75f98b615d",
+              "sparse_space_generation_id": "41cb5309-c5c5-4208-9ce6-c8fa416c29c5"
+            }
+          }
+        },
+        "planner": {
+          "adapter_version": "structured-chat-needs-v9",
+          "contract_schema_version": "evidence-needs-plan-v3",
+          "fingerprint": "551ef7c15d0e2f38e873b16347c1e8f44c5211538cbfbc43d7cf09e6c7c8a0a0",
+          "model": "gpt-5-mini",
+          "prompt_version": "bounded-evidence-needs-v25",
+          "provider": "openai"
+        },
+        "selection_coverage": {
+          "n1": {
+            "budget_cut_unit_count": 0,
+            "eligible_unit_count": 4,
+            "selected_unit_count": 4
+          }
+        }
+      },
+      "outcome": "evidence_found",
+      "resolved_applicability_location": [],
+      "resolved_temporal_authority": []
+    },
+    "attempts": [
+      {
+        "cached_input_tokens": null,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "input_tokens": 19039,
+        "interpretation_check": {
+          "cached_input_tokens": null,
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 640,
+          "latency_ms": 1454.9555010162294,
+          "model": "gpt-5-mini",
+          "output_tokens": 83,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Compare the recorded rules that governed the starter uniform allowance and the annual replacement uniform allowance immediately before April 2026 and immediately after April 2026, and report how each changed.",
+                "authority": {
+                  "kind": "transition_period",
+                  "precision": "month",
+                  "source": {
+                    "quote": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-04"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "compare",
+                "question_span": {
+                  "quote": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v3"
+          },
+          "version": "interpretation-check-v1"
+        },
+        "latency_ms": 8335.245670023141,
+        "output_tokens": 672,
+        "pricing_snapshot": null,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "validation": null
+      }
+    ],
+    "generation": {
+      "aspect_links": [
+        {
+          "answer_part_indices": [
+            0,
+            1
+          ],
+          "need_id": "n1",
+          "unsupported_aspect_indices": []
+        }
+      ],
+      "aspect_results": {
+        "n1": "supported"
+      },
+      "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+      "insufficiency_reason": null,
+      "model": "gpt-5-mini",
+      "outcome": "answered",
+      "parts": [
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 355,
+              "document_id": 105,
+              "evidence_handle": "ev-02"
+            },
+            {
+              "document_chunk_id": 356,
+              "document_id": 105,
+              "evidence_handle": "ev-04"
+            }
+          ],
+          "text": "Immediately before April 2026, the guidance prescribed a one-off starter (initial) uniform allowance of \u00a340 paid in a new starter's first month's pay, and an annual replacement allowance of \u00a325 paid each April."
+        },
+        {
+          "evidence": [
+            {
+              "document_chunk_id": 594,
+              "document_id": 190,
+              "evidence_handle": "ev-01"
+            },
+            {
+              "document_chunk_id": 595,
+              "document_id": 190,
+              "evidence_handle": "ev-03"
+            }
+          ],
+          "text": "From the version effective in April 2026, the starter (initial) allowance was increased to \u00a355 (an increase from \u00a340) and the annual replacement allowance was increased to \u00a335 (an increase from \u00a325); the new version and its increased amounts apply from that version's effective date in April 2026."
+        }
+      ],
+      "provider": "openai",
+      "rendered_text": "Immediately before April 2026, the guidance prescribed a one-off starter (initial) uniform allowance of \u00a340 paid in a new starter's first month's pay, and an annual replacement allowance of \u00a325 paid each April.\n\nFrom the version effective in April 2026, the starter (initial) allowance was increased to \u00a355 (an increase from \u00a340) and the annual replacement allowance was increased to \u00a335 (an increase from \u00a325); the new version and its increased amounts apply from that version's effective date in April 2026.",
+      "scope_citations": [],
+      "unsupported_aspects": [],
+      "usage": {
+        "adapter_version": "openai-responses-needs-v4",
+        "cached_input_tokens": 1792,
+        "contract_version": "generation-result-v3",
+        "cost_basis": "estimated",
+        "cost_usd": 0.00393455,
+        "entailment_review": {
+          "cached_input_tokens": 0,
+          "cost_basis": "estimated",
+          "cost_usd": 0.00125075,
+          "input_tokens": 3139,
+          "latency_ms": 3357.482876017457,
+          "model": "gpt-5-mini",
+          "output_tokens": 233,
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "stage": "generation"
+        },
+        "execution": "provider_api",
+        "generation_fingerprint": "1bdfd32ca594c2a690bb81da095b5114688d372fc8ca66f78e4d656a3641b497",
+        "input_tokens": 8183,
+        "latency_ms": 10630.127213022206,
+        "max_output_tokens": 4096,
+        "measured_input_tokens": 5121,
+        "model": "gpt-5-mini",
+        "output_tokens": 1146,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "prompt_version": "grounded-generation-needs-v11",
+        "provider": "openai",
+        "reasoning_effort": "low",
+        "request_count": 2,
+        "retry_count": 1,
+        "stage": "generation",
+        "validation_attempts": [
+          {
+            "cached_input_tokens": 1792,
+            "cost_basis": "estimated",
+            "cost_usd": 0.00393455,
+            "input_tokens": 8183,
+            "latency_ms": 10630.127213022206,
+            "outcome": "accepted",
+            "output_tokens": 1146,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "request_count": 2,
+            "request_id": "6cd0500f-c5cb-42bf-9fc0-6db470c7318a",
+            "retry_count": 0,
+            "retry_of_request_id": null
+          }
+        ],
+        "validation_retry_count": 0
+      }
+    }
+  }
+]

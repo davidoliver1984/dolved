@@ -8,6 +8,33 @@
 
 ## Document ownership
 
+**Relative checkpoint result:** `2456a08` pushed; all five relative inputs passed
+calendar grounding, with four answers/two authority-window clarifications across
+the six-input set. Full-suite exact failure-name parity is 38 AI / 2 Laravel;
+raw JUnit and [live report](docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-RELATIVE-20261112-01/report.md)
+retained. No safety stop or operational failure. Block 1 remains held because
+input5's correct plan was falsely flagged and its accepted retry introduced a
+document-title/location misread and shortened span. No checker tuning followed.
+
+**2026-11-12 relative arithmetic correction:** model adaptation now derives period
+value/precision from grounded explicit relative phrases, mirrored at PHP plan
+consumption; the existing London period calculator supplies the bounds. Need
+ordering keeps the evaluated_at anchor during its unchanged grounding checks.
+No query, ranking, authority selection, prompt, checker or retry-limit changes.
+See [verification and frozen six-input checkpoint](docs/evaluation/r28-s04/block1-relative-arithmetic-20261112/expectations.md).
+The two prior failed payloads are unavailable; the anchor-loss path is independently
+reproducible, not a claim to have recovered those payloads. Block 3's first target
+is the recorded strengthening of source statements, not repaired in this change.
+
+**2026-11-12 Block 1 continuation:** unchanged runtime `83fdf18`; tooling-only fixed
+tail stage verified by 18 harness tests. [Combined checkpoint evidence](docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-CLOSING-TAIL-20261112-01/report.md)
+links parent input 1/probes and inputs 2–13 without redispatch. Budget disclosure
+is live-exercised; relative-calendar acceptance still fails across inputs 6/8.
+Input 13's unsupported offered-to-required obligation triggered the safety stop
+before input 14. Block 1 remains open, the claim finding belongs to Block 3, and
+no application repair or further run followed. See the living repair plan for
+David's Finance-variance disposition and corrected role-title acceptance.
+
 - `PROJECT_ROADMAP.md` explains **what** will be built and in what order.
 - `IMPLEMENTATION_GUIDE.md` explains **how** to build and verify it.
 - `tasks.json` is the sole source of truth for the current engineering session.

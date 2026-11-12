@@ -1,0 +1,14 @@
+{
+  "status_counts": {
+    "completed": 4,
+    "clarification_required": 2
+  },
+  "interpretation_codes": {
+    "scope_added": 2,
+    "accepted": 6
+  },
+  "interpretation_input_tokens": 5213,
+  "interpretation_output_tokens": 1178,
+  "interpretation_latency_ms": 21100.545385066653,
+  "known_plus_estimated_usd": 0.05784585
+}

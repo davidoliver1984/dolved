@@ -59,6 +59,34 @@ Provider-free diagnosis identified b01-04's exact schema invariant: an ordinary 
 
 Correction `817c307b98b52f30cdbc8f9af01b561165e92b9c` was committed/pushed with eight additional passing tests and identical full-suite failing-name sets, raw JUnit retained. [The once-only four-input run](../evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-FEEDBACK-20261112-01/report.md) produced three answers and one safe evidence no-answer. b01-06 exercised feedback: rejected fact_date_precision then accepted, with the whole approved-claim question retained and next-salary-run answer supported by the matching email. Its “last month” duration label remains a semantic caveat, not new relative-date capability. b01-04 accepted on attempt one but stopped at topical quotation validation; the unfamiliar date/event question and uniform control answered both requested parts correctly. No silent omissions were found in independent clause review; no exhausted-interpretation fallback occurred. Estimated priced-plus-offline spend USD 0.03947546 excludes unavailable reranking/infrastructure prices. Runtime and corpus freezes unchanged; no further run or repair follows. Plan and local journey updated together.
 
+### Closing continuation and safety stop
+
+The relative correction was committed/pushed as `2456a08`. Its six-input checkpoint
+finished once each: four answers and two controlled authority-period clarifications.
+All five relative phrases passed grounding; both former failure shapes now reach
+eligibility, and unfamiliar last-year/this-quarter inputs answer from authorised
+versions. The untouched uniform comparison control answers both changes correctly.
+Full suites retain exactly 38 AI/2 Laravel failures, no new or resolved names, with
+raw JUnit. The incomplete AI baseline mount and initial malformed-JSON diagnostic
+regression are retained and explained in verification. One new clear checker false
+flag on input5 prevents closing Block 1: its accepted retry also confuses a document
+title with a site and shortens the question span. No tuning or extra run followed.
+The plan and journey record this hold and the successful arithmetic separately.
+
+David authorised application-owned relative-calendar arithmetic following the
+two last-month/last-quarter failures. Inspection found a second concrete issue:
+the ordering step repeated grounding validation without the evaluation anchor.
+The bounded correction retains the anchor and canonicalizes the grounded period
+before strict validation, mirrored in PHP. Multiple phrases, ungrounded quotations
+and missing event dates remain failures, not guesses. Six questions and separate
+expectations were frozen before live outputs, with a USD 2 ceiling. Input 13's
+offered-to-required strengthening is recorded as Block 3's first target alongside
+the earlier induction overclaim; no entailment change is included here.
+
+David dispositioned b06-06's Finance reading as non-material interpretation variance and confirmed that explaining the former role title was not an acceptance requirement. The plan records that correction without rewriting original evidence. The fixed tail continuation ran inputs 2–13 once on unchanged runtime `83fdf18`; input 1 and the four omission probes were not repeated. A tooling-only fixed-selection stage passed 18 provider-free harness tests; no application fix was made.
+
+The [combined fourteen-input report](../evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-CLOSING-TAIL-20261112-01/report.md) records nine answers, three no-answers, one clarification and one unattempted input. Input 13 strengthened a cited “offered” wellbeing check-in into “requires”; the revised unsupported-claim circuit breaker stopped before input 14. That finding belongs to Block 3. Block 1 remains open for the repeated calendar-grounding acceptance failures on “last month” and “last quarter,” not for Finance variance. Budget-gap disclosure was genuinely exercised in three inputs. Ten production checks accepted without observed false flags; the parent four omission catches remain linked evidence. Runtime/index freezes match. USD 0.20444881 priced-plus-estimated spend is not a complete invoice: reranking/infrastructure prices remain unavailable. No fix, commit, push or further run followed; plan and journey updated together.
+
 ### Final bounded result
 
 Runtime correction `b00b4a346cfce980987e5a328c9748f2ca29d90b` was committed and pushed after exact full-suite failure-name parity: AI 38 retained failures, Laravel 2, with 17 additional passing tests and raw JUnit retained. Seven frozen questions were each attempted once, producing five real answers and two no-answers. The original and unfamiliar duration questions exercised the non-calendar duration path; before-July and unfamiliar after-July questions selected the correct e-learning authority. The uniform transition comparison stayed correct.

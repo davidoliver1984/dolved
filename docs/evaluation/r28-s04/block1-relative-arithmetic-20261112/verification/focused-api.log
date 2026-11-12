@@ -1,0 +1,16 @@
+ Container rag-platform-api-run-c5c9687d561a Creating 
+ Container rag-platform-api-run-c5c9687d561a Created 
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.25
+Configuration: /app/phpunit.xml
+
+
+Notice: file_get_contents(): Read of 149706 bytes failed with errno=5 I/O error in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 100
+.....                                                               5 / 5 (100%)
+Notice: file_put_contents(): Write of 551 bytes failed with errno=35 Resource deadlock would occur in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:00.294, Memory: 56.50 MB
+
+[30;42mOK (5 tests, 78 assertions)[0m

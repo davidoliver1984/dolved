@@ -1,0 +1,12 @@
+{"index": 0, "case_id": "v4.case.corrected-b01-06", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T17:52:44.488883+00:00"}
+{"index": 0, "case_id": "v4.case.corrected-b01-06", "variant_id": "v1", "event": "recorded", "sha256": "1c8d5304623a0bd4aec0a4e507c2bb55ad621ae0bcfe663188cd1d842ea32c58", "at": "2026-11-12T17:53:17.845330+00:00"}
+{"index": 1, "case_id": "block1.closing-relative", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T17:53:56.624172+00:00"}
+{"index": 1, "case_id": "block1.closing-relative", "variant_id": "v1", "event": "recorded", "sha256": "a01cbe906c6613a18819555dd36462831eef3b8f2a41f557226fffa604e5cbcb", "at": "2026-11-12T17:54:10.904187+00:00"}
+{"index": 2, "case_id": "block1.relative-year", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T17:54:23.819825+00:00"}
+{"index": 2, "case_id": "block1.relative-year", "variant_id": "v1", "event": "recorded", "sha256": "a12d129a57d0cd78192dfd64102130f67a1105f28ca6b6c7e7ac2fe3af5e03a1", "at": "2026-11-12T17:54:34.357534+00:00"}
+{"index": 3, "case_id": "block1.relative-prior-year", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T17:54:50.619786+00:00"}
+{"index": 3, "case_id": "block1.relative-prior-year", "variant_id": "v1", "event": "recorded", "sha256": "68a31d18c786590fafc53afe7348c60a5b327e03d0144b83db0f742727bad429", "at": "2026-11-12T17:55:14.415363+00:00"}
+{"index": 4, "case_id": "block1.relative-current-quarter", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T17:55:44.439244+00:00"}
+{"index": 4, "case_id": "block1.relative-current-quarter", "variant_id": "v1", "event": "recorded", "sha256": "31dd8f35b65f84f0c868a9c8896ee5a641955b8711343115d099d48123ce57c6", "at": "2026-11-12T17:56:17.373918+00:00"}
+{"index": 5, "case_id": "v4.case.corrected-b01-07", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T17:56:41.339713+00:00"}
+{"index": 5, "case_id": "v4.case.corrected-b01-07", "variant_id": "v1", "event": "recorded", "sha256": "7402bda263e7135f766f910e6737900afa78c3c9e21f08950467d5143b9737f3", "at": "2026-11-12T17:57:17.166704+00:00"}

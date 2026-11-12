@@ -1,0 +1,1931 @@
+ Container rag-platform-ai-run-b296d0200444 Creating 
+ Container rag-platform-ai-run-b296d0200444 Created 
+.....s.................................................................. [  5%]
+........................................................................ [ 10%]
+........................................................................ [ 16%]
+........................................................................ [ 21%]
+........................................................................ [ 27%]
+........................................................................ [ 32%]
+.FFFFF.................................................................. [ 38%]
+.......F................................................................ [ 43%]
+....F........................................s.......................... [ 49%]
+........................................................................ [ 54%]
+...................................................................FFFFF [ 60%]
+FFFFFFFFFFFFFFFFFFFFF................................................... [ 65%]
+.......................F................................................ [ 71%]
+........................................................................ [ 76%]
+..............................................................F..F...FF. [ 82%]
+........................................................................ [ 87%]
+........................................................................ [ 93%]
+........................................................................ [ 98%]
+.........ss.....                                                         [100%]
+=================================== FAILURES ===================================
+_________ test_r28_policy_binds_input_cost_and_single_attempt_ceilings _________
+
+tmp_path = PosixPath('/tmp/pytest-of-app/pytest-0/test_r28_policy_binds_input_co0')
+
+    def test_r28_policy_binds_input_cost_and_single_attempt_ceilings(
+        tmp_path: Path,
+    ) -> None:
+        module = load_script()
+        policy = replace(module.LiveGenerationPolicy.load(R28_POLICY), output_root=tmp_path)
+        repository = materialise_repository(tmp_path, policy, policy_source=R28_POLICY)
+    
+>       population, output, attempts = module.validate(
+            policy=policy,
+            repository_root=repository,
+            experiment_id="GEN-SEC-LIVE-R28-S02-0001",
+            settings=live_settings(),
+        )
+
+tests/test_generation_live_safety.py:115: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+policy = LiveGenerationPolicy(policy_id='r28-s02-live-generation-security-v1', population_path=PosixPath('docs/evaluation/gener...lion_tokens_usd=0.025, output_cost_per_million_tokens_usd=2.0, pricing_snapshot='openai-gpt-5-mini-pricing-2026-08-19')
+repository_root = PosixPath('/tmp/pytest-of-app/pytest-0/test_r28_policy_binds_input_co0/repository')
+experiment_id = 'GEN-SEC-LIVE-R28-S02-0001'
+settings = Settings(service_name='rag-platform-ai', environment='local', aws_default_region='us-east-1', aws_endpoint_url='http:/...tel_exporter_otlp_timeout=250, otel_exporter_otlp_metrics_temporality_preference='cumulative', otel_sdk_disabled=False)
+
+    def validate(
+        *,
+        policy: LiveGenerationPolicy,
+        repository_root: Path,
+        experiment_id: str,
+        settings: Settings,
+    ) -> tuple[Path, Path, int]:
+        population_path, output, case_count = verify_bound_artifacts(
+            policy=policy,
+            repository_root=repository_root,
+            experiment_id=experiment_id,
+        )
+        profile = OpenAIGenerationProfile(
+            provider=settings.generation_provider,
+            model=settings.generation_model,
+            contract_version=settings.generation_contract_version,
+            prompt_version=settings.generation_prompt_version,
+            adapter_version=settings.generation_adapter_version,
+            reasoning_effort=settings.generation_reasoning_effort,
+            max_output_tokens=settings.generation_max_output_tokens,
+            context_window_tokens=settings.generation_context_window_tokens,
+        )
+        if (
+            profile.provider != "openai"
+            or profile.fingerprint() != policy.generation_fingerprint
+        ):
+>           raise ValueError("configured generation profile does not match live policy")
+E           ValueError: configured generation profile does not match live policy
+
+/workspace/scripts/evaluation/run_generation_live.py:283: ValueError
+___________ test_r28_policy_fails_closed_for_pricing_or_budget_drift ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-app/pytest-0/test_r28_policy_fails_closed_f0')
+
+    def test_r28_policy_fails_closed_for_pricing_or_budget_drift(
+        tmp_path: Path,
+    ) -> None:
+        module = load_script()
+        policy = replace(module.LiveGenerationPolicy.load(R28_POLICY), output_root=tmp_path)
+        repository = materialise_repository(tmp_path, policy, policy_source=R28_POLICY)
+        arguments = {
+            "policy": policy,
+            "repository_root": repository,
+            "experiment_id": "GEN-SEC-LIVE-R28-S02-0001",
+        }
+    
+>       with pytest.raises(ValueError, match="input"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'input'
+E         Actual message: 'configured generation profile does not match live policy'
+
+tests/test_generation_live_safety.py:141: AssertionError
+________ test_live_policy_binds_population_profile_and_attempt_ceiling _________
+
+tmp_path = PosixPath('/tmp/pytest-of-app/pytest-0/test_live_policy_binds_populat0')
+
+    def test_live_policy_binds_population_profile_and_attempt_ceiling(
+        tmp_path: Path,
+    ) -> None:
+        module = load_script()
+        policy = replace(module.LiveGenerationPolicy.load(POLICY), output_root=tmp_path)
+        repository = materialise_repository(tmp_path, policy)
+    
+>       population, output, attempts = module.validate(
+            policy=policy,
+            repository_root=repository,
+            experiment_id="GEN-SEC-LIVE-TEST-0001",
+            settings=live_settings(),
+        )
+
+tests/test_generation_live_safety.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+policy = LiveGenerationPolicy(policy_id='live-generation-security-v1', population_path=PosixPath('docs/evaluation/generation/po...sd=None, cached_input_cost_per_million_tokens_usd=None, output_cost_per_million_tokens_usd=None, pricing_snapshot=None)
+repository_root = PosixPath('/tmp/pytest-of-app/pytest-0/test_live_policy_binds_populat0/repository')
+experiment_id = 'GEN-SEC-LIVE-TEST-0001'
+settings = Settings(service_name='rag-platform-ai', environment='local', aws_default_region='us-east-1', aws_endpoint_url='http:/...tel_exporter_otlp_timeout=250, otel_exporter_otlp_metrics_temporality_preference='cumulative', otel_sdk_disabled=False)
+
+    def validate(
+        *,
+        policy: LiveGenerationPolicy,
+        repository_root: Path,
+        experiment_id: str,
+        settings: Settings,
+    ) -> tuple[Path, Path, int]:
+        population_path, output, case_count = verify_bound_artifacts(
+            policy=policy,
+            repository_root=repository_root,
+            experiment_id=experiment_id,
+        )
+        profile = OpenAIGenerationProfile(
+            provider=settings.generation_provider,
+            model=settings.generation_model,
+            contract_version=settings.generation_contract_version,
+            prompt_version=settings.generation_prompt_version,
+            adapter_version=settings.generation_adapter_version,
+            reasoning_effort=settings.generation_reasoning_effort,
+            max_output_tokens=settings.generation_max_output_tokens,
+            context_window_tokens=settings.generation_context_window_tokens,
+        )
+        if (
+            profile.provider != "openai"
+            or profile.fingerprint() != policy.generation_fingerprint
+        ):
+>           raise ValueError("configured generation profile does not match live policy")
+E           ValueError: configured generation profile does not match live policy
+
+/workspace/scripts/evaluation/run_generation_live.py:283: ValueError
+_________ test_live_policy_fails_closed_for_population_or_budget_drift _________
+
+tmp_path = PosixPath('/tmp/pytest-of-app/pytest-0/test_live_policy_fails_closed_0')
+
+    def test_live_policy_fails_closed_for_population_or_budget_drift(
+        tmp_path: Path,
+    ) -> None:
+        module = load_script()
+        policy = replace(module.LiveGenerationPolicy.load(POLICY), output_root=tmp_path)
+        repository = materialise_repository(tmp_path, policy)
+        arguments = {
+            "policy": policy,
+            "repository_root": repository,
+            "experiment_id": "GEN-SEC-LIVE-TEST-0001",
+        }
+    
+        with pytest.raises(ValueError, match="population digest"):
+            module.validate(
+                **{**arguments, "policy": replace(policy, population_digest="0" * 64)},
+                settings=live_settings(),
+            )
+>       with pytest.raises(ValueError, match="provider attempts"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'provider attempts'
+E         Actual message: 'configured generation profile does not match live policy'
+
+tests/test_generation_live_safety.py:192: AssertionError
+___ test_live_wrapper_requires_opt_in_and_honestly_skips_without_credentials ___
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffff627eb620>
+capsys = <_pytest.capture.CaptureFixture object at 0xffff62798a50>
+tmp_path = PosixPath('/tmp/pytest-of-app/pytest-0/test_live_wrapper_requires_opt0')
+
+    def test_live_wrapper_requires_opt_in_and_honestly_skips_without_credentials(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        tmp_path: Path,
+    ) -> None:
+        module = load_script()
+        policy = module.LiveGenerationPolicy.load(POLICY)
+        repository = materialise_repository(tmp_path, policy)
+        repository_commit = commit_repository(repository)
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            [
+                str(SCRIPT),
+                "--policy",
+                str(repository / module.POLICY_PATH),
+                "--repository-root",
+                str(repository),
+                "--repository-commit",
+                repository_commit,
+                "--experiment-id",
+                "GEN-SEC-LIVE-TEST-0001",
+            ],
+        )
+        monkeypatch.delenv("RUN_LIVE_GENERATION_EVALUATION", raising=False)
+        monkeypatch.setattr(module, "Settings", lambda: live_settings())
+        with pytest.raises(SystemExit, match="permit paid live-provider calls"):
+>           module.main()
+
+tests/test_generation_live_safety.py:255: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/workspace/scripts/evaluation/run_generation_live.py:417: in main
+    population, output, maximum_attempts = validate(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+policy = LiveGenerationPolicy(policy_id='live-generation-security-v1', population_path=PosixPath('docs/evaluation/generation/po...sd=None, cached_input_cost_per_million_tokens_usd=None, output_cost_per_million_tokens_usd=None, pricing_snapshot=None)
+repository_root = PosixPath('/tmp/pytest-of-app/pytest-0/test_live_wrapper_requires_opt0/repository')
+experiment_id = 'GEN-SEC-LIVE-TEST-0001'
+settings = Settings(service_name='rag-platform-ai', environment='local', aws_default_region='us-east-1', aws_endpoint_url='http:/...tel_exporter_otlp_timeout=250, otel_exporter_otlp_metrics_temporality_preference='cumulative', otel_sdk_disabled=False)
+
+    def validate(
+        *,
+        policy: LiveGenerationPolicy,
+        repository_root: Path,
+        experiment_id: str,
+        settings: Settings,
+    ) -> tuple[Path, Path, int]:
+        population_path, output, case_count = verify_bound_artifacts(
+            policy=policy,
+            repository_root=repository_root,
+            experiment_id=experiment_id,
+        )
+        profile = OpenAIGenerationProfile(
+            provider=settings.generation_provider,
+            model=settings.generation_model,
+            contract_version=settings.generation_contract_version,
+            prompt_version=settings.generation_prompt_version,
+            adapter_version=settings.generation_adapter_version,
+            reasoning_effort=settings.generation_reasoning_effort,
+            max_output_tokens=settings.generation_max_output_tokens,
+            context_window_tokens=settings.generation_context_window_tokens,
+        )
+        if (
+            profile.provider != "openai"
+            or profile.fingerprint() != policy.generation_fingerprint
+        ):
+>           raise ValueError("configured generation profile does not match live policy")
+E           ValueError: configured generation profile does not match live policy
+
+/workspace/scripts/evaluation/run_generation_live.py:283: ValueError
+_ test_real_adapter_reports_static_rejected_rule[framing-answer_parts.text-detached_polarity] _
+
+mutation = 'framing', field = 'answer_parts.text', code = 'detached_polarity'
+
+    @pytest.mark.parametrize(
+        "mutation,field,code",
+        [
+            ("framing", "answer_parts.text", "detached_polarity"),
+            ("membership", "answer_parts.evidence_ids", "citation_membership"),
+            ("duplicate", "answer_parts.evidence_ids", "duplicate_citation"),
+            ("ownership", "answer_parts.evidence_ids", "citation_ownership"),
+            ("outcome", "outcome", "outcome_invariant"),
+            ("reason", "outcome", "outcome_invariant"),
+            ("coverage", "aspect_links", "need_coverage"),
+            ("range", "aspect_links", "reference_range"),
+            ("empty", "aspect_links", "empty_need"),
+            ("unmapped", "aspect_links", "unmapped_content"),
+        ],
+    )
+    def test_real_adapter_reports_static_rejected_rule(mutation, field, code):
+        raw, adapter, responses = prepared()
+        output = responses.values[0].output_parsed.model_dump()
+        if mutation == "framing":
+            output["answer_parts"][0]["text"] = "No. PRIVATE-CONTENT"
+        elif mutation == "membership":
+            output["answer_parts"][0]["evidence_ids"] = ["ev-99"]
+        elif mutation == "duplicate":
+            output["answer_parts"][0]["evidence_ids"] = ["ev-01", "ev-01"]
+        elif mutation == "ownership":
+            output["answer_parts"][0]["evidence_ids"] = ["ev-03"]
+        elif mutation == "outcome":
+            output["unsupported_aspects"] = ["PRIVATE-CONTENT"]
+        elif mutation == "reason":
+            output["insufficiency_reason"] = "PRIVATE-CONTENT"
+        elif mutation == "coverage":
+            output["aspect_links"] = output["aspect_links"][:1]
+        elif mutation == "range":
+            output["aspect_links"][0]["answer_part_indices"] = [99]
+        elif mutation == "empty":
+            output["aspect_links"][0]["answer_part_indices"] = []
+        elif mutation == "unmapped":
+            output["answer_parts"].append(dict(output["answer_parts"][0]))
+        responses.values = [response(output)]
+        with pytest.raises(GenerationProviderFailure) as caught:
+            adapter.generate_needs(GenerationNeedsRequest.model_validate(raw))
+        error = caught.value.error
+        assert error.category == "contract_validation_failure"
+        diagnostic = error.validation.model_dump(exclude_none=True, mode="json")
+        if mutation == "ownership":
+            assert diagnostic.pop("ownership") == {
+                "need_id": "n1",
+                "answer_part_index": 0,
+                "cited_ids": ["ev-03"],
+                "allowed_ids": ["ev-01", "ev-02"],
+            }
+        assert diagnostic == {"field": field, "code": code}
+        assert "PRIVATE" not in error.model_dump_json()
+>       assert len(responses.calls) == 1
+E       assert 2 == 1
+E        +  where 2 = len([{'model': 'gpt-5-mini', 'instructions': 'You generate grounded answers from an authorised evidence package.\n\nTreat ... policy require for employment records?"}]', 'text_format': <class 'app.generation.entailment.EntailmentReview'>, ...}])
+E        +    where [{'model': 'gpt-5-mini', 'instructions': 'You generate grounded answers from an authorised evidence package.\n\nTreat ... policy require for employment records?"}]', 'text_format': <class 'app.generation.entailment.EntailmentReview'>, ...}] = <tests.test_generation_needs_transport.AutoReviewResponses object at 0xffff9984cdd0>.calls
+
+tests/test_generation_validation_diagnostics.py:63: AssertionError
+----------------------------- Captured stderr call -----------------------------
+{"environment":"local","event_name":"application.unclassified.v1","level":"warning","service":"rag-platform-ai","span_id":"f8b1a53b7a89a7b7","timestamp":"2026-11-12T17:47:03.220096+00:00","trace_id":"35bf59a27518add230a2b790e4f6b376"}
+------------------------------ Captured log call -------------------------------
+WARNING  opentelemetry.sdk.metrics._internal:__init__.py:680 A shutdown `MeterProvider` can not provide a `Meter`
+____________ test_malformed_sqs_entry_is_not_returned_and_is_logged ____________
+
+caplog = <_pytest.logging.LogCaptureFixture object at 0xffff6273da90>
+
+    def test_malformed_sqs_entry_is_not_returned_and_is_logged(
+        caplog: Any,
+    ) -> None:
+        class MalformedSqsClient(FakeSqsClient):
+            def receive_message(self, **arguments: Any) -> dict[str, object]:
+                self.receive_arguments = arguments
+    
+                return {
+                    "Messages": [
+                        {
+                            "Body": '{"event_id":"logical-event"}',
+                            "MessageId": "transport-message",
+                            "Attributes": {
+                                "ApproximateReceiveCount": "1",
+                            },
+                        }
+                    ]
+                }
+    
+        queue = SqsIngestionQueue(
+            client=MalformedSqsClient(),
+            queue_name="ingestion",
+            wait_time_seconds=10,
+            visibility_timeout_seconds=30,
+            batch_size=1,
+        )
+    
+        with caplog.at_level(logging.WARNING, logger="ingestion.sqs"):
+            assert queue.receive() == []
+    
+        assert "Malformed SQS receive entry remains unacknowledged." in caplog.text
+        record_context = caplog.records[0].__dict__
+    
+>       assert record_context["sqs_message_id"] == "transport-message"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'sqs_message_id'
+
+tests/test_ingestion_sqs.py:139: KeyError
+----------------------------- Captured stderr call -----------------------------
+{"environment":"local","event_name":"application.unclassified.v1","level":"warning","service":"rag-platform-ai","timestamp":"2026-11-12T17:47:03.660525+00:00"}
+{"environment":"local","event_name":"ingestion.queue.invalid_envelope.v1","level":"warning","processing_outcome":"invalid_sqs_envelope","service":"rag-platform-ai","sqs_message_id":"transport-message","timestamp":"2026-11-12T17:47:03.660626+00:00"}
+------------------------------ Captured log call -------------------------------
+WARNING  opentelemetry.sdk.metrics._internal:__init__.py:680 A shutdown `MeterProvider` can not provide a `Meter`
+WARNING  ingestion.sqs:sqs.py:102 Malformed SQS receive entry remains unacknowledged.
+________________ test_new_structural_polarity_matrix[comma_yes] ________________
+
+identity = 'comma_yes'
+text = 'Yes, and the cited section also notes that staff may request a replacement badge.'
+accepted = True
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+>           GenerationNeedsResult.model_validate(payload)
+E           pydantic_core._pydantic_core.ValidationError: 2 validation errors for GenerationNeedsResult
+E           contract_version
+E             Input should be 3 [type=literal_error, input_value=2, input_type=int]
+E               For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E           entailment_checks
+E             Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests/test_polarity_structure.py:89: ValidationError
+_________________ test_new_structural_polarity_matrix[dash_no] _________________
+
+identity = 'dash_no'
+text = 'No — the policy explicitly forbids sharing access codes.'
+accepted = True
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+>           GenerationNeedsResult.model_validate(payload)
+E           pydantic_core._pydantic_core.ValidationError: 2 validation errors for GenerationNeedsResult
+E           contract_version
+E             Input should be 3 [type=literal_error, input_value=2, input_type=int]
+E               For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E           entailment_checks
+E             Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests/test_polarity_structure.py:89: ValidationError
+__________ test_new_structural_polarity_matrix[period_yes_consistent] __________
+
+identity = 'period_yes_consistent'
+text = 'Yes. This is confirmed by the cited passage, which states that staff may request a replacement badge.'
+accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+__________ test_new_structural_polarity_matrix[period_no_consistent] ___________
+
+identity = 'period_no_consistent'
+text = 'No. The policy explicitly forbids sharing access codes.'
+accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+___________ test_new_structural_polarity_matrix[newline_consistent] ____________
+
+identity = 'newline_consistent'
+text = 'Yes.\nStaff may request a replacement badge under section 4.'
+accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+________________ test_new_structural_polarity_matrix[bare_yes] _________________
+
+identity = 'bare_yes', text = 'Yes.', accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+_________________ test_new_structural_polarity_matrix[bare_no] _________________
+
+identity = 'bare_no', text = 'No', accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+____________ test_new_structural_polarity_matrix[contradictory_yes] ____________
+
+identity = 'contradictory_yes'
+text = 'Yes. Staff are not permitted to share access codes.', accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+____________ test_new_structural_polarity_matrix[contradictory_no] _____________
+
+identity = 'contradictory_no'
+text = 'No. Staff are permitted to request a replacement badge.'
+accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+________________ test_new_structural_polarity_matrix[unrelated] ________________
+
+identity = 'unrelated', text = 'Yes. The fire drill is held quarterly.'
+accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+__________ test_new_structural_polarity_matrix[lowercase_whitespace] ___________
+
+identity = 'lowercase_whitespace'
+text = '  yes. Staff may request a replacement badge.', accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+_________ test_new_structural_polarity_matrix[exclamation_consistent] __________
+
+identity = 'exclamation_consistent'
+text = 'Yes! Staff may request a replacement badge.', accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+______________ test_new_structural_polarity_matrix[subject_first] ______________
+
+identity = 'subject_first'
+text = 'Staff may request a replacement badge under section 4.', accepted = True
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+>           GenerationNeedsResult.model_validate(payload)
+E           pydantic_core._pydantic_core.ValidationError: 2 validation errors for GenerationNeedsResult
+E           contract_version
+E             Input should be 3 [type=literal_error, input_value=2, input_type=int]
+E               For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E           entailment_checks
+E             Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests/test_polarity_structure.py:89: ValidationError
+___________ test_new_structural_polarity_matrix[comma_contradictory] ___________
+
+identity = 'comma_contradictory'
+text = 'Yes, staff are not permitted to share access codes.', accepted = True
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+>           GenerationNeedsResult.model_validate(payload)
+E           pydantic_core._pydantic_core.ValidationError: 2 validation errors for GenerationNeedsResult
+E           contract_version
+E             Input should be 3 [type=literal_error, input_value=2, input_type=int]
+E               For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E           entailment_checks
+E             Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests/test_polarity_structure.py:89: ValidationError
+____________ test_new_structural_polarity_matrix[colon_consistent] _____________
+
+identity = 'colon_consistent'
+text = 'Yes: staff may request a replacement badge.', accepted = True
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+>           GenerationNeedsResult.model_validate(payload)
+E           pydantic_core._pydantic_core.ValidationError: 2 validation errors for GenerationNeedsResult
+E           contract_version
+E             Input should be 3 [type=literal_error, input_value=2, input_type=int]
+E               For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E           entailment_checks
+E             Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests/test_polarity_structure.py:89: ValidationError
+____________ test_new_structural_polarity_matrix[markdown_detached] ____________
+
+identity = 'markdown_detached'
+text = '**Yes.** Staff are not permitted to share access codes.'
+accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+____________ test_new_structural_polarity_matrix[no_space_detached] ____________
+
+identity = 'no_space_detached'
+text = 'Yes.Staff are not permitted to share access codes.', accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+_____________ test_new_structural_polarity_matrix[emphasis_joined] _____________
+
+identity = 'emphasis_joined'
+text = '**Yes**, the fictional policy allows replacement badges.'
+accepted = True
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+>           GenerationNeedsResult.model_validate(payload)
+E           pydantic_core._pydantic_core.ValidationError: 2 validation errors for GenerationNeedsResult
+E           contract_version
+E             Input should be 3 [type=literal_error, input_value=2, input_type=int]
+E               For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E           entailment_checks
+E             Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests/test_polarity_structure.py:89: ValidationError
+____________ test_new_structural_polarity_matrix[emphasis_detached] ____________
+
+identity = 'emphasis_detached'
+text = '**No**. Access codes must not be shared.', accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+_______________ test_new_structural_polarity_matrix[empty_comma] _______________
+
+identity = 'empty_comma', text = 'Yes, ', accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+_______________ test_new_structural_polarity_matrix[empty_colon] _______________
+
+identity = 'empty_colon', text = 'No:', accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+_______________ test_new_structural_polarity_matrix[empty_dash] ________________
+
+identity = 'empty_dash', text = 'No — ', accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+_________________ test_new_structural_polarity_matrix[hyphen] __________________
+
+identity = 'hyphen', text = 'No - access codes must not be shared.'
+accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+________________ test_new_structural_polarity_matrix[semicolon] ________________
+
+identity = 'semicolon', text = 'Yes; replacement badges are available.'
+accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+______________ test_new_structural_polarity_matrix[question_mark] ______________
+
+identity = 'question_mark', text = 'Yes? Replacement badges are available.'
+accepted = False
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+            GenerationNeedsResult.model_validate(payload)
+        else:
+>           with pytest.raises(ValueError, match="detached yes/no"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'detached yes/no'
+E             Actual message: "2 validation errors for GenerationNeedsResult\ncontract_version\n  Input should be 3 [type=literal_error, input_value=2, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/literal_error\nentailment_checks\n  Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing"
+
+tests/test_polarity_structure.py:91: AssertionError
+____________ test_new_structural_polarity_matrix[ordinary_no_word] _____________
+
+identity = 'ordinary_no_word', text = 'Nobody may share access codes.'
+accepted = True
+
+    @pytest.mark.parametrize("identity,text,accepted", CASES, ids=[c[0] for c in CASES])
+    def test_new_structural_polarity_matrix(identity, text, accepted):
+        payload = {
+            "contract_version": 2,
+            "outcome": "answered",
+            "answer_parts": [{"text": text, "evidence_ids": ["ev-01"]}],
+            "unsupported_aspects": [],
+            "insufficiency_reason": None,
+            "usage": None,
+            "aspect_links": [
+                {
+                    "need_id": "n1",
+                    "answer_part_indices": [0],
+                    "unsupported_aspect_indices": [],
+                }
+            ],
+        }
+        if accepted:
+>           GenerationNeedsResult.model_validate(payload)
+E           pydantic_core._pydantic_core.ValidationError: 2 validation errors for GenerationNeedsResult
+E           contract_version
+E             Input should be 3 [type=literal_error, input_value=2, input_type=int]
+E               For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E           entailment_checks
+E             Field required [type=missing, input_value={'contract_version': 2, '...d_aspect_indices': []}]}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+tests/test_polarity_structure.py:89: ValidationError
+__________________ test_rejects_check_open_inode_substitution __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffff69b14600>
+
+    def test_rejects_check_open_inode_substitution(monkeypatch) -> None:
+        run = fresh_run()
+        real_open = VALIDATOR.os.open
+        replaced = False
+    
+        def substituting_open(path, flags, *args, **kwargs):
+            nonlocal replaced
+            if path == "population.json" and not replaced:
+                replaced = True
+                (run / "population.json").unlink()
+                (run / "population.json").write_bytes(b"replacement")
+            return real_open(path, flags, *args, **kwargs)
+    
+        monkeypatch.setattr(VALIDATOR.os, "open", substituting_open)
+        try:
+>           with pytest.raises(VALIDATOR.Invalid, match="changed during open"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE Invalid
+
+tests/test_r28_authoring_output_validator.py:576: Failed
+___________ test_complete_148_utterance_execution_uses_gateway_only ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-app/pytest-0/test_complete_148_utterance_ex0')
+
+    @pytest.mark.asyncio
+    async def test_complete_148_utterance_execution_uses_gateway_only(tmp_path) -> None:
+        runner, policy = policy_value()
+        adapters = runner.RecordingProviderAdapters(ROOT)
+        identity = runner.run_identity(policy, RUN_ID, POLICY, "1" * 40, "2" * 64)
+>       result, ledger, budget = await runner.execute_run(
+            root=ROOT,
+            policy=policy,
+            run_id=RUN_ID,
+            identity=identity,
+            run_dir=tmp_path / RUN_ID,
+            adapters=adapters,
+            resume=False,
+            lightweight_corpus=True,
+        )
+
+tests/test_r28_s04_live_preflight.py:923: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/repo/scripts/evaluation/run_r28_s04_live.py:3170: in execute_run
+    execution = await LiveExecutionEngine(
+/repo/scripts/evaluation/run_r28_s04_live.py:2286: in execute
+    ranked = self.gateway.rerank_side(
+/repo/scripts/evaluation/run_r28_s04_live.py:802: in rerank_side
+    return self._stage("reranker", request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:787: in _stage
+    return self.dispatch(request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:589: in dispatch
+    return self._dispatch(request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:608: in _dispatch
+    result = call()
+             ^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:1493: in rerank
+    return self._call("reranker", payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:1372: in _call
+    payload = validate_application_request(self.root, stage, payload)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/repo'), stage = 'reranker'
+payload = {'contract_version': 1, 'request_id': 'cfa03f34-e285-526d-9b2e-accf2427f8e3', 'workspace_id': '466df032-bf7f-5c55-9d74...r, which wellbeing services should I know about, and how will my induction check that I know how to access them?', ...}
+
+    def validate_application_request(
+        root: Path, stage: str, payload: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        """Validate a provider-bound payload through its production request model."""
+        application_import_path(root)
+        if stage in {"corpus_embedding", "query_embedding"}:
+            from app.embedding.models import EmbeddingRequest
+    
+            return EmbeddingRequest.model_validate(payload).model_dump(mode="json")
+        elif stage == "reranker":
+            from app.reranking.models import RerankRequest
+    
+>           return RerankRequest.model_validate(payload).model_dump(mode="json")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           pydantic_core._pydantic_core.ValidationError: 31 validation errors for RerankRequest
+E           candidates.0.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'c4d43249-65...333333, 'fused_rank': 1}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.0.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'c4d43249-65...333333, 'fused_rank': 1}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.1.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'cb7a3966-13...142857, 'fused_rank': 2}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.1.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'cb7a3966-13...142857, 'fused_rank': 2}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.2.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'f9f3a0c8-a0...: 0.25, 'fused_rank': 3}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.2.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'f9f3a0c8-a0...: 0.25, 'fused_rank': 3}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.3.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'f31e83be-dc...222222, 'fused_rank': 4}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.3.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'f31e83be-dc...222222, 'fused_rank': 4}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.4.document_title
+E             Field required [type=missing, input_value={'chunk_id': '1110d879-c1...': 0.2, 'fused_rank': 5}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.4.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '1110d879-c1...': 0.2, 'fused_rank': 5}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.5.document_title
+E             Field required [type=missing, input_value={'chunk_id': '9410eb6f-e4...818182, 'fused_rank': 6}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.5.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '9410eb6f-e4...818182, 'fused_rank': 6}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.6.document_title
+E             Field required [type=missing, input_value={'chunk_id': '95ad921e-9f...666666, 'fused_rank': 7}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.6.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '95ad921e-9f...666666, 'fused_rank': 7}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.7.document_title
+E             Field required [type=missing, input_value={'chunk_id': '68972af9-03...615385, 'fused_rank': 8}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.7.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '68972af9-03...615385, 'fused_rank': 8}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.8.document_title
+E             Field required [type=missing, input_value={'chunk_id': '00eaea55-26...714285, 'fused_rank': 9}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.8.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '00eaea55-26...714285, 'fused_rank': 9}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.9.document_title
+E             Field required [type=missing, input_value={'chunk_id': '4f97d183-1c...33333, 'fused_rank': 10}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.9.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '4f97d183-1c...33333, 'fused_rank': 10}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.10.document_title
+E             Field required [type=missing, input_value={'chunk_id': '4e776c06-14...0.125, 'fused_rank': 11}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.10.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '4e776c06-14...0.125, 'fused_rank': 11}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.11.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'de327f6b-e2...52941, 'fused_rank': 12}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.11.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'de327f6b-e2...52941, 'fused_rank': 12}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.12.document_title
+E             Field required [type=missing, input_value={'chunk_id': '1d2ca15d-f8...11111, 'fused_rank': 13}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.12.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '1d2ca15d-f8...11111, 'fused_rank': 13}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.13.document_title
+E             Field required [type=missing, input_value={'chunk_id': '7c474f23-8f...73684, 'fused_rank': 14}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.13.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '7c474f23-8f...73684, 'fused_rank': 14}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.14.document_title
+E             Field required [type=missing, input_value={'chunk_id': '8188356b-24...: 0.1, 'fused_rank': 15}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.14.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '8188356b-24...: 0.1, 'fused_rank': 15}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates
+E             Tuple should have at least 1 item after validation, not 0 [type=too_short, input_value=[{'chunk_id': 'c4d43249-6... 0.1, 'fused_rank': 15}], input_type=list]
+E               For further information visit https://errors.pydantic.dev/2.13/v/too_short
+
+/repo/scripts/evaluation/run_r28_s04_live.py:1159: ValidationError
+_____ test_no_selected_evidence_is_preserved_without_generation_or_judging _____
+
+tmp_path = PosixPath('/tmp/pytest-of-app/pytest-0/test_no_selected_evidence_is_p0')
+
+    @pytest.mark.asyncio
+    async def test_no_selected_evidence_is_preserved_without_generation_or_judging(
+        tmp_path,
+    ) -> None:
+        runner, policy = policy_value()
+    
+        class EmptyRerankerAdapters(
+            runner.RecordingProviderAdapters  # type: ignore[name-defined]
+        ):
+            def rerank(self, payload):
+                result = super().rerank(payload)
+                value = {"candidates": []}
+                return runner.ProviderResult(
+                    value,
+                    runner.DispatchReceipt(
+                        response_digest=runner.digest_value(value),
+                        input_tokens=result.receipt.input_tokens,
+                        output_tokens=result.receipt.output_tokens,
+                        provider_request_id_digest=(
+                            result.receipt.provider_request_id_digest
+                        ),
+                    ),
+                )
+    
+        adapters = EmptyRerankerAdapters(ROOT)
+        identity = runner.run_identity(policy, RUN_ID, POLICY, "1" * 40, "2" * 64)
+        ledger = runner.AppendOnlyRunLedger(tmp_path / RUN_ID, identity, create=True)
+        budget = runner.HardBudget(policy["ceilings"], monotonic=lambda: 0.0)
+        gate = runner.BudgetedDispatchGateway(policy, budget, ledger)
+>       execution = await runner.LiveExecutionEngine(
+            ROOT, policy, RUN_ID, gate, adapters
+        ).execute(lightweight_corpus=True)
+
+tests/test_r28_s04_live_preflight.py:1163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/repo/scripts/evaluation/run_r28_s04_live.py:2286: in execute
+    ranked = self.gateway.rerank_side(
+/repo/scripts/evaluation/run_r28_s04_live.py:802: in rerank_side
+    return self._stage("reranker", request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:787: in _stage
+    return self.dispatch(request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:589: in dispatch
+    return self._dispatch(request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:608: in _dispatch
+    result = call()
+             ^^^^^^
+tests/test_r28_s04_live_preflight.py:1144: in rerank
+    result = super().rerank(payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:1493: in rerank
+    return self._call("reranker", payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:1372: in _call
+    payload = validate_application_request(self.root, stage, payload)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/repo'), stage = 'reranker'
+payload = {'contract_version': 1, 'request_id': 'cfa03f34-e285-526d-9b2e-accf2427f8e3', 'workspace_id': '466df032-bf7f-5c55-9d74...r, which wellbeing services should I know about, and how will my induction check that I know how to access them?', ...}
+
+    def validate_application_request(
+        root: Path, stage: str, payload: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        """Validate a provider-bound payload through its production request model."""
+        application_import_path(root)
+        if stage in {"corpus_embedding", "query_embedding"}:
+            from app.embedding.models import EmbeddingRequest
+    
+            return EmbeddingRequest.model_validate(payload).model_dump(mode="json")
+        elif stage == "reranker":
+            from app.reranking.models import RerankRequest
+    
+>           return RerankRequest.model_validate(payload).model_dump(mode="json")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           pydantic_core._pydantic_core.ValidationError: 31 validation errors for RerankRequest
+E           candidates.0.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'c4d43249-65...333333, 'fused_rank': 1}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.0.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'c4d43249-65...333333, 'fused_rank': 1}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.1.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'cb7a3966-13...142857, 'fused_rank': 2}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.1.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'cb7a3966-13...142857, 'fused_rank': 2}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.2.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'f9f3a0c8-a0...: 0.25, 'fused_rank': 3}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.2.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'f9f3a0c8-a0...: 0.25, 'fused_rank': 3}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.3.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'f31e83be-dc...222222, 'fused_rank': 4}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.3.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'f31e83be-dc...222222, 'fused_rank': 4}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.4.document_title
+E             Field required [type=missing, input_value={'chunk_id': '1110d879-c1...': 0.2, 'fused_rank': 5}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.4.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '1110d879-c1...': 0.2, 'fused_rank': 5}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.5.document_title
+E             Field required [type=missing, input_value={'chunk_id': '9410eb6f-e4...818182, 'fused_rank': 6}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.5.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '9410eb6f-e4...818182, 'fused_rank': 6}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.6.document_title
+E             Field required [type=missing, input_value={'chunk_id': '95ad921e-9f...666666, 'fused_rank': 7}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.6.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '95ad921e-9f...666666, 'fused_rank': 7}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.7.document_title
+E             Field required [type=missing, input_value={'chunk_id': '68972af9-03...615385, 'fused_rank': 8}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.7.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '68972af9-03...615385, 'fused_rank': 8}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.8.document_title
+E             Field required [type=missing, input_value={'chunk_id': '00eaea55-26...714285, 'fused_rank': 9}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.8.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '00eaea55-26...714285, 'fused_rank': 9}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.9.document_title
+E             Field required [type=missing, input_value={'chunk_id': '4f97d183-1c...33333, 'fused_rank': 10}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.9.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '4f97d183-1c...33333, 'fused_rank': 10}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.10.document_title
+E             Field required [type=missing, input_value={'chunk_id': '4e776c06-14...0.125, 'fused_rank': 11}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.10.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '4e776c06-14...0.125, 'fused_rank': 11}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.11.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'de327f6b-e2...52941, 'fused_rank': 12}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.11.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'de327f6b-e2...52941, 'fused_rank': 12}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.12.document_title
+E             Field required [type=missing, input_value={'chunk_id': '1d2ca15d-f8...11111, 'fused_rank': 13}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.12.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '1d2ca15d-f8...11111, 'fused_rank': 13}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.13.document_title
+E             Field required [type=missing, input_value={'chunk_id': '7c474f23-8f...73684, 'fused_rank': 14}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.13.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '7c474f23-8f...73684, 'fused_rank': 14}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.14.document_title
+E             Field required [type=missing, input_value={'chunk_id': '8188356b-24...: 0.1, 'fused_rank': 15}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.14.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '8188356b-24...: 0.1, 'fused_rank': 15}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates
+E             Tuple should have at least 1 item after validation, not 0 [type=too_short, input_value=[{'chunk_id': 'c4d43249-6... 0.1, 'fused_rank': 15}], input_type=list]
+E               For further information visit https://errors.pydantic.dev/2.13/v/too_short
+
+/repo/scripts/evaluation/run_r28_s04_live.py:1159: ValidationError
+____________ test_expected_label_mutations_do_not_change_execution _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-app/pytest-0/test_expected_label_mutations_0')
+
+    @pytest.mark.asyncio
+    async def test_expected_label_mutations_do_not_change_execution(tmp_path) -> None:
+        population = json.loads(
+            POLICY.parent.parent.parent.joinpath(
+                "engineering-populations/dolved-care-v4/v2/population.json"
+            ).read_text()
+        )
+        changed = copy.deepcopy(population)
+        changed["cases"][0]["expected_outcome"]["retrieval"] = "INSUFFICIENT_EVIDENCE"
+        changed["cases"][0]["expected_evidence"][0]["quotation"] = "wrong oracle"
+        changed["cases"][0]["expected_evidence"][0]["source_sha256"] = "0" * 64
+>       _, first, first_adapters = await execute_with_population(tmp_path, population)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_r28_s04_live_preflight.py:1388: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_r28_s04_live_preflight.py:1243: in execute_with_population
+    execution = await runner.LiveExecutionEngine(
+/repo/scripts/evaluation/run_r28_s04_live.py:2286: in execute
+    ranked = self.gateway.rerank_side(
+/repo/scripts/evaluation/run_r28_s04_live.py:802: in rerank_side
+    return self._stage("reranker", request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:787: in _stage
+    return self.dispatch(request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:589: in dispatch
+    return self._dispatch(request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:608: in _dispatch
+    result = call()
+             ^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:1493: in rerank
+    return self._call("reranker", payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:1372: in _call
+    payload = validate_application_request(self.root, stage, payload)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/repo'), stage = 'reranker'
+payload = {'contract_version': 1, 'request_id': 'cfa03f34-e285-526d-9b2e-accf2427f8e3', 'workspace_id': '466df032-bf7f-5c55-9d74...r, which wellbeing services should I know about, and how will my induction check that I know how to access them?', ...}
+
+    def validate_application_request(
+        root: Path, stage: str, payload: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        """Validate a provider-bound payload through its production request model."""
+        application_import_path(root)
+        if stage in {"corpus_embedding", "query_embedding"}:
+            from app.embedding.models import EmbeddingRequest
+    
+            return EmbeddingRequest.model_validate(payload).model_dump(mode="json")
+        elif stage == "reranker":
+            from app.reranking.models import RerankRequest
+    
+>           return RerankRequest.model_validate(payload).model_dump(mode="json")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           pydantic_core._pydantic_core.ValidationError: 31 validation errors for RerankRequest
+E           candidates.0.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'c4d43249-65...333333, 'fused_rank': 1}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.0.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'c4d43249-65...333333, 'fused_rank': 1}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.1.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'cb7a3966-13...142857, 'fused_rank': 2}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.1.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'cb7a3966-13...142857, 'fused_rank': 2}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.2.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'f9f3a0c8-a0...: 0.25, 'fused_rank': 3}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.2.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'f9f3a0c8-a0...: 0.25, 'fused_rank': 3}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.3.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'f31e83be-dc...222222, 'fused_rank': 4}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.3.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'f31e83be-dc...222222, 'fused_rank': 4}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.4.document_title
+E             Field required [type=missing, input_value={'chunk_id': '1110d879-c1...': 0.2, 'fused_rank': 5}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.4.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '1110d879-c1...': 0.2, 'fused_rank': 5}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.5.document_title
+E             Field required [type=missing, input_value={'chunk_id': '9410eb6f-e4...818182, 'fused_rank': 6}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.5.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '9410eb6f-e4...818182, 'fused_rank': 6}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.6.document_title
+E             Field required [type=missing, input_value={'chunk_id': '95ad921e-9f...666666, 'fused_rank': 7}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.6.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '95ad921e-9f...666666, 'fused_rank': 7}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.7.document_title
+E             Field required [type=missing, input_value={'chunk_id': '68972af9-03...615385, 'fused_rank': 8}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.7.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '68972af9-03...615385, 'fused_rank': 8}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.8.document_title
+E             Field required [type=missing, input_value={'chunk_id': '00eaea55-26...714285, 'fused_rank': 9}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.8.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '00eaea55-26...714285, 'fused_rank': 9}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.9.document_title
+E             Field required [type=missing, input_value={'chunk_id': '4f97d183-1c...33333, 'fused_rank': 10}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.9.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '4f97d183-1c...33333, 'fused_rank': 10}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.10.document_title
+E             Field required [type=missing, input_value={'chunk_id': '4e776c06-14...0.125, 'fused_rank': 11}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.10.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '4e776c06-14...0.125, 'fused_rank': 11}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.11.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'de327f6b-e2...52941, 'fused_rank': 12}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.11.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'de327f6b-e2...52941, 'fused_rank': 12}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.12.document_title
+E             Field required [type=missing, input_value={'chunk_id': '1d2ca15d-f8...11111, 'fused_rank': 13}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.12.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '1d2ca15d-f8...11111, 'fused_rank': 13}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.13.document_title
+E             Field required [type=missing, input_value={'chunk_id': '7c474f23-8f...73684, 'fused_rank': 14}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.13.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '7c474f23-8f...73684, 'fused_rank': 14}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.14.document_title
+E             Field required [type=missing, input_value={'chunk_id': '8188356b-24...: 0.1, 'fused_rank': 15}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.14.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '8188356b-24...: 0.1, 'fused_rank': 15}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates
+E             Tuple should have at least 1 item after validation, not 0 [type=too_short, input_value=[{'chunk_id': 'c4d43249-6... 0.1, 'fused_rank': 15}], input_type=list]
+E               For further information visit https://errors.pydantic.dev/2.13/v/too_short
+
+/repo/scripts/evaluation/run_r28_s04_live.py:1159: ValidationError
+__________ test_execution_completes_when_expectations_are_unavailable __________
+
+tmp_path = PosixPath('/tmp/pytest-of-app/pytest-0/test_execution_completes_when_0')
+
+    @pytest.mark.asyncio
+    async def test_execution_completes_when_expectations_are_unavailable(tmp_path) -> None:
+        population = json.loads(
+            (ROOT / json.loads(POLICY.read_text())["population_path"]).read_text()
+        )
+        for case in population["cases"]:
+            case.pop("expected_outcome")
+            case.pop("expected_evidence")
+            case.pop("slices")
+>       _, execution, adapters = await execute_with_population(tmp_path, population)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_r28_s04_live_preflight.py:1403: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_r28_s04_live_preflight.py:1243: in execute_with_population
+    execution = await runner.LiveExecutionEngine(
+/repo/scripts/evaluation/run_r28_s04_live.py:2286: in execute
+    ranked = self.gateway.rerank_side(
+/repo/scripts/evaluation/run_r28_s04_live.py:802: in rerank_side
+    return self._stage("reranker", request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:787: in _stage
+    return self.dispatch(request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:589: in dispatch
+    return self._dispatch(request, call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:608: in _dispatch
+    result = call()
+             ^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:1493: in rerank
+    return self._call("reranker", payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/repo/scripts/evaluation/run_r28_s04_live.py:1372: in _call
+    payload = validate_application_request(self.root, stage, payload)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/repo'), stage = 'reranker'
+payload = {'contract_version': 1, 'request_id': 'cfa03f34-e285-526d-9b2e-accf2427f8e3', 'workspace_id': '466df032-bf7f-5c55-9d74...r, which wellbeing services should I know about, and how will my induction check that I know how to access them?', ...}
+
+    def validate_application_request(
+        root: Path, stage: str, payload: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        """Validate a provider-bound payload through its production request model."""
+        application_import_path(root)
+        if stage in {"corpus_embedding", "query_embedding"}:
+            from app.embedding.models import EmbeddingRequest
+    
+            return EmbeddingRequest.model_validate(payload).model_dump(mode="json")
+        elif stage == "reranker":
+            from app.reranking.models import RerankRequest
+    
+>           return RerankRequest.model_validate(payload).model_dump(mode="json")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           pydantic_core._pydantic_core.ValidationError: 31 validation errors for RerankRequest
+E           candidates.0.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'c4d43249-65...333333, 'fused_rank': 1}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.0.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'c4d43249-65...333333, 'fused_rank': 1}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.1.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'cb7a3966-13...142857, 'fused_rank': 2}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.1.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'cb7a3966-13...142857, 'fused_rank': 2}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.2.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'f9f3a0c8-a0...: 0.25, 'fused_rank': 3}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.2.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'f9f3a0c8-a0...: 0.25, 'fused_rank': 3}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.3.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'f31e83be-dc...222222, 'fused_rank': 4}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.3.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'f31e83be-dc...222222, 'fused_rank': 4}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.4.document_title
+E             Field required [type=missing, input_value={'chunk_id': '1110d879-c1...': 0.2, 'fused_rank': 5}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.4.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '1110d879-c1...': 0.2, 'fused_rank': 5}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.5.document_title
+E             Field required [type=missing, input_value={'chunk_id': '9410eb6f-e4...818182, 'fused_rank': 6}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.5.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '9410eb6f-e4...818182, 'fused_rank': 6}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.6.document_title
+E             Field required [type=missing, input_value={'chunk_id': '95ad921e-9f...666666, 'fused_rank': 7}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.6.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '95ad921e-9f...666666, 'fused_rank': 7}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.7.document_title
+E             Field required [type=missing, input_value={'chunk_id': '68972af9-03...615385, 'fused_rank': 8}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.7.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '68972af9-03...615385, 'fused_rank': 8}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.8.document_title
+E             Field required [type=missing, input_value={'chunk_id': '00eaea55-26...714285, 'fused_rank': 9}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.8.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '00eaea55-26...714285, 'fused_rank': 9}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.9.document_title
+E             Field required [type=missing, input_value={'chunk_id': '4f97d183-1c...33333, 'fused_rank': 10}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.9.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '4f97d183-1c...33333, 'fused_rank': 10}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.10.document_title
+E             Field required [type=missing, input_value={'chunk_id': '4e776c06-14...0.125, 'fused_rank': 11}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.10.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '4e776c06-14...0.125, 'fused_rank': 11}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.11.document_title
+E             Field required [type=missing, input_value={'chunk_id': 'de327f6b-e2...52941, 'fused_rank': 12}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.11.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': 'de327f6b-e2...52941, 'fused_rank': 12}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.12.document_title
+E             Field required [type=missing, input_value={'chunk_id': '1d2ca15d-f8...11111, 'fused_rank': 13}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.12.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '1d2ca15d-f8...11111, 'fused_rank': 13}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.13.document_title
+E             Field required [type=missing, input_value={'chunk_id': '7c474f23-8f...73684, 'fused_rank': 14}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.13.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '7c474f23-8f...73684, 'fused_rank': 14}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.14.document_title
+E             Field required [type=missing, input_value={'chunk_id': '8188356b-24...: 0.1, 'fused_rank': 15}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates.14.document_family_title
+E             Field required [type=missing, input_value={'chunk_id': '8188356b-24...: 0.1, 'fused_rank': 15}, input_type=dict]
+E               For further information visit https://errors.pydantic.dev/2.13/v/missing
+E           candidates
+E             Tuple should have at least 1 item after validation, not 0 [type=too_short, input_value=[{'chunk_id': 'c4d43249-6... 0.1, 'fused_rank': 15}], input_type=list]
+E               For further information visit https://errors.pydantic.dev/2.13/v/too_short
+
+/repo/scripts/evaluation/run_r28_s04_live.py:1159: ValidationError
+=========================== short test summary info ============================
+FAILED tests/test_generation_live_safety.py::test_r28_policy_binds_input_cost_and_single_attempt_ceilings
+FAILED tests/test_generation_live_safety.py::test_r28_policy_fails_closed_for_pricing_or_budget_drift
+FAILED tests/test_generation_live_safety.py::test_live_policy_binds_population_profile_and_attempt_ceiling
+FAILED tests/test_generation_live_safety.py::test_live_policy_fails_closed_for_population_or_budget_drift
+FAILED tests/test_generation_live_safety.py::test_live_wrapper_requires_opt_in_and_honestly_skips_without_credentials
+FAILED tests/test_generation_validation_diagnostics.py::test_real_adapter_reports_static_rejected_rule[framing-answer_parts.text-detached_polarity]
+FAILED tests/test_ingestion_sqs.py::test_malformed_sqs_entry_is_not_returned_and_is_logged
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[comma_yes]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[dash_no]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[period_yes_consistent]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[period_no_consistent]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[newline_consistent]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[bare_yes]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[bare_no]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[contradictory_yes]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[contradictory_no]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[unrelated]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[lowercase_whitespace]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[exclamation_consistent]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[subject_first]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[comma_contradictory]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[colon_consistent]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[markdown_detached]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[no_space_detached]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[emphasis_joined]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[emphasis_detached]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[empty_comma]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[empty_colon]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[empty_dash]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[hyphen]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[semicolon]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[question_mark]
+FAILED tests/test_polarity_structure.py::test_new_structural_polarity_matrix[ordinary_no_word]
+FAILED tests/test_r28_authoring_output_validator.py::test_rejects_check_open_inode_substitution
+FAILED tests/test_r28_s04_live_preflight.py::test_complete_148_utterance_execution_uses_gateway_only
+FAILED tests/test_r28_s04_live_preflight.py::test_no_selected_evidence_is_preserved_without_generation_or_judging
+FAILED tests/test_r28_s04_live_preflight.py::test_expected_label_mutations_do_not_change_execution
+FAILED tests/test_r28_s04_live_preflight.py::test_execution_completes_when_expectations_are_unavailable
+38 failed, 1270 passed, 4 skipped in 31.96s
+

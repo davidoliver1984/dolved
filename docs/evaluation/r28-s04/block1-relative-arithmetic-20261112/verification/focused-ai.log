@@ -1,0 +1,983 @@
+ Container rag-platform-ai-run-459d98976a36 Creating 
+ Container rag-platform-ai-run-459d98976a36 Created 
+.............FFFFFFFFFFFF...                                             [100%]
+=================================== FAILURES ===================================
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this year?-2026-01-01T00:00:00Z-2026-year-authority] _
+
+field = 'authority', quote = 'What applied this year?'
+anchor = '2026-01-01T00:00:00Z', value = '2026', precision = 'year'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6db9e510>
+turns = (UserTurn(turn_id='u1', text='What applied this year?'),)
+evaluated_at = '2026-01-01T00:00:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this year?-2026-01-01T00:00:00Z-2026-year-fact_reference] _
+
+field = 'fact_reference', quote = 'What applied this year?'
+anchor = '2026-01-01T00:00:00Z', value = '2026', precision = 'year'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6deb65d0>
+turns = (UserTurn(turn_id='u1', text='What applied this year?'),)
+evaluated_at = '2026-01-01T00:00:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[Who handled it last year?-2026-01-01T00:00:00Z-2025-year-authority] _
+
+field = 'authority', quote = 'Who handled it last year?'
+anchor = '2026-01-01T00:00:00Z', value = '2025', precision = 'year'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6d8d8690>
+turns = (UserTurn(turn_id='u1', text='Who handled it last year?'),)
+evaluated_at = '2026-01-01T00:00:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[Who handled it last year?-2026-01-01T00:00:00Z-2025-year-fact_reference] _
+
+field = 'fact_reference', quote = 'Who handled it last year?'
+anchor = '2026-01-01T00:00:00Z', value = '2025', precision = 'year'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6da810f0>
+turns = (UserTurn(turn_id='u1', text='Who handled it last year?'),)
+evaluated_at = '2026-01-01T00:00:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this quarter?-2026-09-30T23:30:00Z-2026-10-01/2026-12-31-interval-authority] _
+
+field = 'authority', quote = 'What applied this quarter?'
+anchor = '2026-09-30T23:30:00Z', value = '2026-10-01/2026-12-31'
+precision = 'interval'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6da82060>
+turns = (UserTurn(turn_id='u1', text='What applied this quarter?'),)
+evaluated_at = '2026-09-30T23:30:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this quarter?-2026-09-30T23:30:00Z-2026-10-01/2026-12-31-interval-fact_reference] _
+
+field = 'fact_reference', quote = 'What applied this quarter?'
+anchor = '2026-09-30T23:30:00Z', value = '2026-10-01/2026-12-31'
+precision = 'interval'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6da332f0>
+turns = (UserTurn(turn_id='u1', text='What applied this quarter?'),)
+evaluated_at = '2026-09-30T23:30:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[Please check the claim approved last month for me.-2024-03-01T00:00:00Z-2024-02-month-authority] _
+
+field = 'authority'
+quote = 'Please check the claim approved last month for me.'
+anchor = '2024-03-01T00:00:00Z', value = '2024-02', precision = 'month'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6da2a7a0>
+turns = (UserTurn(turn_id='u1', text='Please check the claim approved last month for me.'),)
+evaluated_at = '2024-03-01T00:00:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[Please check the claim approved last month for me.-2024-03-01T00:00:00Z-2024-02-month-fact_reference] _
+
+field = 'fact_reference'
+quote = 'Please check the claim approved last month for me.'
+anchor = '2024-03-01T00:00:00Z', value = '2024-02', precision = 'month'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6da28270>
+turns = (UserTurn(turn_id='u1', text='Please check the claim approved last month for me.'),)
+evaluated_at = '2024-03-01T00:00:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this month?-2026-10-25T01:30:00Z-2026-10-month-authority] _
+
+field = 'authority', quote = 'What applied this month?'
+anchor = '2026-10-25T01:30:00Z', value = '2026-10', precision = 'month'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6db8af50>
+turns = (UserTurn(turn_id='u1', text='What applied this month?'),)
+evaluated_at = '2026-10-25T01:30:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this month?-2026-10-25T01:30:00Z-2026-10-month-fact_reference] _
+
+field = 'fact_reference', quote = 'What applied this month?'
+anchor = '2026-10-25T01:30:00Z', value = '2026-10', precision = 'month'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6d8f4850>
+turns = (UserTurn(turn_id='u1', text='What applied this month?'),)
+evaluated_at = '2026-10-25T01:30:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied last month?-2026-03-31T23:30:00Z-2026-03-month-authority] _
+
+field = 'authority', quote = 'What applied last month?'
+anchor = '2026-03-31T23:30:00Z', value = '2026-03', precision = 'month'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6d9a0e60>
+turns = (UserTurn(turn_id='u1', text='What applied last month?'),)
+evaluated_at = '2026-03-31T23:30:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+_ test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied last month?-2026-03-31T23:30:00Z-2026-03-month-fact_reference] _
+
+field = 'fact_reference', quote = 'What applied last month?'
+anchor = '2026-03-31T23:30:00Z', value = '2026-03', precision = 'month'
+
+    @pytest.mark.parametrize("field", ["authority", "fact_reference"])
+    @pytest.mark.parametrize("quote,anchor,value,precision", [
+        ("What applied this year?", "2026-01-01T00:00:00Z", "2026", "year"),
+        ("Who handled it last year?", "2026-01-01T00:00:00Z", "2025", "year"),
+        ("What applied this quarter?", "2026-09-30T23:30:00Z", "2026-10-01/2026-12-31", "interval"),
+        ("Please check the claim approved last month for me.", "2024-03-01T00:00:00Z", "2024-02", "month"),
+        ("What applied this month?", "2026-10-25T01:30:00Z", "2026-10", "month"),
+        ("What applied last month?", "2026-03-31T23:30:00Z", "2026-03", "month"),
+    ])
+    def test_real_adapter_owns_relative_arithmetic_and_preserves_anchor(field, quote, anchor, value, precision):
+        plan = relative_plan(quote, field)
+        turns = (UserTurn(turn_id="u1", text=quote),)
+>       result = adapter(plan, []).plan_needs(turns, evaluated_at=anchor).plan
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_relative_calendar.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.retrieval.needs_planner.StructuredChatNeedsPlanner object at 0xffff6d9a0140>
+turns = (UserTurn(turn_id='u1', text='What applied last month?'),)
+evaluated_at = '2026-03-31T23:30:00Z', catalogue = ()
+
+    def plan_needs(
+        self,
+        turns: tuple[UserTurn, ...],
+        *,
+        evaluated_at: str,
+        catalogue: tuple[CatalogueFamily, ...] = (),
+    ) -> NeedsPlanningResult:
+        receipts: list[dict[str, object]] = []
+        feedback: dict[str, str] | None = None
+        for number in (1, 2):
+            started = time.perf_counter()
+            try:
+                result = self._plan_needs_once(
+                    turns,
+                    evaluated_at=evaluated_at,
+                    catalogue=catalogue,
+                    validation_feedback=feedback,
+                )
+                check = None
+                if result.plan.decision == "plan":
+                    try:
+                        check = review_interpretation(
+                            client=self._client,
+                            api_url=self._api_url,
+                            api_key=self._api_key,
+                            model=self._model,
+                            provider=self._provider_name,
+                            turns=turns,
+                            plan=result.plan,
+                        )
+                    except InterpretationCheckError as error:
+                        check = error.receipt
+                    if check["code"] != "accepted":
+                        failure = NeedsValidationFailure("interpretation", ValueError())
+                        failure.validation["code"] = (
+                            "interpretation_check_unavailable"
+                            if check["code"] == "unavailable"
+                            else str(check["code"])
+                        )
+                        failure.completion = {
+                            "finish_reason": "stop",
+                            "input_tokens": self._combined_tokens(
+                                result.usage.input_tokens, check.get("input_tokens")
+                            ),
+                            "output_tokens": self._combined_tokens(
+                                result.usage.output_tokens, check.get("output_tokens")
+                            ),
+                        }
+                        failure.interpretation_check = check
+>                       raise failure
+E                       app.retrieval.needs_planner.NeedsValidationFailure: needs planner returned an invalid grounded plan
+
+app/retrieval/needs_planner.py:478: NeedsValidationFailure
+=========================== short test summary info ============================
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this year?-2026-01-01T00:00:00Z-2026-year-authority]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this year?-2026-01-01T00:00:00Z-2026-year-fact_reference]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[Who handled it last year?-2026-01-01T00:00:00Z-2025-year-authority]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[Who handled it last year?-2026-01-01T00:00:00Z-2025-year-fact_reference]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this quarter?-2026-09-30T23:30:00Z-2026-10-01/2026-12-31-interval-authority]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this quarter?-2026-09-30T23:30:00Z-2026-10-01/2026-12-31-interval-fact_reference]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[Please check the claim approved last month for me.-2024-03-01T00:00:00Z-2024-02-month-authority]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[Please check the claim approved last month for me.-2024-03-01T00:00:00Z-2024-02-month-fact_reference]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this month?-2026-10-25T01:30:00Z-2026-10-month-authority]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied this month?-2026-10-25T01:30:00Z-2026-10-month-fact_reference]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied last month?-2026-03-31T23:30:00Z-2026-03-month-authority]
+FAILED tests/test_relative_calendar.py::test_real_adapter_owns_relative_arithmetic_and_preserves_anchor[What applied last month?-2026-03-31T23:30:00Z-2026-03-month-fact_reference]
+12 failed, 16 passed in 1.78s
+
