@@ -161,6 +161,7 @@ final readonly class GenerateGroundedAnswer
                 throw $exception;
             }
         }
+        $result = $result->withSelectionCoverage($input->retrievalResult->evidenceNeeds);
         $observeStage?->__invoke('validating');
         $fingerprint = $this->fingerprints->make(
             $profile->provider,

@@ -131,8 +131,8 @@ class ConversationOrchestrationTest extends TestCase
         $run = app(SubmitConversationMessage::class)->handle($conversation, $user, 'Synthetic question', (string) Str::uuid());
         app(OrchestrateConversationRun::class)->handle($run->id);
         $run->refresh();
-        $this->assertSame(GenerationRunStatus::Failed, $run->status);
-        $this->assertSame('retrieval_failed', $run->failure_code->value);
+        $this->assertSame(GenerationRunStatus::RetrievalNoAnswer, $run->status);
+        $this->assertNull($run->failure_code);
         $this->assertSame(['category' => 'invalid_grounded_needs_plan', 'provider_status' => 200,
             'attempt_count' => 1, 'systemic' => false,
             'validation' => ['stage' => 'catalogue', 'field' => 'root', 'code' => 'binding_coverage'],
@@ -159,7 +159,7 @@ class ConversationOrchestrationTest extends TestCase
         Http::fake(function (Request $request) use ($question, $attempts) {
             $identity = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                 'contract_schema_version' => 'evidence-needs-plan-v3',
-                'prompt_version' => 'bounded-evidence-needs-v22', 'adapter_version' => 'structured-chat-needs-v7'];
+                'prompt_version' => 'bounded-evidence-needs-v23', 'adapter_version' => 'structured-chat-needs-v7'];
             $canonical = $identity;
             ksort($canonical);
 
@@ -195,7 +195,7 @@ class ConversationOrchestrationTest extends TestCase
     }
 
     #[DataProvider('referenceFailures')]
-    public function test_ungrounded_needs_reference_uses_existing_typed_clarification_without_retrieval(array $validation, string $reason): void
+    public function test_invalid_model_reference_is_not_misrepresented_as_missing_user_information(array $validation, string $reason): void
     {
         Queue::fake();
         [$user, $workspace] = $this->workspaceFixture();
@@ -211,10 +211,12 @@ class ConversationOrchestrationTest extends TestCase
         $run = app(SubmitConversationMessage::class)->handle($conversation, $user, 'How does the supplier register work?', (string) Str::uuid());
         app(OrchestrateConversationRun::class)->handle($run->id);
         $run->refresh();
-        $this->assertSame(GenerationRunStatus::ClarificationRequired, $run->status);
+        $this->assertSame(GenerationRunStatus::RetrievalNoAnswer, $run->status);
         $this->assertNull($run->failure_code);
-        $this->assertSame($reason, $run->retrievalOutcomeSnapshot->clarification_reason);
-        $this->assertStringContainsString('?', $run->assistantMessage->display_text);
+        $this->assertSame('planner_validation_failed', $run->retrievalOutcomeSnapshot->clarification_reason);
+        $this->assertSame('interpretation_failed', $run->retrievalOutcomeSnapshot->outcome->value);
+        $this->assertStringContainsString("couldn't interpret", $run->assistantMessage->display_text);
+        $this->assertStringNotContainsString('Which date', $run->assistantMessage->display_text);
         $this->assertSame($validation, $run->usage['planner_failure']['validation']);
         $this->assertSame(90, $run->usage['planner_failure']['completion']['output_tokens']);
         Http::assertSentCount(1);
@@ -232,7 +234,7 @@ class ConversationOrchestrationTest extends TestCase
     }
 
     #[DataProvider('calendarGroundingFailureScenarios')]
-    public function test_only_two_exhausted_calendar_grounding_rejections_become_a_controlled_clarification(array $codes, int $providerStatus, bool $clarifies): void
+    public function test_completed_invalid_plans_have_an_honest_controlled_outcome_not_a_date_question(array $codes, int $providerStatus, bool $clarifies): void
     {
         Queue::fake();
         [$user, $workspace] = $this->workspaceFixture();
@@ -257,9 +259,10 @@ class ConversationOrchestrationTest extends TestCase
         $run->refresh();
 
         if ($clarifies) {
-            $this->assertSame(GenerationRunStatus::ClarificationRequired, $run->status);
-            $this->assertSame('ungrounded_calendar_reference', $run->retrievalOutcomeSnapshot->clarification_reason);
-            $this->assertSame('Which date, month or period do you mean for this question?', $run->assistantMessage->display_text);
+            $this->assertSame(GenerationRunStatus::RetrievalNoAnswer, $run->status);
+            $this->assertSame('planner_validation_failed', $run->retrievalOutcomeSnapshot->clarification_reason);
+            $this->assertStringContainsString("couldn't interpret", $run->assistantMessage->display_text);
+            $this->assertStringNotContainsString('Which date', $run->assistantMessage->display_text);
             $this->assertNull($run->failure_code);
         } else {
             $this->assertSame(GenerationRunStatus::Failed, $run->status);
@@ -275,9 +278,9 @@ class ConversationOrchestrationTest extends TestCase
     {
         return [
             'exhausted calendar grounding' => [['calendar_grounding', 'calendar_grounding'], 200, true],
-            'single calendar rejection' => [['calendar_grounding'], 200, false],
-            'other exhausted validation' => [['binding_coverage', 'binding_coverage'], 200, false],
-            'mixed exhausted validation' => [['binding_coverage', 'calendar_grounding'], 200, false],
+            'single legacy rejection' => [['calendar_grounding'], 200, true],
+            'other exhausted validation' => [['binding_coverage', 'binding_coverage'], 200, true],
+            'mixed exhausted validation' => [['binding_coverage', 'calendar_grounding'], 200, true],
             'provider failure cannot become clarification' => [['calendar_grounding', 'calendar_grounding'], 503, false],
         ];
     }
@@ -501,7 +504,7 @@ class ConversationOrchestrationTest extends TestCase
                 $this->assertSame([['turn_id' => 'user-1', 'text' => 'What does the current approved procedure require?']], $body['user_turns']);
                 $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                     'contract_schema_version' => 'evidence-needs-plan-v3',
-                    'prompt_version' => 'bounded-evidence-needs-v22', 'adapter_version' => 'structured-chat-needs-v7'];
+                    'prompt_version' => 'bounded-evidence-needs-v23', 'adapter_version' => 'structured-chat-needs-v7'];
                 ksort($lineage);
                 $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 

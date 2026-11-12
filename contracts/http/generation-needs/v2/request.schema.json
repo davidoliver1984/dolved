@@ -55,7 +55,9 @@
             "day",
             "month",
             "year",
-            "interval"
+            "interval",
+            "duration",
+            "quantity"
           ],
           "title": "Precision",
           "type": "string"
@@ -311,6 +313,8 @@
             "current",
             "date",
             "period",
+            "before",
+            "after",
             "previous",
             "historical_reference",
             "transition_period",

@@ -21,6 +21,17 @@ final class R28ProductionPathDiagnosticTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_selection_coverage_export_is_bounded_counts_only(): void
+    {
+        $method = new \ReflectionMethod(RunR28ProductionPathDiagnostic::class, 'boundedStage');
+        $actual = $method->invoke(app(RunR28ProductionPathDiagnostic::class), 'needs_selection_coverage', [
+            'n1' => ['eligible_unit_count' => 8, 'selected_unit_count' => 2, 'budget_cut_unit_count' => 6, 'text' => 'PRIVATE'],
+            'n2' => ['eligible_unit_count' => -1, 'selected_unit_count' => '1', 'budget_cut_unit_count' => 10001],
+            'n4' => ['eligible_unit_count' => 1],
+        ]);
+        $this->assertSame(['n1' => ['eligible_unit_count' => 8, 'selected_unit_count' => 2, 'budget_cut_unit_count' => 6]], $actual);
+    }
+
     public function test_question_only_subset_runs_through_the_production_conversation_orchestrator(): void
     {
         $workspace = Workspace::factory()->create();

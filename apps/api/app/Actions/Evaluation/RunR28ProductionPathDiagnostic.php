@@ -232,6 +232,22 @@ final readonly class RunR28ProductionPathDiagnostic
                 'need_id', 'chunk_id', 'document_id', 'document_family_id', 'side',
             ])->all(), array_values($value));
         }
+        if ($stage === 'needs_selection_coverage') {
+            $result = [];
+            foreach (['n1', 'n2', 'n3'] as $id) {
+                if (! is_array($value[$id] ?? null)) {
+                    continue;
+                }
+                foreach (['eligible_unit_count', 'selected_unit_count', 'budget_cut_unit_count'] as $key) {
+                    $count = $value[$id][$key] ?? null;
+                    if (is_int($count) && $count >= 0 && $count <= 10000) {
+                        $result[$id][$key] = $count;
+                    }
+                }
+            }
+
+            return $result;
+        }
         if ($stage === 'plan') {
             return collect($value)->only([
                 'temporal_mode', 'explicit_date', 'temporal_reference', 'location_references',

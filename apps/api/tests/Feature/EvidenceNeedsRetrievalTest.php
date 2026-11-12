@@ -206,13 +206,50 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $data = $mutate($data);
         }
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v3',
-            'prompt_version' => 'bounded-evidence-needs-v22', 'adapter_version' => 'structured-chat-needs-v7'];
+            'prompt_version' => 'bounded-evidence-needs-v23', 'adapter_version' => 'structured-chat-needs-v7'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
         return EvidenceNeedsPlan::fromArray($data['plan'], $data['turns'], $lineage,
             ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini', 'execution' => 'provider_api',
                 'request_count' => 1, 'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable']);
+    }
+
+    public function test_duration_context_never_filters_dates_and_adjacent_periods_select_real_versions(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $old = $this->document($workspace, $generation, '2026-01-01');
+        $current = $this->document($workspace, $generation, '2026-07-01', $old);
+        foreach (['before', 'after', 'duration', 'quantity'] as $kind) {
+            $plan = $this->plan(0, function ($data) use ($kind, $old) {
+                $relation = in_array($kind, ['before', 'after'], true);
+                $question = $relation ? 'Who handled it '.$kind.' July 2026?' : 'What entitlement follows three years or five shifts?';
+                $data['turns'] = [['turn_id' => 'u1', 'text' => 'July 2026'], ['turn_id' => 'u2', 'text' => $question]];
+                $need = $data['plan']['needs'][1];
+                $need['need_id'] = 'n1';
+                $need['supports_need_id'] = null;
+                $need['aspect'] = $question;
+                $need['question_span'] = ['turn_id' => 'u2', 'quote' => $question];
+                if ($relation) {
+                    $need['authority'] = ['kind' => $kind, 'value' => '2026-07', 'precision' => 'month',
+                        'source' => ['turn_id' => 'u1', 'quote' => 'July 2026']];
+                } else {
+                    $value = $kind === 'duration' ? 'three years' : 'five shifts';
+                    $need['fact_reference'] = ['value' => $value, 'precision' => $kind,
+                        'source' => ['turn_id' => 'u2', 'quote' => $value]];
+                }
+                $data['plan']['needs'] = [$need];
+                $data['plan']['bindings'] = [['need_id' => 'n1', 'subject_status' => 'matched',
+                    'family_ids' => [$old->family->public_id], 'ownership' => 'authorised_workspace', 'ownership_source' => null]];
+
+                return $data;
+            });
+            $lane = $plan->retrievalPlan('n1');
+            $this->assertNull($lane->factDate);
+            $eligible = app(EligibilityResolver::class)->handle($scope, $lane, CarbonImmutable::parse('2026-11-12'));
+            $this->assertSame(RetrievalOutcome::EvidenceFound, $eligible->outcome);
+            $this->assertSame(['primary' => [($kind === 'before' ? $old : $current)->public_id]], $eligible->documentPublicIdsBySide);
+        }
     }
 
     private function scopePlan(Document $document, string $question = 'Does Equipment Policy cover Harbour Place?', string $location = 'Harbour Place', string $scopeQuestion = 'membership'): EvidenceNeedsPlan

@@ -1,11 +1,40 @@
 # Evidence needs plan v3 — applicability scope enquiries
 
 ADR-0039 adds `scope_enquiry` to the existing retrieve/compare operation union.
-Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v22`,
+Active producer identity: `evidence-needs-plan-v3`, `bounded-evidence-needs-v23`,
 `structured-chat-needs-v7`. The existing request and signed transport purpose
 are retained. V2 historical contracts remain byte-identical; v3 is explicitly
 pinned for new needs runs by `bounded-needs-slice-v20` (three executable needs,
 four search lanes, five final evidence slots; scope facts do not consume search lanes).
+
+### Block 1 additive interpretation rules (2026-11-12)
+
+Deploy the v23 producer, generated schemas and Laravel consumer together. Authority
+`before`/`after` retains a quoted day/month/year and the relation; Laravel resolves
+the version immediately before the period starts / immediately after it ends.
+Day boundaries exclude that whole named day. For example, before July is the instant
+before 1 July, not a lookup within July; after July starts at 1 August. The existing
+authority timeline, approvals, applicability and workspace checks remain authoritative.
+Follow-ups may quote a calendar selector from an earlier authorised user turn and
+the relation from the current question span. No relative-calendar arithmetic is added.
+
+Fact references also accept `duration` and `quantity`, retaining exact user wording.
+These are policy-rule context, never `fact_date` filters; duration requires an explicit
+duration unit. Existing calendar precision/grounding validation remains strict.
+
+The existing maximum two completed-output validation attempts now also covers invalid
+fact/reference grounding. Exhausted completed invalid output produces an
+`interpretation_failed` retrieval outcome with reason `planner_validation_failed`
+and an honest controlled no-answer, not an invented missing-date clarification.
+Transport/provider failures retain their existing failure path. Validated user ambiguity
+and capacity overflow retain their separate clarification reasons.
+
+Per-need `selection_coverage` records eligible/selected/budget-cut complete units in
+application lineage and bounded diagnostics. A compare unit is a same-family pair;
+ordinary units are passages. Allocation, minimums, order, thresholds and FINAL_K=5
+are unchanged. A qualified unsupported aspect linked to a budget-cut need discloses
+that the selected evidence is incomplete, without concluding the source lacks the fact.
+This application-owned disclosure persists with the existing unsupported-aspect fields.
 
 Scope enquiries are explicit, grounded planner choices with a required
 `scope_question` of `membership` or `breadth`. They do not result from an empty

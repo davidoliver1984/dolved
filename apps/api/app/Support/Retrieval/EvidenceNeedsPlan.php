@@ -27,7 +27,7 @@ final readonly class EvidenceNeedsPlan
         $identity = ClassifierLineage::fromArray($lineage);
         $observation = PlannerUsage::fromArray($usage);
         if ($identity->contractSchemaVersion !== 'evidence-needs-plan-v3'
-            || $identity->promptVersion !== 'bounded-evidence-needs-v22'
+            || $identity->promptVersion !== 'bounded-evidence-needs-v23'
             || $identity->adapterVersion !== 'structured-chat-needs-v7'
             || $identity->provider !== $observation->provider
             || $identity->model !== $observation->model) {
@@ -62,12 +62,12 @@ final readonly class EvidenceNeedsPlan
         $compare = $need['operation'] === 'compare';
         $mode = $compare ? RetrievalTemporalMode::Compare : match ($authority['kind']) {
             'current' => RetrievalTemporalMode::Current,
-            'date', 'period' => RetrievalTemporalMode::ValidAtDate,
+            'date', 'period', 'before', 'after' => RetrievalTemporalMode::ValidAtDate,
             'previous', 'historical_reference' => RetrievalTemporalMode::HistoricalReference,
             default => throw new InvalidArgumentException('Unsupported retrieval authority.'),
         };
         $reference = match ($authority['kind']) {
-            'period' => ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => $authority['value']],
+            'period', 'before', 'after' => ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => $authority['value']],
             'historical_reference' => ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => $authority['value']],
             'previous' => $compare ? null : ['kind' => RetrievalTemporalReferenceKind::HistoricalReference, 'value' => 'previous'],
             default => null,
@@ -85,7 +85,7 @@ final readonly class EvidenceNeedsPlan
             $reference,
             $need['applicability']['kind'] === 'generic' ? [] : [$need['applicability']['source']['quote']],
             null, $this->lineage, $this->usage,
-            factDate: $need['fact_reference']['value'] ?? null,
+            factDate: in_array($need['fact_reference']['precision'] ?? null, ['duration', 'quantity'], true) ? null : ($need['fact_reference']['value'] ?? null),
             requestedEvidenceType: $compare ? RequestedEvidenceType::CurrentVersusHistoricalComparison : RequestedEvidenceType::PolicyOrProceduralRequirements,
             evidenceNeed: $need,
         );
@@ -137,6 +137,7 @@ final readonly class EvidenceNeedsPlan
                 $allowed = match ($authority['kind']) {
                     'date', 'transition_boundary' => ['day'],
                     'period', 'transition_period' => ['month', 'year', 'interval'],
+                    'before', 'after' => ['day', 'month', 'year'],
                     'previous', 'historical_reference' => ['named'],
                 };
                 if ($authority['value'] === null || $authority['source'] === null || ! in_array($authority['precision'], $allowed, true)) {
@@ -144,6 +145,13 @@ final readonly class EvidenceNeedsPlan
                 }
                 self::dateValue($authority['value'], $authority['precision']);
                 self::dateGrounding($authority['value'], $authority['precision'], $authority['source']['quote']);
+                if ($authority['kind'] === 'period' && preg_match('/^\s*(?:before|after)\b/i', $authority['source']['quote']) === 1) {
+                    throw new InvalidArgumentException('Temporal relation is not grounded.');
+                }
+                if (in_array($authority['kind'], ['before', 'after'], true)
+                    && preg_match('/\b'.$authority['kind'].'\b/i', $authority['source']['quote'].' '.$need['question_span']['quote']) !== 1) {
+                    throw new InvalidArgumentException('Temporal relation is not grounded.');
+                }
                 if ($authority['kind'] === 'historical_reference' && ! str_contains($authority['source']['quote'], $authority['value'])) {
                     throw new InvalidArgumentException('Named historical reference must retain its wording.');
                 }
@@ -174,8 +182,15 @@ final readonly class EvidenceNeedsPlan
             }
             if ($need['fact_reference'] !== null) {
                 $fact = $need['fact_reference'];
-                self::dateValue($fact['value'], $fact['precision']);
-                self::dateGrounding($fact['value'], $fact['precision'], $fact['source']['quote']);
+                if (in_array($fact['precision'], ['duration', 'quantity'], true)) {
+                    if (! str_contains($fact['source']['quote'], $fact['value'])
+                        || ($fact['precision'] === 'duration' && preg_match('/\b(?:seconds?|minutes?|hours?|days?|weeks?|months?|years?)\b/i', $fact['value']) !== 1)) {
+                        throw new InvalidArgumentException('Quantity or duration is not grounded.');
+                    }
+                } else {
+                    self::dateValue($fact['value'], $fact['precision']);
+                    self::dateGrounding($fact['value'], $fact['precision'], $fact['source']['quote']);
+                }
                 $spans[] = $fact['source'];
             }
             foreach ($spans as $span) {

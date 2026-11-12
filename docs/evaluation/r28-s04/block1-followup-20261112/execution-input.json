@@ -1,0 +1,12 @@
+{
+  "subset_id": "R28-BLOCK1-SEVEN-20261112-V1",
+  "items": [
+    {"case_id": "v4.case.corrected-b03-05", "variant_id": "v1", "utterance": "I'm resigning after three years. How much notice do I give, and what else do I need to do before I leave?"},
+    {"case_id": "v4.case.corrected-b05-01", "variant_id": "v1", "utterance": "Who do I go to now if I'm locked out of e-learnng or a course is missing, and who handled it before July 2026?"},
+    {"case_id": "v4.case.corrected-b01-04", "variant_id": "v1", "utterance": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?"},
+    {"case_id": "v4.case.corrected-b01-10", "variant_id": "v1", "utterance": "When “Over the counter medicines” became “Homely remedies list”, did the rule about which remedies may be given change?"},
+    {"case_id": "block1.unfamiliar-duration", "variant_id": "v1", "utterance": "After four completed years of service, what resignation notice does the Employee Handbook Terms Full require, and what issued items must I return?"},
+    {"case_id": "block1.unfamiliar-after", "variant_id": "v1", "utterance": "Under the E-Learning Platform Guidance, who handled a missing course immediately after July 2026?"},
+    {"case_id": "v4.case.corrected-b01-07", "variant_id": "v1", "utterance": "How did both the starter and annual replacement uniform allowances change in April 2026?"}
+  ]
+}

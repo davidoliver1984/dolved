@@ -1,0 +1,21 @@
+{
+  "schema_version": "r28-r07-production-authorization-v1",
+  "authorization_id": "R28-R07-AUTH-CAPACITY-OVERFLOW-20261112-01",
+  "run_id": "R28-R07-CAPACITY-OVERFLOW-20261112-01",
+  "stage": "capacity_overflow",
+  "manifest_id": "R28-CAPACITY-OVERFLOW-20261112-V1",
+  "authorised": true,
+  "approved_by": "David",
+  "approved_on": "2026-11-12",
+  "approval_basis": "David explicitly authorizes frozen capacity.overflow input 5 once only, maximum USD 1. Original five-input SHA verified unchanged. No input 1-4 redispatch; no retry or replacement. Primary workspace only, existing provider retry limits and governed checks.",
+  "execution_commit": "d27900160bc2dba0131ea0bc9961f6f90a5b0ef8",
+  "selection_sha256": "00c5838a3a9228ef84f7daeee76c9b286f6b61e5b208734e1080baec0fe209a4",
+  "input_sha256": "00c5838a3a9228ef84f7daeee76c9b286f6b61e5b208734e1080baec0fe209a4",
+  "scopes_sha256": "2ec3242acdfc04f192360a4dc04698842014032c4ba3c1392928821ffbf20b47",
+  "population_sha256": "00c5838a3a9228ef84f7daeee76c9b286f6b61e5b208734e1080baec0fe209a4",
+  "dispatcher_sha256": "7a805fd13cf12ec66a5abad83b312dcb8f99dfc15104a6aa35642002e78a566c",
+  "runner_sha256": "f596b5bb2a468ccdbd1b76077bdd0446ef12c9c77eb60139c8a0e081d9e3bd8c",
+  "runtime_source_aggregate": "263ef24beabc4348f573904e3e390a71b3a16bb9c2fd9cd72bb8e65637182727",
+  "runtime_snapshot_sha256": "f271c1ac843e53aaa16f6f0c70f6f3b642499d69dac2467d17e80c42f280d792",
+  "selective_rerun_authorised": true
+}

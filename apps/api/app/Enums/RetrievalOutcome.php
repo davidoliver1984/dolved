@@ -14,4 +14,5 @@ enum RetrievalOutcome: string
     case ComparisonScopeIncomplete = 'comparison_scope_incomplete';
     case ClarificationRequired = 'clarification_required';
     case RetrievalFailed = 'retrieval_failed';
+    case InterpretationFailed = 'interpretation_failed';
 }

@@ -270,7 +270,7 @@ final readonly class EligibilityResolver
             RetrievalTemporalMode::Current => $this->current($families, $evaluatedAt),
             RetrievalTemporalMode::ValidAtDate => $plan->explicitDate !== null
                 ? $this->current($families, $plan->explicitDate)
-                : $this->resolveEach($families, fn (DocumentFamily $family): TemporalResolution => $this->periods->resolve($family, $plan->temporalReference['value'], $plan->evidenceNeed['authority']['source']['quote'] ?? null)),
+                : $this->resolveEach($families, fn (DocumentFamily $family): TemporalResolution => $this->resolveNeedPeriod($family, $plan)),
             RetrievalTemporalMode::HistoricalReference => $this->resolveEach(
                 $families,
                 fn (DocumentFamily $family): TemporalResolution => $this->historical->resolve(
@@ -360,6 +360,15 @@ final readonly class EligibilityResolver
                 resolvedLocationPublicId: $location?->public_id);
     }
 
+    private function resolveNeedPeriod(DocumentFamily $family, RetrievalPlan $plan): TemporalResolution
+    {
+        $authority = $plan->evidenceNeed['authority'] ?? [];
+
+        return in_array($authority['kind'] ?? null, ['before', 'after'], true)
+            ? $this->periods->resolveAdjacent($family, $plan->temporalReference['value'], $authority['kind'])
+            : $this->periods->resolve($family, $plan->temporalReference['value'], $authority['source']['quote'] ?? null);
+    }
+
     private function comparison(
         Collection $families,
         RetrievalPlan $plan,
@@ -371,7 +380,7 @@ final readonly class EligibilityResolver
         }
         if ($plan->temporalReference !== null) {
             return $this->resolveEach($families, fn (DocumentFamily $family): TemporalResolution => $plan->temporalReference['kind'] === RetrievalTemporalReferenceKind::CalendarPeriod
-                    ? $this->periods->resolve($family, $plan->temporalReference['value'], $plan->evidenceNeed['authority']['source']['quote'] ?? null)
+                    ? $this->resolveNeedPeriod($family, $plan)
                     : $this->historical->resolve($family, $plan->temporalReference['value'], $evaluatedAt));
         }
 

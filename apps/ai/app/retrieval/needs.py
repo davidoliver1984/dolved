@@ -93,6 +93,8 @@ class NeedAuthority(ImmutableModel):
         "current",
         "date",
         "period",
+        "before",
+        "after",
         "previous",
         "historical_reference",
         "transition_period",
@@ -117,6 +119,8 @@ class NeedAuthority(ImmutableModel):
             allowed = {
                 "date": {"day"},
                 "period": {"month", "year", "interval"},
+                "before": {"day", "month", "year"},
+                "after": {"day", "month", "year"},
                 "previous": {"named"},
                 "historical_reference": {"named"},
                 "transition_period": {"month", "year", "interval"},
@@ -125,16 +129,34 @@ class NeedAuthority(ImmutableModel):
             if self.precision not in allowed[self.kind]:
                 raise ValueError("authority kind and precision disagree")
             validate_date_value(self.value, self.precision)
+            if self.kind == "period" and re.match(
+                r"\s*(?:before|after)\b", self.source.quote, re.IGNORECASE
+            ):
+                raise ValueError("temporal relation is not grounded")
         return self
 
 
 class FactReference(ImmutableModel):
     value: Text
-    precision: Precision
+    precision: Literal["day", "month", "year", "interval", "duration", "quantity"]
     source: QuestionSpan
 
     @model_validator(mode="after")
     def coherent_date(self) -> FactReference:
+        if self.precision in {"duration", "quantity"}:
+            if self.value not in self.source.quote:
+                raise ValueError("quantity must retain its user wording")
+            if (
+                self.precision == "duration"
+                and re.search(
+                    r"\b(?:seconds?|minutes?|hours?|days?|weeks?|months?|years?)\b",
+                    self.value,
+                    re.IGNORECASE,
+                )
+                is None
+            ):
+                raise ValueError("duration requires an explicit unit")
+            return self
         try:
             validate_date_value(self.value, self.precision)
         except ValueError as error:
@@ -363,13 +385,26 @@ class EvidenceNeedsPlan(ImmutableModel):
                     need.authority.source.quote,
                 )
                 if (
+                    need.authority.kind in {"before", "after"}
+                    and re.search(
+                        r"\b" + need.authority.kind + r"\b",
+                        need.authority.source.quote + " " + need.question_span.quote,
+                        re.IGNORECASE,
+                    )
+                    is None
+                ):
+                    raise ValueError("temporal relation is not grounded")
+                if (
                     need.authority.kind == "historical_reference"
                     and need.authority.value not in need.authority.source.quote
                 ):
                     raise ValueError(
                         "named historical reference must retain its wording"
                     )
-            if need.fact_reference is not None:
+            if (
+                need.fact_reference is not None
+                and need.fact_reference.precision not in {"duration", "quantity"}
+            ):
                 validate_date_grounding(
                     need.fact_reference.value,
                     need.fact_reference.precision,

@@ -14,6 +14,13 @@ import run_r28_r06_governed as governed
 
 
 class R28R06GovernedTest(unittest.TestCase):
+    def test_block1_checkpoint_is_fixed_and_question_only(self) -> None:
+        execution, scopes, identities = governed.verify_inputs("block1_checkpoint")
+        self.assertEqual(7, len(execution["items"]))
+        self.assertEqual("e8841dba95a86828fe0f825a5e9b5b58c7cc3d5f925e0829bca6584ee41988c8", identities["input_sha256"])
+        self.assertTrue(all(set(i) == {"case_id", "variant_id", "utterance"} for i in execution["items"]))
+        self.assertEqual(["primary"] * 7, [i["scope"] for i in scopes["items"]])
+
     def setUp(self) -> None:
         self.authorization = (
             governed.ROOT

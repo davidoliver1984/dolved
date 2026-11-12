@@ -11,6 +11,31 @@ use PHPUnit\Framework\TestCase;
 
 final class EvidenceNeedsPlanTest extends TestCase
 {
+    public function test_before_relation_cannot_be_relabelled_as_during_or_reversed(): void
+    {
+        $data = self::read('examples')[0];
+        $question = 'Who handled it before July 2026?';
+        $need = $data['plan']['needs'][1];
+        $need['need_id'] = 'n1';
+        $need['supports_need_id'] = null;
+        $need['question_span'] = ['turn_id' => 'u1', 'quote' => $question];
+        $need['authority'] = ['kind' => 'before', 'value' => '2026-07', 'precision' => 'month',
+            'source' => ['turn_id' => 'u1', 'quote' => 'before July 2026']];
+        $data['plan']['needs'] = [$need];
+        $data['plan']['bindings'] = [];
+        $turns = [['turn_id' => 'u1', 'text' => $question]];
+        EvidenceNeedsPlan::validate($data['plan'], $turns);
+        foreach (['period', 'after'] as $kind) {
+            $data['plan']['needs'][0]['authority']['kind'] = $kind;
+            try {
+                EvidenceNeedsPlan::validate($data['plan'], $turns);
+                $this->fail('A changed temporal relation was accepted.');
+            } catch (InvalidArgumentException $exception) {
+                $this->assertSame('Temporal relation is not grounded.', $exception->getMessage());
+            }
+        }
+    }
+
     private static function read(string $name): array
     {
         return json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/'.$name.'.json'), true, flags: JSON_THROW_ON_ERROR);

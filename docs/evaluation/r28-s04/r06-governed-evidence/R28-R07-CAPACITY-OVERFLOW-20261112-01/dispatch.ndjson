@@ -1,0 +1,2 @@
+{"index": 0, "case_id": "capacity.overflow", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-12T11:06:14.079756+00:00"}
+{"index": 0, "case_id": "capacity.overflow", "variant_id": "v1", "event": "recorded", "sha256": "bf9ce6733067a7ac10fe41b42c0e2444143f6d58644a4a77587da246f48abb4e", "at": "2026-11-12T11:06:31.198195+00:00"}

@@ -30,6 +30,97 @@ EXAMPLES = json.loads((ROOT / "examples.json").read_text())
 MUTATIONS = json.loads((ROOT / "invalid-mutations.json").read_text())
 
 
+def test_before_quote_cannot_be_encoded_as_the_named_period():
+    from app.retrieval.needs import NeedAuthority
+
+    with pytest.raises(ValidationError, match="temporal relation is not grounded"):
+        NeedAuthority(
+            kind="period",
+            value="2026-07",
+            precision="month",
+            source={"turn_id": "u1", "quote": "before July 2026"},
+        )
+
+
+@pytest.mark.parametrize(
+    "precision,value", [("duration", "three years"), ("quantity", "five shifts")]
+)
+def test_policy_quantity_is_grounded_without_becoming_a_calendar_date(precision, value):
+    sample = deepcopy(EXAMPLES[0])
+    question = f"What entitlement follows {value}?"
+    need = deepcopy(sample["plan"]["needs"][1])
+    need.update(
+        need_id="n1",
+        supports_need_id=None,
+        aspect=question,
+        question_span={"turn_id": "u1", "quote": question},
+        fact_reference={
+            "precision": precision,
+            "value": value,
+            "source": {"turn_id": "u1", "quote": value},
+        },
+    )
+    sample["plan"].update(
+        needs=[need],
+        bindings=[{**deepcopy(sample["plan"]["bindings"][1]), "need_id": "n1"}],
+    )
+    result = adapter(sample["plan"], []).plan_needs(
+        (UserTurn(turn_id="u1", text=question),), evaluated_at="2026-11-12T12:00:00Z"
+    )
+    assert result.plan.needs[0].authority.kind == "current"
+    assert result.plan.needs[0].fact_reference.precision == precision
+    need["fact_reference"]["value"] = "invented duration"
+    with pytest.raises((ValidationError, NeedsValidationFailure)):
+        adapter(sample["plan"], []).plan_needs(
+            (UserTurn(turn_id="u1", text=question),),
+            evaluated_at="2026-11-12T12:00:00Z",
+        )
+
+
+@pytest.mark.parametrize("relation", ["before", "after"])
+@pytest.mark.parametrize(
+    "value,precision,quote",
+    [
+        ("2024-02-29", "day", "29 February 2024"),
+        ("2026-07", "month", "July 2026"),
+        ("2026", "year", "2026"),
+    ],
+)
+def test_adjacent_authority_preserves_relation_and_grounded_followup(
+    relation, value, precision, quote
+):
+    plan = deepcopy(EXAMPLES[0]["plan"])
+    need = deepcopy(plan["needs"][1])
+    question = f"Who handled it {relation} that?"
+    need.update(
+        need_id="n1",
+        supports_need_id=None,
+        aspect=question,
+        question_span={"turn_id": "u2", "quote": question},
+        fact_reference=None,
+        authority={
+            "kind": relation,
+            "value": value,
+            "precision": precision,
+            "source": {"turn_id": "u1", "quote": quote},
+        },
+    )
+    plan.update(
+        needs=[need], bindings=[{**deepcopy(plan["bindings"][1]), "need_id": "n1"}]
+    )
+    user_turns = (
+        UserTurn(turn_id="u1", text=quote),
+        UserTurn(turn_id="u2", text=question),
+    )
+    result = adapter(plan, []).plan_needs(
+        user_turns, evaluated_at="2026-11-12T12:00:00Z"
+    )
+    assert result.plan.needs[0].authority.kind == relation
+    need["authority"]["kind"] = "after" if relation == "before" else "before"
+    with pytest.raises(NeedsValidationFailure):
+        adapter(plan, []).plan_needs(user_turns, evaluated_at="2026-11-12T12:00:00Z")
+
+
 def test_three_need_planner_output_survives_adapter_and_grounding():
     sample = deepcopy(EXAMPLES[0])
     sample["plan"]["needs"].append(
@@ -47,6 +138,28 @@ def test_three_need_planner_output_survives_adapter_and_grounding():
         "retrieve",
         "retrieve",
     ]
+
+
+@pytest.mark.parametrize("fault", ["fact", "reference"])
+def test_invalid_internal_references_use_the_existing_two_attempt_bound(fault):
+    sample = deepcopy(EXAMPLES[0])
+    need = sample["plan"]["needs"][0]
+    if fault == "fact":
+        need["fact_reference"] = {
+            "value": "three years",
+            "precision": "year",
+            "source": need["question_span"],
+        }
+    else:
+        need["question_span"]["quote"] = "not present in user wording"
+    calls = []
+    with pytest.raises(NeedsValidationFailure) as caught:
+        adapter(sample["plan"], calls, finished=True).plan_needs(
+            turns(sample), evaluated_at="2026-11-12T12:00:00Z"
+        )
+    assert len(calls) == 2
+    assert caught.value.attempt_count == 2
+    assert len(caught.value.validation_attempts) == 2
 
 
 def test_prompt_distinguishes_requested_tasks_from_source_count_and_named_binding():
@@ -387,13 +500,18 @@ def test_shared_schema_matches_real_producer(name, model):
     )
 
 
-def adapter(output, calls):
+def adapter(output, calls, *, finished=False):
     def handle(request):
         calls.append(json.loads(request.content))
         return httpx.Response(
             200,
             json={
-                "choices": [{"message": {"content": json.dumps(output)}}],
+                "choices": [
+                    {
+                        "finish_reason": "stop" if finished else None,
+                        "message": {"content": json.dumps(output)},
+                    }
+                ],
                 "usage": {"prompt_tokens": 120, "completion_tokens": 90},
             },
         )
@@ -762,7 +880,7 @@ def test_non_current_reference_still_rejects_missing_components(field):
     authority[field] = "none" if field == "precision" else None
     calls = []
     planner = adapter(example["plan"], calls)
-    assert planner.lineage().prompt_version == "bounded-evidence-needs-v22"
+    assert planner.lineage().prompt_version == "bounded-evidence-needs-v23"
     with pytest.raises(RetrievalPlanningError) as error:
         planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
     assert error.value.category == "invalid_grounded_needs_plan"

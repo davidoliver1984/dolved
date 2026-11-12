@@ -12,6 +12,26 @@ use PHPUnit\Framework\TestCase;
 
 final class GenerationResultRenderingTest extends TestCase
 {
+    public function test_budget_limited_gap_discloses_selection_not_source_absence(): void
+    {
+        $result = new GenerationResult(GenerationOutcome::Qualified,
+            [new AnswerPartResult('Confirmed guidance.', [])], ['The documents do not say the frequency.', 'Unrelated gap.'], null,
+            aspectLinks: [
+                ['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => [0]],
+                ['need_id' => 'n2', 'answer_part_indices' => [], 'unsupported_aspect_indices' => [1]],
+            ]);
+        $updated = $result->withSelectionCoverage([
+            ['need_id' => 'n1', 'aspect' => 'How frequently is monitoring done?', 'selection_coverage' => ['budget_cut_unit_count' => 2]],
+            ['need_id' => 'n2', 'aspect' => 'Other question', 'selection_coverage' => ['budget_cut_unit_count' => 0]],
+        ]);
+        $this->assertStringContainsString('Additional eligible evidence was omitted', $updated->renderedText());
+        $this->assertStringNotContainsString('The documents do not say', $updated->renderedText());
+        $this->assertSame('Unrelated gap.', $updated->unsupportedAspects[1]);
+        $this->assertSame($result->answerParts, $updated->answerParts);
+        $this->assertSame($result->aspectLinks, $updated->aspectLinks);
+        $this->assertSame($result->unsupportedAspects, $result->withSelectionCoverage([])->unsupportedAspects);
+    }
+
     public static function qualifiedGapsFromR07(): array
     {
         return [

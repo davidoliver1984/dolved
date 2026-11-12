@@ -65,6 +65,22 @@ from supplied user turns for question_span and every non-current temporal or app
 reference. A clarification reply may ground a reference in an earlier supplied user turn.
 Current authority has null value/source and precision none. Distinguish dates of events or
 personal facts (fact_reference) from dates selecting governing document authority. Do not
+encode a policy-rule duration or quantity as a calendar date: a length of service
+(such as three years) or notice length uses fact_reference precision duration,
+with value copied verbatim and its unit retained; other rule quantities use quantity.
+These values are question context only, never date filters. Do not request a date
+merely because the user supplied a duration. Calendar fact references retain their
+existing day/month/year/interval meanings.
+Preserve an explicit before/after relation: before July 2026 uses authority kind
+before, precision month, value 2026-07, with the original before phrase as source.
+It means the authority immediately preceding that period. After a named period
+means immediately after its end; after an exact day excludes that day. Laravel
+resolves those boundaries; never choose a document/version or substitute the period
+itself. An in/during period remains period, not before/after. A follow-up can ground
+the calendar value in an earlier authorised turn; quote that calendar in authority.source
+and preserve the explicit relation in the current need's question_span. Do not invent
+a relation or calendar selector absent from those quoted user spans.
+Do not
 turn 'our training' or grammatical past tense into a historical authority selection.
 But when the user asks which rule applied to THEIR specific past event or state
 ('when I did that bank-holiday shift', 'when I started', 'back when I worked there')
@@ -294,6 +310,7 @@ class NeedsValidationFailure(RetrievalPlanningError):
             "external tenant ownership cannot become a location restriction": "ownership_location_conflict",
             "plan reference is not grounded in an authorised user turn": "reference_grounding",
             "calendar value/precision is not supported by user quote": "calendar_grounding",
+            "temporal relation is not grounded": "temporal_relation_grounding",
             "year is not supported by user quote": "calendar_grounding",
             "needs must retain user question order": "need_order",
             "fact reference date value does not match declared precision": "fact_date_precision",
@@ -400,7 +417,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             timeout_seconds=timeout_seconds,
             client=client,
             contract_schema_version="evidence-needs-plan-v3",
-            prompt_version="bounded-evidence-needs-v22",
+            prompt_version="bounded-evidence-needs-v23",
             adapter_version="structured-chat-needs-v7",
         )
 
@@ -439,27 +456,11 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                 )
                 failure.validation_attempts = receipts
                 failure.attempt_count = number
-                graceful = (
-                    validation.get("code") == "reference_grounding"
-                    and validation.get("stage") == "grounding"
-                ) or (
-                    str(validation.get("field", "")).endswith(".fact_reference")
-                    and validation.get("stage") == "schema"
-                    and validation.get("code")
-                    in {
-                        "value_error",
-                        "fact_date_precision",
-                        "fact_date_interval_shape",
-                        "fact_date_interval_reversed",
-                        "fact_date_calendar",
-                    }
-                )
                 eligible = (
                     isinstance(failure, NeedsValidationFailure)
                     and failure.provider_status == 200
                     and completion.get("finish_reason") == "stop"
                     and validation.get("stage") in {"schema", "grounding", "catalogue"}
-                    and not graceful
                 )
                 if number == 1 and eligible:
                     continue

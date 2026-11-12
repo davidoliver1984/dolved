@@ -189,13 +189,15 @@ final readonly class RetrieveWorkspaceEvidence
                 resolvedApplicabilityLocation: ['resolved_location_public_id' => $eligible->resolvedLocationPublicId],
                 lineage: $result->lineage);
         }
-        $selected = (new NeedsEvidenceSelection)->select($needs, $results);
+        $selection = (new NeedsEvidenceSelection)->selectWithCoverage($needs, $results);
+        $selected = $selection['candidates'];
         $coverage = [];
         foreach ($needs as $need) {
             $id = $need['need_id'];
             unset($need['supports_need_id']);
             $result = $results[$id];
             $coverage[] = [...$need, 'retrieval_outcome' => $result->outcome->value,
+                'selection_coverage' => $selection['coverage'][$id],
                 ...(isset($scopeFacts[$id]) ? ['scope_fact' => $scopeFacts[$id]->value] : []),
                 'retrieval_reason' => $result->reason,
                 'selected_chunk_ids' => array_column(array_values(array_filter($selected, fn ($c) => $c['need_id'] === $id)), 'chunk_id'),
@@ -203,12 +205,14 @@ final readonly class RetrieveWorkspaceEvidence
                 'resolved_applicability_location' => $result->resolvedApplicabilityLocation];
         }
         $observe?->__invoke('needs_final_evidence', $selected);
+        $observe?->__invoke('needs_selection_coverage', $selection['coverage']);
 
         return new RetrievalResult($selected === [] && $scopeFacts === [] ? RetrievalOutcome::InsufficientEvidence : RetrievalOutcome::EvidenceFound,
             $selected, reason: $selected === [] && $coverage !== []
                 && count(array_filter($coverage, fn ($need) => $need['retrieval_reason'] === 'no_previous_version')) === count($coverage)
                     ? 'no_previous_version' : null,
             lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v3',
+                'selection_coverage' => $selection['coverage'],
                 'needs' => array_map(fn ($r) => $r->lineage, $results)], usage: $usage, evidenceNeeds: $coverage);
     }
 

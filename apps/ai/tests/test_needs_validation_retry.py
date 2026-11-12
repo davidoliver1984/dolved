@@ -104,7 +104,7 @@ def test_correct_clarification_is_not_retried():
             "reference_grounding",
             "root",
             "stop",
-            1,
+            2,
         ),
         (
             "invalid_grounded_needs_plan",
@@ -122,7 +122,7 @@ def test_correct_clarification_is_not_retried():
             "fact_date_precision",
             "needs.0.fact_reference",
             "stop",
-            1,
+            2,
         ),
         (
             "invalid_grounded_needs_plan",
@@ -146,7 +146,7 @@ def test_correct_clarification_is_not_retried():
         ("rate_limit", 429, None, None, None, None, 1),
     ],
 )
-def test_retry_trigger_excludes_non_output_and_graceful_failures(
+def test_retry_trigger_includes_invalid_output_but_excludes_provider_failures(
     monkeypatch, category, status, stage, code, field, reason, expected
 ):
     from app.retrieval.planner import RetrievalPlanningError

@@ -27,6 +27,12 @@ final class NeedsEvidenceSelection
     /** @param list<array<string, mixed>> $needs @param array<string, RetrievalResult> $results */
     public function select(array $needs, array $results): array
     {
+        return $this->selectWithCoverage($needs, $results)['candidates'];
+    }
+
+    /** Counts refer to complete eligible units (a comparison unit is a pair), not source completeness. */
+    public function selectWithCoverage(array $needs, array $results): array
+    {
         if (count($needs) > self::MAX_NEEDS || self::searchLanes($needs) > self::MAX_SEARCH_LANES) {
             throw new InvalidArgumentException('The production slice permits three needs and four search lanes.');
         }
@@ -75,7 +81,22 @@ final class NeedsEvidenceSelection
             $this->includeUnit($selected, $item['need_id'], $item['unit']);
         }
 
-        return array_values($selected);
+        $coverage = [];
+        foreach ($unitsByNeed as $id => $units) {
+            $included = count(array_filter($units, static function (array $unit) use ($selected, $id): bool {
+                foreach ($unit as $candidate) {
+                    if (! isset($selected[$id.':'.$candidate['side'].':'.$candidate['chunk_id']])) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }));
+            $coverage[$id] = ['eligible_unit_count' => count($units),
+                'selected_unit_count' => $included, 'budget_cut_unit_count' => count($units) - $included];
+        }
+
+        return ['candidates' => array_values($selected), 'coverage' => $coverage];
     }
 
     private function includeUnit(array &$selected, string $needId, array $unit): void

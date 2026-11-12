@@ -14,8 +14,6 @@ use App\Enums\GenerationRunFailureCode;
 use App\Enums\GenerationRunStatus;
 use App\Enums\MessageKind;
 use App\Enums\MessageRole;
-use App\Enums\PlannerClarificationReason;
-use App\Enums\RetrievalClarificationSource;
 use App\Enums\RetrievalOutcome;
 use App\Exceptions\GenerationCancelled;
 use App\Exceptions\GenerationContextBudgetExceeded;
@@ -191,26 +189,16 @@ final readonly class OrchestrateConversationRun
                     'validation_attempts' => $exception->validationAttempts,
                 ],
             ];
-            $invalidFactDate = ($exception->validation['stage'] ?? null) === 'schema'
-                && preg_match('/^needs\.[0-2]\.fact_reference$/D', $exception->validation['field'] ?? '') === 1
-                && in_array($exception->validation['code'] ?? null, ['value_error', 'fact_date_precision', 'fact_date_interval_shape', 'fact_date_interval_reversed', 'fact_date_calendar'], true);
-            $calendarGroundingExhausted = $exception->attemptCount === 2
-                && $exception->providerStatus === 200
-                && $exception->validation === ['stage' => 'grounding', 'field' => 'root', 'code' => 'calendar_grounding']
-                && count($exception->validationAttempts) === 2
-                && count(array_filter($exception->validationAttempts, static fn (array $attempt): bool => ($attempt['status'] ?? null) === 'rejected'
-                    && ($attempt['validation'] ?? null) === ['stage' => 'grounding', 'field' => 'root', 'code' => 'calendar_grounding'])) === 2;
             if ($needsProfile !== null
                 && $exception->category === 'invalid_grounded_needs_plan'
                 && ! $exception->systemic
-                && ($invalidFactDate || $calendarGroundingExhausted
-                    || $exception->validation === ['stage' => 'grounding', 'field' => 'root', 'code' => 'reference_grounding'])) {
+                && $exception->providerStatus === 200
+                && ($exception->completion['finish_reason'] ?? null) === 'stop') {
                 $run->forceFill(['usage' => $failureUsage])->save();
-                $retrieval = new RetrievalResult(RetrievalOutcome::ClarificationRequired,
-                    reason: ($invalidFactDate ? PlannerClarificationReason::InvalidFactDateReference
-                        : ($calendarGroundingExhausted ? PlannerClarificationReason::UngroundedCalendarReference
-                            : PlannerClarificationReason::UngroundedNeedsReference))->value,
-                    clarificationSource: RetrievalClarificationSource::Planner);
+                // Invalid model output is not evidence of missing information from the user.
+                // Python owns the bounded correction attempt; Laravel never adds a retry.
+                $retrieval = new RetrievalResult(RetrievalOutcome::InterpretationFailed,
+                    reason: 'planner_validation_failed');
                 $snapshot = $this->persistRetrievalSnapshot($run, $retrieval, $evaluatedAt);
                 $this->completeControlledRetrieval($run, $retrieval, $snapshot);
 

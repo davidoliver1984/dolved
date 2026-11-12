@@ -75,6 +75,32 @@ final readonly class TemporalPeriodResolver
         return $this->window($reference)[0] ?? null;
     }
 
+    /** Adjacent boundary semantics are application-owned; no model-selected version. */
+    public function adjacentBoundary(string $reference, string $relation): ?CarbonImmutable
+    {
+        if (! in_array($relation, ['before', 'after'], true)) {
+            return null;
+        }
+        $window = $this->window($reference);
+        if ($window === null && preg_match('/^\d{4}-\d{2}-\d{2}$/D', $reference) === 1) {
+            $start = $this->boundaryStart($reference);
+            $window = $start === null ? null : [$start, $start->addDay()];
+        }
+
+        return $window === null ? null : ($relation === 'before' ? $window[0]->subMicrosecond() : $window[1]);
+    }
+
+    public function resolveAdjacent(DocumentFamily $family, string $reference, string $relation): TemporalResolution
+    {
+        $at = $this->adjacentBoundary($reference, $relation);
+        if ($at === null) {
+            return TemporalResolution::unresolved(EligibilityClarificationReason::UnresolvableTemporalPeriod);
+        }
+        $document = $this->timeline->resolve($family, $at);
+
+        return $document === null ? TemporalResolution::empty() : TemporalResolution::found($document);
+    }
+
     /** @return array{CarbonImmutable, CarbonImmutable}|null */
     public function window(string $reference): ?array
     {

@@ -22,6 +22,33 @@ final readonly class GenerationResult
         public ?self $operationalResult = null,
     ) {}
 
+    /** Preserve aspect ownership; disclose selection limits, never infer source absence. */
+    public function withSelectionCoverage(array $needs): self
+    {
+        if ($this->outcome !== GenerationOutcome::Qualified) {
+            return $this;
+        }
+        $gaps = $this->unsupportedAspects;
+        foreach ($needs as $need) {
+            if (($need['selection_coverage']['budget_cut_unit_count'] ?? 0) < 1) {
+                continue;
+            }
+            foreach ($this->aspectLinks as $link) {
+                if ($link['need_id'] !== $need['need_id']) {
+                    continue;
+                }
+                foreach ($link['unsupported_aspect_indices'] as $index) {
+                    $gaps[$index] = 'Not established from the selected evidence: '.$need['aspect']
+                        .'. Additional eligible evidence was omitted because the answer evidence budget was reached. '
+                        .'This does not establish that the source documents lack the requested information.';
+                }
+            }
+        }
+
+        return new self($this->outcome, $this->answerParts, $gaps, $this->insufficiencyReason,
+            $this->usage, $this->aspectLinks, $this->aspectResults, $this->scopeFacts, $this->operationalResult);
+    }
+
     public function renderedText(): string
     {
         $scope = array_map(fn (array $fact): string => (new ApplicabilityScopeFact($fact))->renderedText(), $this->scopeFacts);

@@ -12,6 +12,34 @@ use PHPUnit\Framework\TestCase;
 
 final class NeedsEvidenceSelectionTest extends TestCase
 {
+    public function test_oversubscribed_three_needs_report_cuts_without_changing_selection(): void
+    {
+        foreach (['retrieve', 'compare'] as $operation) {
+            $needs = [['need_id' => 'n1', 'operation' => $operation],
+                ['need_id' => 'n2', 'operation' => 'retrieve'], ['need_id' => 'n3', 'operation' => 'retrieve']];
+            $results = [];
+            foreach ($needs as $need) {
+                $id = $need['need_id'];
+                $candidates = [$this->candidate($id.'p1', $id, 'primary', 1),
+                    $this->candidate($id.'p2', $id, 'primary', 2), $this->candidate($id.'p3', $id, 'primary', 3)];
+                if ($need['operation'] === 'compare') {
+                    $candidates[] = $this->candidate($id.'c1', $id, 'comparison', 1);
+                }
+                $results[$id] = new RetrievalResult(RetrievalOutcome::EvidenceFound, $candidates);
+            }
+            $selector = new NeedsEvidenceSelection;
+            $actual = $selector->selectWithCoverage($needs, $results);
+            $this->assertSame($selector->select($needs, $results), $actual['candidates']);
+            $this->assertCount(5, $actual['candidates']);
+            $this->assertSame(9, array_sum(array_column($actual['coverage'], 'eligible_unit_count')));
+            $this->assertSame($operation === 'compare' ? 5 : 4, array_sum(array_column($actual['coverage'], 'budget_cut_unit_count')));
+            foreach ($actual['coverage'] as $counts) {
+                $this->assertGreaterThanOrEqual(1, $counts['selected_unit_count']);
+                $this->assertSame($counts['eligible_unit_count'], $counts['selected_unit_count'] + $counts['budget_cut_unit_count']);
+            }
+        }
+    }
+
     private function candidate(string $id, string $family, string $side, int $rank): array
     {
         return ['chunk_id' => $id, 'document_id' => $family.'-'.$side,

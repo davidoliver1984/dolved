@@ -49,9 +49,10 @@ def provider_needs_schema(catalogue: tuple[CatalogueFamily, ...]) -> dict[str, A
     current = authority(["current"], "none")
     past = [
         authority(["previous", "historical_reference"], "named"),
-        authority(["date"], "day"),
+        authority(["date", "before", "after"], "day"),
     ]
-    past += [authority(["period"], p) for p in ("month", "year", "interval")]
+    past += [authority(["period", "before", "after"], p) for p in ("month", "year")]
+    past += [authority(["period"], "interval")]
     transitions = [authority(["transition_boundary"], "day")]
     transitions += [
         authority(["transition_period"], p) for p in ("month", "year", "interval")
