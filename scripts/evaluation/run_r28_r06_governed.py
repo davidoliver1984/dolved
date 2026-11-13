@@ -120,9 +120,9 @@ def run_interpretation_probes(run_dir: Path, ledger: Path) -> None:
 
 
 def verify_inputs(stage: str) -> tuple[dict[str, Any], dict[str, Any], dict[str, str]]:
-    if stage == block1_extractive_stage.STAGE:
+    if stage in block1_extractive_stage.STAGES:
         import sys
-        return block1_extractive_stage.inputs(sys.modules[__name__])
+        return block1_extractive_stage.inputs(sys.modules[__name__], stage)
     if stage in {"block1_closing", "block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_checkpoint", "capacity_overflow"}:
         # Explicit development selection, not an amendment to the frozen R07 population.
         path = ROOT / "docs/evaluation/r28-s04/capacity-checkpoint-20261112/execution-input.json"
@@ -360,14 +360,14 @@ def verify_authorization(
     if set(authority) != required:
         raise ValueError("authorization fields differ from the governed schema")
     r07_stage = stage in {"block1_closing", "block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_overflow", "capacity_checkpoint", "topical_diagnostics", "full", "r07_case32_diagnostic", "r07_case40_retry", "r07_tail", "r07_tail_after_44"}
-    r07_stage = r07_stage or stage == block1_extractive_stage.STAGE
+    r07_stage = r07_stage or stage in block1_extractive_stage.STAGES
     expected_schema = "r28-r07-production-authorization-v1" if r07_stage else SCHEMA
     expected_run_prefix = "R28-R07" if r07_stage else "R28-R06"
     expected_auth_prefix = "R28-R07-AUTH" if r07_stage else "R28-R06-AUTH"
     if (
         authority["schema_version"] != expected_schema
         or authority["authorised"] is not True
-        or authority["selective_rerun_authorised"] is not (stage == block1_extractive_stage.STAGE or stage in {"block1_closing", "block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_overflow", "capacity_checkpoint", "topical_diagnostics", "continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case32_diagnostic", "r07_case40_retry"})
+        or authority["selective_rerun_authorised"] is not (stage in block1_extractive_stage.STAGES or stage in {"block1_closing", "block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_overflow", "capacity_checkpoint", "topical_diagnostics", "continuation", "confirmation_retry", "case8_retry", "case6_retry", "case5_retry", "generic_controls", "case14_16_retry", "case9_compare_regression", "case9_uniform_control_retry", "compare_family_final_controls", "r07_case32_diagnostic", "r07_case40_retry"})
         or authority["approved_by"] != "David"
         or authority["stage"] != stage
         or authority["manifest_id"] != manifest_id
@@ -382,7 +382,7 @@ def verify_authorization(
         raise ValueError("run authorization is false or malformed")
     if authority["execution_commit"] != git("rev-parse", "HEAD"):
         raise ValueError("authorization commit mismatch")
-    if stage == block1_extractive_stage.STAGE:
+    if stage in block1_extractive_stage.STAGES:
         import sys
         block1_extractive_stage.verify_commit(sys.modules[__name__], authority)
     elif authority["execution_commit"] != git("rev-parse", "origin/main"):
@@ -576,7 +576,7 @@ def dispatch(
     for index, (item, scope) in enumerate(
         zip(execution["items"], scopes["items"], strict=True)
     ):
-        if stage == block1_extractive_stage.STAGE:
+        if stage in block1_extractive_stage.STAGES:
             import sys
             block1_extractive_stage.verify_commit(sys.modules[__name__], authority)
         if snapshot_digest(runtime_snapshot()) != snapshot_digest(initial_snapshot):
@@ -682,7 +682,7 @@ def dispatch(
             flush=True,
         )
         review_gate = (
-            stage == block1_extractive_stage.STAGE
+            stage in block1_extractive_stage.STAGES
             or stage in {"block1_closing", "block1_feedback", "block1_checkpoint", "block1_remaining", "capacity_checkpoint", "topical_diagnostics", "confirmation_tail", "confirmation_after_case8", "confirmation_cases10_16", "case14_16_retry", "case9_compare_regression", "compare_family_final_controls"}
             or (stage in {"full", "r07_tail", "r07_tail_after_44"} and (index + 1) % 8 == 0)
         ) and index + 1 < len(execution["items"])
@@ -701,7 +701,7 @@ def dispatch(
 
     if runtime_aggregate() != identities["runtime_source_aggregate"]:
         raise RuntimeError("runtime source changed after dispatch")
-    if stage == block1_extractive_stage.STAGE:
+    if stage in block1_extractive_stage.STAGES:
         import sys
         block1_extractive_stage.verify_commit(sys.modules[__name__], authority)
     write_exclusive(run_dir / "code-freeze-after.json", {
@@ -723,7 +723,7 @@ def dispatch(
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--stage", choices=[*STAGES, block1_extractive_stage.STAGE], required=True)
+    parser.add_argument("--stage", choices=[*STAGES, *block1_extractive_stage.STAGES], required=True)
     parser.add_argument("--authorization", type=Path, required=True)
     parser.add_argument("--preflight", action="store_true")
     args = parser.parse_args()

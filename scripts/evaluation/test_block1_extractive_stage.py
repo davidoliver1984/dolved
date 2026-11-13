@@ -70,5 +70,56 @@ class ExtractiveStageTest(unittest.TestCase):
         self.assertEqual(32, len(scopes["items"]))
 
 
+class ContinuationTest(ExtractiveStageTest):
+    def test_exact_tail(self):
+        full, _, _ = stage.inputs(governed)
+        with patch.object(governed, "runtime_aggregate", return_value=stage.RUNTIME_SHA256):
+            tail, scopes, identities = stage.inputs(governed, stage.TAIL_STAGE)
+        self.assertEqual(full["items"][8:], tail["items"])
+        self.assertEqual(24, len(scopes["items"]))
+        self.assertEqual(governed.snapshot_digest(tail), identities["input_sha256"])
+
+    def test_original_eight_and_dispatched_tail_refused(self):
+        full, _, _ = stage.inputs(governed)
+        ledger = [{**i, "event": "recorded"} for i in full["items"][:8]]
+        for item in full["items"][:8]:
+            with self.assertRaisesRegex(ValueError, "already present"):
+                stage.validate_tail([item, *full["items"][9:]], full["items"], ledger)
+        with self.assertRaisesRegex(ValueError, "already present"):
+            stage.validate_tail(full["items"][8:], full["items"], [*ledger, full["items"][8]])
+
+    def test_manifest_ledger_runtime_mismatch(self):
+        real_sha = governed.sha256
+        for name in ("selection-checksums.sha256", "execution-input.json", "dispatch.ndjson", "checksums.sha256"):
+            with self.subTest(name=name), patch.object(governed, "sha256", side_effect=lambda p: "0" * 64 if p.name == name else real_sha(p)):
+                with self.assertRaises(ValueError):
+                    stage.inputs(governed, stage.TAIL_STAGE)
+        with patch.object(governed, "runtime_aggregate", return_value="0" * 64):
+            with self.assertRaisesRegex(ValueError, "runtime aggregate mismatch"):
+                stage.inputs(governed, stage.TAIL_STAGE)
+
+    def test_original_runtime_and_sha_pinned(self):
+        authority = self.authority()
+        authority["stage"] = stage.TAIL_STAGE
+        with patch.object(governed, "git", side_effect=self.fake_git), patch.object(governed, "runtime_aggregate", return_value="b" * 64):
+            with self.assertRaisesRegex(ValueError, "differs from original"):
+                stage.verify_commit(governed, authority)
+        authority["execution_commit"] = "d" * 40
+        with patch.object(governed, "git", side_effect=self.fake_git):
+            with self.assertRaisesRegex(ValueError, "local SHA mismatch"):
+                stage.verify_commit(governed, authority)
+
+    def test_tail_authorization_one_use(self):
+        authority = self.authority()
+        authority["stage"] = stage.TAIL_STAGE
+        with tempfile.TemporaryDirectory() as temp, patch.object(governed, "OUTPUT_ROOT", Path(temp)), patch.object(governed.subprocess, "run") as run:
+            registry = Path(temp) / ".authorizations"
+            registry.mkdir()
+            (registry / f"{authority['authorization_id']}.json").write_text("{}")
+            with self.assertRaisesRegex(ValueError, "already consumed"):
+                governed.dispatch(stage.TAIL_STAGE, authority, {"items": []}, {"items": []}, {}, {})
+            run.assert_not_called()
+
+
 if __name__ == "__main__":
     unittest.main()
