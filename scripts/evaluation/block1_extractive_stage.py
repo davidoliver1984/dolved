@@ -4,7 +4,11 @@ import json
 
 STAGE = "block1_extractive"
 TAIL_STAGE = "block1_extractive_tail"
-STAGES = (STAGE, TAIL_STAGE)
+FINAL_STAGE = "block1_extractive_final"
+STAGES = (STAGE, TAIL_STAGE, FINAL_STAGE)
+TAIL_RUN = "docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-EXTRACTIVE-TAIL-20261113-01"
+TAIL_LEDGER_SHA256 = "33a9aae872b2a30437fbd8840ea1418818b3361a646e0881adb59ebf9d38f66f"
+TAIL_INVENTORY_SHA256 = "673f68afaf4fe7d96eb0e7e6b6104dc1eb91677ffd4488779c62d262785a148b"
 RUNTIME_SHA256 = "0eab315797d6b8af9baea21b85a867386c83bf425c7719ffb16b9974bc9acdc8"
 ORIGINAL_RUN = "docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-EXTRACTIVE-20261113-01"
 LEDGER_SHA256 = "62fb573c22c25d0b2552be33954681a422c24baf722dbfe8d95f116ee58229af"
@@ -25,10 +29,10 @@ def verify_commit(governed, authority):
         raise ValueError("extractive checkpoint remote SHA mismatch")
     if governed.runtime_aggregate() != authority["runtime_source_aggregate"]:
         raise ValueError("extractive checkpoint runtime aggregate mismatch")
-    if authority.get("stage") == TAIL_STAGE:
+    if authority.get("stage") in (TAIL_STAGE, FINAL_STAGE):
         if authority["runtime_source_aggregate"] != RUNTIME_SHA256:
             raise ValueError("continuation runtime aggregate differs from original eight")
-        inputs(governed, TAIL_STAGE)
+        inputs(governed, authority["stage"])
 
 
 def inputs(governed, stage=STAGE):
@@ -55,10 +59,14 @@ def inputs(governed, stage=STAGE):
         "runner_sha256": governed.snapshot_digest({"runner": governed.sha256(governed.RUNNER), "stage": governed.sha256(Path(__file__))}),
         "runtime_source_aggregate": governed.runtime_aggregate(),
     }
-    if stage == TAIL_STAGE:
+    if stage in (TAIL_STAGE, FINAL_STAGE):
         verify_original(governed, execution["items"])
-        execution = {**execution, "subset_id": execution["subset_id"] + "-TAIL-9-32", "items": execution["items"][8:]}
-        scopes = {**scopes, "manifest_id": execution["subset_id"], "items": scopes["items"][8:]}
+        start = 8
+        if stage == FINAL_STAGE:
+            verify_second_run(governed, execution["items"])
+            start = 15
+        execution = {**execution, "subset_id": execution["subset_id"] + f"-TAIL-{start + 1}-32", "items": execution["items"][start:]}
+        scopes = {**scopes, "manifest_id": execution["subset_id"], "items": scopes["items"][start:]}
         identities["input_sha256"] = governed.snapshot_digest(execution)
         identities["scopes_sha256"] = governed.snapshot_digest(scopes)
         if identities["runtime_source_aggregate"] != RUNTIME_SHA256:
@@ -91,3 +99,30 @@ def validate_tail(items, full_items, ledger):
         raise ValueError("continuation input already present in original ledger")
     if items != full_items[8:] or len(items) != 24:
         raise ValueError("continuation must contain only frozen inputs 9–32")
+
+
+def verify_second_run(governed, full_items):
+    root = governed.ROOT / TAIL_RUN
+    if governed.sha256(root / "dispatch.ndjson") != TAIL_LEDGER_SHA256:
+        raise ValueError("second ledger changed")
+    if governed.sha256(root / "checksums.sha256") != TAIL_INVENTORY_SHA256:
+        raise ValueError("second inventory changed")
+    for line in (root / "checksums.sha256").read_text().splitlines():
+        digest, name = line.split("  ", 1)
+        path = root / name
+        if not path.resolve().is_relative_to(root.resolve()) or governed.sha256(path) != digest:
+            raise ValueError("second evidence checksum mismatch")
+    ledger = [json.loads(line) for line in (root / "dispatch.ndjson").read_text().splitlines()]
+    recorded = [(r["case_id"], r["variant_id"]) for r in ledger if r["event"] == "recorded"]
+    if recorded != [(i["case_id"], i["variant_id"]) for i in full_items[8:15]]:
+        raise ValueError("second recorded inputs differ")
+    first = [json.loads(line) for line in (governed.ROOT / ORIGINAL_RUN / "dispatch.ndjson").read_text().splitlines()]
+    validate_final(full_items[15:], full_items, [*first, *ledger])
+
+
+def validate_final(items, full_items, ledgers):
+    seen = {(r["case_id"], r["variant_id"]) for r in ledgers}
+    if any((i["case_id"], i["variant_id"]) in seen for i in items):
+        raise ValueError("final continuation input already dispatched")
+    if items != full_items[15:] or len(items) != 17:
+        raise ValueError("final continuation requires frozen inputs 16–32")

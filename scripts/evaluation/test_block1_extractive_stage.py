@@ -121,5 +121,48 @@ class ContinuationTest(ExtractiveStageTest):
             run.assert_not_called()
 
 
+class FinalContinuationTest(ExtractiveStageTest):
+    def test_fixed_seventeen_and_unchanged_prior_stage(self):
+        full, _, _ = stage.inputs(governed)
+        final, scopes, ids = stage.inputs(governed, stage.FINAL_STAGE)
+        self.assertEqual(full["items"][15:], final["items"])
+        self.assertEqual(17, len(scopes["items"]))
+        self.assertEqual(governed.snapshot_digest(final), ids["input_sha256"])
+        self.assertEqual(24, len(stage.inputs(governed, stage.TAIL_STAGE)[0]["items"]))
+
+    def test_any_prior_input_or_changed_selection_refused(self):
+        full, _, _ = stage.inputs(governed)
+        ledger = full["items"][:15]
+        for item in ledger:
+            with self.assertRaisesRegex(ValueError, "already dispatched"):
+                stage.validate_final([item, *full["items"][16:]], full["items"], ledger)
+        with self.assertRaisesRegex(ValueError, "requires frozen"):
+            stage.validate_final(full["items"][16:], full["items"], ledger)
+
+    def test_both_ledgers_and_manifest_refused_if_changed(self):
+        real = governed.sha256
+        for name in ("dispatch.ndjson", "checksums.sha256", "selection-checksums.sha256", "execution-input.json"):
+            for parent in (stage.ORIGINAL_RUN, stage.TAIL_RUN, stage.DIRECTORY):
+                with self.subTest(name=name, parent=parent), patch.object(governed, "sha256", side_effect=lambda p: "0" * 64 if p.name == name and str(p.parent).endswith(parent) else real(p)):
+                    applicable = (parent == stage.DIRECTORY and name in {"selection-checksums.sha256", "execution-input.json"}) or (parent != stage.DIRECTORY and name in {"dispatch.ndjson", "checksums.sha256"})
+                    if applicable:
+                        with self.assertRaises(ValueError):
+                            stage.inputs(governed, stage.FINAL_STAGE)
+
+    def test_final_pin_and_authorization_reuse_refused(self):
+        authority = self.authority()
+        authority["stage"] = stage.FINAL_STAGE
+        with patch.object(governed, "git", side_effect=self.fake_git), patch.object(governed, "runtime_aggregate", return_value="b" * 64):
+            with self.assertRaisesRegex(ValueError, "differs from original"):
+                stage.verify_commit(governed, authority)
+        with tempfile.TemporaryDirectory() as temp, patch.object(governed, "OUTPUT_ROOT", Path(temp)), patch.object(governed.subprocess, "run") as run:
+            registry = Path(temp) / ".authorizations"
+            registry.mkdir()
+            (registry / f"{authority['authorization_id']}.json").write_text("{}")
+            with self.assertRaisesRegex(ValueError, "already consumed"):
+                governed.dispatch(stage.FINAL_STAGE, authority, {"items": []}, {"items": []}, {}, {})
+            run.assert_not_called()
+
+
 if __name__ == "__main__":
     unittest.main()
