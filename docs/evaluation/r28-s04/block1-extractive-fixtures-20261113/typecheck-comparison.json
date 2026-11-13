@@ -1,0 +1,28 @@
+{
+  "baseline": [
+    "app/generation/entailment.py: error: \"OpenAIGenerationOutput\" has no attribute \"aspect_links\"  [attr-defined]",
+    "app/generation/openai_adapter.py: error: \"OpenAIGenerationOutput\" has no attribute \"aspect_links\"  [attr-defined]",
+    "app/generation/openai_adapter.py: error: \"OpenAIGenerationOutput\" has no attribute \"aspect_links\"  [attr-defined]",
+    "tests/test_compare_family.py: error: \"ValueError\" has no attribute \"cause_message\"  [attr-defined]",
+    "tests/test_compare_family.py: error: \"ValueError\" has no attribute \"cause_type\"  [attr-defined]",
+    "tests/test_generation_needs_transport.py: error: \"object\" has no attribute \"output_parsed\"  [attr-defined]",
+    "tests/test_generation_needs_transport.py: error: Cannot determine type of \"last_output\"  [has-type]",
+    "tests/test_openai_answer_evaluator.py: error: Incompatible types in assignment (expression has type \"tuple[ModelAssistedMetric, ModelAssistedMetric, ModelAssistedMetric]\", variable has type \"tuple[ModelAssistedMetric]\")  [assignment]",
+    "tests/test_openai_answer_evaluator.py: error: Incompatible types in assignment (expression has type \"tuple[ModelAssistedMetric, ModelAssistedMetric]\", variable has type \"tuple[ModelAssistedMetric]\")  [assignment]",
+    "tests/test_r28_access_and_view_boundaries.py: error: Need type annotation for \"documents\"  [var-annotated]"
+  ],
+  "candidate": [
+    "app/generation/entailment.py: error: \"OpenAIGenerationOutput\" has no attribute \"aspect_links\"  [attr-defined]",
+    "app/generation/openai_adapter.py: error: \"OpenAIGenerationOutput\" has no attribute \"aspect_links\"  [attr-defined]",
+    "app/generation/openai_adapter.py: error: \"OpenAIGenerationOutput\" has no attribute \"aspect_links\"  [attr-defined]",
+    "tests/test_compare_family.py: error: \"ValueError\" has no attribute \"cause_message\"  [attr-defined]",
+    "tests/test_compare_family.py: error: \"ValueError\" has no attribute \"cause_type\"  [attr-defined]",
+    "tests/test_generation_needs_transport.py: error: \"object\" has no attribute \"output_parsed\"  [attr-defined]",
+    "tests/test_generation_needs_transport.py: error: Cannot determine type of \"last_output\"  [has-type]",
+    "tests/test_openai_answer_evaluator.py: error: Incompatible types in assignment (expression has type \"tuple[ModelAssistedMetric, ModelAssistedMetric, ModelAssistedMetric]\", variable has type \"tuple[ModelAssistedMetric]\")  [assignment]",
+    "tests/test_openai_answer_evaluator.py: error: Incompatible types in assignment (expression has type \"tuple[ModelAssistedMetric, ModelAssistedMetric]\", variable has type \"tuple[ModelAssistedMetric]\")  [assignment]",
+    "tests/test_r28_access_and_view_boundaries.py: error: Need type annotation for \"documents\"  [var-annotated]"
+  ],
+  "new": [],
+  "resolved": []
+}

@@ -610,7 +610,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $this->assertStringNotContainsString($document->public_id, $sent->body());
             $this->assertStringNotContainsString('scope_fact', $sent->body());
 
-            return Http::response(['contract_version' => 2, 'request_id' => $wire['request_id'],
+            return Http::response(['contract_version' => $wire['contract_version'], 'request_id' => $wire['request_id'],
                 'status' => 'completed', 'result' => ['contract_version' => 3, 'outcome' => 'answered',
                     'answer_parts' => [['text' => 'Use the authorised booking record.', 'evidence_ids' => ['ev-01']]],
                     'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,

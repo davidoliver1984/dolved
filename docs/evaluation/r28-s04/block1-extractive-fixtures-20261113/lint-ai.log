@@ -1,0 +1,99 @@
+docker compose exec -T ai uv run ruff check .
+Bytecode compiled 15519 files in 442ms
+warning: Failed to open cache file `/app/.ruff_cache/0.16.0/2267362928964495375`: Input/output error (os error 5)
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_generation_live_safety.py:1:1
+   |
+ 1 | / import importlib.util
+ 2 | | import json
+ 3 | | import os
+ 4 | | import shutil
+ 5 | | import subprocess
+ 6 | | import sys
+ 7 | | from dataclasses import replace
+ 8 | | from pathlib import Path
+ 9 | | from types import ModuleType
+10 | | from typing import Any
+11 | |
+12 | | import pytest
+13 | | from app.evaluation.generation_evaluation import build_generation_request
+14 | | from app.generation.models import AnswerPart, GenerationOutcome, GenerationResult
+15 | | from app.settings import Settings
+16 | | from pydantic import SecretStr
+   | |______________________________^
+17 |
+18 |   SCRIPT_ROOT = Path(os.environ.get("SCRIPT_ROOT", "/workspace"))
+   |
+help: Organize imports
+   |
+12 | import pytest
+13 + from pydantic import SecretStr
+14 +
+15 | from app.evaluation.generation_evaluation import build_generation_request
+16 | from app.generation.models import AnswerPart, GenerationOutcome, GenerationResult
+17 | from app.settings import Settings
+   - from pydantic import SecretStr
+18 |
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_openai_answer_evaluator.py:1:1
+   |
+ 1 | / from types import SimpleNamespace
+ 2 | | from typing import Literal
+ 3 | |
+ 4 | | import pytest
+ 5 | | from app.evaluation.models import (
+ 6 | |     ModelAssistedAnswerPart,
+ 7 | |     ModelAssistedEvaluationRequest,
+ 8 | |     ModelAssistedGenerationResult,
+ 9 | |     ModelAssistedMetric,
+10 | |     ModelAssistedStatus,
+11 | |     RetrievedCandidate,
+12 | | )
+13 | | from app.evaluation.openai_answer_evaluator import (
+14 | |     EVALUATOR_PROMPT_VERSION,
+15 | |     EVALUATOR_REPRESENTATION_VERSION,
+16 | |     AnswerEvaluationOutput,
+17 | |     OpenAIAnswerEvaluator,
+18 | |     PartJudgement,
+19 | |     output_model_for_request,
+20 | | )
+   | |_^
+   |
+help: Organize imports
+  |
+4 | import pytest
+5 +
+6 | from app.evaluation.models import (
+  |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests/test_r28_s02_live_retrieval.py:1:1
+   |
+ 1 | / import importlib.util
+ 2 | | import json
+ 3 | | import os
+ 4 | | import shutil
+ 5 | | import subprocess
+ 6 | | import sys
+ 7 | | from pathlib import Path
+ 8 | | from types import ModuleType
+ 9 | | from typing import Any
+10 | |
+11 | | import pytest
+12 | | from app.settings import Settings
+   | |_________________________________^
+13 |
+14 |   SCRIPT_ROOT = Path(os.environ.get("SCRIPT_ROOT", "/workspace"))
+   |
+help: Organize imports
+   |
+11 | import pytest
+12 +
+13 | from app.settings import Settings
+   |
+
+Found 3 errors.
+[*] 3 fixable with the `--fix` option.
+make: *** [lint-ai] Error 1

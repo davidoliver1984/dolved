@@ -1,0 +1,21 @@
+Bytecode compiled 15519 files in 340ms
+error: INTERNAL ERROR -- Please try using mypy master on GitHub:
+https://mypy.readthedocs.io/en/stable/common_issues.html#using-a-development-mypy-build
+Please report a bug at https://github.com/python/mypy/issues
+version: 2.3.0
+Traceback (most recent call last):
+  File "/app/.venv/lib/python3.14/site-packages/mypy/__main__.py", line 16, in console_entry
+    main()
+    ~~~~^^
+  File "mypy/main.py", line 154, in main
+  File "mypy/main.py", line 244, in run_build
+    res = build.build(sources, options, None, flush_errors, fscache, stdout, stderr)
+  File "mypy/build.py", line 385, in build
+  File "mypy/build.py", line 1908, in create_metastore
+    mds: MetadataStore = SqliteMetadataStore(
+  File "mypy/metastore.py", line 200, in __init__
+  File "mypy/metastore.py", line 168, in connect_db
+    db = sqlite3.dbapi2.connect(db_file, check_same_thread=False)
+sqlite3.OperationalError: disk I/O error
+
+note: use --pdb to drop into pdb

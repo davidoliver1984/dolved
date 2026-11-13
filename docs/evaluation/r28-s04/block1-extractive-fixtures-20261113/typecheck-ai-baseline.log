@@ -1,0 +1,14 @@
+ Container rag-platform-ai-run-8d5ce880c976 Creating 
+ Container rag-platform-ai-run-8d5ce880c976 Created 
+tests/test_r28_access_and_view_boundaries.py:170: error: Need type annotation for "documents"  [var-annotated]
+tests/test_openai_answer_evaluator.py:47: error: Incompatible types in assignment (expression has type "tuple[ModelAssistedMetric, ModelAssistedMetric, ModelAssistedMetric]", variable has type "tuple[ModelAssistedMetric]")  [assignment]
+tests/test_openai_answer_evaluator.py:53: error: Incompatible types in assignment (expression has type "tuple[ModelAssistedMetric, ModelAssistedMetric]", variable has type "tuple[ModelAssistedMetric]")  [assignment]
+app/generation/openai_adapter.py:511: error: "OpenAIGenerationOutput" has no attribute "aspect_links"  [attr-defined]
+app/generation/openai_adapter.py:520: error: "OpenAIGenerationOutput" has no attribute "aspect_links"  [attr-defined]
+app/generation/entailment.py:80: error: "OpenAIGenerationOutput" has no attribute "aspect_links"  [attr-defined]
+tests/test_compare_family.py:300: error: "ValueError" has no attribute "cause_type"  [attr-defined]
+tests/test_compare_family.py:301: error: "ValueError" has no attribute "cause_message"  [attr-defined]
+tests/test_generation_needs_transport.py:36: error: Cannot determine type of "last_output"  [has-type]
+tests/test_generation_needs_transport.py:50: error: "object" has no attribute "output_parsed"  [attr-defined]
+Found 10 errors in 6 files (checked 276 source files)
+

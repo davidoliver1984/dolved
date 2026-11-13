@@ -35,14 +35,17 @@ def decision(code):
     # These tests prove orchestration/citation mechanics, not model semantics.
     value = None
     if code == "scope_added":
-        value = citation(need_id="n1", plan_field="aspect", plan_quote="ROPA changes")
+        # A typed execution field remains citable; the model paraphrase does not.
+        value = citation(
+            need_id="n1", plan_field="authority.value", plan_quote="previous"
+        )
     if code == "meaning_changed":
         value = citation(
             user_turn_id="u1",
             user_quote="What changed in the ROPA",
             need_id="n1",
             plan_field="aspect",
-            plan_quote="ROPA changes",
+            plan_quote="What changed in the ROPA",
         )
     if code == "clause_omitted":
         value = citation(
@@ -262,6 +265,38 @@ def test_unverifiable_flag_keeps_valid_plan_without_an_additional_attempt(
     assert result.plan.model_dump(mode="json") == EXAMPLES[0]["plan"]
 
 
+def test_diagnostic_only_aspect_flag_is_unverifiable_without_retry():
+    client, calls = transport(
+        [
+            {
+                "code": "scope_added",
+                "citation": citation(
+                    need_id="n1", plan_field="aspect", plan_quote="ROPA changes"
+                ),
+            }
+        ]
+    )
+    planner = StructuredChatNeedsPlanner(
+        api_url="https://fake.invalid",
+        api_key=SecretStr("fake"),
+        provider_name="openai",
+        model="gpt-5-mini",
+        timeout_seconds=1,
+        client=client,
+    )
+    result = planner.plan_needs(turns(EXAMPLES[0]), evaluated_at="2026-11-12T12:00:00Z")
+    check = result.usage.validation_attempts[0]["interpretation_check"]
+    assert check["checker_code"] == "scope_added"
+    assert check["code"] == "accepted"
+    assert check["citation_verification"] == "unverifiable"
+    assert check["verification_reason"] == "plan_quote_not_found"
+    assert len(calls) == 2
+    assert result.usage.retry_count == 0
+    assert result.plan.needs[0].aspect == "ROPA changes"
+    executed = json.loads(calls[1]["messages"][1]["content"])["plan"]
+    assert executed["needs"][0]["aspect"] == "What changed in the ROPA"
+
+
 def synthetic():
     value = deepcopy(EXAMPLES[0]["plan"])
     question = "Who reviews incidents and how often are reviews held?"
@@ -329,7 +364,7 @@ def test_different_turn_and_valid_citation_do_not_prove_semantic_wrongness():
     flag = flag.model_copy(
         update={
             "citation": flag.citation.model_copy(
-                update={"plan_quote": "for agency workers"}
+                update={"plan_field": "aspect", "plan_quote": "for agency workers"}
             )
         }
     )

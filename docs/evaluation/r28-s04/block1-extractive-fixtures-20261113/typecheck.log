@@ -1,0 +1,3 @@
+docker compose exec -T web npx tsc --noEmit
+error TS5033: Could not write file '/app/tsconfig.tsbuildinfo': Unknown system error -35: Unknown system error -35, open '/app/tsconfig.tsbuildinfo'.
+make: *** [typecheck-web] Error 2
