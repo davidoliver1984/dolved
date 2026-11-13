@@ -1,0 +1,1800 @@
+{
+  "K": 5,
+  "matching_algorithm": "normalised-token-coverage-v1",
+  "completed_records": 15,
+  "complete_checkpoint": false,
+  "summary": {
+    "PRIMARY": {
+      "observed_attempted_count": 14,
+      "observed_recall_at_5": 0.9642857142857143,
+      "frozen_baseline_attempted_count": 25,
+      "frozen_baseline_recall_at_5": 0.8813333333333334,
+      "intersection_count": 11,
+      "intersection_new_recall_at_5": 0.9545454545454546,
+      "intersection_baseline_recall_at_5": 0.9545454545454546
+    },
+    "COMPARISON": {
+      "observed_attempted_count": 6,
+      "observed_recall_at_5": 0.8333333333333334,
+      "frozen_baseline_attempted_count": 13,
+      "frozen_baseline_recall_at_5": 0.46153846153846156,
+      "intersection_count": 4,
+      "intersection_new_recall_at_5": 0.75,
+      "intersection_baseline_recall_at_5": 0.75
+    }
+  },
+  "cases": [
+    {
+      "case_id": "v4.case.corrected-b01-02",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "Before March 2026 the internal escalation contact for a suspected gas leak was the Facilities Lead.\n\nFrom March 2026 that internal escalation contact was replaced by the 24-hour Estates Helpdesk.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-002-187"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 3
+        },
+        "COMPARISON": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-002-144"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 3
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "COMPARISON",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.41585907340049744,
+          "chunk_id": "44cb5eb9-c344-5a62-821b-450cae975666",
+          "document_version_id": "7e92ca76-90c9-434d-86ef-45adcaf81de8"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.36740028858184814,
+          "chunk_id": "9c128658-a118-5389-9229-c5bd3a12211c",
+          "document_version_id": "7e92ca76-90c9-434d-86ef-45adcaf81de8"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.3307657539844513,
+          "chunk_id": "407dc7d3-9daa-567c-9447-e8e6acc3c4ed",
+          "document_version_id": "7e92ca76-90c9-434d-86ef-45adcaf81de8"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.6721490025520325,
+          "chunk_id": "620c732a-2630-5563-bb1d-bcb8ad064ed5",
+          "document_version_id": "b9eb058e-dc89-47a0-b380-c51ae42b2727"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.5203441977500916,
+          "chunk_id": "00856a9d-a946-521e-a989-c7e1cfefe243",
+          "document_version_id": "b9eb058e-dc89-47a0-b380-c51ae42b2727"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.4662543535232544,
+          "chunk_id": "68f38e36-d76c-5992-ba3c-b36aa550e38c",
+          "document_version_id": "b9eb058e-dc89-47a0-b380-c51ae42b2727"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-04",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "Before January 2026, the policy required a resident assessed at high risk to be repositioned at least every 4 hours.\n\nAfter the change (the version authoritative at and after 2026\u201101\u201101), the interval for a resident assessed at high risk was tightened to repositioning at least every 2 hours.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-004-106"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 3
+        },
+        "COMPARISON": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-004-103"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 3
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "COMPARISON",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.5503536462783813,
+          "chunk_id": "18d5a2b9-488e-55d0-a9c4-8220f9771280",
+          "document_version_id": "15d5f7f0-bf6a-4e97-b779-9460f08dd7d1"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.5303568243980408,
+          "chunk_id": "d69f5aa3-300b-5bde-bb2c-f201eb61a946",
+          "document_version_id": "15d5f7f0-bf6a-4e97-b779-9460f08dd7d1"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.44126424193382263,
+          "chunk_id": "80d8b892-c9fd-55cf-a96c-604459ac9150",
+          "document_version_id": "15d5f7f0-bf6a-4e97-b779-9460f08dd7d1"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8086572885513306,
+          "chunk_id": "3c61297d-5321-5f0a-b9bd-5f1c4a251b4b",
+          "document_version_id": "c36ac189-7e2d-483b-9635-189b03e8e76c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.7595819234848022,
+          "chunk_id": "1b12d51b-1130-5a42-8a02-94f3f883a1fb",
+          "document_version_id": "c36ac189-7e2d-483b-9635-189b03e8e76c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.7132332921028137,
+          "chunk_id": "e48c6178-4d36-5efc-8135-5ad1dbf9e04b",
+          "document_version_id": "c36ac189-7e2d-483b-9635-189b03e8e76c"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-05",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "On identifying two people at the same site with the same suspected infection onset within 48 hours, declare an outbreak immediately: the registered manager declares the outbreak and notifies the local Health Protection Team the same day, begin enhanced cleaning in affected areas using the product/frequency advised by the Health Protection Team or the site infection lead, cohort affected people (and where practicable staff) away from unaffected people, restrict or reshape communal activities per the Visiting Arrangements Policy exception, and monitor and log staff and residents' symptoms daily for the duration of the outbreak.\n\nRecord-keeping: retain a daily case log tracking new cases against the incubation period and a brief dated decision log of every significant outbreak decision (for example when enhanced cleaning began, when cohorting was applied or relaxed), since the registered manager must keep these records to show the process was followed and to support later review or regulatory enquiry.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 0.5,
+          "precision_at_k": 0.2,
+          "mrr": 0.3333333333333333,
+          "ndcg_at_k": 0.3065735963827292,
+          "covered_evidence_ids": [
+            "ev-b01-005-150"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 15
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8370473980903625,
+          "chunk_id": "f9efafe1-3b25-5e45-948c-5da9d92b5fd1",
+          "document_version_id": "d26c20bc-c967-4bed-ad97-63740f1811af"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.8251205682754517,
+          "chunk_id": "e979937a-8f5c-5025-83f0-b436d827759c",
+          "document_version_id": "d26c20bc-c967-4bed-ad97-63740f1811af"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.8191006779670715,
+          "chunk_id": "41566185-57aa-58eb-81c5-04a8f54151f8",
+          "document_version_id": "fdcb4b96-c23c-4cec-8bff-07099b27d88e"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 4,
+          "need_id": "n1",
+          "source_rank": 4,
+          "score": 0.7411245703697205,
+          "chunk_id": "345c85e1-402b-52cc-973a-df9eee11908a",
+          "document_version_id": "d26c20bc-c967-4bed-ad97-63740f1811af"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 5,
+          "need_id": "n1",
+          "source_rank": 5,
+          "score": 0.5837825536727905,
+          "chunk_id": "26f135ee-5684-592c-a740-31495b2968ed",
+          "document_version_id": "d26c20bc-c967-4bed-ad97-63740f1811af"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 6,
+          "need_id": "n1",
+          "source_rank": 6,
+          "score": 0.550123929977417,
+          "chunk_id": "84902930-6732-54f2-bdec-5705aab5381d",
+          "document_version_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 7,
+          "need_id": "n1",
+          "source_rank": 7,
+          "score": 0.5461081862449646,
+          "chunk_id": "ac0407fb-3d50-5081-91bc-de7bbb5c086a",
+          "document_version_id": "fdcb4b96-c23c-4cec-8bff-07099b27d88e"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 8,
+          "need_id": "n1",
+          "source_rank": 8,
+          "score": 0.5136542320251465,
+          "chunk_id": "bf301c7b-f836-58f7-9d0d-da0082053de9",
+          "document_version_id": "7f3ea274-cefa-42c6-85a1-801ec8514743"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 9,
+          "need_id": "n1",
+          "source_rank": 9,
+          "score": 0.4429420828819275,
+          "chunk_id": "f776e285-5430-52cc-8603-bce46888470e",
+          "document_version_id": "6c4c6bcb-a666-4b7a-8999-674a411a95eb"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 10,
+          "need_id": "n1",
+          "source_rank": 10,
+          "score": 0.4220018684864044,
+          "chunk_id": "4b6360ff-7878-5b25-bb05-ac0fda649fd6",
+          "document_version_id": "29e3e059-4943-481d-b9ba-c982e8b40c56"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 11,
+          "need_id": "n1",
+          "source_rank": 11,
+          "score": 0.40670493245124817,
+          "chunk_id": "1b12d51b-1130-5a42-8a02-94f3f883a1fb",
+          "document_version_id": "c36ac189-7e2d-483b-9635-189b03e8e76c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 12,
+          "need_id": "n1",
+          "source_rank": 12,
+          "score": 0.3839435577392578,
+          "chunk_id": "e4e6da12-6e33-5e23-8475-1ce006166e1a",
+          "document_version_id": "23c48834-49e0-4c88-bb96-9f203c0780d9"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 13,
+          "need_id": "n1",
+          "source_rank": 13,
+          "score": 0.3768438398838043,
+          "chunk_id": "8744a469-ecf5-54a1-8265-1b77c1d35731",
+          "document_version_id": "ea5136c5-b15e-4922-8a3c-50d31d5ae8f5"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 14,
+          "need_id": "n1",
+          "source_rank": 14,
+          "score": 0.3632195293903351,
+          "chunk_id": "e48c6178-4d36-5efc-8135-5ad1dbf9e04b",
+          "document_version_id": "c36ac189-7e2d-483b-9635-189b03e8e76c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 15,
+          "need_id": "n1",
+          "source_rank": 15,
+          "score": 0.2861309051513672,
+          "chunk_id": "59abe211-1f4b-5fd7-926d-03350f1850cc",
+          "document_version_id": "0fcd20f7-6481-4a07-bfd3-2c5fb65b2bd2"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-06",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "The mileage claim will be paid with your next salary run.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-006-180"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 6
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8546010255813599,
+          "chunk_id": "821176a0-d6ae-5aff-bbb1-55dfcf5c7da7",
+          "document_version_id": "4b7496ae-445a-4cd9-a089-e5691c9e19b4"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.20510955154895782,
+          "chunk_id": "35b22796-9aa5-539f-a994-b072536cd13d",
+          "document_version_id": "8944f790-dd5f-4ce9-b739-d4a287c6ef26"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.20498739182949066,
+          "chunk_id": "af86c3aa-c0ee-5202-86ba-1c4cb0353aae",
+          "document_version_id": "a9c41b46-3767-4722-ad28-758fcb1bcde3"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 4,
+          "need_id": "n1",
+          "source_rank": 4,
+          "score": 0.20496726036071777,
+          "chunk_id": "de8e4cbd-a77e-5089-b692-2fd6d3ea005e",
+          "document_version_id": "3b0222a1-0775-4da9-8a07-79ab5f5f330c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 5,
+          "need_id": "n1",
+          "source_rank": 5,
+          "score": 0.20260602235794067,
+          "chunk_id": "653a6760-bd5e-59ff-ad35-ec7c86a845ce",
+          "document_version_id": "897585cb-1fbe-4d40-9e96-6507a757b5f2"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 6,
+          "need_id": "n1",
+          "source_rank": 6,
+          "score": 0.199130579829216,
+          "chunk_id": "2fed309c-7efd-5dcd-bd90-70da5338f5a9",
+          "document_version_id": "61922ea5-3498-448b-ae86-b14016ed9bb1"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-07",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "The current (April 2026) version increased both payments: the one-off starter (initial) uniform allowance was raised to \u00a355, and the annual April replacement allowance was raised to \u00a335.\n\nUnder the prior version these amounts were lower: the one-off starter initial allowance had been \u00a340, and the annual April replacement allowance had been \u00a325.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-007-270"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 2
+        },
+        "COMPARISON": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-007-204"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 2
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "COMPARISON",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.6290803551673889,
+          "chunk_id": "c374ef9c-5170-5ae8-b50b-746e2a8c98bb",
+          "document_version_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.5583918690681458,
+          "chunk_id": "5ea460a7-9a67-5cf3-903c-21842e4db198",
+          "document_version_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.7093822360038757,
+          "chunk_id": "c943d6d2-b8ba-5878-b26a-ec32d30d7ecc",
+          "document_version_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.6829932928085327,
+          "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+          "document_version_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-08",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "Recorded policy scope\n\nThe recorded scope of \"Key Safe Procedure\" includes \"Oakfield Lodge\". This is a statement of recorded policy applicability only; it does not establish what action is safe or required. The reason for this scope is not established by the scope record.\n\nOther requested guidance\n\nThe Midlands key-safe procedure explicitly extends to cover Oakfield Lodge\u2019s outreach service as the region-wide policy replacing the Willow-Bank-only version.\n\nThe procedure requires that any client key safe code change be reported to the office within 24 hours.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.6131471927654584,
+          "covered_evidence_ids": [
+            "ev-b01-008-180",
+            "ev-b01-008-228"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 1
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n2",
+          "source_rank": 1,
+          "score": 0.9110727906227112,
+          "chunk_id": "3c152f00-deec-5a40-aa8a-d78e233e52e3",
+          "document_version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": false,
+      "status": "retrieval_no_answer",
+      "displayed_text": "I couldn't find enough available evidence to answer that question.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_k": 0.0,
+          "covered_evidence_ids": [],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 0
+        },
+        "COMPARISON": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_k": 0.0,
+          "covered_evidence_ids": [],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 0
+        }
+      },
+      "ranked_lineage": []
+    },
+    {
+      "case_id": "v4.case.corrected-b01-10",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "The rule did not change: both the earlier and the current policy state that a limited list of over-the-counter/homely remedies (paracetamol, antacid, simple cough syrup) may be given without a prescription, recorded on the MAR/chart and subject to the person\u2019s care plan not excluding it.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.6131471927654584,
+          "covered_evidence_ids": [
+            "ev-b01-010-102",
+            "ev-b01-010-58"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 1
+        },
+        "COMPARISON": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-010-26"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 1
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "COMPARISON",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.6293987035751343,
+          "chunk_id": "9114a1dd-4a12-5039-a3d3-70d171c0bde1",
+          "document_version_id": "6f3954b8-bb68-46f4-9cd8-105d3426aa51"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8779007792472839,
+          "chunk_id": "9b6cd214-cf78-5929-9943-c76438b0debc",
+          "document_version_id": "fdca6e91-8a24-4803-b630-66a5c889e3ce"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b02-01",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "Where a genuinely novel hazard arises that no existing risk assessment covers, the registered manager must arrange an immediate interim control measure and escalate the matter for a formal risk assessment; if the hazard cannot be fully resolved immediately the area should be cordoned off and appropriate warnings placed while fuller resolution is arranged.\n\nRisk assessments, incident records, training records and each year\u2019s annual health and safety report must be retained in accordance with the Records Retention Schedule.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.6131471927654584,
+          "covered_evidence_ids": [
+            "ev-b02-01-202",
+            "ev-b02-01-149"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 22
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.857354462146759,
+          "chunk_id": "963a2a81-f039-576c-b740-65a93ede78e8",
+          "document_version_id": "192a315d-96f3-4cd9-a7fd-77aaed5facfb"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.6923624277114868,
+          "chunk_id": "e9cac738-6bb5-5540-8f19-8bd71ab30fc2",
+          "document_version_id": "b7fdccec-aee4-490d-b1fd-86ce97c6850c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n2",
+          "source_rank": 2,
+          "score": 0.6047776937484741,
+          "chunk_id": "49cedccc-7798-53df-b3b7-bcff2cce799d",
+          "document_version_id": "192a315d-96f3-4cd9-a7fd-77aaed5facfb"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 4,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.6552014946937561,
+          "chunk_id": "ddc7b0ba-f5c8-573f-a781-a3e9471e3539",
+          "document_version_id": "91e7dd31-68df-48e0-9899-22220b656c49"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 5,
+          "need_id": "n2",
+          "source_rank": 3,
+          "score": 0.6009546518325806,
+          "chunk_id": "92a78012-7169-51f6-8abe-bf6b18c72a00",
+          "document_version_id": "192a315d-96f3-4cd9-a7fd-77aaed5facfb"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 6,
+          "need_id": "n1",
+          "source_rank": 4,
+          "score": 0.6407430768013,
+          "chunk_id": "c74b6f2c-07cf-576c-8c82-84e5294ccf54",
+          "document_version_id": "43de6006-c103-4433-bc93-f7abf4b81d37"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 7,
+          "need_id": "n2",
+          "source_rank": 4,
+          "score": 0.5922152996063232,
+          "chunk_id": "95f68d4c-a7ac-5578-88bb-208e9710b9c9",
+          "document_version_id": "43de6006-c103-4433-bc93-f7abf4b81d37"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 8,
+          "need_id": "n1",
+          "source_rank": 5,
+          "score": 0.6194050312042236,
+          "chunk_id": "fcb563d4-6e4c-5ba2-8ed1-c09539ef2116",
+          "document_version_id": "43de6006-c103-4433-bc93-f7abf4b81d37"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 9,
+          "need_id": "n2",
+          "source_rank": 5,
+          "score": 0.5469931960105896,
+          "chunk_id": "9090d19d-f6db-5f20-b466-305a53735293",
+          "document_version_id": "23ebf6a2-3c7c-425f-83cd-a110e323c935"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 10,
+          "need_id": "n1",
+          "source_rank": 6,
+          "score": 0.5543357133865356,
+          "chunk_id": "16f8e24c-5db7-5586-a998-aabd9b6d2aee",
+          "document_version_id": "91e7dd31-68df-48e0-9899-22220b656c49"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 11,
+          "need_id": "n2",
+          "source_rank": 6,
+          "score": 0.5347107648849487,
+          "chunk_id": "3a5a1860-20a3-5934-8103-f1e2d86d1477",
+          "document_version_id": "b7fdccec-aee4-490d-b1fd-86ce97c6850c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 12,
+          "need_id": "n1",
+          "source_rank": 7,
+          "score": 0.5476203560829163,
+          "chunk_id": "bf301c7b-f836-58f7-9d0d-da0082053de9",
+          "document_version_id": "7f3ea274-cefa-42c6-85a1-801ec8514743"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 13,
+          "need_id": "n2",
+          "source_rank": 7,
+          "score": 0.5314357876777649,
+          "chunk_id": "f91be09a-f530-5cf7-895a-44c081183dcc",
+          "document_version_id": "99a2aaab-4bfe-4de5-8c61-8d8d9151201d"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 14,
+          "need_id": "n1",
+          "source_rank": 8,
+          "score": 0.5337108373641968,
+          "chunk_id": "561c5c99-10f9-5937-ab60-0ebc1cb47c91",
+          "document_version_id": "91e7dd31-68df-48e0-9899-22220b656c49"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 15,
+          "need_id": "n2",
+          "source_rank": 8,
+          "score": 0.5207078456878662,
+          "chunk_id": "eed70827-1f96-56ba-913a-2804e8c723a9",
+          "document_version_id": "91e7dd31-68df-48e0-9899-22220b656c49"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 16,
+          "need_id": "n1",
+          "source_rank": 9,
+          "score": 0.5202600359916687,
+          "chunk_id": "5ebfa0b5-53fb-5c61-8bd8-50809bd549ac",
+          "document_version_id": "23ebf6a2-3c7c-425f-83cd-a110e323c935"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 17,
+          "need_id": "n2",
+          "source_rank": 10,
+          "score": 0.49067652225494385,
+          "chunk_id": "d32221c4-323d-5e6f-a95f-dabc75dda8c9",
+          "document_version_id": "7f3ea274-cefa-42c6-85a1-801ec8514743"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 18,
+          "need_id": "n1",
+          "source_rank": 11,
+          "score": 0.4584784507751465,
+          "chunk_id": "b7dc8861-990e-579a-811f-14f01738a7b0",
+          "document_version_id": "81b225ad-8e3d-4e1a-b471-814bdef2d21f"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 19,
+          "need_id": "n2",
+          "source_rank": 11,
+          "score": 0.45600348711013794,
+          "chunk_id": "68f38e36-d76c-5992-ba3c-b36aa550e38c",
+          "document_version_id": "b9eb058e-dc89-47a0-b380-c51ae42b2727"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 20,
+          "need_id": "n1",
+          "source_rank": 13,
+          "score": 0.4295434057712555,
+          "chunk_id": "af9100ba-fc88-5335-bb94-1e63a1e19992",
+          "document_version_id": "43de6006-c103-4433-bc93-f7abf4b81d37"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 21,
+          "need_id": "n1",
+          "source_rank": 14,
+          "score": 0.39578336477279663,
+          "chunk_id": "9601dc64-9d19-5ee3-aeb7-187e5de70925",
+          "document_version_id": "2c5492f6-8c9a-485f-a92e-011d8871269f"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 22,
+          "need_id": "n1",
+          "source_rank": 15,
+          "score": 0.37919068336486816,
+          "chunk_id": "54654c0e-411e-5bc5-90cb-555804e20f44",
+          "document_version_id": "43de6006-c103-4433-bc93-f7abf4b81d37"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b02-03",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "I couldn't find enough available evidence to answer that question.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b02-03-93",
+            "ev-b02-03-203"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 15
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.5842730402946472,
+          "chunk_id": "6d905201-e4a0-5267-9284-2f3351d46b0c",
+          "document_version_id": "fa86860e-8e8d-4df3-b4c2-85b9e45b39ef"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.5388100743293762,
+          "chunk_id": "230ad044-f514-5a70-b63d-a6e7b9eb67c2",
+          "document_version_id": "fa86860e-8e8d-4df3-b4c2-85b9e45b39ef"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.5051025748252869,
+          "chunk_id": "b55cc5ed-511e-5af5-9ae8-187456c0c539",
+          "document_version_id": "fa86860e-8e8d-4df3-b4c2-85b9e45b39ef"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 4,
+          "need_id": "n1",
+          "source_rank": 4,
+          "score": 0.38189470767974854,
+          "chunk_id": "0ef1b571-b744-5a76-bde2-d9d85e4f15a3",
+          "document_version_id": "8f1f096d-ed79-4f20-bd48-21c4a3d5d27b"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 5,
+          "need_id": "n1",
+          "source_rank": 5,
+          "score": 0.37769615650177,
+          "chunk_id": "9f8d5215-ad91-5eff-903f-12fe55e6da5f",
+          "document_version_id": "16978e7b-40b9-460e-8be0-d87aa09a1f73"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 6,
+          "need_id": "n1",
+          "source_rank": 6,
+          "score": 0.3638441264629364,
+          "chunk_id": "f3f179de-ddbe-5615-95ab-59debfb52555",
+          "document_version_id": "085ec4f8-3049-4543-aab3-6af13610115b"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 7,
+          "need_id": "n1",
+          "source_rank": 7,
+          "score": 0.3521741032600403,
+          "chunk_id": "3f1007e7-714f-5738-becc-b814024ae435",
+          "document_version_id": "16978e7b-40b9-460e-8be0-d87aa09a1f73"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 8,
+          "need_id": "n1",
+          "source_rank": 8,
+          "score": 0.3518787920475006,
+          "chunk_id": "88f98fe6-4537-5d18-b147-ea4140e9a28e",
+          "document_version_id": "d2b1d0e8-4a8c-4921-8403-a40924273b27"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 9,
+          "need_id": "n1",
+          "source_rank": 9,
+          "score": 0.3509889543056488,
+          "chunk_id": "05c2582d-5474-5312-b95a-c28227d63d4f",
+          "document_version_id": "16978e7b-40b9-460e-8be0-d87aa09a1f73"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 10,
+          "need_id": "n1",
+          "source_rank": 10,
+          "score": 0.33418038487434387,
+          "chunk_id": "e61c393e-0ce0-57ed-9d89-548ec6eed4e2",
+          "document_version_id": "f7e9ec7d-e1d8-4dfa-ae82-3a874f83d85c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 11,
+          "need_id": "n1",
+          "source_rank": 11,
+          "score": 0.33298271894454956,
+          "chunk_id": "0cdbed84-a7dd-58c3-b24b-ca7fbb4da724",
+          "document_version_id": "bc7eb6fe-606a-4c33-b7fe-76698c99eaa1"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 12,
+          "need_id": "n1",
+          "source_rank": 12,
+          "score": 0.32234424352645874,
+          "chunk_id": "20af6824-b51e-5dd8-91e8-8c68e54771e0",
+          "document_version_id": "8566a5f0-f2b0-4269-8128-f5ae5c324fd7"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 13,
+          "need_id": "n1",
+          "source_rank": 13,
+          "score": 0.3131188452243805,
+          "chunk_id": "444cd605-d41c-5de6-9ebe-3c96210a42ca",
+          "document_version_id": "a8224dbb-62e6-4533-9406-b64813c3bc8b"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 14,
+          "need_id": "n1",
+          "source_rank": 14,
+          "score": 0.28867852687835693,
+          "chunk_id": "e29c1ccd-999c-5973-ab25-ed759732890a",
+          "document_version_id": "8f1f096d-ed79-4f20-bd48-21c4a3d5d27b"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 15,
+          "need_id": "n1",
+          "source_rank": 15,
+          "score": 0.2827317714691162,
+          "chunk_id": "c56bd852-bd0d-554a-9474-06d1104f2a9b",
+          "document_version_id": "1147ca13-413d-426b-9cbc-d4939fb038db"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b02-06",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "For a sector-wide emergency affecting every site, teams should take consistent guidance from the Health and Safety Lead's organisation-level emergency coordination group, which becomes the single point of truth and issues consistent guidance to every site.\n\nThe organisation-wide debrief after a sector-wide emergency is run by the Health and Safety Lead's coordination group, which holds an organisation-wide debrief covering every affected site.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b02-06-188",
+            "ev-b02-06-208"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 20
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8806242942810059,
+          "chunk_id": "4fe645a0-89e5-5182-92e9-8c5920285159",
+          "document_version_id": "99718b7b-a32f-4e75-8c55-3aa824800e76"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n2",
+          "source_rank": 1,
+          "score": 0.8522507548332214,
+          "chunk_id": "ed788cf2-814d-56bd-89ca-86a53cff5b4c",
+          "document_version_id": "99718b7b-a32f-4e75-8c55-3aa824800e76"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.8387388586997986,
+          "chunk_id": "a02879c2-d046-587f-866b-e53dd5b881fd",
+          "document_version_id": "99718b7b-a32f-4e75-8c55-3aa824800e76"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 4,
+          "need_id": "n2",
+          "source_rank": 2,
+          "score": 0.6816797256469727,
+          "chunk_id": "7fd4952b-a8d3-5cd0-be8f-952f4cefdf8f",
+          "document_version_id": "99718b7b-a32f-4e75-8c55-3aa824800e76"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 5,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.7892051339149475,
+          "chunk_id": "ea8d7a6f-7945-5ba3-aca5-5e2af5103ca4",
+          "document_version_id": "99718b7b-a32f-4e75-8c55-3aa824800e76"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 6,
+          "need_id": "n2",
+          "source_rank": 3,
+          "score": 0.6510862708091736,
+          "chunk_id": "3adddf40-d6ef-5b5b-89a7-8712e92ab33b",
+          "document_version_id": "99718b7b-a32f-4e75-8c55-3aa824800e76"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 7,
+          "need_id": "n1",
+          "source_rank": 4,
+          "score": 0.752148449420929,
+          "chunk_id": "b7c47f2d-6b4b-5690-a253-a3cf50edbacb",
+          "document_version_id": "99718b7b-a32f-4e75-8c55-3aa824800e76"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 8,
+          "need_id": "n2",
+          "source_rank": 4,
+          "score": 0.6321771144866943,
+          "chunk_id": "94134703-d318-53f3-8ef5-b728031282c2",
+          "document_version_id": "99718b7b-a32f-4e75-8c55-3aa824800e76"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 9,
+          "need_id": "n1",
+          "source_rank": 5,
+          "score": 0.7303863763809204,
+          "chunk_id": "aea1b3db-d2a3-54e4-a651-8df18c02394f",
+          "document_version_id": "99718b7b-a32f-4e75-8c55-3aa824800e76"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 10,
+          "need_id": "n2",
+          "source_rank": 5,
+          "score": 0.6299914121627808,
+          "chunk_id": "0cef8d38-8478-5bce-927d-882415428064",
+          "document_version_id": "99718b7b-a32f-4e75-8c55-3aa824800e76"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 11,
+          "need_id": "n2",
+          "source_rank": 7,
+          "score": 0.6093977689743042,
+          "chunk_id": "eee396ec-15fc-5d8a-9094-62c792f7461e",
+          "document_version_id": "53b8deb6-2010-4960-af70-61ee29e2d081"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 12,
+          "need_id": "n1",
+          "source_rank": 11,
+          "score": 0.5500847101211548,
+          "chunk_id": "27534298-3a0b-52ed-b813-b68b56b0c97c",
+          "document_version_id": "9b2b7b03-c84f-4e07-8bca-3e25ad07c485"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 13,
+          "need_id": "n1",
+          "source_rank": 12,
+          "score": 0.4204885959625244,
+          "chunk_id": "079f7900-f5df-5c6b-aa24-0a85b6c43806",
+          "document_version_id": "df1cb996-fe27-4701-8808-4a87c6991b85"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 14,
+          "need_id": "n2",
+          "source_rank": 12,
+          "score": 0.53373122215271,
+          "chunk_id": "5eea879a-29a5-52d0-9b55-e470d528066a",
+          "document_version_id": "4395f603-6940-4367-969b-b79ec953fd6e"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 15,
+          "need_id": "n1",
+          "source_rank": 13,
+          "score": 0.339956134557724,
+          "chunk_id": "8e995001-8f88-520b-817f-6b7a19d25649",
+          "document_version_id": "bc0e367f-72ad-4ec1-97d3-51af9adff7c0"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 16,
+          "need_id": "n2",
+          "source_rank": 13,
+          "score": 0.5056702494621277,
+          "chunk_id": "9b7dd2d8-c4e9-577f-adc8-15f45b72ef58",
+          "document_version_id": "d26c20bc-c967-4bed-ad97-63740f1811af"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 17,
+          "need_id": "n1",
+          "source_rank": 14,
+          "score": 0.32480373978614807,
+          "chunk_id": "f9b7201e-5678-542f-bc21-80f8e1a93912",
+          "document_version_id": "a190775d-ae67-4fb9-8e27-8d12c8e5bd47"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 18,
+          "need_id": "n2",
+          "source_rank": 14,
+          "score": 0.4936719536781311,
+          "chunk_id": "b9783c8d-910c-5254-bf17-636f3b6c7ac2",
+          "document_version_id": "53b8deb6-2010-4960-af70-61ee29e2d081"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 19,
+          "need_id": "n1",
+          "source_rank": 15,
+          "score": 0.3053227961063385,
+          "chunk_id": "05194013-9fca-5cd5-911f-fd9add54e7d4",
+          "document_version_id": "e7b2856b-79bc-4c50-a359-6d3e9e6f469b"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 20,
+          "need_id": "n2",
+          "source_rank": 15,
+          "score": 0.4866615831851959,
+          "chunk_id": "26d1d1a9-4ccd-5d73-be32-bfac98c762a2",
+          "document_version_id": "d26c20bc-c967-4bed-ad97-63740f1811af"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b02-07",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "The updated version leads with family communication first\u2014family contact and invitation for feedback are presented before the brief Quality Committee death review; the previous version presented the brief review and Quality Committee step earlier, with family contact described afterward.\n\nNo, the underlying requirements did not change\u2014the update reordered the sections to describe family communication first but explicitly states that no actual requirement was changed.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b02-07-374",
+            "ev-b02-07-307"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 3
+        },
+        "COMPARISON": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b02-07-357"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 3
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "COMPARISON",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.4574586749076843,
+          "chunk_id": "7c7f1bf6-5d56-5fea-b8de-7152bc1a3e29",
+          "document_version_id": "9e28583d-bed1-4f05-916d-60b5d1ce8481"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.40913665294647217,
+          "chunk_id": "d3122fb2-6498-5fa4-80a9-c67ce93f8664",
+          "document_version_id": "9e28583d-bed1-4f05-916d-60b5d1ce8481"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.357811838388443,
+          "chunk_id": "36b645a1-ee28-53c7-a84e-d73d96b9659b",
+          "document_version_id": "9e28583d-bed1-4f05-916d-60b5d1ce8481"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8463842868804932,
+          "chunk_id": "d3bc785f-b390-569a-86a3-39d732e566eb",
+          "document_version_id": "0626244e-a8ee-4746-813c-b50b70d79808"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.7498429417610168,
+          "chunk_id": "31feef44-064c-5c2d-805f-425cbb2cd10d",
+          "document_version_id": "0626244e-a8ee-4746-813c-b50b70d79808"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.46280306577682495,
+          "chunk_id": "573c9028-b037-52dd-8573-9515184f88cc",
+          "document_version_id": "0626244e-a8ee-4746-813c-b50b70d79808"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b02-08",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "If you are an existing HQ (Central Support Office) DSE user, repeat the DSE self\u2011assessment annually or after a workstation change; new starters complete it during their first week.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b02-08-147"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 15
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.7471710443496704,
+          "chunk_id": "e998fa04-5d49-548b-9e90-b0192b3e72b8",
+          "document_version_id": "57874cae-918b-4492-9f9e-ab6449e4b4bd"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.4669274687767029,
+          "chunk_id": "fcb563d4-6e4c-5ba2-8ed1-c09539ef2116",
+          "document_version_id": "43de6006-c103-4433-bc93-f7abf4b81d37"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.3383444547653198,
+          "chunk_id": "1668d29a-9655-55d3-8cf9-5855eb78dae5",
+          "document_version_id": "b44a4c5f-2968-4294-85b6-19b066fc3cab"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 4,
+          "need_id": "n1",
+          "source_rank": 4,
+          "score": 0.33397531509399414,
+          "chunk_id": "9cf32446-690a-5b92-a78c-a5f05671cb6c",
+          "document_version_id": "3b90395d-fcb7-4a1f-ad3b-5ed9d0740b94"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 5,
+          "need_id": "n1",
+          "source_rank": 5,
+          "score": 0.3073154389858246,
+          "chunk_id": "e6c2344b-c081-599a-a156-ec53630256c3",
+          "document_version_id": "42fa73b1-1b53-433c-80de-8bd7023ee670"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 6,
+          "need_id": "n1",
+          "source_rank": 6,
+          "score": 0.3041267693042755,
+          "chunk_id": "29eac54c-1b43-5d8a-8de3-3bd20c67c1cb",
+          "document_version_id": "2c5492f6-8c9a-485f-a92e-011d8871269f"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 7,
+          "need_id": "n1",
+          "source_rank": 7,
+          "score": 0.2975849509239197,
+          "chunk_id": "92a78012-7169-51f6-8abe-bf6b18c72a00",
+          "document_version_id": "192a315d-96f3-4cd9-a7fd-77aaed5facfb"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 8,
+          "need_id": "n1",
+          "source_rank": 8,
+          "score": 0.28616827726364136,
+          "chunk_id": "82a526d1-ace9-5e40-af17-e7c3a110610a",
+          "document_version_id": "43de6006-c103-4433-bc93-f7abf4b81d37"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 9,
+          "need_id": "n1",
+          "source_rank": 9,
+          "score": 0.2842586934566498,
+          "chunk_id": "b0ca588a-0936-57bf-99c7-c42ef87fd006",
+          "document_version_id": "b44a4c5f-2968-4294-85b6-19b066fc3cab"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 10,
+          "need_id": "n1",
+          "source_rank": 10,
+          "score": 0.27765801548957825,
+          "chunk_id": "6fd1ada2-43a7-5fec-babb-fb00a3f5d62e",
+          "document_version_id": "99a2aaab-4bfe-4de5-8c61-8d8d9151201d"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 11,
+          "need_id": "n1",
+          "source_rank": 11,
+          "score": 0.275110125541687,
+          "chunk_id": "49cedccc-7798-53df-b3b7-bcff2cce799d",
+          "document_version_id": "192a315d-96f3-4cd9-a7fd-77aaed5facfb"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 12,
+          "need_id": "n1",
+          "source_rank": 12,
+          "score": 0.2563442587852478,
+          "chunk_id": "a7b45c7f-e435-5c44-a79f-6d0aed8037e9",
+          "document_version_id": "95788e4b-11e2-45d6-a672-dd893a544715"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 13,
+          "need_id": "n1",
+          "source_rank": 13,
+          "score": 0.23257672786712646,
+          "chunk_id": "bcca23a7-cd0b-520e-8355-7bdecd6be704",
+          "document_version_id": "8b50438f-0446-4556-a5f3-ea08aa15aaac"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 14,
+          "need_id": "n1",
+          "source_rank": 14,
+          "score": 0.2324894219636917,
+          "chunk_id": "a86118be-57d8-5996-8c9d-ec3ecfb73811",
+          "document_version_id": "0374f047-d117-4a3e-811a-6a33c8febfbe"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 15,
+          "need_id": "n1",
+          "source_rank": 15,
+          "score": 0.22394303977489471,
+          "chunk_id": "7d178563-1b37-5c11-a922-87636393b6cc",
+          "document_version_id": "0fcd20f7-6481-4a07-bfd3-2c5fb65b2bd2"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b02-09",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "Overtime worked on a bank holiday is paid at 1.5 times the standard hourly rate under the current guidance.\n\nThe older guidance likewise specified a 1.5 times rate for overtime worked on a bank holiday, so the same 1.5x bank holiday rate applied in the previous version as well.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b02-09-current-bank-holiday-rate"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 15
+        },
+        "COMPARISON": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_k": 0.0,
+          "covered_evidence_ids": [],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 2
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "COMPARISON",
+          "rank": 1,
+          "need_id": "n2",
+          "source_rank": 1,
+          "score": 0.8773843050003052,
+          "chunk_id": "e5466c50-bb6c-5ec2-a1bc-596ee12d63d0",
+          "document_version_id": "819826e2-d1e3-43c2-8bf8-ef2cc1114d56"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 2,
+          "need_id": "n2",
+          "source_rank": 2,
+          "score": 0.8706386089324951,
+          "chunk_id": "55c925bd-5eb4-5d8e-a322-a2743289820b",
+          "document_version_id": "819826e2-d1e3-43c2-8bf8-ef2cc1114d56"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8699414730072021,
+          "chunk_id": "0581f059-5479-5065-a852-bc0a53187f66",
+          "document_version_id": "34505187-c14e-4484-9613-9077b2070d0d"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.4937255382537842,
+          "chunk_id": "d59769f2-6cf2-598e-a059-38e1d1461c02",
+          "document_version_id": "58e69592-9309-4ab2-a04d-5edd0b730083"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n2",
+          "source_rank": 2,
+          "score": 0.4051227867603302,
+          "chunk_id": "f877b9f5-580c-5248-97ef-12b88bc1e131",
+          "document_version_id": "34505187-c14e-4484-9613-9077b2070d0d"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 4,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.46127593517303467,
+          "chunk_id": "cb145060-f9a5-5617-8caa-9875036c7f8f",
+          "document_version_id": "b499663d-00b3-447f-89b3-2b4a2a4221ae"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 5,
+          "need_id": "n1",
+          "source_rank": 5,
+          "score": 0.3616953492164612,
+          "chunk_id": "a3a4bf6d-abb9-5edc-98ce-e17c49767203",
+          "document_version_id": "6e5e4e7e-11a8-47d6-831c-d40ebbe1f620"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 6,
+          "need_id": "n1",
+          "source_rank": 6,
+          "score": 0.34698328375816345,
+          "chunk_id": "7c7bdd09-9d5b-5cc7-822d-3e1181e02d74",
+          "document_version_id": "b499663d-00b3-447f-89b3-2b4a2a4221ae"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 7,
+          "need_id": "n1",
+          "source_rank": 7,
+          "score": 0.3453870713710785,
+          "chunk_id": "bac35c94-712c-58d7-a37e-d186a03b370a",
+          "document_version_id": "b499663d-00b3-447f-89b3-2b4a2a4221ae"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 8,
+          "need_id": "n1",
+          "source_rank": 8,
+          "score": 0.34054580330848694,
+          "chunk_id": "19544976-165b-57ad-b422-3bd28d034eb2",
+          "document_version_id": "5d3de7a8-a7da-4bbb-9ea7-e3ac6a294653"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 9,
+          "need_id": "n1",
+          "source_rank": 9,
+          "score": 0.28780969977378845,
+          "chunk_id": "517df8bb-342b-59bb-b0b1-6422183287c8",
+          "document_version_id": "29c809b2-02a4-4389-955c-eb267b7c30de"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 10,
+          "need_id": "n1",
+          "source_rank": 10,
+          "score": 0.28394898772239685,
+          "chunk_id": "fbfc9ed7-f42f-5220-aaad-f7474a2c208a",
+          "document_version_id": "f84044a6-dfb7-4ccc-bc21-df9ede96d8ce"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 11,
+          "need_id": "n1",
+          "source_rank": 11,
+          "score": 0.27626898884773254,
+          "chunk_id": "40515c0e-8c03-5c34-8ebc-42ef8309078e",
+          "document_version_id": "d8a026af-ae75-4665-a944-826e677f80dc"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 12,
+          "need_id": "n1",
+          "source_rank": 12,
+          "score": 0.26086944341659546,
+          "chunk_id": "e9e19f25-2c32-5c35-8d5f-ff27372e6cdb",
+          "document_version_id": "6f1b9d5f-4bf3-423c-a4b1-c2bf4e2ad606"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 13,
+          "need_id": "n1",
+          "source_rank": 13,
+          "score": 0.25975146889686584,
+          "chunk_id": "9c3d20fc-7e75-53fb-b8c4-b1c58a27e0a9",
+          "document_version_id": "6f1b9d5f-4bf3-423c-a4b1-c2bf4e2ad606"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 14,
+          "need_id": "n1",
+          "source_rank": 14,
+          "score": 0.23096804320812225,
+          "chunk_id": "66994773-6821-5584-a3c4-95dbe97d29ef",
+          "document_version_id": "bd6da148-fe3f-40fe-90e2-49b4601997c0"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 15,
+          "need_id": "n1",
+          "source_rank": 15,
+          "score": 0.21662791073322296,
+          "chunk_id": "1bdf2ab9-5062-598e-8942-c8aed8b0c287",
+          "document_version_id": "3ab17580-4744-4a09-b8df-dc28f8dd83fa"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b03-01",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "If an external agency does not acknowledge your referral, the registered manager should follow the escalation steps: contact the agency\u2019s own duty line to follow up, and if the agency still has not resolved or acknowledged the referral within a further 2 working days, inform the organisation\u2011level Safeguarding Lead, who may escalate directly within that agency or use the local Safeguarding Adults Board\u2019s escalation route (the post\u2011referral checklist also instructs following up directly with the agency within 2 working days if acknowledgment is not confirmed). A separate requirement is to complete a post\u2011referral review within 10 working days of any external referral. \n\nYou must keep a record of the external referral and its post\u2011referral review outcome in the confidential safeguarding file: every external referral (including to the Office of the Public Guardian or Action Fraud) and its post\u2011referral review outcome is retained in the confidential safeguarding file in line with the Records Retention Schedule, and safeguarding records are retained for 8 years after the person\u2019s last contact with Alderbridge; these records are stored separately from the general care file with more restricted access. ",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.8772153153380493,
+          "covered_evidence_ids": [
+            "ev-b03-01-record",
+            "ev-b03-01-escalation"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 15
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.7325647473335266,
+          "chunk_id": "8899d493-216d-5695-a0b0-094d4fde1129",
+          "document_version_id": "d14be51f-1bff-4b5a-814b-aa0f8bd1001d"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.5852739214897156,
+          "chunk_id": "272c0021-fcd7-59b6-a46c-a45f221ed885",
+          "document_version_id": "d14be51f-1bff-4b5a-814b-aa0f8bd1001d"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.5412510633468628,
+          "chunk_id": "edfcc5c9-b7cd-560d-9843-25bafb04c07d",
+          "document_version_id": "7738becf-1f08-47bb-9391-286f475b9c1c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 4,
+          "need_id": "n1",
+          "source_rank": 4,
+          "score": 0.5153397917747498,
+          "chunk_id": "90d8b00f-d242-530d-825e-aaebcb4985c8",
+          "document_version_id": "d14be51f-1bff-4b5a-814b-aa0f8bd1001d"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 5,
+          "need_id": "n1",
+          "source_rank": 5,
+          "score": 0.49379515647888184,
+          "chunk_id": "6896d5b5-ca01-55d4-beb8-f9ab4e2c3beb",
+          "document_version_id": "d14be51f-1bff-4b5a-814b-aa0f8bd1001d"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 6,
+          "need_id": "n1",
+          "source_rank": 6,
+          "score": 0.4873294234275818,
+          "chunk_id": "85d94e2f-70d4-5c67-a256-9556569fd629",
+          "document_version_id": "7738becf-1f08-47bb-9391-286f475b9c1c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 7,
+          "need_id": "n1",
+          "source_rank": 7,
+          "score": 0.4774893820285797,
+          "chunk_id": "7df64788-acb7-5fee-a842-2d211bfe230e",
+          "document_version_id": "d14be51f-1bff-4b5a-814b-aa0f8bd1001d"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 8,
+          "need_id": "n1",
+          "source_rank": 8,
+          "score": 0.46592122316360474,
+          "chunk_id": "8d1e6cc0-8365-5ae2-ade7-48daa8176761",
+          "document_version_id": "d14be51f-1bff-4b5a-814b-aa0f8bd1001d"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 9,
+          "need_id": "n1",
+          "source_rank": 9,
+          "score": 0.46345940232276917,
+          "chunk_id": "fe87b9b6-515a-51b1-a529-8c3ac7ff328f",
+          "document_version_id": "7738becf-1f08-47bb-9391-286f475b9c1c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 10,
+          "need_id": "n1",
+          "source_rank": 10,
+          "score": 0.4497672915458679,
+          "chunk_id": "2ad07819-3fcb-589a-b780-57986eb92d75",
+          "document_version_id": "8cb6b4e0-e0bd-46a3-ac36-642e07cb01e6"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 11,
+          "need_id": "n1",
+          "source_rank": 11,
+          "score": 0.4435611963272095,
+          "chunk_id": "afd325b1-df26-51f5-bbc2-fe2e69b23c1c",
+          "document_version_id": "822e205e-2579-4d1c-812d-7882d886bb97"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 12,
+          "need_id": "n1",
+          "source_rank": 12,
+          "score": 0.43515029549598694,
+          "chunk_id": "aaa83860-c18c-5933-88c0-fab1fd8c3c7a",
+          "document_version_id": "8cb6b4e0-e0bd-46a3-ac36-642e07cb01e6"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 13,
+          "need_id": "n1",
+          "source_rank": 13,
+          "score": 0.4225992262363434,
+          "chunk_id": "7964b90f-7528-52e4-98e0-2f179dc47822",
+          "document_version_id": "822e205e-2579-4d1c-812d-7882d886bb97"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 14,
+          "need_id": "n1",
+          "source_rank": 14,
+          "score": 0.40202489495277405,
+          "chunk_id": "47101e26-6900-5d5e-a05f-aca4a5041af6",
+          "document_version_id": "1497326a-7a56-48f3-89c1-2584f5c9fe2a"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 15,
+          "need_id": "n1",
+          "source_rank": 15,
+          "score": 0.4017099440097809,
+          "chunk_id": "e9e120a0-791d-5175-880a-bac5d6231af7",
+          "document_version_id": "d14be51f-1bff-4b5a-814b-aa0f8bd1001d"
+        }
+      ]
+    }
+  ]
+}
