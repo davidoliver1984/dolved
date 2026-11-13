@@ -1,0 +1,16 @@
+{
+  "run_id": "R28-R07-BLOCK1-EXTRACTIVE-20261113-01",
+  "stopped_after_input": 8,
+  "case_id": "v4.case.corrected-b01-10",
+  "variant_id": "v1",
+  "decision": "hold_no_main_merge",
+  "criterion": "every citation-valid wrong flag triggering a retry on a clear question fails the zero-false-flags criterion and stops the checkpoint",
+  "observed_checker_code": "clause_omitted",
+  "citation_verification": "verified",
+  "cited_user_quote": "When “Over the counter medicines” became “Homely remedies list”",
+  "manual_review": "The cited rename clause is present in the compiled executable aspect and previous-authority selector. The first and accepted second executable aspects are byte-identical. This is a wrong omission judgement that triggered a retry, despite successful final generation.",
+  "undispatched_input_indices": [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32],
+  "tuning_or_selective_retry": false,
+  "full_recall_acceptance_measured": false,
+  "main_merged": false
+}

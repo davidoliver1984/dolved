@@ -1,0 +1,844 @@
+{
+  "case8_first_and_second_compiled_aspect_identical": true,
+  "all_check_receipts_count": 9,
+  "flagged_cases": [
+    "v4.case.corrected-b01-06",
+    "v4.case.corrected-b01-10"
+  ],
+  "cases": [
+    {
+      "raw_record": "01-v4.case.corrected-b01-02-v1.json",
+      "case_id": "v4.case.corrected-b01-02",
+      "question": "Who was the internal gas-leak escalation contact before March 2026, and who replaced them from that month?",
+      "displayed_text": "Before March 2026 the internal escalation contact for a suspected gas leak was the Facilities Lead.\n\nFrom March 2026 that internal escalation contact was replaced by the 24-hour Estates Helpdesk.",
+      "status": "completed",
+      "compiled_needs": [
+        {
+          "need_id": "n1",
+          "compiled_request": "before March 2026 from that month Who was the internal gas-leak escalation contact before March 2026, and who replaced them from that month?",
+          "matches_checked_execution_view": true,
+          "model_aspect_diagnostic_only": "Determine the recorded internal escalation contact listed for reporting a gas leak immediately before March 2026, and identify the recorded person who replaced that contact from March 2026 onward; search the organisation's guidance and contact lists governing gas-leak escalation."
+        }
+      ],
+      "checks": [
+        {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1097,
+          "latency_ms": 3198.2035430000906,
+          "model": "gpt-5-mini",
+          "output_tokens": 151,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "before March 2026 from that month Who was the internal gas-leak escalation contact before March 2026, and who replaced them from that month?",
+                "authority": {
+                  "kind": "transition_period",
+                  "precision": "month",
+                  "source": {
+                    "quote": "before March 2026, and who replaced them from that month",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-03"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                  {
+                    "quote": "before March 2026",
+                    "turn_id": "user-1"
+                  },
+                  {
+                    "quote": "from that month",
+                    "turn_id": "user-1"
+                  }
+                ],
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "compare",
+                "question_span": {
+                  "quote": "Who was the internal gas-leak escalation contact before March 2026, and who replaced them from that month?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v4"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        }
+      ]
+    },
+    {
+      "raw_record": "02-v4.case.corrected-b01-04-v1.json",
+      "case_id": "v4.case.corrected-b01-04",
+      "question": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?",
+      "displayed_text": "Before January 2026, the policy required a resident assessed at high risk to be repositioned at least every 4 hours.\n\nAfter the change (the version authoritative at and after 2026\u201101\u201101), the interval for a resident assessed at high risk was tightened to repositioning at least every 2 hours.",
+      "status": "completed",
+      "compiled_needs": [
+        {
+          "need_id": "n1",
+          "compiled_request": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?",
+          "matches_checked_execution_view": true,
+          "model_aspect_diagnostic_only": "Retrieve the recorded repositioning interval required for highest-risk (pressure-area) residents before January 2026 and the recorded interval required after the change that took effect at January 2026, showing how the interval changed."
+        }
+      ],
+      "checks": [
+        {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1077,
+          "latency_ms": 1933.9520010000797,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?",
+                "authority": {
+                  "kind": "transition_period",
+                  "precision": "month",
+                  "source": {
+                    "quote": "before January 2026",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-01"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                  {
+                    "quote": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?",
+                    "turn_id": "user-1"
+                  }
+                ],
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "compare",
+                "question_span": {
+                  "quote": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v4"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        }
+      ]
+    },
+    {
+      "raw_record": "03-v4.case.corrected-b01-05-v1.json",
+      "case_id": "v4.case.corrected-b01-05",
+      "question": "Two residents developed similar symptoms within 48 hours. What immediate action should we take, and what evidence of using that process must be retained?",
+      "displayed_text": "On identifying two people at the same site with the same suspected infection onset within 48 hours, declare an outbreak immediately: the registered manager declares the outbreak and notifies the local Health Protection Team the same day, begin enhanced cleaning in affected areas using the product/frequency advised by the Health Protection Team or the site infection lead, cohort affected people (and where practicable staff) away from unaffected people, restrict or reshape communal activities per the Visiting Arrangements Policy exception, and monitor and log staff and residents' symptoms daily for the duration of the outbreak.\n\nRecord-keeping: retain a daily case log tracking new cases against the incubation period and a brief dated decision log of every significant outbreak decision (for example when enhanced cleaning began, when cohorting was applied or relaxed), since the registered manager must keep these records to show the process was followed and to support later review or regulatory enquiry.",
+      "status": "completed",
+      "compiled_needs": [
+        {
+          "need_id": "n1",
+          "compiled_request": "Two residents developed similar symptoms within 48 hours. What immediate action should we take, and what evidence of using that process must be retained? Two residents developed similar symptoms within 48 hours. What immediate action should we take, and what evidence of using that process must be retained?",
+          "matches_checked_execution_view": true,
+          "model_aspect_diagnostic_only": "Retrieve, from the home's infection/outbreak management and record-keeping guidance, the immediate actions to take when two residents develop similar symptoms within 48 hours and the specific records or evidence that must be retained to show that process was followed."
+        }
+      ],
+      "checks": [
+        {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1120,
+          "latency_ms": 1480.4976679999982,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "Two residents developed similar symptoms within 48 hours. What immediate action should we take, and what evidence of using that process must be retained? Two residents developed similar symptoms within 48 hours. What immediate action should we take, and what evidence of using that process must be retained?",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                  {
+                    "quote": "Two residents developed similar symptoms within 48 hours.",
+                    "turn_id": "user-1"
+                  },
+                  {
+                    "quote": "What immediate action should we take, and what evidence of using that process must be retained?",
+                    "turn_id": "user-1"
+                  }
+                ],
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "Two residents developed similar symptoms within 48 hours. What immediate action should we take, and what evidence of using that process must be retained?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v4"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        }
+      ]
+    },
+    {
+      "raw_record": "04-v4.case.corrected-b01-06-v1.json",
+      "case_id": "v4.case.corrected-b01-06",
+      "question": "When will the approved mileage claim from last month be paid?",
+      "displayed_text": "The mileage claim will be paid with your next salary run.",
+      "status": "completed",
+      "compiled_needs": [
+        {
+          "need_id": "n1",
+          "compiled_request": "When will the approved mileage claim from last month be paid?",
+          "matches_checked_execution_view": true,
+          "model_aspect_diagnostic_only": "Retrieve the organisational rule or payroll schedule that states when an approved mileage claim submitted \"last month\" will be paid."
+        }
+      ],
+      "checks": [
+        {
+          "cached_input_tokens": null,
+          "checker_code": "scope_added",
+          "citation": {
+            "inspected_need_ids": [
+              "n1"
+            ],
+            "need_id": "n1",
+            "plan_field": "fact_reference.value",
+            "plan_quote": "2026-10",
+            "user_quote": "last month",
+            "user_turn_id": "user-1"
+          },
+          "citation_verification": "unverifiable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1064,
+          "latency_ms": 5882.304127999987,
+          "model": "gpt-5-mini",
+          "output_tokens": 322,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "When will the approved mileage claim from last month be paid?",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                  {
+                    "quote": "When will the approved mileage claim from last month be paid?",
+                    "turn_id": "user-1"
+                  },
+                  {
+                    "quote": "last month",
+                    "turn_id": "user-1"
+                  }
+                ],
+                "fact_reference": {
+                  "precision": "month",
+                  "source": {
+                    "quote": "last month",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-10"
+                },
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "When will the approved mileage claim from last month be paid?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v4"
+          },
+          "verification_reason": "application_grounded_period",
+          "version": "interpretation-check-v2"
+        }
+      ]
+    },
+    {
+      "raw_record": "05-v4.case.corrected-b01-07-v1.json",
+      "case_id": "v4.case.corrected-b01-07",
+      "question": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+      "displayed_text": "The current (April 2026) version increased both payments: the one-off starter (initial) uniform allowance was raised to \u00a355, and the annual April replacement allowance was raised to \u00a335.\n\nUnder the prior version these amounts were lower: the one-off starter initial allowance had been \u00a340, and the annual April replacement allowance had been \u00a325.",
+      "status": "completed",
+      "compiled_needs": [
+        {
+          "need_id": "n1",
+          "compiled_request": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+          "matches_checked_execution_view": true,
+          "model_aspect_diagnostic_only": "Compare the recorded rules for the starter uniform allowance and the annual replacement uniform allowance and show how each changed as of the transition in April 2026."
+        }
+      ],
+      "checks": [
+        {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1027,
+          "latency_ms": 1907.1437919999426,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+                "authority": {
+                  "kind": "transition_period",
+                  "precision": "month",
+                  "source": {
+                    "quote": "in April 2026",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2026-04"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [],
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "compare",
+                "question_span": {
+                  "quote": "How did both the starter and annual replacement uniform allowances change in April 2026?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v4"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        }
+      ]
+    },
+    {
+      "raw_record": "06-v4.case.corrected-b01-08-v1.json",
+      "case_id": "v4.case.corrected-b01-08",
+      "question": "Does the Midlands key-safe procedure cover Oakfield Lodge outreach, and if a client changes their code, how quickly must we tell the office?",
+      "displayed_text": "Recorded policy scope\n\nThe recorded scope of \"Key Safe Procedure\" includes \"Oakfield Lodge\". This is a statement of recorded policy applicability only; it does not establish what action is safe or required. The reason for this scope is not established by the scope record.\n\nOther requested guidance\n\nThe Midlands key-safe procedure explicitly extends to cover Oakfield Lodge\u2019s outreach service as the region-wide policy replacing the Willow-Bank-only version.\n\nThe procedure requires that any client key safe code change be reported to the office within 24 hours.",
+      "status": "completed",
+      "compiled_needs": [
+        {
+          "need_id": "n1",
+          "compiled_request": "Does the Midlands key-safe procedure cover Oakfield Lodge outreach,",
+          "matches_checked_execution_view": true,
+          "model_aspect_diagnostic_only": "Determine whether the named policy 'Key Safe Procedure' (the Midlands key-safe procedure referenced by the user) explicitly includes the organisational site 'Oakfield Lodge outreach' within its recorded scope."
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "Does the Midlands key-safe procedure cover Oakfield Lodge outreach, if a client changes their code, how quickly must we tell the office?",
+          "matches_checked_execution_view": true,
+          "model_aspect_diagnostic_only": "Retrieve from the named 'Key Safe Procedure' the required notification timeframe or rule for staff to inform the office when a client changes their key-safe code, for the site 'Oakfield Lodge outreach'."
+        }
+      ],
+      "checks": [
+        {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1357,
+          "latency_ms": 2795.274877000111,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [
+                  "df1c71ef-a996-475d-90e5-c5b595ad7e88"
+                ],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              },
+              {
+                "family_ids": [
+                  "df1c71ef-a996-475d-90e5-c5b595ad7e88"
+                ],
+                "need_id": "n2",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "named",
+                  "source": {
+                    "quote": "Oakfield Lodge outreach",
+                    "turn_id": "user-1"
+                  }
+                },
+                "aspect": "Does the Midlands key-safe procedure cover Oakfield Lodge outreach,",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                  {
+                    "quote": "Does the Midlands key-safe procedure cover Oakfield Lodge outreach,",
+                    "turn_id": "user-1"
+                  }
+                ],
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "scope_enquiry",
+                "question_span": {
+                  "quote": "Does the Midlands key-safe procedure cover Oakfield Lodge outreach,",
+                  "turn_id": "user-1"
+                },
+                "scope_question": "membership",
+                "supports_need_id": null
+              },
+              {
+                "applicability": {
+                  "kind": "named",
+                  "source": {
+                    "quote": "Oakfield Lodge outreach",
+                    "turn_id": "user-1"
+                  }
+                },
+                "aspect": "Does the Midlands key-safe procedure cover Oakfield Lodge outreach, if a client changes their code, how quickly must we tell the office?",
+                "authority": {
+                  "kind": "current",
+                  "precision": "none",
+                  "source": null,
+                  "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                  {
+                    "quote": "Does the Midlands key-safe procedure cover Oakfield Lodge outreach,",
+                    "turn_id": "user-1"
+                  },
+                  {
+                    "quote": "if a client changes their code, how quickly must we tell the office?",
+                    "turn_id": "user-1"
+                  }
+                ],
+                "fact_reference": null,
+                "need_id": "n2",
+                "operation": "retrieve",
+                "question_span": {
+                  "quote": "if a client changes their code, how quickly must we tell the office?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v4"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        }
+      ]
+    },
+    {
+      "raw_record": "07-v4.case.corrected-b01-09-v1.json",
+      "case_id": "v4.case.corrected-b01-09",
+      "question": "What deadline and review step changed for a DoLS outcome notification in November 2025?",
+      "displayed_text": "I couldn't find enough available evidence to answer that question.",
+      "status": "retrieval_no_answer",
+      "compiled_needs": [
+        {
+          "need_id": "n1",
+          "compiled_request": "What deadline and review step changed for a DoLS outcome notification in November 2025?",
+          "matches_checked_execution_view": true,
+          "model_aspect_diagnostic_only": "Compare the DoLS (Deprivation of Liberty Safeguards) outcome notification requirements and identify what deadline and what review step were changed by the transition that occurred in November 2025."
+        }
+      ],
+      "checks": [
+        {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1061,
+          "latency_ms": 1563.0573749999712,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "What deadline and review step changed for a DoLS outcome notification in November 2025?",
+                "authority": {
+                  "kind": "transition_period",
+                  "precision": "month",
+                  "source": {
+                    "quote": "in November 2025",
+                    "turn_id": "user-1"
+                  },
+                  "value": "2025-11"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                  {
+                    "quote": "What deadline and review step changed for a DoLS outcome notification in November 2025?",
+                    "turn_id": "user-1"
+                  }
+                ],
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "compare",
+                "question_span": {
+                  "quote": "What deadline and review step changed for a DoLS outcome notification in November 2025?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v4"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        }
+      ]
+    },
+    {
+      "raw_record": "08-v4.case.corrected-b01-10-v1.json",
+      "case_id": "v4.case.corrected-b01-10",
+      "question": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d, did the rule about which remedies may be given change?",
+      "displayed_text": "The rule did not change: both the earlier and the current policy state that a limited list of over-the-counter/homely remedies (paracetamol, antacid, simple cough syrup) may be given without a prescription, recorded on the MAR/chart and subject to the person\u2019s care plan not excluding it.",
+      "status": "completed",
+      "compiled_needs": [
+        {
+          "need_id": "n1",
+          "compiled_request": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d, did the rule about which remedies may be given change?",
+          "matches_checked_execution_view": true,
+          "model_aspect_diagnostic_only": "Compare the earlier guidance titled \u201cOver the counter medicines\u201d with the later guidance titled \u201cHomely remedies list\u201d as recorded in the Homely Remedies Policy, and determine whether the rule specifying which remedies may be given changed when the name/content was changed."
+        }
+      ],
+      "checks": [
+        {
+          "cached_input_tokens": null,
+          "checker_code": "clause_omitted",
+          "citation": {
+            "inspected_need_ids": [
+              "n1"
+            ],
+            "need_id": "n1",
+            "plan_field": null,
+            "plan_quote": null,
+            "user_quote": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d",
+            "user_turn_id": "user-1"
+          },
+          "citation_verification": "verified",
+          "code": "clause_omitted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1117,
+          "latency_ms": 6380.194753000069,
+          "model": "gpt-5-mini",
+          "output_tokens": 524,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "topic"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d, did the rule about which remedies may be given change?",
+                "authority": {
+                  "kind": "previous",
+                  "precision": "named",
+                  "source": {
+                    "quote": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d, did the rule about which remedies may be given change?",
+                    "turn_id": "user-1"
+                  },
+                  "value": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                  {
+                    "quote": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d, did the rule about which remedies may be given change?",
+                    "turn_id": "user-1"
+                  }
+                ],
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "compare",
+                "question_span": {
+                  "quote": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d, did the rule about which remedies may be given change?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v4"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        },
+        {
+          "cached_input_tokens": null,
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "code": "accepted",
+          "cost_basis": "unavailable",
+          "cost_usd": null,
+          "input_tokens": 1127,
+          "latency_ms": 1711.5497100000994,
+          "model": "gpt-5-mini",
+          "output_tokens": 87,
+          "pricing_snapshot": null,
+          "provider": "openai",
+          "request_count": 1,
+          "retry_count": 0,
+          "reviewed_plan": {
+            "bindings": [
+              {
+                "family_ids": [
+                  "7ed436c8-c780-4263-9df9-876485088fea"
+                ],
+                "need_id": "n1",
+                "ownership": "authorised_workspace",
+                "ownership_source": null,
+                "subject_status": "matched"
+              }
+            ],
+            "clarification": null,
+            "decision": "plan",
+            "needs": [
+              {
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "aspect": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d, did the rule about which remedies may be given change?",
+                "authority": {
+                  "kind": "previous",
+                  "precision": "named",
+                  "source": {
+                    "quote": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d,",
+                    "turn_id": "user-1"
+                  },
+                  "value": "\u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d"
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                  {
+                    "quote": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d,",
+                    "turn_id": "user-1"
+                  },
+                  {
+                    "quote": "did the rule about which remedies may be given change?",
+                    "turn_id": "user-1"
+                  }
+                ],
+                "fact_reference": null,
+                "need_id": "n1",
+                "operation": "compare",
+                "question_span": {
+                  "quote": "did the rule about which remedies may be given change?",
+                  "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "schema_version": "evidence-needs-plan-v4"
+          },
+          "verification_reason": null,
+          "version": "interpretation-check-v2"
+        }
+      ]
+    }
+  ]
+}

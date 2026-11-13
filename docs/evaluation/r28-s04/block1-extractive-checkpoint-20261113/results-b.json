@@ -1,0 +1,624 @@
+{
+  "K": 5,
+  "matching_algorithm": "normalised-token-coverage-v1",
+  "completed_records": 8,
+  "complete_checkpoint": false,
+  "summary": {
+    "PRIMARY": {
+      "observed_attempted_count": 7,
+      "observed_recall_at_5": 0.9285714285714286,
+      "frozen_baseline_attempted_count": 25,
+      "frozen_baseline_recall_at_5": 0.8813333333333334,
+      "intersection_count": 4,
+      "intersection_new_recall_at_5": 0.875,
+      "intersection_baseline_recall_at_5": 0.875
+    },
+    "COMPARISON": {
+      "observed_attempted_count": 4,
+      "observed_recall_at_5": 1.0,
+      "frozen_baseline_attempted_count": 13,
+      "frozen_baseline_recall_at_5": 0.46153846153846156,
+      "intersection_count": 2,
+      "intersection_new_recall_at_5": 1.0,
+      "intersection_baseline_recall_at_5": 1.0
+    }
+  },
+  "cases": [
+    {
+      "case_id": "v4.case.corrected-b01-02",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "Before March 2026 the internal escalation contact for a suspected gas leak was the Facilities Lead.\n\nFrom March 2026 that internal escalation contact was replaced by the 24-hour Estates Helpdesk.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-002-187"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 3
+        },
+        "COMPARISON": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-002-144"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 3
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "COMPARISON",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.41585907340049744,
+          "chunk_id": "44cb5eb9-c344-5a62-821b-450cae975666",
+          "document_version_id": "7e92ca76-90c9-434d-86ef-45adcaf81de8"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.36740028858184814,
+          "chunk_id": "9c128658-a118-5389-9229-c5bd3a12211c",
+          "document_version_id": "7e92ca76-90c9-434d-86ef-45adcaf81de8"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.3307657539844513,
+          "chunk_id": "407dc7d3-9daa-567c-9447-e8e6acc3c4ed",
+          "document_version_id": "7e92ca76-90c9-434d-86ef-45adcaf81de8"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.6721490025520325,
+          "chunk_id": "620c732a-2630-5563-bb1d-bcb8ad064ed5",
+          "document_version_id": "b9eb058e-dc89-47a0-b380-c51ae42b2727"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.5203441977500916,
+          "chunk_id": "00856a9d-a946-521e-a989-c7e1cfefe243",
+          "document_version_id": "b9eb058e-dc89-47a0-b380-c51ae42b2727"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.4662543535232544,
+          "chunk_id": "68f38e36-d76c-5992-ba3c-b36aa550e38c",
+          "document_version_id": "b9eb058e-dc89-47a0-b380-c51ae42b2727"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-04",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "Before January 2026, the policy required a resident assessed at high risk to be repositioned at least every 4 hours.\n\nAfter the change (the version authoritative at and after 2026\u201101\u201101), the interval for a resident assessed at high risk was tightened to repositioning at least every 2 hours.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-004-106"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 3
+        },
+        "COMPARISON": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-004-103"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 3
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "COMPARISON",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.5503536462783813,
+          "chunk_id": "18d5a2b9-488e-55d0-a9c4-8220f9771280",
+          "document_version_id": "15d5f7f0-bf6a-4e97-b779-9460f08dd7d1"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.5303568243980408,
+          "chunk_id": "d69f5aa3-300b-5bde-bb2c-f201eb61a946",
+          "document_version_id": "15d5f7f0-bf6a-4e97-b779-9460f08dd7d1"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.44126424193382263,
+          "chunk_id": "80d8b892-c9fd-55cf-a96c-604459ac9150",
+          "document_version_id": "15d5f7f0-bf6a-4e97-b779-9460f08dd7d1"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8086572885513306,
+          "chunk_id": "3c61297d-5321-5f0a-b9bd-5f1c4a251b4b",
+          "document_version_id": "c36ac189-7e2d-483b-9635-189b03e8e76c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.7595819234848022,
+          "chunk_id": "1b12d51b-1130-5a42-8a02-94f3f883a1fb",
+          "document_version_id": "c36ac189-7e2d-483b-9635-189b03e8e76c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.7132332921028137,
+          "chunk_id": "e48c6178-4d36-5efc-8135-5ad1dbf9e04b",
+          "document_version_id": "c36ac189-7e2d-483b-9635-189b03e8e76c"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-05",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "On identifying two people at the same site with the same suspected infection onset within 48 hours, declare an outbreak immediately: the registered manager declares the outbreak and notifies the local Health Protection Team the same day, begin enhanced cleaning in affected areas using the product/frequency advised by the Health Protection Team or the site infection lead, cohort affected people (and where practicable staff) away from unaffected people, restrict or reshape communal activities per the Visiting Arrangements Policy exception, and monitor and log staff and residents' symptoms daily for the duration of the outbreak.\n\nRecord-keeping: retain a daily case log tracking new cases against the incubation period and a brief dated decision log of every significant outbreak decision (for example when enhanced cleaning began, when cohorting was applied or relaxed), since the registered manager must keep these records to show the process was followed and to support later review or regulatory enquiry.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 0.5,
+          "precision_at_k": 0.2,
+          "mrr": 0.3333333333333333,
+          "ndcg_at_k": 0.3065735963827292,
+          "covered_evidence_ids": [
+            "ev-b01-005-150"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 15
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8370473980903625,
+          "chunk_id": "f9efafe1-3b25-5e45-948c-5da9d92b5fd1",
+          "document_version_id": "d26c20bc-c967-4bed-ad97-63740f1811af"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.8251205682754517,
+          "chunk_id": "e979937a-8f5c-5025-83f0-b436d827759c",
+          "document_version_id": "d26c20bc-c967-4bed-ad97-63740f1811af"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.8191006779670715,
+          "chunk_id": "41566185-57aa-58eb-81c5-04a8f54151f8",
+          "document_version_id": "fdcb4b96-c23c-4cec-8bff-07099b27d88e"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 4,
+          "need_id": "n1",
+          "source_rank": 4,
+          "score": 0.7411245703697205,
+          "chunk_id": "345c85e1-402b-52cc-973a-df9eee11908a",
+          "document_version_id": "d26c20bc-c967-4bed-ad97-63740f1811af"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 5,
+          "need_id": "n1",
+          "source_rank": 5,
+          "score": 0.5837825536727905,
+          "chunk_id": "26f135ee-5684-592c-a740-31495b2968ed",
+          "document_version_id": "d26c20bc-c967-4bed-ad97-63740f1811af"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 6,
+          "need_id": "n1",
+          "source_rank": 6,
+          "score": 0.550123929977417,
+          "chunk_id": "84902930-6732-54f2-bdec-5705aab5381d",
+          "document_version_id": "6ee43148-7ddd-439a-a4fd-2b6e0409783a"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 7,
+          "need_id": "n1",
+          "source_rank": 7,
+          "score": 0.5461081862449646,
+          "chunk_id": "ac0407fb-3d50-5081-91bc-de7bbb5c086a",
+          "document_version_id": "fdcb4b96-c23c-4cec-8bff-07099b27d88e"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 8,
+          "need_id": "n1",
+          "source_rank": 8,
+          "score": 0.5136542320251465,
+          "chunk_id": "bf301c7b-f836-58f7-9d0d-da0082053de9",
+          "document_version_id": "7f3ea274-cefa-42c6-85a1-801ec8514743"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 9,
+          "need_id": "n1",
+          "source_rank": 9,
+          "score": 0.4429420828819275,
+          "chunk_id": "f776e285-5430-52cc-8603-bce46888470e",
+          "document_version_id": "6c4c6bcb-a666-4b7a-8999-674a411a95eb"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 10,
+          "need_id": "n1",
+          "source_rank": 10,
+          "score": 0.4220018684864044,
+          "chunk_id": "4b6360ff-7878-5b25-bb05-ac0fda649fd6",
+          "document_version_id": "29e3e059-4943-481d-b9ba-c982e8b40c56"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 11,
+          "need_id": "n1",
+          "source_rank": 11,
+          "score": 0.40670493245124817,
+          "chunk_id": "1b12d51b-1130-5a42-8a02-94f3f883a1fb",
+          "document_version_id": "c36ac189-7e2d-483b-9635-189b03e8e76c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 12,
+          "need_id": "n1",
+          "source_rank": 12,
+          "score": 0.3839435577392578,
+          "chunk_id": "e4e6da12-6e33-5e23-8475-1ce006166e1a",
+          "document_version_id": "23c48834-49e0-4c88-bb96-9f203c0780d9"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 13,
+          "need_id": "n1",
+          "source_rank": 13,
+          "score": 0.3768438398838043,
+          "chunk_id": "8744a469-ecf5-54a1-8265-1b77c1d35731",
+          "document_version_id": "ea5136c5-b15e-4922-8a3c-50d31d5ae8f5"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 14,
+          "need_id": "n1",
+          "source_rank": 14,
+          "score": 0.3632195293903351,
+          "chunk_id": "e48c6178-4d36-5efc-8135-5ad1dbf9e04b",
+          "document_version_id": "c36ac189-7e2d-483b-9635-189b03e8e76c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 15,
+          "need_id": "n1",
+          "source_rank": 15,
+          "score": 0.2861309051513672,
+          "chunk_id": "59abe211-1f4b-5fd7-926d-03350f1850cc",
+          "document_version_id": "0fcd20f7-6481-4a07-bfd3-2c5fb65b2bd2"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-06",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "The mileage claim will be paid with your next salary run.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-006-180"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 6
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8546010255813599,
+          "chunk_id": "821176a0-d6ae-5aff-bbb1-55dfcf5c7da7",
+          "document_version_id": "4b7496ae-445a-4cd9-a089-e5691c9e19b4"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.20510955154895782,
+          "chunk_id": "35b22796-9aa5-539f-a994-b072536cd13d",
+          "document_version_id": "8944f790-dd5f-4ce9-b739-d4a287c6ef26"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 3,
+          "need_id": "n1",
+          "source_rank": 3,
+          "score": 0.20498739182949066,
+          "chunk_id": "af86c3aa-c0ee-5202-86ba-1c4cb0353aae",
+          "document_version_id": "a9c41b46-3767-4722-ad28-758fcb1bcde3"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 4,
+          "need_id": "n1",
+          "source_rank": 4,
+          "score": 0.20496726036071777,
+          "chunk_id": "de8e4cbd-a77e-5089-b692-2fd6d3ea005e",
+          "document_version_id": "3b0222a1-0775-4da9-8a07-79ab5f5f330c"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 5,
+          "need_id": "n1",
+          "source_rank": 5,
+          "score": 0.20260602235794067,
+          "chunk_id": "653a6760-bd5e-59ff-ad35-ec7c86a845ce",
+          "document_version_id": "897585cb-1fbe-4d40-9e96-6507a757b5f2"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 6,
+          "need_id": "n1",
+          "source_rank": 6,
+          "score": 0.199130579829216,
+          "chunk_id": "2fed309c-7efd-5dcd-bd90-70da5338f5a9",
+          "document_version_id": "61922ea5-3498-448b-ae86-b14016ed9bb1"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-07",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "The current (April 2026) version increased both payments: the one-off starter (initial) uniform allowance was raised to \u00a355, and the annual April replacement allowance was raised to \u00a335.\n\nUnder the prior version these amounts were lower: the one-off starter initial allowance had been \u00a340, and the annual April replacement allowance had been \u00a325.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-007-270"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 2
+        },
+        "COMPARISON": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-007-204"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 2
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "COMPARISON",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.6290803551673889,
+          "chunk_id": "c374ef9c-5170-5ae8-b50b-746e2a8c98bb",
+          "document_version_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b"
+        },
+        {
+          "side": "COMPARISON",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.5583918690681458,
+          "chunk_id": "5ea460a7-9a67-5cf3-903c-21842e4db198",
+          "document_version_id": "1bc8adb6-cc70-4b68-9db4-f3a555bc944b"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.7093822360038757,
+          "chunk_id": "c943d6d2-b8ba-5878-b26a-ec32d30d7ecc",
+          "document_version_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 2,
+          "need_id": "n1",
+          "source_rank": 2,
+          "score": 0.6829932928085327,
+          "chunk_id": "8f2f2372-6747-56c3-aad7-e8b2a1ee544f",
+          "document_version_id": "580ef1bd-1bb8-4f2e-b839-b790b6b17738"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-08",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "Recorded policy scope\n\nThe recorded scope of \"Key Safe Procedure\" includes \"Oakfield Lodge\". This is a statement of recorded policy applicability only; it does not establish what action is safe or required. The reason for this scope is not established by the scope record.\n\nOther requested guidance\n\nThe Midlands key-safe procedure explicitly extends to cover Oakfield Lodge\u2019s outreach service as the region-wide policy replacing the Willow-Bank-only version.\n\nThe procedure requires that any client key safe code change be reported to the office within 24 hours.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.6131471927654584,
+          "covered_evidence_ids": [
+            "ev-b01-008-180",
+            "ev-b01-008-228"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 1
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n2",
+          "source_rank": 1,
+          "score": 0.9110727906227112,
+          "chunk_id": "3c152f00-deec-5a40-aa8a-d78e233e52e3",
+          "document_version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab"
+        }
+      ]
+    },
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": false,
+      "status": "retrieval_no_answer",
+      "displayed_text": "I couldn't find enough available evidence to answer that question.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_k": 0.0,
+          "covered_evidence_ids": [],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 0
+        },
+        "COMPARISON": {
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_k": 0.0,
+          "covered_evidence_ids": [],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 0
+        }
+      },
+      "ranked_lineage": []
+    },
+    {
+      "case_id": "v4.case.corrected-b01-10",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "reached_rerank": true,
+      "status": "completed",
+      "displayed_text": "The rule did not change: both the earlier and the current policy state that a limited list of over-the-counter/homely remedies (paracetamol, antacid, simple cough syrup) may be given without a prescription, recorded on the MAR/chart and subject to the person\u2019s care plan not excluding it.",
+      "attempted_rerank": {
+        "PRIMARY": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.6131471927654584,
+          "covered_evidence_ids": [
+            "ev-b01-010-102",
+            "ev-b01-010-58"
+          ],
+          "required_unit_count": 2,
+          "ranked_candidate_count": 1
+        },
+        "COMPARISON": {
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 1.0,
+          "covered_evidence_ids": [
+            "ev-b01-010-26"
+          ],
+          "required_unit_count": 1,
+          "ranked_candidate_count": 1
+        }
+      },
+      "ranked_lineage": [
+        {
+          "side": "COMPARISON",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.6293987035751343,
+          "chunk_id": "9114a1dd-4a12-5039-a3d3-70d171c0bde1",
+          "document_version_id": "6f3954b8-bb68-46f4-9cd8-105d3426aa51"
+        },
+        {
+          "side": "PRIMARY",
+          "rank": 1,
+          "need_id": "n1",
+          "source_rank": 1,
+          "score": 0.8779007792472839,
+          "chunk_id": "9b6cd214-cf78-5929-9943-c76438b0debc",
+          "document_version_id": "fdca6e91-8a24-4803-b630-66a5c889e3ce"
+        }
+      ]
+    }
+  ]
+}

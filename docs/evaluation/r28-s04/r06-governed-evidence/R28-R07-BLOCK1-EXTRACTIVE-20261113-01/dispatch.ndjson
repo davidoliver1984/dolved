@@ -1,0 +1,16 @@
+{"index": 0, "case_id": "v4.case.corrected-b01-02", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-13T06:53:54.155903+00:00"}
+{"index": 0, "case_id": "v4.case.corrected-b01-02", "variant_id": "v1", "event": "recorded", "sha256": "8d4dabcb18a0f8f08757d89588fdc184bdd074d33c520759dd9121813b995f9d", "at": "2026-11-13T06:54:34.203310+00:00"}
+{"index": 1, "case_id": "v4.case.corrected-b01-04", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-13T06:55:16.562844+00:00"}
+{"index": 1, "case_id": "v4.case.corrected-b01-04", "variant_id": "v1", "event": "recorded", "sha256": "c05ceee357f2d0377e6e05d3cb46b77a93e1fa235b9786ddc63a6b34c1687908", "at": "2026-11-13T06:56:08.506762+00:00"}
+{"index": 2, "case_id": "v4.case.corrected-b01-05", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-13T06:56:49.589019+00:00"}
+{"index": 2, "case_id": "v4.case.corrected-b01-05", "variant_id": "v1", "event": "recorded", "sha256": "0e1e37118d0ae86be9dc8b5f477e979082bd48efcf69df95cae0ecdc369b0d66", "at": "2026-11-13T06:57:17.507212+00:00"}
+{"index": 3, "case_id": "v4.case.corrected-b01-06", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-13T06:57:59.354669+00:00"}
+{"index": 3, "case_id": "v4.case.corrected-b01-06", "variant_id": "v1", "event": "recorded", "sha256": "0c42974a337726b6994ed54e226dc424cd552552383496476312b470e5a371ae", "at": "2026-11-13T06:58:25.738940+00:00"}
+{"index": 4, "case_id": "v4.case.corrected-b01-07", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-13T06:58:55.865815+00:00"}
+{"index": 4, "case_id": "v4.case.corrected-b01-07", "variant_id": "v1", "event": "recorded", "sha256": "a3388c5ade99aff29d7a481169a1dd0bc6f841beb24678bdd8c5c269696c7df9", "at": "2026-11-13T06:59:34.586265+00:00"}
+{"index": 5, "case_id": "v4.case.corrected-b01-08", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-13T07:00:29.030345+00:00"}
+{"index": 5, "case_id": "v4.case.corrected-b01-08", "variant_id": "v1", "event": "recorded", "sha256": "3e4f7bf15fd805468e216a864801d1d7e11122d86df032b36592e814944266f8", "at": "2026-11-13T07:01:00.285802+00:00"}
+{"index": 6, "case_id": "v4.case.corrected-b01-09", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-13T07:01:54.850502+00:00"}
+{"index": 6, "case_id": "v4.case.corrected-b01-09", "variant_id": "v1", "event": "recorded", "sha256": "0fade9af4a0103116acde65c8663a0a3a7205749d2042264764572b16e3fc85f", "at": "2026-11-13T07:02:15.515642+00:00"}
+{"index": 7, "case_id": "v4.case.corrected-b01-10", "variant_id": "v1", "event": "dispatch_started", "at": "2026-11-13T07:02:56.770523+00:00"}
+{"index": 7, "case_id": "v4.case.corrected-b01-10", "variant_id": "v1", "event": "recorded", "sha256": "b33d0b067f4b3a1b620051bc7a3d389283992b59b3234d0ec20c324d14c1377f", "at": "2026-11-13T07:03:48.667259+00:00"}

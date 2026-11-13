@@ -1,0 +1,21 @@
+{
+  "schema_version": "r28-r07-production-authorization-v1",
+  "authorization_id": "R28-R07-AUTH-BLOCK1-EXTRACTIVE-20261113-01",
+  "run_id": "R28-R07-BLOCK1-EXTRACTIVE-20261113-01",
+  "stage": "block1_extractive",
+  "manifest_id": "R28-BLOCK1-EXTRACTIVE-THIRTY-PLUS-TWO-20261113-V1",
+  "authorised": true,
+  "selective_rerun_authorised": true,
+  "approved_by": "David",
+  "approved_on": "2026-11-13",
+  "approval_basis": "David approved held-branch publication, fixture-only migration, and the frozen about-30 labelled V4 checkpoint followed by b01-01/b03-05 as development cases, once each, USD 3 total cap. He separately approved a checkpoint-only exact pushed-SHA hold-branch runner exception with HEAD, actual remote tip and runtime checks, one-use authorization and unchanged main gating for all existing stages. Full suites exactly match 38 AI / 2 Laravel; 27 harness tests pass. Canonical lint/typecheck retain attributed unchanged baseline findings, documented separately, not claimed green. Stop for any fixed acceptance failure, no tuning or selective rerun. No main promotion unless all acceptance criteria pass. Per-case manual review and budget headroom retained.",
+  "execution_commit": "ea678bac64462b24a039592ab9d951bd679da397",
+  "selection_sha256": "0de5c2ea1998820c1ef950db79ea4386d36a25a7f91bfa85e3693dfb02cc0183",
+  "input_sha256": "ee4fb0903fc0feff93510266455a3c8a520938787d25b5c7027a680e402dd951",
+  "scopes_sha256": "28a3a132a4ecfe8463842e0dd89f4307b089ac37c7404794ded48bc87ba6bd97",
+  "population_sha256": "17e11317d9999056046115e17300c59423c08f0cb0453b636d5abda07ba104b5",
+  "dispatcher_sha256": "105e91a566af3dabe3d11544f9bebbbe60621d34ed51ab19a31f194741218a9a",
+  "runner_sha256": "d2bbb4e0e4f2e2e0b569e02e45535360c71c46eadd0117a3526a02b28c052fcf",
+  "runtime_source_aggregate": "0eab315797d6b8af9baea21b85a867386c83bf425c7719ffb16b9974bc9acdc8",
+  "runtime_snapshot_sha256": "f271c1ac843e53aaa16f6f0c70f6f3b642499d69dac2467d17e80c42f280d792"
+}
