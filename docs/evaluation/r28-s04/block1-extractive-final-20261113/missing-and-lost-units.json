@@ -1,0 +1,123 @@
+{
+  "K": 5,
+  "observed_records": 16,
+  "unattempted_not_scored": 16,
+  "units": [
+    {
+      "case_id": "v4.case.corrected-b01-05",
+      "side": "PRIMARY",
+      "unit": {
+        "evidence_id": "ev-b01-005-127",
+        "document_family_id": "07364c5d-6d1c-4ea1-841a-cfce59fbbd30",
+        "document_version_id": "fdcb4b96-c23c-4cec-8bff-07099b27d88e",
+        "side": "PRIMARY",
+        "source_path": "tests/evaluation/corpus/dolved-care-v4/v1/checkpoint-19-application-evidence-corrections.tar.gz!eval-corpus-v4-authoring/artifacts/docx/infection-control-full-manual-v3.docx",
+        "canonical_excerpts": [
+          "Audit findings, decision tree usage and antimicrobial stewardship observations are retained per the Records Retention Schedule."
+        ],
+        "relevance_grade": 2,
+        "minimum_token_coverage": 1.0,
+        "notes": "v4d.ipc.infection-control-full-manual / v3; source SHA-256 18266de0a758e72c79b4c37686c52d3487449d3fb6a2c8e958386cfda3142dc2"
+      },
+      "lost_from_baseline": false,
+      "significance": "Existing miss, not a newly lost unit; see source-based case verdict and Block 2 attribution where applicable."
+    },
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "side": "PRIMARY",
+      "unit": {
+        "evidence_id": "ev-b01-009-103",
+        "document_family_id": "7643c012-90c5-4883-9056-da22b951b8e5",
+        "document_version_id": "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+        "side": "PRIMARY",
+        "source_path": "tests/evaluation/corpus/dolved-care-v4/v1/checkpoint-19-application-evidence-corrections.tar.gz!eval-corpus-v4-authoring/artifacts/pdf/cqc-notification-procedure-v2.pdf",
+        "canonical_excerpts": [
+          "4. Submit a DoLS outcome notification within 3 working days of the outcome being known, a tightening of"
+        ],
+        "relevance_grade": 2,
+        "minimum_token_coverage": 1.0,
+        "notes": "v4b.complaints.cqc-notification-procedure / v2; source SHA-256 b9b22be2f77145aacb66cb9eea106f9b6cecaf62281bbf8597997d754ce17ef4"
+      },
+      "lost_from_baseline": false,
+      "significance": "Existing miss, not a newly lost unit; see source-based case verdict and Block 2 attribution where applicable."
+    },
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "side": "PRIMARY",
+      "unit": {
+        "evidence_id": "ev-b01-009-108",
+        "document_family_id": "7643c012-90c5-4883-9056-da22b951b8e5",
+        "document_version_id": "a164319c-25a8-4d8c-8df5-5fbd8a5a304f",
+        "side": "PRIMARY",
+        "source_path": "tests/evaluation/corpus/dolved-care-v4/v1/checkpoint-19-application-evidence-corrections.tar.gz!eval-corpus-v4-authoring/artifacts/pdf/cqc-notification-procedure-v2.pdf",
+        "canonical_excerpts": [
+          "2. Draft the notification and send it to the Quality Lead for review before submission; the previous version"
+        ],
+        "relevance_grade": 2,
+        "minimum_token_coverage": 1.0,
+        "notes": "v4b.complaints.cqc-notification-procedure / v2; source SHA-256 b9b22be2f77145aacb66cb9eea106f9b6cecaf62281bbf8597997d754ce17ef4"
+      },
+      "lost_from_baseline": false,
+      "significance": "Existing miss, not a newly lost unit; see source-based case verdict and Block 2 attribution where applicable."
+    },
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "side": "COMPARISON",
+      "unit": {
+        "evidence_id": "ev-b01-009-101",
+        "document_family_id": "7643c012-90c5-4883-9056-da22b951b8e5",
+        "document_version_id": "9f3bf855-ae64-4808-b63a-0a4fdaad4d1c",
+        "side": "COMPARISON",
+        "source_path": "tests/evaluation/corpus/dolved-care-v4/v1/checkpoint-19-application-evidence-corrections.tar.gz!eval-corpus-v4-authoring/artifacts/pdf/cqc-notification-procedure-v1.pdf",
+        "canonical_excerpts": [
+          "3. Submit a DoLS outcome notification within the timeframe set by the relevant authorisation, tracked"
+        ],
+        "relevance_grade": 2,
+        "minimum_token_coverage": 1.0,
+        "notes": "v4b.complaints.cqc-notification-procedure / v1; source SHA-256 970c421c1a2cce167b7ca0edd5b4ac4fa2dbdad13ab86a74224016a7049f01ae"
+      },
+      "lost_from_baseline": false,
+      "significance": "Existing miss, not a newly lost unit; see source-based case verdict and Block 2 attribution where applicable."
+    },
+    {
+      "case_id": "v4.case.corrected-b02-09",
+      "side": "COMPARISON",
+      "unit": {
+        "evidence_id": "ev-b02-09-historical-overtime-rate",
+        "document_family_id": "73d1a28e-c965-48d1-8cd1-34f5d0014b9f",
+        "document_version_id": "8d7f699f-11a9-4354-9977-93d608a02818",
+        "side": "COMPARISON",
+        "source_path": "tests/evaluation/corpus/dolved-care-v4/v1/checkpoint-19-application-evidence-corrections.tar.gz!eval-corpus-v4-authoring/artifacts/pdf/overtime-payment-guidance-v1.pdf",
+        "canonical_excerpts": [
+          "Overtime is paid at 1.25 times the standard hourly rate for any hours beyond contracted hours, pre-authorised by a line manager, ensuring staff are fairly compensated for additional hours genuinely worked."
+        ],
+        "relevance_grade": 2,
+        "minimum_token_coverage": 1.0,
+        "notes": "v4d.payroll.overtime-payment-guidance / v1; source SHA-256 d9d112d8947c4f25df1762b7d83bdadd533419d4c72ff077dcd6f399504fc001"
+      },
+      "lost_from_baseline": false,
+      "significance": "Existing miss, not a newly lost unit; see source-based case verdict and Block 2 attribution where applicable."
+    },
+    {
+      "case_id": "v4.case.corrected-b03-07",
+      "side": "PRIMARY",
+      "unit": {
+        "evidence_id": "ev-b03-07-harbour-cleaning",
+        "document_family_id": "34cacf6a-c7f2-4dcf-a2a0-05ef542175a9",
+        "document_version_id": "95327181-051d-4dc9-bae4-2a9bdc06e626",
+        "side": "PRIMARY",
+        "source_path": "tests/evaluation/corpus/dolved-care-v4/v1/checkpoint-19-application-evidence-corrections.tar.gz!eval-corpus-v4-authoring/artifacts/docx/cleaning-contract-summary-v1.docx",
+        "canonical_excerpts": [
+          "Harbour View\nCleanCo South West Ltd\nDaily"
+        ],
+        "relevance_grade": 2,
+        "minimum_token_coverage": 1.0,
+        "notes": "v4b.contractors.cleaning-contract-summary / v1; source SHA-256 ae84a141b7721d0da26d7454c380f3ab3910c618aa3ef75ef30a5ac878329ac5"
+      },
+      "lost_from_baseline": true,
+      "significance": "Authority-critical historical supplier identity replaced by a post-date current version; blocks regardless of aggregate."
+    }
+  ],
+  "newly_lost_count": 1,
+  "deterministic_results_byte_identical": true
+}
