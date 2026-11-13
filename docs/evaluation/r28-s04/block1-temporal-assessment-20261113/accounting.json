@@ -1,0 +1,58 @@
+{
+  "provider_calls": 125,
+  "planner_calls": 0,
+  "retrieval_calls": 0,
+  "generation_calls": 0,
+  "input_tokens": 191090,
+  "output_tokens": 61215,
+  "cost_usd_retained_rate": 0.1702025,
+  "reservation_usd": 1.30183875,
+  "cost_basis": "Retained gpt-5-mini USD0.25/M input and USD2/M output. No cache discount. Not a billing invoice or independently verified current tariff.",
+  "unaccounted_usage_calls": 0,
+  "input_tokens_per_check": {
+    "min": 1465,
+    "mean": 1528.72,
+    "median": 1538,
+    "max": 1575
+  },
+  "output_tokens_per_check": {
+    "min": 131,
+    "mean": 489.72,
+    "median": 494,
+    "max": 963
+  },
+  "latency_ms_per_check": {
+    "min": 2316.555334000441,
+    "mean": 5992.713151464006,
+    "median": 5875.2054199994745,
+    "max": 13122.065506000581
+  },
+  "development_same_plan": {
+    "old_v2": {
+      "input_tokens": 1100,
+      "output_tokens": 87,
+      "latency_ms": 2165.4862510004023
+    },
+    "new_v3": {
+      "input_tokens": {
+        "min": 1537,
+        "mean": 1537,
+        "median": 1537,
+        "max": 1537
+      },
+      "output_tokens": {
+        "min": 437,
+        "mean": 524.8,
+        "median": 560,
+        "max": 619
+      },
+      "latency_ms": {
+        "min": 5478.215210998314,
+        "mean": 6429.495519600096,
+        "median": 6538.14316900025,
+        "max": 7100.74279500077
+      }
+    },
+    "limitation": "One retained v2 call versus five new v3 calls, not a contemporaneous paired control. Token delta measured for the same plan; latency/output differences are observational, not causal overhead estimates."
+  }
+}

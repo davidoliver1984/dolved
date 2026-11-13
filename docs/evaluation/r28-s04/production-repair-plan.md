@@ -10,6 +10,16 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 ### Block 1 — interpretation and execution consistency (R02/R05)
 
+#### Temporal mechanism experiment failed — 2026-11-13
+
+Implemented/frozen at hold commit `896717a30c26d3f3ea6d48df8684e1d8af95c090`; [complete report and raw evidence](block1-temporal-assessment-20261113/report.md). **125/125 checker-only calls; no planner calls or end-to-end confirmation.** All 25 plans were validated in Python/PHP before dispatch. Runtime aggregate unchanged before/after: `b563abc752e71d44704eaa63d80619ec9662a5b7759e86e986bdc9b1c58a9570`.
+
+Fixed gates **FAIL**: semantically appropriate citation-verified wrong catches **56/65 (86.15%)** versus ≥90%; correct-plan false rejections **10/60 (16.67%)** versus ≤5%; conflicting-selector pattern T12 **0/5 catches**, independently fails the per-pattern gate. Four unavailable checks remain separately recorded, not inferred as semantic decisions. Two wrong-plan flags were unverifiable and retained under the unchanged policy; both real role errors were missed. Retained input16 development plan caught5/5, not population reliability evidence. No tuning, retry-to-pass, expectation revision or main merge.
+
+**Block1-owned measured findings:** false flags on T02 (1), T04 (2), T08 (1), T10 (3), T11 (3); misreading event/current context and compare execution lanes remains despite mandatory assessment. T12 consistently accepts loss of its historical selector by calling it fact_context. Unavailable receipt subtype remains unresolved. Per-attempt citations/semantic review and per-question/per-pattern counts are in the report; citations alone did not certify correct judgment. The 38AI/2Laravel full-suite failure identities remain unchanged, with raw JUnit; that structural regression result does not override the failed live semantic gates.
+
+Reserved USD1.30183875 before dispatch; actual recorded191,090input/61,215output tokens, USD0.1702025 at retained rates (not billing invoice). Mean checker5.993s; retained identical development plan input overhead+437tokens, latency comparison observational rather than causal. Production4096-token limit and two-attempt ceiling unchanged. **Block1 remains HOLD. Stop for David; fresh confirmation not dispatched.**
+
 #### Reviewer resolution and temporal implementation — 2026-11-13
 
 The verification stop below is **superseded by David's approval and reviewer amendment 1**, not erased. `amendment-1.json` SHA-256 `54b9d9bf7c5a9ffec5dfd934aef1605ed3a234e74f138a636ef8190a1f5b934f` was committed unchanged in `8fc2125`; selection remains unchanged in `ccb35dd`. T11 now requires the ingested immediate-risk exception and bounds known history from July 2024. T12 now asks an observable current-versus-June-2025 conflict using Staff Benefits v1/v2 (5–10% versus 5–15%, effective April 2025/April 2026). Both verified against the existing frozen authorised ingested chunks and application effective dates; no package defect remains identified. Short expectations do not waive material source conditions.

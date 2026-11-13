@@ -1,0 +1,8 @@
+{
+  "refs": [
+    "896717a30c26d3f3ea6d48df8684e1d8af95c090\trefs/heads/codex/block1-extractive-hold-20261112",
+    "348f09e053c8ad73676921c5c616cced812111d7\trefs/heads/main"
+  ],
+  "application_commit": "896717a30c26d3f3ea6d48df8684e1d8af95c090",
+  "main_unchanged": true
+}

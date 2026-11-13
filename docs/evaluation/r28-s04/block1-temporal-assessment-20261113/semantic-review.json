@@ -1,0 +1,4274 @@
+{
+  "reviewer": "Codex implementer; source/plan-based review, not independent human adjudication or a model-judge call",
+  "totals": {
+    "correct_acceptance": 48,
+    "appropriate_verified_rejection": 56,
+    "false_rejection": 10,
+    "miss_unverifiable_rejection": 2,
+    "unavailable": 4,
+    "miss_accepted_wrong_plan": 5
+  },
+  "per_question": {
+    "T01": {
+      "correct_attempts": 5,
+      "correct_acceptance": 5,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "T02": {
+      "correct_attempts": 5,
+      "false_rejection": 1,
+      "correct_acceptance": 4,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 4,
+      "miss_unverifiable_rejection": 1
+    },
+    "T03": {
+      "correct_attempts": 5,
+      "correct_acceptance": 5,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "T04": {
+      "correct_attempts": 5,
+      "correct_acceptance": 2,
+      "false_rejection": 2,
+      "unavailable": 2,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 4
+    },
+    "T05": {
+      "correct_attempts": 5,
+      "unavailable": 2,
+      "correct_acceptance": 4,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 4
+    },
+    "T06": {
+      "correct_attempts": 5,
+      "correct_acceptance": 5,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "T07": {
+      "correct_attempts": 5,
+      "correct_acceptance": 5,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 4,
+      "miss_unverifiable_rejection": 1
+    },
+    "T08": {
+      "correct_attempts": 5,
+      "correct_acceptance": 4,
+      "false_rejection": 1,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "T09": {
+      "correct_attempts": 5,
+      "correct_acceptance": 5,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "T10": {
+      "correct_attempts": 5,
+      "false_rejection": 3,
+      "correct_acceptance": 2,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "T11": {
+      "correct_attempts": 5,
+      "false_rejection": 3,
+      "correct_acceptance": 2,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "T12": {
+      "correct_attempts": 5,
+      "correct_acceptance": 5,
+      "wrong_attempts": 5,
+      "miss_accepted_wrong_plan": 5
+    },
+    "input16-development": {
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    }
+  },
+  "per_pattern": {
+    "date_asks_which_rule_applied": {
+      "correct_attempts": 15,
+      "correct_acceptance": 14,
+      "wrong_attempts": 15,
+      "appropriate_verified_rejection": 14,
+      "false_rejection": 1,
+      "miss_unverifiable_rejection": 1
+    },
+    "event_date_must_not_select_history": {
+      "correct_attempts": 10,
+      "correct_acceptance": 6,
+      "false_rejection": 2,
+      "unavailable": 4,
+      "wrong_attempts": 10,
+      "appropriate_verified_rejection": 8
+    },
+    "current_question_mentioning_old_event": {
+      "correct_attempts": 10,
+      "correct_acceptance": 10,
+      "wrong_attempts": 10,
+      "appropriate_verified_rejection": 9,
+      "miss_unverifiable_rejection": 1
+    },
+    "same_date_is_both_event_and_authority": {
+      "correct_attempts": 5,
+      "correct_acceptance": 4,
+      "false_rejection": 1,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "multiple_dates_distinct_roles": {
+      "correct_attempts": 5,
+      "correct_acceptance": 5,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "multiple_dates_distinct_roles_with_comparison": {
+      "correct_attempts": 5,
+      "false_rejection": 3,
+      "correct_acceptance": 2,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "missing_event_date": {
+      "correct_attempts": 5,
+      "false_rejection": 3,
+      "correct_acceptance": 2,
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    },
+    "conflicting_temporal_information": {
+      "correct_attempts": 5,
+      "correct_acceptance": 5,
+      "wrong_attempts": 5,
+      "miss_accepted_wrong_plan": 5
+    },
+    "retained_historical_date_as_fact": {
+      "wrong_attempts": 5,
+      "appropriate_verified_rejection": 5
+    }
+  },
+  "gates": {
+    "wrong_catch": {
+      "count": 56,
+      "denominator": 65,
+      "required_minimum": 59
+    },
+    "false_rejection": {
+      "count": 10,
+      "denominator": 60,
+      "maximum": 3
+    },
+    "patterns_with_zero_catches": [
+      "conflicting_temporal_information"
+    ],
+    "complete_dispatch": true,
+    "unavailable_checks": 4,
+    "disposition": "HOLD; no end-to-end confirmation; no tuning or rerun"
+  },
+  "attempts": [
+    {
+      "record": "results/T01-correct-1.json",
+      "sha256": "85ae21874291540e30ca0487e19f47508b173217d7499ab70b63e957a53c6a60",
+      "probe_id": "T01-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "14 October 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T01-correct-2.json",
+      "sha256": "669f7a419824fda1a7a34489f0c2605aa27167ea9789bbb7f2c666abe62c7fba",
+      "probe_id": "T01-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "14 October 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T01-correct-3.json",
+      "sha256": "7174fd4f92b37beb35e5e11216180ff36858332e5f4650d7e551fb2034876c97",
+      "probe_id": "T01-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "14 October 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T01-correct-4.json",
+      "sha256": "588d27df8a94015056388ab472d4ed0349bbeab2000e45c89cc4dc19ba3d0609",
+      "probe_id": "T01-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "14 October 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T01-correct-5.json",
+      "sha256": "4aef46d99d3688586b10851f92bc9b7d89425d58701175fe8592b42dbde0a3a4",
+      "probe_id": "T01-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "14 October 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T01-wrong-1.json",
+      "sha256": "f77449a47ad88d4ac43bae4a175128b37a67e5d458c11bda1385d779e8726115",
+      "probe_id": "T01-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "14 October 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T01-wrong-2.json",
+      "sha256": "bb993822d9cc95dfc2281d971e025b27ddf87dd0cddf05ef420d58ef0d96ecdf",
+      "probe_id": "T01-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "14 October 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T01-wrong-3.json",
+      "sha256": "08f86936a49310782a6db9f2174593c0ef4bc7e8e324345a7ff023e62f5df8c1",
+      "probe_id": "T01-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "14 October 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T01-wrong-4.json",
+      "sha256": "12680718ae0012ab27c48e581f083ccefd09b8b4527f5a4662c4497499f6ccfa",
+      "probe_id": "T01-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "14 October 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T01-wrong-5.json",
+      "sha256": "a6f2b9ef539f21336bfccb43fc680a36c0f9ada5564e66187112685ddbe747bc",
+      "probe_id": "T01-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "14 October 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T02-correct-1.json",
+      "sha256": "2f879dadae61a84660c086d55a12f845af9a382250eefaf630d4913dfa8fa748",
+      "probe_id": "T02-correct",
+      "expected_plan": "correct",
+      "verdict": "false_rejection",
+      "rationale": "December2025 correctly selects the rule period; the checker instead treats it as fact context.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "period",
+        "user_quote": "Who chaired serious incident reviews in December 2025?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "in December 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T02-correct-2.json",
+      "sha256": "eb3848973e310bea91846998eccdc07e2d5c53ad75f40f0b6a552f46c7ea7fec",
+      "probe_id": "T02-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "December 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T02-correct-3.json",
+      "sha256": "cd7902e02e5edb1787dfffec85e3ff0f05c6bd74381c43008e92413e21112582",
+      "probe_id": "T02-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T02-correct-4.json",
+      "sha256": "60f40de2bedc4926f6f7fda00dce825f68fa64920d82852a9f62d887ea284744",
+      "probe_id": "T02-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T02-correct-5.json",
+      "sha256": "e8fccb152e47a841233bbcd73604e53faf438a7f4e1255b8337dd2e8eb74b794",
+      "probe_id": "T02-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T02-wrong-1.json",
+      "sha256": "303a1b1680f7c6eb545fd5ee7f9b44ac519c9d09d40d91f7f5fba9fe992bba72",
+      "probe_id": "T02-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "in December 2025",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "December 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T02-wrong-2.json",
+      "sha256": "0f48f912ecafc6ab039cc6b91c2ebac25ee0621b250332dd325ba3a55cc165ef",
+      "probe_id": "T02-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "December 2025",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "December 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T02-wrong-3.json",
+      "sha256": "3d9070351104c59ecdf7f1697ec7c1fbc54c9cae79c973afb8700d61efb9550b",
+      "probe_id": "T02-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "Who chaired serious incident reviews in December 2025?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "December 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T02-wrong-4.json",
+      "sha256": "b0ef52af50a007540f99667b709519f29b7260639c5a1072baafd89689651989",
+      "probe_id": "T02-wrong",
+      "expected_plan": "wrong",
+      "verdict": "miss_unverifiable_rejection",
+      "rationale": "The cited plan field is not the literal field value; the existing policy keeps the wrong plan. A semantic suspicion without a verified citation is not a catch.",
+      "checker_code": "meaning_changed",
+      "effective_code": "accepted",
+      "citation_verification": "unverifiable",
+      "verification_reason": "plan_quote_not_found",
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "\"current\"",
+        "user_quote": "December 2025",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "December 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T02-wrong-5.json",
+      "sha256": "d1098dc01655f9d81ece633af63d7718f159542bbface7207d889bd1695e3841",
+      "probe_id": "T02-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": null,
+        "plan_quote": null,
+        "user_quote": "Who chaired serious incident reviews in December 2025?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "December 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T03-correct-1.json",
+      "sha256": "bf2bfc3b0cb229baf86d6101e863ddb3400c586755113f7641dec840622e6adf",
+      "probe_id": "T03-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "As of 20 November 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T03-correct-2.json",
+      "sha256": "68bfe784086dfadd72fb5d07a1589b45b73edaf3ef2277bc44507a3d9874a184",
+      "probe_id": "T03-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "20 November 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T03-correct-3.json",
+      "sha256": "477908d9d58f302084dd57b74b60ced489dfb4e972c5d7d59207a1270528984b",
+      "probe_id": "T03-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "20 November 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T03-correct-4.json",
+      "sha256": "fba5214a8f194960f760a4f90d367e0484894ae96deb4b65cdd68894f26c26c9",
+      "probe_id": "T03-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "20 November 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T03-correct-5.json",
+      "sha256": "e8b0df46cb20acaf08374be8647fce761baf650bfa5ee76a9da8772e082cfd2a",
+      "probe_id": "T03-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "As of 20 November 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T03-wrong-1.json",
+      "sha256": "54bac862a98849ef9f000d367aca1d5b72df946faaee287ca68b026991d8c71c",
+      "probe_id": "T03-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": null,
+        "plan_quote": "authority: { \"kind\": \"current\", \"value\": null, \"precision\": \"none\", \"source\": null }",
+        "user_quote": "As of 20 November 2025",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "20 November 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T03-wrong-2.json",
+      "sha256": "bda7069da67c9d38f3dbb0fcf2d49d1c8991a395de6ff5f8e919950db6637676",
+      "probe_id": "T03-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "20 November 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T03-wrong-3.json",
+      "sha256": "6a089b9638342ea0a79bedfd3ffd857a04a14a51bec408b89b098a2279a7020f",
+      "probe_id": "T03-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "20 November 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T03-wrong-4.json",
+      "sha256": "a63f34c0db1f550361e590cd78b245459fcfd02b4a7b7040d72b75c20d82d985",
+      "probe_id": "T03-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "\"current\"",
+        "user_quote": "As of 20 November 2025",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "20 November 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T03-wrong-5.json",
+      "sha256": "7fbf60d1dcf3666121df5e6bb6583a58f9e87eae24d99865f9d1da136ba9a822",
+      "probe_id": "T03-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "As of 20 November 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T04-correct-1.json",
+      "sha256": "f18463f98065e79180aa9a3d5b0c3c27ecfa9b88c3103ad8106d824e51640fd5",
+      "probe_id": "T04-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "30 September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "a new employer has just asked HR for my reference",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T04-correct-2.json",
+      "sha256": "38df7e2a279580dbeac9f7d922617dc8ac9d624c253c1cc62563a03a3769211d",
+      "probe_id": "T04-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "30 September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T04-correct-3.json",
+      "sha256": "23c83ccb5cbe5e7cc10796328bec68206ce020a609a890348233290e006460f5",
+      "probe_id": "T04-correct",
+      "expected_plan": "correct",
+      "verdict": "false_rejection",
+      "rationale": "The reference was just requested, so current authority is correct; the leaving date remains event context.",
+      "checker_code": "scope_added",
+      "effective_code": "scope_added",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "30 September 2025",
+              "role": "ambiguous",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T04-correct-4.json",
+      "sha256": "b05eb602b45d0ead1ff5dd405c80523e68058a836cbbe4c943d5dfa2307d97ba",
+      "probe_id": "T04-correct",
+      "expected_plan": "correct",
+      "verdict": "false_rejection",
+      "rationale": "The reference was just requested, so current authority is correct; the leaving date remains event context.",
+      "checker_code": "scope_added",
+      "effective_code": "scope_added",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": null,
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "30 September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "unclear"
+        }
+      ]
+    },
+    {
+      "record": "results/T04-correct-5.json",
+      "sha256": "1f478286402fa8c3a40989cac86321087dca419052345a7d3062d97a0a29f123",
+      "probe_id": "T04-correct",
+      "expected_plan": "correct",
+      "verdict": "unavailable",
+      "rationale": "Provider token usage retained, but no valid checker decision; precise malformed/incomplete/grounding/consistency cause is not retained. No retry.",
+      "checker_code": "unavailable",
+      "effective_code": "unavailable",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": []
+    },
+    {
+      "record": "results/T04-wrong-1.json",
+      "sha256": "9cf797e9c6f9b94303f51d37a58260f30211b0995a4f51b2eda67669731408f0",
+      "probe_id": "T04-wrong",
+      "expected_plan": "wrong",
+      "verdict": "unavailable",
+      "rationale": "Provider token usage retained, but no valid checker decision; precise malformed/incomplete/grounding/consistency cause is not retained. No retry.",
+      "checker_code": "unavailable",
+      "effective_code": "unavailable",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": []
+    },
+    {
+      "record": "results/T04-wrong-2.json",
+      "sha256": "17637b9d398e9e8ebd41eb0e6b354f1324a4452430ef8e287da185d1f3a21a39",
+      "probe_id": "T04-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-09-30",
+        "user_quote": "I left Alderbridge on 30 September 2025",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "30 September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T04-wrong-3.json",
+      "sha256": "6ca8fe08f7d79eeeb145418d10bf13f59593b2a650ff213103af7063b0165437",
+      "probe_id": "T04-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-09-30",
+        "user_quote": "I left Alderbridge on 30 September 2025",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "I left Alderbridge on 30 September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T04-wrong-4.json",
+      "sha256": "818f766a42e44ed77615b34a0205be47cbbcc51866dacf63c0367363381cd395",
+      "probe_id": "T04-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-09-30",
+        "user_quote": "I left Alderbridge on 30 September 2025",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "I left Alderbridge on 30 September 2025",
+              "role": "ambiguous",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "has just asked HR for my reference",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "unclear"
+        }
+      ]
+    },
+    {
+      "record": "results/T04-wrong-5.json",
+      "sha256": "809e96944d9f8108b38e002a8433d92856bae29c17c2df5e3cdfc172b8b16d7a",
+      "probe_id": "T04-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-09-30",
+        "user_quote": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "30 September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T05-correct-1.json",
+      "sha256": "e53c0ee17a492b7a2f5081aa0e21a9c72ed7cb690c151c63b6cf2fa85c727999",
+      "probe_id": "T05-correct",
+      "expected_plan": "correct",
+      "verdict": "unavailable",
+      "rationale": "Provider token usage retained, but no valid checker decision; precise malformed/incomplete/grounding/consistency cause is not retained. No retry.",
+      "checker_code": "unavailable",
+      "effective_code": "unavailable",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": []
+    },
+    {
+      "record": "results/T05-correct-2.json",
+      "sha256": "dbfa2f70a876db77ea99fa57e435988e20610e6a1f0d94c54fe75b3eb511c7e4",
+      "probe_id": "T05-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 February 2026",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T05-correct-3.json",
+      "sha256": "8448b0587915052b5d694aab38cf47931bba91dd8f433b37493fe26712ce6b93",
+      "probe_id": "T05-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "A resident fell on 2 February 2026",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T05-correct-4.json",
+      "sha256": "6ba37378e1e6ab2063970737237ef01219436cea107bb830a9731cd20e8637aa",
+      "probe_id": "T05-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 February 2026",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T05-correct-5.json",
+      "sha256": "ce97faa6d29e633849792e78b7984186ca09eae48ee544b9f7c543a4c84e64bd",
+      "probe_id": "T05-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "A resident fell on 2 February 2026",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T05-wrong-1.json",
+      "sha256": "c67235a3ada2d633fc91915ce53613cb5d8d65588aea75547738fe1dad094ee0",
+      "probe_id": "T05-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2026-02-02",
+        "user_quote": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 February 2026",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T05-wrong-2.json",
+      "sha256": "5fe3351040e22b6f5a612653a4e8237dfea5bc13e15f7b121d177d193330d060",
+      "probe_id": "T05-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": null,
+        "plan_field": null,
+        "plan_quote": null,
+        "user_quote": "Who do I need to contact now?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 February 2026",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T05-wrong-3.json",
+      "sha256": "5129132ff558221cc9bd8cc1704eb072bdbb341e0428495f245209b04129e28a",
+      "probe_id": "T05-wrong",
+      "expected_plan": "wrong",
+      "verdict": "unavailable",
+      "rationale": "Provider token usage retained, but no valid checker decision; precise malformed/incomplete/grounding/consistency cause is not retained. No retry.",
+      "checker_code": "unavailable",
+      "effective_code": "unavailable",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": []
+    },
+    {
+      "record": "results/T05-wrong-4.json",
+      "sha256": "46c9617e2cc7a8179edf0736d581046ecf2b802b7dcbe6d0255b070207d1cbdd",
+      "probe_id": "T05-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2026-02-02",
+        "user_quote": "fell on 2 February 2026",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 February 2026",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T05-wrong-5.json",
+      "sha256": "83d098033a9fb0aedf5fa57b645189d28c69f6527461409ae9dbf680c962f17e",
+      "probe_id": "T05-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2026-02-02",
+        "user_quote": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts.",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 February 2026",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T06-correct-1.json",
+      "sha256": "7eee5abe57155532baf58a6ebf347fb0f8b4f46743985ffb716a553af2f9375f",
+      "probe_id": "T06-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "back in September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T06-correct-2.json",
+      "sha256": "3c7568c6f0d269cb7e88ecf4668598442e66647d2d1a7cdca5b3d3b36f7cbe63",
+      "probe_id": "T06-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T06-correct-3.json",
+      "sha256": "00b583b3978e2e759812f388ca14949daa1959d745642a299ae4b113a81facf9",
+      "probe_id": "T06-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T06-correct-4.json",
+      "sha256": "c4dbc5da5d1afbc6d80c29bf492298a2b3419b6e86e3a9905057f51fbf6bb715",
+      "probe_id": "T06-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T06-correct-5.json",
+      "sha256": "9f92f61379c6283dfd0949e8ee6618f553ec38b926142af89719a082047fef1a",
+      "probe_id": "T06-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T06-wrong-1.json",
+      "sha256": "c450ad45c41e866a613a195b06605c3339d5aba7abbc1cdd1a88df1d522a0176",
+      "probe_id": "T06-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-09",
+        "user_quote": "If we had to open one today, who would chair it?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T06-wrong-2.json",
+      "sha256": "0c0d8e35a183d868d70940dcb940cea64c7af83058219b9e21730c0f24b28722",
+      "probe_id": "T06-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-09",
+        "user_quote": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T06-wrong-3.json",
+      "sha256": "6a6f5e8edfdad06285e05ec02c070ff70f26640f6024ba489546f4e292c680a7",
+      "probe_id": "T06-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-09",
+        "user_quote": "If we had to open one today, who would chair it?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T06-wrong-4.json",
+      "sha256": "6498f60938e6701959567fa3656358f9692623c8e2c397fc48a166fdb68ab3bd",
+      "probe_id": "T06-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-09",
+        "user_quote": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T06-wrong-5.json",
+      "sha256": "aced4a706e91ade10b01e3acc536295074fd027aad3da89c90c06f8a3b4c594c",
+      "probe_id": "T06-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-09",
+        "user_quote": "If we had to open one today, who would chair it?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "September 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T07-correct-1.json",
+      "sha256": "3909be31c8a3f502e52d02a71c073fe368038d51faccdaa185c8b48a40d33367",
+      "probe_id": "T07-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "May 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T07-correct-2.json",
+      "sha256": "8f8eb083f462c2c2f2b007ee8c5289198bbe2bf708ac56f50793f87f9a556ed5",
+      "probe_id": "T07-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "May 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "What discount range does it offer now?",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T07-correct-3.json",
+      "sha256": "09555d1066c2c65c548e6f291d28de36621a1a184442314a62f74b87c6c58ca1",
+      "probe_id": "T07-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "May 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T07-correct-4.json",
+      "sha256": "016464e237542cf4429aaff73ad1186cb93af23e8895dc016787aa440792d24a",
+      "probe_id": "T07-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "May 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T07-correct-5.json",
+      "sha256": "43364aecc28669500825500fca2c92f9943fe1dff4f0d96074d9d3c1c8335127",
+      "probe_id": "T07-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "May 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T07-wrong-1.json",
+      "sha256": "3ce4d1475d5c579adc34f332217c856cec4464d75ee5d698769012d6b2e89225",
+      "probe_id": "T07-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-05",
+        "user_quote": "now",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "May 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T07-wrong-2.json",
+      "sha256": "298300040cf0e7e07bbe2373391cddd45e6747680eba2fe9f268e0f82ba8132c",
+      "probe_id": "T07-wrong",
+      "expected_plan": "wrong",
+      "verdict": "miss_unverifiable_rejection",
+      "rationale": "The cited plan field is not the literal field value; the existing policy keeps the wrong plan. A semantic suspicion without a verified citation is not a catch.",
+      "checker_code": "meaning_changed",
+      "effective_code": "accepted",
+      "citation_verification": "unverifiable",
+      "verification_reason": "plan_quote_not_found",
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "period (authority.value: \"2025-05\")",
+        "user_quote": "now",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "May 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T07-wrong-3.json",
+      "sha256": "76b386d619e42b5d65caf2e0111d1fc0414307453411a2fd9cf7dea7ed2d8433",
+      "probe_id": "T07-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-05",
+        "user_quote": "now",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "May 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T07-wrong-4.json",
+      "sha256": "15b9b0e6406ba0ff0757db94d556bb1c692313cb5794b0525d69a55d6d1f2d40",
+      "probe_id": "T07-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-05",
+        "user_quote": "What discount range does it offer now?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "May 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T07-wrong-5.json",
+      "sha256": "2cd337bd58af0190da0ec1e22c0cb7e9a237f96506e5f7bbff95f8d12f9a7f6f",
+      "probe_id": "T07-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The old event date selects historical authority despite an explicit current question.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-05",
+        "user_quote": "What discount range does it offer now?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "May 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "now",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T08-correct-1.json",
+      "sha256": "16efddcd2b00d7e4ed2cafaf8c6b7d10f7ce8180058faf631c1e22d50fce18ae",
+      "probe_id": "T08-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "5 December 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T08-correct-2.json",
+      "sha256": "09dbcfd94e05f37f036ae79689fc088ade23ade9830433a89001987777491943",
+      "probe_id": "T08-correct",
+      "expected_plan": "correct",
+      "verdict": "false_rejection",
+      "rationale": "The executable request retains 90 minutes and the dated authority/fact roles. No additional execution lane or typed duration is needed for the requested source comparison.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": null,
+        "plan_quote": null,
+        "user_quote": "the contractor arrived 90 minutes after the urgent call.",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "5 December 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T08-correct-3.json",
+      "sha256": "29a7549ab3a1e231e9dbfa89a54423fc55916c5835c5d0a3823c371b2d8119ff",
+      "probe_id": "T08-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "5 December 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T08-correct-4.json",
+      "sha256": "acb2f361ab79dd365a1daf2d77324daf33265ef65a5d7e07ee219a1afe820bf1",
+      "probe_id": "T08-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "5 December 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T08-correct-5.json",
+      "sha256": "2d2cecbc6ac0f5564cc801b09a11a6cef87995c0bae13c429df453962a29f795",
+      "probe_id": "T08-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "5 December 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T08-wrong-1.json",
+      "sha256": "aa8a26d1c6f7614ff9fe245f694a3278b537b2c86a2d96b2d82932cc45800aa5",
+      "probe_id": "T08-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "Was that within the urgent response time required at that point?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "5 December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T08-wrong-2.json",
+      "sha256": "f4272602c34385216c3a2ca3cc3c4e170404ca460d6d85341d2d1a6bbad764c4",
+      "probe_id": "T08-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "Was that within the urgent response time required at that point?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "5 December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T08-wrong-3.json",
+      "sha256": "cc9f31ef461f18eb063379d86803146c9f9091ebc9250e22550bb43a60f335ab",
+      "probe_id": "T08-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current (value: null)",
+        "user_quote": "on 5 December 2025",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "5 December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T08-wrong-4.json",
+      "sha256": "0a62fd35023f0686665edb7fa7bc913d39f11464945ebee6cf7652820533cfed",
+      "probe_id": "T08-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "Was that within the urgent response time required at that point?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "5 December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T08-wrong-5.json",
+      "sha256": "e4c3eda335888dcaada083827370b58ff54c7c6e1853c827f92de014c6a9ca15",
+      "probe_id": "T08-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The requested historical rule becomes current; the date remains fact context only.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "Was that within the urgent response time required at that point?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "5 December 2025",
+              "role": "both",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "Was that within the urgent response time required at that point?",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T09-correct-1.json",
+      "sha256": "e64960ea67e44e34053c876cd2b1d35604cc20af4deed87c4d37b3f216dc700a",
+      "probe_id": "T09-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 July 2026",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "15 March 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T09-correct-2.json",
+      "sha256": "b8a33fbfa3648407ec23728798a914862576e61818746bb9aca1bb5b3a19e439",
+      "probe_id": "T09-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 July 2026",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "15 March 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T09-correct-3.json",
+      "sha256": "3044ba3289ad9dfbfdd475559e4fb808d6190fc789c7e9a9e8b980e9f03969fd",
+      "probe_id": "T09-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 July 2026",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "15 March 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T09-correct-4.json",
+      "sha256": "347227679179d10545f97cacc20d535326a2372e3c23e0d968ecfb508d0e19ee",
+      "probe_id": "T09-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 July 2026",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "15 March 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T09-correct-5.json",
+      "sha256": "c927b579592f7934dcddd9061e27fcdad0dd50913b25e49be17fb769104ecaa6",
+      "probe_id": "T09-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "2 July 2026",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "15 March 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T09-wrong-1.json",
+      "sha256": "40401244ae9b9b23a6f90dc821ff1fd25621b5141ce05568a75dd27daab1d362",
+      "probe_id": "T09-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The leaving date wrongly selects authority; the request date is reduced to fact context. Leaving predates the first version.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-03-15",
+        "user_quote": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "15 March 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "2 July 2026",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T09-wrong-2.json",
+      "sha256": "3091f30ca7d0432be7202d050b2aee40d79e7e94edb2fe3c2e1eb27a38e1d7ab",
+      "probe_id": "T09-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The leaving date wrongly selects authority; the request date is reduced to fact context. Leaving predates the first version.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-03-15",
+        "user_quote": "asked HR for a reference on 2 July 2026",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "15 March 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "2 July 2026",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T09-wrong-3.json",
+      "sha256": "bfc6969852cf79a4dd188eeed2e6ca2ba98e0b53bf9a049ccaf4066187b11cc1",
+      "probe_id": "T09-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The leaving date wrongly selects authority; the request date is reduced to fact context. Leaving predates the first version.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-03-15",
+        "user_quote": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "15 March 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "2 July 2026",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T09-wrong-4.json",
+      "sha256": "daffe9ad31c2d6894b68b756a23f4f9a9675118cc2919630c1722f5cc5a14ae2",
+      "probe_id": "T09-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The leaving date wrongly selects authority; the request date is reduced to fact context. Leaving predates the first version.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-03-15",
+        "user_quote": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "left us on 15 March 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "asked HR for a reference on 2 July 2026",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T09-wrong-5.json",
+      "sha256": "b98e23d0c1ea4415de42422ff7a87bc0d9d736c70249a9429e9d05e488e4130f",
+      "probe_id": "T09-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "The leaving date wrongly selects authority; the request date is reduced to fact context. Leaving predates the first version.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.value",
+        "plan_quote": "2025-03-15",
+        "user_quote": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "15 March 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "2 July 2026",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T10-correct-1.json",
+      "sha256": "5d93d15d2c7993aa519f99504d966e61dfe9564f82e30d0bc8b4e403bb94b898",
+      "probe_id": "T10-correct",
+      "expected_plan": "correct",
+      "verdict": "false_rejection",
+      "rationale": "PHP compare mode supplies both the dated historical lane and current lane; today is not omitted.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": null,
+        "plan_quote": null,
+        "user_quote": "is that still the rule today?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "31 December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T10-correct-2.json",
+      "sha256": "074b8eb7abc9b9cd7dea0ac5c482ef6572a6fb14d892e71ff56b345e7f39ce37",
+      "probe_id": "T10-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "31 December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T10-correct-3.json",
+      "sha256": "7a145b5922a0a6a9402042bc0ac735c5c382fef16f203b9fe6d90ad6a201cf0c",
+      "probe_id": "T10-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "31 December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T10-correct-4.json",
+      "sha256": "8ddadc4ba14550404382096b2cc505ce38d995203c687044047f8b89e4344784",
+      "probe_id": "T10-correct",
+      "expected_plan": "correct",
+      "verdict": "false_rejection",
+      "rationale": "PHP compare mode supplies both the dated historical lane and current lane; today is not omitted.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": null,
+        "plan_field": null,
+        "plan_quote": null,
+        "user_quote": "is that still the rule today?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "31 December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T10-correct-5.json",
+      "sha256": "bc72ba204ca15f0cb73598e6c5a6b445fda5ce9d33f1340caa09adc85b6d58fe",
+      "probe_id": "T10-correct",
+      "expected_plan": "correct",
+      "verdict": "false_rejection",
+      "rationale": "PHP compare mode supplies both the dated historical lane and current lane; today is not omitted.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": null,
+        "plan_field": null,
+        "plan_quote": null,
+        "user_quote": "is that still the rule today?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "left on 31 December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T10-wrong-1.json",
+      "sha256": "cf250cd4101e0c4b7fee2d02fa1a55b77139335b1f38c896956c5f61e3b77ca8",
+      "probe_id": "T10-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": null,
+        "plan_field": null,
+        "plan_quote": null,
+        "user_quote": "how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "31 December 2025",
+              "role": "both",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "is that still the rule today?",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T10-wrong-2.json",
+      "sha256": "89502d77766de6dab4e057480a6e7492901bae155422c70d263367add136f361",
+      "probe_id": "T10-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "rule in force when they left",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "31 December 2025",
+              "role": "both",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T10-wrong-3.json",
+      "sha256": "e4e092a43a9e180fe294fed6fa52b3b73a09b47000218bd104ceb1b9a6227c22",
+      "probe_id": "T10-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": null,
+        "plan_quote": null,
+        "user_quote": "the rule in force when they left",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "31 December 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T10-wrong-4.json",
+      "sha256": "1d5a5dd8687d1ce9a06ceaa56df4969193f153f3ff03abab7593adee74960474",
+      "probe_id": "T10-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "checker_code": "clause_omitted",
+      "effective_code": "clause_omitted",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": null,
+        "plan_field": null,
+        "plan_quote": null,
+        "user_quote": "the rule in force when they left",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "31 December 2025",
+              "role": "both",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "is that still the rule today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T10-wrong-5.json",
+      "sha256": "2ab7ecbae8eacf6550b192a3253d3e5f33fc6035b141a56f3dc738d3336aedb8",
+      "probe_id": "T10-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "the rule in force when they left",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "31 December 2025",
+              "role": "both",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "today",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T11-correct-1.json",
+      "sha256": "5e92bd7be4354600279d96cc615d9ae816428f6da9542b7d1165de10cc089c13",
+      "probe_id": "T11-correct",
+      "expected_plan": "correct",
+      "verdict": "false_rejection",
+      "rationale": "The reviewer explicitly approved the qualified two-version alternative. Compare/previous supplies both known versions, not an assertion that the undated event used the previous rule.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "previous",
+        "user_quote": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "When my mum went missing from the home",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T11-correct-2.json",
+      "sha256": "61a8ad7c5e3a0c2a04b2605a23623a0450cb608f34e56a1753c0bd9dfc896c4a",
+      "probe_id": "T11-correct",
+      "expected_plan": "correct",
+      "verdict": "false_rejection",
+      "rationale": "The reviewer explicitly approved the qualified two-version alternative. Compare/previous supplies both known versions, not an assertion that the undated event used the previous rule.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "previous",
+        "user_quote": "When my mum went missing from the home",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "When my mum went missing from the home",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T11-correct-3.json",
+      "sha256": "41bd02fcfaf522b8283a1fc11c7c69705b64153dcc545cab0b11318e29207e87",
+      "probe_id": "T11-correct",
+      "expected_plan": "correct",
+      "verdict": "false_rejection",
+      "rationale": "The reviewer explicitly approved the qualified two-version alternative. Compare/previous supplies both known versions, not an assertion that the undated event used the previous rule.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "previous",
+        "user_quote": "When my mum went missing from the home",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "When my mum went missing from the home",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T11-correct-4.json",
+      "sha256": "8ae8876872fdd17f01f3e8885309dd9b751c4112547fdefe43c982e82971f6f8",
+      "probe_id": "T11-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "When my mum went missing from the home",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T11-correct-5.json",
+      "sha256": "658f20fb5f0e590f1b0d7fc2ffcf95317da8464e1c54ff801864cd873df7259d",
+      "probe_id": "T11-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "When my mum went missing from the home",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T11-wrong-1.json",
+      "sha256": "e44eeec8848c1072231c3ab109f99aef56bbba8ae939753024b5c4bd05982875",
+      "probe_id": "T11-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "When my mum went missing from the home",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T11-wrong-2.json",
+      "sha256": "ba998fb5ffa084ee47aefbf19b415c209309d6ada3930007472e8d1f5b76cd90",
+      "probe_id": "T11-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "When my mum went missing from the home",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T11-wrong-3.json",
+      "sha256": "99b19d7ac8d8aa362c2fb4fa2f76bac69312b25e879a8ff8814ea49f0f0f0617",
+      "probe_id": "T11-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "When my mum went missing from the home",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T11-wrong-4.json",
+      "sha256": "02b23e480dce7942b4c1478ee12fffdfcea0ee9461deb65112a44ddaeb642d35",
+      "probe_id": "T11-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "When my mum went missing from the home",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T11-wrong-5.json",
+      "sha256": "7cc0c6115a0a8dc7df87a5573991664332b0083830bcc8934878373033328dd0",
+      "probe_id": "T11-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+        "user_turn_id": "u1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "When my mum went missing from the home",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/T12-correct-1.json",
+      "sha256": "ffa278666dbcc4d3849afb49443f34a2730dfa3dab967c12017626582410eb58",
+      "probe_id": "T12-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "1 June 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T12-correct-2.json",
+      "sha256": "f7fc6a24b832a107bc6006eb9b6204eaf97a38df62074445c8a46cd955828f57",
+      "probe_id": "T12-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "1 June 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T12-correct-3.json",
+      "sha256": "b4d751f767ecb068f3134db0a6ee5e48d13a9efe178f7f66141b7138faa5abae",
+      "probe_id": "T12-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "1 June 2025",
+              "role": "authority",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T12-correct-4.json",
+      "sha256": "ec3357af9fc6aac010d164654dccf5d36eb63c3e962101e22167ad8d5588585b",
+      "probe_id": "T12-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "1 June 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T12-correct-5.json",
+      "sha256": "117530d8176f9b275031c4c435a83ed3dbe43d324c1ecdb62ca83dc6d0845822",
+      "probe_id": "T12-correct",
+      "expected_plan": "correct",
+      "verdict": "correct_acceptance",
+      "rationale": "Accepts the reviewed correct executable plan.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "1 June 2025",
+              "role": "both",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T12-wrong-1.json",
+      "sha256": "4177c10faa5e1c40b599126c71349b9cd3997eb34a6b10c20e72b42f6cb64f70",
+      "probe_id": "T12-wrong",
+      "expected_plan": "wrong",
+      "verdict": "miss_accepted_wrong_plan",
+      "rationale": "The checker labels current as authority and 1June2025 as fact_context, accepting loss of the past selector. This violates the frozen conflict expectation.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "Under the current staff discount scheme",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "1 June 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T12-wrong-2.json",
+      "sha256": "e874bfc793b3bc3131164310196b80eb9f8d13c2f37d7129174b52c25c18cf6d",
+      "probe_id": "T12-wrong",
+      "expected_plan": "wrong",
+      "verdict": "miss_accepted_wrong_plan",
+      "rationale": "The checker labels current as authority and 1June2025 as fact_context, accepting loss of the past selector. This violates the frozen conflict expectation.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "Under the current staff discount scheme",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "1 June 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T12-wrong-3.json",
+      "sha256": "f898b0f397b5886ea5907f50f50a15aadee317d5f7a30585854734070e171547",
+      "probe_id": "T12-wrong",
+      "expected_plan": "wrong",
+      "verdict": "miss_accepted_wrong_plan",
+      "rationale": "The checker labels current as authority and 1June2025 as fact_context, accepting loss of the past selector. This violates the frozen conflict expectation.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "Under the current staff discount scheme",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "1 June 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T12-wrong-4.json",
+      "sha256": "4af9856f9b841a185ebf091b9206b49e00473c0f9e8e06755fb60df721065312",
+      "probe_id": "T12-wrong",
+      "expected_plan": "wrong",
+      "verdict": "miss_accepted_wrong_plan",
+      "rationale": "The checker labels current as authority and 1June2025 as fact_context, accepting loss of the past selector. This violates the frozen conflict expectation.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "current staff discount scheme",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "1 June 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/T12-wrong-5.json",
+      "sha256": "2a3453c6cbbb9bb3c86e4cd44defd96b9e735564eee5fd52725ca0cb3a3d056c",
+      "probe_id": "T12-wrong",
+      "expected_plan": "wrong",
+      "verdict": "miss_accepted_wrong_plan",
+      "rationale": "The checker labels current as authority and 1June2025 as fact_context, accepting loss of the past selector. This violates the frozen conflict expectation.",
+      "checker_code": "accepted",
+      "effective_code": "accepted",
+      "citation_verification": "not_applicable",
+      "verification_reason": null,
+      "citation": null,
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "current staff discount scheme",
+              "role": "authority",
+              "turn_id": "u1"
+            },
+            {
+              "quote": "1 June 2025",
+              "role": "fact_context",
+              "turn_id": "u1"
+            }
+          ],
+          "temporal_intent_preserved": "yes"
+        }
+      ]
+    },
+    {
+      "record": "results/input16-development-wrong-1.json",
+      "sha256": "7e3223adf7f67022f08e605fa89cba9b7b1ec62c7dca91a7a1c5cce3ddf33e62",
+      "probe_id": "input16-development-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "February supplier question executed current authority; its February date was only fact_reference.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+        "user_turn_id": "user-1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "1 February 2026",
+              "role": "fact_context",
+              "turn_id": "user-1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/input16-development-wrong-2.json",
+      "sha256": "2554c9829c49c6a22bb4998e1c5245c213d8da24362fd22fb547e52fd5f45436",
+      "probe_id": "input16-development-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "February supplier question executed current authority; its February date was only fact_reference.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "1 February 2026",
+        "user_turn_id": "user-1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "1 February 2026",
+              "role": "fact_context",
+              "turn_id": "user-1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/input16-development-wrong-3.json",
+      "sha256": "57aab39d694c05ae529391033355165ebd1c51fee249a6f8e8c268eaacddfe37",
+      "probe_id": "input16-development-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "February supplier question executed current authority; its February date was only fact_reference.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+        "user_turn_id": "user-1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "1 February 2026",
+              "role": "fact_context",
+              "turn_id": "user-1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/input16-development-wrong-4.json",
+      "sha256": "e2a7f0e33bd473842f6cdb169f70608c2df8045d4d40547e7e16207dcdeeb795",
+      "probe_id": "input16-development-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "February supplier question executed current authority; its February date was only fact_reference.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+        "user_turn_id": "user-1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "1 February 2026",
+              "role": "fact_context",
+              "turn_id": "user-1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    },
+    {
+      "record": "results/input16-development-wrong-5.json",
+      "sha256": "7e91193021c79b73cf3d2c3effc0059754827eb8d2b8070b786873eff1e11d33",
+      "probe_id": "input16-development-wrong",
+      "expected_plan": "wrong",
+      "verdict": "appropriate_verified_rejection",
+      "rationale": "February supplier question executed current authority; its February date was only fact_reference.",
+      "checker_code": "meaning_changed",
+      "effective_code": "meaning_changed",
+      "citation_verification": "verified",
+      "verification_reason": null,
+      "citation": {
+        "inspected_need_ids": [
+          "n1"
+        ],
+        "need_id": "n1",
+        "plan_field": "authority.kind",
+        "plan_quote": "current",
+        "user_quote": "1 February 2026",
+        "user_turn_id": "user-1"
+      },
+      "temporal_assessments": [
+        {
+          "need_id": "n1",
+          "references": [
+            {
+              "quote": "1 February 2026",
+              "role": "fact_context",
+              "turn_id": "user-1"
+            }
+          ],
+          "temporal_intent_preserved": "no"
+        }
+      ]
+    }
+  ]
+}

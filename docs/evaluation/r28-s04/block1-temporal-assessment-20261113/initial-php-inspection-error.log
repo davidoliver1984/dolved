@@ -1,0 +1,19 @@
+
+   ErrorException 
+
+  Undefined property: App\Support\Retrieval\RetrievalPlan::$queryText
+
+  at /workspace/docs/evaluation/r28-s04/block1-temporal-assessment-20261113/verify_php_plans.php:20
+     16▕     $lanes=[];
+     17▕     foreach($item['plan']['needs'] as $need) {
+     18▕         $r=$plan->retrievalPlan($need['need_id']);
+     19▕         $lanes[]=['need_id'=>$need['need_id'],'mode'=>$r->temporalMode->value,'date'=>$r->explicitDate?->toDateString(),
+  ➜  20▕             'reference'=>$r->temporalReference,'fact_date'=>$r->factDate,'query'=>$r->queryText];
+     21▕     }
+     22▕     $rows[]=['probe_id'=>$item['probe_id'],'valid'=>true,'lanes'=>$lanes];
+     23▕ }
+     24▕ echo json_encode(['provider_calls'=>0,'rows'=>$rows],JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR);
+
+  1   /workspace/docs/evaluation/r28-s04/block1-temporal-assessment-20261113/verify_php_plans.php:20
+      Illuminate\Foundation\Bootstrap\HandleExceptions::{closure:Illuminate\Foundation\Bootstrap\HandleExceptions::forwardsTo():262}("Undefined property: App\Support\Retrieval\RetrievalPlan::$queryText", "/workspace/docs/evaluation/r28-s04/block1-temporal-assessment-20261113/verify_php_plans.php")
+
