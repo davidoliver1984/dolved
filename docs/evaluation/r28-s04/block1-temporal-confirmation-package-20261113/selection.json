@@ -1,0 +1,134 @@
+{
+  "schema_version": "block1-temporal-confirmation-selection-v1",
+  "package_id": "BLOCK1-TEMPORAL-CONFIRMATION-20261113",
+  "authored_by": "reviewer (Claude), independently of the implementer, before any temporal-role implementation",
+  "authored_on": "2026-11-13",
+  "status": "FROZEN",
+  "independence": "Fresh confirmation wording, written by the reviewer before the repair exists. Engineering corpus only (dolved-care-v4 checkpoint-19, primary scope). Not held-out evidence. All 7 families are absent from the V4 EvidenceUnit corpus (r07-evidence-units-v4-20261111). Authored from semantic masters; Codex must verify every expectation against the ingested authorised documents and effective dates and report any defect without editing.",
+  "assumptions": [
+    "Dispatched with evaluated_at in November 2026 (Europe/London), when every v2 below is the current approved version.",
+    "Single user turn per item. No relative dates (no 'yesterday', 'last month') so application calendar arithmetic is not exercised here.",
+    "Expectations and this file never enter execution requests."
+  ],
+  "verdict_rules": {
+    "temporal_role": "The structured plan must route each date to its intended role (authority/valid-at date versus event/fact context) and the intended version(s) must actually be executed. A plausible answer from a diverted route is not a pass.",
+    "answer": "Source-based verdict per the recorded stage-specific rule: correct / qualified-correct / wrong / no-answer / clarification. Wrong = misstates the cited source, wrong version or period, omits an explicitly requested part, or asserts more than the source supports.",
+    "discriminating_design": "Every item is chosen so that the wrong date role selects a different version with a different answer, or no version at all."
+  },
+  "items": [
+    {
+      "id": "T01", "shape": "date_asks_which_rule_applied",
+      "utterance": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+      "intended_roles": {"14 October 2025": "authority valid-at date"},
+      "expected_version": "v4b.procurement.maintenance-contractor-schedule v1 (effective 2025-01-01, superseded 2026-01-01)",
+      "expected_answer": "2 hours.",
+      "source_support": "v1 table row: 'Heating | 3 working days | 2 hours'",
+      "wrong_role_signature": "Current v2 gives 1 hour."
+    },
+    {
+      "id": "T02", "shape": "date_asks_which_rule_applied",
+      "utterance": "Who chaired serious incident reviews in December 2025?",
+      "intended_roles": {"December 2025": "authority valid-at period (month)"},
+      "expected_version": "v4b.incident.serious-incident-review-policy v1 (effective 2025-05-01, superseded 2026-05-01)",
+      "expected_answer": "The Quality Lead.",
+      "source_support": "v1: 'The Quality Lead chairs the review.'",
+      "wrong_role_signature": "Current v2 gives the Chief Executive."
+    },
+    {
+      "id": "T03", "shape": "date_asks_which_rule_applied",
+      "utterance": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?",
+      "intended_roles": {"20 November 2025": "authority valid-at date"},
+      "expected_version": "v4b.infogov.email-retention-policy v1 (effective 2025-01-01, superseded 2026-01-01)",
+      "expected_answer": "2 years after the employee leaves, then permanently deleted.",
+      "source_support": "v1: 'Mailboxes are retained for 2 years after an employee leaves, then permanently deleted.'",
+      "wrong_role_signature": "Current v2 gives 6 months."
+    },
+    {
+      "id": "T04", "shape": "event_date_must_not_select_history",
+      "utterance": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?",
+      "intended_roles": {"30 September 2025": "event/fact context only (leaving date)", "request now": "current authority"},
+      "expected_version": "v4b.hr.staff-reference-request-procedure v2 (effective 2026-06-01, current)",
+      "expected_answer": "Within 5 working days of the request being received (a factual reference confirming dates of employment and job title).",
+      "source_support": "v2: 'within 5 working days of the request being received'",
+      "wrong_role_signature": "Leaving date as authority selects v1: 10 working days."
+    },
+    {
+      "id": "T05", "shape": "event_date_must_not_select_history",
+      "utterance": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?",
+      "intended_roles": {"2 February 2026": "event/fact context only (date of fall)", "now": "current authority"},
+      "expected_version": "v4b.care.falls-prevention-policy v2 (effective 2026-04-01, current)",
+      "expected_answer": "The on-call registered manager and, because injury is now suspected, the falls lead (nurse or therapist); the GP or emergency services where clinical escalation is indicated.",
+      "source_support": "v2: care staff 'contact the on-call registered manager, and now also the falls lead where injury is suspected'",
+      "wrong_role_signature": "Fall date as authority selects v1: on-call registered manager only, no falls lead.",
+      "grading_note": "An answer may acknowledge the delay since the fall; it must not present v1's manager-only escalation as the current requirement."
+    },
+    {
+      "id": "T06", "shape": "current_question_mentioning_old_event",
+      "utterance": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?",
+      "intended_roles": {"September 2025": "event/fact context only", "today": "current authority"},
+      "expected_version": "v4b.incident.serious-incident-review-policy v2 (effective 2026-05-01, current)",
+      "expected_answer": "The Chief Executive.",
+      "source_support": "v2: 'The Chief Executive now chairs the review (the Quality Lead previously did, per the prior version).'",
+      "wrong_role_signature": "Event date as authority selects v1: Quality Lead."
+    },
+    {
+      "id": "T07", "shape": "current_question_mentioning_old_event",
+      "utterance": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?",
+      "intended_roles": {"May 2025": "event/fact context only (joining/sign-up)", "now": "current authority"},
+      "expected_version": "v4b.hr.staff-benefits-guidance v2 (effective 2026-04-01, current)",
+      "expected_answer": "Typically 5-15% at participating retailers (wider range after a change of scheme provider; existing registrations migrate automatically).",
+      "source_support": "v2: 'typically 5-15% off at a wider range of participating retailers'",
+      "wrong_role_signature": "Event date as authority selects v1: 5-10%."
+    },
+    {
+      "id": "T08", "shape": "same_date_is_both_event_and_authority",
+      "utterance": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?",
+      "intended_roles": {"5 December 2025": "event date AND authority valid-at date"},
+      "expected_version": "v4b.procurement.maintenance-contractor-schedule v1 (effective 2025-01-01, superseded 2026-01-01)",
+      "expected_answer": "Yes: the heating urgent response time then was 2 hours, so 90 minutes was within it.",
+      "source_support": "v1 table row: 'Heating | 3 working days | 2 hours'",
+      "wrong_role_signature": "Current v2 (1 hour) would answer No."
+    },
+    {
+      "id": "T09", "shape": "multiple_dates_distinct_roles",
+      "utterance": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?",
+      "intended_roles": {"15 March 2025": "event/fact context only (leaving date)", "2 July 2026": "authority valid-at date (request date)"},
+      "expected_version": "v4b.hr.staff-reference-request-procedure v2 (effective 2026-06-01)",
+      "expected_answer": "5 working days from receipt of the request.",
+      "source_support": "v2: 'within 5 working days of the request being received'",
+      "wrong_role_signature": "Leaving date as authority predates v1 (effective 2025-06-01): no version, or a wrongly substituted one."
+    },
+    {
+      "id": "T10", "shape": "multiple_dates_distinct_roles_with_comparison",
+      "utterance": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?",
+      "intended_roles": {"31 December 2025": "authority valid-at date for the first part", "today": "current authority for the second part"},
+      "expected_version": "email-retention v1 (in force 2025-12-31) and v2 (current, effective 2026-01-01)",
+      "expected_answer": "Under the rule in force then: 2 years. No longer the rule: the current policy keeps mailboxes for 6 months after leaving.",
+      "source_support": "v1: 'retained for 2 years after an employee leaves'; v2: 'retained for 6 months after an employee leaves (shortened from the previous 2-year period)'",
+      "wrong_role_signature": "Single current lane answers only 6 months; single historical lane omits that the rule changed."
+    },
+    {
+      "id": "T11", "shape": "missing_event_date",
+      "utterance": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+      "intended_roles": {"undated past event": "authority date required but missing"},
+      "expected_version": "v4b.safeguarding.missing-person-procedure: v1 30 minutes (effective 2024-07-01 to 2026-07-01); v2 15 minutes (effective 2026-07-01)",
+      "expected_answer": "ACCEPTABLE: a clarification asking when it happened; OR an answer that presents both rules with the date each applied from (30 minutes before 1 July 2026, 15 minutes from 1 July 2026). WRONG: either figure alone presented as the applicable rule.",
+      "source_support": "v1: 'A 30-minute site and immediate-grounds search'; v2: 'A 15-minute site and immediate-grounds search ... (shortened from the previous 30 minutes)'",
+      "wrong_role_signature": "Silent default to current (15 minutes) for a past event of unknown date."
+    },
+    {
+      "id": "T12", "shape": "conflicting_temporal_information",
+      "utterance": "Who chaired serious incident reviews in December 2025 under the version issued after the governance restructure?",
+      "intended_roles": {"December 2025": "authority valid-at period", "after the governance restructure": "conflicting version selector (the restructure version takes effect 2026-05-01)"},
+      "expected_version": "Conflict: December 2025 falls under v1 (Quality Lead); the post-restructure version v2 is effective 2026-05-01 (Chief Executive).",
+      "expected_answer": "ACCEPTABLE: a clarification about which they mean; OR an answer that explicitly states the conflict and gives both (Quality Lead in December 2025; Chief Executive under the post-restructure version from 1 May 2026). WRONG: either chair alone without noting the conflict.",
+      "source_support": "v1: 'The Quality Lead chairs the review.'; v2: 'The Chief Executive now chairs the review ... following a governance restructure.'",
+      "wrong_role_signature": "Silently drops one of the two temporal selectors."
+    }
+  ],
+  "development_case": {
+    "id": "b03-07/v1",
+    "utterance": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+    "note": "Reported separately as a development regression case; not fresh confirmation."
+  }
+}
