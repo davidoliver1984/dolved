@@ -10,7 +10,28 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 ### Block 1 — interpretation and execution consistency (R02/R05)
 
-#### Temporal intent/date-role diagnosis and proposed decision — 2026-11-13, awaiting David
+#### Temporal assessment approval and bounded mechanism experiment — David, 2026-11-13
+
+**Approved:** the bounded per-need assessment proposed in `58913af73cc8c19f809445b807ea533dbe20c790`, subject to the additional experiment and prerequisites below. One observed date-role failure alongside six earlier successful b03-07 records establishes neither a population failure rate nor the absence of a systematic validation weakness. No additional production model call or planner attempt is authorised. Plan authority fields, PHP timeline resolution, permissions and citation safeguards remain unchanged; measure additional checker tokens and latency. The historical proposal below is retained; its request for design approval is superseded by this decision, not its implementation prerequisites.
+
+**Current next action / prerequisite:** await the reviewer's checksum-frozen, source-supported fresh confirmation questions and expectations **before implementation**. Use authorised engineering sources only: no protected held-out/calibration access or broad corpus authoring. Codex may verify source support but must report any defect and obtain explicit resolution before execution, never silently edit the selection. No new package has been supplied in this approval message; implementation and provider execution have not begun.
+
+**Additional checker-mechanism experiment, separate from end-to-end confirmation:** prepare a separately identified probe set spanning the six temporal shapes below. For each probe, freeze a reviewed correct plan and a structurally valid, semantically incorrect temporal-role variant, the exact necessary field transformation, why it is wrong, expected verdicts and denominators **before any checker output**. Do not use malformed/internally impossible plans. For dual-role/conflicting-date probes, justify the semantics explicitly rather than presuming a field swap establishes an error. Include retained input16 as a labelled development probe. Fixture review must account for the existing plan-level clarification representation for genuinely conflicting/missing information; do not manufacture an executable “correct” plan where clarification is required or count an unexercised checker path as detection evidence.
+
+Run **five fixed checker-only attempts per plan**, no planner calls, maximum **USD0.25 within the USD1 total experiment-plus-confirmation ceiling**. Establish the conservative reservation first, including unpriced allowances. If the cap cannot support the frozen sample, stop/report; do not silently shrink it. Every attempt is retained. Provider-free tests and source/fixture review precede calls. Production call/attempt ceilings remain unchanged; repeated checker probes are measurement only, not production retries.
+
+| Fixed probe gate | Required interpretation |
+|---|---|
+| At least 90% of wrong-plan attempts receive a citation-verified, semantically appropriate rejection | Report numerator/denominator and independently assess the rejection's meaning; a verified quotation alone is insufficient. |
+| At most 5% of correct-plan attempts receive a false rejection | Report raw counts, all flags/citations, and per-question/per-pattern results; do not hide false flags in aggregates. |
+| No complete failure to detect any tested temporal-error pattern | Such a failure holds even if aggregate accuracy passes. |
+| Valid fixtures and complete fixed execution | Invalid fixtures or incomplete execution cannot yield a pass. |
+
+These gates measure only the frozen probe set and repeat variability, not general reliability or a replacement for Block1 acceptance. If a gate fails, preserve the result and stop for review: no tuning or repeated attempts to obtain a pass. End-to-end fresh confirmation remains distinct and must not be used for tuning. Only after probe success may the agreed confirmation run proceed, with its own exact runtime/run identities, source-based answer review, actual temporal-route verification and existing four-part attribution. Unknown/shared causes are not passes; proven downstream defects remain mandatory Block3 work; security/tenancy/authority/citation stops remain unchanged. Do not claim a small run establishes a reduced population failure rate.
+
+**Verification/publication retained:** focused cross-service tests; full-suite failing-identity comparison with 38 AI / 2 Laravel baseline, no weakened assertions, genuinely resolved failures separately reported (not deliberately retained to keep counts). Hold-branch-only focused commits/pushes; main unchanged, failed evidence immutable, inputs17–32 not resumed. Update this living plan and local ignored Journey with actual results. **Block1 remains HOLD** until applicable criteria are demonstrated. Current evidence is approval only—no implementation, tests or provider experiment is claimed complete.
+
+#### Temporal intent/date-role diagnosis and proposed decision — 2026-11-13 (subsequently approved above)
 
 **State/scope:** inspected at `bfd04490501b176f66cb5ecbadb81c7398570fd9`, `codex/block1-extractive-hold-20261112`. Three pre-existing tracked edits (ADR-0039 and the two R06 runner/test files) preserved. Block 1 HOLD, main, failed-run artifacts and acceptance gates unchanged. Documentation only; no application changes, tests, provider calls, new authorization or dispatch. This is one mechanism within Block 1, not a new programme or Block 3 start.
 
