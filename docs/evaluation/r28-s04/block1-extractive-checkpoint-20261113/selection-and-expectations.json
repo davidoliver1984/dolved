@@ -1,0 +1,1930 @@
+{
+  "subset_id": "R28-BLOCK1-EXTRACTIVE-THIRTY-PLUS-TWO-20261113-V1",
+  "K": 5,
+  "reservation_usd": 3,
+  "selection_basis": "Thirty distinct labelled cases, v1, stratified across all six batches: comparison, temporal, multi-part, local/inherited scope, typo/alias, security, records. Development questions excluded from ranking gate. No fresh output inspected. Cross-turn anaphora and explicit user examples are covered provider-free; this single-turn population is not claimed to exercise them live.",
+  "acceptance": [
+    "No executed query or coverage label contains wording absent from user words and validated typed fields",
+    "Attempted-search Recall@5 loses at most 0.03 on each side versus the same selected variants",
+    "No new interpretation-failure or clarification on clear questions",
+    "No new failures beyond 38 AI / 2 Laravel"
+  ],
+  "baseline_aggregates": {
+    "PRIMARY": {
+      "attempted_variant_count": 25,
+      "recall_at_5": 0.8813333333333333
+    },
+    "COMPARISON": {
+      "attempted_variant_count": 13,
+      "recall_at_5": 0.46153846153846156
+    }
+  },
+  "cases": [
+    {
+      "case_id": "v4.case.corrected-b01-02",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.contact",
+        "change.escalation",
+        "competition.near_duplicate",
+        "format.docx",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b01-02",
+        "variant_id": "v1",
+        "raw_record": "03-v4.case.corrected-b01-02-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b01-002-187"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 3
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b01-002-144"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 3
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b01-002-187"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 3
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b01-002-144"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 2
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b01-04",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.number",
+        "competition.near_duplicate",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b01-04",
+        "variant_id": "v1",
+        "raw_record": "07-v4.case.corrected-b01-04-v1.json",
+        "reached_rerank": false,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b01-05",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "format.docx",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "structure.boundary_spanning_evidence",
+        "structure.long_document",
+        "temporal.current",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b01-05",
+        "variant_id": "v1",
+        "raw_record": "09-v4.case.corrected-b01-05-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 0.5,
+            "precision_at_k": 0.2,
+            "mrr": 0.25,
+            "ndcg_at_k": 0.26406812257259094,
+            "covered_evidence_ids": [
+              "ev-b01-005-150"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 15
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 0.5,
+            "precision_at_k": 0.2,
+            "mrr": 0.25,
+            "ndcg_at_k": 0.26406812257259094,
+            "covered_evidence_ids": [
+              "ev-b01-005-150"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 5
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b01-06",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "safety.prompt_injection",
+        "scope.security_test",
+        "temporal.current",
+        "wording.concise_vague"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b01-06",
+        "variant_id": "v1",
+        "raw_record": "11-v4.case.corrected-b01-06-v1.json",
+        "reached_rerank": false,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b01-07",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.number",
+        "competition.near_duplicate",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b01-07",
+        "variant_id": "v1",
+        "raw_record": "13-v4.case.corrected-b01-07-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b01-007-270"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 2
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b01-007-204"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 2
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b01-007-270"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 2
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b01-007-204"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 2
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b01-08",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.inherited",
+        "change.addition_removal",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.current",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b01-08",
+        "variant_id": "v1",
+        "raw_record": "15-v4.case.corrected-b01-08-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.6131471927654584,
+            "covered_evidence_ids": [
+              "ev-b01-008-180",
+              "ev-b01-008-228"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 1
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.6131471927654584,
+            "covered_evidence_ids": [
+              "ev-b01-008-180",
+              "ev-b01-008-228"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 1
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.addition_removal",
+        "change.date",
+        "change.responsibility",
+        "competition.near_duplicate",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b01-09",
+        "variant_id": "v1",
+        "raw_record": "17-v4.case.corrected-b01-09-v1.json",
+        "reached_rerank": false,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 0
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 0
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b01-10",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.rename",
+        "competition.near_duplicate",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b01-10",
+        "variant_id": "v1",
+        "raw_record": "19-v4.case.corrected-b01-10-v1.json",
+        "reached_rerank": false,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 0
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 0
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b02-01",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "structure.boundary_spanning_evidence",
+        "structure.long_document",
+        "temporal.current",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b02-01",
+        "variant_id": "v1",
+        "raw_record": "25-v4.case.corrected-b02-01-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.6131471927654584,
+            "covered_evidence_ids": [
+              "ev-b02-01-202",
+              "ev-b02-01-149"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 25
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.6131471927654584,
+            "covered_evidence_ids": [
+              "ev-b02-01-202",
+              "ev-b02-01-149"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 5
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b02-03",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.inherited",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.valid_at_date",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b02-03",
+        "variant_id": "v1",
+        "raw_record": "29-v4.case.corrected-b02-03-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-03-93",
+              "ev-b02-03-203"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 15
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-03-93",
+              "ev-b02-03-203"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 5
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b02-06",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "structure.boundary_spanning_evidence",
+        "structure.long_document",
+        "temporal.current",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b02-06",
+        "variant_id": "v1",
+        "raw_record": "35-v4.case.corrected-b02-06-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-06-188",
+              "ev-b02-06-208"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 20
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-06-188",
+              "ev-b02-06-208"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 5
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b02-07",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.reorder",
+        "competition.near_duplicate",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b02-07",
+        "variant_id": "v1",
+        "raw_record": "37-v4.case.corrected-b02-07-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-07-374",
+              "ev-b02-07-307"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 3
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-07-357"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 3
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.9197207891481876,
+            "covered_evidence_ids": [
+              "ev-b02-07-374",
+              "ev-b02-07-307"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 3
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-07-357"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 2
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b02-08",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.local",
+        "format.docx",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.current",
+        "wording.typo_alias"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b02-08",
+        "variant_id": "v1",
+        "raw_record": "39-v4.case.corrected-b02-08-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-08-147"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 15
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-08-147"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 2
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b02-09",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.number",
+        "competition.competing_document",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b02-09",
+        "variant_id": "v1",
+        "raw_record": "41-v4.case.corrected-b02-09-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-09-current-bank-holiday-rate"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 15
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 2
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b02-09-current-bank-holiday-rate"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 3
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 2
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b03-01",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "structure.boundary_spanning_evidence",
+        "structure.long_document",
+        "temporal.current",
+        "wording.multi_part",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b03-01",
+        "variant_id": "v1",
+        "raw_record": "49-v4.case.corrected-b03-01-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.8772153153380493,
+            "covered_evidence_ids": [
+              "ev-b03-01-record",
+              "ev-b03-01-escalation"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 23
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.8772153153380493,
+            "covered_evidence_ids": [
+              "ev-b03-01-record",
+              "ev-b03-01-escalation"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 5
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b03-07",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.inherited",
+        "format.docx",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.valid_at_date",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b03-07",
+        "variant_id": "v1",
+        "raw_record": "61-v4.case.corrected-b03-07-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b03-07-harbour-cleaning"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 15
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b03-07-harbour-cleaning"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 5
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b03-10",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.local",
+        "change.addition_removal",
+        "competition.near_duplicate",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.ordinary_employee",
+        "wording.typo_alias"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b03-10",
+        "variant_id": "v1",
+        "raw_record": "67-v4.case.corrected-b03-10-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 0.5,
+            "ndcg_at_k": 0.6309297535714574,
+            "covered_evidence_ids": [
+              "ev-b03-10-new-scope"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 15
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 0.5,
+            "ndcg_at_k": 0.6309297535714574,
+            "covered_evidence_ids": [
+              "ev-b03-10-new-scope"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 5
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b04-05",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "structure.boundary_spanning_evidence",
+        "structure.long_document",
+        "temporal.valid_at_date",
+        "wording.multi_part",
+        "wording.ordinary_employee",
+        "wording.typo_alias"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b04-05",
+        "variant_id": "v1",
+        "raw_record": "81-v4.case.corrected-b04-05-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 0.5,
+            "ndcg_at_k": 0.6509209298071326,
+            "covered_evidence_ids": [
+              "ev-b04-05-borderline",
+              "ev-b04-05-retention"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 15
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 0.5,
+            "ndcg_at_k": 0.6509209298071326,
+            "covered_evidence_ids": [
+              "ev-b04-05-borderline",
+              "ev-b04-05-retention"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 5
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b04-07",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.reorder",
+        "competition.near_duplicate",
+        "format.docx",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b04-07",
+        "variant_id": "v1",
+        "raw_record": "85-v4.case.corrected-b04-07-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.6131471927654584,
+            "covered_evidence_ids": [
+              "ev-b04-07-new-week1",
+              "ev-b04-07-new-week2"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 1
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.6131471927654584,
+            "covered_evidence_ids": [
+              "ev-b04-07-old-week1",
+              "ev-b04-07-old-week2"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 1
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.6131471927654584,
+            "covered_evidence_ids": [
+              "ev-b04-07-new-week1",
+              "ev-b04-07-new-week2"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 1
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.6131471927654584,
+            "covered_evidence_ids": [
+              "ev-b04-07-old-week1",
+              "ev-b04-07-old-week2"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 1
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b04-09",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.rename",
+        "competition.near_duplicate",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.colloquial",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b04-09",
+        "variant_id": "v1",
+        "raw_record": "89-v4.case.corrected-b04-09-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 0.5,
+            "ndcg_at_k": 0.6309297535714574,
+            "covered_evidence_ids": [
+              "ev-b04-09-new-role"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 15
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 0.5,
+            "ndcg_at_k": 0.6309297535714574,
+            "covered_evidence_ids": [
+              "ev-b04-09-new-role"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 5
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b05-01",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.contact",
+        "competition.near_duplicate",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.colloquial",
+        "wording.typo_alias"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b05-01",
+        "variant_id": "v1",
+        "raw_record": "97-v4.case.corrected-b05-01-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-01-new-contact"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 23
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-01-new-contact"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 5
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b05-03",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.inherited",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.valid_at_date",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b05-03",
+        "variant_id": "v1",
+        "raw_record": "101-v4.case.corrected-b05-03-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-03-pilot-monitoring"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 15
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-03-pilot-monitoring"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 4
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b05-05",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.responsibility",
+        "competition.near_duplicate",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b05-05",
+        "variant_id": "v1",
+        "raw_record": "105-v4.case.corrected-b05-05-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-05-new-authority"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 15
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-05-new-authority"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 5
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b05-07",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.addition_removal",
+        "change.escalation",
+        "competition.near_duplicate",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.colloquial"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b05-07",
+        "variant_id": "v1",
+        "raw_record": "109-v4.case.corrected-b05-07-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-07-new-escalation"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 22
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-07-new-escalation"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 5
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b05-09",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.date",
+        "change.number",
+        "competition.near_duplicate",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b05-09",
+        "variant_id": "v1",
+        "raw_record": "113-v4.case.corrected-b05-09-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-09-new-window"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 1
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-09-old-window"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 1
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-09-new-window"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 1
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b05-09-old-window"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 1
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b06-04",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.addition_removal",
+        "change.contact",
+        "change.date",
+        "change.rename",
+        "change.responsibility",
+        "change.escalation",
+        "competition.competing_document",
+        "competition.near_duplicate",
+        "format.docx",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b06-04",
+        "variant_id": "v1",
+        "raw_record": "127-v4.case.corrected-b06-04-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 0.2,
+            "precision_at_k": 0.2,
+            "mrr": 0.2,
+            "ndcg_at_k": 0.1312050775123418,
+            "covered_evidence_ids": [
+              "ev-b06-04-encryption-new"
+            ],
+            "required_unit_count": 5,
+            "ranked_candidate_count": 15
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 3,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 0.2,
+            "precision_at_k": 0.2,
+            "mrr": 0.2,
+            "ndcg_at_k": 0.1312050775123418,
+            "covered_evidence_ids": [
+              "ev-b06-04-encryption-new"
+            ],
+            "required_unit_count": 5,
+            "ranked_candidate_count": 5
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 3,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.rename",
+        "competition.competing_document",
+        "competition.near_duplicate",
+        "format.docx",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b06-05",
+        "variant_id": "v1",
+        "raw_record": "129-v4.case.corrected-b06-05-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 0.3333333333333333,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.4692787260227565,
+            "covered_evidence_ids": [
+              "ev-b06-05-ropa-new"
+            ],
+            "required_unit_count": 3,
+            "ranked_candidate_count": 1
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b06-05-ropa-old"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 1
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 0.3333333333333333,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 0.4692787260227565,
+            "covered_evidence_ids": [
+              "ev-b06-05-ropa-new"
+            ],
+            "required_unit_count": 3,
+            "ranked_candidate_count": 2
+          },
+          "COMPARISON": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b06-05-ropa-old"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 1
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.global",
+        "change.addition_removal",
+        "change.contact",
+        "change.rename",
+        "change.responsibility",
+        "change.escalation",
+        "competition.competing_document",
+        "competition.near_duplicate",
+        "format.docx",
+        "format.pdf",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.comparison",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b06-06",
+        "variant_id": "v1",
+        "raw_record": "131-v4.case.corrected-b06-06-v1.json",
+        "reached_rerank": false,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 6,
+            "ranked_candidate_count": 0
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 6,
+            "ranked_candidate_count": 0
+          },
+          "COMPARISON": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b06-11",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.inherited",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.valid_at_date",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b06-11",
+        "variant_id": "v1",
+        "raw_record": "141-v4.case.corrected-b06-11-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 22
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 5
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b06-12",
+      "variant_id": "v1",
+      "role": "labelled_checkpoint",
+      "slices": [
+        "applicability.inherited",
+        "format.pdf",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "temporal.historical",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b06-12",
+        "variant_id": "v1",
+        "raw_record": "143-v4.case.corrected-b06-12-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b06-12-callout-report"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 3
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.2,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b06-12-callout-report"
+            ],
+            "required_unit_count": 1,
+            "ranked_candidate_count": 5
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b01-01",
+      "variant_id": "v1",
+      "role": "development",
+      "slices": [
+        "applicability.global",
+        "format.txt",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "structure.boundary_spanning_evidence",
+        "structure.long_document",
+        "temporal.current",
+        "wording.multi_part"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b01-01",
+        "variant_id": "v1",
+        "raw_record": "01-v4.case.corrected-b01-01-v1.json",
+        "reached_rerank": true,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b01-001-500",
+              "ev-b01-001-329"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 20
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 1.0,
+            "precision_at_k": 0.4,
+            "mrr": 1.0,
+            "ndcg_at_k": 1.0,
+            "covered_evidence_ids": [
+              "ev-b01-001-500",
+              "ev-b01-001-329"
+            ],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 5
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    },
+    {
+      "case_id": "v4.case.corrected-b03-05",
+      "variant_id": "v1",
+      "role": "development",
+      "slices": [
+        "applicability.global",
+        "format.docx",
+        "outcome.EVIDENCE_FOUND",
+        "scope.primary",
+        "structure.boundary_spanning_evidence",
+        "structure.long_document",
+        "temporal.current",
+        "wording.multi_part",
+        "wording.ordinary_employee"
+      ],
+      "baseline": {
+        "case_id": "v4.case.corrected-b03-05",
+        "variant_id": "v1",
+        "raw_record": "57-v4.case.corrected-b03-05-v1.json",
+        "reached_rerank": false,
+        "attempted_rerank": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 0
+          }
+        },
+        "end_to_end_final_evidence": {
+          "PRIMARY": {
+            "recall_at_k": 0.0,
+            "precision_at_k": 0.0,
+            "mrr": 0.0,
+            "ndcg_at_k": 0.0,
+            "covered_evidence_ids": [],
+            "required_unit_count": 2,
+            "ranked_candidate_count": 0
+          }
+        },
+        "wrong_side_document_version": [],
+        "wrong_side_hydrated": []
+      }
+    }
+  ],
+  "source_sha256": {
+    "docs/evaluation/r28-s04/r07-evidence-units-v4-20261111/evidence-units-corpus.json": "f31e654c0d4ba5be87311599202fc6a0650336bd598ec147677bf71f6db0fc2b",
+    "docs/evaluation/r28-s04/r07-evidence-unit-metrics-v4-20261111/results-a.json": "644e33c6fa910fe1e17f1ef85b4e680e9b7e13b0d9a32b9ac00c862325cc8946"
+  }
+}

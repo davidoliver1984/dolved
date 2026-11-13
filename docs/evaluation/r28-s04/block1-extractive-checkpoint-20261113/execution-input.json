@@ -1,0 +1,165 @@
+{
+  "subset_id": "R28-BLOCK1-EXTRACTIVE-THIRTY-PLUS-TWO-20261113-V1",
+  "items": [
+    {
+      "case_id": "v4.case.corrected-b01-02",
+      "variant_id": "v1",
+      "utterance": "Who was the internal gas-leak escalation contact before March 2026, and who replaced them from that month?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-04",
+      "variant_id": "v1",
+      "utterance": "How often were highest-risk residents repositioned before January 2026, and what interval applies after the change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-05",
+      "variant_id": "v1",
+      "utterance": "Two residents developed similar symptoms within 48 hours. What immediate action should we take, and what evidence of using that process must be retained?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-06",
+      "variant_id": "v1",
+      "utterance": "When will the approved mileage claim from last month be paid?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-07",
+      "variant_id": "v1",
+      "utterance": "How did both the starter and annual replacement uniform allowances change in April 2026?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-08",
+      "variant_id": "v1",
+      "utterance": "Does the Midlands key-safe procedure cover Oakfield Lodge outreach, and if a client changes their code, how quickly must we tell the office?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-09",
+      "variant_id": "v1",
+      "utterance": "What deadline and review step changed for a DoLS outcome notification in November 2025?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-10",
+      "variant_id": "v1",
+      "utterance": "When \u201cOver the counter medicines\u201d became \u201cHomely remedies list\u201d, did the rule about which remedies may be given change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-01",
+      "variant_id": "v1",
+      "utterance": "A hazard has come up that none of our risk assessments covers. What must the manager do straight away, and which safety records must we retain?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-03",
+      "variant_id": "v1",
+      "utterance": "On 1 July 2025, how many key holders did Riverside House need and what happened if both were away?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-06",
+      "variant_id": "v1",
+      "utterance": "During an emergency affecting every site, where should teams get consistent guidance, and who runs the organisation-wide debrief afterwards?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-07",
+      "variant_id": "v1",
+      "utterance": "After the Learning from Deaths update, which element is presented first, and did either underlying requirement change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-08",
+      "variant_id": "v1",
+      "utterance": "I work at HQ and have changed desks; when do I need to redo my DSE assesment?"
+    },
+    {
+      "case_id": "v4.case.corrected-b02-09",
+      "variant_id": "v1",
+      "utterance": "If I work overtime on a bank holiday, what rate applies now, and what rate did the older guidance use for the same hours?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-01",
+      "variant_id": "v1",
+      "utterance": "An outside agency has not acknowledged my safeguarding referral. What happens next, and what record must we keep?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-07",
+      "variant_id": "v1",
+      "utterance": "Who provided the daily cleaning at Harbour View on 1 February 2026?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-10",
+      "variant_id": "v1",
+      "utterance": "Did the Birmingham home need an asbestos-register check before January 2026, and does it now?"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-05",
+      "variant_id": "v1",
+      "utterance": "For a borderline meds error on 3 September 2026, which severity tier should I record and how must that classification be kept?"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-07",
+      "variant_id": "v1",
+      "utterance": "What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?"
+    },
+    {
+      "case_id": "v4.case.corrected-b04-09",
+      "variant_id": "v1",
+      "utterance": "What is the site's safeguarding lead called now, and did the first-contact role itself change?"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-01",
+      "variant_id": "v1",
+      "utterance": "Who do I go to now if I'm locked out of e-learnng or a course is missing, and who handled it before July 2026?"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-03",
+      "variant_id": "v1",
+      "utterance": "At Riverside House on 15 December 2025, which team monitored the North West key-holder pilot and how often?"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-05",
+      "variant_id": "v1",
+      "utterance": "For a hard-to-fill role, who can approve extending the recruitment timescale now, and who held that decision before February 2026?"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-07",
+      "variant_id": "v1",
+      "utterance": "The meds fridge has packed up\u2014who must I call now, and what extra call was added in April 2026?"
+    },
+    {
+      "case_id": "v4.case.corrected-b05-09",
+      "variant_id": "v1",
+      "utterance": "How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-04",
+      "variant_id": "v1",
+      "utterance": "I'm updating our response card for a lost encrypted work device. What is the control called now, and who classifies the incident, how quickly must the DPO assess it, and which out-of-hours route was added?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-05",
+      "variant_id": "v1",
+      "utterance": "I'm updating the ROPA for employee records. What did the old Legal basis field become, and what should I record there for employment data?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-06",
+      "variant_id": "v1",
+      "utterance": "I'm updating our safeguarding card for a resident-money discrepancy. Who receives the first escalation now, what part does Finance keep, and which current role name and outside-agency sharing route should the card use?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-11",
+      "variant_id": "v1",
+      "utterance": "At Oakfield outreach on 1 July 2026, when did a key safe need reviewing and what had to happen when it was no longer needed?"
+    },
+    {
+      "case_id": "v4.case.corrected-b06-12",
+      "variant_id": "v1",
+      "utterance": "At Riverside House in September 2025, when did I have to report a key-holder call-out and what details belonged in the report?"
+    },
+    {
+      "case_id": "v4.case.corrected-b01-01",
+      "variant_id": "v1",
+      "utterance": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?"
+    },
+    {
+      "case_id": "v4.case.corrected-b03-05",
+      "variant_id": "v1",
+      "utterance": "I'm resigning after three years. How much notice do I give, and what else do I need to do before I leave?"
+    }
+  ]
+}
