@@ -1,0 +1,38 @@
+{
+  "schema_version": "block1-temporal-confirmation-amendment-v1",
+  "package_id": "BLOCK1-TEMPORAL-CONFIRMATION-20261113",
+  "amends": {"file": "selection.json", "sha256": "530c05066fc7f9db6dd6fa45fef831fa9720a3463efe056f280500d6fad7b207"},
+  "authored_by": "reviewer (Claude)",
+  "authored_on": "2026-11-13",
+  "reason": "Defects found by implementer source verification (block1-temporal-package-verification-20261113/report.md) before any implementation or provider output. selection.json is preserved unchanged; this file supersedes only the entries named below.",
+  "superseded_items": {
+    "T11": {
+      "id": "T11", "shape": "missing_event_date",
+      "utterance": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+      "intended_roles": {"undated past event": "authority date required but missing"},
+      "expected_version": "v4b.safeguarding.missing-person-procedure: v1 effective 2024-07-01 to 2026-07-01 (30 minutes); v2 effective 2026-07-01 (15 minutes). No version in the corpus before 2024-07-01.",
+      "expected_answer": "ACCEPTABLE: (a) a clarification asking when it happened; OR (b) an answer that gives both rules with their effective periods (30 minutes from 1 July 2024 to 30 June 2026; 15 minutes from 1 July 2026) AND states that where there is immediate risk the registered manager calls emergency services without waiting for the search window. WRONG: either figure alone presented as the applicable rule; or option (b) without the immediate-risk qualification; or stating a rule for dates before 1 July 2024.",
+      "source_support": "v1/v2 immediate search sentences; both versions: the registered manager assesses immediate vulnerability and calls emergency services where risk is immediate (exact wording per verification report).",
+      "wrong_role_signature": "Silent default to a single version for a past event of unknown date."
+    },
+    "T12": {
+      "id": "T12", "shape": "conflicting_temporal_information",
+      "utterance": "Under the current staff discount scheme, what discount range applied on 1 June 2025?",
+      "intended_roles": {"current": "authority selector (current version)", "1 June 2025": "conflicting authority valid-at date"},
+      "conflict_observable_from_question": "The question itself pairs 'current' with a past valid-at date; no corpus metadata is needed to see the two selectors disagree.",
+      "expected_version": "v4b.hr.staff-benefits-guidance v1 (in force 2025-06-01: 5-10%) versus v2 (current, effective 2026-04-01: 5-15%).",
+      "expected_answer": "ACCEPTABLE: (a) a clarification about which they mean; OR (b) an answer that states both: 5-10% applied on 1 June 2025 under the earlier version, and the current scheme (from 1 April 2026, new provider) offers 5-15%. WRONG: either range alone without noting the two selectors disagree.",
+      "source_support": "v1: 'typically 5-10% off at participating retailers'; v2: 'typically 5-15% off at a wider range of participating retailers, following a change of scheme provider'.",
+      "wrong_role_signature": "Silently drops one of the two temporal selectors."
+    }
+  },
+  "probe_construction": {
+    "plans_per_item": "For every item T01-T12: one correct executable plan and one role-flipped wrong plan; plus the retained input-16 plan as an additional wrong plan. 25 plans, 5 checks each, 125 checks.",
+    "T11_T12_correct_plan": "The executable correct plan is the two-version plan (previous/valid-at lane plus current lane) corresponding to acceptable answer (b). Clarification is also acceptable live but bypasses the checker by production design, so it is not probed and is not counted in either rate.",
+    "T11_T12_wrong_plan": "Single-lane plan that silently keeps one selector (current for T11; whichever single selector for T12, fixed by Codex before dispatch and recorded).",
+    "T09_wrong_plan": "Leaving date as authority date (yields no version at execution). It is a wrong role at the checker level even though its execution outcome is a no-answer rather than a different figure.",
+    "T10_wrong_plan": "Single current lane. The discriminating failure is loss of the independently authorised historical lane, not absence of the old number in text.",
+    "gates_unchanged": "Wrong plans flagged with a verified citation in at least 90% of checks; correct plans flagged in at most 5% of checks; per-item rates reported; failure holds with no tuning."
+  },
+  "grading_clarification": "Short expected answers are targets, not permission to drop material source qualifications. Under the existing wrong-answer rule, omitting a source condition that gates or changes the action the user is asking about (as at input 15) is wrong; omitting unrelated detail is not."
+}
