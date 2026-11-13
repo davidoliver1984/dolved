@@ -1,0 +1,1479 @@
+{
+  "items": [
+    {
+      "probe_id": "T01-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "What urgent attendance time applied to heating repairs on 14 October 2025?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "What urgent attendance time applied to heating repairs on 14 October 2025?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "date",
+              "value": "2025-10-14",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "14 October 2025"
+              }
+            },
+            "fact_reference": null,
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "a5fa999d-cc24-4b21-b78f-7ecfb02f0fa6"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T01-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "What urgent attendance time applied to heating repairs on 14 October 2025?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "What urgent attendance time applied to heating repairs on 14 October 2025?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": {
+              "value": "2025-10-14",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "14 October 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "a5fa999d-cc24-4b21-b78f-7ecfb02f0fa6"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T02-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "Who chaired serious incident reviews in December 2025?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "Who chaired serious incident reviews in December 2025?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "Who chaired serious incident reviews in December 2025?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "period",
+              "value": "2025-12",
+              "precision": "month",
+              "source": {
+                "turn_id": "u1",
+                "quote": "December 2025"
+              }
+            },
+            "fact_reference": null,
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "654e7714-56e9-4d73-aa3b-22bd673f2ed6"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T02-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "Who chaired serious incident reviews in December 2025?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "Who chaired serious incident reviews in December 2025?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "Who chaired serious incident reviews in December 2025?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": {
+              "value": "2025-12",
+              "precision": "month",
+              "source": {
+                "turn_id": "u1",
+                "quote": "December 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "654e7714-56e9-4d73-aa3b-22bd673f2ed6"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T03-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "date",
+              "value": "2025-11-20",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "20 November 2025"
+              }
+            },
+            "fact_reference": null,
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "3171164c-0a60-43e0-92cd-ff32664095f1"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T03-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": {
+              "value": "2025-11-20",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "20 November 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "3171164c-0a60-43e0-92cd-ff32664095f1"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T04-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": {
+              "value": "2025-09-30",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "30 September 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "1012871e-ea29-48f3-b399-2e87ad931907"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T04-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "date",
+              "value": "2025-09-30",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "30 September 2025"
+              }
+            },
+            "fact_reference": {
+              "value": "2025-09-30",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "30 September 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "1012871e-ea29-48f3-b399-2e87ad931907"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T05-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": {
+              "value": "2026-02-02",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "2 February 2026"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T05-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "date",
+              "value": "2026-02-02",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "2 February 2026"
+              }
+            },
+            "fact_reference": {
+              "value": "2026-02-02",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "2 February 2026"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "c4a1f9b8-05a4-44d1-ad7e-05151f42fe59"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T06-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": {
+              "value": "2025-09",
+              "precision": "month",
+              "source": {
+                "turn_id": "u1",
+                "quote": "September 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "654e7714-56e9-4d73-aa3b-22bd673f2ed6"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T06-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "period",
+              "value": "2025-09",
+              "precision": "month",
+              "source": {
+                "turn_id": "u1",
+                "quote": "September 2025"
+              }
+            },
+            "fact_reference": {
+              "value": "2025-09",
+              "precision": "month",
+              "source": {
+                "turn_id": "u1",
+                "quote": "September 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "654e7714-56e9-4d73-aa3b-22bd673f2ed6"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T07-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": {
+              "value": "2025-05",
+              "precision": "month",
+              "source": {
+                "turn_id": "u1",
+                "quote": "May 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "2e077d06-0ec1-4889-852a-497423adb119"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T07-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "period",
+              "value": "2025-05",
+              "precision": "month",
+              "source": {
+                "turn_id": "u1",
+                "quote": "May 2025"
+              }
+            },
+            "fact_reference": {
+              "value": "2025-05",
+              "precision": "month",
+              "source": {
+                "turn_id": "u1",
+                "quote": "May 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "2e077d06-0ec1-4889-852a-497423adb119"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T08-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "date",
+              "value": "2025-12-05",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "5 December 2025"
+              }
+            },
+            "fact_reference": {
+              "value": "2025-12-05",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "5 December 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "a5fa999d-cc24-4b21-b78f-7ecfb02f0fa6"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T08-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": {
+              "value": "2025-12-05",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "5 December 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "a5fa999d-cc24-4b21-b78f-7ecfb02f0fa6"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T09-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "date",
+              "value": "2026-07-02",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "2 July 2026"
+              }
+            },
+            "fact_reference": {
+              "value": "2025-03-15",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "15 March 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "1012871e-ea29-48f3-b399-2e87ad931907"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T09-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "date",
+              "value": "2025-03-15",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "15 March 2025"
+              }
+            },
+            "fact_reference": {
+              "value": "2026-07-02",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "2 July 2026"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "1012871e-ea29-48f3-b399-2e87ad931907"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T10-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?"
+            },
+            "context_spans": [],
+            "operation": "compare",
+            "authority": {
+              "kind": "date",
+              "value": "2025-12-31",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "31 December 2025"
+              }
+            },
+            "fact_reference": null,
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "3171164c-0a60-43e0-92cd-ff32664095f1"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T10-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": {
+              "value": "2025-12-31",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "31 December 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "3171164c-0a60-43e0-92cd-ff32664095f1"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T11-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?"
+            },
+            "context_spans": [],
+            "operation": "compare",
+            "authority": {
+              "kind": "previous",
+              "value": "When my mum went missing from the home",
+              "precision": "named",
+              "source": {
+                "turn_id": "u1",
+                "quote": "When my mum went missing from the home"
+              }
+            },
+            "fact_reference": null,
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "8d73ed67-5f0b-424b-abe2-f306d1437cd3"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T11-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": null,
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "8d73ed67-5f0b-424b-abe2-f306d1437cd3"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T12-correct",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "Under the current staff discount scheme, what discount range applied on 1 June 2025?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "Under the current staff discount scheme, what discount range applied on 1 June 2025?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "Under the current staff discount scheme, what discount range applied on 1 June 2025?"
+            },
+            "context_spans": [],
+            "operation": "compare",
+            "authority": {
+              "kind": "date",
+              "value": "2025-06-01",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "1 June 2025"
+              }
+            },
+            "fact_reference": null,
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "2e077d06-0ec1-4889-852a-497423adb119"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "T12-wrong",
+      "user_turns": [
+        {
+          "turn_id": "u1",
+          "text": "Under the current staff discount scheme, what discount range applied on 1 June 2025?"
+        }
+      ],
+      "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "Under the current staff discount scheme, what discount range applied on 1 June 2025?",
+            "central": true,
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "Under the current staff discount scheme, what discount range applied on 1 June 2025?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "current",
+              "value": null,
+              "precision": "none",
+              "source": null
+            },
+            "fact_reference": {
+              "value": "2025-06-01",
+              "precision": "day",
+              "source": {
+                "turn_id": "u1",
+                "quote": "1 June 2025"
+              }
+            },
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            },
+            "claim_under_test": null,
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "matched",
+            "family_ids": [
+              "2e077d06-0ec1-4889-852a-497423adb119"
+            ],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      }
+    },
+    {
+      "probe_id": "input16-development-wrong",
+      "user_turns": [
+        {
+          "turn_id": "user-1",
+          "text": "Who provided the daily cleaning at Harbour View on 1 February 2026?"
+        }
+      ],
+      "plan": {
+        "bindings": [
+          {
+            "family_ids": [],
+            "need_id": "n1",
+            "ownership": "authorised_workspace",
+            "ownership_source": null,
+            "subject_status": "topic"
+          }
+        ],
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+          {
+            "applicability": {
+              "kind": "named",
+              "source": {
+                "quote": "Harbour View",
+                "turn_id": "user-1"
+              }
+            },
+            "aspect": "Harbour View 1 February 2026 Who provided the daily cleaning at Harbour View on 1 February 2026?",
+            "authority": {
+              "kind": "current",
+              "precision": "none",
+              "source": null,
+              "value": null
+            },
+            "central": true,
+            "claim_under_test": null,
+            "context_spans": [
+              {
+                "quote": "Harbour View",
+                "turn_id": "user-1"
+              },
+              {
+                "quote": "1 February 2026",
+                "turn_id": "user-1"
+              }
+            ],
+            "fact_reference": {
+              "precision": "day",
+              "source": {
+                "quote": "1 February 2026",
+                "turn_id": "user-1"
+              },
+              "value": "2026-02-01"
+            },
+            "need_id": "n1",
+            "operation": "retrieve",
+            "question_span": {
+              "quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+              "turn_id": "user-1"
+            },
+            "scope_question": null,
+            "supports_need_id": null
+          }
+        ],
+        "schema_version": "evidence-needs-plan-v4"
+      }
+    }
+  ]
+}

@@ -1,0 +1,364 @@
+{
+    "provider_calls": 0,
+    "rows": [
+        {
+            "probe_id": "T01-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "valid_at_date",
+                    "date": "2025-10-14",
+                    "reference": null,
+                    "fact_date": null,
+                    "query": "What urgent attendance time applied to heating repairs on 14 October 2025?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T01-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2025-10-14",
+                    "query": "What urgent attendance time applied to heating repairs on 14 October 2025?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T02-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "valid_at_date",
+                    "date": null,
+                    "reference": {
+                        "kind": "calendar_period",
+                        "value": "2025-12"
+                    },
+                    "fact_date": null,
+                    "query": "Who chaired serious incident reviews in December 2025?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T02-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2025-12",
+                    "query": "Who chaired serious incident reviews in December 2025?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T03-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "valid_at_date",
+                    "date": "2025-11-20",
+                    "reference": null,
+                    "fact_date": null,
+                    "query": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T03-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2025-11-20",
+                    "query": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T04-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2025-09-30",
+                    "query": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T04-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "valid_at_date",
+                    "date": "2025-09-30",
+                    "reference": null,
+                    "fact_date": "2025-09-30",
+                    "query": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T05-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2026-02-02",
+                    "query": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T05-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "valid_at_date",
+                    "date": "2026-02-02",
+                    "reference": null,
+                    "fact_date": "2026-02-02",
+                    "query": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T06-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2025-09",
+                    "query": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T06-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "valid_at_date",
+                    "date": null,
+                    "reference": {
+                        "kind": "calendar_period",
+                        "value": "2025-09"
+                    },
+                    "fact_date": "2025-09",
+                    "query": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T07-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2025-05",
+                    "query": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T07-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "valid_at_date",
+                    "date": null,
+                    "reference": {
+                        "kind": "calendar_period",
+                        "value": "2025-05"
+                    },
+                    "fact_date": "2025-05",
+                    "query": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T08-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "valid_at_date",
+                    "date": "2025-12-05",
+                    "reference": null,
+                    "fact_date": "2025-12-05",
+                    "query": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T08-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2025-12-05",
+                    "query": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T09-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "valid_at_date",
+                    "date": "2026-07-02",
+                    "reference": null,
+                    "fact_date": "2025-03-15",
+                    "query": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T09-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "valid_at_date",
+                    "date": "2025-03-15",
+                    "reference": null,
+                    "fact_date": "2026-07-02",
+                    "query": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T10-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "compare",
+                    "date": "2025-12-31",
+                    "reference": null,
+                    "fact_date": null,
+                    "query": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T10-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2025-12-31",
+                    "query": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T11-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "compare",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": null,
+                    "query": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T11-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": null,
+                    "query": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T12-correct",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "compare",
+                    "date": "2025-06-01",
+                    "reference": null,
+                    "fact_date": null,
+                    "query": "Under the current staff discount scheme, what discount range applied on 1 June 2025?"
+                }
+            ]
+        },
+        {
+            "probe_id": "T12-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2025-06-01",
+                    "query": "Under the current staff discount scheme, what discount range applied on 1 June 2025?"
+                }
+            ]
+        },
+        {
+            "probe_id": "input16-development-wrong",
+            "valid": true,
+            "lanes": [
+                {
+                    "need_id": "n1",
+                    "mode": "current",
+                    "date": null,
+                    "reference": null,
+                    "fact_date": "2026-02-01",
+                    "query": "Harbour View 1 February 2026 Who provided the daily cleaning at Harbour View on 1 February 2026?"
+                }
+            ]
+        }
+    ]
+}

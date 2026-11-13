@@ -1,0 +1,1024 @@
+{
+  "items": [
+    {
+      "id": "T01",
+      "shape": "date_asks_which_rule_applied",
+      "wrong_reason": "The requested historical rule becomes current; the date remains fact context only.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "What urgent attendance time applied to heating repairs on 14 October 2025?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "date",
+            "value": "2025-10-14",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "14 October 2025"
+            }
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "What urgent attendance time applied to heating repairs on 14 October 2025?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2025-10-14",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "14 October 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T01",
+        "shape": "date_asks_which_rule_applied",
+        "utterance": "What urgent attendance time applied to heating repairs on 14 October 2025?",
+        "intended_roles": {
+          "14 October 2025": "authority valid-at date"
+        },
+        "expected_version": "v4b.procurement.maintenance-contractor-schedule v1 (effective 2025-01-01, superseded 2026-01-01)",
+        "expected_answer": "2 hours.",
+        "source_support": "v1 table row: 'Heating | 3 working days | 2 hours'",
+        "wrong_role_signature": "Current v2 gives 1 hour."
+      }
+    },
+    {
+      "id": "T02",
+      "shape": "date_asks_which_rule_applied",
+      "wrong_reason": "The requested historical rule becomes current; the date remains fact context only.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "Who chaired serious incident reviews in December 2025?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Who chaired serious incident reviews in December 2025?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "period",
+            "value": "2025-12",
+            "precision": "month",
+            "source": {
+              "turn_id": "u1",
+              "quote": "December 2025"
+            }
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "Who chaired serious incident reviews in December 2025?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Who chaired serious incident reviews in December 2025?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2025-12",
+            "precision": "month",
+            "source": {
+              "turn_id": "u1",
+              "quote": "December 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T02",
+        "shape": "date_asks_which_rule_applied",
+        "utterance": "Who chaired serious incident reviews in December 2025?",
+        "intended_roles": {
+          "December 2025": "authority valid-at period (month)"
+        },
+        "expected_version": "v4b.incident.serious-incident-review-policy v1 (effective 2025-05-01, superseded 2026-05-01)",
+        "expected_answer": "The Quality Lead.",
+        "source_support": "v1: 'The Quality Lead chairs the review.'",
+        "wrong_role_signature": "Current v2 gives the Chief Executive."
+      }
+    },
+    {
+      "id": "T03",
+      "shape": "date_asks_which_rule_applied",
+      "wrong_reason": "The requested historical rule becomes current; the date remains fact context only.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "date",
+            "value": "2025-11-20",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "20 November 2025"
+            }
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2025-11-20",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "20 November 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T03",
+        "shape": "date_asks_which_rule_applied",
+        "utterance": "As of 20 November 2025, how long were a departed employee's mailboxes kept before deletion?",
+        "intended_roles": {
+          "20 November 2025": "authority valid-at date"
+        },
+        "expected_version": "v4b.infogov.email-retention-policy v1 (effective 2025-01-01, superseded 2026-01-01)",
+        "expected_answer": "2 years after the employee leaves, then permanently deleted.",
+        "source_support": "v1: 'Mailboxes are retained for 2 years after an employee leaves, then permanently deleted.'",
+        "wrong_role_signature": "Current v2 gives 6 months."
+      }
+    },
+    {
+      "id": "T04",
+      "shape": "event_date_must_not_select_history",
+      "wrong_reason": "The old event date selects historical authority despite an explicit current question.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2025-09-30",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "30 September 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "date",
+            "value": "2025-09-30",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "30 September 2025"
+            }
+          },
+          "fact_reference": {
+            "value": "2025-09-30",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "30 September 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T04",
+        "shape": "event_date_must_not_select_history",
+        "utterance": "I left Alderbridge on 30 September 2025 and a new employer has just asked HR for my reference. How long does HR have to send it?",
+        "intended_roles": {
+          "30 September 2025": "event/fact context only (leaving date)",
+          "request now": "current authority"
+        },
+        "expected_version": "v4b.hr.staff-reference-request-procedure v2 (effective 2026-06-01, current)",
+        "expected_answer": "Within 5 working days of the request being received (a factual reference confirming dates of employment and job title).",
+        "source_support": "v2: 'within 5 working days of the request being received'",
+        "wrong_role_signature": "Leaving date as authority selects v1: 10 working days."
+      }
+    },
+    {
+      "id": "T05",
+      "shape": "event_date_must_not_select_history",
+      "wrong_reason": "The old event date selects historical authority despite an explicit current question.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2026-02-02",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "2 February 2026"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "date",
+            "value": "2026-02-02",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "2 February 2026"
+            }
+          },
+          "fact_reference": {
+            "value": "2026-02-02",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "2 February 2026"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T05",
+        "shape": "event_date_must_not_select_history",
+        "utterance": "A resident fell on 2 February 2026 and seemed fine at the time, but today she says her hip hurts. Who do I need to contact now?",
+        "intended_roles": {
+          "2 February 2026": "event/fact context only (date of fall)",
+          "now": "current authority"
+        },
+        "expected_version": "v4b.care.falls-prevention-policy v2 (effective 2026-04-01, current)",
+        "expected_answer": "The on-call registered manager and, because injury is now suspected, the falls lead (nurse or therapist); the GP or emergency services where clinical escalation is indicated.",
+        "source_support": "v2: care staff 'contact the on-call registered manager, and now also the falls lead where injury is suspected'",
+        "wrong_role_signature": "Fall date as authority selects v1: on-call registered manager only, no falls lead.",
+        "grading_note": "An answer may acknowledge the delay since the fall; it must not present v1's manager-only escalation as the current requirement."
+      }
+    },
+    {
+      "id": "T06",
+      "shape": "current_question_mentioning_old_event",
+      "wrong_reason": "The old event date selects historical authority despite an explicit current question.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2025-09",
+            "precision": "month",
+            "source": {
+              "turn_id": "u1",
+              "quote": "September 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "period",
+            "value": "2025-09",
+            "precision": "month",
+            "source": {
+              "turn_id": "u1",
+              "quote": "September 2025"
+            }
+          },
+          "fact_reference": {
+            "value": "2025-09",
+            "precision": "month",
+            "source": {
+              "turn_id": "u1",
+              "quote": "September 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T06",
+        "shape": "current_question_mentioning_old_event",
+        "utterance": "Our last serious incident review, back in September 2025, was chaired by the Quality Lead. If we had to open one today, who would chair it?",
+        "intended_roles": {
+          "September 2025": "event/fact context only",
+          "today": "current authority"
+        },
+        "expected_version": "v4b.incident.serious-incident-review-policy v2 (effective 2026-05-01, current)",
+        "expected_answer": "The Chief Executive.",
+        "source_support": "v2: 'The Chief Executive now chairs the review (the Quality Lead previously did, per the prior version).'",
+        "wrong_role_signature": "Event date as authority selects v1: Quality Lead."
+      }
+    },
+    {
+      "id": "T07",
+      "shape": "current_question_mentioning_old_event",
+      "wrong_reason": "The old event date selects historical authority despite an explicit current question.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2025-05",
+            "precision": "month",
+            "source": {
+              "turn_id": "u1",
+              "quote": "May 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "period",
+            "value": "2025-05",
+            "precision": "month",
+            "source": {
+              "turn_id": "u1",
+              "quote": "May 2025"
+            }
+          },
+          "fact_reference": {
+            "value": "2025-05",
+            "precision": "month",
+            "source": {
+              "turn_id": "u1",
+              "quote": "May 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T07",
+        "shape": "current_question_mentioning_old_event",
+        "utterance": "I signed up for the staff discount scheme when I joined in May 2025. What discount range does it offer now?",
+        "intended_roles": {
+          "May 2025": "event/fact context only (joining/sign-up)",
+          "now": "current authority"
+        },
+        "expected_version": "v4b.hr.staff-benefits-guidance v2 (effective 2026-04-01, current)",
+        "expected_answer": "Typically 5-15% at participating retailers (wider range after a change of scheme provider; existing registrations migrate automatically).",
+        "source_support": "v2: 'typically 5-15% off at a wider range of participating retailers'",
+        "wrong_role_signature": "Event date as authority selects v1: 5-10%."
+      }
+    },
+    {
+      "id": "T08",
+      "shape": "same_date_is_both_event_and_authority",
+      "wrong_reason": "The requested historical rule becomes current; the date remains fact context only.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "date",
+            "value": "2025-12-05",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "5 December 2025"
+            }
+          },
+          "fact_reference": {
+            "value": "2025-12-05",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "5 December 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2025-12-05",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "5 December 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T08",
+        "shape": "same_date_is_both_event_and_authority",
+        "utterance": "Our boiler failed on 5 December 2025 and the contractor arrived 90 minutes after the urgent call. Was that within the urgent response time required at that point?",
+        "intended_roles": {
+          "5 December 2025": "event date AND authority valid-at date"
+        },
+        "expected_version": "v4b.procurement.maintenance-contractor-schedule v1 (effective 2025-01-01, superseded 2026-01-01)",
+        "expected_answer": "Yes: the heating urgent response time then was 2 hours, so 90 minutes was within it.",
+        "source_support": "v1 table row: 'Heating | 3 working days | 2 hours'",
+        "wrong_role_signature": "Current v2 (1 hour) would answer No."
+      }
+    },
+    {
+      "id": "T09",
+      "shape": "multiple_dates_distinct_roles",
+      "wrong_reason": "The leaving date wrongly selects authority; the request date is reduced to fact context. Leaving predates the first version.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "date",
+            "value": "2026-07-02",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "2 July 2026"
+            }
+          },
+          "fact_reference": {
+            "value": "2025-03-15",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "15 March 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "date",
+            "value": "2025-03-15",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "15 March 2025"
+            }
+          },
+          "fact_reference": {
+            "value": "2026-07-02",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "2 July 2026"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T09",
+        "shape": "multiple_dates_distinct_roles",
+        "utterance": "A former carer who left us on 15 March 2025 asked HR for a reference on 2 July 2026. What response time applied to that request?",
+        "intended_roles": {
+          "15 March 2025": "event/fact context only (leaving date)",
+          "2 July 2026": "authority valid-at date (request date)"
+        },
+        "expected_version": "v4b.hr.staff-reference-request-procedure v2 (effective 2026-06-01)",
+        "expected_answer": "5 working days from receipt of the request.",
+        "source_support": "v2: 'within 5 working days of the request being received'",
+        "wrong_role_signature": "Leaving date as authority predates v1 (effective 2025-06-01): no version, or a wrongly substituted one."
+      }
+    },
+    {
+      "id": "T10",
+      "shape": "multiple_dates_distinct_roles_with_comparison",
+      "wrong_reason": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?"
+          },
+          "operation": "compare",
+          "authority": {
+            "kind": "date",
+            "value": "2025-12-31",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "31 December 2025"
+            }
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2025-12-31",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "31 December 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T10",
+        "shape": "multiple_dates_distinct_roles_with_comparison",
+        "utterance": "For someone who left on 31 December 2025, how long would their mailbox have been kept under the rule in force when they left, and is that still the rule today?",
+        "intended_roles": {
+          "31 December 2025": "authority valid-at date for the first part",
+          "today": "current authority for the second part"
+        },
+        "expected_version": "email-retention v1 (in force 2025-12-31) and v2 (current, effective 2026-01-01)",
+        "expected_answer": "Under the rule in force then: 2 years. No longer the rule: the current policy keeps mailboxes for 6 months after leaving.",
+        "source_support": "v1: 'retained for 2 years after an employee leaves'; v2: 'retained for 6 months after an employee leaves (shortened from the previous 2-year period)'",
+        "wrong_role_signature": "Single current lane answers only 6 months; single historical lane omits that the rule changed."
+      }
+    },
+    {
+      "id": "T11",
+      "shape": "missing_event_date",
+      "wrong_reason": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?"
+          },
+          "operation": "compare",
+          "authority": {
+            "kind": "previous",
+            "value": "When my mum went missing from the home",
+            "precision": "named",
+            "source": {
+              "turn_id": "u1",
+              "quote": "When my mum went missing from the home"
+            }
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Explicitly qualified two-version alternative, not a claim that either applied to the unknown event.",
+      "source_expectation": {
+        "id": "T11",
+        "shape": "missing_event_date",
+        "utterance": "When my mum went missing from the home, how long should staff have searched the grounds before escalating?",
+        "intended_roles": {
+          "undated past event": "authority date required but missing"
+        },
+        "expected_version": "v4b.safeguarding.missing-person-procedure: v1 effective 2024-07-01 to 2026-07-01 (30 minutes); v2 effective 2026-07-01 (15 minutes). No version in the corpus before 2024-07-01.",
+        "expected_answer": "ACCEPTABLE: (a) a clarification asking when it happened; OR (b) an answer that gives both rules with their effective periods (30 minutes from 1 July 2024 to 30 June 2026; 15 minutes from 1 July 2026) AND states that where there is immediate risk the registered manager calls emergency services without waiting for the search window. WRONG: either figure alone presented as the applicable rule; or option (b) without the immediate-risk qualification; or stating a rule for dates before 1 July 2024.",
+        "source_support": "v1/v2 immediate search sentences; both versions: the registered manager assesses immediate vulnerability and calls emergency services where risk is immediate (exact wording per verification report).",
+        "wrong_role_signature": "Silent default to a single version for a past event of unknown date."
+      }
+    },
+    {
+      "id": "T12",
+      "shape": "conflicting_temporal_information",
+      "wrong_reason": "Only current authority executes; the requested historical/unknown or conflicting selector is silently lost, even though the full question is copied.",
+      "transformation": {
+        "before": {
+          "need_id": "n1",
+          "aspect": "Under the current staff discount scheme, what discount range applied on 1 June 2025?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Under the current staff discount scheme, what discount range applied on 1 June 2025?"
+          },
+          "operation": "compare",
+          "authority": {
+            "kind": "date",
+            "value": "2025-06-01",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "1 June 2025"
+            }
+          },
+          "fact_reference": null,
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        },
+        "after": {
+          "need_id": "n1",
+          "aspect": "Under the current staff discount scheme, what discount range applied on 1 June 2025?",
+          "central": true,
+          "question_span": {
+            "turn_id": "u1",
+            "quote": "Under the current staff discount scheme, what discount range applied on 1 June 2025?"
+          },
+          "operation": "retrieve",
+          "authority": {
+            "kind": "current",
+            "value": null,
+            "precision": "none",
+            "source": null
+          },
+          "fact_reference": {
+            "value": "2025-06-01",
+            "precision": "day",
+            "source": {
+              "turn_id": "u1",
+              "quote": "1 June 2025"
+            }
+          },
+          "applicability": {
+            "kind": "generic",
+            "source": null
+          },
+          "supports_need_id": null,
+          "claim_under_test": null,
+          "scope_question": null,
+          "context_spans": []
+        }
+      },
+      "correct_framing": "Preserve every requested temporal side.",
+      "source_expectation": {
+        "id": "T12",
+        "shape": "conflicting_temporal_information",
+        "utterance": "Under the current staff discount scheme, what discount range applied on 1 June 2025?",
+        "intended_roles": {
+          "current": "authority selector (current version)",
+          "1 June 2025": "conflicting authority valid-at date"
+        },
+        "conflict_observable_from_question": "The question itself pairs 'current' with a past valid-at date; no corpus metadata is needed to see the two selectors disagree.",
+        "expected_version": "v4b.hr.staff-benefits-guidance v1 (in force 2025-06-01: 5-10%) versus v2 (current, effective 2026-04-01: 5-15%).",
+        "expected_answer": "ACCEPTABLE: (a) a clarification about which they mean; OR (b) an answer that states both: 5-10% applied on 1 June 2025 under the earlier version, and the current scheme (from 1 April 2026, new provider) offers 5-15%. WRONG: either range alone without noting the two selectors disagree.",
+        "source_support": "v1: 'typically 5-10% off at participating retailers'; v2: 'typically 5-15% off at a wider range of participating retailers, following a change of scheme provider'.",
+        "wrong_role_signature": "Silently drops one of the two temporal selectors."
+      }
+    },
+    {
+      "id": "input16-development",
+      "shape": "retained_historical_date_as_fact",
+      "wrong_reason": "February supplier question executed current authority; its February date was only fact_reference.",
+      "development": true
+    }
+  ],
+  "attempts_per_plan": 5,
+  "correct_attempts": 60,
+  "wrong_attempts": 65,
+  "minimum_appropriate_verified_wrong_rejections": 59,
+  "maximum_correct_false_rejections": 3,
+  "all_patterns_must_have_a_catch": true,
+  "invalid_or_incomplete_cannot_pass": true
+}

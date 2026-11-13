@@ -69,6 +69,19 @@ def transport(reviews, plan=None):
         content = next(pending) if checking else (plan or EXAMPLES[0]["plan"])
         if isinstance(content, Exception):
             raise content
+        if checking and set(content) == {"code", "citation"}:
+            checked = json.loads(body["messages"][1]["content"])["plan"]
+            content = {
+                **content,
+                "temporal_assessments": [
+                    {
+                        "need_id": n["need_id"],
+                        "temporal_intent_preserved": "yes",
+                        "references": [],
+                    }
+                    for n in checked["needs"]
+                ],
+            }
         return httpx.Response(
             200,
             json={
@@ -202,6 +215,10 @@ def test_four_omission_shapes_cannot_execute_when_check_rejects(whole_span, atte
             if check
             else (invalid_plan() if attempt == 2 and len(calls) == 1 else plan)
         )
+        if check:
+            output["temporal_assessments"] = [
+                {"need_id": "n1", "temporal_intent_preserved": "yes", "references": []}
+            ]
         return httpx.Response(
             200,
             json={

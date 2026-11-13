@@ -123,7 +123,7 @@ final readonly class PlannerUsage
 
     private static function safeInterpretationCheck(mixed $check): ?array
     {
-        if (! is_array($check) || ! in_array($check['version'] ?? null, ['interpretation-check-v1', 'interpretation-check-v2'], true)
+        if (! is_array($check) || ! in_array($check['version'] ?? null, ['interpretation-check-v1', 'interpretation-check-v2', 'interpretation-check-v3'], true)
             || ! in_array($check['code'] ?? null, ['accepted', 'clause_omitted', 'meaning_changed', 'scope_added', 'unavailable'], true)) {
             return null;
         }
@@ -140,7 +140,7 @@ final readonly class PlannerUsage
         }
 
         $verification = [];
-        if ($check['version'] === 'interpretation-check-v2') {
+        if (in_array($check['version'], ['interpretation-check-v2', 'interpretation-check-v3'], true)) {
             $citation = is_array($check['citation'] ?? null) ? $check['citation'] : null;
             if ($citation !== null) {
                 $bounded = [];
@@ -157,6 +157,25 @@ final readonly class PlannerUsage
                 'citation_verification' => in_array($check['citation_verification'] ?? null, ['verified', 'unverifiable', 'not_applicable'], true) ? $check['citation_verification'] : 'unverifiable',
                 'verification_reason' => in_array($check['verification_reason'] ?? null, ['missing_citation', 'user_quote_not_found', 'inspected_needs_mismatch', 'unknown_need', 'plan_quote_not_found', 'plan_quote_in_user_turns', 'application_grounded_period'], true) ? $check['verification_reason'] : null,
             ];
+        }
+
+        if ($check['version'] === 'interpretation-check-v3') {
+            $verification['temporal_assessments'] = [];
+            foreach (array_slice(is_array($check['temporal_assessments'] ?? null) ? $check['temporal_assessments'] : [], 0, 3) as $assessment) {
+                if (! is_array($assessment) || ! in_array($assessment['need_id'] ?? null, ['n1', 'n2', 'n3'], true)
+                    || ! in_array($assessment['temporal_intent_preserved'] ?? null, ['yes', 'no', 'unclear'], true)) {
+                    continue;
+                }
+                $references = [];
+                foreach (array_slice(is_array($assessment['references'] ?? null) ? $assessment['references'] : [], 0, 8) as $reference) {
+                    if (is_array($reference) && is_string($reference['turn_id'] ?? null) && is_string($reference['quote'] ?? null)
+                        && in_array($reference['role'] ?? null, ['authority', 'fact_context', 'both', 'ambiguous'], true)) {
+                        $references[] = ['turn_id' => mb_substr($reference['turn_id'], 0, 100), 'quote' => mb_substr($reference['quote'], 0, 1000), 'role' => $reference['role']];
+                    }
+                }
+                $verification['temporal_assessments'][] = ['need_id' => $assessment['need_id'],
+                    'temporal_intent_preserved' => $assessment['temporal_intent_preserved'], 'references' => $references];
+            }
         }
 
         return [...ValidationAttemptUsage::receipt($check), ...$verification,

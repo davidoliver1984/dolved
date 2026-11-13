@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="3" failures="0" skipped="0" tests="3" time="6.430" timestamp="2026-11-13T11:08:48.474636+00:00" hostname="3ef6b071c590"><testcase classname="" name="tests.test_r28_frozen_population_evaluation" time="0.000"><error message="collection failure">tests/test_r28_frozen_population_evaluation.py:11: in &lt;module&gt;
+    ROOT = Path(__file__).resolve().parents[3]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/pathlib/__init__.py:68: in __getitem__
+    raise IndexError(idx)
+E   IndexError: 3</error></testcase><testcase classname="" name="tests.test_r28_s03_materialisation" time="0.000"><error message="collection failure">tests/test_r28_s03_materialisation.py:10: in &lt;module&gt;
+    ROOT = Path(__file__).resolve().parents[3]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/pathlib/__init__.py:68: in __getitem__
+    raise IndexError(idx)
+E   IndexError: 3</error></testcase><testcase classname="" name="tests.test_r28_s04_live_preflight" time="0.000"><error message="collection failure">tests/test_r28_s04_live_preflight.py:14: in &lt;module&gt;
+    ROOT = Path(__file__).resolve().parents[3]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/pathlib/__init__.py:68: in __getitem__
+    raise IndexError(idx)
+E   IndexError: 3</error></testcase></testsuite></testsuites>

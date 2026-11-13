@@ -46,6 +46,36 @@ class InterpretationDecision(ImmutableModel):
     citation: InterpretationCitation | None
 
 
+class TemporalReference(ImmutableModel):
+    turn_id: str = Field(min_length=1, max_length=100)
+    quote: str = Field(min_length=1, max_length=1000)
+    role: Literal["authority", "fact_context", "both", "ambiguous"]
+
+
+class TemporalAssessment(ImmutableModel):
+    need_id: str = Field(min_length=1, max_length=10)
+    temporal_intent_preserved: Literal["yes", "no", "unclear"]
+    references: list[TemporalReference] = Field(max_length=8)
+
+
+class TemporalInterpretationDecision(InterpretationDecision):
+    temporal_assessments: list[TemporalAssessment] = Field(max_length=3)
+
+
+def validate_temporal_assessments(decision, turns, plan):
+    """Validate assessment coverage/grounding, not the reviewer's semantics."""
+    ids = [row.need_id for row in decision.temporal_assessments]
+    if len(ids) != len(plan.needs) or set(ids) != {n.need_id for n in plan.needs}:
+        raise ValueError("temporal assessment need coverage mismatch")
+    texts = {t.turn_id: t.text for t in turns}
+    for row in decision.temporal_assessments:
+        for reference in row.references:
+            if reference.quote not in texts.get(reference.turn_id, ""):
+                raise ValueError("temporal assessment reference is not grounded")
+        if row.temporal_intent_preserved != "yes" and decision.code == "accepted":
+            raise ValueError("accepted check has unresolved temporal assessment")
+
+
 def verify_citation(decision, turns, plan, evaluated_at=None):
     """Verify evidence locations only, NEVER certify the semantic judgement."""
     if decision.code == "accepted":
@@ -125,6 +155,24 @@ span repeats the whole question. Use null for citation fields not needed by the 
 and an empty inspected_need_ids list except for omission. Quotations are bounded
 evidence for review, not semantic proof. Application-computed calendar values are
 grounded interpretations, not by themselves added scope or a changed meaning.
+Return a temporal_assessments entry for EVERY need, including needs with no typed
+date. Assess the time of the requested rule or arrangement against the actual
+authority lane, separately from event/fact context. A date copied into the request
+does not establish that its role is preserved. Cite the relevant user wording and
+label its requested role authority, fact_context, both, or ambiguous. Consider all
+material time references across turns and all required historical/current sides.
+Use an empty references list only when there is no material temporal reference.
+Current questions may mention past events without requesting historical rules;
+questions about what applied at an event may require that event's date as authority.
+Different fact and authority dates can legitimately coexist. Neither every date nor
+every past-tense clause selects historical authority. Do not infer a missing event
+date or silently choose one of conflicting selectors. An explicitly qualified
+multi-version response may preserve unresolved time without claiming a single
+version applied; check that the execution lanes actually support that framing.
+Judge the structured choice, not lexical date presence. A no/unclear assessment
+cannot accompany accepted: use the existing appropriate rejection and citation.
+For a role mismatch cite the conflicting role field, not a correctly computed
+calendar value. Do not supply corrected fields, timeline facts, or new dates.
 """
 
 
@@ -147,12 +195,13 @@ def review_interpretation(
 ) -> dict[str, object]:
     started = time.perf_counter()
     receipt: dict[str, object] = {
-        "version": "interpretation-check-v2",
+        "version": "interpretation-check-v3",
         "code": "unavailable",
         "checker_code": "unavailable",
         "citation": None,
         "citation_verification": "not_applicable",
         "verification_reason": None,
+        "temporal_assessments": [],
         "provider": provider,
         "model": model,
         "request_count": 1,
@@ -189,7 +238,7 @@ def review_interpretation(
                     "json_schema": {
                         "name": "interpretation_check",
                         "strict": True,
-                        "schema": InterpretationDecision.model_json_schema(),
+                        "schema": TemporalInterpretationDecision.model_json_schema(),
                     },
                 },
             },
@@ -204,9 +253,10 @@ def review_interpretation(
         choice = payload["choices"][0]
         if choice.get("finish_reason") != "stop" or choice["message"].get("refusal"):
             raise ValueError("incomplete check")
-        decision = InterpretationDecision.model_validate_json(
+        decision = TemporalInterpretationDecision.model_validate_json(
             choice["message"]["content"]
         )
+        validate_temporal_assessments(decision, turns, plan)
         verification, rejection = verify_citation(decision, turns, plan, evaluated_at)
         receipt.update(
             checker_code=decision.code,
@@ -215,6 +265,9 @@ def review_interpretation(
             else None,
             citation_verification=verification,
             verification_reason=rejection,
+            temporal_assessments=[
+                a.model_dump(mode="json") for a in decision.temporal_assessments
+            ],
             code="accepted" if verification == "unverifiable" else decision.code,
         )
     except httpx.HTTPError, ValueError, KeyError, IndexError, TypeError:

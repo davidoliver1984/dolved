@@ -13,6 +13,27 @@ use Tests\TestCase;
 
 final class BlockOneClosingTest extends TestCase
 {
+    public function test_temporal_assessments_survive_cross_service_diagnostics_without_rewriting_authority(): void
+    {
+        $assessment = ['need_id' => 'n1', 'temporal_intent_preserved' => 'no',
+            'references' => [['turn_id' => 'u1', 'quote' => 'in the previous summer', 'role' => 'authority', 'raw' => 'private']],
+            'new_authority' => 'must not survive'];
+        $check = ['version' => 'interpretation-check-v3', 'code' => 'meaning_changed', 'checker_code' => 'meaning_changed',
+            'citation_verification' => 'verified', 'verification_reason' => null,
+            'temporal_assessments' => [$assessment], 'input_tokens' => 123, 'output_tokens' => 45, 'latency_ms' => 67];
+        $safe = PlannerUsage::safeAttempts([['status' => 'rejected', 'interpretation_check' => $check]])[0]['interpretation_check'];
+        $this->assertSame('interpretation-check-v3', $safe['version']);
+        $this->assertSame('meaning_changed', $safe['code']);
+        $this->assertSame('verified', $safe['citation_verification']);
+        $this->assertSame([['need_id' => 'n1', 'temporal_intent_preserved' => 'no',
+            'references' => [['turn_id' => 'u1', 'quote' => 'in the previous summer', 'role' => 'authority']]]], $safe['temporal_assessments']);
+        $this->assertSame(123, $safe['input_tokens']);
+        $this->assertSame(45, $safe['output_tokens']);
+        $check['temporal_assessments'] = [['need_id' => 'n1', 'temporal_intent_preserved' => 'invented']];
+        $safe = PlannerUsage::safeAttempts([['interpretation_check' => $check]])[0]['interpretation_check'];
+        $this->assertSame([], $safe['temporal_assessments']);
+    }
+
     public function test_citation_diagnostics_preserve_verification_separately_from_judgement(): void
     {
         foreach (['missing_citation', 'user_quote_not_found', 'inspected_needs_mismatch', 'unknown_need', 'plan_quote_not_found', 'plan_quote_in_user_turns', 'application_grounded_period'] as $reason) {
