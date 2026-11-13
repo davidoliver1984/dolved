@@ -21,6 +21,7 @@ from app.retrieval.needs import (
     NeedApplicability,
     NeedAuthority,
     QuestionSpan,
+    compiled_request,
 )
 
 
@@ -30,6 +31,8 @@ class GenerationNeed(ImmutableModel):
     # Additive compatibility for retained v2 requests; production forwards the
     # span already grounded by the planner contract, without re-paraphrasing it.
     question_span: QuestionSpan | None = None
+    context_spans: tuple[QuestionSpan, ...] = Field(default=(), max_length=4)
+    request_text_version: Literal["extractive-request-v1"] | None = None
     central: StrictBool
     operation: Literal["retrieve", "compare"]
     authority: NeedAuthority
@@ -42,7 +45,7 @@ class GenerationNeed(ImmutableModel):
 
 
 class GenerationNeedsRequest(ImmutableModel):
-    contract_version: Literal[2]
+    contract_version: Literal[2, 3]
     request_id: UUID
     workspace_id: UUID
     question: BoundedText
@@ -70,6 +73,12 @@ class GenerationNeedsRequest(ImmutableModel):
         by_id = {item.evidence_id: item for item in self.evidence}
         assigned: set[str] = set()
         for need in needs:
+            if self.contract_version == 3 and (
+                need.request_text_version != "extractive-request-v1"
+                or need.question_span is None
+                or need.aspect != compiled_request(need)
+            ):
+                raise ValueError("generation requires the compiled extractive request")
             ids = need.evidence_ids
             if len(set(ids)) != len(ids) or not set(ids).issubset(by_id):
                 raise ValueError("need evidence references must be unique and supplied")

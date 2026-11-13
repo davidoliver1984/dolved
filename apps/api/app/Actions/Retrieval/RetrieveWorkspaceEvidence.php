@@ -62,7 +62,7 @@ final readonly class RetrieveWorkspaceEvidence
         CarbonImmutable $evaluatedAt,
         ?callable $observe = null,
     ): RetrievalResult {
-        $needs = $plan->value['needs'];
+        $needs = $plan->executionNeeds();
         $usage = [$plan->usage->toArray()];
         $observe?->__invoke('needs_plan', $plan->value);
         if ($plan->value['decision'] === 'clarify') {
@@ -197,6 +197,8 @@ final readonly class RetrieveWorkspaceEvidence
             unset($need['supports_need_id']);
             $result = $results[$id];
             $coverage[] = [...$need, 'retrieval_outcome' => $result->outcome->value,
+                ...($plan->value['schema_version'] === 'evidence-needs-plan-v4'
+                    ? ['request_text_version' => 'extractive-request-v1'] : []),
                 'applicability_reference_classifications' => isset($scopeFacts[$id]) ? []
                     : $this->eligibility->referenceClassifications($authorised, $plans[$id]->locationReferences),
                 'selection_coverage' => $selection['coverage'][$id],

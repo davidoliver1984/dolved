@@ -27,7 +27,7 @@ from app.retrieval.planner import RetrievalPlanningError
 from app.retrieval.routes import needs_planner_dependency
 from tests.test_retrieval_routes import signed_headers
 
-ROOT = Path("/contracts/http/retrieval-needs/v3")
+ROOT = Path("/contracts/http/retrieval-needs/v4")
 EXAMPLES = json.loads((ROOT / "examples.json").read_text())
 MUTATIONS = json.loads((ROOT / "invalid-mutations.json").read_text())
 
@@ -193,7 +193,7 @@ def test_undated_past_event_clarification_contract_and_authority_controls():
     sample = deepcopy(EXAMPLES[3])
     sample["turns"] = [{"turn_id": "u1", "text": question}]
     sample["plan"] = {
-        "schema_version": "evidence-needs-plan-v3",
+        "schema_version": "evidence-needs-plan-v4",
         "decision": "clarify",
         "clarification": "What date or period was that bank-holiday shift?",
         "needs": [],
@@ -758,7 +758,7 @@ def test_real_transport_preserves_month_and_mixed_needs_without_normalisation():
             turns(example), evaluated_at="2026-09-06T12:00:00Z"
         )
         assert result.plan.model_dump(mode="json") == example["plan"]
-        assert result.lineage.contract_schema_version == "evidence-needs-plan-v3"
+        assert result.lineage.contract_schema_version == "evidence-needs-plan-v4"
         assert result.usage.request_count == 2  # planner plus interpretation check
         assert result.usage.input_tokens == 120
         assert len(calls) == 1
@@ -882,7 +882,7 @@ def test_non_current_reference_still_rejects_missing_components(field):
     authority[field] = "none" if field == "precision" else None
     calls = []
     planner = adapter(example["plan"], calls)
-    assert planner.lineage().prompt_version == "bounded-evidence-needs-v25"
+    assert planner.lineage().prompt_version == "bounded-evidence-needs-v26"
     with pytest.raises(RetrievalPlanningError) as error:
         planner.plan_needs(turns(example), evaluated_at="2026-09-06T12:00:00Z")
     assert error.value.category == "invalid_grounded_needs_plan"
@@ -921,7 +921,7 @@ def test_point_in_time_record_date_is_identity_not_policy_version_selector(
 ):
     family = CatalogueFamily(family_id=uuid4(), title=family_title)
     current = {
-        "schema_version": "evidence-needs-plan-v3",
+        "schema_version": "evidence-needs-plan-v4",
         "decision": "plan",
         "clarification": None,
         "needs": [

@@ -79,7 +79,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         }
         [$foreign, $foreignGeneration] = $this->scope(true);
         $foreignDocument = $this->document($foreign, $foreignGeneration, '2026-01-01');
-        $example = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/examples.json'), true, flags: JSON_THROW_ON_ERROR)[0];
+        $example = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v4/examples.json'), true, flags: JSON_THROW_ON_ERROR)[0];
         foreach ($example['plan']['needs'] as &$need) {
             $need['question_span']['turn_id'] = 'user-1';
             if ($need['authority']['source'] !== null) {
@@ -202,12 +202,12 @@ final class EvidenceNeedsRetrievalTest extends TestCase
 
     private function plan(int $example = 0, ?callable $mutate = null): EvidenceNeedsPlan
     {
-        $data = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/examples.json'), true, flags: JSON_THROW_ON_ERROR)[$example];
+        $data = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v4/examples.json'), true, flags: JSON_THROW_ON_ERROR)[$example];
         if ($mutate !== null) {
             $data = $mutate($data);
         }
-        $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v3',
-            'prompt_version' => 'bounded-evidence-needs-v25', 'adapter_version' => 'structured-chat-needs-v9'];
+        $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v4',
+            'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v10'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
@@ -994,6 +994,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $body = $request->data();
             $this->assertStringEndsWith('/search', $request->url());
             $this->assertSame([$document->public_id], $body['scopes'][0]['eligible_document_ids']);
+            $this->assertStringNotContainsString('Invented orbital insurance', $request->body());
 
             return Http::response(['request_id' => $body['request_id'], 'candidates' => [[
                 'chunk_id' => $document->chunks()->firstOrFail()->public_id,
@@ -1007,7 +1008,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $plan = $this->plan(4, function ($data) use ($reference, $question, $document) {
                 $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
                 $data['plan']['needs'][0]['question_span'] = ['turn_id' => 'user-1', 'quote' => $question];
-                $data['plan']['needs'][0]['aspect'] = $question;
+                $data['plan']['needs'][0]['aspect'] = 'Invented orbital insurance examples';
                 $data['plan']['needs'][0]['operation'] = 'retrieve';
                 $data['plan']['needs'][0]['scope_question'] = null;
                 $data['plan']['needs'][0]['applicability'] = ['kind' => 'named', 'source' => ['turn_id' => 'user-1', 'quote' => $reference]];
@@ -1023,6 +1024,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome);
             $this->assertSame($kind, $trace['need.n1.eligibility']['reference_classifications'][0]['kind']);
             $this->assertSame($kind, $result->evidenceNeeds[0]['applicability_reference_classifications'][0]['kind']);
+            $this->assertSame($question, $result->evidenceNeeds[0]['aspect']);
+            $this->assertSame('extractive-request-v1', $result->evidenceNeeds[0]['request_text_version']);
             $display = UnresolvedNamedCoverageDisclosure::append('Guidance.', $result->evidenceNeeds);
             $this->assertSame($kind === 'unresolved', str_contains($display, 'Location coverage not established'));
         }
@@ -1441,7 +1444,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                     $links[] = ['need_id' => $need['need_id'], 'answer_part_indices' => [$index], 'unsupported_aspect_indices' => []];
                 }
 
-                return Http::response(['contract_version' => 2, 'request_id' => $body['request_id'], 'status' => 'completed',
+                return Http::response(['contract_version' => $body['contract_version'], 'request_id' => $body['request_id'], 'status' => 'completed',
                     'result' => ['contract_version' => 3, 'outcome' => 'answered', 'answer_parts' => $parts,
                         'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
                         'aspect_links' => $links, 'entailment_checks' => array_map(fn ($i) => ['part_index' => $i, 'verdict' => 'supported', 'missing_condition' => null], [0, 1, 2])]]);

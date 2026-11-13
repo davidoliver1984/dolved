@@ -49,7 +49,7 @@ final readonly class GenerationClient
             throw new GenerationException('The generation service call failed.');
         }
         $envelope = $response->json();
-        if (! is_array($envelope) || ($envelope['contract_version'] ?? null) !== ($needs ? 2 : 1)) {
+        if (! is_array($envelope) || ($envelope['contract_version'] ?? null) !== $request->toArray()['contract_version']) {
             throw new GenerationException('The generation response envelope is invalid.');
         }
         $status = $envelope['status'] ?? null;

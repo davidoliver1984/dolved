@@ -99,6 +99,9 @@ final readonly class RetrievalClient
                 throw new InvalidArgumentException('Invalid needs response envelope.');
             }
             EvidenceNeedsPlan::validateWireShape($response->json(), 'response');
+            if ($response->json('plan.schema_version') !== 'evidence-needs-plan-v4') {
+                throw new InvalidArgumentException('New execution requires extractive request contract.');
+            }
             EvidenceNeedsPlan::validateCatalogue($response->json('plan'), $catalogue, $userTurns);
 
             return EvidenceNeedsPlan::fromArray($response->json('plan'), $userTurns,

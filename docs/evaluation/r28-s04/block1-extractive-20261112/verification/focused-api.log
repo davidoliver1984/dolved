@@ -1,0 +1,47 @@
+ Container rag-platform-api-run-6fcc2685592e Creating 
+ Container rag-platform-api-run-6fcc2685592e Created 
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.25
+Configuration: /app/phpunit.xml
+
+
+Notice: file_get_contents(): Read of 149706 bytes failed with errno=5 I/O error in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 100
+.................................................[36;1mS[0m[36;1mS[0m[36;1mS[0m...........  63 / 109 ( 57%)
+....[31;1mE[0m.......................................[31;1mE[0m[31;1mE[0m                  109 / 109 (100%)
+Notice: file_put_contents(): Write of 15045 bytes failed with errno=35 Resource deadlock would occur in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:03.349, Memory: 85.00 MB
+
+There were 3 errors:
+
+1) Tests\Feature\EvidenceNeedsRetrievalTest::test_scope_and_operational_answer_are_isolated_through_generation_and_persistence
+App\Exceptions\GenerationException: The generation response envelope is invalid.
+
+/app/app/Services/Generation/GenerationClient.php:53
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:84
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:212
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:59
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:43
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:621
+
+2) Tests\Feature\EvidenceNeedsRetrievalTest::test_real_retrieval_action_dispatches_each_need_and_rechecks_final_authority#3 with data ('three_ordinary')
+App\Exceptions\GenerationException: The generation response envelope is invalid.
+
+/app/app/Services/Generation/GenerationClient.php:53
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:84
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:43
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:1548
+
+3) Tests\Feature\EvidenceNeedsRetrievalTest::test_real_retrieval_action_dispatches_each_need_and_rechecks_final_authority#4 with data ('three_mixed')
+App\Exceptions\GenerationException: The generation response envelope is invalid.
+
+/app/app/Services/Generation/GenerationClient.php:53
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:84
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:43
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:1548
+
+[37;41mERRORS![0m
+[37;41mTests: 109[0m[37;41m, Assertions: 631[0m[37;41m, Errors: 3[0m[37;41m, Skipped: 3[0m[37;41m.[0m
+

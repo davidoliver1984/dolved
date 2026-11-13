@@ -1,0 +1,551 @@
+{
+  "$defs": {
+    "AnswerPart": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "pattern": "^ev-[0-9]{2,}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "text",
+        "evidence_ids"
+      ],
+      "title": "AnswerPart",
+      "type": "object"
+    },
+    "AspectLink": {
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "enum": [
+            "n1",
+            "n2",
+            "n3"
+          ],
+          "title": "Need Id",
+          "type": "string"
+        },
+        "answer_part_indices": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Answer Part Indices",
+          "type": "array"
+        },
+        "unsupported_aspect_indices": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Unsupported Aspect Indices",
+          "type": "array"
+        }
+      },
+      "required": [
+        "need_id",
+        "answer_part_indices",
+        "unsupported_aspect_indices"
+      ],
+      "title": "AspectLink",
+      "type": "object"
+    },
+    "CitationOwnershipDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "enum": [
+            "n1",
+            "n2",
+            "n3"
+          ],
+          "title": "Need Id",
+          "type": "string"
+        },
+        "answer_part_index": {
+          "maximum": 127,
+          "minimum": 0,
+          "title": "Answer Part Index",
+          "type": "integer"
+        },
+        "cited_ids": {
+          "items": {
+            "maxLength": 16,
+            "pattern": "^ev-[0-9]{2,}$",
+            "type": "string"
+          },
+          "maxItems": 5,
+          "title": "Cited Ids",
+          "type": "array"
+        },
+        "allowed_ids": {
+          "items": {
+            "maxLength": 16,
+            "pattern": "^ev-[0-9]{2,}$",
+            "type": "string"
+          },
+          "maxItems": 5,
+          "title": "Allowed Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "need_id",
+        "answer_part_index",
+        "cited_ids",
+        "allowed_ids"
+      ],
+      "title": "CitationOwnershipDiagnostic",
+      "type": "object"
+    },
+    "GenerationContextBudgetExceeded": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "const": "GENERATION_CONTEXT_BUDGET_EXCEEDED",
+          "default": "GENERATION_CONTEXT_BUDGET_EXCEEDED",
+          "title": "Code",
+          "type": "string"
+        },
+        "policy_version": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "proposed_units": {
+          "minimum": 0,
+          "title": "Proposed Units",
+          "type": "integer"
+        },
+        "maximum_units": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Units",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "policy_version",
+        "proposed_units",
+        "maximum_units"
+      ],
+      "title": "GenerationContextBudgetExceeded",
+      "type": "object"
+    },
+    "GenerationNeedsResult": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": 3,
+          "title": "Contract Version",
+          "type": "integer"
+        },
+        "outcome": {
+          "$ref": "#/$defs/GenerationOutcome"
+        },
+        "answer_parts": {
+          "items": {
+            "$ref": "#/$defs/AnswerPart"
+          },
+          "title": "Answer Parts",
+          "type": "array"
+        },
+        "unsupported_aspects": {
+          "items": {
+            "maxLength": 8000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Unsupported Aspects",
+          "type": "array"
+        },
+        "insufficiency_reason": {
+          "anyOf": [
+            {
+              "maxLength": 8000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Insufficiency Reason"
+        },
+        "usage": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Usage"
+        },
+        "aspect_links": {
+          "items": {
+            "$ref": "#/$defs/AspectLink"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Aspect Links",
+          "type": "array"
+        },
+        "entailment_checks": {
+          "items": {
+            "$ref": "#/$defs/PartEntailment"
+          },
+          "title": "Entailment Checks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contract_version",
+        "outcome",
+        "answer_parts",
+        "unsupported_aspects",
+        "insufficiency_reason",
+        "usage",
+        "aspect_links",
+        "entailment_checks"
+      ],
+      "title": "GenerationNeedsResult",
+      "type": "object"
+    },
+    "GenerationOutcome": {
+      "enum": [
+        "answered",
+        "qualified",
+        "insufficient_evidence"
+      ],
+      "title": "GenerationOutcome",
+      "type": "string"
+    },
+    "GenerationProviderError": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "transport_failure",
+            "rate_limit",
+            "timeout",
+            "malformed_typed_output",
+            "provider_refusal",
+            "contract_validation_failure"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "http_status": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Http Status"
+        },
+        "attempt_count": {
+          "minimum": 1,
+          "title": "Attempt Count",
+          "type": "integer"
+        },
+        "latency_ms": {
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "number"
+        },
+        "validation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GenerationValidationDiagnostic"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "returned_output": {
+          "default": false,
+          "title": "Returned Output",
+          "type": "boolean"
+        },
+        "usage": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usage"
+        }
+      },
+      "required": [
+        "category",
+        "attempt_count",
+        "latency_ms"
+      ],
+      "title": "GenerationProviderError",
+      "type": "object"
+    },
+    "GenerationValidationDiagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "ownership": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CitationOwnershipDiagnostic"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "field": {
+          "enum": [
+            "result",
+            "outcome",
+            "answer_parts.text",
+            "answer_parts.evidence_ids",
+            "aspect_links"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "code": {
+          "enum": [
+            "detached_polarity",
+            "outcome_invariant",
+            "citation_membership",
+            "duplicate_citation",
+            "blank_answer",
+            "need_coverage",
+            "reference_range",
+            "empty_need",
+            "unmapped_content",
+            "coverage_outcome",
+            "citation_ownership",
+            "missing_evidence_gap",
+            "site_scope_condition_unproven",
+            "entailment_unsupported",
+            "entailment_uncertain",
+            "schema_validation"
+          ],
+          "title": "Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "code"
+      ],
+      "title": "GenerationValidationDiagnostic",
+      "type": "object"
+    },
+    "NeedsBudgetResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "enum": [
+            2,
+            3
+          ],
+          "title": "Contract Version",
+          "type": "integer"
+        },
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "context_budget_exceeded",
+          "title": "Status",
+          "type": "string"
+        },
+        "failure": {
+          "$ref": "#/$defs/GenerationContextBudgetExceeded"
+        }
+      },
+      "required": [
+        "contract_version",
+        "request_id",
+        "status",
+        "failure"
+      ],
+      "title": "NeedsBudgetResponse",
+      "type": "object"
+    },
+    "NeedsCompletedResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "enum": [
+            2,
+            3
+          ],
+          "title": "Contract Version",
+          "type": "integer"
+        },
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "completed",
+          "title": "Status",
+          "type": "string"
+        },
+        "result": {
+          "$ref": "#/$defs/GenerationNeedsResult"
+        }
+      },
+      "required": [
+        "contract_version",
+        "request_id",
+        "status",
+        "result"
+      ],
+      "title": "NeedsCompletedResponse",
+      "type": "object"
+    },
+    "NeedsProviderResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "enum": [
+            2,
+            3
+          ],
+          "title": "Contract Version",
+          "type": "integer"
+        },
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "provider_error",
+          "title": "Status",
+          "type": "string"
+        },
+        "error": {
+          "$ref": "#/$defs/GenerationProviderError"
+        }
+      },
+      "required": [
+        "contract_version",
+        "request_id",
+        "status",
+        "error"
+      ],
+      "title": "NeedsProviderResponse",
+      "type": "object"
+    },
+    "PartEntailment": {
+      "additionalProperties": false,
+      "properties": {
+        "part_index": {
+          "maximum": 127,
+          "minimum": 0,
+          "title": "Part Index",
+          "type": "integer"
+        },
+        "verdict": {
+          "enum": [
+            "supported",
+            "unsupported",
+            "uncertain"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "missing_condition": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Missing Condition"
+        }
+      },
+      "required": [
+        "part_index",
+        "verdict",
+        "missing_condition"
+      ],
+      "title": "PartEntailment",
+      "type": "object"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "completed": "#/$defs/NeedsCompletedResponse",
+      "context_budget_exceeded": "#/$defs/NeedsBudgetResponse",
+      "provider_error": "#/$defs/NeedsProviderResponse"
+    },
+    "propertyName": "status"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/NeedsCompletedResponse"
+    },
+    {
+      "$ref": "#/$defs/NeedsBudgetResponse"
+    },
+    {
+      "$ref": "#/$defs/NeedsProviderResponse"
+    }
+  ]
+}

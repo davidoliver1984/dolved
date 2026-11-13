@@ -11,6 +11,33 @@ use PHPUnit\Framework\TestCase;
 
 final class EvidenceNeedsPlanTest extends TestCase
 {
+    public function test_extractive_execution_discards_every_diagnostic_aspect_and_keeps_grounded_context(): void
+    {
+        $need = ['need_id' => 'n1', 'aspect' => 'Invented orbital insurance examples',
+            'central' => true, 'question_span' => ['turn_id' => 'u2', 'quote' => 'Who maintains it?'],
+            'context_spans' => [['turn_id' => 'u1', 'quote' => 'equipment register']],
+            'operation' => 'retrieve', 'authority' => ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null],
+            'fact_reference' => null, 'applicability' => ['kind' => 'generic', 'source' => null],
+            'claim_under_test' => null, 'scope_question' => null, 'supports_need_id' => null];
+        $value = ['schema_version' => 'evidence-needs-plan-v4', 'decision' => 'plan', 'clarification' => null,
+            'needs' => [$need], 'bindings' => []];
+        $turns = [['turn_id' => 'u1', 'text' => 'Tell me about the equipment register.'], ['turn_id' => 'u2', 'text' => 'Who maintains it?']];
+        $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v4',
+            'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v10'];
+        ksort($lineage);
+        $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+        $plan = EvidenceNeedsPlan::fromArray($value, $turns, $lineage,
+            ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini', 'execution' => 'provider_api',
+                'request_count' => 1, 'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable']);
+        $this->assertSame('equipment register Who maintains it?', $plan->retrievalPlan('n1')->query);
+        $this->assertSame($plan->retrievalPlan('n1')->query, $plan->executionNeeds()[0]['aspect']);
+        $this->assertSame($need['aspect'], $plan->value['needs'][0]['aspect']);
+        $this->assertStringNotContainsString('orbital', json_encode($plan->retrievalPlan('n1')->evidenceNeed));
+        $value['needs'][0]['context_spans'][0]['quote'] = 'fictional catalogue title';
+        $this->expectException(InvalidArgumentException::class);
+        EvidenceNeedsPlan::validate($value, $turns);
+    }
+
     public function test_before_relation_cannot_be_relabelled_as_during_or_reversed(): void
     {
         $data = self::read('examples')[0];

@@ -81,7 +81,10 @@ async def answer_needs(
         "X-Retrieval-Caller-Request-ID"
     ):
         raise HTTPException(401, "Signed identity does not match body.")
-    envelope = {"contract_version": 2, "request_id": str(incoming.request_id)}
+    envelope = {
+        "contract_version": incoming.contract_version,
+        "request_id": str(incoming.request_id),
+    }
     try:
         result = generator.generate_needs(incoming).validate_for_needs_request(incoming)
     except GenerationContextBudgetError as exception:

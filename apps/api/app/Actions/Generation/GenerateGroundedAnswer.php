@@ -62,7 +62,7 @@ final readonly class GenerateGroundedAnswer
         $request = $this->assembler->handle($input);
         $initialRequestId = $request->requestId;
         if ($request->evidenceNeeds !== [] && ($profile->contractVersion !== 'generation-result-v3'
-            || $profile->promptVersion !== 'grounded-generation-needs-v11'
+            || $profile->promptVersion !== 'grounded-generation-needs-v12'
             || $profile->adapterVersion !== 'openai-responses-needs-v4'
             || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly)) {
             throw new GenerationException('Needs generation requires the pinned v2 complete-result profile.');
@@ -179,7 +179,7 @@ final readonly class GenerateGroundedAnswer
     private function prepareScopeAnswer(GenerationAssemblyInput $input, GenerationProfile $profile, ?callable $observeStage, ?callable $observeCandidate): PreparedGroundedAnswer
     {
         if ($profile->contractVersion !== 'generation-result-v3'
-            || $profile->promptVersion !== 'grounded-generation-needs-v11'
+            || $profile->promptVersion !== 'grounded-generation-needs-v12'
             || $profile->adapterVersion !== 'openai-responses-needs-v4'
             || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly) {
             throw new GenerationException('Scope composition requires the pinned complete-result needs profile.');

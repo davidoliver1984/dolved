@@ -1,0 +1,50 @@
+ Container rag-platform-ai-run-79f4a715d1a0 Creating 
+ Container rag-platform-ai-run-79f4a715d1a0 Created 
+....F................................................................... [ 40%]
+........................................................................ [ 80%]
+...................................                                      [100%]
+=================================== FAILURES ===================================
+_ test_independent_clauses_comparison_relative_and_claim_site_keep_typed_rules _
+
+    def test_independent_clauses_comparison_relative_and_claim_site_keep_typed_rules():
+        question = "Compare the equipment rule before March 2026; this year at Birch House, is the charge 12 pounds?"
+        raw = sample("Compare the equipment rule before March 2026")
+        n1 = raw["needs"][0]
+        n1["operation"] = "compare"
+        n1["authority"] = {"kind": "before", "precision": "month", "value": "2026-03",
+                           "source": {"turn_id": "u2", "quote": "before March 2026"}}
+        n2 = deepcopy(sample("this year at Birch House, is the charge 12 pounds?")["needs"][0])
+        n2["need_id"] = "n2"
+        n2["authority"] = {"kind": "period", "precision": "interval", "value": "2026-01-01/2026-12-31",
+                           "source": {"turn_id": "u2", "quote": "this year"}}
+        n2["applicability"] = {"kind": "named", "source": {"turn_id": "u2", "quote": "Birch House"}}
+        n2["claim_under_test"] = {"version": "claim-under-test-v1", "type": "numeric_value",
+            "relation": "numeric_rate", "source": {"turn_id": "u2", "quote": "12 pounds"}}
+        raw["needs"].append(n2)
+        plan = EvidenceNeedsPlan.model_validate(raw)
+>       plan.validate_grounding((UserTurn(turn_id="u2", text=question),), evaluated_at="2026-06-01T12:00:00Z")
+
+tests/test_extractive_request.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/retrieval/needs.py:429: in validate_grounding
+    validate_date_grounding(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = '2026-01-01/2026-12-31', precision = 'interval', quote = 'this year'
+evaluated_at = '2026-06-01T12:00:00Z'
+
+    def validate_date_grounding(
+        value: str, precision: str, quote: str, evaluated_at: str | None = None
+    ) -> None:
+        """Recognise explicit calendar notation only, never infer temporal intent."""
+        relative = relative_period(quote, evaluated_at)
+        if relative is not None:
+            if (value, precision) != (relative["value"], relative["precision"]):
+>               raise ValueError("calendar value/precision is not supported by user quote")
+E               ValueError: calendar value/precision is not supported by user quote
+
+app/retrieval/needs.py:30: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_extractive_request.py::test_independent_clauses_comparison_relative_and_claim_site_keep_typed_rules
+1 failed, 178 passed in 5.29s
+

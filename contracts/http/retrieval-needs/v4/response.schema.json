@@ -1,0 +1,790 @@
+{
+  "$defs": {
+    "ClaimUnderTest": {
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": "claim-under-test-v1",
+          "title": "Version",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "named_recipient",
+            "named_value",
+            "numeric_value"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "submission_destination",
+            "contact_route",
+            "numeric_rate",
+            "named_value",
+            "other_fact"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/QuestionSpan"
+        }
+      },
+      "required": [
+        "version",
+        "type",
+        "relation",
+        "source"
+      ],
+      "title": "ClaimUnderTest",
+      "type": "object"
+    },
+    "EvidenceNeed": {
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "enum": [
+            "n1",
+            "n2",
+            "n3"
+          ],
+          "title": "Need Id",
+          "type": "string"
+        },
+        "aspect": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Aspect",
+          "type": "string"
+        },
+        "central": {
+          "title": "Central",
+          "type": "boolean"
+        },
+        "question_span": {
+          "$ref": "#/$defs/QuestionSpan"
+        },
+        "context_spans": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/QuestionSpan"
+          },
+          "maxItems": 4,
+          "title": "Context Spans",
+          "type": "array"
+        },
+        "operation": {
+          "enum": [
+            "retrieve",
+            "compare",
+            "scope_enquiry"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "authority": {
+          "$ref": "#/$defs/NeedAuthority"
+        },
+        "fact_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FactReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "applicability": {
+          "$ref": "#/$defs/NeedApplicability"
+        },
+        "claim_under_test": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClaimUnderTest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scope_question": {
+          "anyOf": [
+            {
+              "enum": [
+                "membership",
+                "breadth"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope Question"
+        },
+        "supports_need_id": {
+          "anyOf": [
+            {
+              "enum": [
+                "n1",
+                "n2",
+                "n3"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Supports Need Id"
+        }
+      },
+      "required": [
+        "need_id",
+        "aspect",
+        "central",
+        "question_span",
+        "operation",
+        "authority",
+        "fact_reference",
+        "applicability",
+        "supports_need_id"
+      ],
+      "title": "EvidenceNeed",
+      "type": "object"
+    },
+    "EvidenceNeedsPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "enum": [
+            "evidence-needs-plan-v3",
+            "evidence-needs-plan-v4"
+          ],
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "plan",
+            "clarify"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "clarification": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Clarification"
+        },
+        "needs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceNeed"
+          },
+          "maxItems": 3,
+          "title": "Needs",
+          "type": "array"
+        },
+        "bindings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/NeedBinding"
+          },
+          "maxItems": 3,
+          "title": "Bindings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "decision",
+        "clarification",
+        "needs"
+      ],
+      "title": "EvidenceNeedsPlan",
+      "type": "object"
+    },
+    "FactReference": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Value",
+          "type": "string"
+        },
+        "precision": {
+          "enum": [
+            "day",
+            "month",
+            "year",
+            "interval",
+            "duration",
+            "quantity"
+          ],
+          "title": "Precision",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/QuestionSpan"
+        }
+      },
+      "required": [
+        "value",
+        "precision",
+        "source"
+      ],
+      "title": "FactReference",
+      "type": "object"
+    },
+    "NeedApplicability": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "generic",
+            "named",
+            "relational"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "source"
+      ],
+      "title": "NeedApplicability",
+      "type": "object"
+    },
+    "NeedAuthority": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "current",
+            "date",
+            "period",
+            "before",
+            "after",
+            "previous",
+            "historical_reference",
+            "transition_period",
+            "transition_boundary"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "precision": {
+          "enum": [
+            "none",
+            "day",
+            "month",
+            "year",
+            "interval",
+            "named"
+          ],
+          "title": "Precision",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "value",
+        "precision",
+        "source"
+      ],
+      "title": "NeedAuthority",
+      "type": "object"
+    },
+    "NeedBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "enum": [
+            "n1",
+            "n2",
+            "n3"
+          ],
+          "title": "Need Id",
+          "type": "string"
+        },
+        "subject_status": {
+          "enum": [
+            "matched",
+            "topic",
+            "unavailable",
+            "ambiguous"
+          ],
+          "title": "Subject Status",
+          "type": "string"
+        },
+        "family_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Family Ids",
+          "type": "array"
+        },
+        "ownership": {
+          "enum": [
+            "authorised_workspace",
+            "external_tenant"
+          ],
+          "title": "Ownership",
+          "type": "string"
+        },
+        "ownership_source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "need_id",
+        "subject_status",
+        "family_ids",
+        "ownership",
+        "ownership_source"
+      ],
+      "title": "NeedBinding",
+      "type": "object"
+    },
+    "NeedsOperationUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "stage": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Stage",
+          "type": "string"
+        },
+        "provider": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "execution": {
+          "enum": [
+            "provider_api",
+            "local",
+            "infrastructure",
+            "not_executed"
+          ],
+          "title": "Execution",
+          "type": "string"
+        },
+        "request_count": {
+          "minimum": 0,
+          "title": "Request Count",
+          "type": "integer"
+        },
+        "retry_count": {
+          "minimum": 0,
+          "title": "Retry Count",
+          "type": "integer"
+        },
+        "provider_attempt_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Attempt Count"
+        },
+        "provider_retry_count": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Retry Count"
+        },
+        "outer_attempt_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outer Attempt Count"
+        },
+        "outer_retry_count": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outer Retry Count"
+        },
+        "rate_limit_event_count": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rate Limit Event Count"
+        },
+        "retry_delays": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProviderRetryDelay"
+          },
+          "title": "Retry Delays",
+          "type": "array"
+        },
+        "first_provider_attempt_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Provider Attempt At"
+        },
+        "final_provider_success_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Final Provider Success At"
+        },
+        "provider_retry_elapsed_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Retry Elapsed Ms"
+        },
+        "input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Tokens"
+        },
+        "cached_input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cached Input Tokens"
+        },
+        "output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Tokens"
+        },
+        "latency_ms": {
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "number"
+        },
+        "cost_basis": {
+          "enum": [
+            "provider_reported",
+            "estimated",
+            "unavailable",
+            "zero_cost_local"
+          ],
+          "title": "Cost Basis",
+          "type": "string"
+        },
+        "cost_usd": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Usd"
+        },
+        "pricing_snapshot": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pricing Snapshot"
+        },
+        "validation_attempts": {
+          "default": [],
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 2,
+          "title": "Validation Attempts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "stage",
+        "provider",
+        "model",
+        "execution",
+        "request_count",
+        "retry_count",
+        "latency_ms",
+        "cost_basis"
+      ],
+      "title": "NeedsOperationUsage",
+      "type": "object"
+    },
+    "PlannerLineage": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "contract_schema_version": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Contract Schema Version",
+          "type": "string"
+        },
+        "prompt_version": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "adapter_version": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "fingerprint": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Fingerprint",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "model",
+        "contract_schema_version",
+        "prompt_version",
+        "adapter_version",
+        "fingerprint"
+      ],
+      "title": "PlannerLineage",
+      "type": "object"
+    },
+    "ProviderRetryDelay": {
+      "additionalProperties": false,
+      "properties": {
+        "delay_seconds": {
+          "minimum": 0,
+          "title": "Delay Seconds",
+          "type": "number"
+        },
+        "source": {
+          "pattern": "^(retry_after_numeric|retry_after_http_date|ratelimit_reset|x_ratelimit_reset_requests|x_ratelimit_reset_tokens|configured_fallback|shared_cooldown)$",
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "delay_seconds",
+        "source"
+      ],
+      "title": "ProviderRetryDelay",
+      "type": "object"
+    },
+    "QuestionSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "turn_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Turn Id",
+          "type": "string"
+        },
+        "quote": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "turn_id",
+        "quote"
+      ],
+      "title": "QuestionSpan",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "const": 2,
+      "default": 2,
+      "title": "Contract Version",
+      "type": "integer"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "plan": {
+      "$ref": "#/$defs/EvidenceNeedsPlan"
+    },
+    "classifier_lineage": {
+      "$ref": "#/$defs/PlannerLineage"
+    },
+    "usage": {
+      "$ref": "#/$defs/NeedsOperationUsage"
+    }
+  },
+  "required": [
+    "request_id",
+    "plan",
+    "classifier_lineage",
+    "usage"
+  ],
+  "title": "NeedsPlanResponse",
+  "type": "object"
+}

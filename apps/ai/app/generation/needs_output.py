@@ -26,21 +26,21 @@ from app.generation.polarity import has_invalid_leading_polarity
 
 
 class NeedsCompletedResponse(ImmutableModel):
-    contract_version: Literal[2]
+    contract_version: Literal[2, 3]
     request_id: UUID
     status: Literal["completed"]
     result: GenerationNeedsResult
 
 
 class NeedsBudgetResponse(ImmutableModel):
-    contract_version: Literal[2]
+    contract_version: Literal[2, 3]
     request_id: UUID
     status: Literal["context_budget_exceeded"]
     failure: GenerationContextBudgetExceeded
 
 
 class NeedsProviderResponse(ImmutableModel):
-    contract_version: Literal[2]
+    contract_version: Literal[2, 3]
     request_id: UUID
     status: Literal["provider_error"]
     error: GenerationProviderError

@@ -19,6 +19,10 @@ def provider_needs_schema(catalogue: tuple[CatalogueFamily, ...]) -> dict[str, A
             "invalid bounded catalogue", category="catalogue_bound_exceeded"
         )
     schema = _strict_response_schema(EvidenceNeedsPlan.model_json_schema())
+    schema["properties"]["schema_version"] = {
+        "type": "string",
+        "const": "evidence-needs-plan-v4",
+    }
     defs = schema["$defs"]
     original_authority = defs["NeedAuthority"]
 

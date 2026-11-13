@@ -44,7 +44,7 @@ def test_three_needs_keep_all_owners_and_multiple_passages(comparison):
     from jsonschema import Draft202012Validator
 
     schema = json.loads(
-        Path("/contracts/http/generation-needs/v2/request.schema.json").read_text()
+        Path("/contracts/http/generation-needs/v3/request.schema.json").read_text()
     )
     Draft202012Validator(schema).validate(raw)
     fourth = copy.deepcopy(third)
@@ -127,7 +127,7 @@ def test_shared_request_schema_matches_model_and_example():
     from jsonschema import Draft202012Validator
 
     schema = json.loads(
-        Path("/contracts/http/generation-needs/v2/request.schema.json").read_text()
+        Path("/contracts/http/generation-needs/v3/request.schema.json").read_text()
     )
     Draft202012Validator.check_schema(schema)
     Draft202012Validator(schema).validate(request())

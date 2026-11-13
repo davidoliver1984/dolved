@@ -2,7 +2,7 @@
 
 import re
 from datetime import date, datetime
-from typing import Annotated, Literal
+from typing import TYPE_CHECKING, Annotated, Literal
 from uuid import UUID
 
 from pydantic import Field, StrictBool, StringConstraints, model_validator
@@ -11,6 +11,9 @@ from app.extraction.models import ImmutableModel
 from app.retrieval.models import OperationUsage, PlannerLineage
 from app.retrieval.relative_calendar import PATTERN as RELATIVE_CALENDAR
 from app.retrieval.relative_calendar import relative_period
+
+if TYPE_CHECKING:
+    from app.generation.needs_request import GenerationNeed
 
 Text = Annotated[str, StringConstraints(min_length=1, pattern=r"\S")]
 NeedId = Literal["n1", "n2", "n3"]
@@ -210,6 +213,7 @@ class EvidenceNeed(ImmutableModel):
     aspect: Text
     central: StrictBool
     question_span: QuestionSpan
+    context_spans: tuple[QuestionSpan, ...] = Field(default=(), max_length=4)
     operation: Literal["retrieve", "compare", "scope_enquiry"]
     authority: NeedAuthority
     fact_reference: FactReference | None
@@ -261,12 +265,45 @@ class NeedBinding(ImmutableModel):
         return self
 
 
+def compiled_request(need: EvidenceNeed | GenerationNeed) -> str:
+    """Join validated source quotations only; temporal arithmetic stays typed."""
+    spans = [
+        *need.context_spans,
+        need.question_span,
+        need.authority.source,
+        need.fact_reference.source if need.fact_reference else None,
+        need.applicability.source,
+        need.claim_under_test.source if need.claim_under_test else None,
+    ]
+    parts: list[str] = []
+    for span in spans:
+        if span is not None and not any(span.quote in part for part in parts):
+            parts.append(span.quote)
+    value = " ".join(parts)
+    if len(value) > 8000:
+        raise ValueError("extractive request exceeds input bound")
+    return value
+
+
 class EvidenceNeedsPlan(ImmutableModel):
-    schema_version: Literal["evidence-needs-plan-v3"]
+    schema_version: Literal["evidence-needs-plan-v3", "evidence-needs-plan-v4"]
     decision: Literal["plan", "clarify"]
     clarification: Text | None
     needs: tuple[EvidenceNeed, ...] = Field(max_length=3)
     bindings: tuple[NeedBinding, ...] = Field(default=(), max_length=3)
+
+    def execution_plan(self) -> EvidenceNeedsPlan:
+        """Diagnostic paraphrases never supply an executable request in v4."""
+        if self.schema_version != "evidence-needs-plan-v4":
+            return self  # Historical compatibility, never rewritten on read.
+        return self.model_copy(
+            update={
+                "needs": tuple(
+                    need.model_copy(update={"aspect": compiled_request(need)})
+                    for need in self.needs
+                )
+            }
+        )
 
     def validate_catalogue(
         self, catalogue: tuple[CatalogueFamily, ...], turns: tuple[UserTurn, ...]
@@ -373,6 +410,7 @@ class EvidenceNeedsPlan(ImmutableModel):
         for need in self.needs:
             spans = [
                 need.question_span,
+                *need.context_spans,
                 need.authority.source,
                 need.applicability.source,
                 need.claim_under_test.source

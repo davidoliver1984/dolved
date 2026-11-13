@@ -26,7 +26,8 @@ final readonly class GenerationRequest
     public function toArray(): array
     {
         return [
-            'contract_version' => $this->evidenceNeeds === [] ? 1 : 2,
+            'contract_version' => $this->evidenceNeeds === [] ? 1
+                : (array_all($this->evidenceNeeds, fn ($need) => ($need['request_text_version'] ?? null) === 'extractive-request-v1') ? 3 : 2),
             'request_id' => $this->requestId,
             'workspace_id' => $this->workspacePublicId,
             'question' => $this->question,

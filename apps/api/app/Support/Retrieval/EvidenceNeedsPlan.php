@@ -27,9 +27,10 @@ final readonly class EvidenceNeedsPlan
         self::validate($value, $turns, $evaluatedAt);
         $identity = ClassifierLineage::fromArray($lineage);
         $observation = PlannerUsage::fromArray($usage);
-        if ($identity->contractSchemaVersion !== 'evidence-needs-plan-v3'
-            || $identity->promptVersion !== 'bounded-evidence-needs-v25'
-            || $identity->adapterVersion !== 'structured-chat-needs-v9'
+        $extractive = $value['schema_version'] === 'evidence-needs-plan-v4';
+        if ($identity->contractSchemaVersion !== $value['schema_version']
+            || $identity->promptVersion !== ($extractive ? 'bounded-evidence-needs-v26' : 'bounded-evidence-needs-v25')
+            || $identity->adapterVersion !== ($extractive ? 'structured-chat-needs-v10' : 'structured-chat-needs-v9')
             || $identity->provider !== $observation->provider
             || $identity->model !== $observation->model) {
             throw new InvalidArgumentException('Needs planner identity does not match its contract or usage.');
@@ -38,11 +39,44 @@ final readonly class EvidenceNeedsPlan
         return new self($value, $identity, $observation);
     }
 
+    /** Historical plans retain their stored representation; v4 execution is extractive. */
+    public function executionNeeds(): array
+    {
+        if ($this->value['schema_version'] !== 'evidence-needs-plan-v4') {
+            return $this->value['needs'];
+        }
+
+        return array_map(function (array $need): array {
+            $need['aspect'] = self::compiledRequest($need);
+
+            return $need;
+        }, $this->value['needs']);
+    }
+
+    public static function compiledRequest(array $need): string
+    {
+        $spans = [...($need['context_spans'] ?? []), $need['question_span'],
+            $need['authority']['source'], $need['fact_reference']['source'] ?? null,
+            $need['applicability']['source'], $need['claim_under_test']['source'] ?? null];
+        $parts = [];
+        foreach ($spans as $span) {
+            if ($span !== null && ! array_any($parts, fn ($part) => str_contains($part, $span['quote']))) {
+                $parts[] = $span['quote'];
+            }
+        }
+        $value = implode(' ', $parts);
+        if (mb_strlen($value) > 8000) {
+            throw new InvalidArgumentException('Extractive request exceeds input bound.');
+        }
+
+        return $value;
+    }
+
     /** A validated need becomes one production retrieval lane/pair, not a second planner. */
     public function retrievalPlan(string $needId): RetrievalPlan
     {
         $need = null;
-        foreach ($this->value['needs'] as $item) {
+        foreach ($this->executionNeeds() as $item) {
             if ($item['need_id'] === $needId) {
                 $need = $item;
                 break;
@@ -177,7 +211,7 @@ final readonly class EvidenceNeedsPlan
                 || ! is_array($claim['source'] ?? null))) {
                 throw new InvalidArgumentException('Invalid disputed claim.');
             }
-            $spans = [$need['question_span'], $authority['source'], $need['applicability']['source']];
+            $spans = [$need['question_span'], ...($need['context_spans'] ?? []), $authority['source'], $need['applicability']['source']];
             if ($claim !== null) {
                 $spans[] = $claim['source'];
             }
@@ -208,6 +242,9 @@ final readonly class EvidenceNeedsPlan
                 throw new InvalidArgumentException('Needs must retain user question order.');
             }
             $previousPosition = $position;
+            if ($value['schema_version'] === 'evidence-needs-plan-v4') {
+                self::compiledRequest($need);
+            }
         }
         foreach (array_keys($edges) as $origin) {
             $seen = [];
@@ -251,7 +288,8 @@ final readonly class EvidenceNeedsPlan
         if (! in_array($name, ['plan', 'request', 'response'], true)) {
             throw new InvalidArgumentException('Unknown needs contract.');
         }
-        $schema = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/'.$name.'.schema.json'), flags: JSON_THROW_ON_ERROR);
+        $version = ($value['schema_version'] ?? $value['plan']['schema_version'] ?? null) === 'evidence-needs-plan-v4' ? 'v4' : 'v3';
+        $schema = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/'.$version.'/'.$name.'.schema.json'), flags: JSON_THROW_ON_ERROR);
         $data = json_decode(json_encode($value, JSON_THROW_ON_ERROR), flags: JSON_THROW_ON_ERROR);
         if (! (new Validator)->validate($data, $schema)->isValid()) {
             throw new InvalidArgumentException('Invalid evidence needs shape.');

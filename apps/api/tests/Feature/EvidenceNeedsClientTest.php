@@ -22,7 +22,7 @@ final class EvidenceNeedsClientTest extends TestCase
 
     private function example(): array
     {
-        return json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/examples.json'), true, flags: JSON_THROW_ON_ERROR)[0];
+        return json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v4/examples.json'), true, flags: JSON_THROW_ON_ERROR)[0];
     }
 
     private function workspace(): Workspace
@@ -33,8 +33,8 @@ final class EvidenceNeedsClientTest extends TestCase
     private function response(Request $request): array
     {
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
-            'contract_schema_version' => 'evidence-needs-plan-v3',
-            'prompt_version' => 'bounded-evidence-needs-v25', 'adapter_version' => 'structured-chat-needs-v9'];
+            'contract_schema_version' => 'evidence-needs-plan-v4',
+            'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v10'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
@@ -56,7 +56,7 @@ final class EvidenceNeedsClientTest extends TestCase
             $this->assertArrayNotHasKey('expected', $request->data());
             $response = $this->response($request);
             foreach (['request' => $request->data(), 'response' => $response] as $name => $payload) {
-                $schema = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v3/'.$name.'.schema.json'), flags: JSON_THROW_ON_ERROR);
+                $schema = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v4/'.$name.'.schema.json'), flags: JSON_THROW_ON_ERROR);
                 $this->assertTrue((new Validator)->validate(json_decode(json_encode($payload, JSON_THROW_ON_ERROR)), $schema)->isValid());
             }
 

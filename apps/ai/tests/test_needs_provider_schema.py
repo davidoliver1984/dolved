@@ -14,7 +14,7 @@ from app.retrieval.planner import RetrievalPlanningError
 from tests.test_evidence_needs import adapter, turns
 
 EXAMPLES = json.loads(
-    Path("/contracts/http/retrieval-needs/v3/examples.json").read_text()
+    Path("/contracts/http/retrieval-needs/v4/examples.json").read_text()
 )
 BOUNDARY_MATRIX = json.loads(
     Path(__file__)
@@ -292,7 +292,7 @@ def test_clause_purpose_survives_real_adapter_without_posthoc_reclassification(
     ]
     text = " And ".join(selected)
     plan = {
-        "schema_version": "evidence-needs-plan-v3",
+        "schema_version": "evidence-needs-plan-v4",
         "decision": "plan",
         "clarification": None,
         "needs": [],
@@ -395,7 +395,7 @@ def test_document_reference_and_real_site_are_separate_applicability_fields(
 
     catalogue = (CatalogueFamily(family_id=UUID(int=1), title="Named policy"),)
     plan = {
-        "schema_version": "evidence-needs-plan-v3",
+        "schema_version": "evidence-needs-plan-v4",
         "decision": "plan",
         "clarification": None,
         "needs": [],
@@ -480,7 +480,7 @@ def test_location_quote_excludes_incidental_trailing_qualifier_in_real_plan_cont
 
     catalogue = (CatalogueFamily(family_id=UUID(int=1), title="Key Holder Procedure"),)
     plan = {
-        "schema_version": "evidence-needs-plan-v3",
+        "schema_version": "evidence-needs-plan-v4",
         "decision": "plan",
         "clarification": None,
         "needs": [
@@ -640,7 +640,7 @@ def test_real_transport_sends_request_specific_schema_and_does_not_cache_other_t
         jsonschema.validate(example["plan"], schema)
         other = str(UUID(int=2 if family.family_id.int == 1 else 1))
         assert other not in json.dumps(schema)
-        assert result.lineage.adapter_version == "structured-chat-needs-v9"
+        assert result.lineage.adapter_version == "structured-chat-needs-v10"
         assert len(calls) == 1
 
 
