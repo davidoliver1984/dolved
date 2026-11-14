@@ -11,6 +11,7 @@ from pydantic import SecretStr
 
 from app.retrieval.needs import UserTurn
 from app.retrieval.needs_planner import (
+    TEMPORAL_RELATION_HINT,
     NeedsValidationFailure,
     StructuredChatNeedsPlanner,
 )
@@ -73,6 +74,7 @@ def test_feedback_has_only_bounded_diagnostics_and_original_inputs():
         "stage": "schema",
         "field": "needs.0.authority",
         "code": "temporal_relation_grounding",
+        "hint": TEMPORAL_RELATION_HINT,
     }
     assert second == first
     assert [m["role"] for m in calls[1]["messages"]] == ["system", "user"]

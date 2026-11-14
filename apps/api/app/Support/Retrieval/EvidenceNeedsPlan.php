@@ -30,7 +30,7 @@ final readonly class EvidenceNeedsPlan
         $extractive = $value['schema_version'] === 'evidence-needs-plan-v4';
         if ($identity->contractSchemaVersion !== $value['schema_version']
             || $identity->promptVersion !== ($extractive ? 'bounded-evidence-needs-v26' : 'bounded-evidence-needs-v25')
-            || $identity->adapterVersion !== ($extractive ? 'structured-chat-needs-v11' : 'structured-chat-needs-v9')
+            || $identity->adapterVersion !== ($extractive ? 'structured-chat-needs-v12' : 'structured-chat-needs-v9')
             || $identity->provider !== $observation->provider
             || $identity->model !== $observation->model) {
             throw new InvalidArgumentException('Needs planner identity does not match its contract or usage.');

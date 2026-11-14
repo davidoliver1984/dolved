@@ -37,6 +37,49 @@ from app.retrieval.relative_calendar import (
 
 logger = logging.getLogger("retrieval.needs.planner")
 
+TEMPORAL_RELATION_HINT = (
+    "A before authority requires ‘before’ in the quoted user text; an after "
+    "authority requires ‘after’. Preserve the relation the user actually requested. "
+    "Where the question asks what applied on a stated date or during a stated period, "
+    "use date or period authority respectively. A date describing a background event "
+    "alone must not change current authority."
+)
+
+
+def _canonicalize_leading_relations(
+    value: object, turns: tuple[UserTurn, ...]
+) -> tuple[object, int]:
+    """Correct only the grounded leading relation's kind; validation stays strict."""
+    result = deepcopy(value)
+    if not isinstance(result, dict) or not isinstance(result.get("needs"), list):
+        return result, 0
+    texts = {turn.turn_id: turn.text for turn in turns}
+    count = 0
+    for need in result["needs"][:3]:
+        if not isinstance(need, dict):
+            continue
+        authority = need.get("authority")
+        if not isinstance(authority, dict) or authority.get("kind") != "period":
+            continue
+        source = authority.get("source")
+        if not isinstance(source, dict):
+            continue
+        quote, turn_id = source.get("quote"), source.get("turn_id")
+        if (
+            not isinstance(quote, str)
+            or not isinstance(turn_id, str)
+            or turn_id not in texts
+            or quote not in texts[turn_id]
+            or authority.get("precision") not in ("day", "month", "year")
+        ):
+            continue
+        # Same leading-word predicate as NeedAuthority.coherent_reference.
+        match = re.match(r"\s*(before|after)\b", quote, re.IGNORECASE)
+        if match is not None:
+            authority["kind"] = match[1].lower()
+            count += 1
+    return result, count
+
 
 def _canonicalize_explicit_calendar_values(
     value: object, turns: tuple[UserTurn, ...]
@@ -526,7 +569,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             client=client,
             contract_schema_version="evidence-needs-plan-v4",
             prompt_version="bounded-evidence-needs-v26",
-            adapter_version="structured-chat-needs-v11",
+            adapter_version="structured-chat-needs-v12",
         )
 
     def plan_needs(
@@ -622,6 +665,8 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                     feedback = {
                         key: validation[key] for key in ("stage", "field", "code")
                     }
+                    if validation["code"] == "temporal_relation_grounding":
+                        feedback["hint"] = TEMPORAL_RELATION_HINT
                     continue
                 raise
             planner_end("accepted")
@@ -830,7 +875,15 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                 # Preserve the contract's original malformed-JSON diagnostic.
                 plan = EvidenceNeedsPlan.model_validate_json(content)
             else:
-                from app.evaluation_capture import calendar_normalized
+                from app.evaluation_capture import (
+                    calendar_normalized,
+                    relation_normalized,
+                )
+
+                decoded, relation_count = _canonicalize_leading_relations(
+                    decoded, turns
+                )
+                relation_normalized(relation_count)
 
                 decoded, calendar_count = _canonicalize_explicit_calendar_values(
                     decoded, turns

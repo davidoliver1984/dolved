@@ -60,8 +60,8 @@
     "model": "gpt-5-mini",
     "contract_schema_version": "evidence-needs-plan-v4",
     "prompt_version": "bounded-evidence-needs-v26",
-    "adapter_version": "structured-chat-needs-v11",
-    "fingerprint": "51c472a815e93e6037ec6213249ef3b08ee12d2fe07f281ddf8080be88e05fe9"
+    "adapter_version": "structured-chat-needs-v12",
+    "fingerprint": "c10885f8531e24a435078e47cc16f03420093beea28d2f380bcf7b50fc6b9d54"
   },
   "usage": {
     "stage": "planner",

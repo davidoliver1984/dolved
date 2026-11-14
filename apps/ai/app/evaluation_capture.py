@@ -108,6 +108,7 @@ class Capture:
     proposal: dict | None = None
     validator_input: dict | None = None
     normalized: int | None = None
+    relation_normalized: int | None = None
     events: int = 0
     invocation_id: str = field(default_factory=lambda: str(uuid4()))
 
@@ -188,6 +189,7 @@ def planner_begin(attempt):
         capture.proposal = None
         capture.validator_input = None
         capture.normalized = None
+        capture.relation_normalized = None
 
 
 def planner_proposal(decoded):
@@ -209,6 +211,11 @@ def calendar_normalized(count):
         capture.normalized = count
 
 
+def relation_normalized(count):
+    if capture := _ACTIVE.get():
+        capture.relation_normalized = count
+
+
 def planner_end(status, validation=None):
     if capture := _ACTIVE.get():
         capture.write(
@@ -223,6 +230,7 @@ def planner_end(status, validation=None):
                 if status == "rejected"
                 else None,
                 "calendar_notation_normalization_count": capture.normalized,
+                "leading_relation_conversion_count": capture.relation_normalized,
                 "unavailable": (
                     ["parsed_plan"]
                     if status == "rejected" and capture.proposal is None
@@ -236,6 +244,11 @@ def planner_end(status, validation=None):
                 + (
                     ["calendar_notation_normalization_count"]
                     if capture.normalized is None
+                    else []
+                )
+                + (
+                    ["leading_relation_conversion_count"]
+                    if capture.relation_normalized is None
                     else []
                 ),
             }
