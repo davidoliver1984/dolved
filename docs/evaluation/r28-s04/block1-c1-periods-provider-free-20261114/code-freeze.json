@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-14",
+  "branch": "codex/block1-extractive-hold-20261112",
+  "baseline": "55f4ed601cd721e596e95c4b443eeda8c5bdd796",
+  "implementation_commit": "b1e94fe5ba57baa147bf174e55c30597208ef400",
+  "runtime_source_aggregate": "4dde6707235e66ac707ed1cba90be8845738240dff9e4e6f2a37cc309989b338",
+  "main_unchanged": "348f09e053c8ad73676921c5c616cced812111d7",
+  "stack": "dolved-r28-s03",
+  "connection_identity": {
+    "driver": "pgsql",
+    "host": "postgres",
+    "database": "dolved_e2e_r28_s03"
+  },
+  "test_database": "SQLite :memory: (phpunit.xml forced)",
+  "provider_calls": 0,
+  "cost_usd": 0,
+  "sealed_material_accessed": false,
+  "new_migration": false,
+  "coordinated_api_ai_deployment_required": true
+}

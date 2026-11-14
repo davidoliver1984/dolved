@@ -1,0 +1,30 @@
+[
+  {
+    "fixture": "varied_development",
+    "request_and_persisted_use_valid": true,
+    "parts": 1,
+    "provider_calls": 0,
+    "entailment_verdict_source": "controlled test boundary, not a semantic measurement"
+  },
+  {
+    "fixture": "modified_input16",
+    "request_and_persisted_use_valid": true,
+    "parts": 1,
+    "provider_calls": 0,
+    "entailment_verdict_source": "controlled test boundary, not a semantic measurement"
+  },
+  {
+    "fixture": "month_replay",
+    "request_and_persisted_use_valid": true,
+    "parts": 1,
+    "provider_calls": 0,
+    "entailment_verdict_source": "controlled test boundary, not a semantic measurement"
+  },
+  {
+    "fixture": "year_replay",
+    "request_and_persisted_use_valid": true,
+    "parts": 1,
+    "provider_calls": 0,
+    "entailment_verdict_source": "controlled test boundary, not a semantic measurement"
+  }
+]

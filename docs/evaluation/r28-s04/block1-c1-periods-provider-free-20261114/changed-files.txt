@@ -1,0 +1,12 @@
+apps/ai/app/generation/openai_adapter.py
+apps/ai/app/generation/temporal_targets.py
+apps/ai/tests/test_temporal_answer_use.py
+apps/api/app/Actions/Generation/GenerateGroundedAnswer.php
+apps/api/app/Services/Generation/ValidateTemporalAnswerUse.php
+apps/api/app/Services/Retrieval/TemporalEvidenceAlternatives.php
+apps/api/app/Support/Generation/GenerationResult.php
+apps/api/app/Support/Retrieval/ExplicitTemporalReferences.php
+apps/api/tests/Feature/EvidenceNeedsRetrievalTest.php
+apps/api/tests/Unit/TemporalAnswerUseTest.php
+contracts/http/generation-needs/v4/README.md
+contracts/http/generation-needs/v4/request.schema.json
