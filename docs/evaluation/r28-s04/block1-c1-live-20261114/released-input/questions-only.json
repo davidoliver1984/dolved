@@ -1,0 +1,13 @@
+{
+  "schema_version": "c1-confirmation-questions-v1",
+  "package_id": "C1-CONFIRMATION-20261114",
+  "note": "Question-only execution input. Single user turn each. Contains no expectations.",
+  "evaluated_at_assumption": "Dispatched in November 2026 (Europe/London).",
+  "items": [
+    {"id": "F1", "utterance": "Under the Serious Complaint Escalation Guidance, how quickly did a complaint alleging abuse have to be escalated to the Quality Lead on 10 March 2026?"},
+    {"id": "F2", "utterance": "My father was admitted in March 2025 after a pre-admission assessment. If a new resident were assessed for admission today, would the Admissions and Pre-Admission Assessment Policy require a mental capacity screen?"},
+    {"id": "F3", "utterance": "A resident asked on 20 May 2026 to start applying her own prescribed skin cream, and the arrangement is due to begin on 10 June 2026. Under the Self-Administration of Medication Policy, does she need a full capacity and risk assessment before she starts?"},
+    {"id": "F4", "utterance": "Under the Medication Fridge Breakdown Procedure, who did staff have to call immediately when a medication fridge failed in November 2025, and who must they call now?"},
+    {"id": "F5", "utterance": "Under the current Continence Care Policy, was completing a continence assessment within one week of admission mandatory in January 2026?"}
+  ]
+}

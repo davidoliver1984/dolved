@@ -1,0 +1,5 @@
+{
+    "database": "dolved_e2e_r28_s03",
+    "connection_role": "rag_platform_app",
+    "table_owner": "rag_platform_owner"
+}

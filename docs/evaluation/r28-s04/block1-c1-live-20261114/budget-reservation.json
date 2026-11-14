@@ -1,0 +1,14 @@
+{
+  "authorised_by": "David, current conversation, 2026-11-14",
+  "original_cap_usd": 1.0,
+  "amended_cap_usd": 1.5,
+  "amendment": "Approve $1.50; retain both controls",
+  "unpriced_uncertainty_reserve_usd": 0.5,
+  "minimum_headroom_before_next_dispatch_usd": 0.5,
+  "initial_committed_reserve_usd": 1.0,
+  "provider_calls": 0,
+  "provider_cost_usd": 0,
+  "status": "unconsumed_infrastructure_stop_before_dispatch",
+  "accounting_reference": "docs/evaluation/r28-s04/block1-extractive-final-20261113/accounting.py",
+  "note": "No invoice estimate or usage receipt was required; no paid requests occurred. No one-use authorization file or marker was created."
+}

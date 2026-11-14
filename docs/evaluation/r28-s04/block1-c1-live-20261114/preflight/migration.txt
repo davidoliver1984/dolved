@@ -1,0 +1,28 @@
+
+   INFO  Running migrations.
+
+  2026_11_14_000001_add_temporal_context_to_generated_answers .... 6.98ms FAIL
+
+   Illuminate\Database\QueryException
+
+  SQLSTATE[42501]: Insufficient privilege: 7 ERROR:  must be owner of table generated_answers (Connection: pgsql, Host: postgres, Port: 5432, Database: dolved_e2e_r28_s03, SQL: alter table "generated_answers" add column "temporal_context" jsonb null)
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:857
+    853▕             $exceptionType = ($isUniqueConstraintError = $this->isUniqueConstraintError($e))
+    854▕                 ? UniqueConstraintViolationException::class
+    855▕                 : QueryException::class;
+    856▕
+  ➜ 857▕             $exception = new $exceptionType(
+    858▕                 $this->getNameWithReadWriteType(),
+    859▕                 $query,
+    860▕                 $this->prepareBindings($bindings),
+    861▕                 $e,
+
+      [2m+9 vendor frames [22m
+
+  10  database/migrations/2026_11_14_000001_add_temporal_context_to_generated_answers.php:11
+      Illuminate\Support\Facades\Facade::__callStatic("table")
+      [2m+27 vendor frames [22m
+
+  38  artisan:16
+      Illuminate\Foundation\Application::handleCommand(Object(Symfony\Component\Console\Input\ArgvInput))

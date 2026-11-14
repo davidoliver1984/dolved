@@ -1,0 +1,46 @@
+{
+    "at": "2026-11-14T09:21:22+00:00",
+    "identity": {
+        "driver": "pgsql",
+        "host": "postgres",
+        "database": "dolved_e2e_r28_s03"
+    },
+    "environment": "local",
+    "timezone": "UTC",
+    "workspace": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+    "actor": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+    "migration": null,
+    "column": false,
+    "corpus": {
+        "id": "b24a79c2-875e-4f7c-8fa9-3681db92ae73",
+        "digest": "9b3acad2659bd9d959e41819345123389c9d642029b1215a72b01b12b5f6bf80",
+        "assigned": 986,
+        "foreign": 0,
+        "dense": {
+            "provider": "voyage",
+            "model": "voyage-4-large",
+            "dimensions": 1024
+        },
+        "sparse": {
+            "provider": "fastembed",
+            "model": "prithivida\/Splade_PP_en_v1"
+        }
+    },
+    "needs_profile": {
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "contractVersion": "generation-result-v3",
+        "promptVersion": "grounded-generation-needs-v12",
+        "adapterVersion": "openai-responses-needs-v4",
+        "deliveryMode": "complete_result_only",
+        "qualityAffectingConfiguration": {
+            "reasoning_effort": "low",
+            "max_output_tokens": 4096,
+            "context_window_tokens": 400000,
+            "store": false,
+            "truncation": "disabled"
+        }
+    },
+    "candidate_k": 40,
+    "retrieval_attempts": 2
+}

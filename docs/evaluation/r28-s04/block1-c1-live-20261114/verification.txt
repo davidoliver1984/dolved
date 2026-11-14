@@ -1,0 +1,14 @@
+2026-11-14, stopped pre-dispatch verification
+PASS: branch and pre-dispatch HEAD match the approved identities.
+PASS: runtime inventory independently recomputed from git-tracked app/config/routes/contracts files; SHA-256 4dde6707235e66ac707ed1cba90be8845738240dff9e4e6f2a37cc309989b338.
+PASS: released input SHA-256 e1a54d05d0b688988a083596390ff9a9062b7a32c9352ea716a3a156145a9659 unchanged.
+PASS: isolated connection, workspace/actor membership, active corpus assignments and zero foreign assignments.
+FAIL: named migration; SQLSTATE 42501, must be owner of table generated_answers.
+PASS: after-failure check confirms migration record and column remain absent.
+PASS: read-only owner diagnosis; application role rag_platform_app, owner rag_platform_owner.
+PASS: five evidence JSON files parsed by container PHP with JSON_THROW_ON_ERROR.
+PASS: harness/preflight.php syntax checked by container php -l.
+PASS: git diff --check.
+NOT RUN: provider dispatch, correctness review, full application suites.
+No authorisation marker or execution conversations created.
+Staged diff initially flagged whitespace in verbatim Artisan stdout. Original bytes retained losslessly in preflight/migration.stdout.base64; migration.txt trims trailing whitespace/blank lines for the readable copy. No diagnostic content changed.
