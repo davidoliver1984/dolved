@@ -1,0 +1,224 @@
+[
+  {
+    "item": "G3",
+    "attempt": 1,
+    "source": "docs/evaluation/r28-s04/block1-temporal-association-diagnostic-20261114/capture/51b13294-d548-4241-b2cb-832eb5d6c162-b89ae43c-46f5-4cc0-8887-2b3c65da5932.json",
+    "source_sha256": "f9e2b00cb0c34c9a2042d1028220dc0dc40e9638b21664d6304a43dcd6c34835",
+    "synthetic_fields": [
+      "clarification=null",
+      "n1.aspect=question_span.quote (diagnostic only)",
+      "n1.supports_need_id=null",
+      "n1.binding.ownership=authorised_workspace",
+      "n1.binding.ownership_source=null"
+    ],
+    "evaluated_at": "synthetic fixed anchor, no relative dates in these plans",
+    "catalogue": "empty synthetic catalogue: all retained bindings topic/empty",
+    "interpretation_check": "not run; structural boundary only",
+    "before": {
+      "kind": "after",
+      "value": "2025-07-01",
+      "precision": "day",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "and it started on 1 July 2025."
+      }
+    },
+    "after": {
+      "kind": "after",
+      "value": "2025-07-01",
+      "precision": "day",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "and it started on 1 July 2025."
+      }
+    },
+    "conversion_count": 0,
+    "controlled_requests": 1,
+    "status": "rejected",
+    "validation": {
+      "stage": "grounding",
+      "field": "root",
+      "code": "temporal_relation_grounding"
+    }
+  },
+  {
+    "item": "G3",
+    "attempt": 2,
+    "source": "docs/evaluation/r28-s04/block1-temporal-association-diagnostic-20261114/capture/51b13294-d548-4241-b2cb-832eb5d6c162-de0a47b7-0731-44bd-b4a0-434f0ebb8d62.json",
+    "source_sha256": "c5b4cb612f65d8e31bd3a9c6944ff87e2fe73bf0df960e2f323e6cd1a9e20550",
+    "synthetic_fields": [
+      "clarification=null",
+      "n1.aspect=question_span.quote (diagnostic only)",
+      "n1.supports_need_id=null",
+      "n1.binding.ownership=authorised_workspace",
+      "n1.binding.ownership_source=null"
+    ],
+    "evaluated_at": "synthetic fixed anchor, no relative dates in these plans",
+    "catalogue": "empty synthetic catalogue: all retained bindings topic/empty",
+    "interpretation_check": "not run; structural boundary only",
+    "before": {
+      "kind": "after",
+      "value": "2025-07-01",
+      "precision": "day",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "it started on 1 July 2025."
+      }
+    },
+    "after": {
+      "kind": "after",
+      "value": "2025-07-01",
+      "precision": "day",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "it started on 1 July 2025."
+      }
+    },
+    "conversion_count": 0,
+    "controlled_requests": 1,
+    "status": "rejected",
+    "validation": {
+      "stage": "grounding",
+      "field": "root",
+      "code": "temporal_relation_grounding"
+    }
+  },
+  {
+    "item": "17",
+    "attempt": 1,
+    "source": "docs/evaluation/r28-s04/block1-temporal-association-diagnostic-20261114/capture/57529483-359b-447e-babc-eb77d9e05423-c0328e10-d5d4-436b-b6f2-aeeb5e2839e1.json",
+    "source_sha256": "1bb342f24261f7331ffeffa7c3905e71277a6e1f611d5092fe5a079b717b8085",
+    "synthetic_fields": [
+      "clarification=null",
+      "n1.aspect=question_span.quote (diagnostic only)",
+      "n1.supports_need_id=null",
+      "n1.binding.ownership=authorised_workspace",
+      "n1.binding.ownership_source=null"
+    ],
+    "evaluated_at": "synthetic fixed anchor, no relative dates in these plans",
+    "catalogue": "empty synthetic catalogue: all retained bindings topic/empty",
+    "interpretation_check": "not run; structural boundary only",
+    "before": {
+      "kind": "period",
+      "value": "2026-01",
+      "precision": "month",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "before January 2026"
+      }
+    },
+    "after": {
+      "kind": "before",
+      "value": "2026-01",
+      "precision": "month",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "before January 2026"
+      }
+    },
+    "conversion_count": 1,
+    "controlled_requests": 1,
+    "status": "structurally_accepted_synthetic_envelope",
+    "authority": {
+      "kind": "before",
+      "value": "2026-01",
+      "precision": "month",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "before January 2026"
+      }
+    }
+  },
+  {
+    "item": "25",
+    "attempt": 1,
+    "source": "docs/evaluation/r28-s04/block1-temporal-association-diagnostic-20261114/capture/1bee1a80-b0ed-4a73-b160-d8851c626944-2dcb8635-9d06-4e15-922a-b448774d2f5c.json",
+    "source_sha256": "6ad6ed38a37b67d848b29ce88fe4fadca20d05c4cab922a2a56ddff624d3bd20",
+    "synthetic_fields": [
+      "clarification=null",
+      "n1.aspect=question_span.quote (diagnostic only)",
+      "n1.supports_need_id=null",
+      "n1.binding.ownership=authorised_workspace",
+      "n1.binding.ownership_source=null"
+    ],
+    "evaluated_at": "synthetic fixed anchor, no relative dates in these plans",
+    "catalogue": "empty synthetic catalogue: all retained bindings topic/empty",
+    "interpretation_check": "not run; structural boundary only",
+    "before": {
+      "kind": "period",
+      "value": "2026-01",
+      "precision": "month",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "before January 2026"
+      }
+    },
+    "after": {
+      "kind": "before",
+      "value": "2026-01",
+      "precision": "month",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "before January 2026"
+      }
+    },
+    "conversion_count": 1,
+    "controlled_requests": 1,
+    "status": "structurally_accepted_synthetic_envelope",
+    "authority": {
+      "kind": "before",
+      "value": "2026-01",
+      "precision": "month",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "before January 2026"
+      }
+    }
+  },
+  {
+    "item": "25",
+    "attempt": 2,
+    "source": "docs/evaluation/r28-s04/block1-temporal-association-diagnostic-20261114/capture/1bee1a80-b0ed-4a73-b160-d8851c626944-a7c2aa9a-b203-4612-b978-c78af6994a1a.json",
+    "source_sha256": "835caa750659239b7a7afa23ac3a71deaa54279c390e1dc6a3a6e015ea27d10c",
+    "synthetic_fields": [
+      "clarification=null",
+      "n1.aspect=question_span.quote (diagnostic only)",
+      "n1.supports_need_id=null",
+      "n1.binding.ownership=authorised_workspace",
+      "n1.binding.ownership_source=null"
+    ],
+    "evaluated_at": "synthetic fixed anchor, no relative dates in these plans",
+    "catalogue": "empty synthetic catalogue: all retained bindings topic/empty",
+    "interpretation_check": "not run; structural boundary only",
+    "before": {
+      "kind": "period",
+      "value": "2026-01",
+      "precision": "month",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "before January 2026"
+      }
+    },
+    "after": {
+      "kind": "before",
+      "value": "2026-01",
+      "precision": "month",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "before January 2026"
+      }
+    },
+    "conversion_count": 1,
+    "controlled_requests": 1,
+    "status": "structurally_accepted_synthetic_envelope",
+    "authority": {
+      "kind": "before",
+      "value": "2026-01",
+      "precision": "month",
+      "source": {
+        "turn_id": "user-1",
+        "quote": "before January 2026"
+      }
+    }
+  }
+]

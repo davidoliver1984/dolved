@@ -1,0 +1,7 @@
+{
+  "aggregate": "d5e0b5caf13ec428919d0020fb1bd701620b467c16c5310b13d7eabe04758279",
+  "files": 961,
+  "planner_adapter": "structured-chat-needs-v12",
+  "prompt": "bounded-evidence-needs-v26",
+  "schema": "evidence-needs-plan-v4"
+}

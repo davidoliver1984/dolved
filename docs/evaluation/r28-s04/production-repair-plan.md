@@ -12,6 +12,35 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 #### C1 independent review outcome and road to the full run — David, 2026-11-14
 
+**Bounded leading-relation correction (2026-11-14; provider-free, HOLD):**
+From `c21c586`, implementation `2dc6bfc3ffad5cdd9291ca60786f4fa648ee60a0`
+advances the planner adapter only to `structured-chat-needs-v12` (prompt v26 and
+schema v4 unchanged), coordinated with Laravel's new-execution pin, fixtures and
+real-Python-produced cross-service artifact. At the existing canonicalisation
+boundary only grounded leading before/after in a period source, with permitted
+precision, changes **kind only**. Existing validators all still run. A first
+temporal_relation_grounding rejection receives David's fixed application hint;
+model/retries/limits are unchanged. Evaluation capture adds a bounded conversion
+count without ordinary-log raw data. [Correction, replay and tests](block1-leading-relation-correction-20261114/report.md).
+The captured 17/1 and 25/1–2 fields become before/2026-01/month and pass structural
+validation with an explicitly synthetic missing-field envelope; this is not full
+original-plan or semantic acceptance. G3/1–2 remain after and fail the unchanged
+grounding check. “Once it started” is not deterministically rewritten to date.
+131 focused tests pass; full suites retain exactly 38 AI /2 Laravel failure
+identities (zero new/resolved; intermittent inode test reproduced). Runtime
+`d5e0b5caf13ec428919d0020fb1bd701620b467c16c5310b13d7eabe04758279`.
+No live call/deployment; future feedback effectiveness remains model-dependent.
+17 family selection, 19 selector/period routing, 28 role interpretation, 24
+contact/condition conflation and 26 encryption-evidence/association remain open
+shared Block 1 findings, not passes. 29 remains provider-free only. No previous
+record or score changes. The small diagnostic opportunity is already used; do
+not schedule another. Eventual decision cohorts retain known regressions
+19/24/26/28/29/G3; adding 17/25 requires explicit approval without displacement.
+The private investment record contains no activation/start/accounting/deadline;
+none is invented here. This task's measured wall-clock interval is separately
+recorded in the package, not treated as focused days or a reset of the allowance.
+Main unchanged; Journey local; Block 1 HOLD.
+
 **Bounded temporal-association correction and diagnostics (David, 2026-11-14; completed package, not closure):**
 Starting `02470b2`, reproduce item 29's structural shared-paragraph defect provider-free,
 then validate temporal use per `(part, need)` with independently owned evidence and

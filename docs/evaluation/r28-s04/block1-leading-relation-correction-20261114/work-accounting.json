@@ -1,0 +1,11 @@
+{
+  "first_recorded_clock_after_initial_inspection": "2026-11-14T19:26:21+00:00",
+  "evidence_sealing_time": "2026-11-14T19:36:11.036170+00:00",
+  "measured_elapsed_seconds": 590.03617,
+  "includes": "implementation, provider-free testing, replay, documentation through evidence sealing",
+  "not_included": "initial inspection before first clock observation; publication after sealing",
+  "focused_working_day_conversion": "unavailable; definition not recorded",
+  "cap_activation": "not activated in the private record",
+  "approved_cap_start_deadline_remaining_allowance": "not recorded; not inferred",
+  "paid_provider_calls": 0
+}
