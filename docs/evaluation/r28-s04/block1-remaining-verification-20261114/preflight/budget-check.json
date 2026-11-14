@@ -1,0 +1,12 @@
+{
+  "settings": {
+    "generation_max_attempts": 3,
+    "embedding_max_attempts": 4,
+    "reranker_max_attempts": 3,
+    "retrieval_planner_model": "gpt-5-mini"
+  },
+  "generation_only_broad_reservation_usd": "11.574144",
+  "cap_usd": 10,
+  "provider_calls": 0,
+  "note": "Configured-context upper allowance; not a tight assembled-input bound, not expected spend, not a minimum required budget."
+}
