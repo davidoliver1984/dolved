@@ -1,0 +1,805 @@
+{
+  "note": "Component receipts for inspection; do not sum these with parent aggregates. No grading.",
+  "receipts": [
+    {
+      "item": "F1",
+      "path": "persisted_run_usage.planner_validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 19802,
+        "cached_input_tokens": null,
+        "output_tokens": 1186,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 17114.482965997013,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "status": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F1",
+      "path": "persisted_run_usage.planner_validation_attempts[0].interpretation_check",
+      "receipt": {
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 1177,
+        "cached_input_tokens": null,
+        "output_tokens": 151,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 2950.549876994046,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "code": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F1",
+      "path": "persisted_run_usage.generation",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 17592,
+        "cached_input_tokens": 5376,
+        "output_tokens": 2816,
+        "request_count": 4,
+        "retry_count": 3,
+        "latency_ms": 22560.73884399666,
+        "cost_usd": 0.008820399999999999,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F1",
+      "path": "persisted_run_usage.generation.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 3372,
+        "cached_input_tokens": 0,
+        "output_tokens": 525,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 7772.604628997215,
+        "cost_usd": 0.001893,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F1",
+      "path": "persisted_run_usage.generation.validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 8797,
+        "cached_input_tokens": 0,
+        "output_tokens": 1519,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 12817.916838997917,
+        "cost_usd": 0.00523725,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "rejected"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F1",
+      "path": "persisted_run_usage.generation.validation_attempts[1]",
+      "receipt": {
+        "input_tokens": 8795,
+        "cached_input_tokens": 5376,
+        "output_tokens": 1297,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 9742.822004998743,
+        "cost_usd": 0.0035831500000000002,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F1",
+      "path": "persisted_generation_usage",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 17592,
+        "cached_input_tokens": 5376,
+        "output_tokens": 2816,
+        "request_count": 4,
+        "retry_count": 3,
+        "latency_ms": 22560.73884399666,
+        "cost_usd": 0.008820399999999999,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F1",
+      "path": "persisted_generation_usage.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 3372,
+        "cached_input_tokens": 0,
+        "output_tokens": 525,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 7772.604628997215,
+        "cost_usd": 0.001893,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F1",
+      "path": "persisted_generation_usage.validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 8797,
+        "cached_input_tokens": 0,
+        "output_tokens": 1519,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 12817.916838997917,
+        "cost_usd": 0.00523725,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "rejected"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F1",
+      "path": "persisted_generation_usage.validation_attempts[1]",
+      "receipt": {
+        "input_tokens": 8795,
+        "cached_input_tokens": 5376,
+        "output_tokens": 1297,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 9742.822004998743,
+        "cost_usd": 0.0035831500000000002,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F2",
+      "path": "persisted_run_usage.planner_validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 19787,
+        "cached_input_tokens": null,
+        "output_tokens": 1675,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 23039.322968004853,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "status": "rejected"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F2",
+      "path": "persisted_run_usage.planner_validation_attempts[0].interpretation_check",
+      "receipt": {
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 1154,
+        "cached_input_tokens": null,
+        "output_tokens": 341,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 4888.53058499808,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "code": "clause_omitted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F2",
+      "path": "persisted_run_usage.planner_validation_attempts[1]",
+      "receipt": {
+        "input_tokens": 19812,
+        "cached_input_tokens": null,
+        "output_tokens": 1018,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 13665.228714999103,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "status": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F2",
+      "path": "persisted_run_usage.planner_validation_attempts[1].interpretation_check",
+      "receipt": {
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 1093,
+        "cached_input_tokens": null,
+        "output_tokens": 151,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 2218.7832099953084,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "code": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F2",
+      "path": "persisted_run_usage.generation",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 9358,
+        "cached_input_tokens": 0,
+        "output_tokens": 788,
+        "request_count": 2,
+        "retry_count": 1,
+        "latency_ms": 9585.693961998913,
+        "cost_usd": 0.0039155,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F2",
+      "path": "persisted_run_usage.generation.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 2827,
+        "cached_input_tokens": 0,
+        "output_tokens": 222,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 3305.124459999206,
+        "cost_usd": 0.00115075,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F2",
+      "path": "persisted_run_usage.generation.validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 9358,
+        "cached_input_tokens": 0,
+        "output_tokens": 788,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 9585.693961998913,
+        "cost_usd": 0.0039155,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F2",
+      "path": "persisted_generation_usage",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 9358,
+        "cached_input_tokens": 0,
+        "output_tokens": 788,
+        "request_count": 2,
+        "retry_count": 1,
+        "latency_ms": 9585.693961998913,
+        "cost_usd": 0.0039155,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F2",
+      "path": "persisted_generation_usage.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 2827,
+        "cached_input_tokens": 0,
+        "output_tokens": 222,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 3305.124459999206,
+        "cost_usd": 0.00115075,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F2",
+      "path": "persisted_generation_usage.validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 9358,
+        "cached_input_tokens": 0,
+        "output_tokens": 788,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 9585.693961998913,
+        "cost_usd": 0.0039155,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F3",
+      "path": "persisted_run_usage.planner_validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 19885,
+        "cached_input_tokens": null,
+        "output_tokens": 909,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 12995.431588999054,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "status": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F3",
+      "path": "persisted_run_usage.planner_validation_attempts[0].interpretation_check",
+      "receipt": {
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 1237,
+        "cached_input_tokens": null,
+        "output_tokens": 87,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 1728.1234589972883,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "code": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F3",
+      "path": "persisted_run_usage.generation",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 9116,
+        "cached_input_tokens": 1792,
+        "output_tokens": 780,
+        "request_count": 2,
+        "retry_count": 1,
+        "latency_ms": 6043.8287099968875,
+        "cost_usd": 0.0034358,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F3",
+      "path": "persisted_run_usage.generation.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 2367,
+        "cached_input_tokens": 0,
+        "output_tokens": 248,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 3302.0747509945068,
+        "cost_usd": 0.00108775,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F3",
+      "path": "persisted_run_usage.generation.validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 9116,
+        "cached_input_tokens": 1792,
+        "output_tokens": 780,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 6043.8287099968875,
+        "cost_usd": 0.0034358,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F3",
+      "path": "persisted_generation_usage",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 9116,
+        "cached_input_tokens": 1792,
+        "output_tokens": 780,
+        "request_count": 2,
+        "retry_count": 1,
+        "latency_ms": 6043.8287099968875,
+        "cost_usd": 0.0034358,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F3",
+      "path": "persisted_generation_usage.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 2367,
+        "cached_input_tokens": 0,
+        "output_tokens": 248,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 3302.0747509945068,
+        "cost_usd": 0.00108775,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F3",
+      "path": "persisted_generation_usage.validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 9116,
+        "cached_input_tokens": 1792,
+        "output_tokens": 780,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 6043.8287099968875,
+        "cost_usd": 0.0034358,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F4",
+      "path": "persisted_run_usage.planner_validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 20023,
+        "cached_input_tokens": null,
+        "output_tokens": 1865,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 27187.662470998475,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "status": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F4",
+      "path": "persisted_run_usage.planner_validation_attempts[0].interpretation_check",
+      "receipt": {
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 1398,
+        "cached_input_tokens": null,
+        "output_tokens": 87,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 2500.1535010014777,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "code": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F4",
+      "path": "persisted_run_usage.generation",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 6529,
+        "cached_input_tokens": 1792,
+        "output_tokens": 994,
+        "request_count": 2,
+        "retry_count": 1,
+        "latency_ms": 9576.207045996853,
+        "cost_usd": 0.00321705,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F4",
+      "path": "persisted_run_usage.generation.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 1804,
+        "cached_input_tokens": 0,
+        "output_tokens": 242,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 3871.972752000147,
+        "cost_usd": 0.000935,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F4",
+      "path": "persisted_run_usage.generation.validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 6529,
+        "cached_input_tokens": 1792,
+        "output_tokens": 994,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 9576.207045996853,
+        "cost_usd": 0.00321705,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F4",
+      "path": "persisted_generation_usage",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 6529,
+        "cached_input_tokens": 1792,
+        "output_tokens": 994,
+        "request_count": 2,
+        "retry_count": 1,
+        "latency_ms": 9576.207045996853,
+        "cost_usd": 0.00321705,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F4",
+      "path": "persisted_generation_usage.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 1804,
+        "cached_input_tokens": 0,
+        "output_tokens": 242,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 3871.972752000147,
+        "cost_usd": 0.000935,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F4",
+      "path": "persisted_generation_usage.validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 6529,
+        "cached_input_tokens": 1792,
+        "output_tokens": 994,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 9576.207045996853,
+        "cost_usd": 0.00321705,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F5",
+      "path": "persisted_run_usage.planner_validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 19741,
+        "cached_input_tokens": null,
+        "output_tokens": 1149,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 17067.531549000705,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "status": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F5",
+      "path": "persisted_run_usage.planner_validation_attempts[0].interpretation_check",
+      "receipt": {
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 1123,
+        "cached_input_tokens": null,
+        "output_tokens": 151,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 3167.179750998912,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "pricing_snapshot": null,
+        "code": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F5",
+      "path": "persisted_run_usage.generation",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 9433,
+        "cached_input_tokens": 1792,
+        "output_tokens": 1273,
+        "request_count": 2,
+        "retry_count": 1,
+        "latency_ms": 12727.487340001971,
+        "cost_usd": 0.0045010499999999995,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F5",
+      "path": "persisted_run_usage.generation.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 3372,
+        "cached_input_tokens": 0,
+        "output_tokens": 286,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 3764.6949590052827,
+        "cost_usd": 0.001415,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F5",
+      "path": "persisted_run_usage.generation.validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 9433,
+        "cached_input_tokens": 1792,
+        "output_tokens": 1273,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 12727.487340001971,
+        "cost_usd": 0.0045010499999999995,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F5",
+      "path": "persisted_generation_usage",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 9433,
+        "cached_input_tokens": 1792,
+        "output_tokens": 1273,
+        "request_count": 2,
+        "retry_count": 1,
+        "latency_ms": 12727.487340001971,
+        "cost_usd": 0.0045010499999999995,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F5",
+      "path": "persisted_generation_usage.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "input_tokens": 3372,
+        "cached_input_tokens": 0,
+        "output_tokens": 286,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 3764.6949590052827,
+        "cost_usd": 0.001415,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": "may overlap parent aggregates"
+    },
+    {
+      "item": "F5",
+      "path": "persisted_generation_usage.validation_attempts[0]",
+      "receipt": {
+        "input_tokens": 9433,
+        "cached_input_tokens": 1792,
+        "output_tokens": 1273,
+        "request_count": 2,
+        "retry_count": 0,
+        "latency_ms": 12727.487340001971,
+        "cost_usd": 0.0045010499999999995,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "outcome": "accepted"
+      },
+      "not_additive": "may overlap parent aggregates"
+    }
+  ]
+}

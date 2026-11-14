@@ -1,0 +1,12 @@
+{
+  "items": 5,
+  "dispatches_per_item": 1,
+  "new_conversations": 5,
+  "user_turns_per_conversation": 1,
+  "run_ids_unique": true,
+  "all_ledgers_hash_chained": true,
+  "persisted_reload_verified": true,
+  "input_bytes_hash": "e1a54d05d0b688988a083596390ff9a9062b7a32c9352ea716a3a156145a9659",
+  "grading_performed": false,
+  "provider_calls_in_verification": 0
+}

@@ -1,0 +1,13 @@
+authorization.json: OK
+harness/C1Capture.php: OK
+harness/dispatch.php: OK
+harness/accounting.py: OK
+harness/check_record.py: OK
+harness/check_preflight.py: OK
+harness/run_once.sh: OK
+inputs/F1.json: OK
+inputs/F2.json: OK
+inputs/F3.json: OK
+inputs/F4.json: OK
+inputs/F5.json: OK
+preflight/deployed.json: OK

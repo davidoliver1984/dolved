@@ -1,0 +1,37 @@
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.25
+Configuration: /app/phpunit.xml
+
+[31;1mE[0m[31;1mE[0m[31;1mE[0m[31;1mE[0m                                                                4 / 4 (100%)
+
+Time: 00:01.122, Memory: 69.00 MB
+
+There were 4 errors:
+
+1) Tests\Feature\C1CaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#0 with data ('varied_development')
+Error: Call to a member function __invoke() on array
+
+/app/app/Actions/Conversation/OrchestrateConversationRun.php:230
+/workspace/docs/evaluation/r28-s04/block1-c1-live-20261114/continuation/harness/C1CaptureFixtureTest.php:345
+
+2) Tests\Feature\C1CaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#1 with data ('modified_input16')
+Error: Call to a member function __invoke() on array
+
+/app/app/Actions/Conversation/OrchestrateConversationRun.php:230
+/workspace/docs/evaluation/r28-s04/block1-c1-live-20261114/continuation/harness/C1CaptureFixtureTest.php:345
+
+3) Tests\Feature\C1CaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#2 with data ('month_replay')
+Error: Call to a member function __invoke() on array
+
+/app/app/Actions/Conversation/OrchestrateConversationRun.php:230
+/workspace/docs/evaluation/r28-s04/block1-c1-live-20261114/continuation/harness/C1CaptureFixtureTest.php:345
+
+4) Tests\Feature\C1CaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#3 with data ('year_replay')
+Error: Call to a member function __invoke() on array
+
+/app/app/Actions/Conversation/OrchestrateConversationRun.php:230
+/workspace/docs/evaluation/r28-s04/block1-c1-live-20261114/continuation/harness/C1CaptureFixtureTest.php:345
+
+[37;41mERRORS![0m
+[37;41mTests: 4[0m[37;41m, Assertions: 80[0m[37;41m, Errors: 4[0m[37;41m.[0m

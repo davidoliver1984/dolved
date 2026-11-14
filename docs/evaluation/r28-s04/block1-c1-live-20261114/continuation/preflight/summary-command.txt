@@ -1,0 +1,216 @@
+{
+  "schema_version": "c1-ungraded-route-summary-v1",
+  "items": [
+    {
+      "item": "F1",
+      "status": "completed",
+      "run_id": "559e1237-acbd-40af-b00d-c427a6e24669",
+      "conversation_id": 1627,
+      "operations": [
+        "compare"
+      ],
+      "bindings": [
+        {
+          "need_id": "n1",
+          "subject_status": "matched",
+          "family_ids": [
+            "346752b1-3c08-4a7f-9a3a-951a45979c6d"
+          ],
+          "ownership": "authorised_workspace",
+          "ownership_source": null
+        }
+      ],
+      "observed_temporal_target_count": 0,
+      "precautionary_target_admitted": false,
+      "admitted_target_ids": [],
+      "answer_used_precautionary_target": false,
+      "answer_used_requested_target": false,
+      "validated_used_target_ids": [],
+      "generation_request_contract": 3,
+      "base_logical_lanes": 2,
+      "additional_lanes": 0,
+      "observed_search_calls": 1,
+      "allocated_evidence_count": 4,
+      "service_calls": 5,
+      "elapsed_seconds": 62.3401198387146,
+      "context_reload_equal": null,
+      "context_reload_state": "not_applicable_no_temporal_context",
+      "grader_verdict": null,
+      "record_sha256": "ec7fcb197d77f3cbb5bb2d29fffc521df6a7908421c1d0cd443665b44dd52f3d"
+    },
+    {
+      "item": "F2",
+      "status": "completed",
+      "run_id": "e2dad736-2961-4add-a07e-6868a0e8fa45",
+      "conversation_id": 1628,
+      "operations": [
+        "retrieve"
+      ],
+      "bindings": [
+        {
+          "need_id": "n1",
+          "subject_status": "matched",
+          "family_ids": [
+            "1704249c-ccfc-4437-8b16-18e3238b6bf2"
+          ],
+          "ownership": "authorised_workspace",
+          "ownership_source": null
+        }
+      ],
+      "observed_temporal_target_count": 2,
+      "precautionary_target_admitted": true,
+      "admitted_target_ids": [
+        "n1:date:1"
+      ],
+      "answer_used_precautionary_target": false,
+      "answer_used_requested_target": true,
+      "validated_used_target_ids": [
+        "n1:requested"
+      ],
+      "generation_request_contract": 4,
+      "base_logical_lanes": 1,
+      "additional_lanes": 1,
+      "observed_search_calls": 2,
+      "allocated_evidence_count": 5,
+      "service_calls": 6,
+      "elapsed_seconds": 56.25063705444336,
+      "context_reload_equal": true,
+      "context_reload_state": "equal",
+      "grader_verdict": null,
+      "record_sha256": "ae5f0722601f953d973453ae44fd35fa4119a9dcdf9545de86c00d8c2a503206"
+    },
+    {
+      "item": "F3",
+      "status": "completed",
+      "run_id": "87f7364f-ee14-4552-b2a1-da739fdbf8a0",
+      "conversation_id": 1629,
+      "operations": [
+        "retrieve"
+      ],
+      "bindings": [
+        {
+          "need_id": "n1",
+          "subject_status": "matched",
+          "family_ids": [
+            "fd01e491-0860-4932-bec0-f30347eed7c2"
+          ],
+          "ownership": "authorised_workspace",
+          "ownership_source": null
+        }
+      ],
+      "observed_temporal_target_count": 3,
+      "precautionary_target_admitted": true,
+      "admitted_target_ids": [
+        "n1:date:1",
+        "n1:date:2"
+      ],
+      "answer_used_precautionary_target": true,
+      "answer_used_requested_target": false,
+      "validated_used_target_ids": [
+        "n1:date:2"
+      ],
+      "generation_request_contract": 4,
+      "base_logical_lanes": 1,
+      "additional_lanes": 1,
+      "observed_search_calls": 2,
+      "allocated_evidence_count": 5,
+      "service_calls": 6,
+      "elapsed_seconds": 28.313191890716553,
+      "context_reload_equal": true,
+      "context_reload_state": "equal",
+      "grader_verdict": null,
+      "record_sha256": "02dd384a8784e0daebda1949d5f9b9a1104fa66f376a7834d01a9558a8a712dd"
+    },
+    {
+      "item": "F4",
+      "status": "completed",
+      "run_id": "cd1e3c10-d354-4ea1-825f-791d420478a4",
+      "conversation_id": 1630,
+      "operations": [
+        "compare",
+        "retrieve"
+      ],
+      "bindings": [
+        {
+          "need_id": "n1",
+          "subject_status": "matched",
+          "family_ids": [
+            "92edb632-3b05-4e95-a682-d48ab40750c5"
+          ],
+          "ownership": "authorised_workspace",
+          "ownership_source": null
+        },
+        {
+          "need_id": "n2",
+          "subject_status": "matched",
+          "family_ids": [
+            "92edb632-3b05-4e95-a682-d48ab40750c5"
+          ],
+          "ownership": "authorised_workspace",
+          "ownership_source": null
+        }
+      ],
+      "observed_temporal_target_count": 0,
+      "precautionary_target_admitted": false,
+      "admitted_target_ids": [],
+      "answer_used_precautionary_target": false,
+      "answer_used_requested_target": false,
+      "validated_used_target_ids": [],
+      "generation_request_contract": 3,
+      "base_logical_lanes": 3,
+      "additional_lanes": 0,
+      "observed_search_calls": 2,
+      "allocated_evidence_count": 3,
+      "service_calls": 6,
+      "elapsed_seconds": 46.329933166503906,
+      "context_reload_equal": null,
+      "context_reload_state": "not_applicable_no_temporal_context",
+      "grader_verdict": null,
+      "record_sha256": "1dd26ce4ee68d5ee80c2a97c86f686d6d0c54dcd0c96de0c482366e468e4e003"
+    },
+    {
+      "item": "F5",
+      "status": "completed",
+      "run_id": "63356163-58c2-4d33-9bdf-57be6bbf0a14",
+      "conversation_id": 1631,
+      "operations": [
+        "compare"
+      ],
+      "bindings": [
+        {
+          "need_id": "n1",
+          "subject_status": "matched",
+          "family_ids": [
+            "faf9f56e-e43e-4c11-a4d7-20f85c8f5f08"
+          ],
+          "ownership": "authorised_workspace",
+          "ownership_source": null
+        }
+      ],
+      "observed_temporal_target_count": 0,
+      "precautionary_target_admitted": false,
+      "admitted_target_ids": [],
+      "answer_used_precautionary_target": false,
+      "answer_used_requested_target": false,
+      "validated_used_target_ids": [],
+      "generation_request_contract": 3,
+      "base_logical_lanes": 2,
+      "additional_lanes": 0,
+      "observed_search_calls": 1,
+      "allocated_evidence_count": 5,
+      "service_calls": 4,
+      "elapsed_seconds": 36.60131812095642,
+      "context_reload_equal": null,
+      "context_reload_state": "not_applicable_no_temporal_context",
+      "grader_verdict": null,
+      "record_sha256": "f27c30d2bddd992aba5fdef7c656fe5bd3a4318e9f540f52c571886cc83d1e29"
+    }
+  ],
+  "completed_item_records": 5,
+  "grading_performed": false,
+  "limitations": [
+    "HTTP service calls are logged individually; physical provider attempt counts/usage are the existing nested service receipts, not a new direct-provider gateway.",
+    "An observed route or successful persistence does not establish answer correctness.",
+    "A false answer_used_requested_target flag means no requested temporal target was declared; for a non-C1 route inspect the actual plan, service calls and generation request."
+  ]
+}

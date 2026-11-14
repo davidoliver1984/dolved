@@ -1,0 +1,23 @@
+{
+  "schema_version": "c1-once-only-checkpoint-authority-v1",
+  "authorization_id": "R28-C1-AUTH-20261114-01",
+  "run_id": "R28-C1-LIVE-20261114-01",
+  "authorised_by": "David, explicit continuation instruction in this conversation",
+  "execution_commit": "44219e2df49181e80f0bcaad2495372917d6c4c1",
+  "runtime_source_aggregate": "4dde6707235e66ac707ed1cba90be8845738240dff9e4e6f2a37cc309989b338",
+  "released_input_sha256": "e1a54d05d0b688988a083596390ff9a9062b7a32c9352ea716a3a156145a9659",
+  "governed_harness_inventory": "governed-inputs.sha256",
+  "stack": "dolved-r28-s03",
+  "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+  "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+  "ordered_items": ["F1", "F2", "F3", "F4", "F5"],
+  "per_item_dispatches": 1,
+  "max_cost_usd": 1.5,
+  "uncertainty_reserve_usd": 0.5,
+  "minimum_next_item_headroom_usd": 0.5,
+  "production_retry_limits": "unchanged",
+  "selective_reruns": false,
+  "grading": false,
+  "halt_conditions": ["infrastructure", "authorization", "integrity", "budget"],
+  "confirmation_scope": "C1 component integration, not pilot readiness"
+}

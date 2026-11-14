@@ -1,0 +1,260 @@
+{
+    "items": [
+        {
+            "item": "F1",
+            "run_id": "559e1237-acbd-40af-b00d-c427a6e24669",
+            "conversation_id": "09575164-c97f-4954-b6b9-930615310de4",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "Under the Serious Complaint Escalation Guidance, how quickly did a complaint alleging abuse have to be escalated to the Quality Lead on 10 March 2026?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "On 10 March 2026, the version in effect required that a complaint alleging abuse be escalated to the Quality Lead within 4 hours of it being received.\n\nThe organisation later issued a superseding version that tightened the escalation window to 2 hours (effective from the version that replaces the 4-hour window).",
+            "assistant_display_text": "On 10 March 2026, the version in effect required that a complaint alleging abuse be escalated to the Quality Lead within 4 hours of it being received.\n\nThe organisation later issued a superseding version that tightened the escalation window to 2 hours (effective from the version that replaces the 4-hour window)."
+        },
+        {
+            "item": "F2",
+            "run_id": "e2dad736-2961-4add-a07e-6868a0e8fa45",
+            "conversation_id": "97f1783d-af0e-4b47-b032-d3fa4ee4c3c1",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "My father was admitted in March 2025 after a pre-admission assessment. If a new resident were assessed for admission today, would the Admissions and Pre-Admission Assessment Policy require a mental capacity screen?",
+            "temporal_context": {
+                "uses": [
+                    {
+                        "target": {
+                            "at": "2026-11-14T09:33:42+00:00",
+                            "mode": "current",
+                            "reason": null,
+                            "status": "searched",
+                            "need_id": "n1",
+                            "purpose": "requested",
+                            "versions": [
+                                {
+                                    "end": null,
+                                    "start": "2026-02-01T00:00:00+00:00",
+                                    "version_id": "a190775d-ae67-4fb9-8e27-8d12c8e5bd47"
+                                }
+                            ],
+                            "family_id": "1704249c-ccfc-4437-8b16-18e3238b6bf2",
+                            "reference": null,
+                            "target_id": "n1:requested"
+                        },
+                        "need_id": "n1",
+                        "target_id": "n1:requested",
+                        "part_index": 0,
+                        "question_quote": "would the Admissions and Pre-Admission Assessment Policy require a mental capacity screen?",
+                        "planner_disagreement": false
+                    }
+                ],
+                "targets": [
+                    {
+                        "at": "2026-11-14T09:33:42+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-02-01T00:00:00+00:00",
+                                "version_id": "a190775d-ae67-4fb9-8e27-8d12c8e5bd47"
+                            }
+                        ],
+                        "family_id": "1704249c-ccfc-4437-8b16-18e3238b6bf2",
+                        "reference": null,
+                        "target_id": "n1:requested"
+                    },
+                    {
+                        "at": null,
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": "2026-02-01T00:00:00+00:00",
+                                "start": "2025-02-01T00:00:00+00:00",
+                                "version_id": "a912a5a0-7041-4784-8527-3ad9288ec846"
+                            }
+                        ],
+                        "family_id": "1704249c-ccfc-4437-8b16-18e3238b6bf2",
+                        "reference": {
+                            "at": null,
+                            "quote": "March 2025",
+                            "value": "2025-03",
+                            "turn_id": "user-1",
+                            "precision": "month",
+                            "period_end": "2025-04-01T00:00:00+00:00",
+                            "period_start": "2025-03-01T00:00:00+00:00"
+                        },
+                        "target_id": "n1:date:1"
+                    }
+                ],
+                "version": "temporal-answer-use-v1"
+            },
+            "reloaded_rendered_text": "Under the currently authoritative Admissions and Pre-Admission Assessment Policy (the version effective 1 February 2026), every pre-admission assessment must include a documented mental capacity screen, so a new resident assessed today would be required to have that screen completed and recorded.\nTemporal basis: 2026-11-14T09:33:42+00:00; version a190775d-ae67-4fb9-8e27-8d12c8e5bd47; effective 2026-02-01T00:00:00+00:00 to open end (end exclusive).",
+            "assistant_display_text": "Under the currently authoritative Admissions and Pre-Admission Assessment Policy (the version effective 1 February 2026), every pre-admission assessment must include a documented mental capacity screen, so a new resident assessed today would be required to have that screen completed and recorded.\nTemporal basis: 2026-11-14T09:33:42+00:00; version a190775d-ae67-4fb9-8e27-8d12c8e5bd47; effective 2026-02-01T00:00:00+00:00 to open end (end exclusive)."
+        },
+        {
+            "item": "F3",
+            "run_id": "87f7364f-ee14-4552-b2a1-da739fdbf8a0",
+            "conversation_id": "0cfc4084-d03a-48f8-857d-1104f047ce26",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "A resident asked on 20 May 2026 to start applying her own prescribed skin cream, and the arrangement is due to begin on 10 June 2026. Under the Self-Administration of Medication Policy, does she need a full capacity and risk assessment before she starts?",
+            "temporal_context": {
+                "uses": [
+                    {
+                        "target": {
+                            "at": "2026-06-10T00:00:00+00:00",
+                            "mode": "dated",
+                            "reason": null,
+                            "status": "searched",
+                            "need_id": "n1",
+                            "purpose": "precautionary",
+                            "versions": [
+                                {
+                                    "end": null,
+                                    "start": "2026-06-01T00:00:00+00:00",
+                                    "version_id": "2c5492f6-8c9a-485f-a92e-011d8871269f"
+                                }
+                            ],
+                            "family_id": "fd01e491-0860-4932-bec0-f30347eed7c2",
+                            "reference": {
+                                "at": "2026-06-10T00:00:00+00:00",
+                                "quote": "10 June 2026",
+                                "value": "2026-06-10",
+                                "turn_id": "user-1",
+                                "precision": "day",
+                                "period_end": null,
+                                "period_start": null
+                            },
+                            "target_id": "n1:date:2"
+                        },
+                        "need_id": "n1",
+                        "target_id": "n1:date:2",
+                        "part_index": 0,
+                        "question_quote": "10 June 2026",
+                        "planner_disagreement": false
+                    }
+                ],
+                "targets": [
+                    {
+                        "at": "2026-11-14T09:34:41+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-06-01T00:00:00+00:00",
+                                "version_id": "2c5492f6-8c9a-485f-a92e-011d8871269f"
+                            }
+                        ],
+                        "family_id": "fd01e491-0860-4932-bec0-f30347eed7c2",
+                        "reference": null,
+                        "target_id": "n1:requested"
+                    },
+                    {
+                        "at": "2026-05-20T00:00:00+00:00",
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": "2026-06-01T00:00:00+00:00",
+                                "start": "2025-06-01T00:00:00+00:00",
+                                "version_id": "1348e466-7d69-4d1a-b718-591c68abb753"
+                            }
+                        ],
+                        "family_id": "fd01e491-0860-4932-bec0-f30347eed7c2",
+                        "reference": {
+                            "at": "2026-05-20T00:00:00+00:00",
+                            "quote": "20 May 2026",
+                            "value": "2026-05-20",
+                            "turn_id": "user-1",
+                            "precision": "day",
+                            "period_end": null,
+                            "period_start": null
+                        },
+                        "target_id": "n1:date:1"
+                    },
+                    {
+                        "at": "2026-06-10T00:00:00+00:00",
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-06-01T00:00:00+00:00",
+                                "version_id": "2c5492f6-8c9a-485f-a92e-011d8871269f"
+                            }
+                        ],
+                        "family_id": "fd01e491-0860-4932-bec0-f30347eed7c2",
+                        "reference": {
+                            "at": "2026-06-10T00:00:00+00:00",
+                            "quote": "10 June 2026",
+                            "value": "2026-06-10",
+                            "turn_id": "user-1",
+                            "precision": "day",
+                            "period_end": null,
+                            "period_start": null
+                        },
+                        "target_id": "n1:date:2"
+                    }
+                ],
+                "version": "temporal-answer-use-v1"
+            },
+            "reloaded_rendered_text": "The version of the Self-Administration of Medication Policy in force from 1 June 2026 requires a capacity and risk assessment to be completed before self-administration begins for any medication, including topical medication, so she must have a full capacity and risk assessment before starting to apply the prescribed skin cream.\nTemporal basis: 10 June 2026; version 2c5492f6-8c9a-485f-a92e-011d8871269f; effective 2026-06-01T00:00:00+00:00 to open end (end exclusive).",
+            "assistant_display_text": "The version of the Self-Administration of Medication Policy in force from 1 June 2026 requires a capacity and risk assessment to be completed before self-administration begins for any medication, including topical medication, so she must have a full capacity and risk assessment before starting to apply the prescribed skin cream.\nTemporal basis: 10 June 2026; version 2c5492f6-8c9a-485f-a92e-011d8871269f; effective 2026-06-01T00:00:00+00:00 to open end (end exclusive)."
+        },
+        {
+            "item": "F4",
+            "run_id": "cd1e3c10-d354-4ea1-825f-791d420478a4",
+            "conversation_id": "9b919b63-614f-426f-add8-fce9ffaaaad5",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "Under the Medication Fridge Breakdown Procedure, who did staff have to call immediately when a medication fridge failed in November 2025, and who must they call now?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "In November 2025, the procedure required staff to call the on-call manager immediately when a medication fridge failed.\n\nUnder the current procedure, staff must call both the on-call manager and the supplying pharmacy for advice when a medication fridge fails.",
+            "assistant_display_text": "In November 2025, the procedure required staff to call the on-call manager immediately when a medication fridge failed.\n\nUnder the current procedure, staff must call both the on-call manager and the supplying pharmacy for advice when a medication fridge fails."
+        },
+        {
+            "item": "F5",
+            "run_id": "63356163-58c2-4d33-9bdf-57be6bbf0a14",
+            "conversation_id": "b9f6a0c7-b9b3-4312-8468-5df3acdc2504",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "Under the current Continence Care Policy, was completing a continence assessment within one week of admission mandatory in January 2026?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "No \u2014 in January 2026 the policy language was advisory: the earlier version states a continence assessment \"should\" be completed within one week of admission, whereas a later version explicitly changes that wording to \"must\" and is described as superseding the earlier version.",
+            "assistant_display_text": "No \u2014 in January 2026 the policy language was advisory: the earlier version states a continence assessment \"should\" be completed within one week of admission, whereas a later version explicitly changes that wording to \"must\" and is described as superseding the earlier version."
+        }
+    ],
+    "verified_at": "2026-11-14T09:37:35+00:00",
+    "grading": false
+}

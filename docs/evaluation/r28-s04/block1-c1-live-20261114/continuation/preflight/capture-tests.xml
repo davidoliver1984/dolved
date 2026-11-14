@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\C1CaptureFixtureTest" file="/workspace/docs/evaluation/r28-s04/block1-c1-live-20261114/continuation/harness/C1CaptureFixtureTest.php" tests="4" assertions="240" errors="0" failures="0" skipped="0" time="1.477196">
+    <testsuite name="Tests\Feature\C1CaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use" tests="4" assertions="240" errors="0" failures="0" skipped="0" time="1.477196">
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #0" file="/workspace/docs/evaluation/r28-s04/block1-c1-live-20261114/continuation/harness/C1CaptureFixtureTest.php" line="218" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="59" time="1.075715"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1" file="/workspace/docs/evaluation/r28-s04/block1-c1-live-20261114/continuation/harness/C1CaptureFixtureTest.php" line="218" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="59" time="0.122166"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #2" file="/workspace/docs/evaluation/r28-s04/block1-c1-live-20261114/continuation/harness/C1CaptureFixtureTest.php" line="218" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="61" time="0.166978"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #3" file="/workspace/docs/evaluation/r28-s04/block1-c1-live-20261114/continuation/harness/C1CaptureFixtureTest.php" line="218" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="61" time="0.112337"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

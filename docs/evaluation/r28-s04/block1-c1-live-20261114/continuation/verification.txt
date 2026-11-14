@@ -1,0 +1,14 @@
+2026-11-14 C1 live checkpoint verification
+PASS: expected hold HEAD before dispatch and throughout run.
+PASS: runtime aggregate 4dde6707235e66ac707ed1cba90be8845738240dff9e4e6f2a37cc309989b338; deployed API/AI source checksums.
+PASS: sole pending named migration applied through isolated migrator with --no-deps; column and migration record present afterward.
+PASS: capture-only provider-free proof, 4 tests / 240 assertions; retained initial tooling failures, no application changes.
+PASS: frozen question-only input and governed harness/authority checksums unchanged after execution.
+PASS: five starts/completions in F1-F5 order; one consumed authority; no rerun or selective redispatch.
+PASS: all five hash-chained ledgers; no service transport/integrity failure.
+PASS: five unique persisted conversations, one user turn and one run each; exact input text and reloads verified.
+PASS: USD 1.50 cap, USD 0.50 uncertainty reserve and USD 0.50 next-item headroom at every dispatch.
+PASS: 35 JSON artifacts parsed; Python harness AST and shell/PHP syntax checks.
+PASS: original failed-deployment package inventory unchanged.
+NOT PERFORMED: answer correctness grading, pilot-readiness determination, C2, main merge, full-suite rerun.
+Raw CLI/JUnit execution output is retained verbatim, including ANSI sequences and terminal whitespace; it is not application source.
