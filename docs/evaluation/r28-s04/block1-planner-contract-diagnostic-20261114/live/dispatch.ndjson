@@ -1,0 +1,4 @@
+{"item":"G2","event":"dispatch_started","at":"2026-11-14T12:15:05Z"}
+{"item":"G2","event":"recorded","exit_code":0,"at":"2026-11-14T12:15:28Z"}
+{"item":"G3","event":"dispatch_started","at":"2026-11-14T12:15:29Z"}
+{"item":"G3","event":"recorded","exit_code":0,"at":"2026-11-14T12:15:59Z"}

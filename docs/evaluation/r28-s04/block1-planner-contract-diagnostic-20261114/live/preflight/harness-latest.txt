@@ -1,0 +1,11 @@
+authorization.json: OK
+harness/capture.py: OK
+harness/dispatch.py: OK
+harness/prepare.py: OK
+harness/request.php: OK
+harness/run_once.sh: OK
+harness/test_capture.py: OK
+inputs/G2.json: OK
+inputs/G3.json: OK
+proof/capture.xml: OK
+runtime-source.sha256: OK

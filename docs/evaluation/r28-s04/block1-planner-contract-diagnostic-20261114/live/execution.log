@@ -1,0 +1,5 @@
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+{"item": "G2", "accepted": false, "attempts": 2, "cost_estimate_usd": 0.01267275, "stop": false}
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+{"item": "G3", "accepted": false, "attempts": 2, "cost_estimate_usd": 0.01351975, "stop": false}
+Two diagnostic planner invocations complete; no downstream execution.

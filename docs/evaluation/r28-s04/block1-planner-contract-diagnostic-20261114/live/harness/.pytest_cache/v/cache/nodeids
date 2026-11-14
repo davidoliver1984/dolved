@@ -1,0 +1,5 @@
+[
+  "test_capture.py::CaptureProof::test_corrected_retry_and_first_acceptance_unchanged",
+  "test_capture.py::CaptureProof::test_rejections_are_identical_and_fields_retained",
+  "test_capture.py::CaptureProof::test_scope_and_redaction"
+]

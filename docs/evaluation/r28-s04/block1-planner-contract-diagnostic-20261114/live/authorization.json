@@ -1,0 +1,31 @@
+{
+  "run_id": "R28-PLANNER-CONTRACT-DIAGNOSTIC-20261114-01",
+  "kind": "DIAGNOSTIC_ONLY",
+  "head": "13b7e09bb9cad2b5c6cb0aff600efeb8b217cdf4",
+  "runtime_aggregate": "7f20f123cb9e4af9567e0ea0240ebf715d54755ae2611dc66ecd6719756773af",
+  "workspace": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+  "items": [
+    "G2",
+    "G3"
+  ],
+  "maximum_usd": 10,
+  "reservation_usd": 3.25,
+  "reservation_basis": {
+    "planner_attempts": 4,
+    "planner_output_ceiling": 25000,
+    "interpretation_checks": 4,
+    "checker_output_ceiling": 4096,
+    "input_bytes_guard_per_call": 1000000,
+    "input_token_overhead_allowance_per_call": 1024,
+    "input_reserve_usd": 2.002048,
+    "output_reserve_usd": 0.232768,
+    "uncertainty_usd": 1,
+    "rounded_reservation_usd": 3.25
+  },
+  "retained_rates_usd_per_million": {
+    "input": 0.25,
+    "output": 2
+  },
+  "no_downstream_execution": true,
+  "one_use": true
+}

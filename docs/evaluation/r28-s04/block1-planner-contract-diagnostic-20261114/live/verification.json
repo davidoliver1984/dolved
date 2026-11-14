@@ -1,0 +1,97 @@
+{
+  "run_id": "R28-PLANNER-CONTRACT-DIAGNOSTIC-20261114-01",
+  "once_per_question": true,
+  "questions": 2,
+  "planner_attempts": 4,
+  "interpretation_check_calls": 0,
+  "downstream_calls": 0,
+  "hash_chains_valid": true,
+  "provider_input_tokens": 74674,
+  "provider_output_tokens": 3762,
+  "retained_uncached_cost_estimate_usd": 0.0261925,
+  "complete_invoice_available": false,
+  "reservation_usd": 3.25,
+  "cap_usd": 10,
+  "observations": [
+    {
+      "item": "G2",
+      "attempt": 1,
+      "fact_reference": {
+        "value": "March 2025",
+        "precision": "month",
+        "source": {
+          "turn_id": "user-1",
+          "quote": "My mother moved into the home in March 2025."
+        }
+      },
+      "observed_validation": {
+        "stage": "schema",
+        "field": "needs.0.fact_reference",
+        "code": "fact_date_precision"
+      },
+      "field_only_replay_rejects_identically": true,
+      "classification": "justified",
+      "classification_scope": "Frozen structural format rule only; not a full semantic verdict."
+    },
+    {
+      "item": "G2",
+      "attempt": 2,
+      "fact_reference": {
+        "value": "March 2025",
+        "precision": "month",
+        "source": {
+          "turn_id": "user-1",
+          "quote": "My mother moved into the home in March 2025."
+        }
+      },
+      "observed_validation": {
+        "stage": "schema",
+        "field": "needs.0.fact_reference",
+        "code": "fact_date_precision"
+      },
+      "field_only_replay_rejects_identically": true,
+      "classification": "justified",
+      "classification_scope": "Frozen structural format rule only; not a full semantic verdict."
+    },
+    {
+      "item": "G3",
+      "attempt": 1,
+      "fact_reference": {
+        "value": "1 July 2025",
+        "precision": "day",
+        "source": {
+          "turn_id": "user-1",
+          "quote": "it started on 1 July 2025"
+        }
+      },
+      "observed_validation": {
+        "stage": "schema",
+        "field": "needs.0.fact_reference",
+        "code": "fact_date_precision"
+      },
+      "field_only_replay_rejects_identically": true,
+      "classification": "justified",
+      "classification_scope": "Frozen structural format rule only; not a full semantic verdict."
+    },
+    {
+      "item": "G3",
+      "attempt": 2,
+      "fact_reference": {
+        "value": "1 July 2025",
+        "precision": "day",
+        "source": {
+          "turn_id": "user-1",
+          "quote": "it started on 1 July 2025."
+        }
+      },
+      "observed_validation": {
+        "stage": "schema",
+        "field": "needs.0.fact_reference",
+        "code": "fact_date_precision"
+      },
+      "field_only_replay_rejects_identically": true,
+      "classification": "justified",
+      "classification_scope": "Frozen structural format rule only; not a full semantic verdict."
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "controlled_fixture": true,
+  "no_providers": true,
+  "capture_on_off_requests_and_outcome_identical": true,
+  "attempts": [
+    {
+      "attempt": 1,
+      "proposed_plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "What checks were required in April 2025?",
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "What checks were required in April 2025?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "after",
+              "value": "2025-04",
+              "precision": "month",
+              "source": {
+                "turn_id": "u1",
+                "quote": "April 2025"
+              }
+            },
+            "fact_reference": null,
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            }
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "topic",
+            "family_ids": [],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      },
+      "status": "rejected",
+      "validation": {
+        "stage": "grounding",
+        "field": "root",
+        "code": "temporal_relation_grounding"
+      },
+      "bounded_explanation": "NeedAuthority.coherent_reference or EvidenceNeedsPlan.validate_grounding: period source starts before/after, or before/after authority lacks that relation in source and question span.",
+      "usage": {
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 3.2424160017399117
+      },
+      "interpretation_check": null,
+      "unavailable_fields": "Absent fields are null; raw text, unknown keys and headers are never retained. Projection caps lists at 20 and strings at 8000 characters."
+    },
+    {
+      "attempt": 2,
+      "proposed_plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "needs": [
+          {
+            "need_id": "n1",
+            "aspect": "What checks were required in April 2025?",
+            "question_span": {
+              "turn_id": "u1",
+              "quote": "What checks were required in April 2025?"
+            },
+            "context_spans": [],
+            "operation": "retrieve",
+            "authority": {
+              "kind": "after",
+              "value": "2025-04",
+              "precision": "month",
+              "source": {
+                "turn_id": "u1",
+                "quote": "April 2025"
+              }
+            },
+            "fact_reference": null,
+            "applicability": {
+              "kind": "generic",
+              "source": null
+            }
+          }
+        ],
+        "bindings": [
+          {
+            "need_id": "n1",
+            "subject_status": "topic",
+            "family_ids": [],
+            "ownership": "authorised_workspace",
+            "ownership_source": null
+          }
+        ]
+      },
+      "status": "rejected",
+      "validation": {
+        "stage": "grounding",
+        "field": "root",
+        "code": "temporal_relation_grounding"
+      },
+      "bounded_explanation": "NeedAuthority.coherent_reference or EvidenceNeedsPlan.validate_grounding: period source starts before/after, or before/after authority lacks that relation in source and question span.",
+      "usage": {
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "request_count": 1,
+        "retry_count": 0,
+        "latency_ms": 7.0714590037823655
+      },
+      "interpretation_check": null,
+      "unavailable_fields": "Absent fields are null; raw text, unknown keys and headers are never retained. Projection caps lists at 20 and strings at 8000 characters."
+    }
+  ]
+}
