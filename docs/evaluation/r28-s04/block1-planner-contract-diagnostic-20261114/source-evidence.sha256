@@ -1,0 +1,8 @@
+3a087cb87653527d777124c8a1706b643ad983749376513ea5ca6784d51ea861  apps/ai/app/retrieval/needs_planner.py
+9dd30afc5d125c735f76ee5539dc1ec31587ffabbeff5bbef8ab98efe9837c85  apps/ai/app/retrieval/needs.py
+a11a2378d26e4ab4cb02fe7fc0dedf45ec5fefb038d149866d0ba8835da61779  apps/ai/app/retrieval/interpretation.py
+39f2a8ea63bf662ea0f4d1792a4f50b40b165dc3613d93978188c5c2d98ce9f0  apps/ai/app/retrieval/planner.py
+8ccec69c76227c12833996106a89cc619b0af398442c8819438e2608c2f6a090  apps/ai/app/retrieval/routes.py
+cd9f74d14a108d523e54b8ed6bca88538835621abc3abdb4f4136062b4e7041e  docs/evaluation/r28-s04/block1-c2-live-20261114/cases/G2.json
+e59c7f8218d8e5c902f3ce25f557d281af310d000fecac39a1abb27d3f07dd73  docs/evaluation/r28-s04/block1-c2-live-20261114/cases/G3.json
+7603fc82fc2f95f9852f584f28cc6a3d4949a2a30e17b8ab3b56a52ce4d2899f  docs/evaluation/r28-s04/block1-c2-live-20261114/released-input/questions-only.json

@@ -1,0 +1,26 @@
+{
+  "status": "pre_dispatch_budget_blocked",
+  "authorised_cap_usd": 0.25,
+  "planner_questions": 2,
+  "attempts_per_question": 2,
+  "planner_output_ceiling": 25000,
+  "existing_checker_output_ceiling": 4096,
+  "retained_input_usd_per_million": 0.25,
+  "retained_output_usd_per_million": 2,
+  "prior_planner_input_tokens": [
+    18618,
+    18705,
+    18632,
+    18719
+  ],
+  "prior_planner_input_total": 74674,
+  "planner_output_reservation_usd": 0.2,
+  "checker_output_reservation_usd": 0.032768,
+  "historical_planner_input_subtotal_usd": 0.0186685,
+  "subtotal_before_checker_inputs_or_uncertainty_usd": 0.2514365,
+  "complete_conservative_reservation": false,
+  "actual_provider_calls": 0,
+  "actual_spend_usd": 0,
+  "authorisation_consumed": false,
+  "note": "Historical input counts are not an upper bound on new requests; subtotal already exceeds cap. This is not an expected bill or current pricing quote."
+}
