@@ -7,6 +7,7 @@ namespace Tests\Feature;
 use App\Actions\Conversation\CreateConversation;
 use App\Actions\Conversation\OrchestrateConversationRun;
 use App\Actions\Conversation\SubmitConversationMessage;
+use App\Actions\Evaluation\RunR28ProductionPathDiagnostic;
 use App\Actions\Generation\GenerateGroundedAnswer;
 use App\Actions\Retrieval\RetrieveWorkspaceEvidence;
 use App\Enums\DocumentStatus;
@@ -46,6 +47,7 @@ use Carbon\CarbonImmutable;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
@@ -204,7 +206,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $this->assertSame(['searched', 'searched', 'capacity_limited'], array_column($result->evidenceNeeds[0]['temporal_targets'], 'status'));
             $this->assertNotContains($middle->public_id, array_column($result->candidates, 'document_id'));
         } elseif ($case === 'topic_only') {
-            $this->assertCount(1, $searches);
+            $this->assertCount(2, $searches);
             $this->assertArrayNotHasKey('temporal_targets', $result->evidenceNeeds[0]);
         } elseif ($case === 'empty_search') {
             $this->assertCount(2, $searches);
@@ -463,7 +465,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             if (str_ends_with($request->url(), '/compare-family')) {
                 $reviews++;
                 if ($case === 'unavailable') {
-                    return Http::response([], 503);
+                    return Http::response([], 503, ['X-Comparison-Review-Failure' => 'service_unavailable']);
                 }
                 $candidate = collect($request['candidates'])->firstWhere('family_id', $current->family->public_id);
                 $this->assertNotNull($candidate);
@@ -508,7 +510,10 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             });
         $this->assertLessThanOrEqual(5, count($result->candidates));
         $this->assertNotContains($otherOld->public_id, array_column($result->candidates, 'document_id'));
-        $this->assertNotContains($other->public_id, array_column($result->candidates, 'document_id'));
+        $fallback = in_array($case, ['ambiguous', 'no_match', 'wrong_identity', 'wrong_quote', 'unavailable', 'empty'], true);
+        if (! $fallback) {
+            $this->assertNotContains($other->public_id, array_column($result->candidates, 'document_id'));
+        }
         if (in_array($case, ['selected', 'capacity', 'eligibility_changed', 'historical', 'hybrid'], true)) {
             $this->assertCount($case === 'capacity' ? 4 : 2, $searches, json_encode($result->lineage));
             $this->assertContains($old->public_id, array_column($result->candidates, 'document_id'));
@@ -525,13 +530,20 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $this->assertSame([], $result->candidates);
             $this->assertSame('filtered', $result->evidenceNeeds[0]['temporal_targets'][1]['status']);
         } else {
-            $this->assertCount(1, $searches);
+            $this->assertCount($fallback ? 2 : 1, $searches);
             if ($case === 'no_history') {
                 $this->assertSame('ineligible', $result->evidenceNeeds[0]['temporal_targets'][1]['status']);
                 $this->assertSame([$current->public_id], array_column($result->candidates, 'document_id'));
             } else {
-                $this->assertSame([], $result->candidates);
-                $this->assertContains($result->evidenceNeeds[0]['retrieval_reason'], ['topic_family_unresolved', 'topic_family_unavailable']);
+                $this->assertSame($searches[0], $searches[1]);
+                $this->assertArrayNotHasKey('temporal_targets', $result->evidenceNeeds[0]);
+                $this->assertSame(['status' => 'not_run', 'reason' => $case === 'unavailable' ? 'discovery_unavailable' : 'discovery_unresolved',
+                    'fallback' => 'original_unbound'], $result->lineage['topical_discovery_work']['n1']['temporal_guard']);
+                if ($case !== 'empty') {
+                    $this->assertContains($other->public_id, array_column($result->candidates, 'document_id'));
+                } else {
+                    $this->assertSame([], $result->candidates);
+                }
             }
         }
         $this->assertSame($case === 'empty' ? 0 : ($case === 'capacity' ? 3 : 1), $reviews);
@@ -566,6 +578,185 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             file_put_contents($root.'/c2-discovery-'.$case.'.json', json_encode(['fixture' => $case,
                 'controlled_external_boundaries' => true, 'search_calls' => count($searches), 'reranker_calls' => $reranks,
                 'reviewer_calls' => $reviews, 'result' => $result->toArray(), 'trace' => $trace], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR)."\n");
+        }
+    }
+
+    public static function c2FallbackFailures(): array
+    {
+        return array_map(fn ($case) => [$case], ['timeout', 'connection', 'service', 'search_timeout',
+            'unauthenticated', 'forbidden', 'integrity', 'unknown', 'request_budget', 'token_budget', 'money_budget', 'wall_budget',
+            'deadline', 'deadline_unresolved', 'rejected', 'historical', 'fallback_failed',
+            'header_timeout', 'header_auth', 'header_quota', 'header_invalid', 'unclassified_503', 'typed_auth', 'local_timeout']);
+    }
+
+    #[DataProvider('c2FallbackFailures')]
+    public function test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics(string $case): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope] = $this->scope();
+        $old = $this->document($workspace, $generation, '2024-01-01');
+        $this->document($workspace, $generation, '2026-06-01', $old);
+        $this->document($workspace, $generation, '2024-02-01');
+        $question = 'What are the inspection arrangements now following the review in April 2025?';
+        $plan = $this->plan(4, function ($data) use ($case, $question) {
+            $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
+            $need = $data['plan']['needs'][0];
+            $need = [...$need, 'operation' => 'retrieve', 'scope_question' => null,
+                'question_span' => ['turn_id' => 'user-1', 'quote' => $question], 'context_spans' => [],
+                'authority' => ['kind' => 'current', 'precision' => 'none', 'value' => null, 'source' => null],
+                'fact_reference' => null, 'applicability' => ['kind' => 'generic', 'source' => null]];
+            if ($case === 'historical') {
+                $need['authority'] = ['kind' => 'period', 'precision' => 'month', 'value' => '2025-04',
+                    'source' => ['turn_id' => 'user-1', 'quote' => 'April 2025']];
+            }
+            $data['plan']['needs'] = [$need];
+            $data['plan']['bindings'] = [['need_id' => 'n1', 'subject_status' => 'topic', 'family_ids' => [],
+                'ownership' => 'authorised_workspace', 'ownership_source' => null]];
+
+            return $data;
+        });
+        $original = $plan->retrievalPlan('n1');
+        $at = CarbonImmutable::parse('2026-11-14');
+        $originalEligibility = app(EligibilityResolver::class)->handle($scope, $original, $at);
+        $searches = [];
+        $reviews = 0;
+        Http::fake(function (Request $request) use ($case, $generation, $plan, &$searches, &$reviews) {
+            if (str_ends_with($request->url(), '/plan-needs')) {
+                return Http::response(['contract_version' => 2, 'request_id' => $request['request_id'],
+                    'plan' => $plan->value, 'classifier_lineage' => $plan->lineage->toArray(),
+                    'usage' => ['stage' => 'planner', 'provider' => 'openai', 'model' => 'gpt-5-mini',
+                        'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable']]);
+            }
+            $review = str_ends_with($request->url(), '/compare-family');
+            if ($review) {
+                $reviews++;
+                if (str_starts_with($case, 'header_') || $case === 'unclassified_503') {
+                    $headers = $case === 'unclassified_503' ? [] : ['X-Comparison-Review-Failure' => match ($case) {
+                        'header_timeout' => 'timeout', 'header_auth' => 'authentication_failed',
+                        'header_quota' => 'provider_rejected', 'header_invalid' => 'invalid_output',
+                    }];
+
+                    return Http::response([], 503, $headers);
+                }
+                if (in_array($case, ['historical', 'deadline_unresolved'], true)) {
+                    return $this->familyReviewResponse($request, 'no_match');
+                }
+                if ($case === 'rejected') {
+                    $response = $this->familyReviewResponse($request, 'no_match')->wait();
+                    $body = json_decode((string) $response->getBody(), true);
+
+                    return Http::response([...$body, 'original_decision' => 'selected', 'validation_rejection_code' => 'quote_not_in_candidate']);
+                }
+                if ($case === 'connection') {
+                    throw new ConnectionException('Controlled transport error');
+                }
+                if (in_array($case, ['service', 'deadline', 'fallback_failed'], true)) {
+                    if ($case === 'deadline') {
+                        $this->travelTo(CarbonImmutable::now()->addSeconds((int) config('conversation.run_timeout_seconds') + 1));
+                    }
+
+                    return Http::response([], 503, ['X-Comparison-Review-Failure' => 'service_unavailable']);
+                }
+                if (in_array($case, ['unauthenticated', 'forbidden'], true)) {
+                    return Http::response([], $case === 'unauthenticated' ? 401 : 403);
+                }
+            } else {
+                $this->assertStringEndsWith('/search', $request->url());
+                $searches[] = $request->data();
+                if (count($searches) === ($case === 'search_timeout' ? 3 : 2)) {
+                    return $case === 'fallback_failed' ? Http::response([], 503)
+                        : Http::response(['request_id' => $request['request_id'], 'candidates' => [], 'lineage' => [], 'diagnostics' => []]);
+                }
+                if ($case !== 'search_timeout') {
+                    $candidates = [];
+                    foreach ($request['scopes'] as $lane) {
+                        foreach ($lane['eligible_document_ids'] as $id) {
+                            $doc = Document::where('public_id', $id)->firstOrFail();
+                            $candidates[] = ['chunk_id' => $doc->chunks()->firstOrFail()->public_id, 'document_id' => $id,
+                                'workspace_corpus_generation_id' => $generation->public_id,
+                                'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
+                                'score' => 0.9, 'rank' => count($candidates) + 1, 'retrieval_method' => 'dense', 'side' => $lane['side']];
+                        }
+                    }
+
+                    return Http::response(['request_id' => $request['request_id'], 'candidates' => $candidates, 'lineage' => [], 'diagnostics' => []]);
+                }
+            }
+
+            return Http::response(['detail' => ['failure' => [
+                'stage' => $case === 'integrity' ? 'final_eligibility' : 'transport_orchestration',
+                'execution' => $case === 'local_timeout' ? 'local' : 'orchestration', 'provider' => 'ai-service', 'model' => null,
+                'category' => match ($case) {
+                    'timeout', 'search_timeout', 'typed_auth', 'local_timeout' => 'timeout', 'integrity' => 'contract_validation_error',
+                    'unknown' => 'unknown', default => $case.'_exhausted'
+                },
+                'http_status' => str_ends_with($case, '_budget') ? 429 : 503, 'retry_count' => 0, 'request_count' => 1, 'latency_ms' => 4,
+                'usage' => [['stage' => 'discovery_attempt', 'request_count' => 1, 'input_tokens' => 7]],
+                'downstream_request_attempted' => true, 'candidate_lineage_produced' => false,
+            ]]], $case === 'typed_auth' ? 401 : (str_ends_with($case, '_budget') ? 429 : 503));
+        });
+        $trace = [];
+        $deadline = in_array($case, ['deadline', 'deadline_unresolved'], true) ? CarbonImmutable::now()->subSecond() : null;
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 15, $at,
+            observe: function ($stage, $value) use (&$trace) {
+                $trace[$stage] = $value;
+            }, deadline: $deadline);
+        $fallsBack = in_array($case, ['timeout', 'connection', 'service', 'search_timeout', 'rejected', 'historical', 'fallback_failed', 'header_timeout'], true);
+        $this->assertCount($case === 'search_timeout' ? 3 : ($fallsBack ? 2 : 1), $searches);
+        $this->assertSame($case === 'search_timeout' ? 0 : (in_array($case, ['timeout', 'connection', 'unknown'], true) ? 2 : 1), $reviews);
+        if ($fallsBack) {
+            $fallbackIndex = $case === 'search_timeout' ? 2 : 1;
+            $this->assertSame($original->query, $searches[$fallbackIndex]['query']);
+            $this->assertSame(array_map(fn ($side, $ids) => ['side' => $side, 'eligible_document_ids' => array_values($ids)],
+                array_keys($originalEligibility->documentPublicIdsBySide), array_values($originalEligibility->documentPublicIdsBySide)), $searches[$fallbackIndex]['scopes']);
+            $this->assertSame([], $original->evidenceNeed['subject_binding']['family_ids']);
+            $guard = $result->lineage['topical_discovery_work']['n1']['temporal_guard'];
+            $this->assertSame('not_run', $guard['status']);
+            $this->assertSame(in_array($case, ['rejected', 'historical'], true) ? 'discovery_unresolved' : 'discovery_unavailable', $guard['reason']);
+            $this->assertSame($case === 'fallback_failed' ? RetrievalOutcome::RetrievalFailed : RetrievalOutcome::InsufficientEvidence, $result->outcome);
+            if (in_array($case, ['timeout', 'search_timeout'], true)) {
+                $this->assertSame(2, $result->lineage['topical_discovery_work']['n1']['failure']['request_count']);
+                $this->assertSame(14, collect($result->usage)->where('stage', 'discovery_attempt')->sum('input_tokens'));
+            }
+            if ($case === 'rejected') {
+                $this->assertSame('selected', $result->lineage['topical_discovery_work']['n1']['original_decision']);
+                $this->assertSame('quote_not_in_candidate', $result->lineage['topical_discovery_work']['n1']['validation_rejection_code']);
+            }
+            if (in_array($case, ['service', 'rejected', 'historical'], true)) {
+                Queue::fake();
+                config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
+                $this->travelTo($at);
+                $searches = [];
+                $reviews = 0;
+                $conversation = app(CreateConversation::class)->handle($workspace, $scope->user);
+                $run = app(SubmitConversationMessage::class)->handle($conversation, $scope->user, $question, (string) Str::uuid());
+                app(OrchestrateConversationRun::class)->handle($run->id);
+                $saved = $run->fresh()->retrievalOutcomeSnapshot->lineage;
+                $this->assertSame($guard, $saved['topical_discovery_work']['n1']['temporal_guard']);
+                $this->assertSame($result->lineage['topical_discovery_work']['n1']['original_decision'], $saved['topical_discovery_work']['n1']['original_decision']);
+                $this->assertSame($result->lineage['topical_discovery_work']['n1']['validation_rejection_code'], $saved['topical_discovery_work']['n1']['validation_rejection_code']);
+            }
+            $export = new \ReflectionMethod(RunR28ProductionPathDiagnostic::class, 'boundedStage');
+            $this->assertSame($guard, $export->invoke(app(RunR28ProductionPathDiagnostic::class), 'need.n1.temporal_guard', $guard));
+        } else {
+            $this->assertSame(RetrievalOutcome::RetrievalFailed, $result->outcome);
+        }
+        if ($case === 'deadline') {
+            Queue::fake();
+            config(['conversation.needs_workspace_ids' => [$workspace->public_id]]);
+            $this->travelTo($at);
+            $searches = [];
+            $reviews = 0;
+            $conversation = app(CreateConversation::class)->handle($workspace, $scope->user);
+            $run = app(SubmitConversationMessage::class)->handle($conversation, $scope->user, $question, (string) Str::uuid());
+            app(OrchestrateConversationRun::class)->handle($run->id);
+            $this->assertCount(1, $searches);
+            $this->assertSame('deadline_exhausted', $run->fresh()->retrievalOutcomeSnapshot->lineage['topical_discovery_work']['n1']['fallback_blocked']);
+        }
+        if ($root = getenv('C2_FALLBACK_EVIDENCE_ROOT')) {
+            file_put_contents($root.'/'.$case.'.json', json_encode(['case' => $case, 'result' => $result->toArray(),
+                'original_query' => $original->query, 'original_eligible_scope' => $originalEligibility->documentPublicIdsBySide,
+                'search_requests' => $searches, 'review_calls' => $reviews, 'trace' => $trace], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR)."\n");
         }
     }
 

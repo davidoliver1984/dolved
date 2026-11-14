@@ -45,3 +45,16 @@ request, rather than trusting echoed identities. These fields are diagnostics
 only; legacy responses have unknown original decision (null), not an inferred
 one. Invalid diagnostic metadata is discarded, never used to change selection.
 Prompts, validation criteria, request count and effective decisions are unchanged.
+
+## Optional C2 failure attribution (2026-11-14)
+
+The 503 status/body remain unchanged. An additive `X-Comparison-Review-Failure`
+header classifies the caught exception by type/status, never message text:
+`timeout`, `connection_error`, `service_unavailable`, `authentication_failed`,
+`provider_rejected`, `invalid_output`, `unknown`. No raw response crosses this
+boundary. Existing comparison handling ignores the header. Only optional C2
+discovery uses it to allow an outage fallback; absent/unknown metadata and invalid
+output remain fail-closed. Provider rejection (including 429/quota) and
+authentication failure never permit fallback. No attempts or settings change.
+Deployment must include both services; an old AI service without this metadata
+cannot establish that its generic reviewer 503 is an optional provider outage.

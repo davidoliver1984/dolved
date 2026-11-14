@@ -209,6 +209,9 @@ final readonly class RunR28ProductionPathDiagnostic
         if ($stage === 'needs_plan') {
             return collect($value)->only(['decision', 'clarification', 'needs'])->all();
         }
+        if ($stage === 'temporal_guard') {
+            return collect($value)->only(['status', 'reason', 'fallback'])->all();
+        }
         if ($stage === 'topical_family_selection') {
             $result = collect($value)->only(['decision', 'family_id', 'chunk_id', 'usage', 'failure',
                 'original_decision', 'validation_rejection_code'])->all();

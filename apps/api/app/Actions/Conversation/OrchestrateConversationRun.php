@@ -122,7 +122,8 @@ final readonly class OrchestrateConversationRun
                 $needsPlan = $this->retrievalClient->planNeeds($workspace, $turns, $evaluatedAt);
             }
             $retrieval = $needsPlan !== null ? $this->retrieval->handleNeeds($scope, $needsPlan,
-                (int) config('conversation.candidate_k'), $evaluatedAt, $observe) : $this->retrieval->handle(
+                (int) config('conversation.candidate_k'), $evaluatedAt, $observe,
+                $run->started_at->addSeconds((int) config('conversation.run_timeout_seconds'))) : $this->retrieval->handle(
                     $scope,
                     $contextualised->resolvedQuery ?? $userMessage->display_text,
                     (int) config('conversation.candidate_k'),

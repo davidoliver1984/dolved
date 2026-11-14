@@ -22,6 +22,7 @@ from app.retrieval.compare_family import (
     CompareFamilyRequest,
     CompareFamilyResponse,
     CompareFamilyReviewer,
+    CompareFamilyReviewError,
     persist_review_failure,
 )
 from app.retrieval.corpus_rebuild import (
@@ -319,7 +320,32 @@ async def review_compare_family(
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,
             {"code": "compare_family_review_unavailable"},
+            headers={
+                "X-Comparison-Review-Failure": comparison_review_failure_kind(exception)
+            },
         ) from None
+
+
+def comparison_review_failure_kind(error: Exception) -> str:
+    """Closed attribution only; no exception text or raw provider body crosses services."""
+    if isinstance(error, CompareFamilyReviewError):
+        if not isinstance(error.__cause__, Exception):
+            return "unknown"
+        error = error.__cause__
+    if isinstance(error, httpx.TimeoutException):
+        return "timeout"
+    if isinstance(error, httpx.TransportError):
+        return "connection_error"
+    if isinstance(error, httpx.HTTPStatusError):
+        code = error.response.status_code
+        if code in (401, 403):
+            return "authentication_failed"
+        if code in (502, 503, 504):
+            return "service_unavailable"
+        return "provider_rejected"
+    if isinstance(error, (ValueError, KeyError, TypeError)):
+        return "invalid_output"
+    return "unknown"
 
 
 @router.post("/search", response_model=SearchResponse)

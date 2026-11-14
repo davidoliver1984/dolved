@@ -18,7 +18,10 @@ from app.retrieval.compare_family import (
     validate_selection,
 )
 from app.retrieval.models import OperationUsage
-from app.retrieval.routes import compare_family_reviewer_dependency
+from app.retrieval.routes import (
+    compare_family_reviewer_dependency,
+    comparison_review_failure_kind,
+)
 from tests.test_retrieval_routes import signed_headers
 
 WORKSPACE = "5323cd6b-8b7a-40f9-98b0-9413c75f643e"
@@ -387,6 +390,14 @@ def test_review_failure_persists_local_diagnostic_without_changing_503(
         assert response.json() == {
             "detail": {"code": "compare_family_review_unavailable"}
         }
+        assert (
+            response.headers["X-Comparison-Review-Failure"]
+            == {
+                "transport": "connection_error",
+                "provider_status": "provider_rejected",
+                "incomplete": "invalid_output",
+            }[failure]
+        )
     finally:
         app.dependency_overrides.clear()
 
@@ -409,3 +420,34 @@ def test_review_failure_persists_local_diagnostic_without_changing_503(
         assert record["exception_message"] == "comparison selection did not complete"
         assert "incomplete reviewer output" in record["raw_provider_response_body"]
         assert record["provider_status"] == 200
+
+
+@pytest.mark.parametrize(
+    "kind", ["timeout", "connection", 401, 403, 429, 503, "invalid", "unknown"]
+)
+def test_optional_review_failure_attribution_is_closed_and_not_message_based(kind):
+    if isinstance(kind, int):
+        error = httpx.HTTPStatusError(
+            "timeout budget fake text",
+            request=httpx.Request("POST", "https://example.invalid"),
+            response=httpx.Response(kind),
+        )
+        expected = (
+            "authentication_failed"
+            if kind in (401, 403)
+            else ("service_unavailable" if kind == 503 else "provider_rejected")
+        )
+    else:
+        error = {
+            "timeout": httpx.ReadTimeout,
+            "connection": httpx.ConnectError,
+            "invalid": ValueError,
+            "unknown": RuntimeError,
+        }[kind]("service unavailable")
+        expected = {
+            "timeout": "timeout",
+            "connection": "connection_error",
+            "invalid": "invalid_output",
+            "unknown": "unknown",
+        }[kind]
+    assert comparison_review_failure_kind(error) == expected

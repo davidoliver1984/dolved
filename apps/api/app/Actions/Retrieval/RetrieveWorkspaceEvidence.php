@@ -11,6 +11,7 @@ use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
 use App\Exceptions\RetrievalException;
 use App\Exceptions\RetrievalExecutionException;
+use App\Exceptions\TopicalFamilySelectionRejected;
 use App\Models\Document;
 use App\Models\DocumentChunk;
 use App\Models\DocumentExtractionProjectionElement;
@@ -63,6 +64,7 @@ final readonly class RetrieveWorkspaceEvidence
         int $candidateK,
         CarbonImmutable $evaluatedAt,
         ?callable $observe = null,
+        ?CarbonImmutable $deadline = null,
     ): RetrievalResult {
         $needs = $plan->executionNeeds();
         $usage = [$plan->usage->toArray()];
@@ -116,7 +118,7 @@ final readonly class RetrieveWorkspaceEvidence
                 $discovery = [];
                 try {
                     $topical = $this->selectTopicalComparisonFamily($authorised, $plans[$id],
-                        $candidateK, $evaluatedAt, $discovery);
+                        $candidateK, $evaluatedAt, $discovery, $c2);
                 } catch (RetrievalException $exception) {
                     $failure = $exception instanceof RetrievalExecutionException
                         ? $exception->observation->toArray()
@@ -127,22 +129,24 @@ final readonly class RetrieveWorkspaceEvidence
                         'failure' => $failure,
                     ]);
 
-                    if ($c2) {
-                        $usage = [...$usage, ...($discovery['completed_usage'] ?? []), ...(is_array($failure['usage'] ?? null) ? $failure['usage'] : [])];
-                        $results[$id] = new RetrievalResult(RetrievalOutcome::InsufficientEvidence,
-                            reason: 'topic_family_unavailable', lineage: ['failure' => $failure]);
-                        $discoveryWork[$id] = [...$discovery, 'status' => 'unavailable', 'failure' => $failure];
-
-                        continue;
+                    if ($c2 && ($exception instanceof TopicalFamilySelectionRejected || $this->optionalDiscoveryUnavailable($exception))) {
+                        $rejected = $exception instanceof TopicalFamilySelectionRejected;
+                        $topical = ['decision' => $rejected ? 'no_match' : 'unavailable', 'original_decision' => $rejected ? 'selected' : null,
+                            'validation_rejection_code' => $rejected ? $exception->rejectionCode : null,
+                            'candidate_identities' => $rejected ? $exception->candidateIdentities : [],
+                            'family_id' => null, 'chunk_id' => null,
+                            'usage' => [...($discovery['completed_usage'] ?? []), ...($rejected ? [$exception->usage] : ($failure['usage'] ?? []))],
+                            'diagnostics' => [...$discovery, 'status' => $rejected ? 'unresolved' : 'unavailable', 'failure' => $failure]];
+                    } else {
+                        return new RetrievalResult(RetrievalOutcome::RetrievalFailed,
+                            reason: 'topical_family_review_failed',
+                            lineage: ['failure' => $failure, 'topical_discovery_work' => [$id => $discovery]],
+                            usage: [...$usage, ...($c2 ? ($discovery['completed_usage'] ?? []) : []), ...(is_array($failure['usage'] ?? null) ? $failure['usage'] : [])]);
                     }
-
-                    return new RetrievalResult(RetrievalOutcome::RetrievalFailed,
-                        reason: 'topical_family_review_failed',
-                        lineage: ['failure' => $failure],
-                        usage: [...$usage, ...(is_array($failure['usage'] ?? null) ? $failure['usage'] : [])]);
                 }
                 $usage = [...$usage, ...$topical['usage']];
-                $discoveryWork[$id] = $topical['diagnostics'];
+                $discoveryWork[$id] = [...$topical['diagnostics'], 'original_decision' => $topical['original_decision'] ?? null,
+                    'effective_decision' => $topical['decision'], 'validation_rejection_code' => $topical['validation_rejection_code'] ?? null];
                 $observe?->__invoke('need.'.$id.'.topical_family_selection', [
                     'decision' => $topical['decision'],
                     'original_decision' => $topical['original_decision'] ?? null,
@@ -154,13 +158,25 @@ final readonly class RetrieveWorkspaceEvidence
                     'diagnostics' => $topical['diagnostics'],
                 ]);
                 if ($topical['family_id'] === null) {
-                    $results[$id] = new RetrievalResult($c2 ? RetrievalOutcome::InsufficientEvidence : RetrievalOutcome::ComparisonScopeIncomplete,
-                        reason: 'topic_family_unresolved');
+                    if (! $c2) {
+                        $results[$id] = new RetrievalResult(RetrievalOutcome::ComparisonScopeIncomplete, reason: 'topic_family_unresolved');
 
-                    continue;
+                        continue;
+                    }
+                    $guard = ['status' => 'not_run', 'reason' => ($topical['diagnostics']['status'] ?? null) === 'unavailable'
+                        ? 'discovery_unavailable' : 'discovery_unresolved', 'fallback' => 'original_unbound'];
+                    $discoveryWork[$id]['temporal_guard'] = $guard;
+                    $observe?->__invoke('need.'.$id.'.temporal_guard', $guard);
+                    if ($deadline !== null && CarbonImmutable::now()->greaterThanOrEqualTo($deadline)) {
+                        $discoveryWork[$id]['fallback_blocked'] = 'deadline_exhausted';
+
+                        return new RetrievalResult(RetrievalOutcome::RetrievalFailed, reason: 'deadline_exhausted',
+                            lineage: ['topical_discovery_work' => $discoveryWork], usage: $usage);
+                    }
+                } else {
+                    $plans[$id] = $this->comparisonPlanForFamily($plans[$id], $topical['family_id']);
                 }
-                $plans[$id] = $this->comparisonPlanForFamily($plans[$id], $topical['family_id']);
-                if ($c2) {
+                if ($c2 && $topical['family_id'] !== null) {
                     $topicalCurrent[$id] = $this->reuseTopicalCurrent($authorised, $plans[$id], $topical, $evaluatedAt);
                     $discoveryWork[$id]['current_reuse'] = $topicalCurrent[$id]->reason ?? 'equivalent';
                     $observe?->__invoke('need.'.$id.'.topical_current_reuse', $topicalCurrent[$id]->toArray());
@@ -176,11 +192,13 @@ final readonly class RetrieveWorkspaceEvidence
                 planOverride: $plans[$id], recordPlannerUsage: false);
             $usage = [...$usage, ...$results[$id]->usage];
             if ($results[$id]->outcome === RetrievalOutcome::RetrievalFailed) {
-                return new RetrievalResult(RetrievalOutcome::RetrievalFailed, reason: $results[$id]->reason, usage: $usage);
+                return new RetrievalResult(RetrievalOutcome::RetrievalFailed, reason: $results[$id]->reason,
+                    lineage: [...$results[$id]->lineage, 'topical_discovery_work' => $discoveryWork], usage: $usage);
             }
             if ($results[$id]->outcome === RetrievalOutcome::ClarificationRequired) {
                 return new RetrievalResult(RetrievalOutcome::ClarificationRequired,
                     reason: $results[$id]->reason, clarificationSource: $results[$id]->clarificationSource,
+                    lineage: [...$results[$id]->lineage, 'topical_discovery_work' => $discoveryWork],
                     usage: $usage, clarificationQuestion: $results[$id]->clarificationQuestion);
             }
         }
@@ -300,6 +318,7 @@ final readonly class RetrieveWorkspaceEvidence
         int $candidateK,
         CarbonImmutable $evaluatedAt,
         array &$diagnostics = [],
+        bool $optionalDiscovery = false,
     ): array {
         $currentPlan = new RetrievalPlan($plan->query, RetrievalTemporalMode::Current,
             null, null, $plan->locationReferences, null, $plan->classifierLineage,
@@ -362,12 +381,32 @@ final readonly class RetrieveWorkspaceEvidence
         $diagnostics['reviewer_invoked'] = true;
         $diagnostics['reviewer_requests'] = 1;
         $selection = $this->client->selectTopicalCompareFamily($authorised->workspace,
-            $plan->query, $candidates);
+            $plan->query, $candidates, $optionalDiscovery);
         $diagnostics['stop_stage'] = 'reviewer_result';
 
         return [...$selection, 'usage' => [...$usage, $selection['usage']], 'diagnostics' => $diagnostics,
             'current_candidates' => $hydrated, 'current_document_ids' => $fresh->documentPublicIdsBySide['primary'] ?? [],
             'ranked' => $ranked, 'policy' => $policy];
+    }
+
+    /** Only attributable optional transport/provider outages qualify, never unknown/integrity failures. */
+    private function optionalDiscoveryUnavailable(RetrievalException $exception): bool
+    {
+        if (! $exception instanceof RetrievalExecutionException) {
+            return false;
+        }
+        if ($exception->serviceHttpStatus !== null && $exception->serviceHttpStatus >= 400 && $exception->serviceHttpStatus < 500) {
+            return false;
+        }
+        $failure = $exception->observation;
+        if (! in_array($failure->execution, ['provider_api', 'infrastructure', 'orchestration'], true)
+            || ! in_array($failure->stage, ['transport_orchestration', 'dense_embedding', 'sparse_encoding', 'qdrant_dense_search', 'qdrant_sparse_search', 'reranker'], true)
+            || ($failure->httpStatus !== null && ! in_array($failure->httpStatus, [502, 503, 504], true))) {
+            return false;
+        }
+
+        return in_array($failure->category, ['timeout', 'connection_error'], true)
+            || ($failure->category === 'provider_http_error' && in_array($failure->httpStatus, [502, 503, 504], true));
     }
 
     /** Reuse only the same eligible current version(s); never issue a replacement search. */

@@ -11,6 +11,7 @@ final class RetrievalExecutionException extends RetrievalException
     public function __construct(
         public readonly RetrievalFailureObservation $observation,
         ?\Throwable $previous = null,
+        public readonly ?int $serviceHttpStatus = null,
     ) {
         parent::__construct('Retrieval execution failed.', 0, $previous);
     }

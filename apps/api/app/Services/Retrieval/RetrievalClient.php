@@ -7,6 +7,7 @@ namespace App\Services\Retrieval;
 use App\Exceptions\RetrievalException;
 use App\Exceptions\RetrievalExecutionException;
 use App\Exceptions\RetrievalPlannerException;
+use App\Exceptions\TopicalFamilySelectionRejected;
 use App\Models\DocumentChunk;
 use App\Models\DocumentFamily;
 use App\Models\EmbeddingProfile;
@@ -160,7 +161,7 @@ final readonly class RetrievalClient
      * @param  list<array<string, mixed>>  $candidates  Authorised, hydrated current-side chunks only.
      * @return array{family_id: ?string, chunk_id: ?string, usage: array<string, mixed>, decision: string}
      */
-    public function selectTopicalCompareFamily(Workspace $workspace, string $question, array $candidates): array
+    public function selectTopicalCompareFamily(Workspace $workspace, string $question, array $candidates, bool $optionalDiscovery = false): array
     {
         $bounded = array_slice($candidates, 0, 12);
         if ($bounded === []) {
@@ -177,7 +178,7 @@ final readonly class RetrievalClient
             'workspace_id' => $workspace->public_id,
             'question' => $question,
             'candidates' => $items,
-        ]);
+        ], optionalDiscovery: $optionalDiscovery);
         $selection = $response->json('selection');
         $usage = $response->json('usage');
         if ($response->json('contract_version') !== 1 || ! is_array($selection) || ! is_array($usage)) {
@@ -216,7 +217,11 @@ final readonly class RetrievalClient
                 && is_string($quote) && mb_strlen($quote) >= 8 && mb_strlen($quote) <= 300
                 && str_contains($item['text'], $quote)));
             if (count($matches) !== 1) {
-                throw new RetrievalException('The comparison family review cited no authorised current evidence.');
+                $identity = array_filter($items, fn (array $item): bool => $item['family_id'] === $familyId && $item['chunk_id'] === $chunkId);
+                $code = $identity === [] ? 'identity_mismatch'
+                    : (! is_string($quote) || mb_strlen($quote) < 8 || mb_strlen($quote) > 300 ? 'quote_length' : 'quote_not_in_candidate');
+                throw new TopicalFamilySelectionRejected($code, $safeUsage,
+                    array_map(fn (array $item): array => ['family_id' => $item['family_id'], 'chunk_id' => $item['chunk_id']], $items));
             }
         } elseif ($familyId !== null || $chunkId !== null || $quote !== null) {
             throw new RetrievalException('The comparison family review returned inconsistent evidence.');
@@ -551,6 +556,7 @@ final readonly class RetrievalClient
         Workspace $workspace,
         array $payload,
         ?string $stableRequestId = null,
+        bool $optionalDiscovery = false,
     ): Response {
         $this->assertTimeoutEnvelope();
         $started = hrtime(true);
@@ -617,6 +623,22 @@ final readonly class RetrievalClient
                     continue;
                 }
                 $failure = $response->json('detail.failure');
+                if ($optionalDiscovery && $path === '/api/internal/retrieval/compare-family' && $response->status() === 503 && ! is_array($failure)) {
+                    // The old 503 also covers invalid model output. Only closed,
+                    // source-attributed outage metadata permits C2 fallback.
+                    [$category, $providerStatus] = match ($response->header('X-Comparison-Review-Failure')) {
+                        'timeout' => ['timeout', null], 'connection_error' => ['connection_error', null],
+                        'service_unavailable' => ['provider_http_error', 503],
+                        'authentication_failed' => ['provider_http_error', 401],
+                        'provider_rejected' => ['provider_http_error', 400],
+                        'invalid_output' => ['contract_validation_error', 503],
+                        default => ['unknown', 503],
+                    };
+                    throw new RetrievalExecutionException(new RetrievalFailureObservation(
+                        'transport_orchestration', 'provider_api', 'openai', null, $category, $providerStatus,
+                        0, $attempt, (hrtime(true) - $started) / 1_000_000, [], true, false,
+                    ));
+                }
                 if (is_array($failure)) {
                     try {
                         $failure = $this->withFailureOuterAttempt($failure, $attempt);
@@ -630,6 +652,7 @@ final readonly class RetrievalClient
                         }
                         $last = new RetrievalExecutionException(
                             $observation,
+                            serviceHttpStatus: $response->status(),
                         );
                         $previousTypedFailure = $observation;
                     } catch (InvalidArgumentException) {
