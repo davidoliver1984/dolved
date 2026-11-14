@@ -166,6 +166,7 @@ class GenerationValidationDiagnostic(ImmutableModel):
         "site_scope_condition_unproven",
         "entailment_unsupported",
         "entailment_uncertain",
+        "temporal_target_invalid",
         "schema_validation",
     ]
 

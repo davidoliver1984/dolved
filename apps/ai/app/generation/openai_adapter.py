@@ -407,6 +407,17 @@ class OpenAIGenerator:
             self.profile.adapter_version,
         ) != (NEEDS_CONTRACT_VERSION, NEEDS_PROMPT_VERSION, NEEDS_ADAPTER_VERSION):
             raise ValueError("needs generation requires the exact versioned profile")
+        if request.contract_version == 4:
+            from copy import copy
+
+            temporal = copy(self)
+            temporal.profile = replace(
+                self.profile,
+                contract_version="generation-result-v4",
+                prompt_version="grounded-generation-temporal-v1",
+                adapter_version="openai-responses-temporal-v1",
+            )
+            return temporal._generate(request.legacy_request(), request)
         with trace.get_tracer("dolved.python.generation").start_as_current_span(
             "generation.provider.needs", kind=SpanKind.CLIENT, record_exception=False
         ):
@@ -431,9 +442,18 @@ class OpenAIGenerator:
             from app.generation.needs_output import OpenAIGenerationNeedsOutput
 
             output_model = OpenAIGenerationNeedsOutput
+            temporal_instructions = ""
+            if needs_request.contract_version == 4:
+                from app.generation.needs_output import OpenAIGenerationTemporalOutput
+                from app.generation.temporal_targets import TEMPORAL_INSTRUCTIONS
+
+                output_model = OpenAIGenerationTemporalOutput
+                temporal_instructions = TEMPORAL_INSTRUCTIONS
             rendered = replace(
                 rendered,
-                instructions=rendered.instructions + NEEDS_INSTRUCTIONS,
+                instructions=rendered.instructions
+                + NEEDS_INSTRUCTIONS
+                + temporal_instructions,
                 input=rendered.input
                 + "\nIndependent requested needs:\n"
                 + json.dumps(
@@ -508,11 +528,18 @@ class OpenAIGenerator:
                             conditional_obligation_guard,
                             review_input,
                         )
-                        from app.generation.needs_output import GenerationNeedsResult
+                        from app.generation.needs_output import (
+                            GenerationNeedsResult,
+                            GenerationTemporalResult,
+                        )
+
+                        needs_output = cast(
+                            OpenAIGenerationNeedsOutput, provider_output
+                        )
 
                         validate_aspect_links(
                             validated,
-                            tuple(provider_output.aspect_links),
+                            tuple(needs_output.aspect_links),
                             tuple(
                                 need.need_id for need in needs_request.evidence_needs
                             ),
@@ -521,7 +548,7 @@ class OpenAIGenerator:
                             need.need_id: set(need.evidence_ids)
                             for need in needs_request.evidence_needs
                         }
-                        for link in provider_output.aspect_links:
+                        for link in needs_output.aspect_links:
                             for index in link.answer_part_indices:
                                 if not set(
                                     provider_output.answer_parts[index].evidence_ids
@@ -537,6 +564,19 @@ class OpenAIGenerator:
                                         owners[link.need_id],
                                     )
                         conditional_obligation_guard(needs_request, provider_output)
+                        if needs_request.contract_version == 4:
+                            from app.generation.temporal_targets import (
+                                validate_temporal_uses,
+                            )
+
+                            validate_temporal_uses(
+                                needs_request,
+                                provider_output.answer_parts,
+                                needs_output.aspect_links,
+                                cast(
+                                    OpenAIGenerationTemporalOutput, provider_output
+                                ).temporal_uses,
+                            )
                         verifier_receipt: dict[str, object] | None = None
                         checks = []
                         if provider_output.answer_parts:
@@ -614,10 +654,17 @@ class OpenAIGenerator:
                         usage = {**(result.usage or {}), **failure_usage}
                         if verifier_receipt is not None:
                             usage["entailment_review"] = verifier_receipt
-                        needs_result = GenerationNeedsResult.model_validate(
+                        result_model: type[
+                            GenerationNeedsResult | GenerationTemporalResult
+                        ] = GenerationNeedsResult
+                        if needs_request.contract_version == 4:
+                            result_model = GenerationTemporalResult
+                        needs_result = result_model.model_validate(
                             {
                                 **provider_output.model_dump(),
-                                "contract_version": 3,
+                                "contract_version": 4
+                                if needs_request.contract_version == 4
+                                else 3,
                                 "entailment_checks": [
                                     check.model_dump() for check in checks
                                 ],

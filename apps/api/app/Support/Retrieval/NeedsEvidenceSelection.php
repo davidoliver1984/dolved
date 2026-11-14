@@ -67,7 +67,22 @@ final class NeedsEvidenceSelection
         foreach ($needs as $need) {
             $id = $need['need_id'];
             if (isset($unitsByNeed[$id][0])) {
-                $this->includeUnit($selected, $id, $unitsByNeed[$id][0]);
+                $requested = array_values(array_filter($unitsByNeed[$id], fn ($unit) => ! isset($need['temporal_targets'])
+                    || in_array($id.':requested', $unit[0]['temporal_target_ids'] ?? [], true)));
+                if ($requested !== []) {
+                    $this->includeUnit($selected, $id, $requested[0]);
+                }
+            }
+        }
+        // Reserve an admitted temporal target before any spare-capacity fill.
+        foreach ($needs as $need) {
+            foreach ($need['temporal_targets'] ?? [] as $target) {
+                foreach ($unitsByNeed[$need['need_id']] as $unit) {
+                    if (in_array($target['target_id'], $unit[0]['temporal_target_ids'] ?? [], true)) {
+                        $this->includeUnit($selected, $need['need_id'], $unit);
+                        break;
+                    }
+                }
             }
         }
         $remaining = [];

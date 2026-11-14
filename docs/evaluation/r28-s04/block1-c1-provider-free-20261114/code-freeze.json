@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-14",
+  "branch": "codex/block1-extractive-hold-20261112",
+  "implementation_parent": "d51ba5a2e53bc5c453b8ab1fd08f84030fe93473",
+  "main_unchanged": "348f09e053c8ad73676921c5c616cced812111d7",
+  "runtime_source_aggregate": "5121718b8ef305426e8525d32d1a8a459bfbdc9abf038251f163df7dd0d4bc1c",
+  "algorithm": "git ls-files -z -- apps/api/app apps/api/config apps/api/routes apps/ai/app contracts | gsort -z | xargs -0 sha256sum | sha256sum",
+  "new_runtime_files_included": true,
+  "database_migration": "apps/api/database/migrations/2026_11_14_000001_add_temporal_context_to_generated_answers.php",
+  "provider_calls": 0,
+  "cost_usd": 0,
+  "sealed_material_accessed": false,
+  "confirmation_hash_status": "reviewer-declared only, not independently verified"
+}

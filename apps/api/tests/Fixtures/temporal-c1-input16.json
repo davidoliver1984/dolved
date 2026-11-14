@@ -1,0 +1,54 @@
+{
+  "question": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+  "plan": {
+    "clarification": null,
+    "decision": "plan",
+    "needs": [
+      {
+        "applicability": {
+          "kind": "named",
+          "source": {
+            "quote": "Harbour View",
+            "turn_id": "user-1"
+          }
+        },
+        "aspect": "Identify which supplier, contractor or staff member provided the daily cleaning service at the Harbour View site on 1 February 2026, using recorded service/shift/contractor logs or cleaning contract summary.",
+        "authority": {
+          "kind": "current",
+          "precision": "none",
+          "source": null,
+          "value": null
+        },
+        "central": true,
+        "claim_under_test": null,
+        "context_spans": [
+          {
+            "quote": "Harbour View",
+            "turn_id": "user-1"
+          },
+          {
+            "quote": "1 February 2026",
+            "turn_id": "user-1"
+          }
+        ],
+        "fact_reference": {
+          "precision": "day",
+          "source": {
+            "quote": "1 February 2026",
+            "turn_id": "user-1"
+          },
+          "value": "2026-02-01"
+        },
+        "need_id": "n1",
+        "operation": "retrieve",
+        "question_span": {
+          "quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+          "turn_id": "user-1"
+        },
+        "scope_question": null,
+        "supports_need_id": null
+      }
+    ]
+  },
+  "provenance": "MODIFIED DIAGNOSTIC FIXTURE: retained input 16 needs; a single synthetic family binding is injected only by the test. Original evidence is unchanged. No production mapping."
+}

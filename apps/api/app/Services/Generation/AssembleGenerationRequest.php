@@ -44,6 +44,11 @@ final readonly class AssembleGenerationRequest
         if ($needs->count() !== count($input->retrievalResult->evidenceNeeds) || $needs->count() > NeedsEvidenceSelection::MAX_NEEDS) {
             throw new GenerationException('Invalid bounded generation needs.');
         }
+        foreach ($needs as $need) {
+            if (count($need['temporal_targets'] ?? []) > 9) {
+                throw new GenerationContextBudgetExceeded('bounded-temporal-targets-v1', count($need['temporal_targets']), 9);
+            }
+        }
         foreach ($input->retrievalResult->candidates as $index => $candidate) {
             $chunk = $chunks->get($candidate['chunk_id'] ?? null);
             if (! $chunk instanceof DocumentChunk
@@ -69,6 +74,24 @@ final readonly class AssembleGenerationRequest
                     'document_family_id' => $familyId, 'document_version_id' => $candidate['document_id'],
                     'document_title' => mb_substr($chunk->document->source_filename, 0, 500),
                     'document_family_title' => mb_substr($chunk->document->family->name, 0, 500)];
+                if (isset($need['temporal_targets'])) {
+                    // Do not stamp a historical precautionary passage with the
+                    // requested lane's current-authority label.
+                    $authority = array_intersect_key($authority, array_flip(['need_id', 'document_family_id',
+                        'document_version_id', 'document_title', 'document_family_title', 'evaluated_at']))
+                        + ['temporal_target_ids' => $candidate['temporal_target_ids'] ?? [],
+                            'temporal_basis' => 'application-labelled-targets-v1'];
+                    if ($authority['temporal_target_ids'] === []) {
+                        throw new GenerationException('Temporal evidence lost its target label.');
+                    }
+                    foreach ($authority['temporal_target_ids'] as $targetId) {
+                        $target = collect($need['temporal_targets'])->firstWhere('target_id', $targetId);
+                        if ($target === null || $target['need_id'] !== $need['need_id'] || $target['family_id'] !== $familyId
+                            || ! in_array($candidate['document_id'], array_column($target['versions'], 'version_id'), true)) {
+                            throw new GenerationException('Temporal evidence target identity is invalid.');
+                        }
+                    }
+                }
                 $applicability = $need['resolved_applicability_location'];
             }
             if (isset($authority['evaluated_at'])) {
@@ -121,7 +144,7 @@ final readonly class AssembleGenerationRequest
                 }
                 $generationNeeds[] = array_intersect_key($need, array_flip([
                     'need_id', 'aspect', 'question_span', 'context_spans', 'request_text_version', 'central', 'operation', 'authority', 'fact_reference', 'applicability', 'claim_under_test',
-                    'retrieval_outcome', 'retrieval_reason',
+                    'retrieval_outcome', 'retrieval_reason', 'temporal_targets',
                 ])) + ['evidence_ids' => array_map(fn ($item) => $item->evidenceId, $items)];
             }
             if (NeedsEvidenceSelection::searchLanes($needs->values()->all()) > NeedsEvidenceSelection::MAX_SEARCH_LANES) {

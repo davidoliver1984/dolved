@@ -15,6 +15,7 @@ from app.generation.models import (
     GenerationEvidence,
     GenerationRequest,
 )
+from app.generation.temporal_targets import TemporalTarget
 from app.retrieval.needs import (
     ClaimUnderTest,
     FactReference,
@@ -42,10 +43,11 @@ class GenerationNeed(ImmutableModel):
     retrieval_outcome: BoundedText
     retrieval_reason: BoundedText | None
     evidence_ids: tuple[EvidenceId, ...]
+    temporal_targets: tuple[TemporalTarget, ...] = Field(default=(), max_length=9)
 
 
 class GenerationNeedsRequest(ImmutableModel):
-    contract_version: Literal[2, 3]
+    contract_version: Literal[2, 3, 4]
     request_id: UUID
     workspace_id: UUID
     question: BoundedText
@@ -73,12 +75,29 @@ class GenerationNeedsRequest(ImmutableModel):
         by_id = {item.evidence_id: item for item in self.evidence}
         assigned: set[str] = set()
         for need in needs:
-            if self.contract_version == 3 and (
+            if self.contract_version >= 3 and (
                 need.request_text_version != "extractive-request-v1"
                 or need.question_span is None
                 or need.aspect != compiled_request(need)
             ):
                 raise ValueError("generation requires the compiled extractive request")
+            if need.temporal_targets:
+                if self.contract_version != 4 or need.operation != "retrieve":
+                    raise ValueError("temporal targets require the C1 envelope")
+                if len({t.target_id for t in need.temporal_targets}) != len(
+                    need.temporal_targets
+                ):
+                    raise ValueError("duplicate temporal target")
+                for target in need.temporal_targets:
+                    if target.need_id != need.need_id:
+                        raise ValueError("temporal target need mismatch")
+                    if target.reference is not None and not any(
+                        span
+                        and span.turn_id == target.reference.turn_id
+                        and target.reference.quote in span.quote
+                        for span in (need.question_span, *need.context_spans)
+                    ):
+                        raise ValueError("temporal reference is not grounded")
             ids = need.evidence_ids
             if len(set(ids)) != len(ids) or not set(ids).issubset(by_id):
                 raise ValueError("need evidence references must be unique and supplied")

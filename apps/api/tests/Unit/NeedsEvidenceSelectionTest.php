@@ -12,6 +12,24 @@ use PHPUnit\Framework\TestCase;
 
 final class NeedsEvidenceSelectionTest extends TestCase
 {
+    public function test_c1_guard_slot_is_reserved_before_stronger_spare_passages(): void
+    {
+        $needs = [['need_id' => 'n1', 'operation' => 'retrieve', 'temporal_targets' => [
+            ['target_id' => 'n1:requested'], ['target_id' => 'n1:date:1']]],
+            ['need_id' => 'n2', 'operation' => 'compare']];
+        $primary = array_map(fn ($rank) => [...$this->candidate('p'.$rank, 'a', 'primary', $rank),
+            'temporal_target_ids' => ['n1:requested']], range(1, 5));
+        $guard = [...$this->candidate('guard', 'a', 'primary', 100), 'document_id' => 'old', 'temporal_target_ids' => ['n1:date:1']];
+        $results = ['n1' => new RetrievalResult(RetrievalOutcome::EvidenceFound, [...$primary, $guard]),
+            'n2' => new RetrievalResult(RetrievalOutcome::EvidenceFound, [$this->candidate('pair-p', 'b', 'primary', 1), $this->candidate('pair-c', 'b', 'comparison', 1)])];
+        $selected = (new NeedsEvidenceSelection)->selectWithCoverage($needs, $results);
+        $this->assertCount(5, $selected['candidates']);
+        foreach (['p1', 'guard', 'pair-p', 'pair-c'] as $id) {
+            $this->assertContains($id, array_column($selected['candidates'], 'chunk_id'));
+        }
+        $this->assertGreaterThan(0, $selected['coverage']['n1']['budget_cut_unit_count']);
+    }
+
     public function test_oversubscribed_three_needs_report_cuts_without_changing_selection(): void
     {
         foreach (['retrieve', 'compare'] as $operation) {

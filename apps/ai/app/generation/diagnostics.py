@@ -26,6 +26,17 @@ class CitationOwnershipError(ValueError):
 
 
 RULES: dict[str, tuple[str, str]] = {
+    **{
+        message: ("result", "temporal_target_invalid")
+        for message in (
+            "temporal answer-use coverage mismatch",
+            "temporal target unavailable",
+            "temporal answer target is not question-grounded",
+            "temporal answer reference mismatch",
+            "temporal evidence ownership or version mismatch",
+            "temporal evidence interval mismatch",
+        )
+    },
     "provider output violates the generation outcome invariant": (
         "outcome",
         "outcome_invariant",
@@ -101,6 +112,10 @@ def validation_diagnostic(exception: ValueError) -> dict[str, object]:
     # Exact static messages originate in our validators, not arbitrary output text.
     messages = [str(exception)]
     if isinstance(exception, ValidationError):
+        if any(
+            "temporal_uses" in e["loc"] for e in exception.errors(include_input=False)
+        ):
+            return {"field": "result", "code": "temporal_target_invalid"}
         messages = [
             e["msg"].removeprefix("Value error, ")
             for e in exception.errors(

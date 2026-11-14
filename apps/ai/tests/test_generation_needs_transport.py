@@ -377,7 +377,7 @@ def test_shared_response_schema_and_tagged_failures():
     from jsonschema import Draft202012Validator
 
     schema = json.loads(
-        Path("/contracts/http/generation-needs/v3/response.schema.json").read_text()
+        Path("/contracts/http/generation-needs/v4/response.schema.json").read_text()
     )
     Draft202012Validator.check_schema(schema)
     assert schema == NEEDS_RESPONSE.json_schema()

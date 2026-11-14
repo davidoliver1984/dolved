@@ -11,6 +11,12 @@ use Throwable;
 final class GenerationValidationDiagnostics
 {
     private const RULES = [
+        'Temporal answer-use coverage is invalid.' => ['result', 'temporal_target_invalid'],
+        'Temporal answer target is unavailable or ungrounded.' => ['result', 'temporal_target_invalid'],
+        'Temporal answer reference mismatch.' => ['result', 'temporal_target_invalid'],
+        'Temporal evidence ownership or version mismatch.' => ['result', 'temporal_target_invalid'],
+        'Temporal evidence interval mismatch.' => ['result', 'temporal_target_invalid'],
+        'Temporal answer-use coverage is incomplete.' => ['result', 'temporal_target_invalid'],
         'Generation result needs differ from the assembled request.' => ['aspect_links', 'request_needs'],
         'The needs generation result schema is invalid.' => ['result', 'needs_schema'],
         'The needs generation entailment coverage is invalid.' => ['answer_parts.text', 'entailment_coverage'],
@@ -61,6 +67,7 @@ final class GenerationValidationDiagnostics
             'site_scope_condition_unproven' => 'answer_parts.text',
             'entailment_unsupported' => 'answer_parts.text', 'entailment_uncertain' => 'answer_parts.text',
             'schema_validation' => 'result',
+            'temporal_target_invalid' => 'result',
         ];
         $code = is_array($diagnostic) ? ($diagnostic['code'] ?? null) : null;
         if (! is_string($code) || ! isset($pairs[$code]) || ($diagnostic['field'] ?? null) !== $pairs[$code]) {

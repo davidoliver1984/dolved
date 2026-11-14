@@ -7,6 +7,7 @@ namespace App\Actions\Generation;
 use App\Enums\GenerationDeliveryMode;
 use App\Enums\GenerationOutcome;
 use App\Enums\RetrievalOutcome;
+use App\Exceptions\GenerationContextBudgetExceeded;
 use App\Exceptions\GenerationException;
 use App\Exceptions\GenerationProviderException;
 use App\Exceptions\GenerationServiceAuthenticationException;
@@ -59,7 +60,15 @@ final readonly class GenerateGroundedAnswer
             return $this->prepareScopeAnswer($input, $profile, $observeStage, $observeCandidate);
         }
         $observeStage?->__invoke('preparing_evidence');
-        $request = $this->assembler->handle($input);
+        try {
+            $request = $this->assembler->handle($input);
+        } catch (GenerationContextBudgetExceeded $exception) {
+            if (! array_any($input->retrievalResult->evidenceNeeds, fn ($need) => isset($need['temporal_targets']))) {
+                throw $exception;
+            }
+
+            return $this->temporalBudgetDisclosure($input, $profile);
+        }
         $initialRequestId = $request->requestId;
         if ($request->evidenceNeeds !== [] && ($profile->contractVersion !== 'generation-result-v3'
             || $profile->promptVersion !== 'grounded-generation-needs-v12'
@@ -68,6 +77,10 @@ final readonly class GenerateGroundedAnswer
             throw new GenerationException('Needs generation requires the pinned v2 complete-result profile.');
         }
         $observeStage?->__invoke('generating');
+        if ($request->toArray()['contract_version'] === 4) {
+            $profile = new GenerationProfile($profile->provider, $profile->model, 'generation-result-v4',
+                'grounded-generation-temporal-v1', 'openai-responses-temporal-v1', $profile->deliveryMode, $profile->qualityAffectingConfiguration);
+        }
         $receipts = [];
         $completedSafetyRejections = 0;
         for ($validationAttempt = 1; $validationAttempt <= 2; $validationAttempt++) {
@@ -93,7 +106,7 @@ final readonly class GenerateGroundedAnswer
                 $result = new GenerationResult($result->outcome, $result->answerParts,
                     $result->unsupportedAspects, $result->insufficiencyReason,
                     array_replace($result->usage ?? [], ValidationAttemptUsage::combine($receipts)),
-                    $result->aspectLinks, $result->aspectResults);
+                    $result->aspectLinks, $result->aspectResults, temporalContext: $result->temporalContext);
                 break;
             } catch (GenerationException $exception) {
                 $providerFailure = $exception instanceof GenerationProviderException;
@@ -120,7 +133,12 @@ final readonly class GenerateGroundedAnswer
                 $exception->validationAttempts = $receipts;
                 if ($providerFailure && $exception->category === 'contract_validation_failure'
                     && $exception->returnedOutput && in_array($diagnostic['code'] ?? null,
-                        ['entailment_unsupported', 'entailment_uncertain', 'citation_ownership'], true)) {
+                        ['entailment_unsupported', 'entailment_uncertain', 'citation_ownership', 'temporal_target_invalid'], true)) {
+                    $completedSafetyRejections++;
+                }
+                if (! $providerFailure && is_array($payload) && ($diagnostic['code'] ?? null) === 'temporal_target_invalid') {
+                    // A completed successful service response rejected by PHP's
+                    // independent target validation is not a provider outage.
                     $completedSafetyRejections++;
                 }
                 $eligible = $request->evidenceNeeds !== [] && $profile->deliveryMode === GenerationDeliveryMode::CompleteResultOnly
@@ -155,7 +173,9 @@ final readonly class GenerateGroundedAnswer
                     $base = new GenerationResult(GenerationOutcome::InsufficientEvidence, [], $gaps, $reason, $usage);
                     $result = new GenerationResult($base->outcome, $base->answerParts, $base->unsupportedAspects,
                         $base->insufficiencyReason, $base->usage, $links,
-                        AspectCoverage::derive($base, array_column($request->evidenceNeeds, 'need_id'), $links));
+                        AspectCoverage::derive($base, array_column($request->evidenceNeeds, 'need_id'), $links),
+                        temporalContext: $request->toArray()['contract_version'] === 4
+                            ? ['version' => 'temporal-answer-use-v1', 'uses' => [], 'targets' => collect($request->evidenceNeeds)->flatMap(fn ($need) => $need['temporal_targets'] ?? [])->values()->all()] : []);
                     break;
                 }
                 throw $exception;
@@ -235,8 +255,32 @@ final readonly class GenerateGroundedAnswer
             [...$profile->qualityAffectingConfiguration, 'scope_renderer' => 'scope-fact-renderer-v2']);
         $outcome = $base->unsupportedAspects === [] ? GenerationOutcome::Answered : GenerationOutcome::Qualified;
         $result = new GenerationResult($outcome, $base->answerParts, $base->unsupportedAspects, null,
-            $base->usage, $base->aspectLinks, $base->aspectResults, $facts, $operational === [] ? null : $base);
+            $base->usage, $base->aspectLinks, $base->aspectResults, $facts, $operational === [] ? null : $base, $base->temporalContext);
 
         return new PreparedGroundedAnswer($request, $result, $fingerprint, $correlation);
+    }
+
+    private function temporalBudgetDisclosure(GenerationAssemblyInput $input, GenerationProfile $profile): PreparedGroundedAnswer
+    {
+        $needs = $input->retrievalResult->evidenceNeeds;
+        $gaps = array_map(fn ($need) => 'Evidence could not be retained within the context budget for: '.$need['question_span']['quote'], $needs);
+        $links = array_map(fn ($index, $need) => ['need_id' => $need['need_id'], 'answer_part_indices' => [],
+            'unsupported_aspect_indices' => [$index]], array_keys($needs), $needs);
+        $reason = 'I could not retain the required versioned evidence within the answer context budget. '.implode(' ', $gaps)
+            .'. This does not establish that the source documents lack the information.';
+        $usage = ['execution' => 'local', 'cost_basis' => 'zero_cost_local', 'request_count' => 0,
+            'retry_count' => 0, 'input_tokens' => 0, 'output_tokens' => 0, 'latency_ms' => 0, 'cost_usd' => 0];
+        $base = new GenerationResult(GenerationOutcome::InsufficientEvidence, [], $gaps, $reason, $usage);
+        $targets = collect($needs)->flatMap(fn ($need) => $need['temporal_targets'] ?? [])
+            ->map(fn ($target) => [...$target, 'status' => 'capacity_limited', 'reason' => 'context_budget'])->values()->all();
+        $result = new GenerationResult($base->outcome, [], $gaps, $reason, $usage, $links,
+            AspectCoverage::derive($base, array_column($needs, 'need_id'), $links),
+            temporalContext: ['version' => 'temporal-answer-use-v1', 'uses' => [], 'targets' => $targets]);
+        $request = new GenerationRequest((string) Str::uuid(), $input->authorisedScope->workspace->public_id,
+            $input->question, [], 'whole-needs-evidence-v1', (int) config('generation.max_context_characters'), [], evidenceNeeds: $needs);
+        $fingerprint = $this->fingerprints->make($profile->provider, $profile->model, 'generation-result-v4',
+            'grounded-generation-temporal-v1', 'openai-responses-temporal-v1', $profile->qualityAffectingConfiguration);
+
+        return new PreparedGroundedAnswer($request, $result, $fingerprint, $input->correlationLineage['correlation_id'] ?? $request->requestId);
     }
 }

@@ -18,6 +18,7 @@ use App\Models\EvidenceThresholdPolicy;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Services\Retrieval\ResolveEvidenceThresholdPolicy;
 use App\Services\Retrieval\RetrievalClient;
+use App\Services\Retrieval\TemporalEvidenceAlternatives;
 use App\Support\Documents\DocumentAuthorityTimeline;
 use App\Support\Retrieval\ApplicabilityScopeFact;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
@@ -158,6 +159,17 @@ final readonly class RetrieveWorkspaceEvidence
                     usage: $usage, clarificationQuestion: $results[$id]->clarificationQuestion);
             }
         }
+        $temporal = app(TemporalEvidenceAlternatives::class)->augment($authorised, $needs, $plans, $results,
+            $evaluatedAt, fn ($dated, $id, $target) => $this->execute($authorised, $dated->query, $candidateK, $evaluatedAt,
+                observe: $observe === null ? null : fn ($stage, $value) => $observe('need.'.$id.'.'.$target.'.'.$stage, $value),
+                planOverride: $dated, recordPlannerUsage: false), $observe);
+        $usage = [...$usage, ...$temporal['usage']];
+        if (isset($temporal['failure'])) {
+            return new RetrievalResult(RetrievalOutcome::RetrievalFailed, reason: $temporal['failure']->reason, usage: $usage);
+        }
+        $needs = $temporal['needs'];
+        $results = $temporal['results'];
+        $needsById = collect($needs)->keyBy('need_id');
         // A corpus cutover during multi-need execution must not mix generations.
         if (! $authorised->workspace->newQuery()->whereKey($authorised->workspace->id)
             ->where('active_workspace_corpus_generation_id', $authorised->activeCorpusGeneration?->id)->exists()) {
@@ -179,11 +191,15 @@ final readonly class RetrieveWorkspaceEvidence
                     reason: $eligible->reason, clarificationSource: $eligible->clarificationSource, usage: $usage,
                     clarificationQuestion: $eligible->clarificationQuestion);
             }
+            $targetVersions = isset($needsById[$id]['temporal_targets'])
+                ? collect($needsById[$id]['temporal_targets'])->flatMap(fn ($target) => array_column($target['versions'], 'version_id'))->unique()->values()->all()
+                : null;
             $candidates = $this->hydrateAndRecheck($result->candidates,
-                $eligible->canSearch() ? $eligible->documentPublicIdsBySide : [], $authorised);
+                $targetVersions !== null ? ['primary' => $targetVersions]
+                    : ($eligible->canSearch() ? $eligible->documentPublicIdsBySide : []), $authorised);
             $byKey = collect($result->candidates)->keyBy(fn ($c) => $c['side'].':'.$c['chunk_id']);
             $candidates = array_map(fn ($c) => [...($byKey[$c['side'].':'.$c['chunk_id']]), ...$c], $candidates);
-            $results[$id] = new RetrievalResult($eligible->canSearch() ? $result->outcome : $eligible->outcome,
+            $results[$id] = new RetrievalResult($targetVersions !== null && $candidates !== [] ? RetrievalOutcome::EvidenceFound : ($eligible->canSearch() ? $result->outcome : $eligible->outcome),
                 $candidates, reason: $eligible->reason ?? $result->reason,
                 resolvedTemporalAuthority: $this->resolvedTemporalAuthority($plans[$id], $eligible, $evaluatedAt),
                 resolvedApplicabilityLocation: ['resolved_location_public_id' => $eligible->resolvedLocationPublicId],
@@ -196,6 +212,18 @@ final readonly class RetrieveWorkspaceEvidence
             $id = $need['need_id'];
             unset($need['supports_need_id']);
             $result = $results[$id];
+            if (isset($need['temporal_targets'])) {
+                foreach ($need['temporal_targets'] as &$target) {
+                    if ($target['status'] === 'searched' && ! array_any($selected,
+                        fn ($candidate) => $candidate['need_id'] === $id
+                            && in_array($target['target_id'], $candidate['temporal_target_ids'] ?? [], true))) {
+                        $target['status'] = array_any($result->candidates,
+                            fn ($candidate) => in_array($target['target_id'], $candidate['temporal_target_ids'] ?? [], true))
+                            ? 'capacity_limited' : 'filtered';
+                    }
+                }
+                unset($target);
+            }
             $coverage[] = [...$need, 'retrieval_outcome' => $result->outcome->value,
                 ...($plan->value['schema_version'] === 'evidence-needs-plan-v4'
                     ? ['request_text_version' => 'extractive-request-v1'] : []),
@@ -216,6 +244,8 @@ final readonly class RetrieveWorkspaceEvidence
                 && count(array_filter($coverage, fn ($need) => $need['retrieval_reason'] === 'no_previous_version')) === count($coverage)
                     ? 'no_previous_version' : null,
             lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v3',
+                'temporal_alternatives' => ['version' => 'bounded-temporal-targets-v1',
+                    'additional_search_lanes' => $temporal['additional_search_lanes']],
                 'selection_coverage' => $selection['coverage'],
                 'needs' => array_map(fn ($r) => $r->lineage, $results)], usage: $usage, evidenceNeeds: $coverage);
     }
@@ -515,7 +545,7 @@ final readonly class RetrieveWorkspaceEvidence
             ]);
             $candidates = $search->candidates;
             if ($candidates === []) {
-                return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates, usage: $usage);
+                return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates, lineage: ['selection_stop_stage' => 'search_empty'], usage: $usage);
             }
             if ($policy !== null) {
                 $this->policies->assertSearchLineage($policy, $search->lineage);
@@ -540,7 +570,7 @@ final readonly class RetrieveWorkspaceEvidence
             $observe?->__invoke('hydrated', $hydrated);
 
             if ($hydrated === []) {
-                return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates, usage: $usage);
+                return new RetrievalResult(RetrievalOutcome::NoRetrievalCandidates, lineage: ['selection_stop_stage' => 'hydration_filtered'], usage: $usage);
             }
             if ($policy === null) {
                 return $this->evidenceFoundResult($hydrated, $plan, $freshEligible, $evaluatedAt, $search->lineage, $usage);
@@ -599,7 +629,7 @@ final readonly class RetrieveWorkspaceEvidence
             })->filter()->sortBy('rank')->values();
             $observe?->__invoke('threshold_qualified', $qualified->all());
             if ($qualified->isEmpty()) {
-                return new RetrievalResult(RetrievalOutcome::InsufficientEvidence, usage: $usage);
+                return new RetrievalResult(RetrievalOutcome::InsufficientEvidence, lineage: ['selection_stop_stage' => 'threshold_filtered'], usage: $usage);
             }
 
             $sides = array_keys($eligible->documentPublicIdsBySide);

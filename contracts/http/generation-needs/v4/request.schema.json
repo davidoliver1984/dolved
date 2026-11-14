@@ -1,0 +1,673 @@
+{
+  "$defs": {
+    "ClaimUnderTest": {
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": "claim-under-test-v1",
+          "title": "Version",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "named_recipient",
+            "named_value",
+            "numeric_value"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "submission_destination",
+            "contact_route",
+            "numeric_rate",
+            "named_value",
+            "other_fact"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/QuestionSpan"
+        }
+      },
+      "required": [
+        "version",
+        "type",
+        "relation",
+        "source"
+      ],
+      "title": "ClaimUnderTest",
+      "type": "object"
+    },
+    "FactReference": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Value",
+          "type": "string"
+        },
+        "precision": {
+          "enum": [
+            "day",
+            "month",
+            "year",
+            "interval",
+            "duration",
+            "quantity"
+          ],
+          "title": "Precision",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/QuestionSpan"
+        }
+      },
+      "required": [
+        "value",
+        "precision",
+        "source"
+      ],
+      "title": "FactReference",
+      "type": "object"
+    },
+    "GenerationConstraints": {
+      "additionalProperties": false,
+      "properties": {
+        "context_policy_version": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Context Policy Version",
+          "type": "string"
+        },
+        "max_context_characters": {
+          "exclusiveMinimum": 0,
+          "title": "Max Context Characters",
+          "type": "integer"
+        },
+        "required_sides": {
+          "items": {
+            "$ref": "#/$defs/RetrievalSide"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Required Sides",
+          "type": "array"
+        },
+        "requested_evidence_type": {
+          "$ref": "#/$defs/RequestedEvidenceType",
+          "default": "policy_or_procedural_requirements"
+        }
+      },
+      "required": [
+        "context_policy_version",
+        "max_context_characters",
+        "required_sides"
+      ],
+      "title": "GenerationConstraints",
+      "type": "object"
+    },
+    "GenerationEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "pattern": "^ev-[0-9]{2,}$",
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "document_chunk_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Chunk Id",
+          "type": "integer"
+        },
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "ingestion_event_claim_id": {
+          "exclusiveMinimum": 0,
+          "title": "Ingestion Event Claim Id",
+          "type": "integer"
+        },
+        "source_provenance": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "minItems": 1,
+          "title": "Source Provenance",
+          "type": "array"
+        },
+        "temporal_authority": {
+          "additionalProperties": true,
+          "title": "Temporal Authority",
+          "type": "object"
+        },
+        "applicability_context": {
+          "additionalProperties": true,
+          "title": "Applicability Context",
+          "type": "object"
+        },
+        "side": {
+          "$ref": "#/$defs/RetrievalSide"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "text",
+        "document_chunk_id",
+        "document_id",
+        "ingestion_event_claim_id",
+        "source_provenance",
+        "temporal_authority",
+        "applicability_context",
+        "side"
+      ],
+      "title": "GenerationEvidence",
+      "type": "object"
+    },
+    "GenerationNeed": {
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "enum": [
+            "n1",
+            "n2",
+            "n3"
+          ],
+          "title": "Need Id",
+          "type": "string"
+        },
+        "aspect": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Aspect",
+          "type": "string"
+        },
+        "question_span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "context_spans": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/QuestionSpan"
+          },
+          "maxItems": 4,
+          "title": "Context Spans",
+          "type": "array"
+        },
+        "request_text_version": {
+          "anyOf": [
+            {
+              "const": "extractive-request-v1",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Text Version"
+        },
+        "central": {
+          "title": "Central",
+          "type": "boolean"
+        },
+        "operation": {
+          "enum": [
+            "retrieve",
+            "compare"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "authority": {
+          "$ref": "#/$defs/NeedAuthority"
+        },
+        "fact_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FactReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "applicability": {
+          "$ref": "#/$defs/NeedApplicability"
+        },
+        "claim_under_test": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClaimUnderTest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "retrieval_outcome": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Retrieval Outcome",
+          "type": "string"
+        },
+        "retrieval_reason": {
+          "anyOf": [
+            {
+              "maxLength": 8000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Retrieval Reason"
+        },
+        "evidence_ids": {
+          "items": {
+            "pattern": "^ev-[0-9]{2,}$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "temporal_targets": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TemporalTarget"
+          },
+          "maxItems": 9,
+          "title": "Temporal Targets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "need_id",
+        "aspect",
+        "central",
+        "operation",
+        "authority",
+        "fact_reference",
+        "applicability",
+        "retrieval_outcome",
+        "retrieval_reason",
+        "evidence_ids"
+      ],
+      "title": "GenerationNeed",
+      "type": "object"
+    },
+    "NeedApplicability": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "generic",
+            "named",
+            "relational"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "source"
+      ],
+      "title": "NeedApplicability",
+      "type": "object"
+    },
+    "NeedAuthority": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "current",
+            "date",
+            "period",
+            "before",
+            "after",
+            "previous",
+            "historical_reference",
+            "transition_period",
+            "transition_boundary"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "precision": {
+          "enum": [
+            "none",
+            "day",
+            "month",
+            "year",
+            "interval",
+            "named"
+          ],
+          "title": "Precision",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "value",
+        "precision",
+        "source"
+      ],
+      "title": "NeedAuthority",
+      "type": "object"
+    },
+    "QuestionSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "turn_id": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Turn Id",
+          "type": "string"
+        },
+        "quote": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "turn_id",
+        "quote"
+      ],
+      "title": "QuestionSpan",
+      "type": "object"
+    },
+    "RequestedEvidenceType": {
+      "enum": [
+        "policy_or_procedural_requirements",
+        "personal_record_status",
+        "current_versus_historical_comparison"
+      ],
+      "title": "RequestedEvidenceType",
+      "type": "string"
+    },
+    "RetrievalSide": {
+      "enum": [
+        "primary",
+        "comparison"
+      ],
+      "title": "RetrievalSide",
+      "type": "string"
+    },
+    "TemporalReference": {
+      "additionalProperties": false,
+      "properties": {
+        "turn_id": {
+          "title": "Turn Id",
+          "type": "string"
+        },
+        "quote": {
+          "title": "Quote",
+          "type": "string"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "turn_id",
+        "quote",
+        "at"
+      ],
+      "title": "TemporalReference",
+      "type": "object"
+    },
+    "TemporalTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "target_id": {
+          "title": "Target Id",
+          "type": "string"
+        },
+        "need_id": {
+          "title": "Need Id",
+          "type": "string"
+        },
+        "family_id": {
+          "title": "Family Id",
+          "type": "string"
+        },
+        "purpose": {
+          "enum": [
+            "requested",
+            "precautionary"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "current",
+            "dated",
+            "provisional"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "At"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TemporalReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "versions": {
+          "items": {
+            "$ref": "#/$defs/TemporalVersion"
+          },
+          "maxItems": 1,
+          "title": "Versions",
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "unsearched",
+            "empty",
+            "filtered",
+            "ineligible",
+            "capacity_limited",
+            "searched"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "target_id",
+        "need_id",
+        "family_id",
+        "purpose",
+        "mode",
+        "at",
+        "reference",
+        "versions",
+        "status",
+        "reason"
+      ],
+      "title": "TemporalTarget",
+      "type": "object"
+    },
+    "TemporalVersion": {
+      "additionalProperties": false,
+      "properties": {
+        "version_id": {
+          "title": "Version Id",
+          "type": "string"
+        },
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "End"
+        }
+      },
+      "required": [
+        "version_id",
+        "start",
+        "end"
+      ],
+      "title": "TemporalVersion",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "enum": [
+        2,
+        3,
+        4
+      ],
+      "title": "Contract Version",
+      "type": "integer"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "workspace_id": {
+      "format": "uuid",
+      "title": "Workspace Id",
+      "type": "string"
+    },
+    "question": {
+      "maxLength": 8000,
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/GenerationEvidence"
+      },
+      "maxItems": 5,
+      "minItems": 1,
+      "title": "Evidence",
+      "type": "array"
+    },
+    "constraints": {
+      "$ref": "#/$defs/GenerationConstraints"
+    },
+    "evidence_needs": {
+      "items": {
+        "$ref": "#/$defs/GenerationNeed"
+      },
+      "maxItems": 3,
+      "minItems": 1,
+      "title": "Evidence Needs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "contract_version",
+    "request_id",
+    "workspace_id",
+    "question",
+    "evidence",
+    "constraints",
+    "evidence_needs"
+  ],
+  "title": "GenerationNeedsRequest",
+  "type": "object"
+}

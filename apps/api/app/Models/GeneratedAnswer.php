@@ -17,7 +17,7 @@ class GeneratedAnswer extends Model
 
     protected function casts(): array
     {
-        return ['outcome' => GenerationOutcome::class, 'unsupported_aspects' => 'array', 'generation_configuration' => 'array', 'usage' => 'array', 'cost_usd' => 'decimal:8', 'aspect_links' => 'array', 'aspect_results' => 'array', 'scope_facts' => 'array'];
+        return ['outcome' => GenerationOutcome::class, 'unsupported_aspects' => 'array', 'generation_configuration' => 'array', 'usage' => 'array', 'cost_usd' => 'decimal:8', 'aspect_links' => 'array', 'aspect_results' => 'array', 'scope_facts' => 'array', 'temporal_context' => 'array'];
     }
 
     public function workspace(): BelongsTo
@@ -60,6 +60,6 @@ class GeneratedAnswer extends Model
             $this->answerParts->map(fn ($part) => new AnswerPartResult($part->text, []))->all(),
             $this->unsupported_aspects, $this->insufficiency_reason,
             aspectLinks: $this->aspect_links ?? [], aspectResults: $this->aspect_results ?? [],
-            scopeFacts: $this->scope_facts ?? []))->renderedText();
+            scopeFacts: $this->scope_facts ?? [], temporalContext: $this->temporal_context ?? []))->renderedText();
     }
 }

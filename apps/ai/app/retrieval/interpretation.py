@@ -155,6 +155,10 @@ span repeats the whole question. Use null for citation fields not needed by the 
 and an empty inspected_need_ids list except for omission. Quotations are bounded
 evidence for review, not semantic proof. Application-computed calendar values are
 grounded interpretations, not by themselves added scope or a changed meaning.
+"""
+
+# Historical v3 instruction retained for receipt/probe compatibility, never sent.
+RETIRED_TEMPORAL_INSTRUCTIONS = """
 Return a temporal_assessments entry for EVERY need, including needs with no typed
 date. Assess the time of the requested rule or arrangement against the actual
 authority lane, separately from event/fact context. A date copied into the request
@@ -195,13 +199,12 @@ def review_interpretation(
 ) -> dict[str, object]:
     started = time.perf_counter()
     receipt: dict[str, object] = {
-        "version": "interpretation-check-v3",
+        "version": "interpretation-check-v2",
         "code": "unavailable",
         "checker_code": "unavailable",
         "citation": None,
         "citation_verification": "not_applicable",
         "verification_reason": None,
-        "temporal_assessments": [],
         "provider": provider,
         "model": model,
         "request_count": 1,
@@ -238,7 +241,7 @@ def review_interpretation(
                     "json_schema": {
                         "name": "interpretation_check",
                         "strict": True,
-                        "schema": TemporalInterpretationDecision.model_json_schema(),
+                        "schema": InterpretationDecision.model_json_schema(),
                     },
                 },
             },
@@ -253,10 +256,9 @@ def review_interpretation(
         choice = payload["choices"][0]
         if choice.get("finish_reason") != "stop" or choice["message"].get("refusal"):
             raise ValueError("incomplete check")
-        decision = TemporalInterpretationDecision.model_validate_json(
+        decision = InterpretationDecision.model_validate_json(
             choice["message"]["content"]
         )
-        validate_temporal_assessments(decision, turns, plan)
         verification, rejection = verify_citation(decision, turns, plan, evaluated_at)
         receipt.update(
             checker_code=decision.code,
@@ -265,9 +267,6 @@ def review_interpretation(
             else None,
             citation_verification=verification,
             verification_reason=rejection,
-            temporal_assessments=[
-                a.model_dump(mode="json") for a in decision.temporal_assessments
-            ],
             code="accepted" if verification == "unverifiable" else decision.code,
         )
     except httpx.HTTPError, ValueError, KeyError, IndexError, TypeError:

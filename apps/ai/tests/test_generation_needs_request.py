@@ -131,7 +131,10 @@ def test_shared_request_schema_matches_model_and_example():
     )
     Draft202012Validator.check_schema(schema)
     Draft202012Validator(schema).validate(request())
-    assert schema == GenerationNeedsRequest.model_json_schema()
+    current = json.loads(
+        Path("/contracts/http/generation-needs/v4/request.schema.json").read_text()
+    )
+    assert current == GenerationNeedsRequest.model_json_schema()
 
 
 def test_result_is_bound_to_the_actual_assembled_request():

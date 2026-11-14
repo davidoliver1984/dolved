@@ -23,24 +23,25 @@ from app.generation.models import (
 from app.generation.needs_request import GenerationNeedsRequest
 from app.generation.openai_adapter import OpenAIGenerationOutput
 from app.generation.polarity import has_invalid_leading_polarity
+from app.generation.temporal_targets import TemporalUse, validate_temporal_uses
 
 
 class NeedsCompletedResponse(ImmutableModel):
-    contract_version: Literal[2, 3]
+    contract_version: Literal[2, 3, 4]
     request_id: UUID
     status: Literal["completed"]
-    result: GenerationNeedsResult
+    result: GenerationNeedsResult | GenerationTemporalResult
 
 
 class NeedsBudgetResponse(ImmutableModel):
-    contract_version: Literal[2, 3]
+    contract_version: Literal[2, 3, 4]
     request_id: UUID
     status: Literal["context_budget_exceeded"]
     failure: GenerationContextBudgetExceeded
 
 
 class NeedsProviderResponse(ImmutableModel):
-    contract_version: Literal[2, 3]
+    contract_version: Literal[2, 3, 4]
     request_id: UUID
     status: Literal["provider_error"]
     error: GenerationProviderError
@@ -60,7 +61,12 @@ class GenerationNeedsResult(ImmutableModel):
         # Reuse exactly the established shape/citation checks, not a relaxed copy.
         return GenerationResult.model_validate(
             self.model_dump(
-                exclude={"contract_version", "aspect_links", "entailment_checks"}
+                exclude={
+                    "contract_version",
+                    "aspect_links",
+                    "entailment_checks",
+                    "temporal_uses",
+                }
             )
         )
 
@@ -111,6 +117,21 @@ class GenerationNeedsResult(ImmutableModel):
         return self
 
 
+class GenerationTemporalResult(GenerationNeedsResult):
+    # Frozen Pydantic discriminator refinement; no mutable base assignment exists.
+    contract_version: Literal[4]  # type: ignore[assignment]
+    temporal_uses: tuple[TemporalUse, ...] = Field(max_length=32)
+
+    def validate_for_needs_request(self, request):
+        super().validate_for_needs_request(request)
+        if request.contract_version != 4:
+            raise ValueError("temporal result requires the C1 request")
+        validate_temporal_uses(
+            request, self.answer_parts, self.aspect_links, self.temporal_uses
+        )
+        return self
+
+
 class OpenAIGenerationNeedsOutput(OpenAIGenerationOutput):
     aspect_links: list[AspectLink] = Field(
         min_length=1,
@@ -137,6 +158,10 @@ class OpenAIGenerationNeedsOutput(OpenAIGenerationOutput):
                 "entailment_checks": [item.model_dump() for item in entailment_checks],
             }
         ).validate_against(request, need_ids)
+
+
+class OpenAIGenerationTemporalOutput(OpenAIGenerationNeedsOutput):
+    temporal_uses: list[TemporalUse] = Field(max_length=32)
 
 
 NeedsCompletedResponse.model_rebuild()

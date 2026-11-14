@@ -71,13 +71,29 @@ def review_input(
                 "part_index": index,
                 "user_question": request.question,
                 "claim_text": part.text,
+                **(
+                    {
+                        "temporal_uses": [
+                            use.model_dump(mode="json")
+                            for use in getattr(output, "temporal_uses", ())
+                            if use.part_index == index
+                        ],
+                        "application_temporal_targets": [
+                            target.model_dump(mode="json")
+                            for need in request.evidence_needs
+                            for target in need.temporal_targets
+                        ],
+                    }
+                    if request.contract_version == 4
+                    else {}
+                ),
                 "requested_aspects": [
                     need.question_span.quote if need.question_span else need.aspect
                     for need in request.evidence_needs
                     if any(
                         link.need_id == need.need_id
                         and index in link.answer_part_indices
-                        for link in output.aspect_links
+                        for link in getattr(output, "aspect_links", ())
                     )
                 ],
                 "cited_passages": [

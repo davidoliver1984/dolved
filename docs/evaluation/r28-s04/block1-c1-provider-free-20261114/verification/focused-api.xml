@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="/app/phpunit.xml" tests="21" assertions="203" errors="0" failures="0" skipped="0" time="1.205983">
+    <testsuite name="Unit" tests="12" assertions="72" errors="0" failures="0" skipped="0" time="0.272112">
+      <testsuite name="Tests\Unit\NeedsEvidenceSelectionTest" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" tests="10" assertions="56" errors="0" failures="0" skipped="0" time="0.005945">
+        <testcase name="test_c1_guard_slot_is_reserved_before_stronger_spare_passages" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="15" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="6" time="0.004422"/>
+        <testcase name="test_oversubscribed_three_needs_report_cuts_without_changing_selection" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="33" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="26" time="0.000291"/>
+        <testcase name="test_pair_and_current_support_survive_global_cap_and_descriptive_edge_has_no_effect" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="67" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="6" time="0.000173"/>
+        <testcase name="test_current_evidence_cannot_supply_a_missing_comparison_side" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="88" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="1" time="0.000129"/>
+        <testcase name="test_same_document_on_both_sides_cannot_form_a_pair" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="97" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="1" time="0.000138"/>
+        <testcase name="test_two_comparisons_preserve_both_pairs_within_k5" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="106" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="3" time="0.000122"/>
+        <testcase name="test_five_search_lanes_still_exceed_slice_fanout" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="120" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="1" time="0.000199"/>
+        <testcase name="test_three_ordinary_needs_retain_multiple_passages_within_five_slots" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="126" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="2" time="0.000162"/>
+        <testcase name="test_comparison_and_two_ordinary_needs_keep_pair_and_two_passage_support" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="139" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="4" time="0.000144"/>
+        <testcase name="test_pair_ranking_considers_both_sides_before_chunk_identity" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="155" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="6" time="0.000163"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\TemporalAnswerUseTest" file="/app/tests/Unit/TemporalAnswerUseTest.php" tests="2" assertions="16" errors="0" failures="0" skipped="0" time="0.266168">
+        <testcase name="test_inventory_is_independent_of_planner_labels_and_rejects_invalid_or_event_dates" file="/app/tests/Unit/TemporalAnswerUseTest.php" line="18" class="Tests\Unit\TemporalAnswerUseTest" classname="Tests.Unit.TemporalAnswerUseTest" assertions="5" time="0.248954"/>
+        <testcase name="test_temporal_target_validation_rejects_cross_lane_family_version_and_quote_use" file="/app/tests/Unit/TemporalAnswerUseTest.php" line="30" class="Tests\Unit\TemporalAnswerUseTest" classname="Tests.Unit.TemporalAnswerUseTest" assertions="11" time="0.017214"/>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="9" assertions="131" errors="0" failures="0" skipped="0" time="0.933871">
+      <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" tests="9" assertions="131" errors="0" failures="0" skipped="0" time="0.933871">
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_admission_respects_existing_eligibility_and_four_lane_cap" tests="7" assertions="43" errors="0" failures="0" skipped="0" time="0.687079">
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="75" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.478610"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="75" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.031920"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="75" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="6" time="0.041234"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="75" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="6" time="0.044194"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="75" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.027352"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #5" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="75" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.027601"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #6" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="75" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="7" time="0.036167"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use" tests="2" assertions="88" errors="0" failures="0" skipped="0" time="0.246791">
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="164" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="44" time="0.133911"/>
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="164" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="44" time="0.112881"/>
+        </testsuite>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

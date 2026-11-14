@@ -20,8 +20,13 @@ final class ValidateGenerationResult
         if ($request->evidenceNeeds !== [] && array_column($request->evidenceNeeds, 'need_id') !== $needIds) {
             throw new GenerationException('Generation result needs differ from the assembled request.');
         }
-        if (! $this->hasExactKeys($payload, ['contract_version', 'outcome', 'answer_parts', 'unsupported_aspects', 'insufficiency_reason', 'usage', 'aspect_links', 'entailment_checks'])
-            || ($payload['contract_version'] ?? null) !== 3 || ! is_array($payload['aspect_links'])
+        $temporal = $request->toArray()['contract_version'] === 4;
+        $uses = $temporal ? ($payload['temporal_uses'] ?? null) : [];
+        if ($temporal && ! is_array($uses)) {
+            throw new GenerationException('Temporal answer-use coverage is invalid.');
+        }
+        if (! is_array($uses) || ! $this->hasExactKeys($payload, ['contract_version', 'outcome', 'answer_parts', 'unsupported_aspects', 'insufficiency_reason', 'usage', 'aspect_links', 'entailment_checks', ...($temporal ? ['temporal_uses'] : [])])
+            || ($payload['contract_version'] ?? null) !== ($temporal ? 4 : 3) || ! is_array($payload['aspect_links'])
             || ! is_array($payload['entailment_checks']) || ! is_array($payload['answer_parts'])) {
             throw new GenerationException('The needs generation result schema is invalid.');
         }
@@ -36,7 +41,7 @@ final class ValidateGenerationResult
                 throw new GenerationException('The needs generation entailment verdict is invalid.');
             }
         }
-        unset($payload['aspect_links'], $payload['entailment_checks']);
+        unset($payload['aspect_links'], $payload['entailment_checks'], $payload['temporal_uses']);
         $payload['contract_version'] = 1;
         // Preserve the same citation membership and outcome invariants as v1.
         $result = $this->handle($request, $payload);
@@ -63,8 +68,10 @@ final class ValidateGenerationResult
             throw new GenerationException('The needs generation coverage is invalid.', previous: $exception);
         }
 
+        $context = $temporal ? (new ValidateTemporalAnswerUse)->handle($request, $result->answerParts, $links, $uses) : [];
+
         return new GenerationResult($result->outcome, $result->answerParts, $result->unsupportedAspects,
-            $result->insufficiencyReason, $result->usage, $links, $statuses);
+            $result->insufficiencyReason, $result->usage, $links, $statuses, temporalContext: $context);
     }
 
     /** @param array<string, mixed> $payload */

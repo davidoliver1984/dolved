@@ -1,0 +1,460 @@
+{
+    "label": "Separate development fixture",
+    "substituted_boundaries": [
+        "planner HTTP",
+        "dense search HTTP",
+        "generation\/entailment HTTP"
+    ],
+    "plan": {
+        "schema_version": "evidence-needs-plan-v4",
+        "decision": "plan",
+        "clarification": null,
+        "needs": [
+            {
+                "need_id": "n1",
+                "aspect": "Under the Inspection Schedule, who performed daily inspections on 14 February 2026?",
+                "central": true,
+                "question_span": {
+                    "turn_id": "user-1",
+                    "quote": "Under the Inspection Schedule, who performed daily inspections on 14 February 2026?"
+                },
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "value": null,
+                    "precision": "none",
+                    "source": null
+                },
+                "fact_reference": {
+                    "value": "2026-02-14",
+                    "precision": "day",
+                    "source": {
+                        "turn_id": "user-1",
+                        "quote": "14 February 2026"
+                    }
+                },
+                "applicability": {
+                    "kind": "generic",
+                    "source": null
+                },
+                "supports_need_id": null,
+                "claim_under_test": null,
+                "scope_question": null,
+                "context_spans": []
+            }
+        ],
+        "bindings": [
+            {
+                "need_id": "n1",
+                "subject_status": "matched",
+                "family_ids": [
+                    "dfdfcbc0-cceb-3710-96e2-917f9804973b"
+                ],
+                "ownership": "authorised_workspace",
+                "ownership_source": null
+            }
+        ]
+    },
+    "generation_request": {
+        "contract_version": 4,
+        "request_id": "8fc72b90-e6aa-4835-aa2f-0df1d9618ed2",
+        "workspace_id": "5d3af574-2c66-3dee-90a7-ae5ff12cfe55",
+        "question": "Under the Inspection Schedule, who performed daily inspections on 14 February 2026?",
+        "evidence": [
+            {
+                "evidence_id": "ev-01",
+                "text": "The national contractor performs the daily inspection.",
+                "document_chunk_id": 2,
+                "document_id": 2,
+                "ingestion_event_claim_id": 2,
+                "source_provenance": [
+                    {
+                        "normalised_element_id": "913b6e35-921d-3556-b908-61d51b2dc680",
+                        "source_element_ids": [
+                            "a126d252-a43b-3af8-85e9-e01289376a23"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "temporal_authority": {
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "need_id": "n1",
+                    "document_family_id": "dfdfcbc0-cceb-3710-96e2-917f9804973b",
+                    "document_version_id": "0e9f62d4-6105-3e2e-b442-fd9d088a5b39",
+                    "document_title": "ducimus.pdf",
+                    "document_family_title": "nobis sed itaque",
+                    "temporal_target_ids": [
+                        "n1:requested"
+                    ],
+                    "temporal_basis": "application-labelled-targets-v1",
+                    "authority_start": "2026-06-01T00:00:00+00:00",
+                    "authoritative_at_evaluated_at": true
+                },
+                "applicability_context": {
+                    "resolved_location_public_id": null
+                },
+                "side": "primary"
+            },
+            {
+                "evidence_id": "ev-02",
+                "text": "During the daily inspection in hazardous areas, trained staff must accompany the contractor.",
+                "document_chunk_id": 3,
+                "document_id": 1,
+                "ingestion_event_claim_id": 1,
+                "source_provenance": [
+                    {
+                        "normalised_element_id": "10520b8a-d63f-35dd-a598-4d1468e4cd7f",
+                        "source_element_ids": [
+                            "7bec6b46-f752-3804-bd89-ca32cdf1f9b9"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "temporal_authority": {
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "need_id": "n1",
+                    "document_family_id": "dfdfcbc0-cceb-3710-96e2-917f9804973b",
+                    "document_version_id": "daf71bad-6bbf-3031-a877-da1d8f84e212",
+                    "document_title": "minima.pdf",
+                    "document_family_title": "nobis sed itaque",
+                    "temporal_target_ids": [
+                        "n1:date:1"
+                    ],
+                    "temporal_basis": "application-labelled-targets-v1",
+                    "authority_start": "2025-01-01T00:00:00+00:00",
+                    "authoritative_at_evaluated_at": false
+                },
+                "applicability_context": {
+                    "resolved_location_public_id": null
+                },
+                "side": "primary"
+            },
+            {
+                "evidence_id": "ev-03",
+                "text": "The regional contractor performs the daily inspection.",
+                "document_chunk_id": 1,
+                "document_id": 1,
+                "ingestion_event_claim_id": 1,
+                "source_provenance": [
+                    {
+                        "normalised_element_id": "c9a0431a-3f3f-358e-9b98-7f65a4dfdf11",
+                        "source_element_ids": [
+                            "d979dd71-9ff0-3e15-aace-b40679175055"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "temporal_authority": {
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "need_id": "n1",
+                    "document_family_id": "dfdfcbc0-cceb-3710-96e2-917f9804973b",
+                    "document_version_id": "daf71bad-6bbf-3031-a877-da1d8f84e212",
+                    "document_title": "minima.pdf",
+                    "document_family_title": "nobis sed itaque",
+                    "temporal_target_ids": [
+                        "n1:date:1"
+                    ],
+                    "temporal_basis": "application-labelled-targets-v1",
+                    "authority_start": "2025-01-01T00:00:00+00:00",
+                    "authoritative_at_evaluated_at": false
+                },
+                "applicability_context": {
+                    "resolved_location_public_id": null
+                },
+                "side": "primary"
+            }
+        ],
+        "constraints": {
+            "context_policy_version": "whole-needs-evidence-v1",
+            "max_context_characters": 60000,
+            "required_sides": [
+                "primary"
+            ],
+            "requested_evidence_type": "policy_or_procedural_requirements"
+        },
+        "evidence_needs": [
+            {
+                "need_id": "n1",
+                "aspect": "Under the Inspection Schedule, who performed daily inspections on 14 February 2026?",
+                "central": true,
+                "question_span": {
+                    "turn_id": "user-1",
+                    "quote": "Under the Inspection Schedule, who performed daily inspections on 14 February 2026?"
+                },
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "value": null,
+                    "precision": "none",
+                    "source": null
+                },
+                "fact_reference": {
+                    "value": "2026-02-14",
+                    "precision": "day",
+                    "source": {
+                        "turn_id": "user-1",
+                        "quote": "14 February 2026"
+                    }
+                },
+                "applicability": {
+                    "kind": "generic",
+                    "source": null
+                },
+                "claim_under_test": null,
+                "context_spans": [],
+                "temporal_targets": [
+                    {
+                        "target_id": "n1:requested",
+                        "need_id": "n1",
+                        "family_id": "dfdfcbc0-cceb-3710-96e2-917f9804973b",
+                        "purpose": "requested",
+                        "mode": "current",
+                        "at": "2026-11-14T00:00:00+00:00",
+                        "reference": null,
+                        "versions": [
+                            {
+                                "version_id": "0e9f62d4-6105-3e2e-b442-fd9d088a5b39",
+                                "start": "2026-06-01T00:00:00+00:00",
+                                "end": null
+                            }
+                        ],
+                        "status": "searched",
+                        "reason": null
+                    },
+                    {
+                        "target_id": "n1:date:1",
+                        "need_id": "n1",
+                        "family_id": "dfdfcbc0-cceb-3710-96e2-917f9804973b",
+                        "purpose": "precautionary",
+                        "mode": "dated",
+                        "at": "2026-02-14T00:00:00+00:00",
+                        "reference": {
+                            "turn_id": "user-1",
+                            "quote": "14 February 2026",
+                            "at": "2026-02-14T00:00:00+00:00"
+                        },
+                        "versions": [
+                            {
+                                "version_id": "daf71bad-6bbf-3031-a877-da1d8f84e212",
+                                "start": "2025-01-01T00:00:00+00:00",
+                                "end": "2026-06-01T00:00:00+00:00"
+                            }
+                        ],
+                        "status": "searched",
+                        "reason": null
+                    }
+                ],
+                "retrieval_outcome": "evidence_found",
+                "request_text_version": "extractive-request-v1",
+                "retrieval_reason": null,
+                "evidence_ids": [
+                    "ev-01",
+                    "ev-02",
+                    "ev-03"
+                ]
+            }
+        ]
+    },
+    "temporal_context": {
+        "version": "temporal-answer-use-v1",
+        "uses": [
+            {
+                "part_index": 0,
+                "need_id": "n1",
+                "target_id": "n1:date:1",
+                "question_quote": "14 February 2026",
+                "target": {
+                    "target_id": "n1:date:1",
+                    "need_id": "n1",
+                    "family_id": "dfdfcbc0-cceb-3710-96e2-917f9804973b",
+                    "purpose": "precautionary",
+                    "mode": "dated",
+                    "at": "2026-02-14T00:00:00+00:00",
+                    "reference": {
+                        "turn_id": "user-1",
+                        "quote": "14 February 2026",
+                        "at": "2026-02-14T00:00:00+00:00"
+                    },
+                    "versions": [
+                        {
+                            "version_id": "daf71bad-6bbf-3031-a877-da1d8f84e212",
+                            "start": "2025-01-01T00:00:00+00:00",
+                            "end": "2026-06-01T00:00:00+00:00"
+                        }
+                    ],
+                    "status": "searched",
+                    "reason": null
+                },
+                "planner_disagreement": true
+            }
+        ],
+        "targets": [
+            {
+                "target_id": "n1:requested",
+                "need_id": "n1",
+                "family_id": "dfdfcbc0-cceb-3710-96e2-917f9804973b",
+                "purpose": "requested",
+                "mode": "current",
+                "at": "2026-11-14T00:00:00+00:00",
+                "reference": null,
+                "versions": [
+                    {
+                        "version_id": "0e9f62d4-6105-3e2e-b442-fd9d088a5b39",
+                        "start": "2026-06-01T00:00:00+00:00",
+                        "end": null
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            },
+            {
+                "target_id": "n1:date:1",
+                "need_id": "n1",
+                "family_id": "dfdfcbc0-cceb-3710-96e2-917f9804973b",
+                "purpose": "precautionary",
+                "mode": "dated",
+                "at": "2026-02-14T00:00:00+00:00",
+                "reference": {
+                    "turn_id": "user-1",
+                    "quote": "14 February 2026",
+                    "at": "2026-02-14T00:00:00+00:00"
+                },
+                "versions": [
+                    {
+                        "version_id": "daf71bad-6bbf-3031-a877-da1d8f84e212",
+                        "start": "2025-01-01T00:00:00+00:00",
+                        "end": "2026-06-01T00:00:00+00:00"
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            }
+        ]
+    },
+    "persisted_answer_parts": [
+        {
+            "text": "The regional contractor performed daily inspections; trained staff accompanied them in hazardous areas.",
+            "evidence_ids": [
+                "ev-02",
+                "ev-03"
+            ]
+        }
+    ],
+    "aspect_links": [
+        {
+            "need_id": "n1",
+            "answer_part_indices": [
+                0
+            ],
+            "unsupported_aspect_indices": []
+        }
+    ],
+    "displayed_text": "The regional contractor performed daily inspections; trained staff accompanied them in hazardous areas.\nTemporal basis: 14 February 2026; version daf71bad-6bbf-3031-a877-da1d8f84e212; effective 2025-01-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).",
+    "reloaded_text": "The regional contractor performed daily inspections; trained staff accompanied them in hazardous areas.\nTemporal basis: 14 February 2026; version daf71bad-6bbf-3031-a877-da1d8f84e212; effective 2025-01-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).",
+    "token_budget_outcome": "insufficient_evidence",
+    "token_budget_text": "I could not retain the required versioned evidence within the answer context budget. Evidence could not be retained within the context budget for: Under the Inspection Schedule, who performed daily inspections on 14 February 2026?. This does not establish that the source documents lack the information.",
+    "exhausted_target_rejection": {
+        "outcome": "insufficient_evidence",
+        "usage": {
+            "request_count": 2,
+            "input_tokens": null,
+            "output_tokens": null,
+            "cached_input_tokens": null,
+            "latency_ms": null,
+            "cost_usd": null,
+            "retry_count": 1,
+            "validation_retry_count": 1,
+            "pricing_snapshot": null,
+            "cost_basis": "unavailable",
+            "validation_attempts": [
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": null,
+                    "output_tokens": null,
+                    "cached_input_tokens": null,
+                    "latency_ms": null,
+                    "cost_usd": null,
+                    "pricing_snapshot": null,
+                    "cost_basis": "unavailable",
+                    "outcome": "rejected",
+                    "request_id": "95e85459-d9dc-46ed-ae01-1e6e38118d8e",
+                    "retry_of_request_id": null,
+                    "validation": {
+                        "category": "contract_validation_failure",
+                        "layer": "laravel_result_validation",
+                        "field": "result",
+                        "code": "temporal_target_invalid",
+                        "http_status": null
+                    }
+                },
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": null,
+                    "output_tokens": null,
+                    "cached_input_tokens": null,
+                    "latency_ms": null,
+                    "cost_usd": null,
+                    "pricing_snapshot": null,
+                    "cost_basis": "unavailable",
+                    "outcome": "rejected",
+                    "request_id": "8fc72b90-e6aa-4835-aa2f-0df1d9618ed2",
+                    "retry_of_request_id": "95e85459-d9dc-46ed-ae01-1e6e38118d8e",
+                    "validation": {
+                        "category": "contract_validation_failure",
+                        "layer": "laravel_result_validation",
+                        "field": "result",
+                        "code": "temporal_target_invalid",
+                        "http_status": null
+                    }
+                }
+            ],
+            "controlled_fallback": {
+                "category": "contract_validation_failure",
+                "code": "temporal_target_invalid",
+                "layer": "python_generation_adapter"
+            }
+        },
+        "text": "I couldn't find enough available evidence to answer that question."
+    }
+}

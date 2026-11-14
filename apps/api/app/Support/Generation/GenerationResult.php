@@ -20,6 +20,7 @@ final readonly class GenerationResult
         public array $aspectResults = [],
         public array $scopeFacts = [],
         public ?self $operationalResult = null,
+        public array $temporalContext = [],
     ) {}
 
     /** Preserve aspect ownership; disclose selection limits, never infer source absence. */
@@ -46,7 +47,7 @@ final readonly class GenerationResult
         }
 
         return new self($this->outcome, $this->answerParts, $gaps, $this->insufficiencyReason,
-            $this->usage, $this->aspectLinks, $this->aspectResults, $this->scopeFacts, $this->operationalResult);
+            $this->usage, $this->aspectLinks, $this->aspectResults, $this->scopeFacts, $this->operationalResult, $this->temporalContext);
     }
 
     public function renderedText(): string
@@ -56,7 +57,16 @@ final readonly class GenerationResult
         $parts = [];
         foreach ($this->answerParts as $index => $part) {
             if (! $this->isUnsupportedBinaryPart($index, $part)) {
-                $parts[] = $part->text;
+                $basis = collect($this->temporalContext['uses'] ?? [])->firstWhere('part_index', $index);
+                $label = '';
+                if ($basis !== null) {
+                    $target = $basis['target'];
+                    $label = "\nTemporal basis: ".($target['reference']['quote'] ?? $target['at'] ?? 'planner-selected authority')
+                        .'; version '.implode(', ', array_column($target['versions'], 'version_id'))
+                        .'; effective '.implode(', ', array_map(fn ($version) => $version['start'].' to '.($version['end'] ?? 'open end').' (end exclusive)', $target['versions']))
+                        .($basis['planner_disagreement'] ? ' (differs from the provisional planner target).' : '.');
+                }
+                $parts[] = $part->text.$label;
             }
         }
         if ($scope !== [] && $parts === [] && $this->unsupportedAspects !== []) {
@@ -66,6 +76,12 @@ final readonly class GenerationResult
         $body = $scope !== [] && $parts !== []
             ? "Recorded policy scope\n\n".implode("\n\n", $scope)."\n\nOther requested guidance\n\n".implode("\n\n", $parts)
             : implode("\n\n", [...$scope, ...$parts]);
+        foreach ($this->temporalContext['targets'] ?? [] as $target) {
+            if ($target['status'] !== 'searched') {
+                $body .= "\n\nTemporal evidence incomplete for ".($target['reference']['quote'] ?? $target['target_id']).': '.$target['status']
+                    .'. This does not establish that the source lacks the requested information.';
+            }
+        }
 
         if ($this->outcome !== GenerationOutcome::Qualified || $this->unsupportedAspects === []) {
             return $body;

@@ -5,7 +5,12 @@ from copy import deepcopy
 import pytest
 from pydantic import SecretStr
 
-from app.retrieval.interpretation import InterpretationCheckError, review_interpretation
+from app.retrieval.interpretation import (
+    TemporalInterpretationDecision,
+    review_interpretation,
+    validate_temporal_assessments,
+    verify_citation,
+)
 from app.retrieval.needs import EvidenceNeedsPlan
 from tests.test_evidence_needs import EXAMPLES, turns
 from tests.test_interpretation_check import citation, transport
@@ -27,22 +32,20 @@ def output():
 
 
 def check(value):
-    client, calls = transport([value])
     plan = EvidenceNeedsPlan.model_validate(EXAMPLES[0]["plan"]).execution_plan()
     before = plan.model_dump()
-    result = review_interpretation(
-        client=client,
-        api_url="https://fake.invalid",
-        api_key=SecretStr("fake"),
-        model="gpt-5-mini",
-        provider="openai",
-        turns=turns(EXAMPLES[0]),
-        plan=plan,
-    )
+    decision = TemporalInterpretationDecision.model_validate(value)
+    validate_temporal_assessments(decision, turns(EXAMPLES[0]), plan)
+    verification, reason = verify_citation(decision, turns(EXAMPLES[0]), plan)
     assert plan.model_dump() == before
-    assert len(calls) == 1
-    assert calls[0]["max_completion_tokens"] == 4096
-    return result
+    return {
+        **value,
+        "version": "interpretation-check-v3",
+        "checker_code": decision.code,
+        "code": "accepted" if verification == "unverifiable" else decision.code,
+        "citation_verification": verification,
+        "verification_reason": reason,
+    }
 
 
 @pytest.mark.parametrize("role", ["authority", "fact_context", "both", "ambiguous"])
@@ -56,8 +59,6 @@ def test_temporal_assessment_is_bounded_grounded_and_not_an_authority_rewrite(ro
     assert result["version"] == "interpretation-check-v3"
     assert result["temporal_assessments"] == value["temporal_assessments"]
     assert result["citation_verification"] == "not_applicable"
-    assert result["input_tokens"] == 11
-    assert result["output_tokens"] == 3
 
 
 @pytest.mark.parametrize(
@@ -96,9 +97,8 @@ def test_invalid_temporal_receipt_fails_closed_without_an_additional_call(shape)
         rows[0]["temporal_intent_preserved"] = "unclear"
     else:
         rows[0]["new_authority"] = "1900"
-    with pytest.raises(InterpretationCheckError) as caught:
+    with pytest.raises(ValueError):
         check(value)
-    assert caught.value.receipt["request_count"] == 1
 
 
 def test_temporal_judgement_does_not_override_unverifiable_citation_rule():
@@ -111,3 +111,26 @@ def test_temporal_judgement_does_not_override_unverifiable_citation_rule():
     assert result["code"] == "accepted"
     assert result["citation_verification"] == "unverifiable"
     assert result["verification_reason"] == "user_quote_not_found"
+
+
+def test_active_checker_uses_general_schema_once_and_retains_usage():
+    client, calls = transport([{"code": "accepted", "citation": None}])
+    result = review_interpretation(
+        client=client,
+        api_url="https://fake.invalid",
+        api_key=SecretStr("fake"),
+        model="gpt-5-mini",
+        provider="openai",
+        turns=turns(EXAMPLES[0]),
+        plan=EvidenceNeedsPlan.model_validate(EXAMPLES[0]["plan"]).execution_plan(),
+    )
+    assert result["version"] == "interpretation-check-v2"
+    assert len(calls) == 1
+    assert calls[0]["max_completion_tokens"] == 4096
+    assert (
+        "temporal_assessments"
+        not in calls[0]["response_format"]["json_schema"]["schema"]["properties"]
+    )
+    assert "temporal_assessments" not in calls[0]["messages"][0]["content"]
+    assert result["input_tokens"] == 11
+    assert result["output_tokens"] == 3
