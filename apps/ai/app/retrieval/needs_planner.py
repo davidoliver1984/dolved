@@ -2,7 +2,9 @@
 
 import json
 import logging
+import re
 import time
+from copy import deepcopy
 from dataclasses import dataclass
 
 import httpx
@@ -15,6 +17,8 @@ from app.retrieval.needs import (
     EvidenceNeedsPlan,
     NeedsOperationUsage,
     UserTurn,
+    validate_date_grounding,
+    validate_date_value,
 )
 from app.retrieval.needs_schema import provider_needs_schema
 from app.retrieval.planner import (
@@ -24,11 +28,98 @@ from app.retrieval.planner import (
     _provider_failure,
 )
 from app.retrieval.relative_calendar import (
+    PATTERN as RELATIVE_CALENDAR,
+)
+from app.retrieval.relative_calendar import (
     canonicalize_relative_periods,
     grounded_periods,
 )
 
 logger = logging.getLogger("retrieval.needs.planner")
+
+
+def _canonicalize_explicit_calendar_values(
+    value: object, turns: tuple[UserTurn, ...]
+) -> tuple[object, int]:
+    """Convert quoted calendar notation only; never change precision or intent."""
+    result = deepcopy(value)
+    if not isinstance(result, dict) or not isinstance(result.get("needs"), list):
+        return result, 0
+    texts = {turn.turn_id: turn.text for turn in turns}
+    months = (
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    )
+    month_numbers = {
+        spelling.lower(): number
+        for number, name in enumerate(months, 1)
+        for spelling in (name, name[:3])
+    }
+    day = r"(?P<day>[0-9]{1,2})(?:st|nd|rd|th)?"
+    month = r"(?P<month>[A-Za-z]+\.?)"
+    year = r"(?P<year>[0-9]{4})"
+    forms = {
+        "month": (rf"{month}\s+{year}",),
+        "day": (rf"{day}\s+{month}\s+{year}", rf"{month}\s+{day},?\s+{year}"),
+    }
+    count = 0
+    # The contract allows three needs and two references per need. Invalid
+    # oversized plans still reach the unchanged validator and are rejected.
+    for need in result["needs"][:3]:
+        if not isinstance(need, dict):
+            continue
+        for field in ("fact_reference", "authority"):
+            reference = need.get(field)
+            if not isinstance(reference, dict):
+                continue
+            precision, raw = reference.get("precision"), reference.get("value")
+            source = reference.get("source")
+            if not isinstance(precision, str) or precision not in forms:
+                continue  # Numeric years are already canonical; no interval expansion.
+            if not isinstance(raw, str) or not isinstance(source, dict):
+                continue
+            quote, turn_id = source.get("quote"), source.get("turn_id")
+            if (
+                not isinstance(quote, str)
+                or not isinstance(turn_id, str)
+                or turn_id not in texts
+                or quote not in texts[turn_id]
+                or RELATIVE_CALENDAR.search(quote)
+                or re.search(r"(?<!\w)" + re.escape(raw) + r"(?!\w)", quote) is None
+            ):
+                continue
+            for pattern in forms[precision]:
+                match = re.fullmatch(pattern, raw, re.IGNORECASE)
+                if match is None:
+                    continue
+                number = month_numbers.get(match["month"].rstrip(".").lower())
+                if number is None:
+                    continue
+                canonical = f"{match['year']}-{number:02d}"
+                if precision == "day":
+                    canonical += f"-{int(match['day']):02d}"
+                try:
+                    validate_date_value(canonical, precision)
+                    # Reuse the existing grammar as the final acceptance boundary,
+                    # including its day/ordinal/abbreviation constraints.
+                    validate_date_grounding(canonical, precision, raw)
+                    validate_date_grounding(canonical, precision, quote)
+                except ValueError:
+                    continue
+                reference["value"] = canonical
+                count += 1
+                break
+    return result, count
 
 
 def _normalize_scope_claim_conflicts(content: str) -> tuple[str, int]:
@@ -435,7 +526,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             client=client,
             contract_schema_version="evidence-needs-plan-v4",
             prompt_version="bounded-evidence-needs-v26",
-            adapter_version="structured-chat-needs-v10",
+            adapter_version="structured-chat-needs-v11",
         )
 
     def plan_needs(
@@ -728,6 +819,17 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                 # Preserve the contract's original malformed-JSON diagnostic.
                 plan = EvidenceNeedsPlan.model_validate_json(content)
             else:
+                decoded, calendar_count = _canonicalize_explicit_calendar_values(
+                    decoded, turns
+                )
+                if calendar_count:
+                    logger.info(
+                        "Explicit calendar notation normalized.",
+                        extra={
+                            "event_name": "retrieval.needs.calendar_notation_normalized.v1",
+                            "normalized_reference_count": calendar_count,
+                        },
+                    )
                 plan = EvidenceNeedsPlan.model_validate(
                     canonicalize_relative_periods(decoded, turns, evaluated_at)
                 )

@@ -1,0 +1,20 @@
+{
+  "base_head": "629a4e3198aeeb3f5404ab9ee48dbe66ed571523",
+  "branch": "codex/block1-extractive-hold-20261112",
+  "main": "348f09e053c8ad73676921c5c616cced812111d7",
+  "runtime_aggregate": "cb45d4db1cee0ab9e1e3edd7cf85aa4a25603f5ca5ecfe60fb5c447e730bf36a",
+  "prompt_unchanged": true,
+  "prompt_version": "bounded-evidence-needs-v26",
+  "adapter_version": "structured-chat-needs-v11",
+  "provider_calls": 0,
+  "changed_code_hashes": {
+    "apps/ai/app/retrieval/needs_planner.py": "e3f0a266e19d55ed91b5ebc6829f460d7677ff95f11e5e1eb2939b8866ef833a",
+    "apps/ai/tests/test_needs_calendar_notation.py": "1a98330023c0b9a8462477e2c1f20e98619fb3968e11a6f81afc489d9811971e",
+    "apps/ai/tests/test_evidence_needs.py": "afaffbb9b3720cc7c382554857cb16501636a7024553a5838fd8fe60a642c994",
+    "apps/ai/tests/test_needs_provider_schema.py": "501782988b6f8ca162009099d74cc67464c0db0c5ff227a6b689af95a976abe0"
+  },
+  "unchanged_validators_and_schema": {
+    "apps/ai/app/retrieval/needs.py": true,
+    "apps/ai/app/retrieval/needs_schema.py": true
+  }
+}

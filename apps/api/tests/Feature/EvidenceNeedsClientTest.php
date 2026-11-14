@@ -34,7 +34,7 @@ final class EvidenceNeedsClientTest extends TestCase
     {
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
             'contract_schema_version' => 'evidence-needs-plan-v4',
-            'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v10'];
+            'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v11'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 

@@ -858,12 +858,15 @@ def test_transition_month_uses_canonical_value_and_verbatim_quote(month, canonic
     assert result.plan.needs[0].authority.source.quote == month
     assert "month=YYYY-MM" in calls[0]["messages"][0]["content"]
     assert "Temporal selection precedence" in calls[0]["messages"][0]["content"]
-    # Exact live failure shape remains rejected, never silently repaired.
+    # The raw contract stays strict; the adapter now converts explicitly quoted
+    # calendar notation before validation, without changing authority or precision.
     need["authority"]["value"] = month
-    with pytest.raises(RetrievalPlanningError):
-        adapter(example["plan"], []).plan_needs(
-            turns(example), evaluated_at="2026-09-06T12:00:00Z"
-        )
+    with pytest.raises(ValidationError):
+        EvidenceNeedsPlan.model_validate(example["plan"])
+    converted = adapter(example["plan"], []).plan_needs(
+        turns(example), evaluated_at="2026-09-06T12:00:00Z"
+    )
+    assert converted.plan == result.plan
     # Nor may the planner manufacture an exact day from the month wording.
     need["authority"].update(
         kind="transition_boundary", precision="day", value=canonical + "-01"

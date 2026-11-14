@@ -11,6 +11,26 @@ use PHPUnit\Framework\TestCase;
 
 final class EvidenceNeedsPlanTest extends TestCase
 {
+    public function test_real_python_adapter_artifact_passes_consumer_identity_validation(): void
+    {
+        $data = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/v4/python-produced-plan.json'), true, flags: JSON_THROW_ON_ERROR);
+        $plan = EvidenceNeedsPlan::fromArray($data['plan'], $data['turns'], $data['classifier_lineage'], $data['usage'], $data['evaluated_at']);
+        $this->assertSame('structured-chat-needs-v11', $plan->lineage->adapterVersion);
+        $this->assertSame('2023-11', $plan->value['needs'][0]['fact_reference']['value']);
+        $this->assertSame('November 2023', $plan->value['needs'][0]['fact_reference']['source']['quote']);
+        $this->assertSame('current', $plan->value['needs'][0]['authority']['kind']);
+
+        // An internally valid old fingerprint must not authorise new v10 execution.
+        $old = $data['classifier_lineage'];
+        unset($old['fingerprint']);
+        $old['adapter_version'] = 'structured-chat-needs-v10';
+        ksort($old);
+        $old['fingerprint'] = hash('sha256', json_encode($old, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Needs planner identity does not match its contract or usage.');
+        EvidenceNeedsPlan::fromArray($data['plan'], $data['turns'], $old, $data['usage'], $data['evaluated_at']);
+    }
+
     public function test_extractive_execution_discards_every_diagnostic_aspect_and_keeps_grounded_context(): void
     {
         $need = ['need_id' => 'n1', 'aspect' => 'Invented orbital insurance examples',
@@ -23,7 +43,7 @@ final class EvidenceNeedsPlanTest extends TestCase
             'needs' => [$need], 'bindings' => []];
         $turns = [['turn_id' => 'u1', 'text' => 'Tell me about the equipment register.'], ['turn_id' => 'u2', 'text' => 'Who maintains it?']];
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v4',
-            'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v10'];
+            'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v11'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
         $plan = EvidenceNeedsPlan::fromArray($value, $turns, $lineage,

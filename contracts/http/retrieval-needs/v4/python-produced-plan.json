@@ -1,0 +1,116 @@
+{
+  "evidence_kind": "real_python_adapter_controlled_transport_and_interpretation",
+  "evaluated_at": "2026-11-14T12:00:00Z",
+  "turns": [
+    {
+      "turn_id": "u1",
+      "text": "The event was November 2023. What does the current policy require?"
+    }
+  ],
+  "plan": {
+    "schema_version": "evidence-needs-plan-v4",
+    "decision": "plan",
+    "clarification": null,
+    "needs": [
+      {
+        "need_id": "n1",
+        "aspect": "The event was November 2023. What does the current policy require?",
+        "central": true,
+        "question_span": {
+          "turn_id": "u1",
+          "quote": "The event was November 2023. What does the current policy require?"
+        },
+        "context_spans": [],
+        "operation": "retrieve",
+        "authority": {
+          "kind": "current",
+          "value": null,
+          "precision": "none",
+          "source": null
+        },
+        "fact_reference": {
+          "value": "2023-11",
+          "precision": "month",
+          "source": {
+            "turn_id": "u1",
+            "quote": "November 2023"
+          }
+        },
+        "applicability": {
+          "kind": "generic",
+          "source": null
+        },
+        "claim_under_test": null,
+        "scope_question": null,
+        "supports_need_id": null
+      }
+    ],
+    "bindings": [
+      {
+        "need_id": "n1",
+        "subject_status": "topic",
+        "family_ids": [],
+        "ownership": "authorised_workspace",
+        "ownership_source": null
+      }
+    ]
+  },
+  "classifier_lineage": {
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "contract_schema_version": "evidence-needs-plan-v4",
+    "prompt_version": "bounded-evidence-needs-v26",
+    "adapter_version": "structured-chat-needs-v11",
+    "fingerprint": "51c472a815e93e6037ec6213249ef3b08ee12d2fe07f281ddf8080be88e05fe9"
+  },
+  "usage": {
+    "stage": "planner",
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "execution": "provider_api",
+    "request_count": 2,
+    "retry_count": 0,
+    "provider_attempt_count": null,
+    "provider_retry_count": null,
+    "outer_attempt_count": null,
+    "outer_retry_count": null,
+    "rate_limit_event_count": null,
+    "retry_delays": [],
+    "first_provider_attempt_at": null,
+    "final_provider_success_at": null,
+    "provider_retry_elapsed_ms": null,
+    "input_tokens": 120,
+    "cached_input_tokens": null,
+    "output_tokens": 90,
+    "latency_ms": 0.0,
+    "cost_basis": "unavailable",
+    "cost_usd": null,
+    "pricing_snapshot": null,
+    "validation_attempts": [
+      {
+        "attempt": 1,
+        "request_count": 2,
+        "retry_count": 0,
+        "status": "accepted",
+        "category": null,
+        "input_tokens": 120,
+        "output_tokens": 90,
+        "latency_ms": 0.0,
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "interpretation_check": {
+          "version": "interpretation-check-v1",
+          "code": "accepted",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "latency_ms": 0,
+          "cost_basis": "unavailable",
+          "cost_usd": null
+        }
+      }
+    ]
+  }
+}

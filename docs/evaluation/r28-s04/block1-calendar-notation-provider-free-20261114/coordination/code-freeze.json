@@ -1,0 +1,27 @@
+{
+  "base_head": "629a4e3198aeeb3f5404ab9ee48dbe66ed571523",
+  "branch": "codex/block1-extractive-hold-20261112",
+  "main": "348f09e053c8ad73676921c5c616cced812111d7",
+  "runtime_aggregate": "cbff39c23c64c7226ca3592248816884f2af8a5dcf7d5672f125d524078ba238",
+  "prompt_unchanged": true,
+  "prompt_version": "bounded-evidence-needs-v26",
+  "adapter_version": "structured-chat-needs-v11",
+  "provider_calls": 0,
+  "changed_code_hashes": {
+    "apps/ai/app/retrieval/needs_planner.py": "e3f0a266e19d55ed91b5ebc6829f460d7677ff95f11e5e1eb2939b8866ef833a",
+    "apps/ai/tests/test_needs_calendar_notation.py": "24f0f574d16bb4370dc9333b713840219e1b1711fae7f3da0ecaf2d7730a00c7",
+    "apps/ai/tests/test_evidence_needs.py": "afaffbb9b3720cc7c382554857cb16501636a7024553a5838fd8fe60a642c994",
+    "apps/ai/tests/test_needs_provider_schema.py": "501782988b6f8ca162009099d74cc67464c0db0c5ff227a6b689af95a976abe0",
+    "apps/api/app/Support/Retrieval/EvidenceNeedsPlan.php": "27f87749c4f7e14a92d1b0639ada4ff16afb2908c85eced569b1d24da37e7eac",
+    "apps/api/tests/Unit/EvidenceNeedsPlanTest.php": "52002264b94231c4c2e30426d55229aed5123008ee94b262d72c068ad61c9a4a",
+    "apps/api/tests/Feature/EvidenceNeedsClientTest.php": "bbdfdf1c57fa74d0ee2d22e5530582c13cfd231b18f69f2c6be3bf5ecf95342d",
+    "apps/api/tests/Feature/EvidenceNeedsRetrievalTest.php": "5f644b150ce968e9a17c28fbf5ddb4a7e9857bc5ab7deeabd3b152eafcd515c3",
+    "apps/api/tests/Feature/ConversationOrchestrationTest.php": "289a97cdced7860f38713cfba4df8bd4ea46748e343a9c2d6edea9cb6254894c",
+    "contracts/http/retrieval-needs/v4/README.md": "d31740b551c07753edce5d33f37e1fedb2a22fac729c4f5de7e7b84f9b2eb926",
+    "contracts/http/retrieval-needs/v4/python-produced-plan.json": "3cb328ee35cae4420fae10ed31c0f3d41bac55cc7ae33798fd109351c62b9239"
+  },
+  "unchanged_validators_and_schema": {
+    "apps/ai/app/retrieval/needs.py": true,
+    "apps/ai/app/retrieval/needs_schema.py": true
+  }
+}

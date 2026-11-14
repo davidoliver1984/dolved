@@ -1,0 +1,84 @@
+{
+  "scope": "retained temporal fields plus synthetic-envelope grounding; not full original-plan replay",
+  "missing_from_capture": [
+    "clarification",
+    "central",
+    "supports_need_id",
+    "claim_under_test",
+    "scope_question"
+  ],
+  "harness_fillers": {
+    "clarification": null,
+    "central": true,
+    "supports_need_id": null
+  },
+  "optional_contract_defaults": {
+    "claim_under_test": null,
+    "scope_question": null
+  },
+  "projection_only_field_removed": "fact_reference.kind",
+  "interpretation_checked": false,
+  "provider_calls": 0,
+  "rows": [
+    {
+      "item": "G2",
+      "attempt": 1,
+      "normalizations": 1,
+      "changes": [
+        {
+          "path": "needs.0.fact_reference.value",
+          "old": "March 2025",
+          "new": "2025-03"
+        }
+      ],
+      "retained_temporal_fields_schema": "PASS",
+      "synthetic_envelope_grounding": "PASS"
+    },
+    {
+      "item": "G2",
+      "attempt": 2,
+      "normalizations": 1,
+      "changes": [
+        {
+          "path": "needs.0.fact_reference.value",
+          "old": "March 2025",
+          "new": "2025-03"
+        }
+      ],
+      "retained_temporal_fields_schema": "PASS",
+      "synthetic_envelope_grounding": "PASS"
+    },
+    {
+      "item": "G3",
+      "attempt": 1,
+      "normalizations": 1,
+      "changes": [
+        {
+          "path": "needs.0.fact_reference.value",
+          "old": "1 July 2025",
+          "new": "2025-07-01"
+        }
+      ],
+      "retained_temporal_fields_schema": "PASS",
+      "synthetic_envelope_grounding": "PASS"
+    },
+    {
+      "item": "G3",
+      "attempt": 2,
+      "normalizations": 1,
+      "changes": [
+        {
+          "path": "needs.0.fact_reference.value",
+          "old": "1 July 2025",
+          "new": "2025-07-01"
+        }
+      ],
+      "retained_temporal_fields_schema": "PASS",
+      "synthetic_envelope_grounding": {
+        "stage": "grounding",
+        "field": "root",
+        "code": "temporal_relation_grounding"
+      }
+    }
+  ]
+}
