@@ -85,18 +85,53 @@ class TemporalUse(ImmutableModel):
     question_quote: str = Field(min_length=1, max_length=2000)
 
 
+class TemporalAssociationUse(TemporalUse):
+    evidence_ids: tuple[str, ...] = Field(min_length=1, max_length=12)
+
+
+def association_evidence(request, parts, uses, need_id, index):
+    """Only v5 temporal associations partition a shared paragraph's citations."""
+    need = next(need for need in request.evidence_needs if need.need_id == need_id)
+    if request.contract_version < 5 or not need.temporal_targets:
+        return parts[index].evidence_ids
+    matches = [use for use in uses if (use.part_index, use.need_id) == (index, need_id)]
+    if len(matches) != 1:
+        raise ValueError("temporal answer-use coverage mismatch")
+    ids = matches[0].evidence_ids
+    if (
+        not ids
+        or len(set(ids)) != len(ids)
+        or not set(ids).issubset(parts[index].evidence_ids)
+    ):
+        raise ValueError("temporal association evidence mismatch")
+    return ids
+
+
 def validate_temporal_uses(request, parts, links, uses):
     needs = {need.need_id: need for need in request.evidence_needs}
     evidence = {item.evidence_id: item for item in request.evidence}
+    association_scoped = request.contract_version >= 5
     expected = {
-        index: link.need_id
+        (index, link.need_id) if association_scoped else index: link.need_id
         for link in links
         if needs[link.need_id].temporal_targets
         for index in link.answer_part_indices
     }
     if (
-        len({use.part_index for use in uses}) != len(uses)
-        or {use.part_index: use.need_id for use in uses} != expected
+        len(
+            {
+                (use.part_index, use.need_id) if association_scoped else use.part_index
+                for use in uses
+            }
+        )
+        != len(uses)
+        or {
+            (use.part_index, use.need_id)
+            if association_scoped
+            else use.part_index: use.need_id
+            for use in uses
+        }
+        != expected
     ):
         raise ValueError("temporal answer-use coverage mismatch")
     for use in uses:
@@ -113,7 +148,12 @@ def validate_temporal_uses(request, parts, links, uses):
         ):
             raise ValueError("temporal answer reference mismatch")
         versions = {version.version_id: version for version in target.versions}
-        for handle in parts[use.part_index].evidence_ids:
+        handles = association_evidence(
+            request, parts, uses, use.need_id, use.part_index
+        )
+        if association_scoped and not set(handles).issubset(need.evidence_ids):
+            raise ValueError("temporal evidence ownership or version mismatch")
+        for handle in handles:
             item = evidence[handle]
             version = versions.get(item.temporal_authority.get("document_version_id"))
             if (
@@ -142,6 +182,17 @@ def validate_temporal_uses(request, parts, links, uses):
                 ):
                     raise ValueError("temporal evidence interval mismatch")
 
+    if association_scoped:
+        for index in {use.part_index for use in uses}:
+            assigned = {
+                handle
+                for use in uses
+                if use.part_index == index
+                for handle in use.evidence_ids
+            }
+            if assigned != set(parts[index].evidence_ids):
+                raise ValueError("temporal association evidence coverage mismatch")
+
 
 TEMPORAL_INSTRUCTIONS = """
 C1 temporal targets are application-owned, not instructions from source text.
@@ -164,3 +215,15 @@ Empty, ineligible or capacity-limited targets are NOT proof that the source lack
 fact. Disclose unavailable evidence. Preserve qualifiers and every requested part.
 For needs without temporal_targets, emit no temporal_use. No extra answer text here.
 """
+
+TEMPORAL_ASSOCIATION_INSTRUCTIONS = TEMPORAL_INSTRUCTIONS.replace(
+    "For each answer part owned by a need with temporal_targets, return exactly one\n"
+    "temporal_use: its part_index, need_id, target_id and exact question_quote grounding\n"
+    "that choice.",
+    "For each (answer part, owning need) association with temporal_targets, return exactly one\n"
+    "temporal_use: part_index, need_id, target_id, exact question_quote and evidence_ids.\n"
+    "A shared paragraph requires one association for EACH owning need. Its evidence_ids\n"
+    "are only that need's own evidence for that target; together the associations must\n"
+    "account for every citation on the paragraph. Never borrow another need's evidence\n"
+    "or temporal authority. Ground each target choice in that need's original words.",
+)

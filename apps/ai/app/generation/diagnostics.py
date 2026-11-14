@@ -35,6 +35,8 @@ RULES: dict[str, tuple[str, str]] = {
             "temporal answer reference mismatch",
             "temporal evidence ownership or version mismatch",
             "temporal evidence interval mismatch",
+            "temporal association evidence mismatch",
+            "temporal association evidence coverage mismatch",
         )
     },
     "provider output violates the generation outcome invariant": (

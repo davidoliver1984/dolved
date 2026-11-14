@@ -1,0 +1,7 @@
+services:
+  ai:
+    environment:
+      EVALUATION_CAPTURE_ENABLED: "true"
+      EVALUATION_CAPTURE_DESTINATION: /evaluation-evidence/capture
+    volumes:
+      - /Users/davidoliver/Desktop/RAG/docs/evaluation/r28-s04/block1-temporal-association-diagnostic-20261114:/evaluation-evidence

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "G3",
+    "utterance": "Facilities agreed a new pest control schedule on 20 May 2025, and it started on 1 July 2025. How often did the kitchen area have to be inspected once it started?",
+    "source": "docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/inputs/G3.json",
+    "sha256": "c88905a2fc5eaab9cc40b879fc67a8bf51de5ff8b1127e9fe4dc7aa79347cf68"
+  },
+  {
+    "id": "17",
+    "utterance": "Did the Birmingham home need an asbestos-register check before January 2026, and does it now?",
+    "source": "docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/inputs/17.json",
+    "sha256": "575dacf1faf4c9c8de9a4ef1e67454391a7acc18c60e71a3c6d9142bc2173e49"
+  },
+  {
+    "id": "25",
+    "utterance": "How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?",
+    "source": "docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/inputs/25.json",
+    "sha256": "e187dc2c8322b18105a8195cbdee3b44e9b706af1748ee78f4b653fd975191ca"
+  }
+]

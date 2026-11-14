@@ -47,7 +47,7 @@ class GenerationNeed(ImmutableModel):
 
 
 class GenerationNeedsRequest(ImmutableModel):
-    contract_version: Literal[2, 3, 4]
+    contract_version: Literal[2, 3, 4, 5]
     request_id: UUID
     workspace_id: UUID
     question: BoundedText
@@ -82,7 +82,7 @@ class GenerationNeedsRequest(ImmutableModel):
             ):
                 raise ValueError("generation requires the compiled extractive request")
             if need.temporal_targets:
-                if self.contract_version != 4 or need.operation != "retrieve":
+                if self.contract_version not in (4, 5) or need.operation != "retrieve":
                     raise ValueError("temporal targets require the C1 envelope")
                 if len({t.target_id for t in need.temporal_targets}) != len(
                     need.temporal_targets

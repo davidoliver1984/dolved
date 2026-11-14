@@ -9,6 +9,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     service_name: str = "rag-platform-ai"
     environment: str = "local"
+    evaluation_capture_enabled: bool = False
+    evaluation_capture_destination: str | None = None
     aws_default_region: str = "us-east-1"
     aws_endpoint_url: str | None = None
     ingestion_queue: str = "rag-platform-ingestion-local"

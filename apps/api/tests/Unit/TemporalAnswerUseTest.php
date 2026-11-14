@@ -6,6 +6,9 @@ namespace Tests\Unit;
 
 use App\Enums\GenerationSide;
 use App\Exceptions\GenerationException;
+use App\Models\AnswerPart;
+use App\Models\GeneratedAnswer;
+use App\Services\Generation\ValidateGenerationResult;
 use App\Services\Generation\ValidateTemporalAnswerUse;
 use App\Support\Generation\AnswerPartResult;
 use App\Support\Generation\GenerationEvidence;
@@ -15,6 +18,72 @@ use Tests\TestCase;
 
 final class TemporalAnswerUseTest extends TestCase
 {
+    public function test_shared_part_requires_each_independent_temporal_association(): void
+    {
+        foreach (['valid', 'borrowed', 'missing', 'duplicate', 'version', 'interval', 'quote', 'unassigned'] as $case) {
+            $needs = $uses = $links = $evidence = [];
+            foreach (['n1', 'n2'] as $index => $id) {
+                $target = ['target_id' => $id.':requested', 'need_id' => $id, 'family_id' => 'family',
+                    'purpose' => 'requested', 'mode' => 'current', 'at' => '2026-11-14T00:00:00Z', 'reference' => null,
+                    'status' => 'searched', 'versions' => [['version_id' => 'version', 'start' => '2026-01-01T00:00:00Z', 'end' => null]]];
+                $needs[] = ['need_id' => $id, 'question_span' => ['turn_id' => 'u1', 'quote' => 'What is required now?'],
+                    'evidence_ids' => ['ev-'.$index], 'temporal_targets' => [$target]];
+                $uses[] = ['part_index' => 0, 'need_id' => $id, 'target_id' => $target['target_id'], 'question_quote' => 'now', 'evidence_ids' => ['ev-'.$index]];
+                $links[] = ['need_id' => $id, 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []];
+                $evidence[] = new GenerationEvidence('ev-'.$index, 'Both duties require daily inspection.', 1, 1, 1, [],
+                    ['need_id' => $id, 'document_family_id' => 'family', 'document_version_id' => 'version', 'temporal_target_ids' => [$target['target_id']]], [], GenerationSide::Primary);
+            }
+            if ($case === 'borrowed') {
+                $uses[0]['evidence_ids'] = ['ev-1'];
+            }
+            if ($case === 'missing') {
+                array_pop($uses);
+            }
+            if ($case === 'duplicate') {
+                $uses[] = $uses[0];
+            }
+            if ($case === 'version') {
+                $needs[1]['temporal_targets'][0]['versions'][0]['version_id'] = 'other';
+            }
+            if ($case === 'interval') {
+                $needs[1]['temporal_targets'][0]['versions'][0]['end'] = '2026-02-01T00:00:00Z';
+            }
+            if ($case === 'quote') {
+                $uses[1]['question_quote'] = 'invented';
+            }
+            if ($case === 'unassigned') {
+                $uses[1]['evidence_ids'] = [];
+            }
+            $request = new GenerationRequest('request', 'workspace', 'What is required now?', $evidence, 'test', 8000,
+                [GenerationSide::Primary], evidenceNeeds: $needs);
+            $payload = ['contract_version' => 5, 'outcome' => 'answered',
+                'answer_parts' => [['text' => 'Both duties require daily inspection.', 'evidence_ids' => ['ev-0', 'ev-1']]],
+                'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+                'aspect_links' => $links, 'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
+                'temporal_uses' => $uses];
+            try {
+                $result = (new ValidateGenerationResult)->handleNeeds($request, ['n1', 'n2'], $payload);
+                $this->assertSame('valid', $case);
+                $this->assertCount(2, $result->temporalContext['uses']);
+                $this->assertSame('temporal-answer-use-v2', $result->temporalContext['version']);
+                $this->assertSame(2, substr_count($result->renderedText(), 'Temporal basis:'));
+                $reloaded = new GeneratedAnswer;
+                $reloaded->forceFill(['outcome' => 'answered', 'answer_parts' => $payload['answer_parts'],
+                    'unsupported_aspects' => [], 'aspect_links' => $links, 'temporal_context' => $result->temporalContext]);
+                $reloaded->setRelation('answerParts', collect([new AnswerPart(['text' => $payload['answer_parts'][0]['text']])]));
+                $this->assertSame($result->renderedText(), $reloaded->renderedText());
+                $legacy = $result->temporalContext;
+                $legacy['version'] = 'temporal-answer-use-v1';
+                $legacy['uses'] = [$legacy['uses'][0]];
+                unset($legacy['uses'][0]['evidence_ids']);
+                $reloaded->temporal_context = $legacy;
+                $this->assertSame(1, substr_count($reloaded->renderedText(), 'Temporal basis:'));
+            } catch (GenerationException) {
+                $this->assertNotSame('valid', $case);
+            }
+        }
+    }
+
     public function test_calendar_inventory_preserves_precision_and_excludes_numeric_non_dates(): void
     {
         $question = 'On 29 February 2024, during March 2025 and in 2023. Compare 2024-12-31. '

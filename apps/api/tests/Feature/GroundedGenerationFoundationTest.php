@@ -52,6 +52,41 @@ class GroundedGenerationFoundationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_shared_temporal_receipts_persist_reload_and_render_each_association(): void
+    {
+        [$input] = $this->assemblyFixture();
+        $request = app(AssembleGenerationRequest::class)->handle($input);
+        $uses = [];
+        foreach (['n1', 'n2'] as $id) {
+            $uses[] = ['part_index' => 0, 'need_id' => $id, 'target_id' => $id.':requested',
+                'question_quote' => 'now', 'evidence_ids' => ['ev-01'], 'planner_disagreement' => false,
+                'target' => ['target_id' => $id.':requested', 'need_id' => $id, 'reference' => null,
+                    'at' => '2026-11-14T00:00:00Z', 'versions' => [['version_id' => 'version',
+                        'start' => '2026-01-01T00:00:00Z', 'end' => null]]]];
+        }
+        // Persistence does not revalidate ownership; that boundary is tested by
+        // TemporalAnswerUseTest through the real ValidateGenerationResult service.
+        $result = new GenerationResult(GenerationOutcome::Answered,
+            [new AnswerPartResult('Both requested duties are covered.', ['ev-01'])], [], null,
+            aspectLinks: array_map(fn ($id) => ['need_id' => $id, 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []], ['n1', 'n2']),
+            aspectResults: ['n1' => 'supported', 'n2' => 'supported'],
+            temporalContext: ['version' => 'temporal-answer-use-v2', 'uses' => $uses, 'targets' => []]);
+        $fingerprint = app(GenerationFingerprint::class)->make('deterministic', 'contract-fake',
+            'generation-result-v5', 'test-only', 'test-only', []);
+        $saved = app(PersistGeneratedAnswer::class)->handle($input->authorisedScope, $input->question,
+            (string) Str::uuid(), $request, $result, $fingerprint);
+        $reloaded = GeneratedAnswer::query()->findOrFail($saved->id);
+        $this->assertSame($result->temporalContext, $reloaded->temporal_context);
+        $this->assertSame($result->renderedText(), $reloaded->renderedText());
+        $this->assertSame(2, substr_count($reloaded->renderedText(), 'Temporal basis:'));
+        $legacy = $result->temporalContext;
+        $legacy['version'] = 'temporal-answer-use-v1';
+        $legacy['uses'] = [$uses[0]];
+        unset($legacy['uses'][0]['evidence_ids']);
+        $reloaded->forceFill(['temporal_context' => $legacy])->save();
+        $this->assertSame(1, substr_count($reloaded->fresh()->renderedText(), 'Temporal basis:'));
+    }
+
     public function test_combined_paid_rejections_without_pricing_identity_degrade_to_unavailable_cost(): void
     {
         $receipt = ValidationAttemptUsage::receipt(['request_count' => 1,

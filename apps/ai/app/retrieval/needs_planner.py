@@ -537,8 +537,11 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
         catalogue: tuple[CatalogueFamily, ...] = (),
     ) -> NeedsPlanningResult:
         receipts: list[dict[str, object]] = []
+        from app.evaluation_capture import planner_begin, planner_end
+
         feedback: dict[str, str] | None = None
         for number in (1, 2):
+            planner_begin(number)
             started = time.perf_counter()
             try:
                 result = self._plan_needs_once(
@@ -583,6 +586,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             except RetrievalPlanningError as failure:
                 completion = getattr(failure, "completion", {})
                 validation = getattr(failure, "validation", {})
+                planner_end("rejected", validation)
                 check = getattr(failure, "interpretation_check", None)
                 receipts.append(
                     {
@@ -620,6 +624,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                     }
                     continue
                 raise
+            planner_end("accepted")
             receipts.append(
                 {
                     "attempt": number,
@@ -804,6 +809,12 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             if not isinstance(content, str):
                 raise TypeError("non-text structured output")
             validation_stage = "schema"
+            from app.evaluation_capture import planner_proposal, planner_validator_input
+
+            try:
+                planner_proposal(json.loads(content))
+            except json.JSONDecodeError:
+                pass  # No parsed fields; unchanged contract validation below rejects it.
             content, normalized_count = _normalize_scope_claim_conflicts(content)
             if normalized_count:
                 logger.info(
@@ -819,9 +830,12 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                 # Preserve the contract's original malformed-JSON diagnostic.
                 plan = EvidenceNeedsPlan.model_validate_json(content)
             else:
+                from app.evaluation_capture import calendar_normalized
+
                 decoded, calendar_count = _canonicalize_explicit_calendar_values(
                     decoded, turns
                 )
+                calendar_normalized(calendar_count)
                 if calendar_count:
                     logger.info(
                         "Explicit calendar notation normalized.",
@@ -830,9 +844,11 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                             "normalized_reference_count": calendar_count,
                         },
                     )
-                plan = EvidenceNeedsPlan.model_validate(
-                    canonicalize_relative_periods(decoded, turns, evaluated_at)
+                validator_input = canonicalize_relative_periods(
+                    decoded, turns, evaluated_at
                 )
+                planner_validator_input(validator_input)
+                plan = EvidenceNeedsPlan.model_validate(validator_input)
             if plan.schema_version != "evidence-needs-plan-v4":
                 raise ValueError("new execution requires extractive request contract")
             validation_stage = "grounding"

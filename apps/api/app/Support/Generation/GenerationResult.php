@@ -57,11 +57,10 @@ final readonly class GenerationResult
         $parts = [];
         foreach ($this->answerParts as $index => $part) {
             if (! $this->isUnsupportedBinaryPart($index, $part)) {
-                $basis = collect($this->temporalContext['uses'] ?? [])->firstWhere('part_index', $index);
                 $label = '';
-                if ($basis !== null) {
+                foreach (collect($this->temporalContext['uses'] ?? [])->where('part_index', $index) as $basis) {
                     $target = $basis['target'];
-                    $label = "\nTemporal basis: ".($target['reference']['quote'] ?? $target['at'] ?? 'planner-selected authority')
+                    $label .= "\nTemporal basis: ".($target['reference']['quote'] ?? $target['at'] ?? 'planner-selected authority')
                         .(($target['reference']['period_start'] ?? null) === null ? ''
                             : '; whole '.$target['reference']['precision'].' '.$target['reference']['period_start'].' to '.$target['reference']['period_end'].' (end exclusive)')
                         .'; version '.implode(', ', array_column($target['versions'], 'version_id'))

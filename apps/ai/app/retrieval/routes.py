@@ -245,11 +245,16 @@ async def plan_evidence_needs(
             status.HTTP_401_UNAUTHORIZED, "Signed identity does not match body."
         )
     try:
-        result = planner.plan_needs(
-            incoming.user_turns,
-            evaluated_at=incoming.evaluated_at.isoformat(),
-            catalogue=incoming.catalogue,
-        )
+        from app.evaluation_capture import capture_scope
+
+        with capture_scope(
+            get_settings(), incoming.workspace_id, incoming.request_id, "planner"
+        ):
+            result = planner.plan_needs(
+                incoming.user_turns,
+                evaluated_at=incoming.evaluated_at.isoformat(),
+                catalogue=incoming.catalogue,
+            )
     except RetrievalPlanningError as exception:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,

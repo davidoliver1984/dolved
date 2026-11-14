@@ -12,6 +12,20 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 #### C1 independent review outcome and road to the full run — David, 2026-11-14
 
+**Bounded temporal-association correction and diagnostics (David, 2026-11-14; in progress):**
+Starting `02470b2`, reproduce item 29's structural shared-paragraph defect provider-free,
+then validate temporal use per `(part, need)` with independently owned evidence and
+authority. Generation v5 and persisted `temporal-answer-use-v2` retain historical
+receipt readability; retrieval, planner interpretation, limits and retries are
+unchanged. Add default-off, workspace-bound serving-AI evaluation sidecars for
+rejected planner/generation fields and actual calendar-notation counts. Verify
+capture-on/off equivalence and full-suite identities before exactly one new
+**DIAGNOSTIC** of G3 and checkpoint 17/25 on the isolated stack. Results cannot
+replace earlier verdicts. [Package and verification](block1-temporal-association-diagnostic-20261114/report.md).
+Items **19 and 28 remain unresolved Block 1 findings, implementation assigned to
+Block 2**, not passes. Main unchanged; Block 1 HOLD. The earlier missing rejected
+outputs remain unavailable and will not be reconstructed from this new run.
+
 **Remaining-verification executed under amended budget (2026-11-14):** David raised this run's runaway ceiling to **USD50**; conservative unchanged-limits reservation **USD47** fit and was stated before one-use consumption. Future governed ceilings are **max(USD50, twice the stated conservative reservation)**, not a reason to reduce controls. [New-runtime report](block1-remaining-verification-20261114/run/report.md), [source-quoted review](block1-remaining-verification-20261114/run/correctness-review.md), and immutable cases/checksums: execution HEAD `c28e69c15a1ae03f900fdb60ca579aafab8cb34f`, runtime **`cbff39c23c64c7226ca3592248816884f2af8a5dcf7d5672f125d524078ba238`**. Isolated stack/membership/corpus, 50 migrations already Ran, coordinated API/AI restart and mounted hashes verified. Frozen evidence-local harness excludes the unrelated dirty governed-runner edits. Four stop tests and five real-orchestration capture tests passed. All **18** items (17–32, then separately labelled G2/G3) dispatched once in order, no typed infrastructure/auth/integrity/budget stop, no application change or replay. Correctness was deferred under David's amendment.
 
 **New 16-item cohort, not a combined historical gate:** stored **14 completed /1 clarification /1 retrieval_no_answer**; literal **12 answers /1 clarification /3 no-answers**. Implementing-agent source review: **7 correct /2 qualified-correct /3 wrong /4 no-answer (including clarification)**. Inputs31/32 are development (**one no-answer, one correct**); the other14 are **6/2/3/3**. Wrong24 adds a senior-carer alternative to the mandatory fridge-breakdown call (Block3 condition/contact conflation, correct source present); wrong26 substitutes MDM for Device encryption and mixes care/cyber routes (shared retrieval/association/assembly, not solely Block3); wrong28 again omits the site Champion role (existing Block1 role-sense finding with missing evidence/assembly contribution; renamed-from wording not required). No-answer19 has an update selector compiled as named historical reference and an ambiguous-period clarification (shared Block1/2);29 exhausts `temporal_target_invalid` with same-version C1 targets and unresolved site coverage (cause not reconstructed); development31 exhausts citation ownership after an induction-family binding excludes the required Handbook passage. These shared/unresolved causes are **not Block1 passes**. Input17 compare no_match belongs to Block2;23 explicitly discloses missing prior role although current-side evidence states it (Block2/3 isolation). Input27 exercises two-unit budget-cut disclosure, while29/31 repeat the separately recorded misleading validation-exhaustion wording. Earlier mandatory Block3 obligations remain unchanged; no fixes authorised by these findings.

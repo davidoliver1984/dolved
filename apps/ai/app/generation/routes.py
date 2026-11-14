@@ -86,7 +86,14 @@ async def answer_needs(
         "request_id": str(incoming.request_id),
     }
     try:
-        result = generator.generate_needs(incoming).validate_for_needs_request(incoming)
+        from app.evaluation_capture import capture_scope
+
+        with capture_scope(
+            get_settings(), incoming.workspace_id, incoming.request_id, "generation"
+        ):
+            result = generator.generate_needs(incoming).validate_for_needs_request(
+                incoming
+            )
     except GenerationContextBudgetError as exception:
         return needs_response(
             {

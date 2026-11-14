@@ -11,7 +11,7 @@ use Carbon\CarbonImmutable;
 
 final class ValidateTemporalAnswerUse
 {
-    public function handle(GenerationRequest $request, array $parts, array $links, array $uses): array
+    public function handle(GenerationRequest $request, array $parts, array $links, array $uses, bool $associationScoped = false): array
     {
         $needs = collect($request->evidenceNeeds)->keyBy('need_id');
         $evidence = collect($request->evidence)->keyBy('evidenceId');
@@ -19,21 +19,32 @@ final class ValidateTemporalAnswerUse
         foreach ($links as $link) {
             if (($needs[$link['need_id']]['temporal_targets'] ?? []) !== []) {
                 foreach ($link['answer_part_indices'] as $index) {
-                    $expected[$index] = $link['need_id'];
+                    $expected[$associationScoped ? $index.':'.$link['need_id'] : $index] = $link['need_id'];
                 }
             }
         }
         $seen = [];
         $validated = [];
+        $assigned = [];
         foreach ($uses as $use) {
-            if (! is_array($use) || count($use) !== 4 || ! is_int($use['part_index'] ?? null)
+            $key = is_array($use) && is_int($use['part_index'] ?? null) && is_string($use['need_id'] ?? null)
+                ? ($associationScoped ? $use['part_index'].':'.$use['need_id'] : $use['part_index']) : null;
+            if (! is_array($use) || count($use) !== ($associationScoped ? 5 : 4) || ! is_int($use['part_index'] ?? null)
                 || ! is_string($use['need_id'] ?? null) || ! is_string($use['target_id'] ?? null)
                 || ! is_string($use['question_quote'] ?? null) || trim($use['question_quote']) === ''
-                || isset($seen[$use['part_index']]) || ($expected[$use['part_index']] ?? null) !== $use['need_id']) {
+                || isset($seen[$key]) || ($expected[$key] ?? null) !== $use['need_id']) {
                 throw new GenerationException('Temporal answer-use coverage is invalid.');
             }
-            $seen[$use['part_index']] = $use['need_id'];
+            $seen[$key] = $use['need_id'];
             $need = $needs[$use['need_id']];
+            $handles = $associationScoped ? ($use['evidence_ids'] ?? null) : $parts[$use['part_index']]->evidenceIds;
+            if (! is_array($handles) || $handles === [] || ! array_is_list($handles)
+                || array_any($handles, fn ($id) => ! is_string($id)) || count(array_unique($handles)) !== count($handles)
+                || array_diff($handles, $parts[$use['part_index']]->evidenceIds) !== []
+                || ($associationScoped && array_diff($handles, $need['evidence_ids'] ?? []) !== [])) {
+                throw new GenerationException('Temporal association evidence ownership is invalid.');
+            }
+            $assigned[$use['part_index']] = array_unique([...($assigned[$use['part_index']] ?? []), ...$handles]);
             $target = collect($need['temporal_targets'])->firstWhere('target_id', $use['target_id']);
             if ($target === null || $target['status'] !== 'searched' || $target['need_id'] !== $use['need_id']
                 || ! array_any([$need['question_span'], ...($need['context_spans'] ?? [])],
@@ -44,7 +55,7 @@ final class ValidateTemporalAnswerUse
                 || ! str_contains($use['question_quote'], $target['reference']['quote']))) {
                 throw new GenerationException('Temporal answer reference mismatch.');
             }
-            foreach ($parts[$use['part_index']]->evidenceIds as $handle) {
+            foreach ($handles as $handle) {
                 $item = $evidence->get($handle);
                 $authority = $item?->temporalAuthority ?? [];
                 $version = collect($target['versions'])->firstWhere('version_id', $authority['document_version_id'] ?? null);
@@ -81,8 +92,15 @@ final class ValidateTemporalAnswerUse
         if ($seen !== $expected) {
             throw new GenerationException('Temporal answer-use coverage is incomplete.');
         }
+        if ($associationScoped) {
+            foreach ($assigned as $index => $handles) {
+                if (array_diff($parts[$index]->evidenceIds, $handles) !== []) {
+                    throw new GenerationException('Temporal association evidence coverage is incomplete.');
+                }
+            }
+        }
 
-        return ['version' => 'temporal-answer-use-v1', 'uses' => $validated,
+        return ['version' => $associationScoped ? 'temporal-answer-use-v2' : 'temporal-answer-use-v1', 'uses' => $validated,
             'targets' => $needs->flatMap(fn ($need) => $need['temporal_targets'] ?? [])->values()->all()];
     }
 }

@@ -295,7 +295,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             }
             if (str_ends_with($request->url(), '/answer-needs')) {
                 $generationRequest = $body;
-                $this->assertSame(4, $body['contract_version']);
+                $this->assertSame(5, $body['contract_version']);
                 $historicalItems = collect($body['evidence'])->where('document_id', $old->id);
                 $historical = $historicalItems->first();
                 $this->assertNotNull($historical);
@@ -303,13 +303,13 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 $this->assertCount($input16 ? 1 : 2, $historicalItems);
                 $this->assertSame(['n1:date:1'], $historical['temporal_authority']['temporal_target_ids']);
 
-                return Http::response(['contract_version' => 4, 'request_id' => $body['request_id'], 'status' => 'completed',
-                    'result' => ['contract_version' => 4, 'outcome' => 'answered',
+                return Http::response(['contract_version' => 5, 'request_id' => $body['request_id'], 'status' => 'completed',
+                    'result' => ['contract_version' => 5, 'outcome' => 'answered',
                         'answer_parts' => [['text' => $answerText, 'evidence_ids' => $historicalItems->pluck('evidence_id')->values()->all()]],
                         'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
                         'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]],
                         'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
-                        'temporal_uses' => [['part_index' => 0, 'need_id' => 'n1', 'target_id' => $rejectTargets ? 'invented' : 'n1:date:1', 'question_quote' => $dateQuote]]]]);
+                        'temporal_uses' => [['part_index' => 0, 'need_id' => 'n1', 'target_id' => $rejectTargets ? 'invented' : 'n1:date:1', 'question_quote' => $dateQuote, 'evidence_ids' => $historicalItems->pluck('evidence_id')->values()->all()]]]]);
             }
             $this->assertStringEndsWith('/search', $request->url());
             $candidates = [];
@@ -559,13 +559,13 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 $evidence = collect($request['evidence'])->firstWhere('document_id', $current->id);
                 $this->assertNotNull($evidence);
 
-                return Http::response(['contract_version' => 4, 'request_id' => $request['request_id'], 'status' => 'completed',
-                    'result' => ['contract_version' => 4, 'outcome' => 'answered',
+                return Http::response(['contract_version' => 5, 'request_id' => $request['request_id'], 'status' => 'completed',
+                    'result' => ['contract_version' => 5, 'outcome' => 'answered',
                         'answer_parts' => [['text' => 'The laboratory inspection is daily now.', 'evidence_ids' => [$evidence['evidence_id']]]],
                         'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
                         'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]],
                         'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
-                        'temporal_uses' => [['part_index' => 0, 'need_id' => 'n1', 'target_id' => 'n1:requested', 'question_quote' => 'now']]]]);
+                        'temporal_uses' => [['part_index' => 0, 'need_id' => 'n1', 'target_id' => 'n1:requested', 'question_quote' => 'now', 'evidence_ids' => [$evidence['evidence_id']]]]]]);
             };
             $answer = app(GenerateGroundedAnswer::class)->handle(new GenerationAssemblyInput($question, $result, [], [], $scope, []),
                 app(GenerationProfileFactory::class)->configuredNeeds())->fresh();

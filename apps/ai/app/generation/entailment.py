@@ -84,7 +84,7 @@ def review_input(
                             for target in need.temporal_targets
                         ],
                     }
-                    if request.contract_version == 4
+                    if request.contract_version in (4, 5)
                     else {}
                 ),
                 "requested_aspects": [

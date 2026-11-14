@@ -1,0 +1,10 @@
+{
+  "base_head": "02470b24a23ed3001faebe41d9cf94c9c4818180",
+  "executed_before_changes": true,
+  "provider_calls": 0,
+  "fixture": "Two temporal needs, same family/version, one shared part; separate need-owned evidence handles and two temporal uses.",
+  "python": {"validator": "validate_temporal_uses", "exception": "ValueError", "message": "temporal answer-use coverage mismatch", "same_version": true},
+  "php": {"validator": "ValidateTemporalAnswerUse::handle", "exception": "App\\Exceptions\\GenerationException", "message": "Temporal answer-use coverage is invalid."},
+  "mechanism": "The expected mapping is keyed only by part index; the second owning need overwrites the first, and repeated part indices are rejected. Ordinary citation ownership also checks the whole shared paragraph against each need, rather than an explicitly attributed subset.",
+  "historical_limit": "This proves the structural defect. Item 29's rejected drafts were not retained; these controlled fixtures are not a reconstruction of those drafts."
+}

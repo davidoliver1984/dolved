@@ -23,25 +23,34 @@ from app.generation.models import (
 from app.generation.needs_request import GenerationNeedsRequest
 from app.generation.openai_adapter import OpenAIGenerationOutput
 from app.generation.polarity import has_invalid_leading_polarity
-from app.generation.temporal_targets import TemporalUse, validate_temporal_uses
+from app.generation.temporal_targets import (
+    TemporalAssociationUse,
+    TemporalUse,
+    association_evidence,
+    validate_temporal_uses,
+)
 
 
 class NeedsCompletedResponse(ImmutableModel):
-    contract_version: Literal[2, 3, 4]
+    contract_version: Literal[2, 3, 4, 5]
     request_id: UUID
     status: Literal["completed"]
-    result: GenerationNeedsResult | GenerationTemporalResult
+    result: (
+        GenerationNeedsResult
+        | GenerationTemporalResult
+        | GenerationTemporalAssociationResult
+    )
 
 
 class NeedsBudgetResponse(ImmutableModel):
-    contract_version: Literal[2, 3, 4]
+    contract_version: Literal[2, 3, 4, 5]
     request_id: UUID
     status: Literal["context_budget_exceeded"]
     failure: GenerationContextBudgetExceeded
 
 
 class NeedsProviderResponse(ImmutableModel):
-    contract_version: Literal[2, 3, 4]
+    contract_version: Literal[2, 3, 4, 5]
     request_id: UUID
     status: Literal["provider_error"]
     error: GenerationProviderError
@@ -101,13 +110,18 @@ class GenerationNeedsResult(ImmutableModel):
         }
         for link in self.aspect_links:
             for index in link.answer_part_indices:
-                if not set(self.answer_parts[index].evidence_ids).issubset(
-                    owners[link.need_id]
-                ):
+                cited = association_evidence(
+                    request,
+                    self.answer_parts,
+                    getattr(self, "temporal_uses", ()),
+                    link.need_id,
+                    index,
+                )
+                if not set(cited).issubset(owners[link.need_id]):
                     raise CitationOwnershipError(
                         link.need_id,
                         index,
-                        self.answer_parts[index].evidence_ids,
+                        cited,
                         owners[link.need_id],
                     )
             if not owners[link.need_id] and (
@@ -162,6 +176,24 @@ class OpenAIGenerationNeedsOutput(OpenAIGenerationOutput):
 
 class OpenAIGenerationTemporalOutput(OpenAIGenerationNeedsOutput):
     temporal_uses: list[TemporalUse] = Field(max_length=32)
+
+
+class GenerationTemporalAssociationResult(GenerationNeedsResult):
+    contract_version: Literal[5]  # type: ignore[assignment]
+    temporal_uses: tuple[TemporalAssociationUse, ...] = Field(max_length=32)
+
+    def validate_for_needs_request(self, request):
+        super().validate_for_needs_request(request)
+        if request.contract_version != 5:
+            raise ValueError("temporal association result requires the v5 request")
+        validate_temporal_uses(
+            request, self.answer_parts, self.aspect_links, self.temporal_uses
+        )
+        return self
+
+
+class OpenAIGenerationTemporalAssociationOutput(OpenAIGenerationNeedsOutput):
+    temporal_uses: list[TemporalAssociationUse] = Field(max_length=32)
 
 
 NeedsCompletedResponse.model_rebuild()
