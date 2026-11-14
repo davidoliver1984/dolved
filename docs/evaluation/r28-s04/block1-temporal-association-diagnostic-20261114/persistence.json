@@ -1,0 +1,48 @@
+{
+    "items": [
+        {
+            "item": "G3",
+            "run_id": "b969c1bb-12b5-4996-a033-22f5283936d1",
+            "conversation_id": "d82d9334-350a-4196-8fb5-5bafb0fdda63",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "Facilities agreed a new pest control schedule on 20 May 2025, and it started on 1 July 2025. How often did the kitchen area have to be inspected once it started?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question."
+        },
+        {
+            "item": "17",
+            "run_id": "4b5f4a1a-f41f-4d7f-9d31-9ced2421b681",
+            "conversation_id": "c8c0ab06-5dd9-476f-be97-aaea650d1295",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "Did the Birmingham home need an asbestos-register check before January 2026, and does it now?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        },
+        {
+            "item": "25",
+            "run_id": "61649ebf-2257-43e8-8e79-173f3e0292e4",
+            "conversation_id": "4e2a3d4f-10a1-487f-8840-dadc0492a4f7",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question."
+        }
+    ],
+    "verified_at": "2026-11-14T19:04:15+00:00",
+    "grading": false
+}

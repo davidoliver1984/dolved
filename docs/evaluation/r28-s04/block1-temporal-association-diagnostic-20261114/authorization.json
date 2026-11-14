@@ -1,0 +1,19 @@
+{
+  "authorization_id": "R28-TEMPORAL-ASSOCIATION-DIAGNOSTIC-AUTH-20261114-01",
+  "run_id": "R28-TEMPORAL-ASSOCIATION-DIAGNOSTIC-20261114-01",
+  "classification": "DIAGNOSTIC_NEW_OBSERVATIONS",
+  "head": "181e00a9fe7ef1b2785d3ed79f347868504e0381",
+  "main": "348f09e053c8ad73676921c5c616cced812111d7",
+  "runtime": "fa20a7970da378a3c5aa49e995e1c674e1c26e8254543b869d0337d2d467b5b8",
+  "manifest_sha256": "e47a2a48699bea184ca8104d8138d32cbfa20e80840114ad6abf01ac5eac22f2",
+  "items": [
+    "G3",
+    "17",
+    "25"
+  ],
+  "one_use": true,
+  "reservation_usd": 12,
+  "cap_usd": 50,
+  "capture": "Serving AI evaluation-only sidecar, authorised workspace only, default-off; rejected parsed fields and actual calendar notation count.",
+  "prior_verdicts": "Unchanged; this diagnostic does not replace earlier outcomes."
+}

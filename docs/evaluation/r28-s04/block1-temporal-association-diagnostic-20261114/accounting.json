@@ -1,0 +1,340 @@
+{
+  "cap_usd": 50.0,
+  "known_and_retained_rate_subtotal_usd": 0.01656815,
+  "reranking_conservative_allowance_usd": 0,
+  "unpriced_uncertainty_reserve_usd": 5,
+  "next_item_headroom_required_usd": 3,
+  "conservative_committed_usd": 5.01656815,
+  "available_after_reserve_usd": 44.98343185,
+  "next_dispatch_budget_gate": true,
+  "complete_invoice_total_available": false,
+  "receipt_accounting_unit": "API-to-AI service call; provider attempts nested in receipts, not independently reconstructed",
+  "receipts": [
+    {
+      "item": "17",
+      "call_key": "57529483-359b-447e-babc-eb77d9e05423:0",
+      "path": "/api/internal/retrieval/plan-needs",
+      "receipt_index": 0,
+      "receipt": {
+        "stage": "planner",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "request_count": 3,
+        "retry_count": 1,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": 38403,
+        "cached_input_tokens": null,
+        "output_tokens": 2685,
+        "latency_ms": 27871.382220997475,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "validation_attempts": [
+          {
+            "attempt": 1,
+            "request_count": 1,
+            "retry_count": 0,
+            "status": "rejected",
+            "category": "invalid_grounded_needs_plan",
+            "validation": {
+              "stage": "schema",
+              "field": "needs.0.authority",
+              "code": "temporal_relation_grounding"
+            },
+            "provider_status": 200,
+            "input_tokens": 18612,
+            "output_tokens": 1096,
+            "latency_ms": 10131.159879994811,
+            "cost_usd": null,
+            "cost_basis": "unavailable"
+          },
+          {
+            "attempt": 2,
+            "request_count": 2,
+            "retry_count": 0,
+            "status": "accepted",
+            "category": null,
+            "input_tokens": 19791,
+            "output_tokens": 1589,
+            "latency_ms": 17740.222341002664,
+            "cost_usd": null,
+            "cost_basis": "unavailable",
+            "interpretation_check": {
+              "version": "interpretation-check-v2",
+              "code": "accepted",
+              "checker_code": "accepted",
+              "citation": null,
+              "citation_verification": "not_applicable",
+              "verification_reason": null,
+              "provider": "openai",
+              "model": "gpt-5-mini",
+              "request_count": 1,
+              "input_tokens": 1090,
+              "output_tokens": 87,
+              "latency_ms": 2276.6910010104766,
+              "cost_basis": "unavailable",
+              "cost_usd": null,
+              "reviewed_plan": {
+                "schema_version": "evidence-needs-plan-v4",
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                  {
+                    "need_id": "n1",
+                    "aspect": "Did the Birmingham home need an asbestos-register check before January 2026 and does it now?",
+                    "central": true,
+                    "question_span": {
+                      "turn_id": "user-1",
+                      "quote": "Did the Birmingham home need an asbestos-register check before January 2026"
+                    },
+                    "context_spans": [
+                      {
+                        "turn_id": "user-1",
+                        "quote": "Did the Birmingham home need an asbestos-register check before January 2026"
+                      },
+                      {
+                        "turn_id": "user-1",
+                        "quote": "and does it now?"
+                      }
+                    ],
+                    "operation": "compare",
+                    "authority": {
+                      "kind": "before",
+                      "value": "2026-01",
+                      "precision": "month",
+                      "source": {
+                        "turn_id": "user-1",
+                        "quote": "before January 2026"
+                      }
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                      "kind": "named",
+                      "source": {
+                        "turn_id": "user-1",
+                        "quote": "the Birmingham home"
+                      }
+                    },
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "supports_need_id": null
+                  }
+                ],
+                "bindings": [
+                  {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "accounted_usd": 0.01497075,
+      "accounted_basis": "retained_2026-08-19_rate_estimate_uncached_when_unknown",
+      "conservative_reranker_allowance_usd": 0
+    },
+    {
+      "item": "17",
+      "call_key": "763cff97-46ea-463a-b218-9f2183c5ca15:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt_index": 0,
+      "receipt": {
+        "stage": "dense_embedding",
+        "provider": "voyage",
+        "model": "voyage-4-large",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T19:00:52.134783Z",
+        "final_provider_success_at": "2026-11-14T19:00:52.426228Z",
+        "provider_retry_elapsed_ms": 0,
+        "input_tokens": 20,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 297.4942090077093,
+        "cost_basis": "estimated",
+        "cost_usd": 2.4e-06,
+        "pricing_snapshot": "voyage-pricing-2026-08-12"
+      },
+      "accounted_usd": 2.4e-06,
+      "accounted_basis": "estimated",
+      "conservative_reranker_allowance_usd": 0
+    },
+    {
+      "item": "17",
+      "call_key": "763cff97-46ea-463a-b218-9f2183c5ca15:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt_index": 1,
+      "receipt": {
+        "stage": "qdrant_dense_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 181.54833400330972,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "accounted_basis": "unavailable",
+      "conservative_reranker_allowance_usd": 0
+    },
+    {
+      "item": "17",
+      "call_key": "763cff97-46ea-463a-b218-9f2183c5ca15:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt_index": 2,
+      "receipt": {
+        "stage": "sparse_encoding",
+        "provider": "fastembed",
+        "model": "prithivida/Splade_PP_en_v1",
+        "execution": "local",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 10531.888380006421,
+        "cost_basis": "zero_cost_local",
+        "cost_usd": 0,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0,
+      "accounted_basis": "zero_cost_local",
+      "conservative_reranker_allowance_usd": 0
+    },
+    {
+      "item": "17",
+      "call_key": "763cff97-46ea-463a-b218-9f2183c5ca15:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt_index": 3,
+      "receipt": {
+        "stage": "qdrant_sparse_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 56.51291699905414,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "accounted_basis": "unavailable",
+      "conservative_reranker_allowance_usd": 0
+    },
+    {
+      "item": "17",
+      "call_key": "c9c2fee2-a110-477f-bc28-9c68add1cbd1:2",
+      "path": "/api/internal/retrieval/rerank",
+      "unavailable": true,
+      "reason": "no usage receipt",
+      "accounted_usd": null
+    },
+    {
+      "item": "17",
+      "call_key": "c84eceed-d2cd-4419-8c9b-4a3c3e582cae:3",
+      "path": "/api/internal/retrieval/compare-family",
+      "receipt_index": 0,
+      "receipt": {
+        "stage": "compare_family_selection",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": 5084,
+        "cached_input_tokens": null,
+        "output_tokens": 162,
+        "latency_ms": 2924.926667998079,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0.001595,
+      "accounted_basis": "retained_2026-08-19_rate_estimate_uncached_when_unknown",
+      "conservative_reranker_allowance_usd": 0
+    },
+    {
+      "item": "25",
+      "call_key": "1bee1a80-b0ed-4a73-b160-d8851c626944:0",
+      "path": "/api/internal/retrieval/plan-needs",
+      "unavailable": true,
+      "reason": "no usage receipt",
+      "accounted_usd": null
+    },
+    {
+      "item": "G3",
+      "call_key": "51b13294-d548-4241-b2cb-832eb5d6c162:0",
+      "path": "/api/internal/retrieval/plan-needs",
+      "unavailable": true,
+      "reason": "no usage receipt",
+      "accounted_usd": null
+    }
+  ]
+}

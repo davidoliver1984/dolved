@@ -1,0 +1,15 @@
+{
+  "api": {
+    "unchanged_except": [],
+    "project": "dolved-r28-s03",
+    "image_id": "sha256:2831b7678833d675161ab61fea4f3ba1440b62c5f3a7d9c743ca06c84b9dcaa5"
+  },
+  "ai": {
+    "unchanged_except": [
+      "EVALUATION_CAPTURE_DESTINATION",
+      "EVALUATION_CAPTURE_ENABLED"
+    ],
+    "project": "dolved-r28-s03",
+    "image_id": "sha256:3da21b4478c1f0d357f9941d01b8b65e3c008847742b9a57ac87eef18d246468"
+  }
+}

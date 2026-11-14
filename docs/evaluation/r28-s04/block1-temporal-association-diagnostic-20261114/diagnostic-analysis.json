@@ -1,0 +1,816 @@
+{
+  "run_id": "R28-TEMPORAL-ASSOCIATION-DIAGNOSTIC-20261114-01",
+  "new_observations_only": true,
+  "rejected_attempts": 5,
+  "classifications": {
+    "justified": 3,
+    "mixed": 2,
+    "unjustified": 0,
+    "inconclusive": 0
+  },
+  "accepted_attempts": 1,
+  "calendar_notation_conversions_observed": 0,
+  "generation_capture_live": "unexercised: no generation request; provider-free authenticated-route proof only",
+  "reconciliation": [
+    {
+      "item": "G3",
+      "attempts_expected": 2,
+      "sidecars": 2,
+      "matching": true,
+      "generation_requests": 0
+    },
+    {
+      "item": "17",
+      "attempts_expected": 2,
+      "sidecars": 2,
+      "matching": true,
+      "generation_requests": 0
+    },
+    {
+      "item": "25",
+      "attempts_expected": 2,
+      "sidecars": 2,
+      "matching": true,
+      "generation_requests": 0
+    }
+  ],
+  "attempts": [
+    {
+      "item": "G3",
+      "attempt": 1,
+      "status": "rejected",
+      "file": "capture/51b13294-d548-4241-b2cb-832eb5d6c162-b89ae43c-46f5-4cc0-8887-2b3c65da5932.json",
+      "sha256": "f9e2b00cb0c34c9a2042d1028220dc0dc40e9638b21664d6304a43dcd6c34835",
+      "validation": {
+        "stage": "grounding",
+        "field": "root",
+        "code": "temporal_relation_grounding"
+      },
+      "calendar_notation_normalization_count": 0,
+      "proposed_authority": {
+        "kind": "after",
+        "value": "2025-07-01",
+        "precision": "day",
+        "source": {
+          "turn_id": "user-1",
+          "quote": "and it started on 1 July 2025."
+        }
+      },
+      "proposed_fact_reference": {
+        "value": "2025-07-01",
+        "precision": "day",
+        "source": {
+          "turn_id": "user-1",
+          "quote": "and it started on 1 July 2025."
+        }
+      },
+      "question_span": {
+        "turn_id": "user-1",
+        "quote": "How often did the kitchen area have to be inspected once it started?"
+      },
+      "context_spans": [
+        {
+          "turn_id": "user-1",
+          "quote": "Facilities agreed a new pest control schedule on 20 May 2025,"
+        },
+        {
+          "turn_id": "user-1",
+          "quote": "and it started on 1 July 2025."
+        }
+      ],
+      "binding": [
+        {
+          "need_id": "n1",
+          "subject_status": "topic",
+          "family_ids": []
+        }
+      ],
+      "proposal_equals_validator_input": true,
+      "classification": "mixed",
+      "structural_verdict": "justified_under_existing_literal_relation_rule",
+      "code_path": "apps/ai/app/retrieval/needs.py: EvidenceNeedsPlan.validate_grounding, before/after literal-word check (lines 443\u2013452 at execution commit)",
+      "exact_condition": "authority.kind in {'before','after'} and no word-boundary occurrence of that kind in authority.source.quote + question_span.quote",
+      "explanation": "The date/value and source are structurally grounded, but neither checked span contains 'after'. The rejection follows the rule exactly. Semantically, 'once it started' can ask about the policy from activation; a missing literal 'after' is not proof of an ungrounded user intent. Conversely, after a named day has an end-exclusive adjacent-authority meaning, not necessarily the activation instant. This is a mixed contract/interpretation finding, not a claim the entire rejected plan was semantically correct."
+    },
+    {
+      "item": "G3",
+      "attempt": 2,
+      "status": "rejected",
+      "file": "capture/51b13294-d548-4241-b2cb-832eb5d6c162-de0a47b7-0731-44bd-b4a0-434f0ebb8d62.json",
+      "sha256": "c5b4cb612f65d8e31bd3a9c6944ff87e2fe73bf0df960e2f323e6cd1a9e20550",
+      "validation": {
+        "stage": "grounding",
+        "field": "root",
+        "code": "temporal_relation_grounding"
+      },
+      "calendar_notation_normalization_count": 0,
+      "proposed_authority": {
+        "kind": "after",
+        "value": "2025-07-01",
+        "precision": "day",
+        "source": {
+          "turn_id": "user-1",
+          "quote": "it started on 1 July 2025."
+        }
+      },
+      "proposed_fact_reference": null,
+      "question_span": {
+        "turn_id": "user-1",
+        "quote": "How often did the kitchen area have to be inspected once it started?"
+      },
+      "context_spans": [
+        {
+          "turn_id": "user-1",
+          "quote": "Facilities agreed a new pest control schedule on 20 May 2025, and it started on 1 July 2025."
+        },
+        {
+          "turn_id": "user-1",
+          "quote": "How often did the kitchen area have to be inspected once it started?"
+        }
+      ],
+      "binding": [
+        {
+          "need_id": "n1",
+          "subject_status": "topic",
+          "family_ids": []
+        }
+      ],
+      "proposal_equals_validator_input": true,
+      "classification": "mixed",
+      "structural_verdict": "justified_under_existing_literal_relation_rule",
+      "code_path": "apps/ai/app/retrieval/needs.py: EvidenceNeedsPlan.validate_grounding, before/after literal-word check (lines 443\u2013452 at execution commit)",
+      "exact_condition": "authority.kind in {'before','after'} and no word-boundary occurrence of that kind in authority.source.quote + question_span.quote",
+      "explanation": "The date/value and source are structurally grounded, but neither checked span contains 'after'. The rejection follows the rule exactly. Semantically, 'once it started' can ask about the policy from activation; a missing literal 'after' is not proof of an ungrounded user intent. Conversely, after a named day has an end-exclusive adjacent-authority meaning, not necessarily the activation instant. This is a mixed contract/interpretation finding, not a claim the entire rejected plan was semantically correct."
+    },
+    {
+      "item": "17",
+      "attempt": 1,
+      "status": "rejected",
+      "file": "capture/57529483-359b-447e-babc-eb77d9e05423-c0328e10-d5d4-436b-b6f2-aeeb5e2839e1.json",
+      "sha256": "1bb342f24261f7331ffeffa7c3905e71277a6e1f611d5092fe5a079b717b8085",
+      "validation": {
+        "stage": "schema",
+        "field": "needs.0.authority",
+        "code": "temporal_relation_grounding"
+      },
+      "calendar_notation_normalization_count": 0,
+      "proposed_authority": {
+        "kind": "period",
+        "value": "2026-01",
+        "precision": "month",
+        "source": {
+          "turn_id": "user-1",
+          "quote": "before January 2026"
+        }
+      },
+      "proposed_fact_reference": null,
+      "question_span": {
+        "turn_id": "user-1",
+        "quote": "Did the Birmingham home need an asbestos-register check before January 2026, and does it now?"
+      },
+      "context_spans": [
+        {
+          "turn_id": "user-1",
+          "quote": "Birmingham home"
+        },
+        {
+          "turn_id": "user-1",
+          "quote": "before January 2026"
+        }
+      ],
+      "binding": [
+        {
+          "need_id": "n1",
+          "subject_status": "topic",
+          "family_ids": []
+        }
+      ],
+      "proposal_equals_validator_input": true,
+      "classification": "justified",
+      "structural_verdict": "rejected_by_authority_coherence",
+      "code_path": "apps/ai/app/retrieval/needs.py: NeedAuthority.coherent_reference (lines 144\u2013147 at execution commit)",
+      "exact_condition": "kind == 'period' and re.match(r'\\s*(?:before|after)\\b', source.quote, re.IGNORECASE)",
+      "explanation": "The proposal represents January 2026 itself (period/month/2026-01), but its source says 'before January 2026'. The period reading loses the explicitly requested before relation. Both the structural rejection and the meaning distinction are justified; no calendar-notation failure occurred."
+    },
+    {
+      "item": "17",
+      "attempt": 2,
+      "status": "accepted",
+      "file": "capture/57529483-359b-447e-babc-eb77d9e05423-b5b0d780-a220-4d83-a175-d07acc2d258f.json",
+      "sha256": "cf6da02229a8e93c28cf441111cad62bb77098a0c04320317d17541c2ddca68d",
+      "validation": null,
+      "calendar_notation_normalization_count": 0,
+      "classification": "not_applicable_accepted",
+      "explanation": "Input 17 changed period to before; accepted by the planner/checker, then genuine reviewer no_match led to no final evidence. Acceptance is not an answer-correctness verdict."
+    },
+    {
+      "item": "25",
+      "attempt": 1,
+      "status": "rejected",
+      "file": "capture/1bee1a80-b0ed-4a73-b160-d8851c626944-2dcb8635-9d06-4e15-922a-b448774d2f5c.json",
+      "sha256": "6ad6ed38a37b67d848b29ce88fe4fadca20d05c4cab922a2a56ddff624d3bd20",
+      "validation": {
+        "stage": "schema",
+        "field": "needs.0.authority",
+        "code": "temporal_relation_grounding"
+      },
+      "calendar_notation_normalization_count": 0,
+      "proposed_authority": {
+        "kind": "period",
+        "value": "2026-01",
+        "precision": "month",
+        "source": {
+          "turn_id": "user-1",
+          "quote": "before January 2026"
+        }
+      },
+      "proposed_fact_reference": null,
+      "question_span": {
+        "turn_id": "user-1",
+        "quote": "How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?"
+      },
+      "context_spans": [
+        {
+          "turn_id": "user-1",
+          "quote": "flag the renewal now"
+        },
+        {
+          "turn_id": "user-1",
+          "quote": "DoLS expiry"
+        },
+        {
+          "turn_id": "user-1",
+          "quote": "before January 2026"
+        }
+      ],
+      "binding": [
+        {
+          "need_id": "n1",
+          "subject_status": "topic",
+          "family_ids": []
+        }
+      ],
+      "proposal_equals_validator_input": true,
+      "classification": "justified",
+      "structural_verdict": "rejected_by_authority_coherence",
+      "code_path": "apps/ai/app/retrieval/needs.py: NeedAuthority.coherent_reference (lines 144\u2013147 at execution commit)",
+      "exact_condition": "kind == 'period' and re.match(r'\\s*(?:before|after)\\b', source.quote, re.IGNORECASE)",
+      "explanation": "The proposal represents January 2026 itself (period/month/2026-01), but its source says 'before January 2026'. The period reading loses the explicitly requested before relation. Both the structural rejection and the meaning distinction are justified; no calendar-notation failure occurred."
+    },
+    {
+      "item": "25",
+      "attempt": 2,
+      "status": "rejected",
+      "file": "capture/1bee1a80-b0ed-4a73-b160-d8851c626944-a7c2aa9a-b203-4612-b978-c78af6994a1a.json",
+      "sha256": "835caa750659239b7a7afa23ac3a71deaa54279c390e1dc6a3a6e015ea27d10c",
+      "validation": {
+        "stage": "schema",
+        "field": "needs.0.authority",
+        "code": "temporal_relation_grounding"
+      },
+      "calendar_notation_normalization_count": 0,
+      "proposed_authority": {
+        "kind": "period",
+        "value": "2026-01",
+        "precision": "month",
+        "source": {
+          "turn_id": "user-1",
+          "quote": "before January 2026"
+        }
+      },
+      "proposed_fact_reference": null,
+      "question_span": {
+        "turn_id": "user-1",
+        "quote": "How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?"
+      },
+      "context_spans": [
+        {
+          "turn_id": "user-1",
+          "quote": "How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?"
+        },
+        {
+          "turn_id": "user-1",
+          "quote": "DoLS expiry"
+        },
+        {
+          "turn_id": "user-1",
+          "quote": "before January 2026"
+        }
+      ],
+      "binding": [
+        {
+          "need_id": "n1",
+          "subject_status": "topic",
+          "family_ids": []
+        }
+      ],
+      "proposal_equals_validator_input": true,
+      "classification": "justified",
+      "structural_verdict": "rejected_by_authority_coherence",
+      "code_path": "apps/ai/app/retrieval/needs.py: NeedAuthority.coherent_reference (lines 144\u2013147 at execution commit)",
+      "exact_condition": "kind == 'period' and re.match(r'\\s*(?:before|after)\\b', source.quote, re.IGNORECASE)",
+      "explanation": "The proposal represents January 2026 itself (period/month/2026-01), but its source says 'before January 2026'. The period reading loses the explicitly requested before relation. Both the structural rejection and the meaning distinction are justified; no calendar-notation failure occurred."
+    }
+  ],
+  "items": [
+    {
+      "item": "G3",
+      "status": "retrieval_no_answer",
+      "displayed_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question.",
+      "routes": null,
+      "start": "2026-11-14T18:59:55+00:00",
+      "end": "2026-11-14T19:00:20+00:00"
+    },
+    {
+      "item": "17",
+      "status": "retrieval_no_answer",
+      "displayed_text": "I couldn't find enough available evidence to answer that question.",
+      "routes": {
+        "n1": {
+          "route": "compare",
+          "c2_discovery_ran": false,
+          "selection": {
+            "decision": "no_match",
+            "original_decision": "no_match",
+            "validation_rejection_code": null,
+            "candidate_identities": [
+              {
+                "family_id": "c6d8a80f-3076-4950-ba36-1ccafb0943b4",
+                "chunk_id": "c78594f3-ca74-532a-969d-dec8d2ffc20a"
+              },
+              {
+                "family_id": "c6d8a80f-3076-4950-ba36-1ccafb0943b4",
+                "chunk_id": "66994773-6821-5584-a3c4-95dbe97d29ef"
+              },
+              {
+                "family_id": "c6d8a80f-3076-4950-ba36-1ccafb0943b4",
+                "chunk_id": "757c5e16-0e52-5ac9-a380-1ba7e2432c6a"
+              },
+              {
+                "family_id": "6a839c56-d207-4025-baa8-168eb4d9cd69",
+                "chunk_id": "84f33275-bfb5-540a-a005-17976ef8db99"
+              },
+              {
+                "family_id": "6a839c56-d207-4025-baa8-168eb4d9cd69",
+                "chunk_id": "92a78012-7169-51f6-8abe-bf6b18c72a00"
+              },
+              {
+                "family_id": "b1022ecb-826f-4192-a39a-b502a6897d80",
+                "chunk_id": "6fd1ada2-43a7-5fec-babb-fb00a3f5d62e"
+              },
+              {
+                "family_id": "0804eb2e-ede8-4856-8fc2-f5d77fbaf8c5",
+                "chunk_id": "327b6995-1ef9-5213-a4b1-c869109b1a01"
+              },
+              {
+                "family_id": "bb53d61c-51d6-4f22-b5fe-d4aeed2b2817",
+                "chunk_id": "a86118be-57d8-5996-8c9d-ec3ecfb73811"
+              },
+              {
+                "family_id": "abec7b1d-8106-41ad-ba78-f96743a1f5af",
+                "chunk_id": "7fe16f18-4dc2-5f3a-912a-f6f5c0b44fd4"
+              },
+              {
+                "family_id": "8e13ef6e-c1a1-4c8b-b49e-0e2c6bdbc532",
+                "chunk_id": "1d09d7b1-1390-5c4d-b3a5-125eeb68a6d7"
+              },
+              {
+                "family_id": "6a839c56-d207-4025-baa8-168eb4d9cd69",
+                "chunk_id": "49cedccc-7798-53df-b3b7-bcff2cce799d"
+              },
+              {
+                "family_id": "a1965844-cad1-491c-90a5-ea6a29bbfc1a",
+                "chunk_id": "45531d0a-e829-51c2-afc0-222a73f3cc32"
+              }
+            ],
+            "family_id": null,
+            "chunk_id": null,
+            "usage": [
+              {
+                "stage": "dense_embedding",
+                "provider": "voyage",
+                "model": "voyage-4-large",
+                "execution": "provider_api",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": 1,
+                "provider_retry_count": 0,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": 0,
+                "retry_delays": [],
+                "first_provider_attempt_at": "2026-11-14T19:00:52.134783Z",
+                "final_provider_success_at": "2026-11-14T19:00:52.426228Z",
+                "provider_retry_elapsed_ms": 0,
+                "input_tokens": 20,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 297.4942090077093,
+                "cost_basis": "estimated",
+                "cost_usd": 2.4e-06,
+                "pricing_snapshot": "voyage-pricing-2026-08-12"
+              },
+              {
+                "stage": "qdrant_dense_search",
+                "provider": "qdrant",
+                "model": "rag-platform-vectors-v1",
+                "execution": "infrastructure",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": null,
+                "provider_retry_count": null,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": null,
+                "retry_delays": [],
+                "first_provider_attempt_at": null,
+                "final_provider_success_at": null,
+                "provider_retry_elapsed_ms": null,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 181.54833400330972,
+                "cost_basis": "unavailable",
+                "cost_usd": null,
+                "pricing_snapshot": null
+              },
+              {
+                "stage": "sparse_encoding",
+                "provider": "fastembed",
+                "model": "prithivida/Splade_PP_en_v1",
+                "execution": "local",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": null,
+                "provider_retry_count": null,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": null,
+                "retry_delays": [],
+                "first_provider_attempt_at": null,
+                "final_provider_success_at": null,
+                "provider_retry_elapsed_ms": null,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 10531.888380006421,
+                "cost_basis": "zero_cost_local",
+                "cost_usd": 0,
+                "pricing_snapshot": null
+              },
+              {
+                "stage": "qdrant_sparse_search",
+                "provider": "qdrant",
+                "model": "rag-platform-vectors-v1",
+                "execution": "infrastructure",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": null,
+                "provider_retry_count": null,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": null,
+                "retry_delays": [],
+                "first_provider_attempt_at": null,
+                "final_provider_success_at": null,
+                "provider_retry_elapsed_ms": null,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 56.51291699905414,
+                "cost_basis": "unavailable",
+                "cost_usd": null,
+                "pricing_snapshot": null
+              },
+              {
+                "stage": "reranking",
+                "provider": "voyage",
+                "model": "rerank-2.5",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": 1,
+                "provider_retry_count": 0,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": 0,
+                "retry_delays": [],
+                "first_provider_attempt_at": "2026-11-14T19:01:04.105721Z",
+                "final_provider_success_at": "2026-11-14T19:01:04.409307Z",
+                "provider_retry_elapsed_ms": 0,
+                "input_tokens": 6587,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 329.612583,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null,
+                "pricing_snapshot": null
+              },
+              {
+                "stage": "compare_family_selection",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": 5084,
+                "output_tokens": 162,
+                "latency_ms": 2924.926667998079,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null
+              }
+            ],
+            "diagnostics": {
+              "stop_stage": "reviewer_result",
+              "search_requests": 1,
+              "reranker_requests": 1,
+              "reviewer_requests": 1,
+              "charged_to_logical_lane_limit": false,
+              "eligibility_outcome": "evidence_found",
+              "eligibility_reason": null,
+              "active_corpus_present": true,
+              "search_candidate_count": 15,
+              "hydrated_candidate_count": 15,
+              "reranked_candidate_count": 15,
+              "reviewer_candidate_count": 12,
+              "reviewer_invoked": true,
+              "completed_usage": [
+                {
+                  "stage": "dense_embedding",
+                  "provider": "voyage",
+                  "model": "voyage-4-large",
+                  "execution": "provider_api",
+                  "request_count": 1,
+                  "retry_count": 0,
+                  "provider_attempt_count": 1,
+                  "provider_retry_count": 0,
+                  "outer_attempt_count": 1,
+                  "outer_retry_count": 0,
+                  "rate_limit_event_count": 0,
+                  "retry_delays": [],
+                  "first_provider_attempt_at": "2026-11-14T19:00:52.134783Z",
+                  "final_provider_success_at": "2026-11-14T19:00:52.426228Z",
+                  "provider_retry_elapsed_ms": 0,
+                  "input_tokens": 20,
+                  "cached_input_tokens": null,
+                  "output_tokens": null,
+                  "latency_ms": 297.4942090077093,
+                  "cost_basis": "estimated",
+                  "cost_usd": 2.4e-06,
+                  "pricing_snapshot": "voyage-pricing-2026-08-12"
+                },
+                {
+                  "stage": "qdrant_dense_search",
+                  "provider": "qdrant",
+                  "model": "rag-platform-vectors-v1",
+                  "execution": "infrastructure",
+                  "request_count": 1,
+                  "retry_count": 0,
+                  "provider_attempt_count": null,
+                  "provider_retry_count": null,
+                  "outer_attempt_count": 1,
+                  "outer_retry_count": 0,
+                  "rate_limit_event_count": null,
+                  "retry_delays": [],
+                  "first_provider_attempt_at": null,
+                  "final_provider_success_at": null,
+                  "provider_retry_elapsed_ms": null,
+                  "input_tokens": null,
+                  "cached_input_tokens": null,
+                  "output_tokens": null,
+                  "latency_ms": 181.54833400330972,
+                  "cost_basis": "unavailable",
+                  "cost_usd": null,
+                  "pricing_snapshot": null
+                },
+                {
+                  "stage": "sparse_encoding",
+                  "provider": "fastembed",
+                  "model": "prithivida/Splade_PP_en_v1",
+                  "execution": "local",
+                  "request_count": 1,
+                  "retry_count": 0,
+                  "provider_attempt_count": null,
+                  "provider_retry_count": null,
+                  "outer_attempt_count": 1,
+                  "outer_retry_count": 0,
+                  "rate_limit_event_count": null,
+                  "retry_delays": [],
+                  "first_provider_attempt_at": null,
+                  "final_provider_success_at": null,
+                  "provider_retry_elapsed_ms": null,
+                  "input_tokens": null,
+                  "cached_input_tokens": null,
+                  "output_tokens": null,
+                  "latency_ms": 10531.888380006421,
+                  "cost_basis": "zero_cost_local",
+                  "cost_usd": 0,
+                  "pricing_snapshot": null
+                },
+                {
+                  "stage": "qdrant_sparse_search",
+                  "provider": "qdrant",
+                  "model": "rag-platform-vectors-v1",
+                  "execution": "infrastructure",
+                  "request_count": 1,
+                  "retry_count": 0,
+                  "provider_attempt_count": null,
+                  "provider_retry_count": null,
+                  "outer_attempt_count": 1,
+                  "outer_retry_count": 0,
+                  "rate_limit_event_count": null,
+                  "retry_delays": [],
+                  "first_provider_attempt_at": null,
+                  "final_provider_success_at": null,
+                  "provider_retry_elapsed_ms": null,
+                  "input_tokens": null,
+                  "cached_input_tokens": null,
+                  "output_tokens": null,
+                  "latency_ms": 56.51291699905414,
+                  "cost_basis": "unavailable",
+                  "cost_usd": null,
+                  "pricing_snapshot": null
+                },
+                {
+                  "stage": "reranking",
+                  "provider": "voyage",
+                  "model": "rerank-2.5",
+                  "execution": "PROVIDER_API",
+                  "request_count": 1,
+                  "retry_count": 0,
+                  "provider_attempt_count": 1,
+                  "provider_retry_count": 0,
+                  "outer_attempt_count": 1,
+                  "outer_retry_count": 0,
+                  "rate_limit_event_count": 0,
+                  "retry_delays": [],
+                  "first_provider_attempt_at": "2026-11-14T19:01:04.105721Z",
+                  "final_provider_success_at": "2026-11-14T19:01:04.409307Z",
+                  "provider_retry_elapsed_ms": 0,
+                  "input_tokens": 6587,
+                  "cached_input_tokens": null,
+                  "output_tokens": null,
+                  "latency_ms": 329.612583,
+                  "cost_basis": "UNAVAILABLE",
+                  "cost_usd": null,
+                  "pricing_snapshot": null
+                }
+              ]
+            }
+          },
+          "temporal_guard": null,
+          "discovery_work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true,
+            "completed_usage": [
+              {
+                "stage": "dense_embedding",
+                "provider": "voyage",
+                "model": "voyage-4-large",
+                "execution": "provider_api",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": 1,
+                "provider_retry_count": 0,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": 0,
+                "retry_delays": [],
+                "first_provider_attempt_at": "2026-11-14T19:00:52.134783Z",
+                "final_provider_success_at": "2026-11-14T19:00:52.426228Z",
+                "provider_retry_elapsed_ms": 0,
+                "input_tokens": 20,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 297.4942090077093,
+                "cost_basis": "estimated",
+                "cost_usd": 2.4e-06,
+                "pricing_snapshot": "voyage-pricing-2026-08-12"
+              },
+              {
+                "stage": "qdrant_dense_search",
+                "provider": "qdrant",
+                "model": "rag-platform-vectors-v1",
+                "execution": "infrastructure",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": null,
+                "provider_retry_count": null,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": null,
+                "retry_delays": [],
+                "first_provider_attempt_at": null,
+                "final_provider_success_at": null,
+                "provider_retry_elapsed_ms": null,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 181.54833400330972,
+                "cost_basis": "unavailable",
+                "cost_usd": null,
+                "pricing_snapshot": null
+              },
+              {
+                "stage": "sparse_encoding",
+                "provider": "fastembed",
+                "model": "prithivida/Splade_PP_en_v1",
+                "execution": "local",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": null,
+                "provider_retry_count": null,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": null,
+                "retry_delays": [],
+                "first_provider_attempt_at": null,
+                "final_provider_success_at": null,
+                "provider_retry_elapsed_ms": null,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 10531.888380006421,
+                "cost_basis": "zero_cost_local",
+                "cost_usd": 0,
+                "pricing_snapshot": null
+              },
+              {
+                "stage": "qdrant_sparse_search",
+                "provider": "qdrant",
+                "model": "rag-platform-vectors-v1",
+                "execution": "infrastructure",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": null,
+                "provider_retry_count": null,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": null,
+                "retry_delays": [],
+                "first_provider_attempt_at": null,
+                "final_provider_success_at": null,
+                "provider_retry_elapsed_ms": null,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 56.51291699905414,
+                "cost_basis": "unavailable",
+                "cost_usd": null,
+                "pricing_snapshot": null
+              },
+              {
+                "stage": "reranking",
+                "provider": "voyage",
+                "model": "rerank-2.5",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": 1,
+                "provider_retry_count": 0,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": 0,
+                "retry_delays": [],
+                "first_provider_attempt_at": "2026-11-14T19:01:04.105721Z",
+                "final_provider_success_at": "2026-11-14T19:01:04.409307Z",
+                "provider_retry_elapsed_ms": 0,
+                "input_tokens": 6587,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 329.612583,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null,
+                "pricing_snapshot": null
+              }
+            ],
+            "original_decision": "no_match",
+            "effective_decision": "no_match",
+            "validation_rejection_code": null
+          }
+        }
+      },
+      "start": "2026-11-14T19:00:23+00:00",
+      "end": "2026-11-14T19:01:08+00:00"
+    },
+    {
+      "item": "25",
+      "status": "retrieval_no_answer",
+      "displayed_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question.",
+      "routes": null,
+      "start": "2026-11-14T19:01:13+00:00",
+      "end": "2026-11-14T19:01:35+00:00"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "cap_usd": 50,
+  "reservation_usd": 12,
+  "stage_subtotal_usd": 6.9375066,
+  "unpriced_uncertainty_allowance_usd": 5,
+  "stages": [
+    {
+      "stage": "planner",
+      "calls_per_item": 4,
+      "input_allowance": 101024,
+      "output_ceiling": 25000,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_3_usd": 0.903072
+    },
+    {
+      "stage": "interpretation",
+      "calls_per_item": 4,
+      "input_allowance": 101024,
+      "output_ceiling": 4096,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_3_usd": 0.401376
+    },
+    {
+      "stage": "family_review",
+      "calls_per_item": 6,
+      "input_allowance": 101024,
+      "output_ceiling": 4096,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_3_usd": 0.602064
+    },
+    {
+      "stage": "generation",
+      "calls_per_item": 6,
+      "input_allowance": 400000,
+      "output_ceiling": 4096,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_3_usd": 1.947456
+    },
+    {
+      "stage": "entailment",
+      "calls_per_item": 6,
+      "input_allowance": 400000,
+      "output_ceiling": 1024,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_3_usd": 1.836864
+    },
+    {
+      "stage": "embedding",
+      "calls_per_item": 80,
+      "input_allowance": 1457,
+      "output_ceiling": 0,
+      "input_rate_per_million": 0.12,
+      "output_rate_per_million": 0,
+      "all_3_usd": 0.0419616
+    },
+    {
+      "stage": "reranking",
+      "calls_per_item": 60,
+      "input_allowance": 133857,
+      "output_ceiling": 0,
+      "input_rate_per_million": 0.05,
+      "output_rate_per_million": 0,
+      "all_3_usd": 1.204713
+    }
+  ],
+  "basis": "Same retained-rate, byte-as-token bounds and all production attempts as preceding 18-item run; no limits reduced. Rates are estimates, not invoice pricing.",
+  "max_compiled_query_utf8_bytes": 1457,
+  "fits": true
+}

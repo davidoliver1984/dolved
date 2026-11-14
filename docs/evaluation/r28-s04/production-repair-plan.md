@@ -12,7 +12,7 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 #### C1 independent review outcome and road to the full run — David, 2026-11-14
 
-**Bounded temporal-association correction and diagnostics (David, 2026-11-14; in progress):**
+**Bounded temporal-association correction and diagnostics (David, 2026-11-14; completed package, not closure):**
 Starting `02470b2`, reproduce item 29's structural shared-paragraph defect provider-free,
 then validate temporal use per `(part, need)` with independently owned evidence and
 authority. Generation v5 and persisted `temporal-answer-use-v2` retain historical
@@ -25,6 +25,23 @@ replace earlier verdicts. [Package and verification](block1-temporal-association
 Items **19 and 28 remain unresolved Block 1 findings, implementation assigned to
 Block 2**, not passes. Main unchanged; Block 1 HOLD. The earlier missing rejected
 outputs remain unavailable and will not be reconstructed from this new run.
+Implementation/freeze `181e00a9fe7ef1b2785d3ed79f347868504e0381`, runtime
+`fa20a7970da378a3c5aa49e995e1c674e1c26e8254543b869d0337d2d467b5b8`.
+Full suites retain exactly **38 AI /2 Laravel** failure identities, no new or
+resolved failures; the historically non-reproducing inode test reproduced here.
+The once-only diagnostic completed G3, 17, 25: **five captured planner rejections
+and one accepted attempt**, all six actual notation counts zero. G3's two `after`
+proposals fail the literal-word relation check despite semantically plausible
+“once it started” wording (**mixed** contract/meaning finding). Input 17/1 and
+25/1–2 propose `period` for “before January 2026” (**three justified rejections**).
+Input 17 corrected to `before` on retry, then received a genuine family-review
+`no_match` and no evidence. G3/25 displayed honest interpretation failures.
+No generation request occurred: generation sidecar rejection capture and shared-part
+v5 acceptance remain provider-free verified, **not live exercised**. No additional
+run was used to force them. Reservation USD12, ceiling USD50; estimated subtotal
+USD0.0436364 plus USD0.00032935 reranker allowance, invoice total unavailable.
+Capture is disabled again. This factual diagnostic does not change earlier
+verdicts, settle the old `no_match` causes, repair items 19/28, or close Block 1.
 
 **Remaining-verification executed under amended budget (2026-11-14):** David raised this run's runaway ceiling to **USD50**; conservative unchanged-limits reservation **USD47** fit and was stated before one-use consumption. Future governed ceilings are **max(USD50, twice the stated conservative reservation)**, not a reason to reduce controls. [New-runtime report](block1-remaining-verification-20261114/run/report.md), [source-quoted review](block1-remaining-verification-20261114/run/correctness-review.md), and immutable cases/checksums: execution HEAD `c28e69c15a1ae03f900fdb60ca579aafab8cb34f`, runtime **`cbff39c23c64c7226ca3592248816884f2af8a5dcf7d5672f125d524078ba238`**. Isolated stack/membership/corpus, 50 migrations already Ran, coordinated API/AI restart and mounted hashes verified. Frozen evidence-local harness excludes the unrelated dirty governed-runner edits. Four stop tests and five real-orchestration capture tests passed. All **18** items (17–32, then separately labelled G2/G3) dispatched once in order, no typed infrastructure/auth/integrity/budget stop, no application change or replay. Correctness was deferred under David's amendment.
 

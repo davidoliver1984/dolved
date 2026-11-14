@@ -1,0 +1,93 @@
+{
+  "reservation_usd": 12,
+  "ceiling_usd": 50,
+  "provider_requests": 10,
+  "recorded_input_tokens": 124767,
+  "recorded_output_tokens": 7047,
+  "known_and_retained_rate_estimate_usd": 0.0436364,
+  "unpriced_reranker_allowance_usd": 0.00032935,
+  "invoice_total_available": false,
+  "receipts": [
+    {
+      "item": "G3",
+      "stage": "rejected_planner",
+      "requests": 1,
+      "input_tokens": 18632,
+      "output_tokens": 1021,
+      "estimated_usd": 0.0067,
+      "basis": "retained_uncached_rate_estimate",
+      "source": "planner_detail.validation_attempts"
+    },
+    {
+      "item": "G3",
+      "stage": "rejected_planner",
+      "requests": 1,
+      "input_tokens": 18718,
+      "output_tokens": 1056,
+      "estimated_usd": 0.0067915,
+      "basis": "retained_uncached_rate_estimate",
+      "source": "planner_detail.validation_attempts"
+    },
+    {
+      "item": "17",
+      "stage": "planner",
+      "requests": 3,
+      "input_tokens": 38403,
+      "output_tokens": 2685,
+      "estimated_usd": 0.01497075,
+      "basis": "retained_uncached_rate_estimate",
+      "source": "service usage aggregate"
+    },
+    {
+      "item": "17",
+      "stage": "dense_embedding",
+      "requests": 1,
+      "input_tokens": 20,
+      "output_tokens": 0,
+      "estimated_usd": 2.4e-06,
+      "basis": "estimated",
+      "source": "service usage"
+    },
+    {
+      "item": "17",
+      "stage": "reranking",
+      "requests": 1,
+      "input_tokens": 6587,
+      "output_tokens": 0,
+      "estimated_usd": null,
+      "conservative_allowance_usd": 0.00032935,
+      "basis": "retained allowance, provider price identity unavailable",
+      "source": "provider_receipt"
+    },
+    {
+      "item": "17",
+      "stage": "compare_family_selection",
+      "requests": 1,
+      "input_tokens": 5084,
+      "output_tokens": 162,
+      "estimated_usd": 0.001595,
+      "basis": "retained_uncached_rate_estimate",
+      "source": "service usage aggregate"
+    },
+    {
+      "item": "25",
+      "stage": "rejected_planner",
+      "requests": 1,
+      "input_tokens": 18617,
+      "output_tokens": 1117,
+      "estimated_usd": 0.00688825,
+      "basis": "retained_uncached_rate_estimate",
+      "source": "planner_detail.validation_attempts"
+    },
+    {
+      "item": "25",
+      "stage": "rejected_planner",
+      "requests": 1,
+      "input_tokens": 18706,
+      "output_tokens": 1006,
+      "estimated_usd": 0.0066885,
+      "basis": "retained_uncached_rate_estimate",
+      "source": "planner_detail.validation_attempts"
+    }
+  ]
+}

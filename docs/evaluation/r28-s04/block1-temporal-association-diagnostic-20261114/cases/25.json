@@ -1,0 +1,193 @@
+{
+    "input": {
+        "id": "25",
+        "utterance": "How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?"
+    },
+    "started_at_london": "2026-11-14T19:01:13+00:00",
+    "finished_at_london": "2026-11-14T19:01:35+00:00",
+    "elapsed_ms": 21654.980182647705,
+    "run_id": "61649ebf-2257-43e8-8e79-173f3e0292e4",
+    "conversation_id": 1658,
+    "workspace_id": 1,
+    "status": "retrieval_no_answer",
+    "failure_code": null,
+    "evaluated_at": "2026-11-14T19:01:13.000000Z",
+    "displayed_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question.",
+    "production_trace": {
+        "contextualisation": {
+            "status": "resolved",
+            "resolved_query": "How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?",
+            "clarification_question": null,
+            "used_prior_context": false,
+            "contextualiser_version": "authorised-user-turns-needs-v1",
+            "usage": null
+        }
+    },
+    "inventoried_references": [],
+    "observed_temporal_targets": [],
+    "routes_by_need": null,
+    "availability": {
+        "rejected_planner_output": "evaluation_sidecar",
+        "calendar_normalisation_count": "evaluation_sidecar",
+        "accepted_plan": false,
+        "temporal_inventory": "unavailable_no_accepted_plan",
+        "generation_request": "unavailable_not_reached",
+        "validated_temporal_use": "unavailable_no_answer_record",
+        "empty_derived_arrays": "No observation is not proof of an executed negative result; consult availability and raw trace."
+    },
+    "generation_request": null,
+    "entailment_checks": null,
+    "aspect_results": null,
+    "unsupported_aspects": null,
+    "lane_events": [],
+    "base_logical_lanes": 0,
+    "additional_search_lanes": 0,
+    "final_allocated_evidence": [],
+    "precautionary_target_admitted": false,
+    "admitted_precautionary_target_ids": [],
+    "answer_used_precautionary_target": false,
+    "validated_used_target_ids": [],
+    "answer_used_requested_target": false,
+    "temporal_context": [],
+    "reloaded_temporal_context": null,
+    "reloaded_rendered_text": null,
+    "parts": null,
+    "retrieval": {
+        "outcome": "interpretation_failed",
+        "clarification_source": null,
+        "clarification_reason": "planner_validation_failed",
+        "lineage": [],
+        "resolved_temporal_authority": []
+    },
+    "usage": {
+        "contextualisation": null,
+        "planner_failure": {
+            "category": "invalid_grounded_needs_plan",
+            "provider_status": 200,
+            "attempt_count": 2,
+            "systemic": false,
+            "validation": {
+                "stage": "schema",
+                "field": "needs.0.authority",
+                "code": "temporal_relation_grounding"
+            },
+            "completion": {
+                "finish_reason": "stop",
+                "input_tokens": 18706,
+                "output_tokens": 1006,
+                "reasoning_tokens": 576
+            },
+            "validation_attempts": [
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 18617,
+                    "output_tokens": 1117,
+                    "cached_input_tokens": null,
+                    "latency_ms": 11629.592878991389,
+                    "cost_usd": null,
+                    "pricing_snapshot": null,
+                    "cost_basis": "unavailable",
+                    "validation": {
+                        "stage": "schema",
+                        "field": "needs.0.authority",
+                        "code": "temporal_relation_grounding"
+                    },
+                    "status": "rejected"
+                },
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 18706,
+                    "output_tokens": 1006,
+                    "cached_input_tokens": null,
+                    "latency_ms": 9730.034672000329,
+                    "cost_usd": null,
+                    "pricing_snapshot": null,
+                    "cost_basis": "unavailable",
+                    "validation": {
+                        "stage": "schema",
+                        "field": "needs.0.authority",
+                        "code": "temporal_relation_grounding"
+                    },
+                    "status": "rejected"
+                }
+            ]
+        }
+    },
+    "generation_usage": null,
+    "service_calls": [
+        {
+            "key": "1bee1a80-b0ed-4a73-b160-d8851c626944:0",
+            "request_id": "1bee1a80-b0ed-4a73-b160-d8851c626944",
+            "path": "/api/internal/retrieval/plan-needs",
+            "status": "received",
+            "http_status": 503,
+            "latency_ms": 21449.638843536377,
+            "usage": null,
+            "service_status": null,
+            "error_category": null,
+            "comparison_review_failure": null,
+            "error": null,
+            "planner_detail": {
+                "code": "retrieval_planning_failed",
+                "category": "invalid_grounded_needs_plan",
+                "provider_status": 200,
+                "systemic": false,
+                "validation": {
+                    "stage": "schema",
+                    "field": "needs.0.authority",
+                    "code": "temporal_relation_grounding"
+                },
+                "completion": {
+                    "finish_reason": "stop",
+                    "input_tokens": 18706,
+                    "output_tokens": 1006,
+                    "reasoning_tokens": 576
+                },
+                "attempt_count": 2,
+                "validation_attempts": [
+                    {
+                        "attempt": 1,
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "status": "rejected",
+                        "category": "invalid_grounded_needs_plan",
+                        "validation": {
+                            "stage": "schema",
+                            "field": "needs.0.authority",
+                            "code": "temporal_relation_grounding"
+                        },
+                        "provider_status": 200,
+                        "input_tokens": 18617,
+                        "output_tokens": 1117,
+                        "latency_ms": 11629.592878991389,
+                        "cost_usd": null,
+                        "cost_basis": "unavailable"
+                    },
+                    {
+                        "attempt": 2,
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "status": "rejected",
+                        "category": "invalid_grounded_needs_plan",
+                        "validation": {
+                            "stage": "schema",
+                            "field": "needs.0.authority",
+                            "code": "temporal_relation_grounding"
+                        },
+                        "provider_status": 200,
+                        "input_tokens": 18706,
+                        "output_tokens": 1006,
+                        "latency_ms": 9730.034672000329,
+                        "cost_usd": null,
+                        "cost_basis": "unavailable"
+                    }
+                ]
+            },
+            "review_metadata": [],
+            "provider_receipt": []
+        }
+    ],
+    "workspace_usage": []
+}

@@ -1,0 +1,11 @@
+{
+  "runtime_before": "fa20a7970da378a3c5aa49e995e1c674e1c26e8254543b869d0337d2d467b5b8",
+  "runtime_after": "fa20a7970da378a3c5aa49e995e1c674e1c26e8254543b869d0337d2d467b5b8",
+  "distinct_persisted_conversations": 3,
+  "one_user_turn_each": true,
+  "one_run_each": true,
+  "displayed_text_matches_persistence": true,
+  "capture_disabled_after": true,
+  "prior_results_replaced": false,
+  "main_unchanged": true
+}
