@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-14",
+  "branch": "codex/block1-extractive-hold-20261112",
+  "parent_commit": "c0006be7aece93de733dc72f6a6df24274e98c08",
+  "implementation_commit": "84f22f862e5001be998e6a8fe027f56a17db6941",
+  "main_unchanged": "348f09e053c8ad73676921c5c616cced812111d7",
+  "parent_runtime_aggregate": "fb81a4cafa619b4a4e3c89daadab33a277a92a922d164d1e1a67bfb0b47c29ac",
+  "frozen_runtime_aggregate": "7f20f123cb9e4af9567e0ea0240ebf715d54755ae2611dc66ecd6719756773af",
+  "aggregate_command": "git ls-files -z -- apps/api/app apps/api/config apps/api/routes apps/ai/app contracts | gsort -z | xargs -0 sha256sum | sha256sum",
+  "provider_calls": 0,
+  "provider_spend_usd": 0,
+  "live_authorisations_created_or_consumed": 0,
+  "sealed_confirmation_material_accessed": false,
+  "block_1": "HOLD",
+  "full_suite_new_failures": {"ai": [], "laravel": []},
+  "genuinely_resolved_failures_claimed": [],
+  "final_ai_baseline_non_reproduction": ["tests.test_r28_authoring_output_validator::test_rejects_check_open_inode_substitution"],
+  "preserved_unrelated_tracked_edits": [
+    "docs/adr/0039-define-authorised-applicability-scope-facts.md",
+    "scripts/evaluation/run_r28_r06_governed.py",
+    "scripts/evaluation/test_run_r28_r06_governed.py"
+  ],
+  "journey": "Updated locally only; ignored file not staged",
+  "prior_published_evidence": "Unchanged; this correction has a separate versioned evidence package"
+}

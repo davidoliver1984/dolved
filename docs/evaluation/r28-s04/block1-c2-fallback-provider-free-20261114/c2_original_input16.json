@@ -1,0 +1,495 @@
+{
+    "label": "ORIGINAL topic-only input16 plan; production family review, controlled external responses",
+    "retrieval_lineage": {
+        "planner": {
+            "provider": "openai",
+            "model": "gpt-5-mini",
+            "contract_schema_version": "evidence-needs-plan-v4",
+            "prompt_version": "bounded-evidence-needs-v26",
+            "adapter_version": "structured-chat-needs-v10",
+            "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+        },
+        "evidence_selection": "bounded-needs-k5-v3",
+        "temporal_alternatives": {
+            "version": "bounded-temporal-targets-v1",
+            "additional_search_lanes": 1
+        },
+        "topical_discovery_work": {
+            "n1": {
+                "stop_stage": "reviewer_result",
+                "search_requests": 1,
+                "reranker_requests": 0,
+                "reviewer_requests": 1,
+                "charged_to_logical_lane_limit": false,
+                "eligibility_outcome": "evidence_found",
+                "eligibility_reason": null,
+                "active_corpus_present": true,
+                "search_candidate_count": 2,
+                "hydrated_candidate_count": 2,
+                "reranked_candidate_count": null,
+                "reviewer_candidate_count": 2,
+                "reviewer_invoked": true,
+                "completed_usage": [],
+                "original_decision": "selected",
+                "effective_decision": "selected",
+                "validation_rejection_code": null,
+                "current_reuse": "equivalent"
+            }
+        },
+        "selection_coverage": {
+            "n1": {
+                "eligible_unit_count": 2,
+                "selected_unit_count": 2,
+                "budget_cut_unit_count": 0
+            }
+        },
+        "needs": {
+            "n1": {
+                "selection_stop_stage": null,
+                "topical_current_reused": true
+            }
+        }
+    },
+    "substituted_boundaries": [
+        "planner HTTP",
+        "dense search HTTP",
+        "generation\/entailment HTTP"
+    ],
+    "plan": {
+        "clarification": null,
+        "decision": "plan",
+        "needs": [
+            {
+                "applicability": {
+                    "kind": "named",
+                    "source": {
+                        "quote": "Harbour View",
+                        "turn_id": "user-1"
+                    }
+                },
+                "aspect": "Identify which supplier, contractor or staff member provided the daily cleaning service at the Harbour View site on 1 February 2026, using recorded service\/shift\/contractor logs or cleaning contract summary.",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "source": null,
+                    "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                    {
+                        "quote": "Harbour View",
+                        "turn_id": "user-1"
+                    },
+                    {
+                        "quote": "1 February 2026",
+                        "turn_id": "user-1"
+                    }
+                ],
+                "fact_reference": {
+                    "precision": "day",
+                    "source": {
+                        "quote": "1 February 2026",
+                        "turn_id": "user-1"
+                    },
+                    "value": "2026-02-01"
+                },
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                    "quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+                    "turn_id": "user-1"
+                },
+                "scope_question": null,
+                "supports_need_id": null
+            }
+        ],
+        "schema_version": "evidence-needs-plan-v4",
+        "bindings": [
+            {
+                "need_id": "n1",
+                "subject_status": "topic",
+                "family_ids": [],
+                "ownership": "authorised_workspace",
+                "ownership_source": null
+            }
+        ]
+    },
+    "generation_request": {
+        "contract_version": 4,
+        "request_id": "533f6201-6802-4258-8370-be3065f2e62c",
+        "workspace_id": "a478a594-bfd2-3f80-a94f-e5f188cb9532",
+        "question": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+        "evidence": [
+            {
+                "evidence_id": "ev-01",
+                "text": "Cleaning Contract Summary\n\nSupersedes the South-West-only version effective 1 June 2025. The same contractor's national framework agreement now covers all regions.\n\nSite\tContractor\tFrequency\nAll sites, all regions\tCleanCo National Ltd (successor to CleanCo South West Ltd's framework)\tDaily",
+                "document_chunk_id": 4,
+                "document_id": 4,
+                "ingestion_event_claim_id": 4,
+                "source_provenance": [
+                    {
+                        "normalised_element_id": "2be4bac7-0200-3f7d-a802-f655c13b5f0d",
+                        "source_element_ids": [
+                            "065c158b-9c77-360a-a42c-6ed9ecb6694a"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "temporal_authority": {
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "need_id": "n1",
+                    "document_family_id": "b49943ea-8e2f-3007-97ff-d97d9b9a5d2e",
+                    "document_version_id": "77254406-a940-3a49-a934-913176c5ec7b",
+                    "document_title": "aut.pdf",
+                    "document_family_title": "atque consectetur animi",
+                    "temporal_target_ids": [
+                        "n1:requested"
+                    ],
+                    "temporal_basis": "application-labelled-targets-v1",
+                    "authority_start": "2026-06-01T00:00:00+00:00",
+                    "authoritative_at_evaluated_at": true
+                },
+                "applicability_context": {
+                    "resolved_location_public_id": null
+                },
+                "side": "primary"
+            },
+            {
+                "evidence_id": "ev-02",
+                "text": "Cleaning Contract Summary\n\nSite\tContractor\tFrequency\nHarbour View\tCleanCo South West Ltd\tDaily\nMeadow Court\tCleanCo South West Ltd\tDaily",
+                "document_chunk_id": 3,
+                "document_id": 3,
+                "ingestion_event_claim_id": 3,
+                "source_provenance": [
+                    {
+                        "normalised_element_id": "424d0fab-280a-3712-9c4d-e18ebe10381c",
+                        "source_element_ids": [
+                            "5f03f788-f7cb-35fe-8536-34a72d013eb3"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "temporal_authority": {
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "need_id": "n1",
+                    "document_family_id": "b49943ea-8e2f-3007-97ff-d97d9b9a5d2e",
+                    "document_version_id": "f3542a61-dc73-3963-8b7a-e3b2e5b893f3",
+                    "document_title": "non.pdf",
+                    "document_family_title": "atque consectetur animi",
+                    "temporal_target_ids": [
+                        "n1:date:1"
+                    ],
+                    "temporal_basis": "application-labelled-targets-v1",
+                    "authority_start": "2025-06-01T00:00:00+00:00",
+                    "authoritative_at_evaluated_at": false
+                },
+                "applicability_context": {
+                    "resolved_location_public_id": null
+                },
+                "side": "primary"
+            }
+        ],
+        "constraints": {
+            "context_policy_version": "whole-needs-evidence-v1",
+            "max_context_characters": 60000,
+            "required_sides": [
+                "primary"
+            ],
+            "requested_evidence_type": "policy_or_procedural_requirements"
+        },
+        "evidence_needs": [
+            {
+                "applicability": {
+                    "kind": "named",
+                    "source": {
+                        "quote": "Harbour View",
+                        "turn_id": "user-1"
+                    }
+                },
+                "aspect": "Harbour View 1 February 2026 Who provided the daily cleaning at Harbour View on 1 February 2026?",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "source": null,
+                    "value": null
+                },
+                "central": true,
+                "claim_under_test": null,
+                "context_spans": [
+                    {
+                        "quote": "Harbour View",
+                        "turn_id": "user-1"
+                    },
+                    {
+                        "quote": "1 February 2026",
+                        "turn_id": "user-1"
+                    }
+                ],
+                "fact_reference": {
+                    "precision": "day",
+                    "source": {
+                        "quote": "1 February 2026",
+                        "turn_id": "user-1"
+                    },
+                    "value": "2026-02-01"
+                },
+                "need_id": "n1",
+                "operation": "retrieve",
+                "question_span": {
+                    "quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+                    "turn_id": "user-1"
+                },
+                "temporal_targets": [
+                    {
+                        "target_id": "n1:requested",
+                        "need_id": "n1",
+                        "family_id": "b49943ea-8e2f-3007-97ff-d97d9b9a5d2e",
+                        "purpose": "requested",
+                        "mode": "current",
+                        "at": "2026-11-14T00:00:00+00:00",
+                        "reference": null,
+                        "versions": [
+                            {
+                                "version_id": "77254406-a940-3a49-a934-913176c5ec7b",
+                                "start": "2026-06-01T00:00:00+00:00",
+                                "end": null
+                            }
+                        ],
+                        "status": "searched",
+                        "reason": null
+                    },
+                    {
+                        "target_id": "n1:date:1",
+                        "need_id": "n1",
+                        "family_id": "b49943ea-8e2f-3007-97ff-d97d9b9a5d2e",
+                        "purpose": "precautionary",
+                        "mode": "dated",
+                        "at": "2026-02-01T00:00:00+00:00",
+                        "reference": {
+                            "turn_id": "user-1",
+                            "quote": "1 February 2026",
+                            "at": "2026-02-01T00:00:00+00:00",
+                            "precision": "day",
+                            "value": "2026-02-01",
+                            "period_start": null,
+                            "period_end": null
+                        },
+                        "versions": [
+                            {
+                                "version_id": "f3542a61-dc73-3963-8b7a-e3b2e5b893f3",
+                                "start": "2025-06-01T00:00:00+00:00",
+                                "end": "2026-06-01T00:00:00+00:00"
+                            }
+                        ],
+                        "status": "searched",
+                        "reason": null
+                    }
+                ],
+                "retrieval_outcome": "evidence_found",
+                "request_text_version": "extractive-request-v1",
+                "retrieval_reason": null,
+                "evidence_ids": [
+                    "ev-01",
+                    "ev-02"
+                ]
+            }
+        ]
+    },
+    "temporal_context": {
+        "version": "temporal-answer-use-v1",
+        "uses": [
+            {
+                "part_index": 0,
+                "need_id": "n1",
+                "target_id": "n1:date:1",
+                "question_quote": "1 February 2026",
+                "target": {
+                    "target_id": "n1:date:1",
+                    "need_id": "n1",
+                    "family_id": "b49943ea-8e2f-3007-97ff-d97d9b9a5d2e",
+                    "purpose": "precautionary",
+                    "mode": "dated",
+                    "at": "2026-02-01T00:00:00+00:00",
+                    "reference": {
+                        "turn_id": "user-1",
+                        "quote": "1 February 2026",
+                        "at": "2026-02-01T00:00:00+00:00",
+                        "precision": "day",
+                        "value": "2026-02-01",
+                        "period_start": null,
+                        "period_end": null
+                    },
+                    "versions": [
+                        {
+                            "version_id": "f3542a61-dc73-3963-8b7a-e3b2e5b893f3",
+                            "start": "2025-06-01T00:00:00+00:00",
+                            "end": "2026-06-01T00:00:00+00:00"
+                        }
+                    ],
+                    "status": "searched",
+                    "reason": null
+                },
+                "planner_disagreement": true
+            }
+        ],
+        "targets": [
+            {
+                "target_id": "n1:requested",
+                "need_id": "n1",
+                "family_id": "b49943ea-8e2f-3007-97ff-d97d9b9a5d2e",
+                "purpose": "requested",
+                "mode": "current",
+                "at": "2026-11-14T00:00:00+00:00",
+                "reference": null,
+                "versions": [
+                    {
+                        "version_id": "77254406-a940-3a49-a934-913176c5ec7b",
+                        "start": "2026-06-01T00:00:00+00:00",
+                        "end": null
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            },
+            {
+                "target_id": "n1:date:1",
+                "need_id": "n1",
+                "family_id": "b49943ea-8e2f-3007-97ff-d97d9b9a5d2e",
+                "purpose": "precautionary",
+                "mode": "dated",
+                "at": "2026-02-01T00:00:00+00:00",
+                "reference": {
+                    "turn_id": "user-1",
+                    "quote": "1 February 2026",
+                    "at": "2026-02-01T00:00:00+00:00",
+                    "precision": "day",
+                    "value": "2026-02-01",
+                    "period_start": null,
+                    "period_end": null
+                },
+                "versions": [
+                    {
+                        "version_id": "f3542a61-dc73-3963-8b7a-e3b2e5b893f3",
+                        "start": "2025-06-01T00:00:00+00:00",
+                        "end": "2026-06-01T00:00:00+00:00"
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            }
+        ]
+    },
+    "persisted_answer_parts": [
+        {
+            "text": "CleanCo South West Ltd provided the daily cleaning at Harbour View on 1 February 2026.",
+            "evidence_ids": [
+                "ev-02"
+            ]
+        }
+    ],
+    "aspect_links": [
+        {
+            "need_id": "n1",
+            "answer_part_indices": [
+                0
+            ],
+            "unsupported_aspect_indices": []
+        }
+    ],
+    "displayed_text": "CleanCo South West Ltd provided the daily cleaning at Harbour View on 1 February 2026.\nTemporal basis: 1 February 2026; version f3542a61-dc73-3963-8b7a-e3b2e5b893f3; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).\n\nLocation coverage not established\n\nThe named location in your question could not be matched to a registered site. The guidance above is general; its applicability to that location has not been established.",
+    "reloaded_text": "CleanCo South West Ltd provided the daily cleaning at Harbour View on 1 February 2026.\nTemporal basis: 1 February 2026; version f3542a61-dc73-3963-8b7a-e3b2e5b893f3; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).",
+    "token_budget_outcome": "insufficient_evidence",
+    "token_budget_text": "I could not retain the required versioned evidence within the answer context budget. Evidence could not be retained within the context budget for: Who provided the daily cleaning at Harbour View on 1 February 2026?. This does not establish that the source documents lack the information.",
+    "exhausted_target_rejection": {
+        "outcome": "insufficient_evidence",
+        "usage": {
+            "request_count": 2,
+            "input_tokens": null,
+            "output_tokens": null,
+            "cached_input_tokens": null,
+            "latency_ms": null,
+            "cost_usd": null,
+            "retry_count": 1,
+            "validation_retry_count": 1,
+            "pricing_snapshot": null,
+            "cost_basis": "unavailable",
+            "validation_attempts": [
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": null,
+                    "output_tokens": null,
+                    "cached_input_tokens": null,
+                    "latency_ms": null,
+                    "cost_usd": null,
+                    "pricing_snapshot": null,
+                    "cost_basis": "unavailable",
+                    "outcome": "rejected",
+                    "request_id": "1e87472d-3851-463a-814d-6b7fc12bcb25",
+                    "retry_of_request_id": null,
+                    "validation": {
+                        "category": "contract_validation_failure",
+                        "layer": "laravel_result_validation",
+                        "field": "result",
+                        "code": "temporal_target_invalid",
+                        "http_status": null
+                    }
+                },
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": null,
+                    "output_tokens": null,
+                    "cached_input_tokens": null,
+                    "latency_ms": null,
+                    "cost_usd": null,
+                    "pricing_snapshot": null,
+                    "cost_basis": "unavailable",
+                    "outcome": "rejected",
+                    "request_id": "533f6201-6802-4258-8370-be3065f2e62c",
+                    "retry_of_request_id": "1e87472d-3851-463a-814d-6b7fc12bcb25",
+                    "validation": {
+                        "category": "contract_validation_failure",
+                        "layer": "laravel_result_validation",
+                        "field": "result",
+                        "code": "temporal_target_invalid",
+                        "http_status": null
+                    }
+                }
+            ],
+            "controlled_fallback": {
+                "category": "contract_validation_failure",
+                "code": "temporal_target_invalid",
+                "layer": "python_generation_adapter"
+            }
+        },
+        "text": "I couldn't find enough available evidence to answer that question."
+    }
+}

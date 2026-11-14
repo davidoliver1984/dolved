@@ -1,0 +1,156 @@
+{
+    "case": "request_budget",
+    "result": {
+        "outcome": "retrieval_failed",
+        "candidates": [],
+        "reason": "topical_family_review_failed",
+        "clarification_source": null,
+        "resolved_temporal_authority": [],
+        "resolved_applicability_location": [],
+        "lineage": {
+            "failure": {
+                "stage": "topical_family_selection",
+                "category": "contract_failure",
+                "request_count": null,
+                "usage": []
+            },
+            "topical_discovery_work": {
+                "n1": {
+                    "stop_stage": "discovery_recheck",
+                    "search_requests": 1,
+                    "reranker_requests": 0,
+                    "reviewer_requests": 1,
+                    "charged_to_logical_lane_limit": false,
+                    "eligibility_outcome": "evidence_found",
+                    "eligibility_reason": null,
+                    "active_corpus_present": true,
+                    "search_candidate_count": 2,
+                    "hydrated_candidate_count": 2,
+                    "reranked_candidate_count": null,
+                    "reviewer_candidate_count": 2,
+                    "reviewer_invoked": true,
+                    "completed_usage": []
+                }
+            }
+        },
+        "usage": [
+            {
+                "stage": "planner",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null,
+                "pricing_snapshot": null
+            }
+        ]
+    },
+    "original_query": "What are the inspection arrangements now following the review in April 2025?",
+    "original_eligible_scope": {
+        "primary": [
+            "322042da-0277-366e-82b6-d1d89a2842a9",
+            "cde51a9c-f78d-32d8-ac60-cced4ba978c5"
+        ]
+    },
+    "search_requests": [
+        {
+            "request_id": "1202e3bc-61b0-41ae-bfc9-35b821b08099",
+            "contract_version": 1,
+            "workspace_id": "b433df7a-03d7-31ee-9560-b2041662ec54",
+            "query": "What are the inspection arrangements now following the review in April 2025?",
+            "embedding_profile": {
+                "provider": "test",
+                "model": "deterministic-test",
+                "dimensions": 3,
+                "output_dtype": "float",
+                "document_input_type": "document",
+                "query_input_type": "query",
+                "normalisation": "unit_length",
+                "truncation": false,
+                "model_revision": null,
+                "adapter_version": "1"
+            },
+            "embedding_profile_fingerprint": "3d7fb80e09e30850082e7709f5aa62023d85ee7a8021c6f5d8a85bef3b28ad98",
+            "vector_space": {
+                "collection_name": "embedding-space-d28976b4-7b38-359e-b4fa-2a48ee2bc546",
+                "embedding_space_generation_id": "54b33a4a-73bc-360f-b21d-2b512a770268",
+                "profile_fingerprint": "3d7fb80e09e30850082e7709f5aa62023d85ee7a8021c6f5d8a85bef3b28ad98",
+                "vector_name": "dense",
+                "dimensions": 3,
+                "distance": "cosine"
+            },
+            "workspace_corpus_generation_id": "a06f98c4-bb05-3178-bfb7-62c49424234c",
+            "candidate_k": 15,
+            "scopes": [
+                {
+                    "side": "primary",
+                    "eligible_document_ids": [
+                        "322042da-0277-366e-82b6-d1d89a2842a9",
+                        "cde51a9c-f78d-32d8-ac60-cced4ba978c5"
+                    ]
+                }
+            ]
+        }
+    ],
+    "review_calls": 1,
+    "trace": {
+        "needs_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+                {
+                    "need_id": "n1",
+                    "aspect": "applicable policy",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "What are the inspection arrangements now following the review in April 2025?"
+                    },
+                    "operation": "retrieve",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "supports_need_id": null,
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "context_spans": []
+                }
+            ],
+            "bindings": [
+                {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                }
+            ]
+        },
+        "need.n1.topical_family_selection": {
+            "decision": "failed",
+            "family_id": null,
+            "chunk_id": null,
+            "failure": {
+                "stage": "topical_family_selection",
+                "category": "contract_failure",
+                "request_count": null,
+                "usage": []
+            }
+        }
+    }
+}

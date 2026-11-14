@@ -1,0 +1,606 @@
+{
+    "fixture": "no_match",
+    "controlled_external_boundaries": true,
+    "search_calls": 2,
+    "reranker_calls": 0,
+    "reviewer_calls": 1,
+    "result": {
+        "outcome": "evidence_found",
+        "candidates": [
+            {
+                "chunk_id": "684512d5-7f89-39fb-ac74-c1406f1f6200",
+                "document_id": "a5bc92e4-ee4a-37cd-b910-6c01b59b1e83",
+                "document_family_id": "8e9f9177-a738-306c-babc-76ac9b011f9e",
+                "version_position": 2,
+                "source_filename": "voluptates.pdf",
+                "document_title": "voluptates.pdf",
+                "document_family_title": "dolore culpa dolorem",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is daily.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "562200b7-72ad-3360-9ce3-ea28e26c801d",
+                        "source_element_ids": [
+                            "b77a4e88-50d7-365a-8ee3-f96eaa4665fc"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "eb28cf16-5d43-3616-96d0-cf7357233d09",
+                "embedding_space_generation_id": "280fd353-1721-3f63-ad6e-651bd689e178",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "need_id": "n1"
+            },
+            {
+                "chunk_id": "fcf9e396-35d3-33cd-b62d-231a6e2ee8cd",
+                "document_id": "bf284e29-ca79-3a3f-a7b9-40f37d513417",
+                "document_family_id": "5aeef7e8-d1e4-374a-8e60-6d85d29dbf5c",
+                "version_position": 2,
+                "source_filename": "minus.pdf",
+                "document_title": "minus.pdf",
+                "document_family_title": "tempore iusto quasi",
+                "section_heading": null,
+                "chunk_text": "Quod saepe non occaecati ex earum minima. Ipsam et pariatur neque quo ab. Aliquid nesciunt voluptas nihil. Sunt consequuntur ullam laboriosam ea dolores aut voluptas.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "7de4a068-4c8a-3c8e-bf06-a4273515d26b",
+                        "source_element_ids": [
+                            "3824b590-7072-36c8-b3ce-ec8513a1ce3a"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 2,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "eb28cf16-5d43-3616-96d0-cf7357233d09",
+                "embedding_space_generation_id": "280fd353-1721-3f63-ad6e-651bd689e178",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "need_id": "n1"
+            }
+        ],
+        "reason": null,
+        "clarification_source": null,
+        "resolved_temporal_authority": [],
+        "resolved_applicability_location": [],
+        "lineage": {
+            "planner": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v10",
+                "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+            },
+            "evidence_selection": "bounded-needs-k5-v3",
+            "temporal_alternatives": {
+                "version": "bounded-temporal-targets-v1",
+                "additional_search_lanes": 0
+            },
+            "topical_discovery_work": {
+                "n1": {
+                    "stop_stage": "reviewer_result",
+                    "search_requests": 1,
+                    "reranker_requests": 0,
+                    "reviewer_requests": 1,
+                    "charged_to_logical_lane_limit": false,
+                    "eligibility_outcome": "evidence_found",
+                    "eligibility_reason": null,
+                    "active_corpus_present": true,
+                    "search_candidate_count": 2,
+                    "hydrated_candidate_count": 2,
+                    "reranked_candidate_count": null,
+                    "reviewer_candidate_count": 2,
+                    "reviewer_invoked": true,
+                    "completed_usage": [],
+                    "original_decision": "no_match",
+                    "effective_decision": "no_match",
+                    "validation_rejection_code": null,
+                    "temporal_guard": {
+                        "status": "not_run",
+                        "reason": "discovery_unresolved",
+                        "fallback": "original_unbound"
+                    }
+                }
+            },
+            "selection_coverage": {
+                "n1": {
+                    "eligible_unit_count": 2,
+                    "selected_unit_count": 2,
+                    "budget_cut_unit_count": 0
+                }
+            },
+            "needs": {
+                "n1": {
+                    "planner": {
+                        "provider": "openai",
+                        "model": "gpt-5-mini",
+                        "contract_schema_version": "evidence-needs-plan-v4",
+                        "prompt_version": "bounded-evidence-needs-v26",
+                        "adapter_version": "structured-chat-needs-v10",
+                        "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+                    },
+                    "retrieval": []
+                }
+            }
+        },
+        "usage": [
+            {
+                "stage": "planner",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null,
+                "pricing_snapshot": null
+            },
+            {
+                "stage": "compare_family_selection",
+                "provider": "openai",
+                "model": "test-model",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null
+            }
+        ],
+        "evidence_needs": [
+            {
+                "need_id": "n1",
+                "aspect": "What is the laboratory inspection interval now, after the review in March 2025?",
+                "central": true,
+                "question_span": {
+                    "turn_id": "user-1",
+                    "quote": "What is the laboratory inspection interval now, after the review in March 2025?"
+                },
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "value": null,
+                    "source": null
+                },
+                "fact_reference": null,
+                "applicability": {
+                    "kind": "generic",
+                    "source": null
+                },
+                "claim_under_test": null,
+                "scope_question": null,
+                "context_spans": [],
+                "retrieval_outcome": "evidence_found",
+                "request_text_version": "extractive-request-v1",
+                "applicability_reference_classifications": [],
+                "selection_coverage": {
+                    "eligible_unit_count": 2,
+                    "selected_unit_count": 2,
+                    "budget_cut_unit_count": 0
+                },
+                "retrieval_reason": null,
+                "selected_chunk_ids": [
+                    "684512d5-7f89-39fb-ac74-c1406f1f6200",
+                    "fcf9e396-35d3-33cd-b62d-231a6e2ee8cd"
+                ],
+                "resolved_temporal_authority": {
+                    "temporal_mode": "current",
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "explicit_date": null,
+                    "temporal_reference": null,
+                    "version_transition_boundary": null,
+                    "fact_date": null,
+                    "requested_evidence_type": "policy_or_procedural_requirements",
+                    "eligible_document_public_ids_by_side": {
+                        "primary": [
+                            "a5bc92e4-ee4a-37cd-b910-6c01b59b1e83",
+                            "bf284e29-ca79-3a3f-a7b9-40f37d513417"
+                        ]
+                    },
+                    "need_id": "n1",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    }
+                },
+                "resolved_applicability_location": {
+                    "resolved_location_public_id": null
+                }
+            }
+        ]
+    },
+    "trace": {
+        "needs_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+                {
+                    "need_id": "n1",
+                    "aspect": "What is the laboratory inspection interval now, after the review in March 2025?",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "What is the laboratory inspection interval now, after the review in March 2025?"
+                    },
+                    "operation": "retrieve",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "supports_need_id": null,
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "context_spans": []
+                }
+            ],
+            "bindings": [
+                {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                }
+            ]
+        },
+        "need.n1.topical_family_selection": {
+            "decision": "no_match",
+            "original_decision": "no_match",
+            "validation_rejection_code": null,
+            "candidate_identities": [
+                {
+                    "family_id": "8e9f9177-a738-306c-babc-76ac9b011f9e",
+                    "chunk_id": "684512d5-7f89-39fb-ac74-c1406f1f6200"
+                },
+                {
+                    "family_id": "5aeef7e8-d1e4-374a-8e60-6d85d29dbf5c",
+                    "chunk_id": "fcf9e396-35d3-33cd-b62d-231a6e2ee8cd"
+                }
+            ],
+            "family_id": null,
+            "chunk_id": null,
+            "usage": [
+                {
+                    "stage": "compare_family_selection",
+                    "provider": "openai",
+                    "model": "test-model",
+                    "execution": "PROVIDER_API",
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": null,
+                    "output_tokens": null,
+                    "latency_ms": 1,
+                    "cost_basis": "UNAVAILABLE",
+                    "cost_usd": null
+                }
+            ],
+            "diagnostics": {
+                "stop_stage": "reviewer_result",
+                "search_requests": 1,
+                "reranker_requests": 0,
+                "reviewer_requests": 1,
+                "charged_to_logical_lane_limit": false,
+                "eligibility_outcome": "evidence_found",
+                "eligibility_reason": null,
+                "active_corpus_present": true,
+                "search_candidate_count": 2,
+                "hydrated_candidate_count": 2,
+                "reranked_candidate_count": null,
+                "reviewer_candidate_count": 2,
+                "reviewer_invoked": true,
+                "completed_usage": []
+            }
+        },
+        "need.n1.temporal_guard": {
+            "status": "not_run",
+            "reason": "discovery_unresolved",
+            "fallback": "original_unbound"
+        },
+        "need.n1.plan": {
+            "query": "What is the laboratory inspection interval now, after the review in March 2025?",
+            "temporal_mode": "current",
+            "explicit_date": null,
+            "temporal_reference": null,
+            "version_transition_boundary": null,
+            "fact_date": null,
+            "requested_evidence_type": "policy_or_procedural_requirements",
+            "location_references": [],
+            "clarification_reason": null,
+            "classifier_lineage": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v10",
+                "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+            },
+            "usage": []
+        },
+        "need.n1.eligibility": {
+            "outcome": "evidence_found",
+            "document_public_ids_by_side": {
+                "primary": [
+                    "a5bc92e4-ee4a-37cd-b910-6c01b59b1e83",
+                    "bf284e29-ca79-3a3f-a7b9-40f37d513417"
+                ]
+            },
+            "reason": null,
+            "resolved_location_public_id": null,
+            "clarification_question": null,
+            "reference_classifications": []
+        },
+        "need.n1.search": {
+            "candidates": [
+                {
+                    "chunk_id": "684512d5-7f89-39fb-ac74-c1406f1f6200",
+                    "document_id": "a5bc92e4-ee4a-37cd-b910-6c01b59b1e83",
+                    "workspace_corpus_generation_id": "eb28cf16-5d43-3616-96d0-cf7357233d09",
+                    "embedding_space_generation_id": "280fd353-1721-3f63-ad6e-651bd689e178",
+                    "score": 0.9,
+                    "rank": 1,
+                    "retrieval_method": "dense",
+                    "side": "primary"
+                },
+                {
+                    "chunk_id": "fcf9e396-35d3-33cd-b62d-231a6e2ee8cd",
+                    "document_id": "bf284e29-ca79-3a3f-a7b9-40f37d513417",
+                    "workspace_corpus_generation_id": "eb28cf16-5d43-3616-96d0-cf7357233d09",
+                    "embedding_space_generation_id": "280fd353-1721-3f63-ad6e-651bd689e178",
+                    "score": 0.9,
+                    "rank": 2,
+                    "retrieval_method": "dense",
+                    "side": "primary"
+                }
+            ],
+            "lineage": [],
+            "diagnostics": [],
+            "usage": []
+        },
+        "need.n1.hydrated": [
+            {
+                "chunk_id": "684512d5-7f89-39fb-ac74-c1406f1f6200",
+                "document_id": "a5bc92e4-ee4a-37cd-b910-6c01b59b1e83",
+                "document_family_id": "8e9f9177-a738-306c-babc-76ac9b011f9e",
+                "version_position": 2,
+                "source_filename": "voluptates.pdf",
+                "document_title": "voluptates.pdf",
+                "document_family_title": "dolore culpa dolorem",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is daily.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "562200b7-72ad-3360-9ce3-ea28e26c801d",
+                        "source_element_ids": [
+                            "b77a4e88-50d7-365a-8ee3-f96eaa4665fc"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "eb28cf16-5d43-3616-96d0-cf7357233d09",
+                "embedding_space_generation_id": "280fd353-1721-3f63-ad6e-651bd689e178",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null
+            },
+            {
+                "chunk_id": "fcf9e396-35d3-33cd-b62d-231a6e2ee8cd",
+                "document_id": "bf284e29-ca79-3a3f-a7b9-40f37d513417",
+                "document_family_id": "5aeef7e8-d1e4-374a-8e60-6d85d29dbf5c",
+                "version_position": 2,
+                "source_filename": "minus.pdf",
+                "document_title": "minus.pdf",
+                "document_family_title": "tempore iusto quasi",
+                "section_heading": null,
+                "chunk_text": "Quod saepe non occaecati ex earum minima. Ipsam et pariatur neque quo ab. Aliquid nesciunt voluptas nihil. Sunt consequuntur ullam laboriosam ea dolores aut voluptas.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "7de4a068-4c8a-3c8e-bf06-a4273515d26b",
+                        "source_element_ids": [
+                            "3824b590-7072-36c8-b3ce-ec8513a1ce3a"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 2,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "eb28cf16-5d43-3616-96d0-cf7357233d09",
+                "embedding_space_generation_id": "280fd353-1721-3f63-ad6e-651bd689e178",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null
+            }
+        ],
+        "needs_final_evidence": [
+            {
+                "chunk_id": "684512d5-7f89-39fb-ac74-c1406f1f6200",
+                "document_id": "a5bc92e4-ee4a-37cd-b910-6c01b59b1e83",
+                "document_family_id": "8e9f9177-a738-306c-babc-76ac9b011f9e",
+                "version_position": 2,
+                "source_filename": "voluptates.pdf",
+                "document_title": "voluptates.pdf",
+                "document_family_title": "dolore culpa dolorem",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is daily.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "562200b7-72ad-3360-9ce3-ea28e26c801d",
+                        "source_element_ids": [
+                            "b77a4e88-50d7-365a-8ee3-f96eaa4665fc"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "eb28cf16-5d43-3616-96d0-cf7357233d09",
+                "embedding_space_generation_id": "280fd353-1721-3f63-ad6e-651bd689e178",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "need_id": "n1"
+            },
+            {
+                "chunk_id": "fcf9e396-35d3-33cd-b62d-231a6e2ee8cd",
+                "document_id": "bf284e29-ca79-3a3f-a7b9-40f37d513417",
+                "document_family_id": "5aeef7e8-d1e4-374a-8e60-6d85d29dbf5c",
+                "version_position": 2,
+                "source_filename": "minus.pdf",
+                "document_title": "minus.pdf",
+                "document_family_title": "tempore iusto quasi",
+                "section_heading": null,
+                "chunk_text": "Quod saepe non occaecati ex earum minima. Ipsam et pariatur neque quo ab. Aliquid nesciunt voluptas nihil. Sunt consequuntur ullam laboriosam ea dolores aut voluptas.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "7de4a068-4c8a-3c8e-bf06-a4273515d26b",
+                        "source_element_ids": [
+                            "3824b590-7072-36c8-b3ce-ec8513a1ce3a"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 2,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "eb28cf16-5d43-3616-96d0-cf7357233d09",
+                "embedding_space_generation_id": "280fd353-1721-3f63-ad6e-651bd689e178",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "need_id": "n1"
+            }
+        ],
+        "needs_selection_coverage": {
+            "n1": {
+                "eligible_unit_count": 2,
+                "selected_unit_count": 2,
+                "budget_cut_unit_count": 0
+            }
+        }
+    }
+}

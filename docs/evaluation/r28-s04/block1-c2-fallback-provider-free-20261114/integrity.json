@@ -1,0 +1,213 @@
+{
+    "case": "integrity",
+    "result": {
+        "outcome": "retrieval_failed",
+        "candidates": [],
+        "reason": "topical_family_review_failed",
+        "clarification_source": null,
+        "resolved_temporal_authority": [],
+        "resolved_applicability_location": [],
+        "lineage": {
+            "failure": {
+                "stage": "final_eligibility",
+                "execution": "orchestration",
+                "provider": "ai-service",
+                "model": null,
+                "category": "contract_validation_error",
+                "http_status": 503,
+                "retry_count": 0,
+                "request_count": 1,
+                "latency_ms": 4,
+                "usage": [
+                    {
+                        "stage": "discovery_attempt",
+                        "request_count": 1,
+                        "input_tokens": 7,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0
+                    }
+                ],
+                "downstream_request_attempted": true,
+                "candidate_lineage_produced": false,
+                "provider_retry_count": null,
+                "outer_retry_count": 0,
+                "first_failure_at": null,
+                "final_failure_at": null,
+                "retry_delay_ms": null,
+                "provider_retry_after_seconds": null,
+                "provider_timing_source": null,
+                "rate_limit_event_count": null,
+                "retry_delays": []
+            },
+            "topical_discovery_work": {
+                "n1": {
+                    "stop_stage": "discovery_recheck",
+                    "search_requests": 1,
+                    "reranker_requests": 0,
+                    "reviewer_requests": 1,
+                    "charged_to_logical_lane_limit": false,
+                    "eligibility_outcome": "evidence_found",
+                    "eligibility_reason": null,
+                    "active_corpus_present": true,
+                    "search_candidate_count": 2,
+                    "hydrated_candidate_count": 2,
+                    "reranked_candidate_count": null,
+                    "reviewer_candidate_count": 2,
+                    "reviewer_invoked": true,
+                    "completed_usage": []
+                }
+            }
+        },
+        "usage": [
+            {
+                "stage": "planner",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null,
+                "pricing_snapshot": null
+            },
+            {
+                "stage": "discovery_attempt",
+                "request_count": 1,
+                "input_tokens": 7,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0
+            }
+        ]
+    },
+    "original_query": "What are the inspection arrangements now following the review in April 2025?",
+    "original_eligible_scope": {
+        "primary": [
+            "0217af8d-d4d4-3d0f-825b-5cd3a1955530",
+            "105a9531-74d4-3132-a73b-43075778f498"
+        ]
+    },
+    "search_requests": [
+        {
+            "request_id": "effb215b-2ea5-4c94-9ef8-500f8ca14084",
+            "contract_version": 1,
+            "workspace_id": "f9648ac3-6181-31a7-866a-eabc38eb787d",
+            "query": "What are the inspection arrangements now following the review in April 2025?",
+            "embedding_profile": {
+                "provider": "test",
+                "model": "deterministic-test",
+                "dimensions": 3,
+                "output_dtype": "float",
+                "document_input_type": "document",
+                "query_input_type": "query",
+                "normalisation": "unit_length",
+                "truncation": false,
+                "model_revision": null,
+                "adapter_version": "1"
+            },
+            "embedding_profile_fingerprint": "c75ffaaf26e2a9e07edb87612b93707e7ef9d727045e3c7f8303a6a5852775ba",
+            "vector_space": {
+                "collection_name": "embedding-space-055ac612-6972-3d1f-adc6-e6d4609abf7b",
+                "embedding_space_generation_id": "0c37397e-cb8e-3ee6-8ba2-24a30a23f078",
+                "profile_fingerprint": "c75ffaaf26e2a9e07edb87612b93707e7ef9d727045e3c7f8303a6a5852775ba",
+                "vector_name": "dense",
+                "dimensions": 3,
+                "distance": "cosine"
+            },
+            "workspace_corpus_generation_id": "1b3bf3f5-dfee-3515-bf9e-6538af79f483",
+            "candidate_k": 15,
+            "scopes": [
+                {
+                    "side": "primary",
+                    "eligible_document_ids": [
+                        "0217af8d-d4d4-3d0f-825b-5cd3a1955530",
+                        "105a9531-74d4-3132-a73b-43075778f498"
+                    ]
+                }
+            ]
+        }
+    ],
+    "review_calls": 1,
+    "trace": {
+        "needs_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+                {
+                    "need_id": "n1",
+                    "aspect": "applicable policy",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "What are the inspection arrangements now following the review in April 2025?"
+                    },
+                    "operation": "retrieve",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "supports_need_id": null,
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "context_spans": []
+                }
+            ],
+            "bindings": [
+                {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                }
+            ]
+        },
+        "need.n1.topical_family_selection": {
+            "decision": "failed",
+            "family_id": null,
+            "chunk_id": null,
+            "failure": {
+                "stage": "final_eligibility",
+                "execution": "orchestration",
+                "provider": "ai-service",
+                "model": null,
+                "category": "contract_validation_error",
+                "http_status": 503,
+                "retry_count": 0,
+                "request_count": 1,
+                "latency_ms": 4,
+                "usage": [
+                    {
+                        "stage": "discovery_attempt",
+                        "request_count": 1,
+                        "input_tokens": 7,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0
+                    }
+                ],
+                "downstream_request_attempted": true,
+                "candidate_lineage_produced": false,
+                "provider_retry_count": null,
+                "outer_retry_count": 0,
+                "first_failure_at": null,
+                "final_failure_at": null,
+                "retry_delay_ms": null,
+                "provider_retry_after_seconds": null,
+                "provider_timing_source": null,
+                "rate_limit_event_count": null,
+                "retry_delays": []
+            }
+        }
+    }
+}

@@ -1,0 +1,655 @@
+{
+    "fixture": "threshold",
+    "controlled_external_boundaries": true,
+    "search_calls": 2,
+    "reranker_calls": 2,
+    "reviewer_calls": 1,
+    "result": {
+        "outcome": "insufficient_evidence",
+        "candidates": [],
+        "reason": null,
+        "clarification_source": null,
+        "resolved_temporal_authority": [],
+        "resolved_applicability_location": [],
+        "lineage": {
+            "planner": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v10",
+                "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+            },
+            "evidence_selection": "bounded-needs-k5-v3",
+            "temporal_alternatives": {
+                "version": "bounded-temporal-targets-v1",
+                "additional_search_lanes": 1
+            },
+            "topical_discovery_work": {
+                "n1": {
+                    "stop_stage": "reviewer_result",
+                    "search_requests": 1,
+                    "reranker_requests": 1,
+                    "reviewer_requests": 1,
+                    "charged_to_logical_lane_limit": false,
+                    "eligibility_outcome": "evidence_found",
+                    "eligibility_reason": null,
+                    "active_corpus_present": true,
+                    "search_candidate_count": 2,
+                    "hydrated_candidate_count": 2,
+                    "reranked_candidate_count": 2,
+                    "reviewer_candidate_count": 2,
+                    "reviewer_invoked": true,
+                    "completed_usage": [
+                        {
+                            "stage": "reranking",
+                            "provider": "deterministic-fake",
+                            "model": "deterministic-reranker",
+                            "execution": "PROVIDER_API",
+                            "request_count": 1,
+                            "retry_count": 0,
+                            "provider_attempt_count": 1,
+                            "provider_retry_count": 0,
+                            "outer_attempt_count": 1,
+                            "outer_retry_count": 0,
+                            "rate_limit_event_count": 0,
+                            "retry_delays": [],
+                            "first_provider_attempt_at": "2026-11-14T12:00:00Z",
+                            "final_provider_success_at": "2026-11-14T12:00:01Z",
+                            "provider_retry_elapsed_ms": 0,
+                            "input_tokens": 17,
+                            "cached_input_tokens": null,
+                            "output_tokens": null,
+                            "latency_ms": 0.2545,
+                            "cost_basis": "UNAVAILABLE",
+                            "cost_usd": null,
+                            "pricing_snapshot": null
+                        }
+                    ],
+                    "original_decision": "selected",
+                    "effective_decision": "selected",
+                    "validation_rejection_code": null,
+                    "current_reuse": "topical_current_evidence_unavailable"
+                }
+            },
+            "selection_coverage": {
+                "n1": {
+                    "eligible_unit_count": 0,
+                    "selected_unit_count": 0,
+                    "budget_cut_unit_count": 0
+                }
+            },
+            "needs": {
+                "n1": {
+                    "selection_stop_stage": "threshold_filtered",
+                    "topical_current_reused": true
+                }
+            }
+        },
+        "usage": [
+            {
+                "stage": "planner",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null,
+                "pricing_snapshot": null
+            },
+            {
+                "stage": "reranking",
+                "provider": "deterministic-fake",
+                "model": "deterministic-reranker",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": 1,
+                "provider_retry_count": 0,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": 0,
+                "retry_delays": [],
+                "first_provider_attempt_at": "2026-11-14T12:00:00Z",
+                "final_provider_success_at": "2026-11-14T12:00:01Z",
+                "provider_retry_elapsed_ms": 0,
+                "input_tokens": 17,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 0.2545,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null,
+                "pricing_snapshot": null
+            },
+            {
+                "stage": "compare_family_selection",
+                "provider": "openai",
+                "model": "test-model",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null
+            },
+            {
+                "stage": "reranking",
+                "provider": "deterministic-fake",
+                "model": "deterministic-reranker",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "provider_attempt_count": 1,
+                "provider_retry_count": 0,
+                "outer_attempt_count": 1,
+                "outer_retry_count": 0,
+                "rate_limit_event_count": 0,
+                "retry_delays": [],
+                "first_provider_attempt_at": "2026-11-14T12:00:00Z",
+                "final_provider_success_at": "2026-11-14T12:00:01Z",
+                "provider_retry_elapsed_ms": 0,
+                "input_tokens": 17,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 0.181875,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null,
+                "pricing_snapshot": null
+            }
+        ],
+        "evidence_needs": [
+            {
+                "need_id": "n1",
+                "aspect": "What is the laboratory inspection interval now, after the review in March 2025?",
+                "central": true,
+                "question_span": {
+                    "turn_id": "user-1",
+                    "quote": "What is the laboratory inspection interval now, after the review in March 2025?"
+                },
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "value": null,
+                    "source": null
+                },
+                "fact_reference": null,
+                "applicability": {
+                    "kind": "generic",
+                    "source": null
+                },
+                "claim_under_test": null,
+                "scope_question": null,
+                "context_spans": [],
+                "temporal_targets": [
+                    {
+                        "target_id": "n1:requested",
+                        "need_id": "n1",
+                        "family_id": "12a5af90-c22c-3145-8778-3fc2ac270f13",
+                        "purpose": "requested",
+                        "mode": "current",
+                        "at": "2026-11-14T00:00:00+00:00",
+                        "reference": null,
+                        "versions": [
+                            {
+                                "version_id": "71519bf5-8b0d-323f-ad98-a2722a711803",
+                                "start": "2026-01-01T00:00:00+00:00",
+                                "end": null
+                            }
+                        ],
+                        "status": "filtered",
+                        "reason": "topical_current_evidence_unavailable"
+                    },
+                    {
+                        "target_id": "n1:date:1",
+                        "need_id": "n1",
+                        "family_id": "12a5af90-c22c-3145-8778-3fc2ac270f13",
+                        "purpose": "precautionary",
+                        "mode": "dated",
+                        "at": null,
+                        "reference": {
+                            "turn_id": "user-1",
+                            "quote": "March 2025",
+                            "at": null,
+                            "precision": "month",
+                            "value": "2025-03",
+                            "period_start": "2025-03-01T00:00:00+00:00",
+                            "period_end": "2025-04-01T00:00:00+00:00"
+                        },
+                        "versions": [
+                            {
+                                "version_id": "5ebfb310-586f-3935-8142-80d791561dad",
+                                "start": "2024-01-01T00:00:00+00:00",
+                                "end": "2026-01-01T00:00:00+00:00"
+                            }
+                        ],
+                        "status": "filtered",
+                        "reason": "threshold_filtered"
+                    }
+                ],
+                "retrieval_outcome": "insufficient_evidence",
+                "request_text_version": "extractive-request-v1",
+                "applicability_reference_classifications": [],
+                "selection_coverage": {
+                    "eligible_unit_count": 0,
+                    "selected_unit_count": 0,
+                    "budget_cut_unit_count": 0
+                },
+                "retrieval_reason": "topical_current_evidence_unavailable",
+                "selected_chunk_ids": [],
+                "resolved_temporal_authority": {
+                    "temporal_mode": "current",
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "explicit_date": null,
+                    "temporal_reference": null,
+                    "version_transition_boundary": null,
+                    "fact_date": null,
+                    "requested_evidence_type": "policy_or_procedural_requirements",
+                    "eligible_document_public_ids_by_side": {
+                        "primary": [
+                            "71519bf5-8b0d-323f-ad98-a2722a711803"
+                        ]
+                    },
+                    "need_id": "n1",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    }
+                },
+                "resolved_applicability_location": {
+                    "resolved_location_public_id": null
+                }
+            }
+        ]
+    },
+    "trace": {
+        "needs_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+                {
+                    "need_id": "n1",
+                    "aspect": "What is the laboratory inspection interval now, after the review in March 2025?",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "What is the laboratory inspection interval now, after the review in March 2025?"
+                    },
+                    "operation": "retrieve",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "supports_need_id": null,
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "context_spans": []
+                }
+            ],
+            "bindings": [
+                {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                }
+            ]
+        },
+        "need.n1.topical_family_selection": {
+            "decision": "selected",
+            "original_decision": "selected",
+            "validation_rejection_code": null,
+            "candidate_identities": [
+                {
+                    "family_id": "12a5af90-c22c-3145-8778-3fc2ac270f13",
+                    "chunk_id": "be8c4476-d118-34a2-8c6e-5def0e5ffea5"
+                },
+                {
+                    "family_id": "1370bdd6-2e95-3220-9980-8e172bf20ad3",
+                    "chunk_id": "2fae11c4-84e8-3d27-baad-103e20426c79"
+                }
+            ],
+            "family_id": "12a5af90-c22c-3145-8778-3fc2ac270f13",
+            "chunk_id": "be8c4476-d118-34a2-8c6e-5def0e5ffea5",
+            "usage": [
+                {
+                    "stage": "reranking",
+                    "provider": "deterministic-fake",
+                    "model": "deterministic-reranker",
+                    "execution": "PROVIDER_API",
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "provider_attempt_count": 1,
+                    "provider_retry_count": 0,
+                    "outer_attempt_count": 1,
+                    "outer_retry_count": 0,
+                    "rate_limit_event_count": 0,
+                    "retry_delays": [],
+                    "first_provider_attempt_at": "2026-11-14T12:00:00Z",
+                    "final_provider_success_at": "2026-11-14T12:00:01Z",
+                    "provider_retry_elapsed_ms": 0,
+                    "input_tokens": 17,
+                    "cached_input_tokens": null,
+                    "output_tokens": null,
+                    "latency_ms": 0.2545,
+                    "cost_basis": "UNAVAILABLE",
+                    "cost_usd": null,
+                    "pricing_snapshot": null
+                },
+                {
+                    "stage": "compare_family_selection",
+                    "provider": "openai",
+                    "model": "test-model",
+                    "execution": "PROVIDER_API",
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": null,
+                    "output_tokens": null,
+                    "latency_ms": 1,
+                    "cost_basis": "UNAVAILABLE",
+                    "cost_usd": null
+                }
+            ],
+            "diagnostics": {
+                "stop_stage": "reviewer_result",
+                "search_requests": 1,
+                "reranker_requests": 1,
+                "reviewer_requests": 1,
+                "charged_to_logical_lane_limit": false,
+                "eligibility_outcome": "evidence_found",
+                "eligibility_reason": null,
+                "active_corpus_present": true,
+                "search_candidate_count": 2,
+                "hydrated_candidate_count": 2,
+                "reranked_candidate_count": 2,
+                "reviewer_candidate_count": 2,
+                "reviewer_invoked": true,
+                "completed_usage": [
+                    {
+                        "stage": "reranking",
+                        "provider": "deterministic-fake",
+                        "model": "deterministic-reranker",
+                        "execution": "PROVIDER_API",
+                        "request_count": 1,
+                        "retry_count": 0,
+                        "provider_attempt_count": 1,
+                        "provider_retry_count": 0,
+                        "outer_attempt_count": 1,
+                        "outer_retry_count": 0,
+                        "rate_limit_event_count": 0,
+                        "retry_delays": [],
+                        "first_provider_attempt_at": "2026-11-14T12:00:00Z",
+                        "final_provider_success_at": "2026-11-14T12:00:01Z",
+                        "provider_retry_elapsed_ms": 0,
+                        "input_tokens": 17,
+                        "cached_input_tokens": null,
+                        "output_tokens": null,
+                        "latency_ms": 0.2545,
+                        "cost_basis": "UNAVAILABLE",
+                        "cost_usd": null,
+                        "pricing_snapshot": null
+                    }
+                ]
+            }
+        },
+        "need.n1.topical_current_reuse": {
+            "outcome": "insufficient_evidence",
+            "candidates": [],
+            "reason": "topical_current_evidence_unavailable",
+            "clarification_source": null,
+            "resolved_temporal_authority": {
+                "temporal_mode": "current",
+                "evaluated_at": "2026-11-14T00:00:00+00:00",
+                "explicit_date": null,
+                "temporal_reference": null,
+                "version_transition_boundary": null,
+                "fact_date": null,
+                "requested_evidence_type": "policy_or_procedural_requirements",
+                "eligible_document_public_ids_by_side": {
+                    "primary": [
+                        "71519bf5-8b0d-323f-ad98-a2722a711803"
+                    ]
+                },
+                "need_id": "n1",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "value": null,
+                    "source": null
+                }
+            },
+            "resolved_applicability_location": {
+                "resolved_location_public_id": null
+            },
+            "lineage": {
+                "selection_stop_stage": "threshold_filtered",
+                "topical_current_reused": true
+            },
+            "usage": []
+        },
+        "need.n1.n1:date:1.plan": {
+            "query": "What is the laboratory inspection interval now, after the review in March 2025?",
+            "temporal_mode": "valid_at_date",
+            "explicit_date": null,
+            "temporal_reference": {
+                "kind": "calendar_period",
+                "value": "2025-03"
+            },
+            "version_transition_boundary": null,
+            "fact_date": null,
+            "requested_evidence_type": "policy_or_procedural_requirements",
+            "location_references": [],
+            "clarification_reason": null,
+            "classifier_lineage": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v10",
+                "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+            },
+            "usage": []
+        },
+        "need.n1.n1:date:1.eligibility": {
+            "outcome": "evidence_found",
+            "document_public_ids_by_side": {
+                "primary": [
+                    "5ebfb310-586f-3935-8142-80d791561dad"
+                ]
+            },
+            "reason": null,
+            "resolved_location_public_id": null,
+            "clarification_question": null,
+            "reference_classifications": []
+        },
+        "need.n1.n1:date:1.search": {
+            "candidates": [
+                {
+                    "chunk_id": "802372a8-8807-30b8-9f95-b1cd5876931e",
+                    "document_id": "5ebfb310-586f-3935-8142-80d791561dad",
+                    "workspace_corpus_generation_id": "70535368-bc17-33e6-afba-b28056655dd1",
+                    "embedding_space_generation_id": "a345b368-7943-3842-9631-9c1598ef7527",
+                    "sparse_space_generation_id": "061512c7-bcf5-3f6b-841c-6fb8daf42a17",
+                    "score": 0.9,
+                    "rank": 1,
+                    "retrieval_method": "hybrid",
+                    "side": "primary"
+                }
+            ],
+            "lineage": {
+                "embedding_profile_fingerprint": "b29a9cb7c72d0c1d30fc2a9109177ee0de73075a4d935adadd7a1305bd0527e3",
+                "sparse_profile_fingerprint": "39bfcfc4542fc2ecb1692ba1360bddc016ed33cb674b9d0f2905d27b22f23d2f",
+                "sparse_space_generation_id": "061512c7-bcf5-3f6b-841c-6fb8daf42a17",
+                "fusion_strategy": "rrf",
+                "fusion_version": "1",
+                "rrf_k": 60,
+                "configuration_version": "test-862391e0-e69f-3840-b86a-a1a5de3b658c"
+            },
+            "diagnostics": [],
+            "usage": []
+        },
+        "need.n1.n1:date:1.hydrated": [
+            {
+                "chunk_id": "802372a8-8807-30b8-9f95-b1cd5876931e",
+                "document_id": "5ebfb310-586f-3935-8142-80d791561dad",
+                "document_family_id": "12a5af90-c22c-3145-8778-3fc2ac270f13",
+                "version_position": 1,
+                "source_filename": "expedita.pdf",
+                "document_title": "expedita.pdf",
+                "document_family_title": "eius nostrum ut",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is weekly.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "84e91285-f694-3284-9647-59a5e43c5c32",
+                        "source_element_ids": [
+                            "67693cd3-ae5a-3684-8f2f-7063c5254d2a"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "hybrid",
+                "side": "primary",
+                "workspace_corpus_generation_id": "70535368-bc17-33e6-afba-b28056655dd1",
+                "embedding_space_generation_id": "a345b368-7943-3842-9631-9c1598ef7527",
+                "sparse_space_generation_id": "061512c7-bcf5-3f6b-841c-6fb8daf42a17",
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null
+            }
+        ],
+        "need.n1.n1:date:1.reranked": {
+            "candidates": [
+                {
+                    "chunk_id": "802372a8-8807-30b8-9f95-b1cd5876931e",
+                    "side": "primary",
+                    "score": 0.01,
+                    "rank": 1
+                }
+            ],
+            "profile": {
+                "provider": "deterministic-fake",
+                "model": "deterministic-reranker",
+                "adapter_version": "1",
+                "truncation": false
+            },
+            "provider_input_tokens": 17,
+            "provider_retry_count": 0,
+            "usage": [
+                {
+                    "stage": "reranking",
+                    "provider": "deterministic-fake",
+                    "model": "deterministic-reranker",
+                    "execution": "PROVIDER_API",
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "provider_attempt_count": 1,
+                    "provider_retry_count": 0,
+                    "outer_attempt_count": 1,
+                    "outer_retry_count": 0,
+                    "rate_limit_event_count": 0,
+                    "retry_delays": [],
+                    "first_provider_attempt_at": "2026-11-14T12:00:00Z",
+                    "final_provider_success_at": "2026-11-14T12:00:01Z",
+                    "provider_retry_elapsed_ms": 0,
+                    "input_tokens": 17,
+                    "cached_input_tokens": null,
+                    "output_tokens": null,
+                    "latency_ms": 0.181875,
+                    "cost_basis": "UNAVAILABLE",
+                    "cost_usd": null,
+                    "pricing_snapshot": null
+                }
+            ]
+        },
+        "need.n1.n1:date:1.threshold_qualified": [],
+        "need.n1.temporal_targets": [
+            {
+                "target_id": "n1:requested",
+                "need_id": "n1",
+                "family_id": "12a5af90-c22c-3145-8778-3fc2ac270f13",
+                "purpose": "requested",
+                "mode": "current",
+                "at": "2026-11-14T00:00:00+00:00",
+                "reference": null,
+                "versions": [
+                    {
+                        "version_id": "71519bf5-8b0d-323f-ad98-a2722a711803",
+                        "start": "2026-01-01T00:00:00+00:00",
+                        "end": null
+                    }
+                ],
+                "status": "filtered",
+                "reason": "topical_current_evidence_unavailable"
+            },
+            {
+                "target_id": "n1:date:1",
+                "need_id": "n1",
+                "family_id": "12a5af90-c22c-3145-8778-3fc2ac270f13",
+                "purpose": "precautionary",
+                "mode": "dated",
+                "at": null,
+                "reference": {
+                    "turn_id": "user-1",
+                    "quote": "March 2025",
+                    "at": null,
+                    "precision": "month",
+                    "value": "2025-03",
+                    "period_start": "2025-03-01T00:00:00+00:00",
+                    "period_end": "2025-04-01T00:00:00+00:00"
+                },
+                "versions": [
+                    {
+                        "version_id": "5ebfb310-586f-3935-8142-80d791561dad",
+                        "start": "2024-01-01T00:00:00+00:00",
+                        "end": "2026-01-01T00:00:00+00:00"
+                    }
+                ],
+                "status": "filtered",
+                "reason": "threshold_filtered"
+            }
+        ],
+        "needs_final_evidence": [],
+        "needs_selection_coverage": {
+            "n1": {
+                "eligible_unit_count": 0,
+                "selected_unit_count": 0,
+                "budget_cut_unit_count": 0
+            }
+        }
+    }
+}

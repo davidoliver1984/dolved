@@ -1,0 +1,1631 @@
+{
+    "fixture": "capacity",
+    "controlled_external_boundaries": true,
+    "search_calls": 4,
+    "reranker_calls": 0,
+    "reviewer_calls": 3,
+    "result": {
+        "outcome": "evidence_found",
+        "candidates": [
+            {
+                "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+                "document_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "version_position": 2,
+                "source_filename": "saepe.pdf",
+                "document_title": "saepe.pdf",
+                "document_family_title": "sed magnam aut",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is daily.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "1246f5e2-bd19-3b2a-a629-b3b3f95a7aa8",
+                        "source_element_ids": [
+                            "67daca5f-9707-34fe-b478-91b487c3f790"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n1:requested"
+                ],
+                "need_id": "n1"
+            },
+            {
+                "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+                "document_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "version_position": 2,
+                "source_filename": "saepe.pdf",
+                "document_title": "saepe.pdf",
+                "document_family_title": "sed magnam aut",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is daily.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "1246f5e2-bd19-3b2a-a629-b3b3f95a7aa8",
+                        "source_element_ids": [
+                            "67daca5f-9707-34fe-b478-91b487c3f790"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n2:requested"
+                ],
+                "need_id": "n2"
+            },
+            {
+                "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+                "document_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "version_position": 2,
+                "source_filename": "saepe.pdf",
+                "document_title": "saepe.pdf",
+                "document_family_title": "sed magnam aut",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is daily.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "1246f5e2-bd19-3b2a-a629-b3b3f95a7aa8",
+                        "source_element_ids": [
+                            "67daca5f-9707-34fe-b478-91b487c3f790"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n3:requested"
+                ],
+                "need_id": "n3"
+            },
+            {
+                "chunk_id": "c13c1446-63c1-3d37-bb95-95471cd0e21e",
+                "document_id": "fe23f128-5edc-39ca-9d0d-c70a5a6d1512",
+                "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "version_position": 1,
+                "source_filename": "sint.pdf",
+                "document_title": "sint.pdf",
+                "document_family_title": "sed magnam aut",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is weekly.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "b19dfc0f-bbc4-3c8d-bc13-850b628e8687",
+                        "source_element_ids": [
+                            "d77e5063-13c1-3030-a992-fe5f54035bd4"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n1:date:1"
+                ],
+                "need_id": "n1"
+            }
+        ],
+        "reason": null,
+        "clarification_source": null,
+        "resolved_temporal_authority": [],
+        "resolved_applicability_location": [],
+        "lineage": {
+            "planner": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v10",
+                "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+            },
+            "evidence_selection": "bounded-needs-k5-v3",
+            "temporal_alternatives": {
+                "version": "bounded-temporal-targets-v1",
+                "additional_search_lanes": 1
+            },
+            "topical_discovery_work": {
+                "n1": {
+                    "stop_stage": "reviewer_result",
+                    "search_requests": 1,
+                    "reranker_requests": 0,
+                    "reviewer_requests": 1,
+                    "charged_to_logical_lane_limit": false,
+                    "eligibility_outcome": "evidence_found",
+                    "eligibility_reason": null,
+                    "active_corpus_present": true,
+                    "search_candidate_count": 2,
+                    "hydrated_candidate_count": 2,
+                    "reranked_candidate_count": null,
+                    "reviewer_candidate_count": 2,
+                    "reviewer_invoked": true,
+                    "completed_usage": [],
+                    "original_decision": "selected",
+                    "effective_decision": "selected",
+                    "validation_rejection_code": null,
+                    "current_reuse": "equivalent"
+                },
+                "n2": {
+                    "stop_stage": "reviewer_result",
+                    "search_requests": 1,
+                    "reranker_requests": 0,
+                    "reviewer_requests": 1,
+                    "charged_to_logical_lane_limit": false,
+                    "eligibility_outcome": "evidence_found",
+                    "eligibility_reason": null,
+                    "active_corpus_present": true,
+                    "search_candidate_count": 2,
+                    "hydrated_candidate_count": 2,
+                    "reranked_candidate_count": null,
+                    "reviewer_candidate_count": 2,
+                    "reviewer_invoked": true,
+                    "completed_usage": [],
+                    "original_decision": "selected",
+                    "effective_decision": "selected",
+                    "validation_rejection_code": null,
+                    "current_reuse": "equivalent"
+                },
+                "n3": {
+                    "stop_stage": "reviewer_result",
+                    "search_requests": 1,
+                    "reranker_requests": 0,
+                    "reviewer_requests": 1,
+                    "charged_to_logical_lane_limit": false,
+                    "eligibility_outcome": "evidence_found",
+                    "eligibility_reason": null,
+                    "active_corpus_present": true,
+                    "search_candidate_count": 2,
+                    "hydrated_candidate_count": 2,
+                    "reranked_candidate_count": null,
+                    "reviewer_candidate_count": 2,
+                    "reviewer_invoked": true,
+                    "completed_usage": [],
+                    "original_decision": "selected",
+                    "effective_decision": "selected",
+                    "validation_rejection_code": null,
+                    "current_reuse": "equivalent"
+                }
+            },
+            "selection_coverage": {
+                "n1": {
+                    "eligible_unit_count": 2,
+                    "selected_unit_count": 2,
+                    "budget_cut_unit_count": 0
+                },
+                "n2": {
+                    "eligible_unit_count": 1,
+                    "selected_unit_count": 1,
+                    "budget_cut_unit_count": 0
+                },
+                "n3": {
+                    "eligible_unit_count": 1,
+                    "selected_unit_count": 1,
+                    "budget_cut_unit_count": 0
+                }
+            },
+            "needs": {
+                "n1": {
+                    "selection_stop_stage": null,
+                    "topical_current_reused": true
+                },
+                "n2": {
+                    "selection_stop_stage": null,
+                    "topical_current_reused": true
+                },
+                "n3": {
+                    "selection_stop_stage": null,
+                    "topical_current_reused": true
+                }
+            }
+        },
+        "usage": [
+            {
+                "stage": "planner",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null,
+                "pricing_snapshot": null
+            },
+            {
+                "stage": "compare_family_selection",
+                "provider": "openai",
+                "model": "test-model",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null
+            },
+            {
+                "stage": "compare_family_selection",
+                "provider": "openai",
+                "model": "test-model",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null
+            },
+            {
+                "stage": "compare_family_selection",
+                "provider": "openai",
+                "model": "test-model",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null
+            }
+        ],
+        "evidence_needs": [
+            {
+                "need_id": "n1",
+                "aspect": "What is the laboratory inspection interval now, after the review in March 2025?",
+                "central": true,
+                "question_span": {
+                    "turn_id": "user-1",
+                    "quote": "What is the laboratory inspection interval now, after the review in March 2025?"
+                },
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "value": null,
+                    "source": null
+                },
+                "fact_reference": null,
+                "applicability": {
+                    "kind": "generic",
+                    "source": null
+                },
+                "claim_under_test": null,
+                "scope_question": null,
+                "context_spans": [],
+                "temporal_targets": [
+                    {
+                        "target_id": "n1:requested",
+                        "need_id": "n1",
+                        "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                        "purpose": "requested",
+                        "mode": "current",
+                        "at": "2026-11-14T00:00:00+00:00",
+                        "reference": null,
+                        "versions": [
+                            {
+                                "version_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                                "start": "2026-01-01T00:00:00+00:00",
+                                "end": null
+                            }
+                        ],
+                        "status": "searched",
+                        "reason": null
+                    },
+                    {
+                        "target_id": "n1:date:1",
+                        "need_id": "n1",
+                        "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                        "purpose": "precautionary",
+                        "mode": "dated",
+                        "at": null,
+                        "reference": {
+                            "turn_id": "user-1",
+                            "quote": "March 2025",
+                            "at": null,
+                            "precision": "month",
+                            "value": "2025-03",
+                            "period_start": "2025-03-01T00:00:00+00:00",
+                            "period_end": "2025-04-01T00:00:00+00:00"
+                        },
+                        "versions": [
+                            {
+                                "version_id": "fe23f128-5edc-39ca-9d0d-c70a5a6d1512",
+                                "start": "2024-01-01T00:00:00+00:00",
+                                "end": "2026-01-01T00:00:00+00:00"
+                            }
+                        ],
+                        "status": "searched",
+                        "reason": null
+                    }
+                ],
+                "retrieval_outcome": "evidence_found",
+                "request_text_version": "extractive-request-v1",
+                "applicability_reference_classifications": [],
+                "selection_coverage": {
+                    "eligible_unit_count": 2,
+                    "selected_unit_count": 2,
+                    "budget_cut_unit_count": 0
+                },
+                "retrieval_reason": null,
+                "selected_chunk_ids": [
+                    "be05c727-122e-35d3-b31a-e1c0c312c32c",
+                    "c13c1446-63c1-3d37-bb95-95471cd0e21e"
+                ],
+                "resolved_temporal_authority": {
+                    "temporal_mode": "current",
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "explicit_date": null,
+                    "temporal_reference": null,
+                    "version_transition_boundary": null,
+                    "fact_date": null,
+                    "requested_evidence_type": "policy_or_procedural_requirements",
+                    "eligible_document_public_ids_by_side": {
+                        "primary": [
+                            "858cb1fe-b191-32e9-9e9e-1c4bad3b8662"
+                        ]
+                    },
+                    "need_id": "n1",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    }
+                },
+                "resolved_applicability_location": {
+                    "resolved_location_public_id": null
+                }
+            },
+            {
+                "need_id": "n2",
+                "aspect": "What is the laboratory inspection interval now, after the review in March 2025?",
+                "central": true,
+                "question_span": {
+                    "turn_id": "user-1",
+                    "quote": "What is the laboratory inspection interval now, after the review in March 2025?"
+                },
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "value": null,
+                    "source": null
+                },
+                "fact_reference": null,
+                "applicability": {
+                    "kind": "generic",
+                    "source": null
+                },
+                "claim_under_test": null,
+                "scope_question": null,
+                "context_spans": [],
+                "temporal_targets": [
+                    {
+                        "target_id": "n2:requested",
+                        "need_id": "n2",
+                        "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                        "purpose": "requested",
+                        "mode": "current",
+                        "at": "2026-11-14T00:00:00+00:00",
+                        "reference": null,
+                        "versions": [
+                            {
+                                "version_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                                "start": "2026-01-01T00:00:00+00:00",
+                                "end": null
+                            }
+                        ],
+                        "status": "searched",
+                        "reason": null
+                    },
+                    {
+                        "target_id": "n2:date:1",
+                        "need_id": "n2",
+                        "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                        "purpose": "precautionary",
+                        "mode": "dated",
+                        "at": null,
+                        "reference": {
+                            "turn_id": "user-1",
+                            "quote": "March 2025",
+                            "at": null,
+                            "precision": "month",
+                            "value": "2025-03",
+                            "period_start": "2025-03-01T00:00:00+00:00",
+                            "period_end": "2025-04-01T00:00:00+00:00"
+                        },
+                        "versions": [
+                            {
+                                "version_id": "fe23f128-5edc-39ca-9d0d-c70a5a6d1512",
+                                "start": "2024-01-01T00:00:00+00:00",
+                                "end": "2026-01-01T00:00:00+00:00"
+                            }
+                        ],
+                        "status": "capacity_limited",
+                        "reason": null
+                    }
+                ],
+                "retrieval_outcome": "evidence_found",
+                "request_text_version": "extractive-request-v1",
+                "applicability_reference_classifications": [],
+                "selection_coverage": {
+                    "eligible_unit_count": 1,
+                    "selected_unit_count": 1,
+                    "budget_cut_unit_count": 0
+                },
+                "retrieval_reason": null,
+                "selected_chunk_ids": [
+                    "be05c727-122e-35d3-b31a-e1c0c312c32c"
+                ],
+                "resolved_temporal_authority": {
+                    "temporal_mode": "current",
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "explicit_date": null,
+                    "temporal_reference": null,
+                    "version_transition_boundary": null,
+                    "fact_date": null,
+                    "requested_evidence_type": "policy_or_procedural_requirements",
+                    "eligible_document_public_ids_by_side": {
+                        "primary": [
+                            "858cb1fe-b191-32e9-9e9e-1c4bad3b8662"
+                        ]
+                    },
+                    "need_id": "n2",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    }
+                },
+                "resolved_applicability_location": {
+                    "resolved_location_public_id": null
+                }
+            },
+            {
+                "need_id": "n3",
+                "aspect": "What is the laboratory inspection interval now, after the review in March 2025?",
+                "central": true,
+                "question_span": {
+                    "turn_id": "user-1",
+                    "quote": "What is the laboratory inspection interval now, after the review in March 2025?"
+                },
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "value": null,
+                    "source": null
+                },
+                "fact_reference": null,
+                "applicability": {
+                    "kind": "generic",
+                    "source": null
+                },
+                "claim_under_test": null,
+                "scope_question": null,
+                "context_spans": [],
+                "temporal_targets": [
+                    {
+                        "target_id": "n3:requested",
+                        "need_id": "n3",
+                        "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                        "purpose": "requested",
+                        "mode": "current",
+                        "at": "2026-11-14T00:00:00+00:00",
+                        "reference": null,
+                        "versions": [
+                            {
+                                "version_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                                "start": "2026-01-01T00:00:00+00:00",
+                                "end": null
+                            }
+                        ],
+                        "status": "searched",
+                        "reason": null
+                    },
+                    {
+                        "target_id": "n3:date:1",
+                        "need_id": "n3",
+                        "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                        "purpose": "precautionary",
+                        "mode": "dated",
+                        "at": null,
+                        "reference": {
+                            "turn_id": "user-1",
+                            "quote": "March 2025",
+                            "at": null,
+                            "precision": "month",
+                            "value": "2025-03",
+                            "period_start": "2025-03-01T00:00:00+00:00",
+                            "period_end": "2025-04-01T00:00:00+00:00"
+                        },
+                        "versions": [
+                            {
+                                "version_id": "fe23f128-5edc-39ca-9d0d-c70a5a6d1512",
+                                "start": "2024-01-01T00:00:00+00:00",
+                                "end": "2026-01-01T00:00:00+00:00"
+                            }
+                        ],
+                        "status": "capacity_limited",
+                        "reason": null
+                    }
+                ],
+                "retrieval_outcome": "evidence_found",
+                "request_text_version": "extractive-request-v1",
+                "applicability_reference_classifications": [],
+                "selection_coverage": {
+                    "eligible_unit_count": 1,
+                    "selected_unit_count": 1,
+                    "budget_cut_unit_count": 0
+                },
+                "retrieval_reason": null,
+                "selected_chunk_ids": [
+                    "be05c727-122e-35d3-b31a-e1c0c312c32c"
+                ],
+                "resolved_temporal_authority": {
+                    "temporal_mode": "current",
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "explicit_date": null,
+                    "temporal_reference": null,
+                    "version_transition_boundary": null,
+                    "fact_date": null,
+                    "requested_evidence_type": "policy_or_procedural_requirements",
+                    "eligible_document_public_ids_by_side": {
+                        "primary": [
+                            "858cb1fe-b191-32e9-9e9e-1c4bad3b8662"
+                        ]
+                    },
+                    "need_id": "n3",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    }
+                },
+                "resolved_applicability_location": {
+                    "resolved_location_public_id": null
+                }
+            }
+        ]
+    },
+    "trace": {
+        "needs_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+                {
+                    "need_id": "n1",
+                    "aspect": "What is the laboratory inspection interval now, after the review in March 2025?",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "What is the laboratory inspection interval now, after the review in March 2025?"
+                    },
+                    "operation": "retrieve",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "supports_need_id": null,
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "context_spans": []
+                },
+                {
+                    "need_id": "n2",
+                    "aspect": "What is the laboratory inspection interval now, after the review in March 2025?",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "What is the laboratory inspection interval now, after the review in March 2025?"
+                    },
+                    "operation": "retrieve",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "supports_need_id": null,
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "context_spans": []
+                },
+                {
+                    "need_id": "n3",
+                    "aspect": "What is the laboratory inspection interval now, after the review in March 2025?",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "What is the laboratory inspection interval now, after the review in March 2025?"
+                    },
+                    "operation": "retrieve",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "supports_need_id": null,
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "context_spans": []
+                }
+            ],
+            "bindings": [
+                {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                },
+                {
+                    "need_id": "n2",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                },
+                {
+                    "need_id": "n3",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                }
+            ]
+        },
+        "need.n1.topical_family_selection": {
+            "decision": "selected",
+            "original_decision": "selected",
+            "validation_rejection_code": null,
+            "candidate_identities": [
+                {
+                    "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                    "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c"
+                },
+                {
+                    "family_id": "f999e2eb-30e6-36b4-b38e-08106c620ce6",
+                    "chunk_id": "12e14285-7e47-3b5c-bad4-24b2640b70aa"
+                }
+            ],
+            "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+            "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+            "usage": [
+                {
+                    "stage": "compare_family_selection",
+                    "provider": "openai",
+                    "model": "test-model",
+                    "execution": "PROVIDER_API",
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": null,
+                    "output_tokens": null,
+                    "latency_ms": 1,
+                    "cost_basis": "UNAVAILABLE",
+                    "cost_usd": null
+                }
+            ],
+            "diagnostics": {
+                "stop_stage": "reviewer_result",
+                "search_requests": 1,
+                "reranker_requests": 0,
+                "reviewer_requests": 1,
+                "charged_to_logical_lane_limit": false,
+                "eligibility_outcome": "evidence_found",
+                "eligibility_reason": null,
+                "active_corpus_present": true,
+                "search_candidate_count": 2,
+                "hydrated_candidate_count": 2,
+                "reranked_candidate_count": null,
+                "reviewer_candidate_count": 2,
+                "reviewer_invoked": true,
+                "completed_usage": []
+            }
+        },
+        "need.n1.topical_current_reuse": {
+            "outcome": "evidence_found",
+            "candidates": [
+                {
+                    "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+                    "document_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                    "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                    "version_position": 2,
+                    "source_filename": "saepe.pdf",
+                    "document_title": "saepe.pdf",
+                    "document_family_title": "sed magnam aut",
+                    "section_heading": null,
+                    "chunk_text": "The laboratory inspection is daily.",
+                    "provenance": [
+                        {
+                            "normalised_element_id": "1246f5e2-bd19-3b2a-a629-b3b3f95a7aa8",
+                            "source_element_ids": [
+                                "67daca5f-9707-34fe-b478-91b487c3f790"
+                            ],
+                            "source_locations": [
+                                {
+                                    "type": "text",
+                                    "start_character": 0,
+                                    "end_character": 20,
+                                    "start_line": 1,
+                                    "end_line": 1
+                                }
+                            ],
+                            "element_start_character": 0,
+                            "element_end_character": 20,
+                            "chunk_start_character": 0,
+                            "chunk_end_character": 20,
+                            "role": "primary"
+                        }
+                    ],
+                    "score": 0.9,
+                    "rank": 1,
+                    "retrieval_method": "dense",
+                    "side": "primary",
+                    "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                    "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                    "sparse_space_generation_id": null,
+                    "dense_score": null,
+                    "dense_rank": null,
+                    "sparse_score": null,
+                    "sparse_rank": null
+                }
+            ],
+            "reason": null,
+            "clarification_source": null,
+            "resolved_temporal_authority": {
+                "temporal_mode": "current",
+                "evaluated_at": "2026-11-14T00:00:00+00:00",
+                "explicit_date": null,
+                "temporal_reference": null,
+                "version_transition_boundary": null,
+                "fact_date": null,
+                "requested_evidence_type": "policy_or_procedural_requirements",
+                "eligible_document_public_ids_by_side": {
+                    "primary": [
+                        "858cb1fe-b191-32e9-9e9e-1c4bad3b8662"
+                    ]
+                },
+                "need_id": "n1",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "value": null,
+                    "source": null
+                }
+            },
+            "resolved_applicability_location": {
+                "resolved_location_public_id": null
+            },
+            "lineage": {
+                "selection_stop_stage": null,
+                "topical_current_reused": true
+            },
+            "usage": []
+        },
+        "need.n2.topical_family_selection": {
+            "decision": "selected",
+            "original_decision": "selected",
+            "validation_rejection_code": null,
+            "candidate_identities": [
+                {
+                    "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                    "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c"
+                },
+                {
+                    "family_id": "f999e2eb-30e6-36b4-b38e-08106c620ce6",
+                    "chunk_id": "12e14285-7e47-3b5c-bad4-24b2640b70aa"
+                }
+            ],
+            "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+            "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+            "usage": [
+                {
+                    "stage": "compare_family_selection",
+                    "provider": "openai",
+                    "model": "test-model",
+                    "execution": "PROVIDER_API",
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": null,
+                    "output_tokens": null,
+                    "latency_ms": 1,
+                    "cost_basis": "UNAVAILABLE",
+                    "cost_usd": null
+                }
+            ],
+            "diagnostics": {
+                "stop_stage": "reviewer_result",
+                "search_requests": 1,
+                "reranker_requests": 0,
+                "reviewer_requests": 1,
+                "charged_to_logical_lane_limit": false,
+                "eligibility_outcome": "evidence_found",
+                "eligibility_reason": null,
+                "active_corpus_present": true,
+                "search_candidate_count": 2,
+                "hydrated_candidate_count": 2,
+                "reranked_candidate_count": null,
+                "reviewer_candidate_count": 2,
+                "reviewer_invoked": true,
+                "completed_usage": []
+            }
+        },
+        "need.n2.topical_current_reuse": {
+            "outcome": "evidence_found",
+            "candidates": [
+                {
+                    "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+                    "document_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                    "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                    "version_position": 2,
+                    "source_filename": "saepe.pdf",
+                    "document_title": "saepe.pdf",
+                    "document_family_title": "sed magnam aut",
+                    "section_heading": null,
+                    "chunk_text": "The laboratory inspection is daily.",
+                    "provenance": [
+                        {
+                            "normalised_element_id": "1246f5e2-bd19-3b2a-a629-b3b3f95a7aa8",
+                            "source_element_ids": [
+                                "67daca5f-9707-34fe-b478-91b487c3f790"
+                            ],
+                            "source_locations": [
+                                {
+                                    "type": "text",
+                                    "start_character": 0,
+                                    "end_character": 20,
+                                    "start_line": 1,
+                                    "end_line": 1
+                                }
+                            ],
+                            "element_start_character": 0,
+                            "element_end_character": 20,
+                            "chunk_start_character": 0,
+                            "chunk_end_character": 20,
+                            "role": "primary"
+                        }
+                    ],
+                    "score": 0.9,
+                    "rank": 1,
+                    "retrieval_method": "dense",
+                    "side": "primary",
+                    "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                    "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                    "sparse_space_generation_id": null,
+                    "dense_score": null,
+                    "dense_rank": null,
+                    "sparse_score": null,
+                    "sparse_rank": null
+                }
+            ],
+            "reason": null,
+            "clarification_source": null,
+            "resolved_temporal_authority": {
+                "temporal_mode": "current",
+                "evaluated_at": "2026-11-14T00:00:00+00:00",
+                "explicit_date": null,
+                "temporal_reference": null,
+                "version_transition_boundary": null,
+                "fact_date": null,
+                "requested_evidence_type": "policy_or_procedural_requirements",
+                "eligible_document_public_ids_by_side": {
+                    "primary": [
+                        "858cb1fe-b191-32e9-9e9e-1c4bad3b8662"
+                    ]
+                },
+                "need_id": "n2",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "value": null,
+                    "source": null
+                }
+            },
+            "resolved_applicability_location": {
+                "resolved_location_public_id": null
+            },
+            "lineage": {
+                "selection_stop_stage": null,
+                "topical_current_reused": true
+            },
+            "usage": []
+        },
+        "need.n3.topical_family_selection": {
+            "decision": "selected",
+            "original_decision": "selected",
+            "validation_rejection_code": null,
+            "candidate_identities": [
+                {
+                    "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                    "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c"
+                },
+                {
+                    "family_id": "f999e2eb-30e6-36b4-b38e-08106c620ce6",
+                    "chunk_id": "12e14285-7e47-3b5c-bad4-24b2640b70aa"
+                }
+            ],
+            "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+            "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+            "usage": [
+                {
+                    "stage": "compare_family_selection",
+                    "provider": "openai",
+                    "model": "test-model",
+                    "execution": "PROVIDER_API",
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": null,
+                    "output_tokens": null,
+                    "latency_ms": 1,
+                    "cost_basis": "UNAVAILABLE",
+                    "cost_usd": null
+                }
+            ],
+            "diagnostics": {
+                "stop_stage": "reviewer_result",
+                "search_requests": 1,
+                "reranker_requests": 0,
+                "reviewer_requests": 1,
+                "charged_to_logical_lane_limit": false,
+                "eligibility_outcome": "evidence_found",
+                "eligibility_reason": null,
+                "active_corpus_present": true,
+                "search_candidate_count": 2,
+                "hydrated_candidate_count": 2,
+                "reranked_candidate_count": null,
+                "reviewer_candidate_count": 2,
+                "reviewer_invoked": true,
+                "completed_usage": []
+            }
+        },
+        "need.n3.topical_current_reuse": {
+            "outcome": "evidence_found",
+            "candidates": [
+                {
+                    "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+                    "document_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                    "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                    "version_position": 2,
+                    "source_filename": "saepe.pdf",
+                    "document_title": "saepe.pdf",
+                    "document_family_title": "sed magnam aut",
+                    "section_heading": null,
+                    "chunk_text": "The laboratory inspection is daily.",
+                    "provenance": [
+                        {
+                            "normalised_element_id": "1246f5e2-bd19-3b2a-a629-b3b3f95a7aa8",
+                            "source_element_ids": [
+                                "67daca5f-9707-34fe-b478-91b487c3f790"
+                            ],
+                            "source_locations": [
+                                {
+                                    "type": "text",
+                                    "start_character": 0,
+                                    "end_character": 20,
+                                    "start_line": 1,
+                                    "end_line": 1
+                                }
+                            ],
+                            "element_start_character": 0,
+                            "element_end_character": 20,
+                            "chunk_start_character": 0,
+                            "chunk_end_character": 20,
+                            "role": "primary"
+                        }
+                    ],
+                    "score": 0.9,
+                    "rank": 1,
+                    "retrieval_method": "dense",
+                    "side": "primary",
+                    "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                    "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                    "sparse_space_generation_id": null,
+                    "dense_score": null,
+                    "dense_rank": null,
+                    "sparse_score": null,
+                    "sparse_rank": null
+                }
+            ],
+            "reason": null,
+            "clarification_source": null,
+            "resolved_temporal_authority": {
+                "temporal_mode": "current",
+                "evaluated_at": "2026-11-14T00:00:00+00:00",
+                "explicit_date": null,
+                "temporal_reference": null,
+                "version_transition_boundary": null,
+                "fact_date": null,
+                "requested_evidence_type": "policy_or_procedural_requirements",
+                "eligible_document_public_ids_by_side": {
+                    "primary": [
+                        "858cb1fe-b191-32e9-9e9e-1c4bad3b8662"
+                    ]
+                },
+                "need_id": "n3",
+                "authority": {
+                    "kind": "current",
+                    "precision": "none",
+                    "value": null,
+                    "source": null
+                }
+            },
+            "resolved_applicability_location": {
+                "resolved_location_public_id": null
+            },
+            "lineage": {
+                "selection_stop_stage": null,
+                "topical_current_reused": true
+            },
+            "usage": []
+        },
+        "need.n1.n1:date:1.plan": {
+            "query": "What is the laboratory inspection interval now, after the review in March 2025?",
+            "temporal_mode": "valid_at_date",
+            "explicit_date": null,
+            "temporal_reference": {
+                "kind": "calendar_period",
+                "value": "2025-03"
+            },
+            "version_transition_boundary": null,
+            "fact_date": null,
+            "requested_evidence_type": "policy_or_procedural_requirements",
+            "location_references": [],
+            "clarification_reason": null,
+            "classifier_lineage": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v10",
+                "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+            },
+            "usage": []
+        },
+        "need.n1.n1:date:1.eligibility": {
+            "outcome": "evidence_found",
+            "document_public_ids_by_side": {
+                "primary": [
+                    "fe23f128-5edc-39ca-9d0d-c70a5a6d1512"
+                ]
+            },
+            "reason": null,
+            "resolved_location_public_id": null,
+            "clarification_question": null,
+            "reference_classifications": []
+        },
+        "need.n1.n1:date:1.search": {
+            "candidates": [
+                {
+                    "chunk_id": "c13c1446-63c1-3d37-bb95-95471cd0e21e",
+                    "document_id": "fe23f128-5edc-39ca-9d0d-c70a5a6d1512",
+                    "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                    "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                    "score": 0.9,
+                    "rank": 1,
+                    "retrieval_method": "dense",
+                    "side": "primary"
+                }
+            ],
+            "lineage": [],
+            "diagnostics": [],
+            "usage": []
+        },
+        "need.n1.n1:date:1.hydrated": [
+            {
+                "chunk_id": "c13c1446-63c1-3d37-bb95-95471cd0e21e",
+                "document_id": "fe23f128-5edc-39ca-9d0d-c70a5a6d1512",
+                "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "version_position": 1,
+                "source_filename": "sint.pdf",
+                "document_title": "sint.pdf",
+                "document_family_title": "sed magnam aut",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is weekly.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "b19dfc0f-bbc4-3c8d-bc13-850b628e8687",
+                        "source_element_ids": [
+                            "d77e5063-13c1-3030-a992-fe5f54035bd4"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null
+            }
+        ],
+        "need.n1.temporal_targets": [
+            {
+                "target_id": "n1:requested",
+                "need_id": "n1",
+                "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "purpose": "requested",
+                "mode": "current",
+                "at": "2026-11-14T00:00:00+00:00",
+                "reference": null,
+                "versions": [
+                    {
+                        "version_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                        "start": "2026-01-01T00:00:00+00:00",
+                        "end": null
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            },
+            {
+                "target_id": "n1:date:1",
+                "need_id": "n1",
+                "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "purpose": "precautionary",
+                "mode": "dated",
+                "at": null,
+                "reference": {
+                    "turn_id": "user-1",
+                    "quote": "March 2025",
+                    "at": null,
+                    "precision": "month",
+                    "value": "2025-03",
+                    "period_start": "2025-03-01T00:00:00+00:00",
+                    "period_end": "2025-04-01T00:00:00+00:00"
+                },
+                "versions": [
+                    {
+                        "version_id": "fe23f128-5edc-39ca-9d0d-c70a5a6d1512",
+                        "start": "2024-01-01T00:00:00+00:00",
+                        "end": "2026-01-01T00:00:00+00:00"
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            }
+        ],
+        "need.n2.temporal_targets": [
+            {
+                "target_id": "n2:requested",
+                "need_id": "n2",
+                "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "purpose": "requested",
+                "mode": "current",
+                "at": "2026-11-14T00:00:00+00:00",
+                "reference": null,
+                "versions": [
+                    {
+                        "version_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                        "start": "2026-01-01T00:00:00+00:00",
+                        "end": null
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            },
+            {
+                "target_id": "n2:date:1",
+                "need_id": "n2",
+                "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "purpose": "precautionary",
+                "mode": "dated",
+                "at": null,
+                "reference": {
+                    "turn_id": "user-1",
+                    "quote": "March 2025",
+                    "at": null,
+                    "precision": "month",
+                    "value": "2025-03",
+                    "period_start": "2025-03-01T00:00:00+00:00",
+                    "period_end": "2025-04-01T00:00:00+00:00"
+                },
+                "versions": [
+                    {
+                        "version_id": "fe23f128-5edc-39ca-9d0d-c70a5a6d1512",
+                        "start": "2024-01-01T00:00:00+00:00",
+                        "end": "2026-01-01T00:00:00+00:00"
+                    }
+                ],
+                "status": "capacity_limited",
+                "reason": null
+            }
+        ],
+        "need.n3.temporal_targets": [
+            {
+                "target_id": "n3:requested",
+                "need_id": "n3",
+                "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "purpose": "requested",
+                "mode": "current",
+                "at": "2026-11-14T00:00:00+00:00",
+                "reference": null,
+                "versions": [
+                    {
+                        "version_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                        "start": "2026-01-01T00:00:00+00:00",
+                        "end": null
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            },
+            {
+                "target_id": "n3:date:1",
+                "need_id": "n3",
+                "family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "purpose": "precautionary",
+                "mode": "dated",
+                "at": null,
+                "reference": {
+                    "turn_id": "user-1",
+                    "quote": "March 2025",
+                    "at": null,
+                    "precision": "month",
+                    "value": "2025-03",
+                    "period_start": "2025-03-01T00:00:00+00:00",
+                    "period_end": "2025-04-01T00:00:00+00:00"
+                },
+                "versions": [
+                    {
+                        "version_id": "fe23f128-5edc-39ca-9d0d-c70a5a6d1512",
+                        "start": "2024-01-01T00:00:00+00:00",
+                        "end": "2026-01-01T00:00:00+00:00"
+                    }
+                ],
+                "status": "capacity_limited",
+                "reason": null
+            }
+        ],
+        "needs_final_evidence": [
+            {
+                "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+                "document_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "version_position": 2,
+                "source_filename": "saepe.pdf",
+                "document_title": "saepe.pdf",
+                "document_family_title": "sed magnam aut",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is daily.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "1246f5e2-bd19-3b2a-a629-b3b3f95a7aa8",
+                        "source_element_ids": [
+                            "67daca5f-9707-34fe-b478-91b487c3f790"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n1:requested"
+                ],
+                "need_id": "n1"
+            },
+            {
+                "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+                "document_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "version_position": 2,
+                "source_filename": "saepe.pdf",
+                "document_title": "saepe.pdf",
+                "document_family_title": "sed magnam aut",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is daily.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "1246f5e2-bd19-3b2a-a629-b3b3f95a7aa8",
+                        "source_element_ids": [
+                            "67daca5f-9707-34fe-b478-91b487c3f790"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n2:requested"
+                ],
+                "need_id": "n2"
+            },
+            {
+                "chunk_id": "be05c727-122e-35d3-b31a-e1c0c312c32c",
+                "document_id": "858cb1fe-b191-32e9-9e9e-1c4bad3b8662",
+                "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "version_position": 2,
+                "source_filename": "saepe.pdf",
+                "document_title": "saepe.pdf",
+                "document_family_title": "sed magnam aut",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is daily.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "1246f5e2-bd19-3b2a-a629-b3b3f95a7aa8",
+                        "source_element_ids": [
+                            "67daca5f-9707-34fe-b478-91b487c3f790"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n3:requested"
+                ],
+                "need_id": "n3"
+            },
+            {
+                "chunk_id": "c13c1446-63c1-3d37-bb95-95471cd0e21e",
+                "document_id": "fe23f128-5edc-39ca-9d0d-c70a5a6d1512",
+                "document_family_id": "52e82e32-e85f-3de0-9e8c-d67069cd6839",
+                "version_position": 1,
+                "source_filename": "sint.pdf",
+                "document_title": "sint.pdf",
+                "document_family_title": "sed magnam aut",
+                "section_heading": null,
+                "chunk_text": "The laboratory inspection is weekly.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "b19dfc0f-bbc4-3c8d-bc13-850b628e8687",
+                        "source_element_ids": [
+                            "d77e5063-13c1-3030-a992-fe5f54035bd4"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "e6f286bd-29a2-3c58-85ee-07d9fbb5396f",
+                "embedding_space_generation_id": "9878b4d3-8f45-352e-9069-0badfa3c6fac",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n1:date:1"
+                ],
+                "need_id": "n1"
+            }
+        ],
+        "needs_selection_coverage": {
+            "n1": {
+                "eligible_unit_count": 2,
+                "selected_unit_count": 2,
+                "budget_cut_unit_count": 0
+            },
+            "n2": {
+                "eligible_unit_count": 1,
+                "selected_unit_count": 1,
+                "budget_cut_unit_count": 0
+            },
+            "n3": {
+                "eligible_unit_count": 1,
+                "selected_unit_count": 1,
+                "budget_cut_unit_count": 0
+            }
+        }
+    }
+}

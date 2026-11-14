@@ -1,0 +1,190 @@
+{
+    "case": "unclassified_503",
+    "result": {
+        "outcome": "retrieval_failed",
+        "candidates": [],
+        "reason": "topical_family_review_failed",
+        "clarification_source": null,
+        "resolved_temporal_authority": [],
+        "resolved_applicability_location": [],
+        "lineage": {
+            "failure": {
+                "stage": "transport_orchestration",
+                "execution": "provider_api",
+                "provider": "openai",
+                "model": null,
+                "category": "unknown",
+                "http_status": 503,
+                "retry_count": 0,
+                "request_count": 1,
+                "latency_ms": 0.266833,
+                "usage": [],
+                "downstream_request_attempted": true,
+                "candidate_lineage_produced": false,
+                "provider_retry_count": null,
+                "outer_retry_count": null,
+                "first_failure_at": null,
+                "final_failure_at": null,
+                "retry_delay_ms": null,
+                "provider_retry_after_seconds": null,
+                "provider_timing_source": null,
+                "rate_limit_event_count": null,
+                "retry_delays": []
+            },
+            "topical_discovery_work": {
+                "n1": {
+                    "stop_stage": "discovery_recheck",
+                    "search_requests": 1,
+                    "reranker_requests": 0,
+                    "reviewer_requests": 1,
+                    "charged_to_logical_lane_limit": false,
+                    "eligibility_outcome": "evidence_found",
+                    "eligibility_reason": null,
+                    "active_corpus_present": true,
+                    "search_candidate_count": 2,
+                    "hydrated_candidate_count": 2,
+                    "reranked_candidate_count": null,
+                    "reviewer_candidate_count": 2,
+                    "reviewer_invoked": true,
+                    "completed_usage": []
+                }
+            }
+        },
+        "usage": [
+            {
+                "stage": "planner",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "PROVIDER_API",
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "cached_input_tokens": null,
+                "output_tokens": null,
+                "latency_ms": 1,
+                "cost_basis": "UNAVAILABLE",
+                "cost_usd": null,
+                "pricing_snapshot": null
+            }
+        ]
+    },
+    "original_query": "What are the inspection arrangements now following the review in April 2025?",
+    "original_eligible_scope": {
+        "primary": [
+            "a574bc6c-b68c-379f-8df2-8d3d23d56d4c",
+            "7702e0b4-a0d9-36c7-9d44-4f28cf488fe7"
+        ]
+    },
+    "search_requests": [
+        {
+            "request_id": "b7a9c4a6-e9a3-4436-b1a8-99c66a4fb59c",
+            "contract_version": 1,
+            "workspace_id": "8c13575e-63cd-3e56-9573-9ea0ad2e54a7",
+            "query": "What are the inspection arrangements now following the review in April 2025?",
+            "embedding_profile": {
+                "provider": "test",
+                "model": "deterministic-test",
+                "dimensions": 3,
+                "output_dtype": "float",
+                "document_input_type": "document",
+                "query_input_type": "query",
+                "normalisation": "unit_length",
+                "truncation": false,
+                "model_revision": null,
+                "adapter_version": "1"
+            },
+            "embedding_profile_fingerprint": "4f33e312b4abc2c447760ed55c34598eafbe368c0591a4a2526c40650d9c1bcf",
+            "vector_space": {
+                "collection_name": "embedding-space-b06dfac7-12b9-3692-b1ff-64eb196ac8ab",
+                "embedding_space_generation_id": "886c0b35-9406-3b3b-a4a5-668f437dfdda",
+                "profile_fingerprint": "4f33e312b4abc2c447760ed55c34598eafbe368c0591a4a2526c40650d9c1bcf",
+                "vector_name": "dense",
+                "dimensions": 3,
+                "distance": "cosine"
+            },
+            "workspace_corpus_generation_id": "a4df86d5-8c3e-343a-a8df-5ef77646949e",
+            "candidate_k": 15,
+            "scopes": [
+                {
+                    "side": "primary",
+                    "eligible_document_ids": [
+                        "a574bc6c-b68c-379f-8df2-8d3d23d56d4c",
+                        "7702e0b4-a0d9-36c7-9d44-4f28cf488fe7"
+                    ]
+                }
+            ]
+        }
+    ],
+    "review_calls": 1,
+    "trace": {
+        "needs_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+                {
+                    "need_id": "n1",
+                    "aspect": "applicable policy",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "What are the inspection arrangements now following the review in April 2025?"
+                    },
+                    "operation": "retrieve",
+                    "authority": {
+                        "kind": "current",
+                        "precision": "none",
+                        "value": null,
+                        "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "supports_need_id": null,
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "context_spans": []
+                }
+            ],
+            "bindings": [
+                {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                }
+            ]
+        },
+        "need.n1.topical_family_selection": {
+            "decision": "failed",
+            "family_id": null,
+            "chunk_id": null,
+            "failure": {
+                "stage": "transport_orchestration",
+                "execution": "provider_api",
+                "provider": "openai",
+                "model": null,
+                "category": "unknown",
+                "http_status": 503,
+                "retry_count": 0,
+                "request_count": 1,
+                "latency_ms": 0.266833,
+                "usage": [],
+                "downstream_request_attempted": true,
+                "candidate_lineage_produced": false,
+                "provider_retry_count": null,
+                "outer_retry_count": null,
+                "first_failure_at": null,
+                "final_failure_at": null,
+                "retry_delay_ms": null,
+                "provider_retry_after_seconds": null,
+                "provider_timing_source": null,
+                "rate_limit_event_count": null,
+                "retry_delays": []
+            }
+        }
+    }
+}
