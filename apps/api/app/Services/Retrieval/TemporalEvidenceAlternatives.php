@@ -6,6 +6,7 @@ namespace App\Services\Retrieval;
 
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
+use App\Enums\RetrievalTemporalReferenceKind;
 use App\Models\Document;
 use App\Support\Documents\DocumentAuthorityTimeline;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
@@ -56,10 +57,18 @@ final readonly class TemporalEvidenceAlternatives
                 $references[] = null; // Current is available as a distinct target, never labelled requested history.
             }
             foreach ($references as $index => $reference) {
-                $at = $reference === null ? $evaluatedAt : CarbonImmutable::parse($reference['at']);
-                $dated = new RetrievalPlan($plan->query, $reference === null ? RetrievalTemporalMode::Current : RetrievalTemporalMode::ValidAtDate, $reference === null ? null : $at, null,
+                $period = $reference !== null && ($reference['precision'] ?? 'day') !== 'day';
+                $at = $reference === null ? $evaluatedAt : ($period ? null : CarbonImmutable::parse($reference['at']));
+                // This alternative is a whole-period question, never the planner's
+                // before/after endpoint interpretation. The original need is unchanged.
+                $alternativeNeed = $plan->evidenceNeed;
+                if ($period) {
+                    $alternativeNeed['authority'] = ['kind' => 'period', 'source' => ['turn_id' => $reference['turn_id'], 'quote' => $reference['quote']]];
+                }
+                $dated = new RetrievalPlan($plan->query, $reference === null ? RetrievalTemporalMode::Current : RetrievalTemporalMode::ValidAtDate, $reference === null ? null : $at,
+                    $period ? ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => $reference['value']] : null,
                     $plan->locationReferences, null, $plan->classifierLineage, $plan->classifierUsage,
-                    factDate: $plan->factDate, requestedEvidenceType: $plan->requestedEvidenceType, evidenceNeed: $plan->evidenceNeed);
+                    factDate: $plan->factDate, requestedEvidenceType: $plan->requestedEvidenceType, evidenceNeed: $alternativeNeed);
                 $datedEligible = $this->eligibility->handle($scope, $dated, $evaluatedAt);
                 $versions = $datedEligible->documentPublicIdsBySide['primary'] ?? [];
                 $rechecks[] = [$dated, $versions];

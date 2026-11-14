@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Generation;
 
 use App\Exceptions\GenerationException;
+use App\Services\Retrieval\TemporalPeriodResolver;
 use App\Support\Generation\GenerationRequest;
 use Carbon\CarbonImmutable;
 
@@ -56,6 +57,17 @@ final class ValidateTemporalAnswerUse
                     $at = CarbonImmutable::parse($target['at']);
                     if ($version['start'] === null || $at->lt(CarbonImmutable::parse($version['start']))
                         || ($version['end'] !== null && $at->gte(CarbonImmutable::parse($version['end'])))) {
+                        throw new GenerationException('Temporal evidence interval mismatch.');
+                    }
+                }
+                $reference = $target['reference'];
+                if ($reference !== null && ($reference['precision'] ?? 'day') !== 'day') {
+                    $window = app(TemporalPeriodResolver::class)->window($reference['value'] ?? '');
+                    if ($target['at'] !== null || $window === null
+                        || $window[0]->toIso8601String() !== ($reference['period_start'] ?? null)
+                        || $window[1]->toIso8601String() !== ($reference['period_end'] ?? null)
+                        || $version['start'] === null || $window[0]->lt(CarbonImmutable::parse($version['start']))
+                        || ($version['end'] !== null && $window[1]->gt(CarbonImmutable::parse($version['end'])))) {
                         throw new GenerationException('Temporal evidence interval mismatch.');
                     }
                 }

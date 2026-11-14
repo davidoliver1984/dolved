@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from app.extraction.models import ImmutableModel
 
@@ -11,7 +11,50 @@ from app.extraction.models import ImmutableModel
 class TemporalReference(ImmutableModel):
     turn_id: str
     quote: str
-    at: datetime
+    at: datetime | None
+    precision: Literal["day", "month", "year"] = "day"
+    value: str | None = None
+    period_start: datetime | None = None
+    period_end: datetime | None = None
+
+    @model_validator(mode="after")
+    def whole_calendar_reference(self):
+        if self.precision == "day":
+            if (
+                self.at is None
+                or self.period_start is not None
+                or self.period_end is not None
+            ):
+                raise ValueError("invalid temporal day reference")
+        else:
+            if (
+                self.at is not None
+                or self.period_start is None
+                or self.period_end is None
+            ):
+                raise ValueError("period reference requires bounds, not an exact day")
+            start, end = self.period_start, self.period_end
+            if (
+                start.day != 1
+                or any((start.hour, start.minute, start.second, start.microsecond))
+                or start.tzinfo is None
+                or end.tzinfo is None
+            ):
+                raise ValueError("invalid calendar period bounds")
+            year, month = start.year, start.month
+            if self.precision == "year":
+                if month != 1 or self.value != f"{year:04}":
+                    raise ValueError("invalid calendar year")
+                expected = start.replace(year=year + 1)
+            else:
+                if self.value != f"{year:04}-{month:02}":
+                    raise ValueError("invalid calendar month")
+                expected = start.replace(
+                    year=year + (month == 12), month=1 if month == 12 else month + 1
+                )
+            if end != expected:
+                raise ValueError("invalid calendar period end")
+        return self
 
 
 class TemporalVersion(ImmutableModel):
@@ -86,6 +129,18 @@ def validate_temporal_uses(request, parts, links, uses):
                 and (version.end is None or target.at < version.end)
             ):
                 raise ValueError("temporal evidence interval mismatch")
+            if target.reference is not None and target.reference.precision != "day":
+                ref = target.reference
+                if (
+                    target.at is not None
+                    or ref.period_start is None
+                    or ref.period_end is None
+                    or not (
+                        version.start <= ref.period_start
+                        and (version.end is None or ref.period_end <= version.end)
+                    )
+                ):
+                    raise ValueError("temporal evidence interval mismatch")
 
 
 TEMPORAL_INSTRUCTIONS = """
@@ -98,6 +153,8 @@ that choice. A dated target quote includes the supplied date reference verbatim.
 Use ONLY evidence labelled for that target for the part's direct assertions.
 Historical evidence cannot support an explicitly current-target answer. If an old
 event is background to a current question, choose current, not that event's date.
+Month/year targets cover their whole half-open period, not an invented exact day.
+Do not treat a partially covered or unresolved period as a usable target.
 If the question requests history but the planner selected current, a supplied dated
 target may answer it; do not relabel current evidence as history. The application
 will display the selected time basis and record disagreement with the planner.

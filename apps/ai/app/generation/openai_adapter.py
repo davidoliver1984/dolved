@@ -414,8 +414,8 @@ class OpenAIGenerator:
             temporal.profile = replace(
                 self.profile,
                 contract_version="generation-result-v4",
-                prompt_version="grounded-generation-temporal-v1",
-                adapter_version="openai-responses-temporal-v1",
+                prompt_version="grounded-generation-temporal-v2",
+                adapter_version="openai-responses-temporal-v2",
             )
             return temporal._generate(request.legacy_request(), request)
         with trace.get_tracer("dolved.python.generation").start_as_current_span(

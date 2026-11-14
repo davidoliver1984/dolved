@@ -10,6 +10,7 @@ use App\Actions\Conversation\SubmitConversationMessage;
 use App\Actions\Generation\GenerateGroundedAnswer;
 use App\Actions\Retrieval\RetrieveWorkspaceEvidence;
 use App\Enums\DocumentStatus;
+use App\Enums\GenerationOutcome;
 use App\Enums\GenerationRunStatus;
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
@@ -35,6 +36,7 @@ use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Generation\GenerationProfileFactory;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Support\Generation\GenerationAssemblyInput;
+use App\Support\Generation\GenerationResult;
 use App\Support\Generation\UnresolvedNamedCoverageDisclosure;
 use App\Support\Retrieval\ApplicabilityScopeFact;
 use App\Support\Retrieval\EvidenceNeedsPlan;
@@ -63,12 +65,13 @@ final class EvidenceNeedsRetrievalTest extends TestCase
 
     public static function c1ReplayCases(): array
     {
-        return [['varied_development'], ['modified_input16']];
+        return [['varied_development'], ['modified_input16'], ['month_replay'], ['year_replay']];
     }
 
     public static function c1AdmissionCases(): array
     {
-        return [['capacity'], ['missing_history'], ['ineligible'], ['applicability'], ['foreign_family'], ['topic_only'], ['empty_search'], ['historical'], ['two_dates']];
+        return [['capacity'], ['missing_history'], ['ineligible'], ['applicability'], ['foreign_family'], ['topic_only'], ['empty_search'], ['historical'], ['two_dates'],
+            ['month'], ['year'], ['month_transition'], ['year_transition'], ['partial'], ['no_attained'], ['period_capacity']];
     }
 
     #[DataProvider('c1AdmissionCases')]
@@ -78,7 +81,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         [$workspace, $generation, $scope] = $this->scope();
         $old = $case === 'missing_history' ? null : $this->document($workspace, $generation, '2025-01-01');
         $middle = $case === 'two_dates' ? $this->document($workspace, $generation, '2025-12-01', $old) : $old;
-        $current = $this->document($workspace, $generation, '2026-07-01', $middle);
+        $current = $this->document($workspace, $generation, $case === 'month_transition' ? '2026-07-15' : '2026-07-01', $middle);
         if ($case === 'ineligible') {
             $old->status = DocumentStatus::Deleting;
             $old->save();
@@ -89,6 +92,20 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $familyId = $this->document($foreign, $foreignGeneration, '2024-01-01')->family->public_id;
         }
         $question = 'What did the procedure require on 2025-10-04?';
+        $periodQuote = match ($case) {
+            'month', 'period_capacity' => 'October 2025', 'year' => '2025',
+            'month_transition' => 'July 2026', 'year_transition' => '2026',
+            'partial' => '2024', 'no_attained' => '2023', default => null,
+        };
+        if ($periodQuote !== null) {
+            $question = 'What does the procedure require now, after the review in '.$periodQuote.'?';
+        }
+        if ($case === 'partial') {
+            // Start of the period has no attained authority; do not use only its end.
+            $old->effective_from = CarbonImmutable::parse('2024-06-01');
+            $old->approved_at = CarbonImmutable::parse('2024-06-01');
+            $old->save();
+        }
         if ($case === 'two_dates') {
             $question = 'What did the procedure require on 2025-10-04 and on 2026-02-05?';
         }
@@ -119,7 +136,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             }
             $data['plan']['needs'] = [];
             $data['plan']['bindings'] = [];
-            foreach ($case === 'capacity' ? ['n1', 'n2', 'n3'] : ['n1'] as $id) {
+            foreach (in_array($case, ['capacity', 'period_capacity'], true) ? ['n1', 'n2', 'n3'] : ['n1'] as $id) {
                 $data['plan']['needs'][] = [...$need, 'need_id' => $id];
                 $data['plan']['bindings'][] = ['need_id' => $id, 'subject_status' => $case === 'topic_only' ? 'topic' : 'matched',
                     'family_ids' => $case === 'topic_only' ? [] : [$familyId], 'ownership' => 'authorised_workspace', 'ownership_source' => null];
@@ -148,10 +165,29 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         });
         $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 10, CarbonImmutable::parse('2026-11-14'));
         $this->assertLessThanOrEqual(5, count($result->candidates));
-        if ($case === 'capacity') {
+        if (in_array($case, ['capacity', 'period_capacity'], true)) {
             $this->assertCount(4, $searches);
             $this->assertSame(['searched', 'capacity_limited', 'capacity_limited'], array_map(fn ($need) => $need['temporal_targets'][1]['status'], $result->evidenceNeeds));
             $this->assertContains($old->public_id, array_column($result->candidates, 'document_id'));
+        } elseif (in_array($case, ['month', 'year'], true)) {
+            $this->assertCount(2, $searches);
+            $target = $result->evidenceNeeds[0]['temporal_targets'][1];
+            $this->assertSame('searched', $target['status']);
+            $this->assertNull($target['at']);
+            $this->assertSame($case, $target['reference']['precision']);
+            $this->assertSame($periodQuote, $target['reference']['quote']);
+        } elseif (in_array($case, ['month_transition', 'year_transition', 'partial', 'no_attained'], true)) {
+            $this->assertCount(1, $searches);
+            $target = $result->evidenceNeeds[0]['temporal_targets'][1];
+            $this->assertSame('ineligible', $target['status']);
+            $this->assertSame([], $target['versions']);
+            if ($case !== 'no_attained') {
+                $this->assertSame('ambiguous_authority_window_for_period', $target['reason']);
+            }
+            $rendered = (new GenerationResult(GenerationOutcome::Qualified, [], [], null,
+                temporalContext: ['targets' => [$target], 'uses' => []]))->renderedText();
+            $this->assertStringContainsString($periodQuote, $rendered);
+            $this->assertStringContainsString('ineligible', $rendered);
         } elseif ($case === 'historical') {
             $this->assertCount(2, $searches);
             $targets = $result->evidenceNeeds[0]['temporal_targets'];
@@ -185,14 +221,17 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         [$workspace, $generation, $scope] = $this->scope();
         $old = $this->document($workspace, $generation, '2025-01-01', text: 'The regional contractor performs the daily inspection.');
         $current = $this->document($workspace, $generation, '2026-06-01', $old, 'The national contractor performs the daily inspection.');
-        if ($case === 'varied_development') {
+        if ($case !== 'modified_input16') {
             $qualifier = DocumentChunk::factory()->create(['workspace_id' => $workspace->id, 'document_id' => $old->id,
                 'ingestion_event_claim_id' => $old->chunks()->firstOrFail()->ingestion_event_claim_id,
                 'ordinal' => 2, 'text' => 'During the daily inspection in hazardous areas, trained staff must accompany the contractor.']);
             WorkspaceCorpusGenerationChunk::factory()->create(['workspace_id' => $workspace->id,
                 'workspace_corpus_generation_id' => $generation->id, 'document_chunk_id' => $qualifier->id]);
         }
-        $question = 'Under the Inspection Schedule, who performed daily inspections on 14 February 2026?';
+        $dateQuote = match ($case) {
+            'month_replay' => 'February 2026', 'year_replay' => '2025', default => '14 February 2026'
+        };
+        $question = 'Under the Inspection Schedule, who performed daily inspections during '.$dateQuote.'?';
         $plan = $this->plan(4, function ($data) use ($old, $question) {
             $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
             $need = &$data['plan']['needs'][0];
@@ -202,15 +241,13 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $need['operation'] = 'retrieve';
             $need['scope_question'] = null;
             $need['authority'] = ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null];
-            $need['fact_reference'] = ['value' => '2026-02-14', 'precision' => 'day',
-                'source' => ['turn_id' => 'user-1', 'quote' => '14 February 2026']];
+            $need['fact_reference'] = null; // Inventory is independent of any typed date label.
             $need['applicability'] = ['kind' => 'generic', 'source' => null];
             $data['plan']['bindings'][0]['subject_status'] = 'matched';
             $data['plan']['bindings'][0]['family_ids'] = [$old->family->public_id];
 
             return $data;
         });
-        $dateQuote = '14 February 2026';
         $answerText = 'The regional contractor performed daily inspections; trained staff accompanied them in hazardous areas.';
         if ($case === 'modified_input16') {
             $fixture = json_decode(file_get_contents(base_path('tests/Fixtures/temporal-c1-input16.json')), true, flags: JSON_THROW_ON_ERROR);
@@ -282,6 +319,10 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertTrue($answer->temporal_context['uses'][0]['planner_disagreement']);
         $this->assertStringContainsString($dateQuote, $answer->renderedText());
         $this->assertStringContainsString($old->public_id, $answer->renderedText());
+        if (in_array($case, ['month_replay', 'year_replay'], true)) {
+            $this->assertStringContainsString('whole '.($case === 'month_replay' ? 'month' : 'year'), $answer->renderedText());
+            $this->assertNull($answer->temporal_context['uses'][0]['target']['at']);
+        }
         $this->assertSame([$old->id], $answer->evidenceSnapshots->pluck('document_id')->unique()->values()->all());
         $this->assertNotNull($generationRequest);
         Http::assertSentCount(3);

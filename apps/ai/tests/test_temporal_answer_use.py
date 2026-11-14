@@ -94,6 +94,61 @@ def test_dated_alternative_can_answer_instead_of_provisional_current():
     validate_temporal_uses(*objects())
 
 
+@pytest.mark.parametrize(
+    "precision,quote,value,start,end",
+    [
+        (
+            "month",
+            "February 2024",
+            "2024-02",
+            "2024-02-01T00:00:00Z",
+            "2024-03-01T00:00:00Z",
+        ),
+        ("year", "2025", "2025", "2025-01-01T00:00:00Z", "2026-01-01T00:00:00Z"),
+    ],
+)
+def test_whole_period_use_rejects_partial_coverage_and_current_history(
+    precision, quote, value, start, end
+):
+    raw = temporal_request()
+    need = raw["evidence_needs"][0]
+    need["question_span"]["quote"] = (
+        f"What is required now, after the review in {quote}?"
+    )
+    need["aspect"] = need["question_span"]["quote"]
+    raw["question"] = need["aspect"]
+    target = need["temporal_targets"][1]
+    target["at"] = None
+    target["reference"] = {
+        "turn_id": "u1",
+        "quote": quote,
+        "at": None,
+        "precision": precision,
+        "value": value,
+        "period_start": start,
+        "period_end": end,
+    }
+    args = list(objects(raw))
+    args[3] = [args[3][0].model_copy(update={"question_quote": quote})]
+    validate_temporal_uses(*args)
+    # Identity verification is independent of deciding whether the date is background.
+    args[3] = [args[3][0].model_copy(update={"target_id": "n1:requested"})]
+    with pytest.raises(ValueError, match="version mismatch"):
+        validate_temporal_uses(*args)
+    for field in ("start", "end"):
+        changed = deepcopy(raw)
+        changed["evidence_needs"][0]["temporal_targets"][1]["versions"][0][field] = (
+            end if field == "start" else start
+        )
+        args = list(objects(changed))
+        args[3] = [args[3][0].model_copy(update={"question_quote": quote})]
+        with pytest.raises(ValueError, match="interval mismatch"):
+            validate_temporal_uses(*args)
+    target["reference"]["period_end"] = start
+    with pytest.raises(ValueError, match="period end"):
+        GenerationNeedsRequest.model_validate(raw)
+
+
 def test_current_target_uses_current_evidence_not_historical_background():
     validate_temporal_uses(*objects(target="n1:requested", handle="ev-01"))
     with pytest.raises(ValueError, match="version mismatch"):

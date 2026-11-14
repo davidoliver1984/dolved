@@ -62,6 +62,8 @@ final readonly class GenerationResult
                 if ($basis !== null) {
                     $target = $basis['target'];
                     $label = "\nTemporal basis: ".($target['reference']['quote'] ?? $target['at'] ?? 'planner-selected authority')
+                        .(($target['reference']['period_start'] ?? null) === null ? ''
+                            : '; whole '.$target['reference']['precision'].' '.$target['reference']['period_start'].' to '.$target['reference']['period_end'].' (end exclusive)')
                         .'; version '.implode(', ', array_column($target['versions'], 'version_id'))
                         .'; effective '.implode(', ', array_map(fn ($version) => $version['start'].' to '.($version['end'] ?? 'open end').' (end exclusive)', $target['versions']))
                         .($basis['planner_disagreement'] ? ' (differs from the provisional planner target).' : '.');
